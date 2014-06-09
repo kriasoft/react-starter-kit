@@ -21,11 +21,11 @@
 
 ```
 .
-├── /bower_components/         # 3rd party client-side libraries
-├── /build/                    # The folder for compiled output
-├── /docs/                     # Documentation files
-├── /node_modules/             # Node.js-based dev tools and utilities
-├── /src/                      # The source code of the application
+├── /bower_components/          # 3rd party client-side libraries
+├── /build/                     # The folder for compiled output
+├── /docs/                      # Documentation files
+├── /node_modules/              # Node.js-based dev tools and utilities
+├── /src/                       # The source code of the application
 │   ├── /assets/
 │   ├── /data/
 │   ├── /common/
@@ -36,9 +36,9 @@
 │   ├── /app.jsx
 │   ├── /app.less
 │   └── /index.html
-├── /test/                     # Unit, integration and load tests
-│   ├── /e2e/                  # End-to-end tests
-│   └── /unit/                 # Unit tests
+├── /test/                      # Unit, integration and load tests
+│   ├── /e2e/                   # End-to-end tests
+│   └── /unit/                  # Unit tests
 └── ...
 ```
 
@@ -46,7 +46,7 @@
 
 To get started you can simply clone the repo and install the dependencies:
 
-```
+```shell
 > git clone https://github.com/kriasoft/React-Seed MyApp && cd MyApp
 > npm install -g gulp           # Install Gulp task runner globally
 > npm install                   # Install Node.js components listed in ./package.json
@@ -55,8 +55,14 @@ To get started you can simply clone the repo and install the dependencies:
 
 To compile the application and start a dev server just run:
 
+```shell
+> gulp                          # or, `gulp --production`
 ```
-> gulp
+
+To build the project, without starting a web server run:
+
+```shell
+> gulp build                    # or, `gulp build --production`
 ```
 
 Now browse to the app at [http://localhost:8080/](http://localhost:8080/)
