@@ -22,6 +22,7 @@ module.exports = function (isDebug) {
         },
 
         plugins: isDebug ? [] : [
+            new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'})
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.UglifyJsPlugin(),
             new webpack.optimize.OccurenceOrderPlugin(),
