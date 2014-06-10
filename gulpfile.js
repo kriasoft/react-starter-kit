@@ -157,7 +157,7 @@ gulp.task('watch', ['run'], function () {
 // Deploy to GitHub Pages. See: https://pages.github.com
 // -----------------------------------------------------------------------------
 gulp.task('deploy', ['build'], function (cb) {
-    var url = 'https://github.com/watchlist/watchlist.github.io.git';
+    var url = 'https://github.com/{name}/{name}.github.io.git';
     var exec = require('child_process').exec;
     var cwd = path.join(__dirname, './build');
     var cmd = 'git init && git remote add origin ' + url + ' && ' +
