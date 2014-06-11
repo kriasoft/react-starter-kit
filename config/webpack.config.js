@@ -1,6 +1,8 @@
 // Webpack Configuration
 // http://webpack.github.io/docs/configuration.html
 
+var webpack = require('webpack');
+
 module.exports = function (isDebug) {
     return {
         output: {
@@ -22,7 +24,7 @@ module.exports = function (isDebug) {
         },
 
         plugins: isDebug ? [] : [
-            new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'})
+            new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'}),
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.UglifyJsPlugin(),
             new webpack.optimize.OccurenceOrderPlugin(),
