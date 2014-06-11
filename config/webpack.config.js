@@ -8,15 +8,13 @@ module.exports = function (isDebug) {
         output: {
             publicPatch: './build/',
             path: './build/',
-            filename: 'app.js',
-            hideModules: true
+            filename: 'app.js'
         },
 
         cache: isDebug,
         debug: isDebug,
         devtool: false,
         entry: './src/app.jsx',
-        qiuet: true,
 
         stats: {
             colors: true,
