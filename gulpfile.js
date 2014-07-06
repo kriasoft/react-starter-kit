@@ -13,7 +13,6 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var es = require('event-stream');
 var path = require('path');
-var rimraf = require('rimraf');
 var webpack = require('webpack');
 var argv = require('minimist')(process.argv.slice(2));
 
@@ -33,6 +32,7 @@ var task = {};
 // Clean up
 // -----------------------------------------------------------------------------
 gulp.task('clean', function (cb) {
+    var rimraf = require('rimraf');
     rimraf('./build', cb);
 });
 
@@ -174,7 +174,7 @@ gulp.task('deploy', ['build'], function (cb) {
         if (err !== null) {
             cb(err);
         } else {
-            gutil.log(stdout, stderr);
+            $.util.log(stdout, stderr);
             cb();
         }
     });
