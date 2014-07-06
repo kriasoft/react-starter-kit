@@ -1,5 +1,12 @@
-// Webpack Configuration
-// http://webpack.github.io/docs/configuration.html
+/*!
+ * Facebook React Starter Kit | https://github.com/kriasoft/React-Seed
+ * Copyright (c) KriaSoft, LLC. All rights reserved. See LICENSE.txt
+ */
+
+/*
+ * Webpack Configuration
+ * http://webpack.github.io/docs/configuration.html
+ */
 
 var webpack = require('webpack');
 
