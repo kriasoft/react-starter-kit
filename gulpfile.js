@@ -13,6 +13,7 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var es = require('event-stream');
 var path = require('path');
+var runSequence = require('run-sequence');
 var webpack = require('webpack');
 var argv = require('minimist')(process.argv.slice(2));
 
@@ -20,14 +21,13 @@ var argv = require('minimist')(process.argv.slice(2));
 var DEBUG = !argv.release;
 var WATCH = Boolean(argv.watch);
 
+// Node.js runtime dependencies and their version numbers
 var pkgs = require('./package.json').dependencies;
 Object.keys(pkgs).forEach(function (key) { return pkgs[key] = pkgs[key].substring(1); });
+
+// Configure Webpack bundler
 var bundler = webpack(require('./config/webpack.config.js')(DEBUG));
 
-
-// A cache for Gulp tasks. It is used as a workaround for Gulp's dependency resolution
-// limitations. It won't be needed anymore starting with Gulp 4.
-var task = {};
 
 // Clean up
 // -----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ gulp.task('clean', function (cb) {
 
 // Copy vendor files
 // -----------------------------------------------------------------------------
-gulp.task('vendor', task.vendor = function () {
+gulp.task('vendor', function () {
     return es.merge(
         gulp.src('./node_modules/jquery/dist/**')
             .pipe(gulp.dest('./build/vendor/jquery-' + pkgs.jquery)),
@@ -46,11 +46,10 @@ gulp.task('vendor', task.vendor = function () {
             .pipe(gulp.dest('./build/fonts'))
     );
 });
-gulp.task('vendor:clean', ['clean'], task.vendor);
 
 // Copy static files / assets
 // -----------------------------------------------------------------------------
-gulp.task('assets', task.assets = function () {
+gulp.task('assets', function () {
     return es.merge(
         gulp.src('./src/assets/**')
             .pipe(gulp.dest('./build')),
@@ -66,11 +65,10 @@ gulp.task('assets', task.assets = function () {
             .pipe(gulp.dest('./build'))
     );
 });
-gulp.task('assets:clean', ['clean'], task.assets);
 
 // CSS stylesheets
 // -----------------------------------------------------------------------------
-gulp.task('styles', task.styles = function () {
+gulp.task('styles', function () {
     return gulp.src('./src/styles/bootstrap.less')
         .pipe($.plumber())
         .pipe($.less({sourceMap: DEBUG, sourceMapBasepath: __dirname}))
@@ -78,40 +76,34 @@ gulp.task('styles', task.styles = function () {
         .pipe(DEBUG ? $.util.noop() : $.minifyCss())
         .pipe(gulp.dest('./build/css'));
 });
-gulp.task('styles:clean', ['clean'], task.styles);
 
 // Create JavaScript bundle
 // -----------------------------------------------------------------------------
-gulp.task('bundle', ['clean'], function (cb) {
-    bundler.run(function (err, stats) {
+gulp.task('bundle', function (cb) {
+    function bundle (err, stats) {
         if (err) {
             throw new $.util.PluginError('webpack', err);
         }
         $.util.log('[webpack]', stats.toString({colors: true}));
-        cb();
-    });
-});
-gulp.task('bundle:watch', ['clean'], function (cb) {
-    bundler.watch(200, function (err, stats) {
-        if (err) {
-            throw new $.util.PluginError('webpack', err);
-        }
-        $.util.log('[webpack]', stats.toString({colors: true}));
-        if (cb) {
-            cb();
-            cb = null;
-        }
-    });
+        return cb();
+    }
+
+    if (WATCH) {
+        bundler.watch(200, bundle);
+    } else {
+        bundler.run(bundle);
+    }
 });
 
 // Build the app from source code
 // -----------------------------------------------------------------------------
-gulp.task('build', ['vendor:clean', 'assets:clean', 'styles:clean', 'bundle']);
-gulp.task('build:watch', ['vendor:clean', 'assets:clean', 'styles:clean', 'bundle:watch']);
+gulp.task('build', ['clean'], function (cb) {
+    runSequence(['vendor', 'assets', 'styles', 'bundle'], cb);
+});
 
 // Launch a lightweight HTTP Server
 // -----------------------------------------------------------------------------
-gulp.task('run', ['build:watch'], function (next) {
+gulp.task('serve', ['build'], function (next) {
     var url = require('url');
     var server = require('ecstatic')({root: './', cache: 'no-cache', showDir: true});
     var port = 3000;
@@ -142,7 +134,7 @@ gulp.task('run', ['build:watch'], function (next) {
 
 // Watch for changes in source files
 // -----------------------------------------------------------------------------
-gulp.task('watch', ['run'], function () {
+gulp.task('watch', ['serve'], function () {
     var path = require('path');
     var lr = require('gulp-livereload');
 

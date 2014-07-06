@@ -54,7 +54,7 @@ To get started you can simply clone the repo and install the dependencies:
 To compile the application and start a dev server just run:
 
 ```shell
-> gulp                          # or, `gulp --release`
+> gulp --watch                  # or, `gulp --watch --release`
 ```
 
 To build the project, without starting a web server run:
