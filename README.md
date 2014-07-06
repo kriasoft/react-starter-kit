@@ -1,4 +1,4 @@
-# KriaSoft React Seed
+# Facebook React Starter Kit
 
 > **Web Application Front-end Starter Kit** built with [Facebook React](https://github.com/facebook/react).
 
@@ -77,3 +77,4 @@ Need help or willing to contribute? Contact me via email: [hello@tarkus.me](mail
 
  * Source code is licensed under the MIT License. See [LICENSE.txt](./LICENSE.txt) file in the project root.
  * Documentation to the project is licensed under the [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/) license.
+ * React logo image is a trademark of Facebook, Inc.
