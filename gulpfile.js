@@ -1,30 +1,37 @@
-// For more information on how to configure Gulp.js build system, please visit:
-// https://github.com/gulpjs/gulp/blob/master/docs/API.md
+/*!
+ * Facebook React Starter Kit | https://github.com/kriasoft/React-Seed
+ * Copyright (c) KriaSoft, LLC. All rights reserved. See LICENSE.txt
+ */
 
-var es = require('event-stream');
+/*
+ * For more information on how to configure Gulp, please visit:
+ * https://github.com/gulpjs/gulp/blob/master/docs/API.md
+ */
+
+// Include Gulp & other tools for build automation
 var gulp = require('gulp');
-var changed = require('gulp-changed');
-var embedlr = require('gulp-embedlr');
-var htmlmin = require('gulp-htmlmin');
-var jshint = require('gulp-jshint');
-var less = require('gulp-less');
-var minifyCSS = require('gulp-minify-css');
-var plumber = require('gulp-plumber');
-var uglify = require('gulp-uglify');
-var gutil = require('gulp-util');
+var $ = require('gulp-load-plugins')();
+var es = require('event-stream');
 var path = require('path');
 var rimraf = require('rimraf');
 var webpack = require('webpack');
+var argv = require('minimist')(process.argv.slice(2));
 
 // Settings
-var isDebug = !require('minimist')(process.argv.slice(2)).production;
-var compiler = webpack(require('./config/webpack.config.js')(isDebug));
+var DEBUG = !argv.release;
+var WATCH = Boolean(argv.watch);
+
+var pkgs = require('./package.json').dependencies;
+Object.keys(pkgs).forEach(function (key) { return pkgs[key] = pkgs[key].substring(1); });
+var bundler = webpack(require('./config/webpack.config.js')(DEBUG));
+
 
 // A cache for Gulp tasks. It is used as a workaround for Gulp's dependency resolution
 // limitations. It won't be needed anymore starting with Gulp 4.
 var task = {};
 
 // Clean up
+// -----------------------------------------------------------------------------
 gulp.task('clean', function (cb) {
     rimraf('./build', cb);
 });
@@ -32,11 +39,10 @@ gulp.task('clean', function (cb) {
 // Copy vendor files
 // -----------------------------------------------------------------------------
 gulp.task('vendor', task.vendor = function () {
-    var pkg = require('./bower.json').dependencies;
-    return es.concat(
-        gulp.src('./bower_components/jquery/dist/**')
-            .pipe(gulp.dest('./build/vendor/jquery-' + pkg.jquery.substring(1))),
-        gulp.src('./bower_components/bootstrap/dist/fonts/**')
+    return es.merge(
+        gulp.src('./node_modules/jquery/dist/**')
+            .pipe(gulp.dest('./build/vendor/jquery-' + pkgs.jquery)),
+        gulp.src('./node_modules/bootstrap/dist/fonts/**')
             .pipe(gulp.dest('./build/fonts'))
     );
 });
@@ -45,18 +51,18 @@ gulp.task('vendor:clean', ['clean'], task.vendor);
 // Copy static files / assets
 // -----------------------------------------------------------------------------
 gulp.task('assets', task.assets = function () {
-    return es.concat(
+    return es.merge(
         gulp.src('./src/assets/**')
             .pipe(gulp.dest('./build')),
         gulp.src('./src/images/**')
             .pipe(gulp.dest('./build/images/')),
         gulp.src('./src/*.html')
-            .pipe(isDebug ? gutil.noop() : htmlmin({
+            .pipe(DEBUG ? $.util.noop() : $.htmlmin({
                 removeComments: true,
                 collapseWhitespace: true,
                 minifyJS: true
             }))
-            .pipe(isDebug ? embedlr() : gutil.noop())
+            .pipe(DEBUG ? $.embedlr() : $.util.noop())
             .pipe(gulp.dest('./build'))
     );
 });
@@ -65,32 +71,32 @@ gulp.task('assets:clean', ['clean'], task.assets);
 // CSS stylesheets
 // -----------------------------------------------------------------------------
 gulp.task('styles', task.styles = function () {
-    return gulp.src('./src/app.less')
-        .pipe(plumber())
-        .pipe(less({sourceMap: isDebug, sourceMapBasepath: __dirname}))
-        .on('error', gutil.log)
-        .pipe(isDebug ? gutil.noop() : minifyCSS())
-        .pipe(gulp.dest('./build'));
+    return gulp.src('./src/styles/bootstrap.less')
+        .pipe($.plumber())
+        .pipe($.less({sourceMap: DEBUG, sourceMapBasepath: __dirname}))
+        .on('error', $.util.log)
+        .pipe(DEBUG ? $.util.noop() : $.minifyCss())
+        .pipe(gulp.dest('./build/css'));
 });
 gulp.task('styles:clean', ['clean'], task.styles);
 
 // Create JavaScript bundle
 // -----------------------------------------------------------------------------
 gulp.task('bundle', ['clean'], function (cb) {
-    compiler.run(function (err, stats) {
+    bundler.run(function (err, stats) {
         if (err) {
-            throw new gutil.PluginError('webpack', err);
+            throw new $.util.PluginError('webpack', err);
         }
-        gutil.log('[webpack]', stats.toString({colors: true}));
+        $.util.log('[webpack]', stats.toString({colors: true}));
         cb();
     });
 });
 gulp.task('bundle:watch', ['clean'], function (cb) {
-    compiler.watch(200, function (err, stats) {
+    bundler.watch(200, function (err, stats) {
         if (err) {
-            throw new gutil.PluginError('webpack', err);
+            throw new $.util.PluginError('webpack', err);
         }
-        gutil.log('[webpack]', stats.toString({colors: true}));
+        $.util.log('[webpack]', stats.toString({colors: true}));
         if (cb) {
             cb();
             cb = null;
@@ -108,7 +114,7 @@ gulp.task('build:watch', ['vendor:clean', 'assets:clean', 'styles:clean', 'bundl
 gulp.task('run', ['build:watch'], function (next) {
     var url = require('url');
     var server = require('ecstatic')({root: './', cache: 'no-cache', showDir: true});
-    var port = 8080;
+    var port = 3000;
 
     require('http').createServer()
         .on('request', function (req, res) {
@@ -129,7 +135,7 @@ gulp.task('run', ['build:watch'], function (next) {
             server(req, res);
         })
         .listen(port, function () {
-            gutil.log('Server is listening on ' + gutil.colors.magenta('http://localhost:' + port + '/'));
+            $.util.log('Server is listening on ' + $.util.colors.magenta('http://localhost:' + port + '/'));
             next();
         });
 });
@@ -147,7 +153,7 @@ gulp.task('watch', ['run'], function () {
     // Watch for changes in 'compiled' files
     gulp.watch('./build/**', function (file) {
         var relPath = 'build\\' + path.relative('./build', file.path);
-        gutil.log('File changed: ' + gutil.colors.magenta(relPath));
+        $.util.log('File changed: ' + $.util.colors.magenta(relPath));
         lr.changed(file.path);
     });
 
