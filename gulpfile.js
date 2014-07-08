@@ -20,14 +20,11 @@ var argv = require('minimist')(process.argv.slice(2));
 // Settings
 var DEBUG = !argv.release;
 var WATCH = Boolean(argv.watch);
+var LOG = Boolean(argv.log);
 
 // Node.js runtime dependencies and their version numbers
 var pkgs = require('./package.json').dependencies;
 Object.keys(pkgs).forEach(function (key) { return pkgs[key] = pkgs[key].substring(1); });
-
-// Configure Webpack bundler
-var bundler = webpack(require('./config/webpack.config.js')(DEBUG));
-
 
 // Clean up
 // -----------------------------------------------------------------------------
@@ -80,11 +77,13 @@ gulp.task('styles', function () {
 // Create JavaScript bundle
 // -----------------------------------------------------------------------------
 gulp.task('bundle', function (cb) {
+    var bundler = webpack(require('./config/webpack.config.js')(DEBUG));
+
     function bundle (err, stats) {
         if (err) {
             throw new $.util.PluginError('webpack', err);
         }
-        $.util.log('[webpack]', stats.toString({colors: true}));
+        LOG && $.util.log('[webpack]', stats.toString({colors: true}));
         return cb();
     }
 
