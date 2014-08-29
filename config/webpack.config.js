@@ -4,13 +4,13 @@
  */
 
 /*
- * Webpack Configuration
- * http://webpack.github.io/docs/configuration.html
+ * Webpack configuration. For more information visit
+ * http://webpack.github.io/docs/configuration
  */
 
 var webpack = require('webpack');
 
-module.exports = function (isDebug) {
+module.exports = function (release) {
     return {
         output: {
             publicPatch: './build/',
@@ -18,23 +18,23 @@ module.exports = function (isDebug) {
             filename: 'app.js'
         },
 
-        cache: isDebug,
-        debug: isDebug,
+        cache: !release,
+        debug: !release,
         devtool: false,
         entry: './src/app.jsx',
 
         stats: {
             colors: true,
-            reasons: isDebug
+            reasons: !release
         },
 
-        plugins: isDebug ? [] : [
+        plugins: release ? [
             new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'}),
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.UglifyJsPlugin(),
             new webpack.optimize.OccurenceOrderPlugin(),
             new webpack.optimize.AggressiveMergingPlugin()
-        ],
+        ] : [],
 
         module: {
             preLoaders: [
