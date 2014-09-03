@@ -122,10 +122,11 @@ gulp.task('bundle', function (cb) {
         return cb();
     }
 
-    if (watch) {
-        bundler.watch(200, bundle);
-    } else {
+    // Start watching for changes if task == 'serve'
+    if ($.util.env._.indexOf('serve') === -1) {
         bundler.run(bundle);
+    } else {
+        bundler.watch(200, bundle);
     }
 });
 
@@ -152,7 +153,6 @@ gulp.task('serve', ['build'], function () {
     gulp.watch(src.images, ['images']);
     gulp.watch(src.pages, ['pages']);
     gulp.watch(src.styles, ['styles']);
-    gulp.watch(src.bundle, ['bundle']);
     watch = true;
 });
 
