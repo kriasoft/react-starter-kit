@@ -17,9 +17,9 @@
 
 #### Development Tools
 
- * [BrowserSync](http://www.browsersync.io/) - Lightweight HTTP server for development
  * [Gulp](http://gulpjs.com/) - JavaScript streaming build system and task automation
  * [Webpack](http://webpack.github.io/) - Compiles front-end source code into modules / bundles
+ * [BrowserSync](http://www.browsersync.io/) - Lightweight HTTP server for development
  * [Karma](http://karma-runner.github.io/) - JavaScript unit-test runner (coming)
  * [Protractor](https://github.com/angular/protractor) - End-to-end test framework (coming)
 
@@ -34,9 +34,12 @@
 │   ├── /assets/
 │   ├── /data/
 │   ├── /common/
+│   ├── /components/
 │   ├── /images/
-│   ├── /styles/
+│   ├── /layouts/
+│   ├── /pages/
 │   ├── /services/
+│   ├── /styles/
 │   ├── /404.html
 │   ├── /app.jsx
 │   └── /index.html
@@ -57,7 +60,7 @@ To get started you can simply clone the repo and install the dependencies:
 > npm install                   # Install Node.js components listed in ./package.json
 ```
 
-To compile the application and start a dev server just run:
+To compile the application and start a dev server run:
 
 ```shell
 > gulp                          # or, `gulp --release`
