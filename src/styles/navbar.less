@@ -9,9 +9,9 @@ html {
 }
 
 .navbar-top {
-    .navbar();
-    .navbar-inverse();
-    .navbar-fixed-top();
+    &:extend(.navbar);
+    &:extend(.navbar-inverse);
+    &:extend(.navbar-fixed-top);
 }
 
 .navbar-brand {
@@ -26,8 +26,8 @@ html {
    ========================================================================== */
 
 .footer {
-    .navbar();
-    .navbar-fixed-bottom();
+    &:extend(.navbar);
+    &:extend(.navbar-fixed-bottom);
 
     background-color: darken(@body-bg, 2%);
 
