@@ -112,21 +112,31 @@ gulp.task('styles', function () {
 
 // Bundle
 gulp.task('bundle', function (cb) {
-    var bundler = webpack(require('./config/webpack.config.js')(RELEASE));
+    var started = false;
+    var config = require('./config/webpack.config.js')(RELEASE);
+    var bundler = webpack(config);
 
     function bundle (err, stats) {
         if (err) {
             throw new $.util.PluginError('webpack', err);
         }
-        //VERBOSE && $.util.log('[webpack]', stats.toString({colors: true}));
-        return cb();
+
+        !!argv.verbose && $.util.log('[webpack]', stats.toString({colors: true}));
+
+        if (watch) {
+            reload(config.output.filename);
+        }
+
+        if (!started) {
+            started = true;
+            return cb();
+        }
     }
 
-    // Start watching for changes if task == 'serve'
-    if ($.util.env._.indexOf('serve') === -1) {
-        bundler.run(bundle);
-    } else {
+    if (watch) {
         bundler.watch(200, bundle);
+    } else {
+        bundler.run(bundle);
     }
 });
 
@@ -136,24 +146,28 @@ gulp.task('build', ['clean'], function (cb) {
 });
 
 // Launch a lightweight HTTP Server
-gulp.task('serve', ['build'], function () {
+gulp.task('serve', function (cb) {
 
-    browserSync({
-        notify: false,
-        // Run as an https by uncommenting 'https: true'
-        // Note: this uses an unsigned certificate which on first access
-        //       will present a certificate warning in the browser.
-        // https: true,
-        server: {
-            baseDir: ['build']
-        }
-    });
-
-    gulp.watch(src.assets, ['assets']);
-    gulp.watch(src.images, ['images']);
-    gulp.watch(src.pages, ['pages']);
-    gulp.watch(src.styles, ['styles']);
     watch = true;
+
+    runSequence('build', function () {
+        browserSync({
+            notify: false,
+            // Run as an https by uncommenting 'https: true'
+            // Note: this uses an unsigned certificate which on first access
+            //       will present a certificate warning in the browser.
+            // https: true,
+            server: {
+                baseDir: ['build']
+            }
+        });
+
+        gulp.watch(src.assets, ['assets']);
+        gulp.watch(src.images, ['images']);
+        gulp.watch(src.pages, ['pages']);
+        gulp.watch(src.styles, ['styles']);
+        cb();
+    });
 });
 
 // Deploy to GitHub Pages
