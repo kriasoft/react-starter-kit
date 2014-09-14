@@ -12,8 +12,8 @@
 #### Runtime Components
 
  * [React](https://facebook.github.io/react/) - A JavaScript library for building user interfaces, developed by Facebook
+ * [React-Router](https://github.com/rackt/react-router) - A complete routing library for React
  * [Bootstrap](http://getbootstrap.com/) - CSS framework for developing responsive, mobile first interfaces
- * [jQuery](http://jquery.com/) - a JavaScript library designed to simplify the client-side scripting of HTML
 
 #### Development Tools
 
