@@ -12,7 +12,7 @@ module.exports = React.createClass({
             <div>
                 <Navbar />
                 <this.props.activeRouteHandler />
-                <div className="navbar navbar-fixed-bottom">
+                <div className="footer">
                     <div className="container">
                         <p className="text-muted">&copy; KriaSoft • <Link to="home">Home</Link> • <Link to="privacy">Privacy</Link></p>
                     </div>
