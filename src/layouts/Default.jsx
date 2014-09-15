@@ -2,11 +2,13 @@
  * @jsx React.DOM
  */
 
+'use strict';
+
 var React = require('react');
 var Link = require('react-router').Link;
 var Navbar = require('../components/Navbar.jsx');
 
-module.exports = React.createClass({
+var DefaultLayout = React.createClass({
     render: function () {
         return (
             <div>
@@ -21,3 +23,5 @@ module.exports = React.createClass({
         );
     }
 });
+
+module.exports = DefaultLayout;

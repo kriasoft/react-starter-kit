@@ -2,9 +2,11 @@
  * @jsx React.DOM
  */
 
+'use strict';
+
 var React = require('react');
 
-module.exports = React.createClass({
+var HomePage = React.createClass({
     render: function () {
         return (
             <div className="container">
@@ -13,8 +15,8 @@ module.exports = React.createClass({
                 <h4>Runtime Components:</h4>
                 <ul>
                     <li><a href="https://facebook.github.io/react/">React</a> - A JavaScript library for building user interfaces, developed by Facebook</li>
+                    <li><a href="https://github.com/rackt/react-router">React-Router</a> - A complete routing library for React</li>
                     <li><a href="http://getbootstrap.com/">Bootstrap</a> - CSS framework for developing responsive, mobile first interfaces</li>
-                    <li><a href="http://jquery.com/">jQuery</a> - a JavaScript library designed to simplify the client-side scripting of HTML</li>
                 </ul>
                 <h4>Development Tools:</h4>
                 <ul>
@@ -27,3 +29,5 @@ module.exports = React.createClass({
         );
     }
 });
+
+module.exports = HomePage;
