@@ -2,9 +2,11 @@
  * @jsx React.DOM
  */
 
+'use strict';
+
 var React = require('react');
 
-module.exports = React.createClass({
+var PrivacyPage = React.createClass({
     render: function () {
         return (
             <div className="container">
@@ -53,3 +55,5 @@ module.exports = React.createClass({
         );
     }
 });
+
+module.exports = PrivacyPage;
