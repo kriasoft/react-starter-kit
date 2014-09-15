@@ -9,19 +9,19 @@ var Link = require('react-router').Link;
 var Navbar = require('../components/Navbar.jsx');
 
 var DefaultLayout = React.createClass({
-    render: function () {
-        return (
-            <div>
-                <Navbar />
-                <this.props.activeRouteHandler />
-                <div className="navbar-footer">
-                    <div className="container">
-                        <p className="text-muted">&copy; KriaSoft • <Link to="home">Home</Link> • <Link to="privacy">Privacy</Link></p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+  render: function () {
+    return (
+      <div>
+        <Navbar />
+        <this.props.activeRouteHandler />
+        <div className="navbar-footer">
+          <div className="container">
+            <p className="text-muted">&copy; KriaSoft • <Link to="home">Home</Link> • <Link to="privacy">Privacy</Link></p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 });
 
 module.exports = DefaultLayout;

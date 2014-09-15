@@ -15,11 +15,11 @@ var HomePage = require('./pages/Home.jsx');
 var PrivacyPage = require('./pages/Privacy.jsx');
 
 React.renderComponent(
-    <Routes location="history">
-        <Route name="app" path="/" handler={DefaultLayout}>
-            <Route name="home" path="/" handler={HomePage} />
-            <Route name="privacy" path="/privacy" handler={PrivacyPage} />
-        </Route>
-    </Routes>,
-    document.body
+  <Routes location="history">
+    <Route name="app" path="/" handler={DefaultLayout}>
+      <Route name="home" path="/" handler={HomePage} />
+      <Route name="privacy" path="/privacy" handler={PrivacyPage} />
+    </Route>
+  </Routes>,
+  document.body
 );
