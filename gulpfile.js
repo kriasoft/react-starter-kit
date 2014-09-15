@@ -85,7 +85,7 @@ gulp.task('images', function () {
 
 // HTML pages
 gulp.task('pages', function () {
-  src.pages = 'src/**/*.html';
+  src.pages = 'src/pages/**/*.html';
   return gulp.src(src.pages)
     .pipe($.if(RELEASE, $.htmlmin({
       removeComments: true,
