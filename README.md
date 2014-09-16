@@ -41,9 +41,7 @@
 │   ├── /pages/                 # Web pages. E.g. Profile.jsx (or .html, .jade etc.)
 │   ├── /services/              # Services and business logic
 │   ├── /styles/                # LESS style sheets (or SASS/SCSS, Stylus etc.)
-│   ├── /404.html               # 'Page not found' page
-│   ├── /app.jsx                # Entry point / bootstrap script
-│   └── /index.html             # Home page of a single-page application (SPA)
+│   └── /app.jsx                # Entry point / bootstrap script
 ├── /test/                      # Unit, integration and load tests
 │   ├── /e2e/                   # End-to-end tests
 │   └── /unit/                  # Unit tests
