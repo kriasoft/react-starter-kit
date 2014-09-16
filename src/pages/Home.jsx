@@ -7,7 +7,7 @@
 var React = require('react');
 
 var HomePage = React.createClass({
-  render: function () {
+  render: () => {
     return (
       <div className="container">
         <h2>Facebook React Starter Kit</h2>
