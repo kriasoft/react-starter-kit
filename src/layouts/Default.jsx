@@ -5,11 +5,11 @@
 'use strict';
 
 var React = require('react');
-var Link = require('react-router').Link;
+var {Link} = require('react-router');
 var Navbar = require('../components/Navbar.jsx');
 
 var DefaultLayout = React.createClass({
-  render: function () {
+  render: () => {
     return (
       <div>
         <Navbar />
