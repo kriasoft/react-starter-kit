@@ -64,7 +64,7 @@ module.exports = function (release) {
         },
         {
           test: /\.jsx$/,
-          loader: 'jsx-loader'
+          loader: 'jsx-loader?harmony'
         }
       ]
     }
