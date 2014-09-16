@@ -5,20 +5,13 @@
 'use strict';
 
 var React = require('react');
-var Router = require('react-router');
-
-var Routes = Router.Routes;
-var Route = Router.Route;
-
-var DefaultLayout = require('./layouts/Default.jsx');
-var HomePage = require('./pages/Home.jsx');
-var PrivacyPage = require('./pages/Privacy.jsx');
+var {Routes, Route} = require('react-router');
 
 React.renderComponent(
   <Routes location="history">
-    <Route name="app" path="/" handler={DefaultLayout}>
-      <Route name="home" path="/" handler={HomePage} />
-      <Route name="privacy" path="/privacy" handler={PrivacyPage} />
+    <Route name="app" path="/" handler={require('./layouts/Default.jsx')}>
+      <Route name="home" path="/" handler={require('./pages/Home.jsx')} />
+      <Route name="privacy" handler={require('./pages/Privacy.jsx')} />
     </Route>
   </Routes>,
   document.body
