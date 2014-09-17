@@ -10,22 +10,34 @@ var HomePage = React.createClass({
   render: () => {
     return (
       <div className="container">
-        <h2>Facebook React Starter Kit</h2>
-        <p>This is a single-page application (SPA) project template based on Facebook React.</p>
-        <h4>Runtime Components:</h4>
-        <ul>
-          <li><a href="https://facebook.github.io/react/">React</a> - A JavaScript library for building user interfaces, developed by Facebook</li>
-          <li><a href="https://github.com/rackt/react-router">React-Router</a> - A complete routing library for React</li>
-          <li><a href="http://getbootstrap.com/">Bootstrap</a> - CSS framework for developing responsive, mobile first interfaces</li>
-        </ul>
-        <h4>Development Tools:</h4>
-        <ul>
-          <li><a href="http://gulpjs.com">Gulp</a> - JavaScript streaming build system and task automation</li>
-          <li><a href="http://webpack.github.io/">Webpack</a> - Compiles front-end source code into modules / bundles</li>
-          <li><a href="http://www.browsersync.io/">BrowserSync</a> - A lightweight HTTP server for development</li>
-        </ul>
-        <h3>Fork me on GitHub</h3>
-        <p><a href="https://github.com/kriasoft/react-starter-kit">https://github.com/kriasoft/react-starter-kit</a></p>
+        <div className="row">
+          <div className="col-sm-4">
+            <h3>Runtime Components</h3>
+            <dl>
+              <dt><a href="https://facebook.github.io/react/">React</a></dt>
+              <dd>A JavaScript library for building user interfaces, developed by Facebook</dd>
+              <dt><a href="https://github.com/rackt/react-router">React-Router</a></dt>
+              <dd>A complete routing library for React</dd>
+              <dt><a href="http://getbootstrap.com/">Bootstrap</a></dt>
+              <dd>CSS framework for developing responsive, mobile first interfaces</dd>
+          </dl>
+          </div>
+          <div className="col-sm-4">
+            <h3>Development Tools</h3>
+            <dl>
+              <dt><a href="http://gulpjs.com">Gulp</a></dt>
+              <dd>JavaScript streaming build system and task automation</dd>
+              <dt><a href="http://webpack.github.io/">Webpack</a></dt>
+              <dd>Compiles front-end source code into modules / bundles</dd>
+              <dt><a href="http://www.browsersync.io/">BrowserSync</a></dt>
+              <dd>A lightweight HTTP server for development</dd>
+            </dl>
+          </div>
+          <div className="col-sm-4">
+            <h3>Fork me on GitHub</h3>
+            <p><a href="https://github.com/kriasoft/react-starter-kit">github.com/kriasoft/react-starter-kit</a></p>
+          </div>
+        </div>
       </div>
     );
   }

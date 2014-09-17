@@ -11,7 +11,7 @@ var Navbar = React.createClass({
     return (
       <div className="navbar-top">
         <div className="container">
-          <a className="navbar-brand" href="/"><img src="/images/logo-small.png" width="38" height="38" alt="" /> React Seed</a>
+          <a className="navbar-brand" href="/"><img src="/images/logo-small.png" width="38" height="38" alt="" /> Facebook React Starter Kit</a>
         </div>
       </div>
     );

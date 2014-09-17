@@ -13,10 +13,17 @@ var DefaultLayout = React.createClass({
     return (
       <div>
         <Navbar />
+        <div className="jumbotron">
+          <div className="container text-center">
+            <h1>React</h1>
+            <p>Complex web apps made easy</p>
+          </div>
+        </div>
         <this.props.activeRouteHandler />
         <div className="navbar-footer">
           <div className="container">
-            <p className="text-muted">&copy; KriaSoft • <Link to="home">Home</Link> • <Link to="privacy">Privacy</Link></p>
+            <p className="text-muted">
+              &copy; KriaSoft • <Link to="home">Home</Link> • <Link to="privacy">Privacy</Link></p>
           </div>
         </div>
       </div>
