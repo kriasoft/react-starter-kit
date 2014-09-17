@@ -41,7 +41,7 @@
 │   ├── /pages/                 # Web pages. E.g. Profile.jsx (or .html, .jade etc.)
 │   ├── /services/              # Services and business logic
 │   ├── /styles/                # LESS style sheets (or SASS/SCSS, Stylus etc.)
-│   └── /app.jsx                # Entry point / bootstrap script
+│   └── /app.jsx                # Entry point of your web application
 ├── /test/                      # Unit, integration and load tests
 │   ├── /e2e/                   # End-to-end tests
 │   └── /unit/                  # Unit tests
@@ -54,7 +54,7 @@
 Just clone or [fork](https://github.com/kriasoft/React-Seed/fork) the repo and start hacking:
 
 ```shell
-$ git clone -o upstream https://github.com/kriasoft/React-Seed MyApp
+$ git clone -o upstream https://github.com/kriasoft/React-Seed.git MyApp
 $ cd MyApp
 $ npm install -g gulp           # Install Gulp task runner globally
 $ npm install                   # Install Node.js components listed in ./package.json
@@ -68,7 +68,6 @@ $ gulp build                    # or, `gulp build --release`
 
 By default, it builds in debug mode. If you need to build in release mode, add
 `--release` flag.
-
 
 ### How to Run
 
