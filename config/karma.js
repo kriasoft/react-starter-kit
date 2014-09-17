@@ -3,9 +3,9 @@ var webpackConfig = require('./webpack.js')(/* release */ false);
 module.exports = function (config) {
   config.set({
 
-    basePath : '../',
+    basePath: '../',
 
-    files : [
+    files: [
       'src/**/*Spec.jsx'
     ],
 
@@ -26,13 +26,15 @@ module.exports = function (config) {
       }
     },
 
-    autoWatch : true,
+    autoWatch: false,
+
+    singleRun: true,
 
     frameworks: ['jasmine'],
 
-    browsers : ['Chrome'],
+    browsers: ['Chrome'],
 
-    plugins : [
+    plugins: [
       'karma-chrome-launcher',
       'karma-firefox-launcher',
       'karma-phantomjs-launcher',
