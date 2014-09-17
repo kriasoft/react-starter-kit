@@ -20,11 +20,12 @@ var HomePage = React.createClass({
         </ul>
         <h4>Development Tools:</h4>
         <ul>
-          <li><a href="http://webpack.github.io/">Webpack</a> - Compiles front-end source code into modules / bundles</li>
           <li><a href="http://gulpjs.com">Gulp</a> - JavaScript streaming build system and task automation</li>
+          <li><a href="http://webpack.github.io/">Webpack</a> - Compiles front-end source code into modules / bundles</li>
+          <li><a href="http://www.browsersync.io/">BrowserSync</a> - A lightweight HTTP server for development</li>
         </ul>
         <h3>Fork me on GitHub</h3>
-        <p><a href="https://github.com/kriasoft/react-seed">https://github.com/kriasoft/react-seed</a></p>
+        <p><a href="https://github.com/kriasoft/react-starter-kit">https://github.com/kriasoft/react-starter-kit</a></p>
       </div>
     );
   }

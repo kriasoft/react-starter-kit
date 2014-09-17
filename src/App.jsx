@@ -7,7 +7,7 @@
 var React = require('react');
 var {Routes, Route} = require('react-router');
 
-// Export React so the devtools can find it
+// Export React so the dev tools can find it
 (window !== window.top ? window.top : window).React = React;
 
 React.renderComponent(

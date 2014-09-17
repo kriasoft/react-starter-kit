@@ -1,5 +1,5 @@
 /*!
- * Facebook React Starter Kit | https://github.com/kriasoft/React-Seed
+ * Facebook React Starter Kit | https://github.com/kriasoft/react-starter-kit
  * Copyright (c) KriaSoft, LLC. All rights reserved. See LICENSE.txt
  */
 
