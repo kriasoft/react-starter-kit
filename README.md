@@ -1,5 +1,7 @@
 # Facebook React Starter Kit
 
+![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)
+
 > This project template is a skeleton for a typical web application or
 > single-page application (SPA) based on Facebook React. You can use it
 > to quickly bootstrap your web application projects. It contains only
