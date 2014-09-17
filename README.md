@@ -1,6 +1,4 @@
-# Facebook React Starter Kit
-
-![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)
+[![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)](https://github.com/kriasoft/react-starter-kit)
 
 > This project template is a skeleton for a typical web application or
 > single-page application (SPA) based on Facebook React. You can use it
@@ -9,7 +7,7 @@
 > paired with a server-side project similar to
 > [ASP.NET Web Application Starter Kit](https://github.com/kriasoft/AspNet-Server-Template).
 
-**Source**: [https://github.com/kriasoft/react-seed](https://github.com/kriasoft/React-Seed)
+**Source**: [https://github.com/kriasoft/react-starter-kit](https://github.com/kriasoft/react-starter-kit)
 
 ### Technology Stack
 
@@ -53,10 +51,10 @@
 
 ### Getting Started
 
-Just clone or [fork](https://github.com/kriasoft/React-Seed/fork) the repo and start hacking:
+Just clone or [fork](https://github.com/kriasoft/react-starter-kit/fork) the repo and start hacking:
 
 ```shell
-$ git clone -o upstream https://github.com/kriasoft/React-Seed.git MyApp
+$ git clone -o upstream https://github.com/kriasoft/react-starter-kit.git MyApp
 $ cd MyApp
 $ npm install -g gulp           # Install Gulp task runner globally
 $ npm install                   # Install Node.js components listed in ./package.json
