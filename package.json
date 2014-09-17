@@ -54,6 +54,8 @@
     "prestart": "npm install",
     "start": "gulp",
     "pretest": "npm install",
-    "test": "karma start ./config/karma.js --single-run"
+    "test": "karma start ./config/karma.js --single-run",
+    "preupdate-webdriver": "npm install",
+    "update-webdriver": "webdriver-manager update"
   }
 }
