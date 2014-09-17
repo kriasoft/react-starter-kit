@@ -1,5 +1,9 @@
 [![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)](https://github.com/kriasoft/react-starter-kit)
 
+[![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/master.svg?style=flat)](http://travis-ci.org/kriasoft/react-starter-kit)
+[![devDependencies Status](http://img.shields.io/david/dev/kriasoft/react-starter-kit.svg?style=flat)](https://david-dm.org/kriasoft/react-starter-kit#info=devDependencies)
+[![Tips](http://img.shields.io/gratipay/koistya.svg?style=flat)](https://gratipay.com/koistya)
+
 > This project template is a skeleton for a typical web application or
 > single-page application (SPA) based on Facebook React. You can use it
 > to quickly bootstrap your web application projects. It contains only
