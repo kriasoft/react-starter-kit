@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "description": "Facebook React Starter Kit",
   "repository": "https://github.com/kriasoft/react-starter-kit",
+  "license": "MIT",
   "dependencies": {
     "bootstrap": "^3.2.0",
     "react": "^0.11.2",
@@ -34,15 +35,25 @@
     "jshint-stylish": "^0.4.0",
     "jsx-loader": "^0.11.0",
     "karma": "^0.12.23",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-jasmine": "^0.1.5",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-webpack": "^1.2.2",
+    "karma-webpack-plugin": "^1.0.0",
     "merge-stream": "^0.1.5",
     "minimist": "^1.1.0",
     "protractor": "^1.2.0",
     "rimraf": "^2.2.8",
     "run-sequence": "^0.3.6",
     "url-loader": "^0.5.5",
-    "webpack": "^1.4.0-beta9"
+    "webpack": "^1.4.0-beta9",
+    "webpack-dev-server": "^1.6.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "npm install",
+    "start": "gulp",
+    "pretest": "npm install",
+    "test": "karma start ./config/karma.js --single-run"
   }
 }
