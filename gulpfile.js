@@ -113,7 +113,7 @@ gulp.task('styles', function () {
 // Bundle
 gulp.task('bundle', function (cb) {
   var started = false;
-  var config = require('./config/webpack.config.js')(RELEASE);
+  var config = require('./config/webpack.js')(RELEASE);
   var bundler = webpack(config);
 
   function bundle (err, stats) {
