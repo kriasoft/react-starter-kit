@@ -13,9 +13,9 @@ var webpack = require('webpack');
 module.exports = function (release) {
   return {
     output: {
-      publicPatch: './build/',
       path: './build/',
-      filename: 'app.js'
+      filename: 'app.js',
+      publicPatch: './build/'
     },
 
     cache: !release,
@@ -35,6 +35,10 @@ module.exports = function (release) {
       new webpack.optimize.OccurenceOrderPlugin(),
       new webpack.optimize.AggressiveMergingPlugin()
     ] : [],
+
+    resolve: {
+      extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx']
+    },
 
     module: {
       preLoaders: [
