@@ -6,7 +6,7 @@
 
 var React = require('react');
 var {Link} = require('react-router');
-var Navbar = require('../components/Navbar');
+var Navbar = require('../components/Navbar.jsx');
 
 var DefaultLayout = React.createClass({
   render: () => {
