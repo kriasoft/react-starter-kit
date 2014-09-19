@@ -43,7 +43,7 @@
 
 ### Getting Started
 
-Just clone or [fork](https://github.com/kriasoft/react-starter-kit/fork) the repo and start hacking:
+Just [clone](github-windows://openRepo/https://github.com/kriasoft/react-starter-kit) or [fork](https://github.com/kriasoft/react-starter-kit/fork) the repo and start hacking:
 
 ```shell
 $ git clone -o upstream https://github.com/kriasoft/react-starter-kit.git MyApp
