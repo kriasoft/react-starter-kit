@@ -92,10 +92,6 @@ $ git merge upstream/master
 $ npm install
 ```
 
-### Contributors
-
-Konstantin Tarkus — [@koistya](https://twitter.com/koistya)
-
 ### Support
 
 Have questions, feedback or need help? Contact [support@kriasoft.com](mailto:support@kriasoft.com)
