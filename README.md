@@ -1,4 +1,4 @@
-[![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)](https://github.com/kriasoft/react-starter-kit)
+# Facebook React Starter Kit
 
 [![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/master.svg?style=flat)](http://travis-ci.org/kriasoft/react-starter-kit)
 [![devDependencies Status](http://img.shields.io/david/dev/kriasoft/react-starter-kit.svg?style=flat)](https://david-dm.org/kriasoft/react-starter-kit#info=devDependencies)
@@ -11,21 +11,9 @@
 > paired with a server-side project similar to
 > [ASP.NET Web Application Starter Kit](https://github.com/kriasoft/AspNet-Server-Template).
 
+[![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)](https://github.com/kriasoft/react-starter-kit)
+
 **Source**: [https://github.com/kriasoft/react-starter-kit](https://github.com/kriasoft/react-starter-kit)
-
-### Technology Stack
-
-**Runtime components**<br />
-[React](https://facebook.github.io/react/),
-[React-Router](https://github.com/rackt/react-router),
-[Bootstrap](http://getbootstrap.com/) (optional)
-
-**Development tools**<br />
-[Gulp](http://gulpjs.com/) (build tool),
-[Webpack](http://webpack.github.io/) (bundler),
-[BrowserSync](http://www.browsersync.io/) (dev server),
-[Karma](http://karma-runner.github.io/) (coming),
-[Protractor](https://github.com/angular/protractor) (coming)
 
 ### Directory Layout
 
