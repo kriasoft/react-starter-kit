@@ -157,9 +157,7 @@ gulp.task('serve', function (cb) {
       // Note: this uses an unsigned certificate which on first access
       //     will present a certificate warning in the browser.
       // https: true,
-      server: {
-        baseDir: ['build']
-      }
+      server: DEST
     });
 
     gulp.watch(src.assets, ['assets']);
