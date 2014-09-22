@@ -101,9 +101,12 @@ gulp.task('styles', function () {
   src.styles = 'src/styles/**/*.{css,less}';
   return gulp.src('src/styles/bootstrap.less')
     .pipe($.plumber())
-    .pipe($.less({sourceMap: !RELEASE, sourceMapBasepath: __dirname}))
-    .on('error', $.util.log)
-    .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
+    .pipe($.less({
+      sourceMap: !RELEASE,
+      sourceMapBasepath: __dirname})
+      .on('error', console.error.bind(console))
+    )
+    .pipe($.autoprefixer({browsers: AUTOPREFIXER_BROWSERS }))
     .pipe($.csscomb())
     .pipe($.if(RELEASE, $.minifyCss()))
     .pipe(gulp.dest(DEST + '/css'))
