@@ -1,3 +1,7 @@
+/**
+ * @jsx React.DOM
+ */
+
 'use strict';
 
 describe('Navbar', () => {
@@ -5,7 +9,7 @@ describe('Navbar', () => {
 
   beforeEach(() => {
     Navbar = require('./Navbar.jsx');
-    component = Navbar();
+    component = new Navbar();
   });
 
   it('should create a new instance of Navbar', () => {

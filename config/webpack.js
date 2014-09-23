@@ -8,6 +8,8 @@
  * http://webpack.github.io/docs/configuration
  */
 
+'use strict';
+
 var webpack = require('webpack');
 
 module.exports = function (release) {
@@ -43,7 +45,7 @@ module.exports = function (release) {
     module: {
       preLoaders: [
         {
-          test: '\\.js$',
+          test: /\.js$/,
           exclude: 'node_modules',
           loader: 'jshint'
         }
@@ -53,6 +55,10 @@ module.exports = function (release) {
         {
           test: /\.css$/,
           loader: 'style!css'
+        },
+        {
+          test: /\.less$/,
+          loader: 'style!css!less'
         },
         {
           test: /\.gif/,
