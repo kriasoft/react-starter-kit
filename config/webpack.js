@@ -46,7 +46,7 @@ module.exports = function (release) {
       preLoaders: [
         {
           test: /\.js$/,
-          exclude: 'node_modules',
+          exclude: /node_modules/,
           loader: 'jshint'
         }
       ],
