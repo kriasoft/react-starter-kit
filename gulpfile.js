@@ -105,10 +105,10 @@ gulp.task('styles', function () {
     .pipe($.plumber())
     .pipe($.less({
       sourceMap: !RELEASE,
-      sourceMapBasepath: __dirname})
-      .on('error', console.error.bind(console))
-    )
-    .pipe($.autoprefixer({browsers: AUTOPREFIXER_BROWSERS }))
+      sourceMapBasepath: __dirname
+    }))
+    .on('error', console.error.bind(console))
+    .pipe($.autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
     .pipe($.csscomb())
     .pipe($.if(RELEASE, $.minifyCss()))
     .pipe(gulp.dest(DEST + '/css'))
@@ -121,7 +121,7 @@ gulp.task('bundle', function (cb) {
   var config = require('./config/webpack.js')(RELEASE);
   var bundler = webpack(config);
 
-  function bundle (err, stats) {
+  function bundle(err, stats) {
     if (err) {
       throw new $.util.PluginError('webpack', err);
     }
