@@ -8,15 +8,18 @@ var React = require('react');
 var {Link} = require('react-router');
 
 var Navbar = React.createClass({
-  render: () =>
-    <div className="navbar-top">
-      <div className="container">
-        <Link className="navbar-brand row" to="home">
-          <img src="/images/logo-small.png" width="38" height="38" alt="React" />
-          {' Facebook React Starter Kit'}
-        </Link>
+  render() {
+    return (
+      <div className="navbar-top">
+        <div className="container">
+          <Link className="navbar-brand row" to="home">
+            <img src="/images/logo-small.png" width="38" height="38" alt="React" />
+            {' Facebook React Starter Kit'}
+          </Link>
+        </div>
       </div>
-    </div>
+    );
+  }
 });
 
 module.exports = Navbar;
