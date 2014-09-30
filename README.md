@@ -31,7 +31,6 @@
 │   ├── /images/                # Graphics (.png, .jpg, .svg etc.)
 │   ├── /layouts/               # Layouts for web pages
 │   ├── /pages/                 # Web pages. E.g. Profile.jsx (or .html, .jade etc.)
-│   ├── /services/              # Services and business logic
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /styles/                # LESS style sheets (or SASS/SCSS, Stylus etc.)
 │   ├── /App.js                 # Entry point of your web application
