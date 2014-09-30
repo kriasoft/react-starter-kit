@@ -23,10 +23,8 @@ AppDispatcher.register(function(payload) {
 
   var action = payload.action;
 
-  switch (action.actionType) {
-    case ActionTypes.SET_CURRENT_ROUTE:
+  if (action.actionType === ActionTypes.SET_CURRENT_ROUTE) {
       router.setRoute(action.route);
-      break;
   }
 
   return true; // No errors.  Needed by promise in Dispatcher.
