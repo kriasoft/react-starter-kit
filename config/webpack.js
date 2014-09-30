@@ -23,7 +23,7 @@ module.exports = function (release) {
     cache: !release,
     debug: !release,
     devtool: false,
-    entry: './src/App.jsx',
+    entry: './src/App.js',
 
     stats: {
       colors: true,
