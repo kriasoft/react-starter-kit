@@ -34,7 +34,7 @@
 │   ├── /services/              # Services and business logic
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /styles/                # LESS style sheets (or SASS/SCSS, Stylus etc.)
-│   ├── /App.jsx                # Entry point of your web application
+│   ├── /App.js                 # Entry point of your web application
 │   └── /AppDispatcher.js       # The central hub that manages all data flow
 ├── /test/                      # Unit, integration and load tests
 │   ├── /e2e/                   # End-to-end tests
