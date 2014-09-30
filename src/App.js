@@ -13,8 +13,8 @@ function render(component) {
 }
 
 var routes = {
-  '/': () => render(require('./pages/Home.jsx')),
-  '/privacy': () => render(require('./pages/Privacy.jsx'))
+  '/': () => render(require('./pages/HomePage.jsx')),
+  '/privacy': () => render(require('./pages/PrivacyPage.jsx'))
 };
 
 var router = new Router(routes).configure({html5history: true}).init();

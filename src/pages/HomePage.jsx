@@ -5,12 +5,12 @@
 'use strict';
 
 var React = require('react');
-var Layout = require('../layouts/Default.jsx');
+var DefaultLayout = require('../layouts/DefaultLayout.jsx');
 
 var HomePage = React.createClass({
   render() {
     return (
-      <Layout>
+      <DefaultLayout>
         <div className="container">
           <div className="row">
             <div className="col-sm-4">
@@ -41,7 +41,7 @@ var HomePage = React.createClass({
             </div>
           </div>
         </div>
-      </Layout>
+      </DefaultLayout>
     );
   }
 });
