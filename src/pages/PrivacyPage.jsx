@@ -5,12 +5,12 @@
 'use strict';
 
 var React = require('react');
-var Layout = require('../layouts/Default.jsx');
+var DefaultLayout = require('../layouts/DefaultLayout.jsx');
 
 var PrivacyPage = React.createClass({
   render() {
     return (
-      <Layout>
+      <DefaultLayout>
         <div className="container">
           <h2>Privacy Policy</h2>
           <p>
@@ -54,7 +54,7 @@ var PrivacyPage = React.createClass({
             sapien nulla fermentum mauris, sed consectetur tortor arcu eget arcu. Vestibulum vel quam enim.
           </p>
         </div>
-      </Layout>
+      </DefaultLayout>
     );
   }
 });
