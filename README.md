@@ -94,6 +94,15 @@ $ git merge upstream/master
 $ npm install
 ```
 
+### Learn More
+
+ * [Getting Started with React.js](http://facebook.github.io/react/)
+ * [React.js Wiki on GitHub](https://github.com/facebook/react/wiki)
+ * [React.js Questions on StackOverflow](http://stackoverflow.com/questions/tagged/reactjs)
+ * [React.js Discussion Board](https://groups.google.com/forum/#!forum/reactjs)
+ * [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
+ * [The Future of React](https://github.com/reactjs/react-future)
+
 ### Support
 
 Have questions, feedback or need help? Contact [support@kriasoft.com](mailto:support@kriasoft.com)
