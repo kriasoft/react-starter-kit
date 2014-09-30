@@ -73,7 +73,7 @@ module.exports = function (release) {
           loader: 'url-loader?limit=10000&mimetype=image/png'
         },
         {
-          test: /\.jsx$/,
+          test: /\.(js|jsx)$/,
           loader: 'jsx-loader?harmony'
         }
       ]

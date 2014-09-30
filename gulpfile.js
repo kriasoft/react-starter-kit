@@ -77,10 +77,10 @@ gulp.task('images', function () {
   src.images = 'src/images/**';
   return gulp.src(src.images)
     .pipe($.changed(DEST + '/images'))
-    .pipe($.cache($.imagemin({
+    .pipe($.imagemin({
       progressive: true,
       interlaced: true
-    })))
+    }))
     .pipe(gulp.dest(DEST + '/images'))
     .pipe($.size({title: 'images'}));
 });
