@@ -4,8 +4,8 @@
 
 'use strict';
 
-var React = require('react');
-var Link = require('../components/Link.jsx');
+var React  = require('react');
+var Link   = require('react-router').Link;
 var Navbar = require('../components/Navbar.jsx');
 
 var DefaultLayout = React.createClass({
@@ -19,7 +19,9 @@ var DefaultLayout = React.createClass({
             <p>Complex web apps made easy</p>
           </div>
         </div>
-        {this.props.children}
+
+        <this.props.activeRouteHandler />
+
         <div className="navbar-footer">
           <div className="container">
             <p className="text-muted">
