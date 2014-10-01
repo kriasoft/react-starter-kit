@@ -6,6 +6,7 @@
 /*
  * Webpack configuration. For more information visit
  * http://webpack.github.io/docs/configuration
+ * https://github.com/petehunt/webpack-howto
  */
 
 'use strict';
