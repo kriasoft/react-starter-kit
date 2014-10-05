@@ -9,8 +9,7 @@ var RouteActions = require('../actions/RouteActions');
 
 var Link = React.createClass({
   propTypes: {
-    to: React.PropTypes.string.isRequired,
-    children: React.PropTypes.component.isRequired
+    to: React.PropTypes.string.isRequired
   },
   render() {
     this.props.href =

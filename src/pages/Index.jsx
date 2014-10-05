@@ -8,9 +8,15 @@ var React = require('react');
 var DefaultLayout = require('../layouts/DefaultLayout.jsx');
 
 var HomePage = React.createClass({
+  getDefaultProps() {
+    return {
+      title: 'React.js Starter Kit',
+      description: 'A skeleton for a web application built with Facebook\'s React.js Library'
+    };
+  },
   render() {
     return (
-      <DefaultLayout>
+      <DefaultLayout title={this.props.title}>
         <div className="container">
           <div className="row">
             <div className="col-sm-4">
