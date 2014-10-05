@@ -87,14 +87,16 @@ gulp.task('images', function () {
 
 // HTML pages
 gulp.task('pages', function () {
-  src.pages = 'src/pages/**/*.html';
+  src.pages = ['src/pages/**/*.jsx', 'src/pages/404.html'];
   return gulp.src(src.pages)
-    .pipe($.changed(DEST))
+    .pipe($.changed(DEST, {extension: '.html'}))
+    .pipe($.if('*.jsx', $.render({template: './src/pages/_template.html'})))
+    .pipe($.replace('UA-XXXXX-X', GOOGLE_ANALYTICS_ID))
     .pipe($.if(RELEASE, $.htmlmin({
       removeComments: true,
       collapseWhitespace: true,
       minifyJS: true
-    })))
+    }), $.jsbeautifier()))
     .pipe(gulp.dest(DEST))
     .pipe($.size({title: 'pages'}));
 });
@@ -150,6 +152,8 @@ gulp.task('build', ['clean'], function (cb) {
 // Launch a lightweight HTTP Server
 gulp.task('serve', function (cb) {
 
+  var url = require('url');
+  var fs = require('fs');
   watch = true;
 
   runSequence('build', function () {
@@ -161,7 +165,19 @@ gulp.task('serve', function (cb) {
       // Note: this uses an unsigned certificate which on first access
       //       will present a certificate warning in the browser.
       // https: true,
-      server: DEST
+      server: {
+        baseDir: DEST,
+        // Allow web page requests without .html file extension in URLs
+        middleware: function (req, res, cb) {
+          var uri = url.parse(req.url);
+          if (uri.pathname.length > 1 &&
+            path.extname(uri.pathname) === '' &&
+            fs.existsSync(DEST + uri.pathname + '.html')) {
+            req.url = uri.pathname + '.html' + (uri.search || '');
+          }
+          cb();
+        }
+      }
     });
 
     gulp.watch(src.assets, ['assets']);

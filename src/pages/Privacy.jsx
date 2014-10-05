@@ -8,11 +8,16 @@ var React = require('react');
 var DefaultLayout = require('../layouts/DefaultLayout.jsx');
 
 var PrivacyPage = React.createClass({
+  getDefaultProps() {
+    return {
+      title: 'Privacy Policy'
+    };
+  },
   render() {
     return (
-      <DefaultLayout>
+      <DefaultLayout title={this.props.title}>
         <div className="container">
-          <h2>Privacy Policy</h2>
+          <h2>{this.props.title}</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consequat tortor fermentum mi
             fermentum dignissim. Nullam vel ipsum ut ligula elementum lobortis. Maecenas aliquam, massa laoreet
