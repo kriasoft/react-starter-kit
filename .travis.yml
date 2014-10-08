@@ -3,11 +3,4 @@ node_js:
   - '0.10'
 
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - node_modules/.bin/gulp > /dev/null &
-  - npm run update-webdriver
-  - sleep 1 # give server time to start
-
-script:
-  - node_modules/karma/bin/karma start ./config/karma.js --no-auto-watch --single-run --reporters=dots --browsers=Firefox
+  - npm install
