@@ -36,7 +36,7 @@ var AUTOPREFIXER_BROWSERS = [                 // https://github.com/ai/autoprefi
 
 var src = {};
 var watch = false;
-var pkgs = (function () {
+var pkgs = (function() {
   var temp = {};
   var map = function (source) {
     for (var key in source) {
@@ -54,7 +54,7 @@ gulp.task('default', ['serve']);
 gulp.task('clean', del.bind(null, [DEST]));
 
 // 3rd party libraries
-gulp.task('vendor', function () {
+gulp.task('vendor', function() {
   return merge(
     gulp.src('./node_modules/jquery/dist/**')
       .pipe(gulp.dest(DEST + '/vendor/jquery-' + pkgs.jquery)),
@@ -64,7 +64,7 @@ gulp.task('vendor', function () {
 });
 
 // Static files
-gulp.task('assets', function () {
+gulp.task('assets', function() {
   src.assets = 'src/assets/**';
   return gulp.src(src.assets)
     .pipe($.changed(DEST))
@@ -73,7 +73,7 @@ gulp.task('assets', function () {
 });
 
 // Images
-gulp.task('images', function () {
+gulp.task('images', function() {
   src.images = 'src/images/**';
   return gulp.src(src.images)
     .pipe($.changed(DEST + '/images'))
@@ -86,11 +86,13 @@ gulp.task('images', function () {
 });
 
 // HTML pages
-gulp.task('pages', function () {
+gulp.task('pages', function() {
   src.pages = ['src/pages/**/*.jsx', 'src/pages/404.html'];
+  var render = $.render({template: './src/pages/_template.html'})
+    .on('error', function(err) { console.log(err); render.end(); });
   return gulp.src(src.pages)
     .pipe($.changed(DEST, {extension: '.html'}))
-    .pipe($.if('*.jsx', $.render({template: './src/pages/_template.html'})))
+    .pipe($.if('*.jsx', render))
     .pipe($.replace('UA-XXXXX-X', GOOGLE_ANALYTICS_ID))
     .pipe($.if(RELEASE, $.htmlmin({
       removeComments: true,
@@ -102,7 +104,7 @@ gulp.task('pages', function () {
 });
 
 // CSS style sheets
-gulp.task('styles', function () {
+gulp.task('styles', function() {
   src.styles = 'src/styles/**/*.{css,less}';
   return gulp.src('src/styles/bootstrap.less')
     .pipe($.plumber())
@@ -119,7 +121,7 @@ gulp.task('styles', function () {
 });
 
 // Bundle
-gulp.task('bundle', function (cb) {
+gulp.task('bundle', function(cb) {
   var started = false;
   var config = require('./config/webpack.js')(RELEASE);
   var bundler = webpack(config);
@@ -145,18 +147,18 @@ gulp.task('bundle', function (cb) {
 });
 
 // Build the app from source code
-gulp.task('build', ['clean'], function (cb) {
+gulp.task('build', ['clean'], function(cb) {
   runSequence(['vendor', 'assets', 'images', 'pages', 'styles', 'bundle'], cb);
 });
 
 // Launch a lightweight HTTP Server
-gulp.task('serve', function (cb) {
+gulp.task('serve', function(cb) {
 
   var url = require('url');
   var fs = require('fs');
   watch = true;
 
-  runSequence('build', function () {
+  runSequence('build', function() {
     browserSync({
       notify: false,
       // Customize the BrowserSync console logging prefix
@@ -168,7 +170,7 @@ gulp.task('serve', function (cb) {
       server: {
         baseDir: DEST,
         // Allow web page requests without .html file extension in URLs
-        middleware: function (req, res, cb) {
+        middleware: function(req, res, cb) {
           var uri = url.parse(req.url);
           if (uri.pathname.length > 1 &&
             path.extname(uri.pathname) === '' &&
@@ -184,7 +186,7 @@ gulp.task('serve', function (cb) {
     gulp.watch(src.images, ['images']);
     gulp.watch(src.pages, ['pages']);
     gulp.watch(src.styles, ['styles']);
-    gulp.watch(DEST + '/**/*.*', function (file) {
+    gulp.watch(DEST + '/**/*.*', function(file) {
       browserSync.reload(path.relative(__dirname, file.path));
     });
     cb();
@@ -192,7 +194,7 @@ gulp.task('serve', function (cb) {
 });
 
 // Deploy to GitHub Pages
-gulp.task('deploy', function () {
+gulp.task('deploy', function() {
 
   // Remove temp folder
   if (argv.clean) {
