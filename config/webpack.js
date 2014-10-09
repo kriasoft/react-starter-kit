@@ -13,7 +13,7 @@
 
 var webpack = require('webpack');
 
-module.exports = function (release) {
+module.exports = function(release) {
   return {
     output: {
       path: './build/',
