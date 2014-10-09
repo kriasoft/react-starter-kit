@@ -25,7 +25,7 @@
 ├── /docs/                      # Documentation files
 ├── /node_modules/              # Node.js-based dev tools and utilities
 ├── /src/                       # The source code of the application
-│   ├── /actions/               # Action methods that allow to trigger a dispatch to stores
+│   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
 │   ├── /assets/                # Static files which don't require pre-processing
 │   ├── /constants/             # Enumerations used in action methods and stores
 │   ├── /components/            # React components. E.g. Navbar.jsx
@@ -34,7 +34,7 @@
 │   ├── /pages/                 # Web pages. E.g. Profile.jsx (or .html, .jade etc.)
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /styles/                # LESS style sheets (or SASS/SCSS, Stylus etc.)
-│   ├── /App.js                 # Entry point of your web application
+│   ├── /app.js                 # Entry point of your web application
 │   └── /AppDispatcher.js       # The central hub that manages all data flow
 ├── /test/                      # Unit, integration and load tests
 │   ├── /e2e/                   # End-to-end tests
