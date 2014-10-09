@@ -21,7 +21,7 @@
 ```
 .
 ├── /build/                     # The folder for compiled output
-├── /config/                    # Configuration files for Webpack, Karma etc.
+├── /config/                    # Configuration files for Webpack, Jest etc.
 ├── /docs/                      # Documentation files
 ├── /node_modules/              # Node.js-based dev tools and utilities
 ├── /src/                       # The source code of the application
