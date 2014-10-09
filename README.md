@@ -94,8 +94,10 @@ $ git merge upstream/master
 $ npm install
 ```
 
-### Running Unit Tests
-Jest tests are located in the __tests__ directory. Run them with this npm script:
+### How to Test
+
+Run unit tests powered by [Jest](https://facebook.github.io/jest/) with the following
+[npm](https://www.npmjs.org/doc/misc/npm-scripts.html) command:
 
 ```shell
 $ npm test
@@ -109,7 +111,7 @@ $ npm test
  * [React.js Discussion Board](https://groups.google.com/forum/#!forum/reactjs)
  * [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
  * [The Future of React](https://github.com/reactjs/react-future)
- * [Jest | Painless Unit Testing](http://facebook.github.io/jest/)
+ * [Jest - Painless Unit Testing](http://facebook.github.io/jest/)
 
 ### Support
 
