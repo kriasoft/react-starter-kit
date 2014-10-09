@@ -24,8 +24,8 @@ var HomePage = React.createClass({
               <dl>
                 <dt><a href="https://facebook.github.io/react/">React</a></dt>
                 <dd>A JavaScript library for building user interfaces, developed by Facebook</dd>
-                <dt><a href="https://github.com/rackt/react-router">React-Router</a></dt>
-                <dd>A complete routing library for React</dd>
+                <dt><a href="https://github.com/flatiron/director">Director</a></dt>
+                <dd>A tiny and isomorphic URL router for JavaScript</dd>
                 <dt><a href="http://getbootstrap.com/">Bootstrap</a></dt>
                 <dd>CSS framework for developing responsive, mobile first interfaces</dd>
               </dl>
