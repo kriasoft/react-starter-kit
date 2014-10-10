@@ -14,7 +14,7 @@
 
 [![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)](https://github.com/kriasoft/react-starter-kit)
 
-**Source**: [https://github.com/kriasoft/react-starter-kit](https://github.com/kriasoft/react-starter-kit)
+**Demo**: http://reactjs.kriasoft.com
 
 ### Directory Layout
 
