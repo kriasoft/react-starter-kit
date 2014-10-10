@@ -23,8 +23,8 @@ var DefaultLayout = React.createClass({
         <div className="navbar-footer">
           <div className="container">
             <p className="text-muted">
-              {' © KriaSoft • '}
-              <Link to="/">Home</Link>{' • '}
+              <span>© KriaSoft • </span>
+              <Link to="/">Home</Link><span> • </span>
               <Link to="/privacy">Privacy</Link>
             </p>
           </div>
