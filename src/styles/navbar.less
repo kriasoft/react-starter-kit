@@ -33,5 +33,10 @@ html {
 
   .text-muted {
     margin-top: 1em;
+
+    span + span:before {
+      content: "\2022\00a0"; // Unicode space added since inline-block means non-collapsing white-space
+      padding: 0 3px 0 7px;
+    }
   }
 }
