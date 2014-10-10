@@ -37,14 +37,14 @@ var AUTOPREFIXER_BROWSERS = [                 // https://github.com/ai/autoprefi
 var src = {};
 var watch = false;
 var pkgs = (function() {
-  var temp = {};
-  var map = function (source) {
+  var pkgs = {};
+  var map = function(source) {
     for (var key in source) {
-      temp[key.replace(/[^a-z0-9]/gi, '')] = source[key].substring(1);
+      pkgs[key.replace(/[^a-z0-9]/gi, '')] = source[key].substring(1);
     }
   };
   map(require('./package.json').dependencies);
-  return temp;
+  return pkgs;
 }());
 
 // The default task
