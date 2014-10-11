@@ -9,16 +9,29 @@ var Link = require('../components/Link.jsx');
 var Navbar = require('../components/Navbar.jsx');
 
 var DefaultLayout = React.createClass({
+  propTypes: {
+    title: React.PropTypes.string,
+    breadcrumb: React.PropTypes.component
+  },
   render() {
+    var header = this.props.breadcrumb ? (
+      <div className="container">
+        <h2>{this.props.title}</h2>
+        {this.props.breadcrumb}
+      </div>
+    ) : (
+      <div className="jumbotron">
+        <div className="container text-center">
+          <h1>React</h1>
+          <p>Complex web apps made easy</p>
+        </div>
+      </div>
+    );
+
     return (
       <div>
         <Navbar />
-        <div className="jumbotron">
-          <div className="container text-center">
-            <h1>React</h1>
-            <p>Complex web apps made easy</p>
-          </div>
-        </div>
+        {header}
         {this.props.children}
         <div className="navbar-footer">
           <div className="container">
