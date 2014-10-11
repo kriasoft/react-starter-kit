@@ -5,6 +5,7 @@
 'use strict';
 
 var React = require('react');
+var Link = require('../components/Link.jsx');
 var DefaultLayout = require('../layouts/DefaultLayout.jsx');
 
 var PrivacyPage = React.createClass({
@@ -14,10 +15,16 @@ var PrivacyPage = React.createClass({
     };
   },
   render() {
+    var breadcrumb = (
+      <ol className="breadcrumb">
+        <li><Link to="/">Home</Link></li>
+        <li className="active">Privacy</li>
+      </ol>
+    );
+
     return (
-      <DefaultLayout title={this.props.title}>
+      <DefaultLayout title={this.props.title} breadcrumb={breadcrumb}>
         <div className="container">
-          <h2>{this.props.title}</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consequat tortor fermentum mi
             fermentum dignissim. Nullam vel ipsum ut ligula elementum lobortis. Maecenas aliquam, massa laoreet
