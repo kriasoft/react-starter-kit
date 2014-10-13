@@ -1,4 +1,4 @@
-# Facebook React Starter Kit
+# React / Flux &nbsp;Starter Kit
 
 [![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/master.svg?style=flat)](http://travis-ci.org/kriasoft/react-starter-kit)
 [![Dependency Status](https://david-dm.org/kriasoft/react-starter-kit.svg?style=flat)](https://david-dm.org/kriasoft/react-starter-kit)
