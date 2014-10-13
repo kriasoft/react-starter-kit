@@ -13,6 +13,12 @@ var DefaultLayout = React.createClass({
     title: React.PropTypes.string,
     breadcrumb: React.PropTypes.component
   },
+  getDefaultProps() {
+    return {
+      title: 'React.js Starter Kit',
+      description: 'A skeleton for an isomorphic web application (SPA) built with React.js and Flux'
+    };
+  },
   render() {
     var header = this.props.breadcrumb ? (
       <div className="container">
