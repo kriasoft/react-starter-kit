@@ -12,7 +12,7 @@ var AppActions = {
   setRoute(route) {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.SET_CURRENT_ROUTE,
-      route: route
+      route
     });
   }
 
