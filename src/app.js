@@ -30,6 +30,7 @@ function render(page) {
 }
 
 // Define URL routes
+// See https://github.com/flatiron/director
 var routes = {
   '/': () => render(require('./pages/Index.jsx')),
   '/privacy': () => render(require('./pages/Privacy.jsx'))
@@ -38,7 +39,7 @@ var routes = {
 // Initialize a router
 var router = new Router(routes).configure({html5history: true}).init();
 
-AppDispatcher.register(function(payload) {
+AppDispatcher.register((payload) => {
 
   var action = payload.action;
 
