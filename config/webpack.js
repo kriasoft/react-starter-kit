@@ -3,28 +3,33 @@
  * Copyright (c) KriaSoft, LLC. All rights reserved. See LICENSE.txt
  */
 
-/*
- * Webpack configuration. For more information visit
- * http://webpack.github.io/docs/configuration
- * https://github.com/petehunt/webpack-howto
- */
-
 'use strict';
 
 var webpack = require('webpack');
 
+/**
+ * Get configuration for Webpack
+ *
+ * @see http://webpack.github.io/docs/configuration
+ *      https://github.com/petehunt/webpack-howto
+ *
+ * @param {boolean} release True if configuration is intended to be used in
+ * a release mode, false otherwise
+ * @return {object} Webpack configuration
+ */
 module.exports = function(release) {
   return {
+    entry: './src/app.js',
+
     output: {
-      path: './build/',
       filename: 'app.js',
+      path: './build/',
       publicPatch: './build/'
     },
 
     cache: !release,
     debug: !release,
     devtool: false,
-    entry: './src/app.js',
 
     stats: {
       colors: true,
@@ -74,7 +79,7 @@ module.exports = function(release) {
           loader: 'url-loader?limit=10000&mimetype=image/png'
         },
         {
-          test: /\.(js|jsx)$/,
+          test: /\.jsx?$/,
           loader: 'jsx-loader?harmony'
         }
       ]
