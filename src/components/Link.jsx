@@ -1,7 +1,3 @@
-/**
- * @jsx React.DOM
- */
-
 'use strict';
 
 var React = require('react');
@@ -16,9 +12,7 @@ var Link = React.createClass({
       this.props.to && this.props.to.lastIndexOf('/', 0) === 0 ?
       this.props.to : '/' + this.props.to;
 
-    return this.transferPropsTo(
-      <a onClick={this.handleClick}>{this.props.children}</a>
-    );
+    return <a onClick={this.handleClick} {...this.props}>{this.props.children}</a>;
   },
   handleClick(e) {
     e.preventDefault();

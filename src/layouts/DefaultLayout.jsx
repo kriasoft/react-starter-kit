@@ -1,7 +1,3 @@
-/**
- * @jsx React.DOM
- */
-
 'use strict';
 
 var React = require('react');
@@ -11,7 +7,7 @@ var Navbar = require('../components/Navbar.jsx');
 var DefaultLayout = React.createClass({
   propTypes: {
     title: React.PropTypes.string,
-    breadcrumb: React.PropTypes.component
+    breadcrumb: React.PropTypes.element
   },
   getDefaultProps() {
     return {

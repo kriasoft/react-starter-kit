@@ -5,8 +5,8 @@
 
 'use strict';
 
+var _ = require('lodash');
 var React = require('react');
-var copyProperties = require('react/lib/copyProperties');
 var {Router} = require('director');
 var AppDispatcher = require('./AppDispatcher');
 var ActionTypes = require('./constants/ActionTypes');
@@ -19,13 +19,13 @@ var ActionTypes = require('./constants/ActionTypes');
  * into the specified layout, then mount to document.body.
  */
 function render(page) {
-  var child, props = {};
-  while (page.defaultProps.layout) {
-    child = page(props, child);
-    copyProperties(props, page.defaultProps);
+  var child = null, props = {};
+  while (page.defaultProps && page.defaultProps.layout) {
+    child = React.createElement(page, props, child);
+    _.extend(props, page.defaultProps);
     page = page.defaultProps.layout;
   }
-  React.renderComponent(page(props, child), document.body);
+  React.render(React.createElement(page, props, child), document.body);
   document.title = props.title;
 }
 
