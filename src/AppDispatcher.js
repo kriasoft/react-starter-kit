@@ -5,11 +5,11 @@
 
 'use strict';
 
+var _ = require('lodash');
 var {Dispatcher} = require('flux');
 var PayloadSources = require('./constants/PayloadSources');
-var copyProperties = require('react/lib/copyProperties');
 
-var AppDispatcher = copyProperties(new Dispatcher(), {
+var AppDispatcher = _.extend(new Dispatcher(), {
 
   /**
    * @param {object} action The details of the action, including the action's
