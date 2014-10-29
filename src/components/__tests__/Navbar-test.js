@@ -10,7 +10,7 @@ describe('Navbar', function() {
     var TestUtils = React.addons.TestUtils;
 
     var Navbar = require('../Navbar.jsx');
-    var Component = TestUtils.renderIntoDocument(new Navbar());
+    var Component = TestUtils.renderIntoDocument(<Navbar />);
 
     var element = TestUtils.findRenderedDOMComponentWithClass(Component, 'navbar-top');
     expect(element).toBeDefined();
