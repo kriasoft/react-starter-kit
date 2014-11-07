@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react');
-var Link = require('./Link.jsx');
+var Link = require('./Link');
 
 var Navbar = React.createClass({
   render() {

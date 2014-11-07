@@ -87,12 +87,12 @@ gulp.task('images', function() {
 
 // HTML pages
 gulp.task('pages', function() {
-  src.pages = ['src/pages/**/*.jsx', 'src/pages/404.html'];
+  src.pages = ['src/pages/**/*.js', 'src/pages/404.html'];
   var render = $.render({template: './src/pages/_template.html'})
     .on('error', function(err) { console.log(err); render.end(); });
   return gulp.src(src.pages)
     .pipe($.changed(DEST, {extension: '.html'}))
-    .pipe($.if('*.jsx', render))
+    .pipe($.if('*.js', render))
     .pipe($.replace('UA-XXXXX-X', GOOGLE_ANALYTICS_ID))
     .pipe($.if(RELEASE, $.htmlmin({
       removeComments: true,

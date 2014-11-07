@@ -1,8 +1,8 @@
 'use strict';
 
 var React = require('react');
-var Link = require('../components/Link.jsx');
-var DefaultLayout = require('../layouts/DefaultLayout.jsx');
+var Link = require('../components/Link');
+var DefaultLayout = require('../layouts/DefaultLayout');
 
 var PrivacyPage = React.createClass({
   getDefaultProps() {

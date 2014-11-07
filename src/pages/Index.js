@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react');
-var DefaultLayout = require('../layouts/DefaultLayout.jsx');
+var DefaultLayout = require('../layouts/DefaultLayout');
 
 var HomePage = React.createClass({
   getDefaultProps() {
