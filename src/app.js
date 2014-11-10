@@ -5,11 +5,11 @@
 
 'use strict';
 
-var _ = require('lodash');
 var React = require('react');
 var {Router} = require('director');
 var AppDispatcher = require('./AppDispatcher');
 var ActionTypes = require('./constants/ActionTypes');
+var assign = require('object-assign');
 
 // Export React so the dev tools can find it
 (window !== window.top ? window.top : window).React = React;
@@ -22,7 +22,7 @@ function render(page) {
   var child = null, props = {};
   while (page.defaultProps && page.defaultProps.layout) {
     child = React.createElement(page, props, child);
-    _.extend(props, page.defaultProps);
+    assign(props, page.defaultProps);
     page = page.defaultProps.layout;
   }
   React.render(React.createElement(page, props, child), document.body);
