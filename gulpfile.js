@@ -1,6 +1,9 @@
-/*!
- * Facebook React Starter Kit | https://github.com/kriasoft/react-starter-kit
- * Copyright (c) KriaSoft, LLC. All rights reserved. See LICENSE.txt
+/*
+ * React.js Starter Kit
+ * Copyright (c) 2014 Konstantin Tarkus (@koistya), KriaSoft LLC.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
  */
 
 'use strict';
@@ -16,6 +19,9 @@ var runSequence = require('run-sequence');
 var webpack = require('webpack');
 var browserSync = require('browser-sync');
 var pagespeed = require('psi');
+var fs = require('fs');
+var url = require('url');
+var ReactTools = require('react-tools');
 var argv = require('minimist')(process.argv.slice(2));
 
 // Settings
@@ -46,6 +52,20 @@ var pkgs = (function() {
   map(require('./package.json').dependencies);
   return pkgs;
 }());
+
+// Configure JSX Harmony transform in order to be able
+// require .js files with JSX (see 'pages' task)
+var originalJsTransform = require.extensions['.js'];
+var reactTransform = function(module, filename) {
+  if (filename.indexOf('node_modules') === -1) {
+    var src = fs.readFileSync(filename, {encoding: 'utf8'});
+    src = ReactTools.transform(src, {harmony: true});
+    module._compile(src, filename);
+  } else {
+    originalJsTransform(module, filename);
+  }
+};
+require.extensions['.js'] = reactTransform;
 
 // The default task
 gulp.task('default', ['serve']);
@@ -88,8 +108,28 @@ gulp.task('images', function() {
 // HTML pages
 gulp.task('pages', function() {
   src.pages = ['src/pages/**/*.js', 'src/pages/404.html'];
-  var render = $.render({template: './src/pages/_template.html'})
+
+  var data = {};
+  var ActionTypes = require('./src/constants/ActionTypes');
+  var AppDispatcher = require('./src/AppDispatcher');
+
+  // Capture document.title changes
+  AppDispatcher.register(function(payload) {
+    switch (payload.action.actionType)
+    {
+      case ActionTypes.SET_PAGE_TITLE:
+        data.title = payload.action.text;
+        break;
+    }
+    return true;
+  });
+
+  var render = $.render({
+      template: './src/pages/_template.html',
+      data: function() { return data; }
+    })
     .on('error', function(err) { console.log(err); render.end(); });
+
   return gulp.src(src.pages)
     .pipe($.changed(DEST, {extension: '.html'}))
     .pipe($.if('*.js', render))
@@ -154,8 +194,6 @@ gulp.task('build', ['clean'], function(cb) {
 // Launch a lightweight HTTP Server
 gulp.task('serve', function(cb) {
 
-  var url = require('url');
-  var fs = require('fs');
   watch = true;
 
   runSequence('build', function() {

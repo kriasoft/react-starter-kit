@@ -1,6 +1,9 @@
 /*
- * A singleton that operates as the central hub for application updates.
- * For more information visit https://facebook.github.io/flux/
+ * React.js Starter Kit
+ * Copyright (c) 2014 Konstantin Tarkus (@koistya), KriaSoft LLC.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
  */
 
 'use strict';
@@ -9,6 +12,10 @@ var {Dispatcher} = require('flux');
 var PayloadSources = require('./constants/PayloadSources');
 var assign = require('object-assign');
 
+/**
+ * A singleton that operates as the central hub for application updates.
+ * For more information visit https://facebook.github.io/flux/
+ */
 var AppDispatcher = assign(new Dispatcher(), {
 
   /**
@@ -18,7 +25,7 @@ var AppDispatcher = assign(new Dispatcher(), {
   handleServerAction(action) {
     var payload = {
       source: PayloadSources.SERVER_ACTION,
-      action
+      action: action
     };
     this.dispatch(payload);
   },
@@ -30,7 +37,7 @@ var AppDispatcher = assign(new Dispatcher(), {
   handleViewAction(action) {
     var payload = {
       source: PayloadSources.VIEW_ACTION,
-      action
+      action: action
     };
     this.dispatch(payload);
   }

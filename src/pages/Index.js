@@ -1,15 +1,27 @@
+/*
+ * React.js Starter Kit
+ * Copyright (c) 2014 Konstantin Tarkus (@koistya), KriaSoft LLC.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
 'use strict';
 
 var React = require('react');
+var PageActions = require('../actions/PageActions');
 var DefaultLayout = require('../layouts/DefaultLayout');
 
 var HomePage = React.createClass({
-  getDefaultProps() {
-    return {
-      title: 'React.js Starter Kit',
-      layout: DefaultLayout
-    };
+
+  statics: {
+    layout: DefaultLayout
   },
+
+  componentWillMount() {
+    PageActions.setTitle('React.js Starter Kit');
+  },
+
   render() {
     return (
       <div className="container">
@@ -44,6 +56,7 @@ var HomePage = React.createClass({
       </div>
     );
   }
+
 });
 
 module.exports = HomePage;
