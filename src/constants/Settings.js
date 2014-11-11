@@ -8,12 +8,8 @@
 
 module.exports = {
 
-  // Route action types
-  SET_CURRENT_ROUTE: 'SET_CURRENT_ROUTE',
-
-  // Page action types
-  SET_PAGE_TITLE: 'SET_PAGE_TITLE',
-  SET_PAGE_DESC: 'SET_PAGE_DESC',
-  SET_PAGE_KEYWORDS: 'SET_PAGE_KEYWORDS'
+  title: 'React.js Starter Kit',
+  description: 'A skeleton for an isomorphic web application (SPA) built with React.js and Flux',
+  keywords: null
 
 };
