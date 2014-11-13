@@ -8,7 +8,7 @@
 
 'use strict';
 
-var AppDispatcher = require('../AppDispatcher');
+var Dispatcher = require('../core/Dispatcher');
 var ActionTypes = require('../constants/ActionTypes');
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
    * @param {string} route Supply a route value, such as `todos/completed`.
    */
   setRoute(route) {
-    AppDispatcher.handleViewAction({
+    Dispatcher.handleViewAction({
       actionType: ActionTypes.SET_CURRENT_ROUTE,
       route: route
     });
