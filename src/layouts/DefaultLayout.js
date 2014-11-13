@@ -19,7 +19,7 @@ var Navbar = require('../components/Navbar');
  */
 function getState() {
   return {
-    title: PageStore.getCurrentPage().title
+    title: PageStore.get().title
   };
 }
 
@@ -31,7 +31,7 @@ var DefaultLayout = React.createClass({
 
   componentDidMount() {
     PageStore.addEventListener(this._onChange);
-    this._onChange();
+    PageStore.emitChange();
   },
 
   componentWillUnmount() {

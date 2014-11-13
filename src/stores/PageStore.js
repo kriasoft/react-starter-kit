@@ -10,30 +10,30 @@
 
 var AppDispatcher = require('../AppDispatcher');
 var ActionTypes = require('../constants/ActionTypes');
-var Settings = require('../constants/Settings');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
 
-var page = {
-  title: null,
-  description: null,
-  keywords: null
-};
+/**
+ * @typedef Page
+ * @type {object}
+ * @property {string} title
+ * @property {string} description
+ * @property {string} keywords
+ */
+
+/** @type {Page} */
+var _page;
 
 var PageStore = assign({}, EventEmitter.prototype, {
 
   /**
-   * Get metadata associated with the current page.
-   * @returns {object}
+   * Get the current page.
+   * @returns {Page}
    */
-  getCurrentPage() {
-    return {
-      title: page.title || Settings.title,
-      description: page.description || Settings.description,
-      keywords: page.keywords || Settings.keywords
-    };
+  get() {
+    return _page || require('../constants/Settings').defaults.page;
   },
 
   emitChange() {
@@ -57,16 +57,8 @@ AppDispatcher.register(function(payload) {
 
   switch (action.actionType)
   {
-    case ActionTypes.SET_PAGE_TITLE:
-      page.title = action.text;
-      break;
-
-    case ActionTypes.SET_PAGE_DESC:
-      page.description = action.description;
-      break;
-
-    case ActionTypes.SET_PAGE_KEYWORDS:
-      page.keywords = action.keywords;
+    case ActionTypes.SET_CURRENT_PAGE:
+      _page = action.page;
       break;
 
     default:

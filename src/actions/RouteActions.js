@@ -11,7 +11,7 @@
 var AppDispatcher = require('../AppDispatcher');
 var ActionTypes = require('../constants/ActionTypes');
 
-var AppActions = {
+module.exports = {
 
   /**
    * Set the current route.
@@ -25,5 +25,3 @@ var AppActions = {
   }
 
 };
-
-module.exports = AppActions;

@@ -109,24 +109,22 @@ gulp.task('images', function() {
 gulp.task('pages', function() {
   src.pages = ['src/pages/**/*.js', 'src/pages/404.html'];
 
-  var data = {};
+  var currentPage = {};
   var ActionTypes = require('./src/constants/ActionTypes');
   var AppDispatcher = require('./src/AppDispatcher');
 
-  // Capture document.title changes
+  // Capture document.title and other page metadata changes
   AppDispatcher.register(function(payload) {
-    switch (payload.action.actionType)
+    if (payload.action.actionType == ActionTypes.SET_CURRENT_PAGE)
     {
-      case ActionTypes.SET_PAGE_TITLE:
-        data.title = payload.action.text;
-        break;
+      currentPage = payload.action.page;
     }
     return true;
   });
 
   var render = $.render({
       template: './src/pages/_template.html',
-      data: function() { return data; }
+      data: function() { return currentPage; }
     })
     .on('error', function(err) { console.log(err); render.end(); });
 

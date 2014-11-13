@@ -26,7 +26,7 @@ var PrivacyPage = React.createClass({
   },
 
   componentWillMount() {
-    PageActions.setTitle('Privacy Policy');
+    PageActions.set({title: 'Privacy Policy'});
   },
 
   render() {
