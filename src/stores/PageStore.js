@@ -55,17 +55,10 @@ AppDispatcher.register(function(payload) {
 
   var action = payload.action;
 
-  switch (action.actionType)
-  {
-    case ActionTypes.SET_CURRENT_PAGE:
-      _page = action.page;
-      break;
-
-    default:
-      return true;
+  if (action.actionType == ActionTypes.SET_CURRENT_PAGE) {
+    _page = action.page;
+    PageStore.emitChange();
   }
-
-  PageStore.emitChange();
 
   return true; // No errors.  Needed by promise in Dispatcher.
 });
