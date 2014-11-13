@@ -14,19 +14,34 @@ var invariant = require('react/lib/invariant');
 
 var CHANGE_EVENT = 'change';
 
+/**
+ * The Flux store base class.
+ */
 class Store {
 
+  /**
+   * Constructs a Store object, extends it with EventEmitter and supplied
+   * methods parameter,  and creates a mixin property for use in components.
+   *
+   * @param {object} methods Public methods for Store instance.
+   * @constructor
+   */
   constructor(methods) {
 
     var self = this;
 
     invariant(!methods.dispatcherToken,'"dispatcherToken" is a reserved name and cannot be used as a method name.');
-    invariant(!methods.mixin,'"mixin" is a reserved name and cannot be used as a method name.');
+    invariant(!methods.Mixin,'"Mixin" is a reserved name and cannot be used as a method name.');
 
     assign(this, EventEmitter.prototype, methods);
 
     this.dispatcherToken = null;
-    this.mixin = {
+
+    /**
+     * Base functionality for every Store constructor. Mixed into the
+     * `Store` prototype, but exposed statically for easy access.
+     */
+    this.Mixin = {
 
       componentDidMount: function() {
         self.addChangeListener(this.onChange);
