@@ -8,12 +8,9 @@
 
 'use strict';
 
-var AppDispatcher = require('../AppDispatcher');
+var Store = require('../core/Store');
+var Dispatcher = require('../core/Dispatcher');
 var ActionTypes = require('../constants/ActionTypes');
-var EventEmitter = require('events').EventEmitter;
-var assign = require('object-assign');
-
-var CHANGE_EVENT = 'change';
 
 /**
  * @typedef Page
@@ -22,36 +19,21 @@ var CHANGE_EVENT = 'change';
  * @property {string} description
  * @property {string} keywords
  */
-
-/** @type {Page} */
 var _page;
 
-var PageStore = assign({}, EventEmitter.prototype, {
+var PageStore = new Store({
 
   /**
-   * Get the current page.
+   * Gets metadata associated with the current page.
    * @returns {Page}
    */
   get() {
     return _page || require('../constants/Settings').defaults.page;
-  },
-
-  emitChange() {
-    this.emit(CHANGE_EVENT);
-  },
-
-  addEventListener(callback) {
-    this.on(CHANGE_EVENT, callback);
-  },
-
-  removeEventListener(callback) {
-    this.removeListener(CHANGE_EVENT, callback);
   }
 
 });
 
-
-AppDispatcher.register(function(payload) {
+PageStore.dispatcherToken = Dispatcher.register(payload => {
 
   var action = payload.action;
 
@@ -61,6 +43,7 @@ AppDispatcher.register(function(payload) {
   }
 
   return true; // No errors.  Needed by promise in Dispatcher.
+
 });
 
 module.exports = PageStore;

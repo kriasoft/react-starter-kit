@@ -11,14 +11,14 @@
 var React = require('react');
 var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
 var {Router} = require('director');
-var AppDispatcher = require('./AppDispatcher');
+var Dispatcher = require('./core/Dispatcher');
 var ActionTypes = require('./constants/ActionTypes');
 var router;
 
 // Export React so the dev tools can find it
 (window !== window.top ? window.top : window).React = React;
 
-AppDispatcher.register((payload) => {
+Dispatcher.register((payload) => {
 
   var action = payload.action;
 
@@ -28,9 +28,9 @@ AppDispatcher.register((payload) => {
       router.setRoute(action.route);
       break;
 
-    case ActionTypes.SET_PAGE_TITLE:
+    case ActionTypes.SET_CURRENT_PAGE:
       if (ExecutionEnvironment.canUseDOM) {
-        document.title = action.text;
+        document.title = action.page.title;
       }
       break;
   }

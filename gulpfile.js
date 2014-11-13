@@ -110,11 +110,11 @@ gulp.task('pages', function() {
   src.pages = ['src/pages/**/*.js', 'src/pages/404.html'];
 
   var currentPage = {};
+  var Dispatcher = require('./src/core/Dispatcher');
   var ActionTypes = require('./src/constants/ActionTypes');
-  var AppDispatcher = require('./src/AppDispatcher');
 
   // Capture document.title and other page metadata changes
-  AppDispatcher.register(function(payload) {
+  Dispatcher.register(function(payload) {
     if (payload.action.actionType == ActionTypes.SET_CURRENT_PAGE)
     {
       currentPage = payload.action.page;

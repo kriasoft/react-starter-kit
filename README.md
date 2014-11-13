@@ -28,15 +28,15 @@
 ├── /src/                       # The source code of the application
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
 │   ├── /assets/                # Static files which are copied to ./build on compile
-│   ├── /constants/             # Enumerations used in action creators and stores
 │   ├── /components/            # React components. E.g. Navbar.jsx, Calendar.jsx
+│   ├── /constants/             # Enumerations used in action creators and stores
+│   ├── /core/                  # Core components (Flux dispatcher, base classes)
 │   ├── /images/                # Graphics (.png, .jpg, .svg etc.)
 │   ├── /layouts/               # Shared layouts for top-level components
 │   ├── /pages/                 # Top-level, URL-bound React components
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /styles/                # CSS style sheets (or LESS, SASS, Stylus)
-│   ├── /app.js                 # The application's bootstrap file, entry point
-│   └── /AppDispatcher.js       # The central hub that manages all data flow (see Flux)
+│   ├── /app.js                 # The application's main file (entry point)
 ├── /test/                      # Unit, integration and load tests
 │   ├── /e2e/                   # End-to-end tests
 │   └── /unit/                  # Unit tests

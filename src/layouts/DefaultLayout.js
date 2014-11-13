@@ -14,7 +14,7 @@ var Link = require('../components/Link');
 var Navbar = require('../components/Navbar');
 
 /**
- * Retrieve the current page metadata from the PageStore.
+ * Retrieves the current page metadata from the PageStore.
  * @returns {{title: string}}
  */
 function getState() {
@@ -25,17 +25,14 @@ function getState() {
 
 var DefaultLayout = React.createClass({
 
+  mixins: [PageStore.mixin],
+
   getInitialState() {
     return getState();
   },
 
   componentDidMount() {
-    PageStore.addEventListener(this._onChange);
     PageStore.emitChange();
-  },
-
-  componentWillUnmount() {
-    PageStore.removeEventListener(this._onChange);
   },
 
   render() {
@@ -72,9 +69,9 @@ var DefaultLayout = React.createClass({
   },
 
   /**
-   * Event handler for 'change' events coming from the PageStore
+   * Event handler for 'change' events coming from the PageStore.
    */
-  _onChange() {
+  onChange() {
     this.setState(getState());
   }
 });

@@ -8,15 +8,15 @@
 
 'use strict';
 
-var {Dispatcher} = require('flux');
-var PayloadSources = require('./constants/PayloadSources');
+var Flux = require('flux');
+var PayloadSources = require('../constants/PayloadSources');
 var assign = require('object-assign');
 
 /**
  * A singleton that operates as the central hub for application updates.
  * For more information visit https://facebook.github.io/flux/
  */
-var AppDispatcher = assign(new Dispatcher(), {
+var Dispatcher = assign(new Flux.Dispatcher(), {
 
   /**
    * @param {object} action The details of the action, including the action's
@@ -44,4 +44,4 @@ var AppDispatcher = assign(new Dispatcher(), {
 
 });
 
-module.exports = AppDispatcher;
+module.exports = Dispatcher;
