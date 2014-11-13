@@ -10,42 +10,20 @@
 
 var AppDispatcher = require('../AppDispatcher');
 var ActionTypes = require('../constants/ActionTypes');
+var pageDefaults = require('../constants/Settings').defaults.page;
+var assign = require('object-assign');
 
-var PageActions = {
-
-  /**
-   * Set a title for the current page.
-   * @param {string} text The text to be set as a page title.
-   */
-  setTitle(text) {
-    AppDispatcher.handleViewAction({
-      actionType: ActionTypes.SET_PAGE_TITLE,
-      text: text
-    });
-  },
+module.exports = {
 
   /**
-   * Set description for the current page.
-   * @param {string} text The text to be set as a page description.
+   * Set metadata for the current page (title, description, keywords etc.).
+   * @param {object} The page object.
    */
-  setDescription(text) {
+  set(page) {
     AppDispatcher.handleViewAction({
-      actionType: ActionTypes.SET_PAGE_DESC,
-      text: text
-    });
-  },
-
-  /**
-   * Set keywords for the current page.
-   * @param {string} text The text to be set as page keywords.
-   */
-  setKeywords(text) {
-    AppDispatcher.handleViewAction({
-      actionType: ActionTypes.SET_PAGE_KEYWORDS,
-      text: text
+      actionType: ActionTypes.SET_CURRENT_PAGE,
+      page: assign({}, pageDefaults, page)
     });
   }
 
 };
-
-module.exports = PageActions;
