@@ -25,7 +25,7 @@ function getState() {
 
 var DefaultLayout = React.createClass({
 
-  mixins: [PageStore.mixin],
+  mixins: [PageStore.Mixin],
 
   getInitialState() {
     return getState();
