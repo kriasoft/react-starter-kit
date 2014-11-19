@@ -19,7 +19,8 @@ var Navbar = require('../components/Navbar');
  */
 function getState() {
   return {
-    title: PageStore.get().title
+    title: PageStore.get().title,
+    description: PageStore.get().description
   };
 }
 
@@ -44,8 +45,8 @@ var DefaultLayout = React.createClass({
     ) : (
       <div className="jumbotron">
         <div className="container text-center">
-          <h1>React</h1>
-          <p>Complex web apps made easy</p>
+          <h1>{this.state.title}</h1>
+          <p>{this.state.description}</p>
         </div>
       </div>
     );
