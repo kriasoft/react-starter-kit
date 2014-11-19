@@ -20,6 +20,7 @@ var HomePage = React.createClass({
 
   componentWillMount() {
     PageActions.set({title: 'React.js Starter Kit'});
+    PageActions.set({description: 'Complex web apps made easy'});
   },
 
   render() {
