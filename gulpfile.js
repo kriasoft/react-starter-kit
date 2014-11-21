@@ -59,7 +59,7 @@ var originalJsTransform = require.extensions['.js'];
 var reactTransform = function(module, filename) {
   if (filename.indexOf('node_modules') === -1) {
     var src = fs.readFileSync(filename, {encoding: 'utf8'});
-    src = ReactTools.transform(src, {harmony: true});
+    src = ReactTools.transform(src, {harmony: true, stripTypes: true});
     module._compile(src, filename);
   } else {
     originalJsTransform(module, filename);
