@@ -80,7 +80,7 @@ module.exports = function(release) {
         },
         {
           test: /\.jsx?$/,
-          loader: 'jsx-loader?harmony'
+          loader: 'jsx-loader?harmony&stripTypes'
         }
       ]
     }
