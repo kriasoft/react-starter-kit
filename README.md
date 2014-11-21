@@ -111,8 +111,9 @@ $ npm test
  * [React.js Questions on StackOverflow](http://stackoverflow.com/questions/tagged/reactjs)
  * [React.js Discussion Board](https://groups.google.com/forum/#!forum/reactjs)
  * [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
- * [The Future of React](https://github.com/reactjs/react-future)
  * [Jest - Painless Unit Testing](http://facebook.github.io/jest/)
+ * [Flow - A static type checker for JavaScript](http://flowtype.org/)
+ * [The Future of React](https://github.com/reactjs/react-future)
 
 ### Support
 
