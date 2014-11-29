@@ -24,7 +24,7 @@ module.exports = function(release) {
     output: {
       filename: 'app.js',
       path: './build/',
-      publicPatch: './build/'
+      publicPath: './build/'
     },
 
     cache: !release,
