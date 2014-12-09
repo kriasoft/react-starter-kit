@@ -104,6 +104,16 @@ Run unit tests powered by [Jest](https://facebook.github.io/jest/) with the foll
 $ npm test
 ```
 
+### Architecture
+
+This project uses the original Flux architecture utilizing a unidirectional data flow.
+
+<img src="https://github.com/facebook/flux/raw/master/docs/img/flux-diagram-white-background.png" style="width: 100%;" />
+
+ * [Flux for Stupid People](blog.andrewray.me/flux-for-stupid-people/) by [Andrew Ray](https://github.com/DelvarWorld)
+ * [What is Flux?](http://fluxxor.com/what-is-flux.html) by [Brandon Tilley](https://github.com/BinaryMuse/)
+ * [Rethinking Web App Development at Facebook](http://www.youtube.com/watch?v=nYkdrAPrdcw) by [Pete Hunt](https://github.com/petehunt)
+
 ### Learn More
 
  * [Getting Started with React.js](http://facebook.github.io/react/)
