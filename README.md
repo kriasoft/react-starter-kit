@@ -24,7 +24,7 @@ utilizing a unidirectional data flow.
 
 <img src="https://github.com/facebook/flux/raw/master/docs/img/flux-diagram-white-background.png" style="width: 100%;" />
 
- * [Flux for Stupid People](blog.andrewray.me/flux-for-stupid-people/) by [Andrew Ray](https://github.com/DelvarWorld)
+ * [Flux for Stupid People](http://blog.andrewray.me/flux-for-stupid-people/) by [Andrew Ray](https://github.com/DelvarWorld)
  * [What is Flux?](http://fluxxor.com/what-is-flux.html) by [Brandon Tilley](https://github.com/BinaryMuse/)
  * [Rethinking Web App Development at Facebook](http://www.youtube.com/watch?v=nYkdrAPrdcw) by [Pete Hunt](https://github.com/petehunt)
  * [The State of Flux](https://reactjsnews.com/the-state-of-flux/) by [David Chang](http://davidandsuzi.com/)
