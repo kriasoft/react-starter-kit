@@ -209,9 +209,14 @@ gulp.task('serve', function(cb) {
         middleware: function(req, res, cb) {
           var uri = url.parse(req.url);
           if (uri.pathname.length > 1 &&
-            path.extname(uri.pathname) === '' &&
-            fs.existsSync(DEST + uri.pathname + '.html')) {
-            req.url = uri.pathname + '.html' + (uri.search || '');
+            uri.pathname.lastIndexOf('/browser-sync/', 0) !== 0 &&
+            !fs.existsSync(DEST + uri.pathname)) {
+            if (fs.existsSync(DEST + uri.pathname + '.html')) {
+              req.url = uri.pathname + '.html' + (uri.search || '');
+            } else {
+              res.statusCode = 404;
+              req.url = '/404.html' + (uri.search || '');
+            }
           }
           cb();
         }
