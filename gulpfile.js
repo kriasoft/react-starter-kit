@@ -107,7 +107,7 @@ gulp.task('images', function() {
 
 // HTML pages
 gulp.task('pages', function() {
-  src.pages = ['src/pages/**/*.js', 'src/pages/404.html'];
+  src.pages = ['src/components/pages/**/*.js', 'src/components/pages/404.html'];
 
   var currentPage = {};
   var Dispatcher = require('./src/core/Dispatcher');
@@ -123,7 +123,7 @@ gulp.task('pages', function() {
   });
 
   var render = $.render({
-      template: './src/pages/_template.html',
+      template: './src/components/pages/_template.html',
       data: function() { return currentPage; }
     })
     .on('error', function(err) { console.log(err); render.end(); });
@@ -137,6 +137,7 @@ gulp.task('pages', function() {
       collapseWhitespace: true,
       minifyJS: true
     }), $.jsbeautifier()))
+    .pipe($.if('**/home.html', $.rename('index.html')))
     .pipe(gulp.dest(DEST))
     .pipe($.size({title: 'pages'}));
 });

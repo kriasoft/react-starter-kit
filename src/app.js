@@ -54,8 +54,8 @@ function render(page) {
 // Define URL routes
 // See https://github.com/flatiron/director
 var routes = {
-  '/': () => render(require('./pages/Index')),
-  '/privacy': () => render(require('./pages/Privacy'))
+  '/': () => render(require('./components/pages/Home')),
+  '/privacy': () => render(require('./components/pages/Privacy'))
 };
 
 // Initialize a router
