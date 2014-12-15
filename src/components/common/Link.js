@@ -9,7 +9,7 @@
 'use strict';
 
 var React = require('react');
-var RouteActions = require('../actions/RouteActions');
+var RouteActions = require('../../actions/RouteActions');
 
 var Link = React.createClass({
   propTypes: {

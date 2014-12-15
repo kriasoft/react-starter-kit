@@ -9,14 +9,14 @@
 'use strict';
 
 var React = require('react');
-var PageActions = require('../actions/PageActions');
-var DefaultLayout = require('../layouts/DefaultLayout');
-var Link = require('../components/Link');
+var PageActions = require('../../actions/PageActions');
+var App = require('../layout/App');
+var Link = require('../common/Link');
 
 var PrivacyPage = React.createClass({
 
   statics: {
-    layout: DefaultLayout,
+    layout: App,
     breadcrumb: (
       <ol className="breadcrumb">
         <li><Link to="/">Home</Link></li>

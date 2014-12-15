@@ -9,9 +9,9 @@
 'use strict';
 
 var React = require('react');
-var PageStore = require('../stores/PageStore');
-var Link = require('../components/Link');
-var Navbar = require('../components/Navbar');
+var PageStore = require('../../stores/PageStore');
+var Link = require('../common/Link');
+var Navbar = require('../layout/Navbar');
 
 /**
  * Retrieves the current page metadata from the PageStore.

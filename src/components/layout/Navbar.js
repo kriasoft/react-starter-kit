@@ -9,7 +9,7 @@
 'use strict';
 
 var React = require('react');
-var Link = require('./Link');
+var Link = require('../common/Link');
 
 var Navbar = React.createClass({
   render() {
