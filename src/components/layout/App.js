@@ -36,6 +36,7 @@ var DefaultLayout = React.createClass({
   },
 
   render() {
+    /* jshint ignore:start */
     var header = this.props.children.type.breadcrumb ? (
       <div className="container">
         <h2>{this.state.title}</h2>
@@ -49,8 +50,10 @@ var DefaultLayout = React.createClass({
         </div>
       </div>
     );
+    /* jshint ignore:end */
 
     return (
+      /* jshint ignore:start */
       <div>
         <Navbar />
         {header}
@@ -65,6 +68,7 @@ var DefaultLayout = React.createClass({
           </div>
         </div>
       </div>
+      /* jshint ignore:end */
     );
   },
 
