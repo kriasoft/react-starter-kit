@@ -123,7 +123,7 @@ gulp.task('pages', function() {
   });
 
   var render = $.render({
-      template: './src/components/pages/_template.html',
+      template: './src/components/pages/index.html',
       data: function() { return currentPage; }
     })
     .on('error', function(err) { console.log(err); render.end(); });
