@@ -18,10 +18,12 @@ var PrivacyPage = React.createClass({
   statics: {
     layout: App,
     breadcrumb: (
+      /* jshint ignore:start */
       <ol className="breadcrumb">
         <li><Link to="/">Home</Link></li>
         <li className="active">Privacy</li>
       </ol>
+      /* jshint ignore:end */
     )
   },
 
@@ -31,6 +33,7 @@ var PrivacyPage = React.createClass({
 
   render() {
     return (
+      /* jshint ignore:start */
       <div className="container">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consequat tortor fermentum mi
@@ -73,6 +76,7 @@ var PrivacyPage = React.createClass({
           sapien nulla fermentum mauris, sed consectetur tortor arcu eget arcu. Vestibulum vel quam enim.
         </p>
       </div>
+      /* jshint ignore:end */
     );
   }
 

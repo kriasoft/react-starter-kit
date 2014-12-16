@@ -12,8 +12,10 @@ var React = require('react');
 var Link = require('../common/Link');
 
 var Navbar = React.createClass({
+
   render() {
     return (
+      /* jshint ignore:start */
       <div className="navbar-top" role="navigation">
         <div className="container">
           <Link className="navbar-brand row" to="/">
@@ -22,8 +24,10 @@ var Navbar = React.createClass({
           </Link>
         </div>
       </div>
+      /* jshint ignore:end */
     );
   }
+
 });
 
 module.exports = Navbar;

@@ -24,6 +24,7 @@ var HomePage = React.createClass({
 
   render() {
     return (
+      /* jshint ignore:start */
       <div className="container">
         <div className="row">
           <div className="col-sm-4">
@@ -54,6 +55,7 @@ var HomePage = React.createClass({
           </div>
         </div>
       </div>
+      /* jshint ignore:end */
     );
   }
 
