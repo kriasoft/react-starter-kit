@@ -41,18 +41,17 @@ utilizing a unidirectional data flow.
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
 │   ├── /assets/                # Static files which are copied to ./build on compile
 │   ├── /components/            # React components
-│   │   ├── /common/            # - Shared components. E.g. Link.js
-│   │   ├── /forms/             # - Form components. E.g. TextBox.js
-│   │   ├── /layout/            # - Layout components. E.g. Navbar.js
-│   │   └── /pages/             # - Web-page components. E.g. About.js
+│   │   ├── /common/            # - Shared components. E.g. Link, Mixins
+│   │   ├── /forms/             # - Form components. E.g. TextBox, DatePicker
+│   │   ├── /layout/            # - Layout components. E.g. Header, Navbar
+│   │   └── /pages/             # - Web-page components. E.g. About, Profile
 │   ├── /constants/             # Enumerations used in action creators and stores
-│   ├── /core/                  # Core components (Flux dispatcher, base classes)
-│   ├── /images/                # Graphics (.png, .jpg, .svg etc.)
+│   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic
-│   ├── /styles/                # CSS style sheets (or LESS, SASS, Stylus)
 │   ├── /app.js                 # The application's main file (entry point)
 ├── /test/                      # Unit, integration and load tests
 │   ├── /e2e/                   # End-to-end tests
+│   ├── /benchmark/             # Load and stress testing
 │   └── /unit/                  # Unit tests
 │── gulpfile.js                 # Configuration file for automated builds
 └── package.json                # The list of 3rd party libraries and utilities
