@@ -5,10 +5,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
+var keyMirror = require('react/lib/keyMirror');
+module.exports = keyMirror({
 
-module.exports = {
+  VIEW_ACTION: null,
+  SERVER_ACTION: null
 
-  VIEW_ACTION: 'VIEW_ACTION',
-  SERVER_ACTION: 'SERVER_ACTION'
-
-};
+});
