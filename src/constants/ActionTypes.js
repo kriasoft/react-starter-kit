@@ -5,8 +5,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
+
+'use strict';
+
 var keyMirror = require('react/lib/keyMirror');
-module.exports = keyMirror({
+
+var ActionTypes = keyMirror({
 
   // Route action types
   SET_CURRENT_ROUTE: null,
@@ -15,3 +19,5 @@ module.exports = keyMirror({
   SET_CURRENT_PAGE: null
 
 });
+
+module.exports = ActionTypes;
