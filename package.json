@@ -64,7 +64,8 @@
   },
   "scripts": {
     "start": "gulp",
-    "test": "jshint ./src && jest",
+    "test": "jshint && jest",
+    "jshint": "jshint ./src gulpfile.js",
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update"
   }
