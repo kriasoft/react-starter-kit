@@ -9,7 +9,7 @@
 'use strict';
 
 var EventEmitter = require('events').EventEmitter;
-var assign = require('object-assign');
+var assign = require('react/lib/Object.assign');
 var invariant = require('react/lib/invariant');
 
 var CHANGE_EVENT = 'change';

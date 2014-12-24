@@ -10,7 +10,7 @@
 
 var Flux = require('flux');
 var PayloadSources = require('../constants/PayloadSources');
-var assign = require('object-assign');
+var assign = require('react/lib/Object.assign');
 
 /**
  * A singleton that operates as the central hub for application updates.
