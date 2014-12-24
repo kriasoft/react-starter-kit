@@ -54,7 +54,7 @@ function render(page) {
 // Define URL routes
 // See https://github.com/flatiron/director
 var routes = {
-  '/': () => render(require('./components/pages/Home')),
+  '/': () => render(require('./components/pages/Index')),
   '/privacy': () => render(require('./components/pages/Privacy'))
 };
 
