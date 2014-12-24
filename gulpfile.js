@@ -137,7 +137,6 @@ gulp.task('pages', function() {
       collapseWhitespace: true,
       minifyJS: true
     }), $.jsbeautifier()))
-    .pipe($.if('**/home.html', $.rename('index.html')))
     .pipe(gulp.dest(DEST))
     .pipe($.size({title: 'pages'}));
 });
