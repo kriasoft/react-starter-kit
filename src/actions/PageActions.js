@@ -11,7 +11,7 @@
 var Dispatcher = require('../core/Dispatcher');
 var ActionTypes = require('../constants/ActionTypes');
 var pageDefaults = require('../constants/Settings').defaults.page;
-var assign = require('object-assign');
+var assign = require('react/lib/Object.assign');
 
 module.exports = {
 
