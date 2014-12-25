@@ -42,8 +42,6 @@ PageStore.dispatcherToken = Dispatcher.register(payload => {
     PageStore.emitChange();
   }
 
-  return true; // No errors.  Needed by promise in Dispatcher.
-
 });
 
 module.exports = PageStore;
