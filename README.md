@@ -49,6 +49,7 @@ utilizing a unidirectional data flow.
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /app.js                 # The application's main file (entry point)
+│   └── /server.js              # HTTP server
 ├── /test/                      # Unit, integration and load tests
 │   ├── /e2e/                   # End-to-end tests
 │   ├── /benchmark/             # Load and stress testing

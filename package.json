@@ -6,13 +6,12 @@
   "repository": "https://github.com/kriasoft/react-starter-kit",
   "license": "MIT",
   "dependencies": {
-    "bootstrap": "^3.3.1",
-    "director": "^1.2.7",
-    "flux": "^2.0.1",
-    "react": "^0.12.2"
-  },
-  "devDependencies": {
-    "browser-sync": "^1.8.2",
+    "bootstrap": "3.3.1",
+    "director": "1.2.7",
+    "express": "4.10.6",
+    "flux": "2.0.1",
+    "react": "0.12.2",
+    "react-tools": "0.12.2",
     "css-loader": "^0.9.0",
     "del": "^1.1.1",
     "gulp": "^3.8.10",
@@ -20,10 +19,10 @@
     "gulp-cache": "^0.2.4",
     "gulp-changed": "^1.1.0",
     "gulp-csscomb": "^3.0.3",
+    "gulp-front-matter": "^1.1.1",
     "gulp-gh-pages": "^0.4.0",
     "gulp-htmlmin": "^0.2.0",
     "gulp-if": "^1.2.5",
-    "gulp-imagemin": "^2.0.0",
     "gulp-jsbeautifier": "^0.0.4",
     "gulp-jshint": "^1.9.0",
     "gulp-less": "^2.0.1",
@@ -36,7 +35,7 @@
     "gulp-size": "^1.1.0",
     "gulp-uglify": "^1.0.2",
     "gulp-util": "^3.0.1",
-    "jest-cli": "^0.2.1",
+    "jade": "^1.8.2",
     "jshint": "^2.5.11",
     "jshint-loader": "^0.8.0",
     "jshint-stylish": "^1.0.0",
@@ -46,13 +45,20 @@
     "merge-stream": "^0.1.6",
     "minimist": "^1.1.0",
     "protractor": "^1.5.0",
-    "psi": "^0.1.6",
-    "react-tools": "^0.12.2",
     "run-sequence": "^1.0.2",
     "style-loader": "^0.8.2",
+    "through2": "^0.6.3",
     "url-loader": "^0.5.5",
-    "webpack": "^1.4.14",
-    "webpack-dev-server": "^1.7.0"
+    "webpack": "^1.4.14"
+  },
+  "devDependencies": {
+    "browser-sync": "^1.8.2",
+    "webpack-dev-server": "^1.7.0",
+    "psi": "^0.1.6",
+    "jest-cli": "^0.2.1"
+  },
+  "engines": {
+    "node": "0.10.x"
   },
   "jest": {
     "rootDir": "src",
@@ -62,7 +68,7 @@
     ]
   },
   "scripts": {
-    "start": "gulp",
+    "start": "node src/server.js",
     "test": "jshint && jest",
     "jshint": "jshint ./src gulpfile.js",
     "preupdate-webdriver": "npm install",
