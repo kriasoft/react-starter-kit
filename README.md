@@ -41,10 +41,6 @@ utilizing a unidirectional data flow.
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
 │   ├── /assets/                # Static files which are copied to ./build on compile
 │   ├── /components/            # React components
-│   │   ├── /common/            # - Shared components. E.g. Link, Mixins
-│   │   ├── /forms/             # - Form components. E.g. TextBox, DatePicker
-│   │   ├── /layout/            # - Layout components. E.g. Header, Navbar
-│   │   └── /pages/             # - Web-page components. E.g. About, Profile
 │   ├── /constants/             # Enumerations used in action creators and stores
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic

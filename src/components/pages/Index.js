@@ -10,7 +10,7 @@
 
 var React = require('react');
 var PageActions = require('../../actions/PageActions');
-var App = require('../layout/App');
+var App = require('../Application');
 
 var HomePage = React.createClass({
 

@@ -10,8 +10,8 @@
 
 var React = require('react');
 var PageActions = require('../../actions/PageActions');
-var App = require('../layout/App');
-var Link = require('../common/Link');
+var App = require('../Application');
+var Link = require('../Link');
 
 var PrivacyPage = React.createClass({
 
