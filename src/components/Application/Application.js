@@ -8,10 +8,12 @@
 
 'use strict';
 
+require('./Application.less');
+
 var React = require('react');
 var PageStore = require('../../stores/PageStore');
-var Link = require('../common/Link');
-var Navbar = require('../layout/Navbar');
+var Link = require('../Link');
+var Navbar = require('../Navbar');
 
 /**
  * Retrieves the current page metadata from the PageStore.
