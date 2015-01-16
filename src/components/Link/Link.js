@@ -9,7 +9,7 @@
 'use strict';
 
 var React = require('react');
-var RouteActions = require('../../actions/RouteActions');
+var AppActions = require('../../actions/AppActions');
 
 var Link = React.createClass({
 
@@ -31,7 +31,7 @@ var Link = React.createClass({
 
   handleClick(e) {
     e.preventDefault();
-    RouteActions.setRoute(this.props.to);
+    AppActions.navigateTo(this.props.to);
   }
 
 });
