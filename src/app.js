@@ -9,54 +9,56 @@
 'use strict';
 
 var React = require('react');
-var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
-var {Router} = require('director');
+var App = require('./components/App');
 var Dispatcher = require('./core/Dispatcher');
+var AppActions = require('./actions/AppActions');
 var ActionTypes = require('./constants/ActionTypes');
-var router;
 
 // Export React so the dev tools can find it
 (window !== window.top ? window.top : window).React = React;
 
-Dispatcher.register((payload) => {
-
-  var action = payload.action;
-
-  switch (action.actionType)
-  {
-    case ActionTypes.SET_CURRENT_ROUTE:
-      router.setRoute(action.route);
-      break;
-
-    case ActionTypes.SET_CURRENT_PAGE:
-      if (ExecutionEnvironment.canUseDOM) {
-        document.title = action.page.title;
+// Initial properties and callbacks
+// which should be passed into the top-level React component (App)
+var props = {
+  path: decodeURI(window.location.pathname),
+  onSetTitle: (title) => {
+    document.title = title;
+  },
+  onSetMeta: (name, content) => {
+    // Remove and create a new <meta /> tag in order to make it work
+    // with bookmarks in Safari
+    var elements = document.getElementsByTagName('meta');
+    [].slice.call(elements).forEach((element) => {
+      if (element.getAttribute('name') === name) {
+        element.parentNode.removeChild(element);
       }
-      break;
-  }
-
-  return true; // No errors.  Needed by promise in Dispatcher.
-});
-
-/**
- * Check if Page component has a layout property; and if yes, wrap the page
- * into the specified layout, then mount to document.body.
- */
-function render(page) {
-  var layout = null, child = null, props = {};
-  while ((layout = page.type.layout || (page.defaultProps && page.defaultProps.layout))) {
-    child = React.createElement(page, props, child);
-    page = layout;
-  }
-  React.render(React.createElement(page, props, child), document.body);
-}
-
-// Define URL routes
-// See https://github.com/flatiron/director
-var routes = {
-  '/': () => render(require('./components/pages/Index')),
-  '/privacy': () => render(require('./components/pages/Privacy'))
+    });
+    var meta = document.createElement('meta');
+    meta.setAttribute('name', name);
+    meta.setAttribute('content', content);
+    document.getElementsByTagName('head')[0].appendChild(meta);
+  },
+  onPageNotFound: () => { /* do nothing */ }
 };
 
-// Initialize a router
-router = new Router(routes).configure({html5history: true}).init();
+// Render application when DOM is ready
+function startup() {
+  // Render the top-level React component and mount it to the `document.body`
+  var app = React.render(React.createElement(App, props), document.body);
+
+  // Set Application.path property when `window.location` is changed
+  Dispatcher.register((payload) => {
+    if (payload.action.actionType === ActionTypes.CHANGE_LOCATION) {
+      app.setProps({path: decodeURI(payload.action.path)});
+    }
+  });
+}
+
+// Load page content
+AppActions.loadPage(props.path, () => {
+  if (window.addEventListener) {
+    window.addEventListener('DOMContentLoaded', startup, false);
+  } else {
+    window.attachEvent('onload', startup);
+  }
+});

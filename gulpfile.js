@@ -14,14 +14,9 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var del = require('del');
 var path = require('path');
-var merge = require('merge-stream');
 var runSequence = require('run-sequence');
 var webpack = require('webpack');
-var browserSync = require('browser-sync');
 var pagespeed = require('psi');
-var fs = require('fs');
-var url = require('url');
-var ReactTools = require('react-tools');
 var argv = require('minimist')(process.argv.slice(2));
 
 // Settings
@@ -42,30 +37,6 @@ var AUTOPREFIXER_BROWSERS = [                 // https://github.com/ai/autoprefi
 
 var src = {};
 var watch = false;
-var pkgs = (function() {
-  var pkgs = {};
-  var map = function(source) {
-    for (var key in source) {
-      pkgs[key.replace(/[^a-z0-9]/gi, '')] = source[key].substring(1);
-    }
-  };
-  map(require('./package.json').dependencies);
-  return pkgs;
-}());
-
-// Configure JSX Harmony transform in order to be able
-// require .js files with JSX (see 'pages' task)
-var originalJsTransform = require.extensions['.js'];
-var reactTransform = function(module, filename) {
-  if (filename.indexOf('node_modules') === -1) {
-    var src = fs.readFileSync(filename, {encoding: 'utf8'});
-    src = ReactTools.transform(src, {harmony: true, stripTypes: true});
-    module._compile(src, filename);
-  } else {
-    originalJsTransform(module, filename);
-  }
-};
-require.extensions['.js'] = reactTransform;
 
 // The default task
 gulp.task('default', ['serve']);
@@ -75,12 +46,8 @@ gulp.task('clean', del.bind(null, [DEST]));
 
 // 3rd party libraries
 gulp.task('vendor', function() {
-  return merge(
-    gulp.src('./node_modules/jquery/dist/**')
-      .pipe(gulp.dest(DEST + '/vendor/jquery-' + pkgs.jquery)),
-    gulp.src('./node_modules/bootstrap/dist/fonts/**')
-      .pipe(gulp.dest(DEST + '/fonts'))
-  );
+  return gulp.src('./node_modules/bootstrap/dist/fonts/**')
+    .pipe(gulp.dest(DEST + '/fonts'));
 });
 
 // Static files
@@ -103,42 +70,6 @@ gulp.task('images', function() {
     }))
     .pipe(gulp.dest(DEST + '/images'))
     .pipe($.size({title: 'images'}));
-});
-
-// HTML pages
-gulp.task('pages', function() {
-  src.pages = ['src/components/pages/**/*.js', 'src/components/pages/404.html'];
-
-  var currentPage = {};
-  var Dispatcher = require('./src/core/Dispatcher');
-  var ActionTypes = require('./src/constants/ActionTypes');
-
-  // Capture document.title and other page metadata changes
-  Dispatcher.register(function(payload) {
-    if (payload.action.actionType == ActionTypes.SET_CURRENT_PAGE)
-    {
-      currentPage = payload.action.page;
-    }
-    return true;
-  });
-
-  var render = $.render({
-      template: './src/components/pages/index.html',
-      data: function() { return currentPage; }
-    })
-    .on('error', function(err) { console.log(err); render.end(); });
-
-  return gulp.src(src.pages)
-    .pipe($.changed(DEST, {extension: '.html'}))
-    .pipe($.if('*.js', render))
-    .pipe($.replace('UA-XXXXX-X', GOOGLE_ANALYTICS_ID))
-    .pipe($.if(RELEASE, $.htmlmin({
-      removeComments: true,
-      collapseWhitespace: true,
-      minifyJS: true
-    }), $.jsbeautifier()))
-    .pipe(gulp.dest(DEST))
-    .pipe($.size({title: 'pages'}));
 });
 
 // CSS style sheets
@@ -188,51 +119,54 @@ gulp.task('bundle', function(cb) {
 
 // Build the app from source code
 gulp.task('build', ['clean'], function(cb) {
-  runSequence(['vendor', 'assets', 'images', 'pages', 'styles', 'bundle'], cb);
+  runSequence(['vendor', 'assets', 'images', 'styles', 'bundle'], cb);
 });
 
 // Launch a lightweight HTTP Server
 gulp.task('serve', function(cb) {
 
+  var nodemon = require('nodemon');
+  var browserSync = require('browser-sync');
+
   watch = true;
 
   runSequence('build', function() {
-    browserSync({
-      notify: false,
-      // Customize the BrowserSync console logging prefix
-      logPrefix: 'RSK',
-      // Run as an https by uncommenting 'https: true'
-      // Note: this uses an unsigned certificate which on first access
-      //       will present a certificate warning in the browser.
-      // https: true,
-      server: {
-        baseDir: DEST,
-        // Allow web page requests without .html file extension in URLs
-        middleware: function(req, res, cb) {
-          var uri = url.parse(req.url);
-          if (uri.pathname.length > 1 &&
-            uri.pathname.lastIndexOf('/browser-sync/', 0) !== 0 &&
-            !fs.existsSync(DEST + uri.pathname)) {
-            if (fs.existsSync(DEST + uri.pathname + '.html')) {
-              req.url = uri.pathname + '.html' + (uri.search || '');
-            } else {
-              res.statusCode = 404;
-              req.url = '/404.html' + (uri.search || '');
-            }
-          }
-          cb();
-        }
-      }
-    });
 
-    gulp.watch(src.assets, ['assets']);
-    gulp.watch(src.images, ['images']);
-    gulp.watch(src.pages, ['pages']);
-    gulp.watch(src.styles, ['styles']);
-    gulp.watch(DEST + '/**/*.*', function(file) {
-      browserSync.reload(path.relative(__dirname, file.path));
+    var server = require('nodemon')({
+      script: 'src/server.js',
+      watch: [path.join(__dirname, 'src/**/*.js')],
+      env: {NODE_ENV: 'development'}
+    }).on('log', function(log) {
+      $.util.log('nodemon', $.util.colors.green(log.message));
+    }).on('crash', function() {
+      $.util.log($.util.colors.red('nodemon crashed'));
+    }).once('start', function() {
+      browserSync({
+        notify: false,
+        // Customize the BrowserSync console logging prefix
+        logPrefix: 'QC',
+        // Run as an https by setting 'https: true'
+        // Note: this uses an unsigned certificate which on first access
+        //       will present a certificate warning in the browser.
+        https: false,
+        // Informs browser-sync to proxy our Express app which would run
+        // at the following location
+        proxy: 'http://localhost:5000'
+      });
+
+      process.on('exit', function () {
+        browserSync.exit();
+        server.emit('exit');
+      });
+
+      gulp.watch(src.assets, ['assets']);
+      gulp.watch(src.images, ['images']);
+      gulp.watch(src.styles, ['styles']);
+      gulp.watch(DEST + '/**/*.*', function (file) {
+        browserSync.reload(path.relative(__dirname, file.path));
+      });
+      cb();
     });
-    cb();
   });
 });
 

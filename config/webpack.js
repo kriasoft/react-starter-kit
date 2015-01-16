@@ -39,14 +39,18 @@ module.exports = function(release) {
     plugins: release ? [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': '"production"',
-        '__DEV__': false
+        '__DEV__': false,
+        '__SERVER__': false
       }),
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin(),
       new webpack.optimize.OccurenceOrderPlugin(),
       new webpack.optimize.AggressiveMergingPlugin()
     ] : [
-      new webpack.DefinePlugin({'__DEV__': true})
+      new webpack.DefinePlugin({
+        '__DEV__': true,
+        '__SERVER__': false
+      })
     ],
 
     resolve: {

@@ -6,10 +6,16 @@
   "repository": "https://github.com/kriasoft/react-starter-kit",
   "license": "MIT",
   "dependencies": {
-    "bootstrap": "^3.3.1",
-    "director": "^1.2.7",
-    "flux": "^2.0.1",
-    "react": "^0.12.2"
+    "bootstrap": "3.3.1",
+    "director": "1.2.7",
+    "eventemitter3": "0.1.6",
+    "express": "4.10.7",
+    "flux": "2.0.1",
+    "front-matter": "0.2.1",
+    "jade": "1.9.0",
+    "lodash": "2.4.1",
+    "react": "0.12.2",
+    "superagent": "0.21.0"
   },
   "devDependencies": {
     "autoprefixer-loader": "^1.1.0",
@@ -44,8 +50,8 @@
     "jsx-loader": "^0.12.2",
     "less": "^2.2.0",
     "less-loader": "^2.0.0",
-    "merge-stream": "^0.1.7",
     "minimist": "^1.1.0",
+    "nodemon": "^1.2.1",
     "protractor": "^1.6.0",
     "psi": "^1.0.4",
     "react-tools": "^0.12.2",
