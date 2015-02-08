@@ -21,7 +21,7 @@ global.__SERVER__ = true;
 // The top-level React component + HTML template for it
 var App = React.createFactory(require('./components/App'));
 var templateFile = path.join(__dirname, 'templates/index.html');
-var template = fs.readFileSync(templateFile, 'utf8');
+var template = _.template(fs.readFileSync(templateFile, 'utf8'));
 var Dispatcher = require('./core/Dispatcher');
 var ActionTypes = require('./constants/ActionTypes');
 var AppStore = require('./stores/AppStore');
@@ -48,11 +48,11 @@ server.get('*', function(req, res) {
     onPageNotFound: function() { res.status(404); }
   });
   data.body = React.renderToString(app);
-  var html = _.template(template, data);
+  var html = template(data);
   res.send(html);
 });
 
-// Load pages from the `/src/pages/` folder into the AppStore
+// Load pages from the `/src/content/` folder into the AppStore
 (function() {
   var assign = require('react/lib/Object.assign');
   var fm = require('front-matter');
