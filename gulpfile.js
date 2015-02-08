@@ -53,19 +53,8 @@ var pkgs = (function() {
   return pkgs;
 }());
 
-// Configure JSX Harmony transform in order to be able
-// require .js files with JSX (see 'pages' task)
-var originalJsTransform = require.extensions['.js'];
-var reactTransform = function(module, filename) {
-  if (filename.indexOf('node_modules') === -1) {
-    var src = fs.readFileSync(filename, {encoding: 'utf8'});
-    src = ReactTools.transform(src, {harmony: true, stripTypes: true});
-    module._compile(src, filename);
-  } else {
-    originalJsTransform(module, filename);
-  }
-};
-require.extensions['.js'] = reactTransform;
+// Use 6to5 to transpile JSX and ES6
+require('6to5/register');
 
 // The default task
 gulp.task('default', ['serve']);
