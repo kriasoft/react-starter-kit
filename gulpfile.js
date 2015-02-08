@@ -52,24 +52,15 @@ gulp.task('vendor', function() {
 
 // Static files
 gulp.task('assets', function() {
-  src.assets = 'src/assets/**';
+  src.assets = [
+    'src/assets/**',
+    'src/content*/**/*.*',
+    'src/templates*/**/*.*'
+  ];
   return gulp.src(src.assets)
     .pipe($.changed(DEST))
     .pipe(gulp.dest(DEST))
     .pipe($.size({title: 'assets'}));
-});
-
-// Images
-gulp.task('images', function() {
-  src.images = 'src/images/**';
-  return gulp.src(src.images)
-    .pipe($.changed(DEST + '/images'))
-    .pipe($.imagemin({
-      progressive: true,
-      interlaced: true
-    }))
-    .pipe(gulp.dest(DEST + '/images'))
-    .pipe($.size({title: 'images'}));
 });
 
 // CSS style sheets
@@ -92,7 +83,7 @@ gulp.task('styles', function() {
 // Bundle
 gulp.task('bundle', function(cb) {
   var started = false;
-  var config = require('./config/webpack.js')(RELEASE);
+  var config = require('./config/webpack.js');
   var bundler = webpack(config);
 
   function bundle(err, stats) {
@@ -119,7 +110,7 @@ gulp.task('bundle', function(cb) {
 
 // Build the app from source code
 gulp.task('build', ['clean'], function(cb) {
-  runSequence(['vendor', 'assets', 'images', 'styles', 'bundle'], cb);
+  runSequence(['vendor', 'assets', 'styles', 'bundle'], cb);
 });
 
 // Launch a lightweight HTTP Server
@@ -133,8 +124,8 @@ gulp.task('serve', function(cb) {
   runSequence('build', function() {
 
     var server = require('nodemon')({
-      script: 'src/server.js',
-      watch: [path.join(__dirname, 'src/**/*.js')],
+      script: 'build/server.js',
+      watch: [path.join(__dirname, 'build/server.js')],
       env: {NODE_ENV: 'development'}
     }).on('log', function(log) {
       $.util.log('nodemon', $.util.colors.green(log.message));
@@ -160,7 +151,6 @@ gulp.task('serve', function(cb) {
       });
 
       gulp.watch(src.assets, ['assets']);
-      gulp.watch(src.images, ['images']);
       gulp.watch(src.styles, ['styles']);
       gulp.watch(DEST + '/**/*.*', function (file) {
         browserSync.reload(path.relative(__dirname, file.path));

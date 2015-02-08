@@ -34,7 +34,7 @@ module.exports = {
       .accept('application/json')
       .end((err, res) => {
         Dispatcher.handleServerAction({
-          actionType: ActionTypes.LOAD_PAGE, path: path, err: err, page: res
+          actionType: ActionTypes.LOAD_PAGE, path: path, err: err, page: res.body
         });
         if (cb) {
           cb();

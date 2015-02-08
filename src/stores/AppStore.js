@@ -20,7 +20,6 @@ var _pages = {};
 var _loading = false;
 
 if (__SERVER__) {
-  console.log('Fill the AppStore with data');
   _pages['/'] = {title: 'Home Page'};
   _pages['/privacy'] = {title: 'Privacy Policy'};
 }

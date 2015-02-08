@@ -11,7 +11,7 @@
 require('./App.less');
 
 var React = require('react');
-var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
+var invariant = require('react/lib/invariant');
 var AppActions = require('../../actions/AppActions');
 var NavigationMixin = require('./NavigationMixin');
 var AppStore = require('../../stores/AppStore');
@@ -30,26 +30,9 @@ var Application = React.createClass({
     onPageNotFound: React.PropTypes.func.isRequired
   },
 
-  getInitialState() {
-    return {loading: false};
-  },
-
-  componentWillMount() {
-    if (ExecutionEnvironment.canUseDOM) {
-      this.setState({loading: true});
-      AppActions.loadPage(this.props.path, () => {
-        this.setState({loading: false});
-      });
-    }
-  },
-
   render() {
     var page = AppStore.getPage(this.props.path);
-
-    if (page === undefined) {
-      return false;
-    }
-
+    invariant(page !== undefined, 'Failed to load page content.');
     this.props.onSetTitle(page.title);
 
     if (page.type === 'notfound') {
