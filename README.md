@@ -9,9 +9,8 @@
 > This project template is a skeleton for an [isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)
 > web application (SPA) based on Facebook's [React](https://facebook.github.io/react/)
 > library and [Flux](http://facebook.github.io/flux/) architecture. You can use
-> it to quickly bootstrap your web application projects. It contains only
-> client-side components and development tools and is recommended to be paired
-> with a server-side project similar to [ASP.NET Web Application Starter Kit](https://github.com/kriasoft/AspNet-Server-Template).
+> it to quickly bootstrap your web application projects. All the parts of this
+> project template are easily replaceable.
 
 [![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)](https://github.com/kriasoft/react-starter-kit)
 
@@ -34,7 +33,6 @@ utilizing a unidirectional data flow.
 ```
 .
 ├── /build/                     # The folder for compiled output
-├── /config/                    # Configuration files for Webpack, Jest etc.
 ├── /docs/                      # Documentation files for the project
 ├── /node_modules/              # 3rd-party libraries and utilities
 ├── /src/                       # The source code of the application
@@ -50,7 +48,8 @@ utilizing a unidirectional data flow.
 │   ├── /benchmark/             # Load and stress testing
 │   └── /unit/                  # Unit tests
 │── gulpfile.js                 # Configuration file for automated builds
-└── package.json                # The list of 3rd party libraries and utilities
+│── package.json                # The list of 3rd party libraries and utilities
+└── webpack.config.js           # Webpack configuration for bundling and optimization
 ```
 
 ### Getting Started
