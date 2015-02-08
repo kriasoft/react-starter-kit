@@ -6,96 +6,122 @@
 'use strict';
 
 var webpack = require('webpack');
+var update = require('react/lib/update');
+var argv = require('minimist')(process.argv.slice(2));
 
-/**
- * Get configuration for Webpack
- *
- * @see http://webpack.github.io/docs/configuration
- *      https://github.com/petehunt/webpack-howto
- *
- * @param {boolean} release True if configuration is intended to be used in
- * a release mode, false otherwise
- * @return {object} Webpack configuration
- */
-module.exports = function(release) {
-  return {
-    entry: './src/app.js',
+var DEBUG = !argv.release;
 
-    output: {
-      filename: 'app.js',
-      path: './build/',
-      publicPath: './build/'
-    },
+// Common configuration for both
+// client-side and server-side bundles
+var config = {
+  output: {
+    path: './build/',
+    publicPath: './build/',
+    sourcePrefix: '  '
+  },
 
-    cache: !release,
-    debug: !release,
-    devtool: false,
+  cache: DEBUG,
+  debug: DEBUG,
+  devtool: DEBUG ? '#inline-source-map' : false,
 
-    stats: {
-      colors: true,
-      reasons: !release
-    },
+  stats: {
+    colors: true,
+    reasons: DEBUG
+  },
 
-    plugins: release ? [
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': '"production"',
-        '__DEV__': false,
-        '__SERVER__': false
-      }),
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin(),
-      new webpack.optimize.OccurenceOrderPlugin(),
-      new webpack.optimize.AggressiveMergingPlugin()
-    ] : [
-      new webpack.DefinePlugin({
-        '__DEV__': true,
-        '__SERVER__': false
-      })
+  plugins: DEBUG ? [
+    new webpack.DefinePlugin({
+      '__DEV__': true,
+      '__SERVER__': false
+    })
+  ] : [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': '"production"',
+      '__DEV__': false,
+      '__SERVER__': false
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.AggressiveMergingPlugin()
+  ],
+
+  resolve: {
+    extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx']
+  },
+
+  module: {
+    preLoaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'jshint'
+      }
     ],
 
-    resolve: {
-      extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx']
-    },
-
-    module: {
-      preLoaders: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          loader: 'jshint'
-        }
-      ],
-
-      loaders: [
-        {
-          test: /\.css$/,
-          loader: 'style-loader!css-loader!autoprefixer-loader?{browsers:[' +
-          '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
-          '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}'
-        },
-        {
-          test: /\.less$/,
-          loader: 'style-loader!css-loader!autoprefixer-loader?{browsers:[' +
-          '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
-          '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}!less-loader'
-        },
-        {
-          test: /\.gif/,
-          loader: 'url-loader?limit=10000&mimetype=image/gif'
-        },
-        {
-          test: /\.jpg/,
-          loader: 'url-loader?limit=10000&mimetype=image/jpg'
-        },
-        {
-          test: /\.png/,
-          loader: 'url-loader?limit=10000&mimetype=image/png'
-        },
-        {
-          test: /\.jsx?$/,
-          loader: 'jsx-loader?harmony&stripTypes'
-        }
-      ]
-    }
-  };
+    loaders: [
+      {
+        test: /\.css$/,
+        loader: 'style-loader!css-loader!autoprefixer-loader?{browsers:[' +
+        '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
+        '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}'
+      },
+      {
+        test: /\.less$/,
+        loader: 'style-loader!css-loader!autoprefixer-loader?{browsers:[' +
+        '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
+        '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}!less-loader'
+      },
+      {
+        test: /\.gif/,
+        loader: 'url-loader?limit=10000&mimetype=image/gif'
+      },
+      {
+        test: /\.jpg/,
+        loader: 'url-loader?limit=10000&mimetype=image/jpg'
+      },
+      {
+        test: /\.png/,
+        loader: 'url-loader?limit=10000&mimetype=image/png'
+      },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: '6to5-loader'
+      }
+    ]
+  }
 };
+
+// Configuration for the client-side bundle
+var appConfig = update(config, {
+  entry: {$set: './src/app.js'},
+  output: {filename: {$set: 'app.js'}}
+});
+
+// Configuration for the server-side bundle
+var serverConfig = update(config, {
+  entry: {$set: './src/server.js'},
+  output: {
+    filename: {$set: 'server.js'},
+    libraryTarget: {$set: 'commonjs2'}
+  },
+  target: {$set: 'node'},
+  externals: {$set: /^[a-z\-0-9]+$/},
+  node: {$set: {
+    console: true,
+    global: false,
+    process: false,
+    Buffer: false,
+    __filename: false,
+    __dirname: false
+  }},
+  module: {loaders: {$apply: function(loaders) {
+    loaders.forEach(function(loader) {
+      loader.loader = loader.loader.replace('style-loader!', '');
+    });
+    return loaders;
+  }}}
+});
+
+module.exports = [appConfig, serverConfig];

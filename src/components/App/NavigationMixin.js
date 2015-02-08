@@ -27,7 +27,6 @@ var NavigationMixin = {
   },
 
   handlePopState(event) {
-    console.log('Application.handlePopState(' + (event.state ? event.state.path : '') + ')');
     if (event.state) {
       var path = event.state.path;
       // TODO: Replace current location
@@ -85,7 +84,9 @@ var NavigationMixin = {
     var path = el.pathname + el.search + (el.hash || '');
 
     event.preventDefault();
-    AppActions.navigateTo(path);
+    AppActions.loadPage(path, () => {
+      AppActions.navigateTo(path);
+    });
   }
 
 };
