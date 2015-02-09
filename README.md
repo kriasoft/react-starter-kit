@@ -111,6 +111,8 @@ Run unit tests powered by [Jest](https://facebook.github.io/jest/) with the foll
 $ npm test
 ```
 
+Test any javascript module by creating a `__tests__/` directory where the file is. Name the test by appending `-test.js` to the js file. [Jest](https://facebook.github.io/jest/) will do the rest.
+
 ### Learn More
 
  * [Getting Started with React.js](http://facebook.github.io/react/)
