@@ -45,11 +45,7 @@ utilizing a unidirectional data flow.
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /styles/                # CSS pre-processed files and rules (csscomb, csslint)
 │   ├── /templates/             # Base template files
-│   ├── /app.js                 # The application's main file (entry point)
-├── /test/                      # Unit, integration and load tests
-│   ├── /e2e/                   # End-to-end tests
-│   ├── /benchmark/             # Load and stress testing
-│   └── /unit/                  # Unit tests
+│   └── /app.js                 # The application's main file (entry point)
 │── gulpfile.js                 # Configuration file for automated builds
 │── package.json                # The list of 3rd party libraries and utilities
 └── webpack.config.js           # Webpack configuration for bundling and optimization
