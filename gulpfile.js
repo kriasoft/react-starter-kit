@@ -129,7 +129,9 @@ gulp.task('serve', function(cb) {
     }).on('crash', function() {
       $.util.log($.util.colors.red('nodemon crashed'));
     }).once('start', function() {
-
+      process.on('exit', function () {
+        server.emit('exit');
+      });
 
       gulp.watch(src.assets, ['assets']);
       gulp.watch(src.styles, ['styles']);
@@ -138,31 +140,28 @@ gulp.task('serve', function(cb) {
   });
 });
 
-gulp.task('sync', function() {
+gulp.task('sync', ['serve'], function() {
   var browserSync = require('browser-sync');
 
-  runSequence('serve', function() {
-    browserSync({
-      notify: false,
-      // Customize the BrowserSync console logging prefix
-      logPrefix: 'QC',
-      // Run as an https by setting 'https: true'
-      // Note: this uses an unsigned certificate which on first access
-      //       will present a certificate warning in the browser.
-      https: false,
-      // Informs browser-sync to proxy our Express app which would run
-      // at the following location
-      proxy: 'http://localhost:5000'
-    });
+  browserSync({
+    notify: false,
+    // Customize the BrowserSync console logging prefix
+    logPrefix: 'QC',
+    // Run as an https by setting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    https: false,
+    // Informs browser-sync to proxy our Express app which would run
+    // at the following location
+    proxy: 'http://localhost:5000'
+  });
 
-    process.on('exit', function () {
-      browserSync.exit();
-      server.emit('exit');
-    });
+  process.on('exit', function () {
+    browserSync.exit();
+  });
 
-    gulp.watch(DEST + '/**/*.*', function (file) {
-      browserSync.reload(path.relative(__dirname, file.path));
-    });
+  gulp.watch(DEST + '/**/*.*', function (file) {
+    browserSync.reload(path.relative(__dirname, file.path));
   });
 });
 
