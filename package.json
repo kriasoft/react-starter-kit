@@ -64,8 +64,8 @@
     "webpack-dev-server": "^1.7.0"
   },
   "jest": {
-    "rootDir": "src",
-    "scriptPreprocessor": "<rootDir>/node_modules/6to5-jest",
+    "rootDir": "./src",
+    "scriptPreprocessor": "../node_modules/6to5-jest",
     "unmockedModulePathPatterns": [
       "react"
     ]
