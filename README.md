@@ -40,13 +40,12 @@ utilizing a unidirectional data flow.
 │   ├── /assets/                # Static files which are copied to ./build on compile
 │   ├── /components/            # React components
 │   ├── /constants/             # Enumerations used in action creators and stores
+│   ├── /content/               # Jade application templates
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic
-│   ├── /app.js                 # The application's main file (entry point)
-├── /test/                      # Unit, integration and load tests
-│   ├── /e2e/                   # End-to-end tests
-│   ├── /benchmark/             # Load and stress testing
-│   └── /unit/                  # Unit tests
+│   ├── /styles/                # CSS pre-processed files and rules (csscomb, csslint)
+│   ├── /templates/             # Base template files
+│   └── /app.js                 # The application's main file (entry point)
 │── gulpfile.js                 # Configuration file for automated builds
 │── package.json                # The list of 3rd party libraries and utilities
 └── webpack.config.js           # Webpack configuration for bundling and optimization
@@ -111,6 +110,8 @@ Run unit tests powered by [Jest](https://facebook.github.io/jest/) with the foll
 ```shell
 $ npm test
 ```
+
+Test any javascript module by creating a `__tests__/` directory where the file is. Name the test by appending `-test.js` to the js file. [Jest](https://facebook.github.io/jest/) will do the rest.
 
 ### Learn More
 
