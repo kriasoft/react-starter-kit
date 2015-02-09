@@ -40,8 +40,11 @@ utilizing a unidirectional data flow.
 │   ├── /assets/                # Static files which are copied to ./build on compile
 │   ├── /components/            # React components
 │   ├── /constants/             # Enumerations used in action creators and stores
+│   ├── /content/               # Jade application templates
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic
+│   ├── /styles/                # CSS pre-processed files and rules (csscomb, csslint)
+│   ├── /templates/             # Base template files
 │   ├── /app.js                 # The application's main file (entry point)
 ├── /test/                      # Unit, integration and load tests
 │   ├── /e2e/                   # End-to-end tests
