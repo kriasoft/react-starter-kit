@@ -115,14 +115,11 @@ gulp.task('build', ['clean'], function(cb) {
 
 // Launch a lightweight HTTP Server
 gulp.task('serve', function(cb) {
-
   var nodemon = require('nodemon');
-  var browserSync = require('browser-sync');
 
   watch = true;
 
   runSequence('build', function() {
-
     var server = require('nodemon')({
       script: 'build/server.js',
       watch: [path.join(__dirname, 'build/server.js')],
@@ -132,31 +129,39 @@ gulp.task('serve', function(cb) {
     }).on('crash', function() {
       $.util.log($.util.colors.red('nodemon crashed'));
     }).once('start', function() {
-      browserSync({
-        notify: false,
-        // Customize the BrowserSync console logging prefix
-        logPrefix: 'QC',
-        // Run as an https by setting 'https: true'
-        // Note: this uses an unsigned certificate which on first access
-        //       will present a certificate warning in the browser.
-        https: false,
-        // Informs browser-sync to proxy our Express app which would run
-        // at the following location
-        proxy: 'http://localhost:5000'
-      });
-
       process.on('exit', function () {
-        browserSync.exit();
         server.emit('exit');
       });
 
       gulp.watch(src.assets, ['assets']);
       gulp.watch(src.styles, ['styles']);
-      gulp.watch(DEST + '/**/*.*', function (file) {
-        browserSync.reload(path.relative(__dirname, file.path));
-      });
       cb();
     });
+  });
+});
+
+gulp.task('sync', ['serve'], function() {
+  var browserSync = require('browser-sync');
+
+  browserSync({
+    notify: false,
+    // Customize the BrowserSync console logging prefix
+    logPrefix: 'QC',
+    // Run as an https by setting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    https: false,
+    // Informs browser-sync to proxy our Express app which would run
+    // at the following location
+    proxy: 'http://localhost:5000'
+  });
+
+  process.on('exit', function () {
+    browserSync.exit();
+  });
+
+  gulp.watch(DEST + '/**/*.*', function (file) {
+    browserSync.reload(path.relative(__dirname, file.path));
   });
 });
 
