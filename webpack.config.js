@@ -85,6 +85,10 @@ var config = {
         loader: 'url-loader?limit=10000&mimetype=image/png'
       },
       {
+        test: /\.svg/,
+        loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+      },
+      {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: '6to5-loader'
