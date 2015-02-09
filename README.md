@@ -40,14 +40,16 @@ utilizing a unidirectional data flow.
 │   ├── /assets/                # Static files which are copied to ./build on compile
 │   ├── /components/            # React components
 │   ├── /constants/             # Enumerations used in action creators and stores
-│   ├── /content/               # Jade application templates
+│   ├── /content/               # Website content (plain HTML or Markdown, Jade, you name it)
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic
-│   ├── /styles/                # CSS pre-processed files and rules (csscomb, csslint)
-│   ├── /templates/             # Base template files
-│   └── /app.js                 # The application's main file (entry point)
+│   ├── /styles/                # CSS styles (deprecated, put CSS into components' folders)
+│   ├── /templates/             # HTML templates for server-side rendering, emails etc.
+│   ├── /app.js                 # Client-side startup script
+│   └── /server.js              # Server-side startup script
 │── gulpfile.js                 # Configuration file for automated builds
 │── package.json                # The list of 3rd party libraries and utilities
+│── preprocessor.js             # ES6 transpiler settings for [Jest](facebook.github.io/jest/) 
 └── webpack.config.js           # Webpack configuration for bundling and optimization
 ```
 
@@ -111,7 +113,9 @@ Run unit tests powered by [Jest](https://facebook.github.io/jest/) with the foll
 $ npm test
 ```
 
-Test any javascript module by creating a `__tests__/` directory where the file is. Name the test by appending `-test.js` to the js file. [Jest](https://facebook.github.io/jest/) will do the rest.
+Test any javascript module by creating a `__tests__/` directory where
+the file is. Name the test by appending `-test.js` to the js file.
+[Jest](https://facebook.github.io/jest/) will do the rest.
 
 ### Learn More
 
