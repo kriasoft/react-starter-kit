@@ -49,7 +49,7 @@ utilizing a unidirectional data flow.
 │   └── /server.js              # Server-side startup script
 │── gulpfile.js                 # Configuration file for automated builds
 │── package.json                # The list of 3rd party libraries and utilities
-│── preprocessor.js             # ES6 transpiler settings for [Jest](facebook.github.io/jest/) 
+│── preprocessor.js             # ES6 transpiler settings for Jest 
 └── webpack.config.js           # Webpack configuration for bundling and optimization
 ```
 
