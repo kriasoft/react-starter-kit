@@ -10,8 +10,6 @@
 
 var React = require('react');
 
-var logo = require('./logo-small.png');
-
 var Navbar = React.createClass({
 
   render() {
@@ -20,7 +18,7 @@ var Navbar = React.createClass({
       <div className="navbar-top" role="navigation">
         <div className="container">
           <a className="navbar-brand row" href="/">
-            <img src={require('./logo-small.png')} width="38" height="38" alt="React" />
+            <img src="/tile.png" width="38" height="38" alt="React" />
             <span>React.js Starter Kit</span>
           </a>
         </div>
