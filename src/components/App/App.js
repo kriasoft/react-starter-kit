@@ -8,16 +8,16 @@
 
 'use strict';
 
-require('./App.less');
+import './App.less';
 
-var React = require('react');
-var invariant = require('react/lib/invariant');
-var AppActions = require('../../actions/AppActions');
-var NavigationMixin = require('./NavigationMixin');
-var AppStore = require('../../stores/AppStore');
-var Navbar = require('../Navbar');
-var ContentPage = require('../ContentPage');
-var NotFoundPage = require('../NotFoundPage');
+import React from 'react';
+import invariant from 'react/lib/invariant';
+import AppActions from '../../actions/AppActions';
+import NavigationMixin from './NavigationMixin';
+import AppStore from '../../stores/AppStore';
+import Navbar from '../Navbar';
+import ContentPage from '../ContentPage';
+import NotFoundPage from '../NotFoundPage';
 
 var Application = React.createClass({
 

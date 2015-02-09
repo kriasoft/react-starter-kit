@@ -8,9 +8,7 @@
 
 'use strict';
 
-var React = require('react');
-
-var logo = require('./logo-small.png');
+import React from 'react';
 
 var Navbar = React.createClass({
 

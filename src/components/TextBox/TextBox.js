@@ -8,9 +8,9 @@
 
 'use strict';
 
-require('./TextBox.less');
+import './TextBox.less';
 
-var React = require('react');
+import React from 'react';
 
 var TextBox = React.createClass({
 

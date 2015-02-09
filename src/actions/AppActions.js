@@ -8,10 +8,10 @@
 
 'use strict';
 
-var Dispatcher = require('../core/Dispatcher');
-var ActionTypes = require('../constants/ActionTypes');
-var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
-var http = require('superagent');
+import Dispatcher from '../core/Dispatcher';
+import ActionTypes from '../constants/ActionTypes';
+import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';
+import http from 'superagent';
 
 module.exports = {
 

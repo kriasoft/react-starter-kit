@@ -8,14 +8,14 @@
 
 'use strict';
 
-require('6to5/polyfill');
+import '6to5/polyfill';
 
-var React = require('react');
-var emptyFunction = require('react/lib/emptyFunction');
-var App = require('./components/App');
-var Dispatcher = require('./core/Dispatcher');
-var AppActions = require('./actions/AppActions');
-var ActionTypes = require('./constants/ActionTypes');
+import React from 'react';
+import emptyFunction from 'react/lib/emptyFunction';
+import App from './components/App';
+import Dispatcher from './core/Dispatcher';
+import AppActions from './actions/AppActions';
+import ActionTypes from './constants/ActionTypes';
 
 var path = decodeURI(window.location.pathname);
 var setMetaTag = (name, content) => {

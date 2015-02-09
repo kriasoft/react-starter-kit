@@ -8,11 +8,11 @@
 
 'use strict';
 
-var Dispatcher = require('../core/Dispatcher');
-var ActionTypes = require('../constants/ActionTypes');
-var PayloadSources = require('../constants/PayloadSources');
-var EventEmitter = require('eventemitter3');
-var assign = require('react/lib/Object.assign');
+import Dispatcher from '../core/Dispatcher';
+import ActionTypes from '../constants/ActionTypes';
+import PayloadSources from '../constants/PayloadSources';
+import EventEmitter from 'eventemitter3';
+import assign from 'react/lib/Object.assign';
 
 var CHANGE_EVENT = 'change';
 
