@@ -65,7 +65,7 @@
   },
   "jest": {
     "rootDir": "./src",
-    "scriptPreprocessor": "../node_modules/6to5-jest",
+    "scriptPreprocessor": "../preprocessor.js",
     "unmockedModulePathPatterns": [
       "react"
     ]
