@@ -8,11 +8,11 @@
 
 'use strict';
 
-var _ = require('lodash');
-var fs = require('fs');
-var path = require('path');
-var express = require('express');
-var React = require('react');
+import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
+import React from 'react';
 
 // Set global variables
 global.__DEV__ = process.env.NODE_ENV == 'development';
@@ -22,9 +22,9 @@ global.__SERVER__ = true;
 var App = React.createFactory(require('./components/App'));
 var templateFile = path.join(__dirname, 'templates/index.html');
 var template = _.template(fs.readFileSync(templateFile, 'utf8'));
-var Dispatcher = require('./core/Dispatcher');
-var ActionTypes = require('./constants/ActionTypes');
-var AppStore = require('./stores/AppStore');
+import Dispatcher from './core/Dispatcher';
+import ActionTypes from './constants/ActionTypes';
+import AppStore from './stores/AppStore';
 
 var server = express();
 

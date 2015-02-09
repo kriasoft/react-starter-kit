@@ -10,19 +10,19 @@
 
 //require('./NotFoundPage.less');
 
-var React = require('react');
+import React from 'react';
 
 var NotFoundPage = React.createClass({
 
   render() {
-    /* jshint ignore:start */
     return (
+      /* jshint ignore:start */
       <div>
         <h1>Page Not Found</h1>
         <p>Sorry, but the page you were trying to view does not exist.</p>
       </div>
+      /* jshint ignore:end */
     );
-    /* jshint ignore:end */
   }
 
 });

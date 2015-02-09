@@ -8,9 +8,9 @@
 
 'use strict';
 
-var React = require('react');
-var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
-var AppActions = require('../../actions/AppActions');
+import React from 'react';
+import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';
+import AppActions from '../../actions/AppActions';
 
 var NavigationMixin = {
 

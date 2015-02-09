@@ -8,7 +8,7 @@
 
 'use strict';
 
-var React = require('react');
+import React from 'react';
 
 var ContentPage = React.createClass({
 
