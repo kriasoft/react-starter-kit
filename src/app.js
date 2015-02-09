@@ -17,9 +17,6 @@ var Dispatcher = require('./core/Dispatcher');
 var AppActions = require('./actions/AppActions');
 var ActionTypes = require('./constants/ActionTypes');
 
-// Export React so the dev tools can find it
-(window !== window.top ? window.top : window).React = React;
-
 var path = decodeURI(window.location.pathname);
 var setMetaTag = (name, content) => {
   // Remove and create a new <meta /> tag in order to make it work
