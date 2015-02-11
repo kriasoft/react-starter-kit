@@ -15,7 +15,7 @@ import express from 'express';
 import React from 'react';
 
 // Set global variables
-global.__DEV__ = process.env.NODE_ENV == 'development';
+global.__DEV__ = (process.env.NODE_ENV == 'development');
 global.__SERVER__ = true;
 
 // The top-level React component + HTML template for it
@@ -28,32 +28,9 @@ import AppStore from './stores/AppStore';
 
 var server = express();
 
-server.set('port', (process.env.PORT || 5000));
-server.use(express.static(path.join(__dirname)));
-
-// Page API
-server.get('/api/page/*', function(req, res) {
-  var path = req.path.substr(9);
-  var page = AppStore.getPage(path);
-  res.send(page);
-});
-
-// Server-side rendering
-server.get('*', function(req, res) {
-  var data = {description: ''};
-  var app = new App({
-    path: req.path,
-    onSetTitle: function(title) { data.title = title; },
-    onSetMeta: function(name, content) { data[name] = content; },
-    onPageNotFound: function() { res.status(404); }
-  });
-  data.body = React.renderToString(app);
-  var html = template(data);
-  res.send(html);
-});
-
 // Load pages from the `/src/content/` folder into the AppStore
-(function() {
+var loadContent;
+(loadContent = function() {
   var assign = require('react/lib/Object.assign');
   var fm = require('front-matter');
   var jade = require('jade');
@@ -88,6 +65,34 @@ server.get('*', function(req, res) {
   };
   return getFiles(sourceDir);
 })();
+
+server.set('port', (process.env.PORT || 5000));
+server.use(express.static(path.join(__dirname)));
+
+// Page API
+server.get('/api/page/*', function(req, res) {
+  if (__DEV__ === true)
+    loadContent();
+  var path = req.path.substr(9);
+  var page = AppStore.getPage(path);
+  res.send(page);
+});
+
+// Server-side rendering
+server.get('*', function(req, res) {
+  var data = {description: ''};
+  var app = new App({
+    path: req.path,
+    onSetTitle: function(title) { data.title = title; },
+    onSetMeta: function(name, content) { data[name] = content; },
+    onPageNotFound: function() { res.status(404); }
+  });
+  data.body = React.renderToString(app);
+  var html = template(data);
+  res.send(html);
+});
+
+
 
 server.listen(server.get('port'), function() {
   if (process.send) {
