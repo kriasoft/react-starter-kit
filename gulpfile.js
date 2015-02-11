@@ -37,6 +37,7 @@ var AUTOPREFIXER_BROWSERS = [                 // https://github.com/ai/autoprefi
 
 var src = {};
 var watch = false;
+var browserSync;
 
 // The default task
 gulp.task('default', ['sync']);
@@ -113,54 +114,78 @@ gulp.task('build', ['clean'], function(cb) {
   runSequence(['vendor', 'assets', 'styles', 'bundle'], cb);
 });
 
-// Launch a lightweight HTTP Server
-gulp.task('serve', function(cb) {
-  var nodemon = require('nodemon');
-
+// Build and start watching for modifications
+gulp.task('build:watch', function(cb) {
   watch = true;
-
   runSequence('build', function() {
-    var server = require('nodemon')({
-      script: 'build/server.js',
-      watch: [path.join(__dirname, 'build/server.js')],
-      env: {NODE_ENV: 'development'}
-    }).on('log', function(log) {
-      $.util.log('nodemon', $.util.colors.green(log.message));
-    }).on('crash', function() {
-      $.util.log($.util.colors.red('nodemon crashed'));
-    }).once('start', function() {
-      process.on('exit', function () {
-        server.emit('exit');
-      });
-
-      gulp.watch(src.assets, ['assets']);
-      gulp.watch(src.styles, ['styles']);
-      cb();
-    });
+    gulp.watch(src.assets, ['assets']);
+    gulp.watch(src.styles, ['styles']);
+    cb();
   });
 });
 
-gulp.task('sync', ['serve'], function() {
-  var browserSync = require('browser-sync');
+// Launch a Node.js/Express server
+gulp.task('serve', ['build:watch'], function(cb) {
+  src.server = [
+    DEST + '/server.js',
+    DEST + '/content/**/*',
+    DEST + '/templates/**/*'
+  ];
+
+  var started = false;
+  var cp = require('child_process');
+  var assign = require('react/lib/Object.assign');
+
+  var server = (function startup() {
+    var child = cp.fork(DEST + '/server.js', {
+      env: assign({ NODE_ENV: 'development' }, process.env)
+    });
+    child.once('message', function(message) {
+      if (message.match(/^online$/)) {
+        if (browserSync) {
+          browserSync.reload();
+        }
+        if (!started) {
+          started = true;
+          gulp.watch(src.server, function (file) {
+            $.util.log('Restarting development server.');
+            server.kill('SIGTERM');
+            server = startup();
+          });
+          cb();
+        }
+      }
+    });
+    return child;
+  })();
+
+  process.on('exit', function() {
+    server.kill('SIGTERM');
+  });
+});
+
+// Launch BrowserSync development server
+gulp.task('sync', ['serve'], function(cb) {
+  browserSync = require('browser-sync');
 
   browserSync({
     notify: false,
-    // Customize the BrowserSync console logging prefix
-    logPrefix: 'QC',
     // Run as an https by setting 'https: true'
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
     https: false,
     // Informs browser-sync to proxy our Express app which would run
     // at the following location
-    proxy: 'http://localhost:5000'
-  });
+    proxy: 'localhost:5000'
+  }, cb);
 
-  process.on('exit', function () {
+  process.on('exit', function() {
     browserSync.exit();
   });
 
-  gulp.watch(DEST + '/**/*.*', function (file) {
+  gulp.watch([DEST + '/**/*.*'].concat(
+    src.server.map(function(file) {return '!' + file;})
+  ), function(file) {
     browserSync.reload(path.relative(__dirname, file.path));
   });
 });
