@@ -13,15 +13,6 @@ import fs from 'fs';
 import path from 'path';
 import express from 'express';
 import React from 'react';
-
-// Set global variables
-global.__DEV__ = process.env.NODE_ENV == 'development';
-global.__SERVER__ = true;
-
-// The top-level React component + HTML template for it
-var App = React.createFactory(require('./components/App'));
-var templateFile = path.join(__dirname, 'templates/index.html');
-var template = _.template(fs.readFileSync(templateFile, 'utf8'));
 import Dispatcher from './core/Dispatcher';
 import ActionTypes from './constants/ActionTypes';
 import AppStore from './stores/AppStore';
@@ -31,14 +22,24 @@ var server = express();
 server.set('port', (process.env.PORT || 5000));
 server.use(express.static(path.join(__dirname)));
 
+//
 // Page API
+// -----------------------------------------------------------------------------
 server.get('/api/page/*', function(req, res) {
   var path = req.path.substr(9);
   var page = AppStore.getPage(path);
   res.send(page);
 });
 
+//
 // Server-side rendering
+// -----------------------------------------------------------------------------
+
+// The top-level React component + HTML template for it
+var App = React.createFactory(require('./components/App'));
+var templateFile = path.join(__dirname, 'templates/index.html');
+var template = _.template(fs.readFileSync(templateFile, 'utf8'));
+
 server.get('*', function(req, res) {
   var data = {description: ''};
   var app = new App({
