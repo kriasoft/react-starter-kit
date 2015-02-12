@@ -11,8 +11,8 @@ var argv = require('minimist')(process.argv.slice(2));
 
 var DEBUG = !argv.release;
 
-// Common configuration for both
-// client-side and server-side bundles
+// Common configuration chunk to be used for both
+// client-side (app.js) and server-side (server.js) bundles
 var config = {
   output: {
     path: './build/',
@@ -29,21 +29,8 @@ var config = {
     reasons: DEBUG
   },
 
-  plugins: DEBUG ? [
-    new webpack.DefinePlugin({
-      '__DEV__': true,
-      '__SERVER__': false
-    })
-  ] : [
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"',
-      '__DEV__': false,
-      '__SERVER__': false
-    }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.AggressiveMergingPlugin()
+  plugins: [
+    new webpack.optimize.OccurenceOrderPlugin()
   ],
 
   resolve: {
@@ -100,7 +87,20 @@ var config = {
 // Configuration for the client-side bundle
 var appConfig = update(config, {
   entry: {$set: './src/app.js'},
-  output: {filename: {$set: 'app.js'}}
+  output: {filename: {$set: 'app.js'}},
+  plugins: {
+    $push: [
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
+        '__DEV__': DEBUG,
+        '__SERVER__': false
+      })
+    ].concat(DEBUG ? [] : [
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.AggressiveMergingPlugin()
+    ])
+  }
 });
 
 // Configuration for the server-side bundle
@@ -113,13 +113,22 @@ var serverConfig = update(config, {
   target: {$set: 'node'},
   externals: {$set: /^[a-z\-0-9]+$/},
   node: {$set: {
-    console: true,
+    console: false,
     global: false,
     process: false,
     Buffer: false,
     __filename: false,
     __dirname: false
   }},
+  plugins: {
+    $push: [
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
+        '__DEV__': DEBUG,
+        '__SERVER__': true
+      })
+    ]
+  },
   module: {loaders: {$apply: function(loaders) {
     loaders.forEach(function(loader) {
       loader.loader = loader.loader.replace('style-loader!', '');
