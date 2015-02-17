@@ -8,7 +8,7 @@
 
 'use strict';
 
-import '6to5/polyfill';
+import 'babel/polyfill';
 
 import React from 'react';
 import emptyFunction from 'react/lib/emptyFunction';
