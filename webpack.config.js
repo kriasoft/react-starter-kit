@@ -78,7 +78,7 @@ var config = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: '6to5-loader'
+        loader: 'babel-loader?experimental'
       }
     ]
   }

@@ -10,7 +10,7 @@
     "npm": ">= 2.1"
   },
   "dependencies": {
-    "6to5": "3.5.3",
+    "babel": "^4.0.2",
     "bootstrap": "3.3.2",
     "eventemitter3": "0.1.6",
     "express": "4.11.2",
@@ -22,9 +22,9 @@
     "superagent": "0.21.0"
   },
   "devDependencies": {
-    "6to5-core": "^3.5.3",
-    "6to5-loader": "^3.0.0",
     "autoprefixer-loader": "^1.1.0",
+    "babel-core": "^4.0.2",
+    "babel-loader": "^4.0.0",
     "browser-sync": "^2.0.1",
     "css-loader": "^0.9.1",
     "del": "^1.1.1",
