@@ -5,17 +5,26 @@
 
 'use strict';
 
+var _ = require('lodash');
 var webpack = require('webpack');
-var update = require('react/lib/update');
 var argv = require('minimist')(process.argv.slice(2));
 
 var DEBUG = !argv.release;
+
 var AUTOPREFIXER_LOADER = 'autoprefixer-loader?{browsers:[' +
   '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
   '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}';
 
+var GLOBALS = {
+  'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
+  '__DEV__': DEBUG
+};
+
+//
 // Common configuration chunk to be used for both
 // client-side (app.js) and server-side (server.js) bundles
+// -----------------------------------------------------------------------------
+
 var config = {
   output: {
     path: './build/',
@@ -56,7 +65,7 @@ var config = {
       },
       {
         test: /\.less$/,
-        loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER +'!less-loader'
+        loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER + '!less-loader'
       },
       {
         test: /\.gif/,
@@ -83,71 +92,53 @@ var config = {
   }
 };
 
-// Configuration for the client-side bundle
-var appConfig = update(config, {
-  entry: {$set: './src/app.js'},
+//
+// Configuration for the client-side bundle (app.js)
+// -----------------------------------------------------------------------------
+
+var appConfig = _.merge(_.cloneDeep(config), {
+  entry: './src/app.js',
   output: {
-    filename: {$set: 'app.js'}
+    filename: 'app.js'
   },
-  plugins: {
-    $push: [
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
-        '__DEV__': DEBUG,
-        '__SERVER__': false
-      })
+  plugins: config.plugins.concat([
+      new webpack.DefinePlugin(_.merge(GLOBALS, {'__SERVER__': false}))
     ].concat(DEBUG ? [] : [
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin(),
       new webpack.optimize.AggressiveMergingPlugin()
     ])
-  }
+  )
 });
 
-// Configuration for the server-side bundle
-var serverConfig = update(config, {
-  entry: {$set: './src/server.js'},
+//
+// Configuration for the server-side bundle (server.js)
+// -----------------------------------------------------------------------------
+
+var serverConfig = _.merge(_.cloneDeep(config), {
+  entry: './src/server.js',
   output: {
-    filename: {$set: 'server.js'},
-    libraryTarget: {$set: 'commonjs2'}
+    filename: 'server.js',
+    libraryTarget: 'commonjs2'
   },
-  target: {$set: 'node'},
-  externals: {$set: /^[a-z\-0-9]+$/},
+  target: 'node',
+  externals: /^[a-z\-0-9]+$/,
   node: {
-    $set: {
-      console: false,
-      global: false,
-      process: false,
-      Buffer: false,
-      __filename: false,
-      __dirname: false
-    }
+    console: false,
+    global: false,
+    process: false,
+    Buffer: false,
+    __filename: false,
+    __dirname: false
   },
-  plugins: {
-    $push: [
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
-        '__DEV__': DEBUG,
-        '__SERVER__': true
-      })
-    ]
-  },
-  module: {
-    loaders: {
-      $apply: function(loaders) {
-        // Remove style-loader
-        return loaders.map(function(loader) {
-          return update(loader, {
-            loader: {
-              $apply: function(loader) {
-                return loader.replace('style-loader!', '');
-              }
-            }
-          });
-        });
-      }
-    }
-  }
+  plugins: config.plugins.concat(
+    new webpack.DefinePlugin(_.merge(GLOBALS, {'__SERVER__': true}))
+  )
+});
+
+// Remove style-loader
+serverConfig.module.loaders.forEach(function(loader) {
+  loader.loader = loader.loader.replace('style-loader!', '');
 });
 
 module.exports = [appConfig, serverConfig];
