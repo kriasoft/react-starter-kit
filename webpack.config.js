@@ -10,6 +10,9 @@ var update = require('react/lib/update');
 var argv = require('minimist')(process.argv.slice(2));
 
 var DEBUG = !argv.release;
+var AUTOPREFIXER_LOADER = 'autoprefixer-loader?{browsers:[' +
+  '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
+  '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}';
 
 // Common configuration chunk to be used for both
 // client-side (app.js) and server-side (server.js) bundles
@@ -49,15 +52,11 @@ var config = {
     loaders: [
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader!autoprefixer-loader?{browsers:[' +
-        '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
-        '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}'
+        loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER
       },
       {
         test: /\.less$/,
-        loader: 'style-loader!css-loader!autoprefixer-loader?{browsers:[' +
-        '"Android 2.3", "Android >= 4", "Chrome >= 20", "Firefox >= 24", ' +
-        '"Explorer >= 8", "iOS >= 6", "Opera >= 12", "Safari >= 6"]}!less-loader'
+        loader: 'style-loader!css-loader!' + AUTOPREFIXER_LOADER +'!less-loader'
       },
       {
         test: /\.gif/,
@@ -87,7 +86,9 @@ var config = {
 // Configuration for the client-side bundle
 var appConfig = update(config, {
   entry: {$set: './src/app.js'},
-  output: {filename: {$set: 'app.js'}},
+  output: {
+    filename: {$set: 'app.js'}
+  },
   plugins: {
     $push: [
       new webpack.DefinePlugin({
@@ -112,14 +113,16 @@ var serverConfig = update(config, {
   },
   target: {$set: 'node'},
   externals: {$set: /^[a-z\-0-9]+$/},
-  node: {$set: {
-    console: false,
-    global: false,
-    process: false,
-    Buffer: false,
-    __filename: false,
-    __dirname: false
-  }},
+  node: {
+    $set: {
+      console: false,
+      global: false,
+      process: false,
+      Buffer: false,
+      __filename: false,
+      __dirname: false
+    }
+  },
   plugins: {
     $push: [
       new webpack.DefinePlugin({
@@ -129,12 +132,22 @@ var serverConfig = update(config, {
       })
     ]
   },
-  module: {loaders: {$apply: function(loaders) {
-    loaders.forEach(function(loader) {
-      loader.loader = loader.loader.replace('style-loader!', '');
-    });
-    return loaders;
-  }}}
+  module: {
+    loaders: {
+      $apply: function(loaders) {
+        // Remove style-loader
+        return loaders.map(function(loader) {
+          return update(loader, {
+            loader: {
+              $apply: function(loader) {
+                return loader.replace('style-loader!', '');
+              }
+            }
+          });
+        });
+      }
+    }
+  }
 });
 
 module.exports = [appConfig, serverConfig];
