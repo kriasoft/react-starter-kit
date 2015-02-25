@@ -96,7 +96,7 @@ var config = {
 // Configuration for the client-side bundle (app.js)
 // -----------------------------------------------------------------------------
 
-var appConfig = _.merge(_.cloneDeep(config), {
+var appConfig = _.merge({}, config, {
   entry: './src/app.js',
   output: {
     filename: 'app.js'
@@ -115,7 +115,7 @@ var appConfig = _.merge(_.cloneDeep(config), {
 // Configuration for the server-side bundle (server.js)
 // -----------------------------------------------------------------------------
 
-var serverConfig = _.merge(_.cloneDeep(config), {
+var serverConfig = _.merge({}, config, {
   entry: './src/server.js',
   output: {
     filename: 'server.js',
@@ -133,12 +133,15 @@ var serverConfig = _.merge(_.cloneDeep(config), {
   },
   plugins: config.plugins.concat(
     new webpack.DefinePlugin(_.merge(GLOBALS, {'__SERVER__': true}))
-  )
-});
-
-// Remove style-loader
-serverConfig.module.loaders.forEach(function(loader) {
-  loader.loader = loader.loader.replace('style-loader!', '');
+  ),
+  module: {
+    loaders: config.module.loaders.map(function(loader) {
+      // Remove style-loader
+      return _.merge(loader, {
+        loader: loader.loader = loader.loader.replace('style-loader!', '')
+      })
+    })
+  }
 });
 
 module.exports = [appConfig, serverConfig];
