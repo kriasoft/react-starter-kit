@@ -19,7 +19,7 @@ import Navbar from '../Navbar';
 import ContentPage from '../ContentPage';
 import NotFoundPage from '../NotFoundPage';
 
-var Application = React.createClass({
+export default React.createClass({
 
   mixins: [NavigationMixin],
 
@@ -72,5 +72,3 @@ var Application = React.createClass({
   }
 
 });
-
-module.exports = Application;

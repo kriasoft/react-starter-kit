@@ -10,7 +10,7 @@
 
 import React from 'react';
 
-var HomePage = React.createClass({
+export default React.createClass({
 
   propTypes: {
     body: React.PropTypes.string.isRequired
@@ -24,5 +24,3 @@ var HomePage = React.createClass({
   }
 
 });
-
-module.exports = HomePage;

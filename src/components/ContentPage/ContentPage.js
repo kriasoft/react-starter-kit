@@ -10,7 +10,7 @@
 
 import React from 'react';
 
-var ContentPage = React.createClass({
+export default React.createClass({
 
   propTypes: {
     body: React.PropTypes.string.isRequired
@@ -26,5 +26,3 @@ var ContentPage = React.createClass({
   }
 
 });
-
-module.exports = ContentPage;

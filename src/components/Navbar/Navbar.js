@@ -10,7 +10,7 @@
 
 import React from 'react';
 
-var Navbar = React.createClass({
+export default React.createClass({
 
   render() {
     return (
@@ -28,5 +28,3 @@ var Navbar = React.createClass({
   }
 
 });
-
-module.exports = Navbar;

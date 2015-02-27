@@ -12,7 +12,7 @@
 
 import React from 'react';
 
-var NotFoundPage = React.createClass({
+export default React.createClass({
 
   render() {
     return (
@@ -26,5 +26,3 @@ var NotFoundPage = React.createClass({
   }
 
 });
-
-module.exports = NotFoundPage;
