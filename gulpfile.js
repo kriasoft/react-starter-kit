@@ -40,7 +40,9 @@ var browserSync;
 gulp.task('default', ['sync']);
 
 // Clean output directory
-gulp.task('clean', del.bind(null, ['.tmp', 'build/*', '!build/.git'], {dot: true}));
+gulp.task('clean', del.bind(
+  null, ['.tmp', 'build/*', '!build/.git'], {dot: true}
+));
 
 // 3rd party libraries
 gulp.task('vendor', function() {
@@ -135,7 +137,7 @@ gulp.task('serve', ['build:watch'], function(cb) {
 
   var server = (function startup() {
     var child = cp.fork('build/server.js', {
-      env: assign({ NODE_ENV: 'development' }, process.env)
+      env: assign({NODE_ENV: 'development'}, process.env)
     });
     child.once('message', function(message) {
       if (message.match(/^online$/)) {
@@ -200,7 +202,8 @@ gulp.task('deploy', function() {
   }
 
   return gulp.src('build/**/*')
-    .pipe($.if('**/robots.txt', !argv.production ? $.replace('Disallow:', 'Disallow: /') : $.util.noop()))
+    .pipe($.if('**/robots.txt', !argv.production ?
+      $.replace('Disallow:', 'Disallow: /') : $.util.noop()))
     .pipe($.ghPages({
       remoteUrl: 'https://github.com/{name}/{name}.github.io.git',
       branch: 'master'
