@@ -54,7 +54,7 @@ var config = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'jshint'
+        loader: 'eslint-loader'
       }
     ],
 
