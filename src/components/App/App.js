@@ -12,7 +12,6 @@ import './App.less';
 
 import React from 'react';
 import invariant from 'react/lib/invariant';
-import AppActions from '../../actions/AppActions';
 import NavigationMixin from './NavigationMixin';
 import AppStore from '../../stores/AppStore';
 import Navbar from '../Navbar';
@@ -41,7 +40,6 @@ export default React.createClass({
     }
 
     return (
-      /* jshint ignore:start */
       <div className="App">
         <Navbar />
         {
@@ -67,7 +65,6 @@ export default React.createClass({
           </div>
         </div>
       </div>
-      /* jshint ignore:end */
     );
   }
 

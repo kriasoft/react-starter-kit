@@ -140,7 +140,7 @@ var serverConfig = _.merge({}, config, {
       // Remove style-loader
       return _.merge(loader, {
         loader: loader.loader = loader.loader.replace('style-loader!', '')
-      })
+      });
     })
   }
 });

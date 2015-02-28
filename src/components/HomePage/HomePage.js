@@ -17,10 +17,8 @@ export default React.createClass({
   },
 
   render() {
-    /* jshint ignore:start */
     return <div className="ContentPage"
       dangerouslySetInnerHTML={{__html: this.props.body}} />;
-    /* jshint ignore:end */
   }
 
 });

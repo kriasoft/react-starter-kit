@@ -16,15 +16,19 @@ import assign from 'react/lib/Object.assign';
 
 var CHANGE_EVENT = 'change';
 
-var _pages = {};
-var _loading = false;
+var pages = {};
+var loading = false;
 
 if (__SERVER__) {
-  _pages['/'] = {title: 'Home Page'};
-  _pages['/privacy'] = {title: 'Privacy Policy'};
+  pages['/'] = {title: 'Home Page'};
+  pages['/privacy'] = {title: 'Privacy Policy'};
 }
 
 var AppStore = assign({}, EventEmitter.prototype, {
+
+  isLoading() {
+    return loading;
+  },
 
   /**
    * Gets page data by the given URL path.
@@ -33,7 +37,7 @@ var AppStore = assign({}, EventEmitter.prototype, {
    * @returns {*} Page data.
    */
   getPage(path) {
-    return path in _pages ? _pages[path] : {
+    return path in pages ? pages[path] : {
       title: 'Page Not Found',
       type: 'notfound'
     };
@@ -75,10 +79,11 @@ AppStore.dispatcherToken = Dispatcher.register((payload) => {
 
     case ActionTypes.LOAD_PAGE:
       if (action.source === PayloadSources.VIEW_ACTION) {
-        _loading = true;
+        loading = true;
       } else {
+        loading = false;
         if (!action.err) {
-          _pages[action.path] = action.page;
+          pages[action.path] = action.page;
         }
       }
       AppStore.emitChange();
@@ -92,4 +97,3 @@ AppStore.dispatcherToken = Dispatcher.register((payload) => {
 });
 
 module.exports = AppStore;
-

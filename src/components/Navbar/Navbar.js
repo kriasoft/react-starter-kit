@@ -14,7 +14,6 @@ export default React.createClass({
 
   render() {
     return (
-      /* jshint ignore:start */
       <div className="navbar-top" role="navigation">
         <div className="container">
           <a className="navbar-brand row" href="/">
@@ -23,7 +22,6 @@ export default React.createClass({
           </a>
         </div>
       </div>
-      /* jshint ignore:end */
     );
   }
 

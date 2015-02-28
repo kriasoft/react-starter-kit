@@ -8,7 +8,6 @@
 
 'use strict';
 
-import React from 'react';
 import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';
 import AppActions from '../../actions/AppActions';
 
@@ -27,11 +26,12 @@ var NavigationMixin = {
   },
 
   handlePopState(event) {
-    if (event.state) {
-      var path = event.state.path;
-      // TODO: Replace current location
-      // replace(path, event.state);
-    } else {
+    //if (event.state) {
+    //  TODO: Replace current location
+    //  var path = event.state.path;
+    //  replace(path, event.state);
+    //}
+    if (!event.state) {
       AppActions.navigateTo(window.location.pathname);
     }
   },
@@ -59,7 +59,7 @@ var NavigationMixin = {
 
     // Ensure non-hash for the same path
     var link = el.getAttribute('href');
-    if (el.pathname === location.pathname && (el.hash || '#' === link)) {
+    if (el.pathname === location.pathname && (el.hash || link === '#')) {
       return;
     }
 
