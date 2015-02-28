@@ -26,8 +26,8 @@ server.use(express.static(path.join(__dirname)));
 // Page API
 // -----------------------------------------------------------------------------
 server.get('/api/page/*', function(req, res) {
-  var path = req.path.substr(9);
-  var page = AppStore.getPage(path);
+  var urlPath = req.path.substr(9);
+  var page = AppStore.getPage(urlPath);
   res.send(page);
 });
 

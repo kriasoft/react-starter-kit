@@ -24,10 +24,12 @@
   "devDependencies": {
     "autoprefixer-loader": "^1.1.0",
     "babel-core": "^4.6.1",
+    "babel-eslint": "^1.0.12",
     "babel-loader": "^4.0.0",
     "browser-sync": "^2.2.1",
     "css-loader": "^0.9.1",
     "del": "^1.1.1",
+    "eslint": "^0.15.1",
     "gulp": "^3.8.11",
     "gulp-autoprefixer": "^2.1.0",
     "gulp-cache": "^0.2.8",
@@ -38,7 +40,6 @@
     "gulp-if": "^1.2.5",
     "gulp-imagemin": "^2.2.1",
     "gulp-jsbeautifier": "^0.0.4",
-    "gulp-jshint": "^1.9.2",
     "gulp-less": "^3.0.1",
     "gulp-load-plugins": "^0.8.1",
     "gulp-minify-css": "^0.5.0",
@@ -50,9 +51,6 @@
     "gulp-uglify": "^1.1.0",
     "gulp-util": "^3.0.4",
     "jest-cli": "^0.4.0",
-    "jshint": "^2.6.2",
-    "jshint-loader": "^0.8.3",
-    "jshint-stylish": "^1.0.1",
     "less": "^2.4.0",
     "less-loader": "^2.0.0",
     "minimist": "^1.1.0",
@@ -74,8 +72,7 @@
   },
   "scripts": {
     "start": "gulp",
-    "test": "jshint && jest",
-    "jshint": "jshint ./src gulpfile.js",
+    "test": "eslint src gulpfile.js webpack.config.js && jest",
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update"
   }

@@ -146,7 +146,7 @@ gulp.task('serve', ['build:watch'], function(cb) {
         }
         if (!started) {
           started = true;
-          gulp.watch(src.server, function (file) {
+          gulp.watch(src.server, function() {
             $.util.log('Restarting development server.');
             server.kill('SIGTERM');
             server = startup();
@@ -195,7 +195,6 @@ gulp.task('deploy', function() {
   // Remove temp folder
   if (argv.clean) {
     var os = require('os');
-    var path = require('path');
     var repoPath = path.join(os.tmpdir(), 'tmpRepo');
     $.util.log('Delete ' + $.util.colors.magenta(repoPath));
     del.sync(repoPath, {force: true});

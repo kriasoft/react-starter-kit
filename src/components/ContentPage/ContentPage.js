@@ -17,12 +17,10 @@ export default React.createClass({
   },
 
   render() {
-    var { className, title, body, other } = this.props;
+    var { className, body, other } = this.props;
 
-    /* jshint ignore:start */
     return <div className={'ContentPage ' + className}
-      dangerouslySetInnerHTML={{__html: body}} />;
-    /* jshint ignore:end */
+      dangerouslySetInnerHTML={{__html: body}} {...other} />;
   }
 
 });
