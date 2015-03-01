@@ -12,6 +12,7 @@
 // See: https://github.com/gulpjs/gulp/blob/master/docs/API.md
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
+var concatCss = require('gulp-concat-css');
 var del = require('del');
 var path = require('path');
 var runSequence = require('run-sequence');
@@ -66,8 +67,9 @@ gulp.task('assets', function() {
 
 // CSS style sheets
 gulp.task('styles', function() {
-  src.styles = 'src/styles/**/*.{css,less}';
-  return gulp.src('src/styles/bootstrap.less')
+  src.styles1 = 'src/components/**/*.{css,less}';
+  src.styles2 = 'src/components/*.{css,less}';
+  return gulp.src(['src/components/**/*.{css,less}', 'src/components/*.{css,less}'])
     .pipe($.plumber())
     .pipe($.less({
       sourceMap: !RELEASE,
@@ -77,6 +79,7 @@ gulp.task('styles', function() {
     .pipe($.autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
     .pipe($.csscomb())
     .pipe($.if(RELEASE, $.minifyCss()))
+    .pipe(concatCss("bundle.css"))
     .pipe(gulp.dest(DEST + '/css'))
     .pipe($.size({title: 'styles'}));
 });
@@ -119,7 +122,8 @@ gulp.task('build:watch', function(cb) {
   watch = true;
   runSequence('build', function() {
     gulp.watch(src.assets, ['assets']);
-    gulp.watch(src.styles, ['styles']);
+    gulp.watch(src.styles1, ['styles']);
+    gulp.watch(src.styles2, ['styles']);
     cb();
   });
 });
