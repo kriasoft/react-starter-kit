@@ -1,3 +1,4 @@
+sudo: false
 language: node_js
 node_js:
   - iojs
@@ -5,5 +6,5 @@ node_js:
   - '0.10'
 matrix:
   allow_failures:
-    - node_js: iojs
     - node_js: '0.12'
+    - node_js: '0.10'

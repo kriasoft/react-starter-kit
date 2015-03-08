@@ -7,6 +7,7 @@
   "license": "MIT",
   "engines": {
     "node": ">= 0.10",
+    "iojs": ">= 1.5.0",
     "npm": ">= 2.1"
   },
   "dependencies": {
@@ -51,10 +52,11 @@
     "gulp-size": "^1.2.1",
     "gulp-uglify": "^1.1.0",
     "gulp-util": "^3.0.4",
-    "jest-cli": "^0.4.0",
+    "jsdom": "^4.0.2",
     "less": "^2.4.0",
     "less-loader": "^2.1.0",
     "minimist": "^1.1.0",
+    "mocha": "^2.2.0",
     "protractor": "^1.8.0",
     "psi": "^1.0.6",
     "react-tools": "^0.12.2",
@@ -64,16 +66,10 @@
     "webpack": "^1.7.2",
     "webpack-dev-server": "^1.7.0"
   },
-  "jest": {
-    "rootDir": "./src",
-    "scriptPreprocessor": "../preprocessor.js",
-    "unmockedModulePathPatterns": [
-      "react"
-    ]
-  },
   "scripts": {
     "start": "gulp",
-    "test": "eslint src gulpfile.js webpack.config.js && jest",
+    "lint": "eslint src/ gulpfile.js webpack.config.js",
+    "test": "mocha --compilers js:compiler.js src/**/*-test.js",
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update"
   }
