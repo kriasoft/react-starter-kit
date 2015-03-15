@@ -10,24 +10,24 @@
 
 import 'babel/polyfill';
 
-import React from 'react';
+import React from 'react/addons';
 import emptyFunction from 'react/lib/emptyFunction';
 import App from './components/App';
 import Dispatcher from './core/Dispatcher';
 import AppActions from './actions/AppActions';
 import ActionTypes from './constants/ActionTypes';
 
-var path = decodeURI(window.location.pathname);
-var setMetaTag = (name, content) => {
+let path = decodeURI(window.location.pathname);
+let setMetaTag = (name, content) => {
   // Remove and create a new <meta /> tag in order to make it work
   // with bookmarks in Safari
-  var elements = document.getElementsByTagName('meta');
+  let elements = document.getElementsByTagName('meta');
   [].slice.call(elements).forEach((element) => {
     if (element.getAttribute('name') === name) {
       element.parentNode.removeChild(element);
     }
   });
-  var meta = document.createElement('meta');
+  let meta = document.createElement('meta');
   meta.setAttribute('name', name);
   meta.setAttribute('content', content);
   document.getElementsByTagName('head')[0].appendChild(meta);
@@ -35,19 +35,20 @@ var setMetaTag = (name, content) => {
 
 function run() {
   // Render the top-level React component
-  var props = {
+  let props = {
     path: path,
     onSetTitle: (title) => document.title = title,
     onSetMeta: setMetaTag,
     onPageNotFound: emptyFunction
   };
-  var component = React.createElement(App, props);
-  var app = React.render(component, document.body);
+  let element = React.createElement(App, props);
+  React.render(element, document.body);
 
   // Update `Application.path` prop when `window.location` is changed
   Dispatcher.register((payload) => {
     if (payload.action.actionType === ActionTypes.CHANGE_LOCATION) {
-      app.setProps({path: decodeURI(payload.action.path)});
+      element = React.cloneElement(element, {path: payload.action.path});
+      React.render(element, document.body);
     }
   });
 }

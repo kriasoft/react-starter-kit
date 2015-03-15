@@ -96,4 +96,4 @@ AppStore.dispatcherToken = Dispatcher.register((payload) => {
 
 });
 
-module.exports = AppStore;
+export default AppStore;

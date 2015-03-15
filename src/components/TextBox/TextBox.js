@@ -12,17 +12,7 @@ import './TextBox.less';
 
 import React from 'react';
 
-export default React.createClass({
-
-  propTypes: {
-    maxLines: React.PropTypes.number
-  },
-
-  getDefaultProps() {
-    return {
-      maxLines: 1
-    };
-  },
+export default class TextBox extends React.Component {
 
   render() {
     return (
@@ -34,4 +24,12 @@ export default React.createClass({
     );
   }
 
-});
+}
+
+TextBox.propTypes = {
+  maxLines: React.PropTypes.number
+};
+
+TextBox.defaultProps = {
+  maxLines: 1
+};
