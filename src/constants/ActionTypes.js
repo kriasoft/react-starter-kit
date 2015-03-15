@@ -10,7 +10,7 @@
 
 import keyMirror from 'react/lib/keyMirror';
 
-var ActionTypes = keyMirror({
+export default keyMirror({
 
   LOAD_PAGE: null,
   LOAD_PAGE_SUCCESS: null,
@@ -18,5 +18,3 @@ var ActionTypes = keyMirror({
   CHANGE_LOCATION: null
 
 });
-
-module.exports = ActionTypes;

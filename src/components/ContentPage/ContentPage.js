@@ -10,17 +10,19 @@
 
 import React from 'react';
 
-export default React.createClass({
-
-  propTypes: {
-    body: React.PropTypes.string.isRequired
-  },
+export default class ContentPage extends React.Component {
 
   render() {
     var { className, body, other } = this.props;
 
-    return <div className={'ContentPage ' + className}
-      dangerouslySetInnerHTML={{__html: body}} {...other} />;
+    return (
+      <div className={'ContentPage ' + className}
+        dangerouslySetInnerHTML={{__html: body}} {...other} />
+    );
   }
 
-});
+}
+
+ContentPage.propTypes = {
+  body: React.PropTypes.string.isRequired
+};

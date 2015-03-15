@@ -13,28 +13,37 @@ import ActionTypes from '../constants/ActionTypes';
 import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';
 import http from 'superagent';
 
-module.exports = {
+export default {
 
-  navigateTo(path) {
+  navigateTo(path, options) {
     if (ExecutionEnvironment.canUseDOM) {
-      window.history.pushState({}, document.title, path);
+      if (options && options.replace) {
+        window.history.replaceState({}, document.title, path);
+      } else {
+        window.history.pushState({}, document.title, path);
+      }
     }
 
     Dispatcher.handleViewAction({
-      actionType: ActionTypes.CHANGE_LOCATION, path: path
+      actionType: ActionTypes.CHANGE_LOCATION,
+      path
     });
   },
 
   loadPage(path, cb) {
     Dispatcher.handleViewAction({
-      actionType: ActionTypes.LOAD_PAGE, path: path
+      actionType: ActionTypes.LOAD_PAGE,
+      path
     });
 
     http.get('/api/page' + path)
       .accept('application/json')
       .end((err, res) => {
         Dispatcher.handleServerAction({
-          actionType: ActionTypes.LOAD_PAGE, path: path, err: err, page: res.body
+          actionType: ActionTypes.LOAD_PAGE,
+          path,
+          err,
+          page: res.body
         });
         if (cb) {
           cb();

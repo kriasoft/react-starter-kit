@@ -10,7 +10,7 @@
 
 import React from 'react';
 
-export default React.createClass({
+export default class Navbar extends React.Component {
 
   render() {
     return (
@@ -25,4 +25,4 @@ export default React.createClass({
     );
   }
 
-});
+}
