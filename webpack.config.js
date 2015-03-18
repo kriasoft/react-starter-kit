@@ -28,7 +28,7 @@ var GLOBALS = {
 var config = {
   output: {
     path: './build/',
-    publicPath: './build/',
+    publicPath: './',
     sourcePrefix: '  '
   },
 
