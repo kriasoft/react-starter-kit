@@ -9,8 +9,7 @@
 'use strict';
 
 import './App.less';
-
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import invariant from 'react/lib/invariant';
 import AppActions from '../../actions/AppActions';
 import AppStore from '../../stores/AppStore';
@@ -18,7 +17,7 @@ import Navbar from '../Navbar';
 import ContentPage from '../ContentPage';
 import NotFoundPage from '../NotFoundPage';
 
-export default class App extends React.Component {
+class App extends Component {
 
   componentDidMount() {
     window.addEventListener('popstate', this.handlePopState);
@@ -133,8 +132,10 @@ export default class App extends React.Component {
 }
 
 App.propTypes = {
-  path: React.PropTypes.string.isRequired,
-  onSetTitle: React.PropTypes.func.isRequired,
-  onSetMeta: React.PropTypes.func.isRequired,
-  onPageNotFound: React.PropTypes.func.isRequired
+  path: PropTypes.string.isRequired,
+  onSetTitle: PropTypes.func.isRequired,
+  onSetMeta: PropTypes.func.isRequired,
+  onPageNotFound: PropTypes.func.isRequired
 };
+
+export default App;
