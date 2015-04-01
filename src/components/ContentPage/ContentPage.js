@@ -8,9 +8,10 @@
 
 'use strict';
 
-import React from 'react';
+import './ContentPage.less';
+import React, { Component, PropTypes } from 'react';
 
-export default class ContentPage extends React.Component {
+class ContentPage extends Component {
 
   render() {
     var { className, body, other } = this.props;
@@ -24,5 +25,7 @@ export default class ContentPage extends React.Component {
 }
 
 ContentPage.propTypes = {
-  body: React.PropTypes.string.isRequired
+  body: PropTypes.string.isRequired
 };
+
+export default ContentPage;

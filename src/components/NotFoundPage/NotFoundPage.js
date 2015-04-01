@@ -10,9 +10,9 @@
 
 //require('./NotFoundPage.less');
 
-import React from 'react';
+import React, { Component } from 'react';
 
-export default class NotFoundPage extends React.Component {
+class NotFoundPage extends Component {
 
   render() {
     return (
@@ -24,3 +24,5 @@ export default class NotFoundPage extends React.Component {
   }
 
 }
+
+export default NotFoundPage;
