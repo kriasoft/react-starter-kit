@@ -11,6 +11,7 @@
 import 'babel/polyfill';
 
 import React from 'react/addons';
+import FastClick from 'fastclick';
 import emptyFunction from 'react/lib/emptyFunction';
 import App from './components/App';
 import Dispatcher from './core/Dispatcher';
@@ -62,8 +63,6 @@ Promise.all([
     } else {
       window.attachEvent('onload', resolve);
     }
-  }),
-  new Promise((resolve) => {
-    AppActions.loadPage(path, resolve);
-  })
+  }).then(() => FastClick.attach(document.body)),
+  new Promise((resolve) => AppActions.loadPage(path, resolve))
 ]).then(run);
