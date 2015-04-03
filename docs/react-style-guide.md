@@ -17,7 +17,7 @@ A sample file structure per component:
 /src/components/Navigation/package.json
 ```
 
-For more information google for [component-based UI development](google.com/search?q=component-based+ui+development).
+For more information google for [component-based UI development](https://google.com/search?q=component-based+ui+development).
 
 ### CSS Class Names
 
