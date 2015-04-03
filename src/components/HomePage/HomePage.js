@@ -9,9 +9,13 @@
 'use strict';
 
 import './HomePage.less';
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 
-class HomePage extends Component {
+class HomePage {
+
+  static propTypes = {
+    body: PropTypes.string.isRequired
+  }
 
   render() {
     return (
@@ -21,9 +25,5 @@ class HomePage extends Component {
   }
 
 }
-
-HomePage.propTypes = {
-  body: PropTypes.string.isRequired
-};
 
 export default HomePage;
