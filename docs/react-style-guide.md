@@ -9,11 +9,11 @@
 A sample file structure per component:
 
 ```
-/src/components/Navigation/Navigation.js
-/src/components/Navigation/Navigation-test.js
-/src/components/Navigation/Navigation.less
-/src/components/Navigation/Navigation.ru-RU.less
 /src/components/Navigation/icon.svg
+/src/components/Navigation/Navigation.js
+/src/components/Navigation/Navigation.less
+/src/components/Navigation/Navigation.test.js
+/src/components/Navigation/Navigation.ru-RU.less
 /src/components/Navigation/package.json
 ```
 
@@ -44,7 +44,7 @@ A sample component class:
 'use strict';
 
 import './SampleComponent.less';
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 class SampleComponent extends Component {
 
