@@ -14,6 +14,10 @@
 
 **Demo**: http://reactjs.kriasoft.com
 
+### Documentation
+
+- [React Style Guide](./docs/react-style-guide.md)
+
 ### Directory Layout
 
 ```
@@ -49,10 +53,6 @@ $ cd MyApp
 $ npm install -g gulp           # Install Gulp task runner globally
 $ npm install                   # Install Node.js components listed in ./package.json
 ```
-
-### Documentation
-
-- [React Style Guide](./docs/react-style-guide.md)
 
 ### How to Build
 
@@ -117,6 +117,7 @@ the file is. Name the test by appending `-test.js` to the js file.
  * [Jest - Painless Unit Testing](http://facebook.github.io/jest/)
  * [Flow - A static type checker for JavaScript](http://flowtype.org/)
  * [The Future of React](https://github.com/reactjs/react-future)
+ * [Learn ES6](https://babeljs.io/docs/learn-es6/), [ES6 Features](https://github.com/lukehoban/es6features#readme)
 
 ### Support
 
