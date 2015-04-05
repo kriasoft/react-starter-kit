@@ -23,7 +23,7 @@ For more information google for [component-based UI development](https://google.
 
 Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS](https://suitcss.github.io/) for inspiration.
 
-```css
+```less
 // CSS
 .ComponentName { }
 .ComponentName--modifier { }
@@ -35,7 +35,7 @@ For example:
 
 ```jsx
 // JSX
-<div className="Navigation">
+<nav className="Navigation">
   <ul className="Navigation-items">
     <li className="Navigation-item Navigation-item--selected">
       <a className="Navigation-link" href="/products">Products</a>
@@ -44,7 +44,7 @@ For example:
       <a className="Navigation-link" href="/services">Services</a>
     </li>
   </ul>
-</div>
+</nav>
 ```
 
 ```less
