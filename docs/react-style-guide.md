@@ -21,16 +21,69 @@ For more information google for [component-based UI development](https://google.
 
 ### CSS Class Names
 
-Use [BEM](https://bem.info/) approach for naming CSS classes.
+Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS](https://suitcss.github.io/) for inspiration.
 
 ```css
+// CSS
 .ComponentName { }
 .ComponentName--modifier { }
 .ComponentName-elementName { }
 .ComponentName-elementName--modifier { }
 ```
 
-See [SUIT CSS](https://suitcss.github.io/) for inspiration.
+For example:
+
+```jsx
+// JSX
+<div className="Navigation">
+  <ul className="Navigation-items">
+    <li className="Navigation-item Navigation-item--selected">
+      <a className="Navigation-link" href="/products">Products</a>
+    </li>
+    <li className="Navigation-item">
+      <a className="Navigation-link" href="/services">Services</a>
+    </li>
+  </ul>
+</div>
+```
+
+```less
+// LESS
+.Navigation {
+  &-items {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    text-align: center;
+  }
+
+  &-item {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  &-link {
+    display: block;
+    padding: 0 25px;
+    outline: 0;
+    border: 0;
+    color: @default-color;
+    text-decoration: none;
+    line-height: @line-height;
+    transition: background-color .3s ease;
+
+    &,
+    .Navigation-items:hover & {
+      background: @default-bg-color;
+    }
+
+    &--selected,
+    .Navigation-items:hover &:hover {
+      background: @active-bg-color;
+    }
+  }
+}
+```
 
 ### React Components
 
