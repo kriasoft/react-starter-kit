@@ -123,7 +123,7 @@ var serverConfig = _.merge({}, config, {
     libraryTarget: 'commonjs2'
   },
   target: 'node',
-  externals: /^[a-z\-0-9]+$/,
+  externals: /^[a-z][a-z\.\-0-9]*$/,
   node: {
     console: false,
     global: false,
