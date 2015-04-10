@@ -6,7 +6,7 @@
 - Avoid having shared resources between components (css, images etc.)
 - Keep all components' folders in the same parent folder (avoid nesting)
 
-A sample file structure per component:
+##### File structure per component example:
 
 ```
 /src/components/Navigation/icon.svg
@@ -31,7 +31,7 @@ Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS
 .ComponentName-elementName--modifier { }
 ```
 
-For example:
+##### CSS styling example:
 
 ```jsx
 // JSX
@@ -69,7 +69,7 @@ For example:
     border: 0;
     color: @default-color;
     text-decoration: none;
-    line-height: @line-height;
+    line-height: 25px;
     transition: background-color .3s ease;
 
     &,
@@ -91,7 +91,7 @@ For example:
 - Use [ES6 classes](https://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html#es6-classes) for creating new React components
 - Use higher-order components to extend the functionality of existing components
 
-A sample component class:
+##### React component example:
 
 ```js
 'use strict';
@@ -136,7 +136,7 @@ export default SampleComponent;
 
 Put custom methods and properties at the bottom of the file, after the render() method.
 
-A sample higher-order component:
+##### Higher-order React component example:
 
 ```js
 'use strict';
