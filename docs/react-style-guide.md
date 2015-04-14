@@ -94,8 +94,6 @@ Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS
 ##### React component example:
 
 ```js
-'use strict';
-
 import './SampleComponent.less';
 import React, { Component } from 'react';
 
@@ -139,8 +137,6 @@ Put custom methods and properties at the bottom of the file, after the render() 
 ##### Higher-order React component example:
 
 ```js
-'use strict';
-
 import React, { Component } from 'react';
 import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 

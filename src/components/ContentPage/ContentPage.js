@@ -6,8 +6,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
 import './ContentPage.less';
 import React, { PropTypes } from 'react';
 
@@ -15,7 +13,7 @@ class ContentPage {
 
   static propTypes = {
     body: PropTypes.string.isRequired
-  }
+  };
 
   render() {
     var { className, body, other } = this.props;
