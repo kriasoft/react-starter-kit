@@ -6,8 +6,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
 import './TextBox.less';
 import React, { PropTypes } from 'react';
 
@@ -15,11 +13,11 @@ class TextBox {
 
   static propTypes = {
     maxLines: PropTypes.number
-  }
+  };
 
   static defaultProps = {
     maxLines: 1
-  }
+  };
 
   render() {
     return (

@@ -6,8 +6,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
 import './App.less';
 import React, { PropTypes } from 'react';
 import invariant from 'react/lib/invariant';
@@ -26,7 +24,7 @@ class App {
     onSetTitle: PropTypes.func.isRequired,
     onSetMeta: PropTypes.func.isRequired,
     onPageNotFound: PropTypes.func.isRequired
-  }
+  };
 
   componentDidMount() {
     window.addEventListener('popstate', this.handlePopState);

@@ -6,8 +6,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
 import React, { Component } from 'react';
 
 class Navbar extends Component {

@@ -6,10 +6,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
-//require('./NotFoundPage.less');
-
+//import './NotFoundPage.less';
 import React, { Component } from 'react';
 
 class NotFoundPage extends Component {

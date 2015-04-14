@@ -6,8 +6,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
 import Dispatcher from '../core/Dispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';

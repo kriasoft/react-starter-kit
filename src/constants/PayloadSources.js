@@ -6,8 +6,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
 import keyMirror from 'react/lib/keyMirror';
 
 export default keyMirror({

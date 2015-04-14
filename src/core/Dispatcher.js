@@ -6,8 +6,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
 import Flux from 'flux';
 import PayloadSources from '../constants/PayloadSources';
 import assign from 'react/lib/Object.assign';

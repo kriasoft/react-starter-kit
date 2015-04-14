@@ -6,8 +6,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
-
 import 'babel/polyfill';
 
 import React from 'react/addons';
