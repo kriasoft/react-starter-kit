@@ -78,9 +78,7 @@ synchronized browsing across multiple devices and browsers.
 $ gulp deploy                   # or, `gulp deploy --production`
 ```
 
-You can deploy to different destinations by adding a corresponding flag.
-For example `--production` or `--staging` etc. See the 'deploy' task in
-`gulpfile.js`.
+For more information see 'deploy' task in `gulpfile.js`.
 
 ### How to Update
 
