@@ -7,9 +7,9 @@
  */
 
 //import './NotFoundPage.less';
-import React, { Component } from 'react';
+import React from 'react'; // eslint-disable-line no-unused-vars
 
-class NotFoundPage extends Component {
+class NotFoundPage {
 
   render() {
     return (
