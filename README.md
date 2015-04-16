@@ -48,7 +48,7 @@
 Just [clone](github-windows://openRepo/https://github.com/kriasoft/react-starter-kit) or [fork](https://github.com/kriasoft/react-starter-kit/fork) the repo and start hacking:
 
 ```shell
-$ git clone -o upstream https://github.com/kriasoft/react-starter-kit.git MyApp
+$ git clone -o react-starter-kit https://github.com/kriasoft/react-starter-kit.git MyApp
 $ cd MyApp
 $ npm install -g gulp           # Install Gulp task runner globally
 $ npm install                   # Install Node.js components listed in ./package.json
@@ -75,10 +75,11 @@ synchronized browsing across multiple devices and browsers.
 ### How to Deploy
 
 ```shell
+$ gulp build --release          # Builds the project in release mode
 $ gulp deploy                   # or, `gulp deploy --production`
 ```
 
-For more information see 'deploy' task in `gulpfile.js`.
+For more information see `deploy` task in `gulpfile.js`.
 
 ### How to Update
 
@@ -87,8 +88,8 @@ your own project:
 
 ```shell
 $ git checkout master
-$ git fetch upstream
-$ git merge upstream/master
+$ git fetch react-starter-kit
+$ git merge react-starter-kit/master
 $ npm install
 ```
 
