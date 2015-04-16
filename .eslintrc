@@ -1,12 +1,19 @@
 {
   "parser": "babel-eslint",
+  "plugins": [
+    "react"
+  ],
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "es6": true
   },
   "globals": {
     "__DEV__": true,
     "__SERVER__": true
+  },
+  "ecmaFeatures": {
+    "jsx": true
   },
   "rules": {
     // Strict mode
