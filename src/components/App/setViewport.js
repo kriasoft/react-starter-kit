@@ -6,10 +6,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'; // eslint-disable-line no-unused-vars
 import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 
-export default function setViewport(ComposedComponent) {
+function setViewport(ComposedComponent) {
   return class AppViewport extends Component {
 
     constructor() {
@@ -45,4 +45,6 @@ export default function setViewport(ComposedComponent) {
     }
 
   };
-};
+}
+
+export default setViewport;
