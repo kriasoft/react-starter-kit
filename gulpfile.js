@@ -184,7 +184,7 @@ gulp.task('sync', ['serve'], function(cb) {
   });
 
   gulp.watch(['build/**/*.*'].concat(
-    src.server.map(function(file) {return '!' + file;})
+    src.server.map(function(file) { return '!' + file; })
   ), function(file) {
     browserSync.reload(path.relative(__dirname, file.path));
   });
