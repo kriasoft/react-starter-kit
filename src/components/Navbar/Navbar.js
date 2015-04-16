@@ -6,9 +6,9 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Component } from 'react';
+import React from 'react'; // eslint-disable-line no-unused-vars
 
-class Navbar extends Component {
+class Navbar {
 
   render() {
     return (
