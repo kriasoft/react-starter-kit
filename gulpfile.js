@@ -53,6 +53,7 @@ gulp.task('vendor', function() {
 // Static files
 gulp.task('assets', function() {
   src.assets = [
+    'package.json',
     'src/assets/**',
     'src/content*/**/*.*',
     'src/templates*/**/*.*'

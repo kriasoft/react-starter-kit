@@ -73,7 +73,7 @@
     ]
   },
   "scripts": {
-    "start": "gulp",
+    "start": "node server.js",
     "test": "eslint src gulpfile.js webpack.config.js && jest",
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update"
