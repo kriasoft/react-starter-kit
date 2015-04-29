@@ -8,8 +8,6 @@
 
 /* global jest, describe, it, expect */
 
-'use strict';
-
 jest.dontMock('../Navbar');
 
 describe('Navbar', function() {
