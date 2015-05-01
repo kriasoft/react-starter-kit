@@ -1,10 +1,10 @@
-# React / Flux &nbsp;Starter Kit
+# React Starter Kit
 
-[![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/master.svg?style=flat)](http://travis-ci.org/kriasoft/react-starter-kit)
-[![Dependency Status](https://david-dm.org/kriasoft/react-starter-kit.svg?style=flat)](https://david-dm.org/kriasoft/react-starter-kit)
-[![devDependency Status](https://david-dm.org/kriasoft/react-starter-kit/dev-status.svg?style=flat)](https://david-dm.org/kriasoft/react-starter-kit#info=devDependencies)
-[![Tips](http://img.shields.io/gratipay/koistya.svg?style=flat)](https://gratipay.com/koistya)
-[![Gitter](http://img.shields.io/badge/chat-online-brightgreen.svg?style=flat)](https://gitter.im/kriasoft/react-starter-kit)
+[![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/master.svg?style=flat-square)](http://travis-ci.org/kriasoft/react-starter-kit)
+[![Dependency Status](https://david-dm.org/kriasoft/react-starter-kit.svg?style=flat-square)](https://david-dm.org/kriasoft/react-starter-kit)
+[![devDependency Status](https://david-dm.org/kriasoft/react-starter-kit/dev-status.svg?style=flat-square)](https://david-dm.org/kriasoft/react-starter-kit#info=devDependencies)
+[![Tips](http://img.shields.io/gratipay/koistya.svg?style=flat-square)](https://gratipay.com/koistya)
+[![Gitter](http://img.shields.io/badge/chat-online-brightgreen.svg?style=flat-square)](https://gitter.im/kriasoft/react-starter-kit)
 
 > This project template is a skeleton for an [isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)
 > web application (SPA) based on Facebook's [React](https://facebook.github.io/react/)
@@ -105,6 +105,11 @@ $ npm test
 Test any javascript module by creating a `__tests__/` directory where
 the file is. Name the test by appending `-test.js` to the js file.
 [Jest](https://facebook.github.io/jest/) will do the rest.
+
+### Related Projects
+
+ * [React Starter Kit Add-ons](https://github.com/kriasoft/react-starter-kit-addons)
+ * [React Component Starter Kit](https://github.com/kriasoft/react-component-starter)
 
 ### Learn More
 
