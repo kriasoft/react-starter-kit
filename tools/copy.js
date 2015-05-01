@@ -25,7 +25,11 @@ export default async () => {
     copy('src/content', 'build/content'),
 
     // Website and email templates
-    copy('src/templates', 'build/templates')
+    copy('src/templates', 'build/templates'),
+
+    // Copy Azure specific files
+    copy('.deployment', 'build/.deployment'),
+    copy('deploy.cmd', 'build/deploy.cmd')
   ]);
 
   if (global.WATCH) {
