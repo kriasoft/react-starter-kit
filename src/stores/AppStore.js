@@ -1,28 +1,15 @@
-/*
- * React.js Starter Kit
- * Copyright (c) 2014 Konstantin Tarkus (@koistya), KriaSoft LLC.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
+/*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import Dispatcher from '../core/Dispatcher';
-import ActionTypes from '../constants/ActionTypes';
-import PayloadSources from '../constants/PayloadSources';
 import EventEmitter from 'eventemitter3';
-import assign from 'react/lib/Object.assign';
+import Dispatcher from '../core/Dispatcher';
+import { ActionTypes } from '../core/Constants.js';
 
-var CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change';
 
 var pages = {};
 var loading = false;
 
-if (__SERVER__) {
-  pages['/'] = {title: 'Home Page'};
-  pages['/privacy'] = {title: 'Privacy Policy'};
-}
-
-var AppStore = assign({}, EventEmitter.prototype, {
+var AppStore = Object.assign({}, EventEmitter.prototype, {
 
   isLoading() {
     return loading;
@@ -35,10 +22,7 @@ var AppStore = assign({}, EventEmitter.prototype, {
    * @returns {*} Page data.
    */
   getPage(path) {
-    return path in pages ? pages[path] : {
-      title: 'Page Not Found',
-      type: 'notfound'
-    };
+    return path in pages ? pages[path] : null;
   },
 
   /**
@@ -70,26 +54,25 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
 });
 
-AppStore.dispatcherToken = Dispatcher.register((payload) => {
-  var action = payload.action;
+AppStore.dispatchToken = Dispatcher.register((action) => {
 
-  switch (action.actionType) {
+  switch (action.type) {
 
-    case ActionTypes.LOAD_PAGE:
-      if (action.source === PayloadSources.VIEW_ACTION) {
-        loading = true;
-      } else {
-        loading = false;
-        if (!action.err) {
-          pages[action.path] = action.page;
-        }
+    case ActionTypes.GET_PAGE:
+      loading = true;
+      AppStore.emitChange();
+      break;
+
+    case ActionTypes.RECEIVE_PAGE:
+      loading = false;
+      if (!action.err) {
+        pages[action.page.path] = action.page;
       }
       AppStore.emitChange();
       break;
 
     default:
       // Do nothing
-
   }
 
 });

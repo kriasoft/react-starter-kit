@@ -1,15 +1,9 @@
-/*
- * React.js Starter Kit
- * Copyright (c) 2014 Konstantin Tarkus (@koistya), KriaSoft LLC.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
+/*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import Dispatcher from '../core/Dispatcher';
-import ActionTypes from '../constants/ActionTypes';
-import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';
 import http from 'superagent';
+import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';
+import Dispatcher from '../core/Dispatcher';
+import { ActionTypes } from '../core/Constants';
 
 export default {
 
@@ -22,26 +16,26 @@ export default {
       }
     }
 
-    Dispatcher.handleViewAction({
-      actionType: ActionTypes.CHANGE_LOCATION,
+    Dispatcher.dispatch({
+      type: ActionTypes.CHANGE_LOCATION,
       path
     });
   },
 
   loadPage(path, cb) {
-    Dispatcher.handleViewAction({
-      actionType: ActionTypes.LOAD_PAGE,
+    Dispatcher.dispatch({
+      type: ActionTypes.GET_PAGE,
       path
     });
 
-    http.get('/api/page' + path)
+    http.get('/api/query?path=' + encodeURI(path))
       .accept('application/json')
       .end((err, res) => {
-        Dispatcher.handleServerAction({
-          actionType: ActionTypes.LOAD_PAGE,
+        Dispatcher.dispatch({
+          type: ActionTypes.RECEIVE_PAGE,
           path,
           err,
-          page: res.body
+          page: res ? res.body : null
         });
         if (cb) {
           cb();
