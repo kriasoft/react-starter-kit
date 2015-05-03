@@ -1,6 +1,6 @@
 /*
  * React.js Starter Kit
- * Copyright (c) 2014 Konstantin Tarkus (@koistya), KriaSoft LLC.
+ * Copyright (c) Konstantin Tarkus (@koistya), KriaSoft LLC
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
@@ -17,20 +17,6 @@ var path = require('path');
 var runSequence = require('run-sequence');
 var webpack = require('webpack');
 var argv = require('minimist')(process.argv.slice(2));
-
-// Settings
-var RELEASE = !!argv.release;                 // Minimize and optimize during a build?
-var AUTOPREFIXER_BROWSERS = [                 // https://github.com/ai/autoprefixer
-  'ie >= 10',
-  'ie_mob >= 10',
-  'ff >= 30',
-  'chrome >= 34',
-  'safari >= 7',
-  'opera >= 23',
-  'ios >= 7',
-  'android >= 4.4',
-  'bb >= 10'
-];
 
 var src = {};
 var watch = false;
@@ -64,23 +50,6 @@ gulp.task('assets', function() {
     .pipe($.size({title: 'assets'}));
 });
 
-// CSS style sheets
-gulp.task('styles', function() {
-  src.styles = 'src/styles/**/*.{css,less}';
-  return gulp.src('src/styles/bootstrap.less')
-    .pipe($.plumber())
-    .pipe($.less({
-      sourceMap: !RELEASE,
-      sourceMapBasepath: __dirname
-    }))
-    .on('error', console.error.bind(console))
-    .pipe($.autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
-    .pipe($.csscomb())
-    .pipe($.if(RELEASE, $.minifyCss()))
-    .pipe(gulp.dest('build/css'))
-    .pipe($.size({title: 'styles'}));
-});
-
 // Bundle
 gulp.task('bundle', function(cb) {
   var started = false;
@@ -111,7 +80,7 @@ gulp.task('bundle', function(cb) {
 
 // Build the app from source code
 gulp.task('build', ['clean'], function(cb) {
-  runSequence(['vendor', 'assets', 'styles', 'bundle'], cb);
+  runSequence(['vendor', 'assets', 'bundle'], cb);
 });
 
 // Build and start watching for modifications
@@ -119,7 +88,6 @@ gulp.task('build:watch', function(cb) {
   watch = true;
   runSequence('build', function() {
     gulp.watch(src.assets, ['assets']);
-    gulp.watch(src.styles, ['styles']);
     cb();
   });
 });

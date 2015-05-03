@@ -12,7 +12,7 @@
 > it to quickly bootstrap your web application projects. All the parts of this
 > project template are easily replaceable.
 
-**Demo**: http://reactjs.kriasoft.com
+**Demo**: http://demo.reactstarterkit.com
 
 ### Documentation
 
@@ -26,26 +26,26 @@
 ├── /docs/                      # Documentation files for the project
 ├── /node_modules/              # 3rd-party libraries and utilities
 ├── /src/                       # The source code of the application
+│   ├── /api/                   # REST API / Relay endpoints
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
 │   ├── /assets/                # Static files which are copied to ./build on compile
 │   ├── /components/            # React components
-│   ├── /constants/             # Enumerations used in action creators and stores
-│   ├── /content/               # Website content (plain HTML or Markdown, Jade, you name it)
+│   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic
-│   ├── /styles/                # CSS styles (deprecated, put CSS into components' folders)
 │   ├── /templates/             # HTML templates for server-side rendering, emails etc.
 │   ├── /app.js                 # Client-side startup script
 │   └── /server.js              # Server-side startup script
 │── gulpfile.js                 # Configuration file for automated builds
 │── package.json                # The list of 3rd party libraries and utilities
-│── preprocessor.js             # ES6 transpiler settings for Jest 
+│── preprocessor.js             # ES6 transpiler settings for Jest
 └── webpack.config.js           # Webpack configuration for bundling and optimization
 ```
 
 ### Getting Started
 
-Just [clone](github-windows://openRepo/https://github.com/kriasoft/react-starter-kit) or [fork](https://github.com/kriasoft/react-starter-kit/fork) the repo and start hacking:
+Just [clone](github-windows://openRepo/https://github.com/kriasoft/react-starter-kit) or
+[fork](https://github.com/kriasoft/react-starter-kit/fork) the repo and start hacking:
 
 ```shell
 $ git clone -o react-starter-kit https://github.com/kriasoft/react-starter-kit.git MyApp

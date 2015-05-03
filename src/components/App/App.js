@@ -1,20 +1,20 @@
-/*
- * React.js Starter Kit
- * Copyright (c) 2014 Konstantin Tarkus (@koistya), KriaSoft LLC.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
+/*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import './App.less';
 import React, { PropTypes } from 'react';
-import invariant from 'react/lib/invariant';
 import AppActions from '../../actions/AppActions';
 import AppStore from '../../stores/AppStore';
-import Navbar from '../Navbar';
+import Header from '../Header';
 import ContentPage from '../ContentPage';
+import ContactPage from '../ContactPage';
+import LoginPage from '../LoginPage';
+import RegisterPage from '../RegisterPage';
 import NotFoundPage from '../NotFoundPage';
+import Feedback from '../Feedback';
+import Footer from '../Footer';
 import setViewport from './setViewport';
+
+const pages = { ContentPage, ContactPage, LoginPage, RegisterPage, NotFoundPage };
 
 class App {
 
@@ -42,41 +42,41 @@ class App {
   }
 
   render() {
-    var page = AppStore.getPage(this.props.path);
-    invariant(page !== undefined, 'Failed to load page content.');
-    this.props.onSetTitle(page.title);
+    switch (this.props.path) {
 
-    if (page.type === 'notfound') {
-      this.props.onPageNotFound();
-      return React.createElement(NotFoundPage, page);
+      case '/contact':
+        this.props.onSetTitle(ContactPage.title);
+        this.component = <ContactPage />;
+        break;
+
+      case '/login':
+        this.props.onSetTitle(LoginPage.title);
+        this.component = <LoginPage />;
+        break;
+
+      case '/register':
+        this.props.onSetTitle(RegisterPage.title);
+        this.component = <RegisterPage />;
+        break;
+
+      default:
+        let page = AppStore.getPage(this.props.path);
+        if (page) {
+          this.props.onSetTitle(page.title);
+          this.component = React.createElement(pages[page.component], page);
+        } else {
+          this.props.onSetTitle(NotFoundPage.title);
+          this.props.onPageNotFound();
+          this.component = <NotFoundPage />;
+        }
     }
 
     return (
-      <div className="App">
-        <Navbar />
-        {
-          this.props.path === '/' ?
-          <div className="jumbotron">
-            <div className="container text-center">
-              <h1>React</h1>
-              <p>Complex web apps made easy</p>
-            </div>
-          </div> :
-          <div className="container">
-            <h2>{page.title}</h2>
-          </div>
-        }
-        <ContentPage className="container" {...page} />
-        <div className="navbar-footer">
-          <div className="container">
-            <p className="text-muted">
-              <span>© Your Company</span>
-              <span><a href="/">Home</a></span>
-              <span><a href="/privacy">Privacy</a></span>
-              <span>{'Viewport: ' + this.props.viewport.width + 'x' + this.props.viewport.height}</span>
-            </p>
-          </div>
-        </div>
+      <div>
+        <Header />
+        {this.component}
+        <Feedback />
+        <Footer viewport={this.props.viewport} />
       </div>
     );
   }
