@@ -110,6 +110,7 @@ the file is. Name the test by appending `-test.js` to the js file.
 
  * [React Starter Kit Add-ons](https://github.com/kriasoft/react-starter-kit-addons)
  * [React Component Starter Kit](https://github.com/kriasoft/react-component-starter)
+ * [React Decorators](https://github.com/kriasoft/react-decorators) (higher-order components)
 
 ### Learn More
 
