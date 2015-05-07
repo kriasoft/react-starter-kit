@@ -2,21 +2,36 @@
 
 import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
 import './Footer.less';
+import Css from '../../utils/Css';
+import setViewport from '../decorators/setViewport'; // eslint-disable-line no-unused-vars
 
+const css = new Css();
+
+@setViewport
 class Footer {
 
   static propTypes = {
-    viewport: PropTypes.object.isRequired
+    viewport: PropTypes.shape({
+      width: PropTypes.number.isRequired,
+      height: PropTypes.number.isRequired
+    }).isRequired
   };
 
   render() {
+    // This is just an example how one can render CSS
+    let { width, height } = this.props.viewport;
+    css.set(`.Footer-viewport:after {content:' ${width}x${height}';}`);
+
     return (
       <div className="Footer">
         <div className="Footer-container">
           <span className="Footer-text">© Your Company</span>
+          <span className="Footer-spacer">·</span>
           <a className="Footer-link" href="/">Home</a>
+          <span className="Footer-spacer">·</span>
           <a className="Footer-link" href="/privacy">Privacy</a>
-          <span className="Footer-text Footer-text--muted">|&nbsp; {'Viewport: ' + this.props.viewport.width + 'x' + this.props.viewport.height}</span>
+          <span className="Footer-spacer"> | </span>
+          <span ref="viewport" className="Footer-viewport Footer-text Footer-text--muted">Viewport:</span>
         </div>
       </div>
     );
