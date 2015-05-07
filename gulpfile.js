@@ -55,15 +55,23 @@ gulp.task('bundle', function(cb) {
   var started = false;
   var config = require('./webpack.config.js');
   var bundler = webpack(config);
+  var verbose = !!argv.verbose;
 
   function bundle(err, stats) {
     if (err) {
       throw new $.util.PluginError('webpack', err);
     }
 
-    if (argv.verbose) {
-      $.util.log('[webpack]', stats.toString({colors: true}));
-    }
+    console.log(stats.toString({
+      colors: $.util.colors.supportsColor,
+      hash: verbose,
+      version: verbose,
+      timings: verbose,
+      chunks: verbose,
+      chunkModules: verbose,
+      cached: verbose,
+      cachedAssets: verbose
+    }));
 
     if (!started) {
       started = true;
