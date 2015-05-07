@@ -12,7 +12,6 @@ import RegisterPage from '../RegisterPage';
 import NotFoundPage from '../NotFoundPage';
 import Feedback from '../Feedback';
 import Footer from '../Footer';
-import setViewport from './setViewport';
 
 const pages = { ContentPage, ContactPage, LoginPage, RegisterPage, NotFoundPage };
 
@@ -20,7 +19,6 @@ class App {
 
   static propTypes = {
     path: PropTypes.string.isRequired,
-    viewport: PropTypes.object.isRequired,
     onSetTitle: PropTypes.func.isRequired,
     onSetMeta: PropTypes.func.isRequired,
     onPageNotFound: PropTypes.func.isRequired
@@ -37,8 +35,7 @@ class App {
   }
 
   shouldComponentUpdate(nextProps) {
-    return this.props.path !== nextProps.path ||
-           this.props.viewport !== nextProps.viewport;
+    return this.props.path !== nextProps.path;
   }
 
   render() {
@@ -76,7 +73,7 @@ class App {
         <Header />
         {this.component}
         <Feedback />
-        <Footer viewport={this.props.viewport} />
+        <Footer />
       </div>
     );
   }
@@ -140,4 +137,4 @@ class App {
 
 }
 
-export default setViewport(App);
+export default App;

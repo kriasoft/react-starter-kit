@@ -137,6 +137,7 @@ Put custom methods and properties at the bottom of the file, after the render() 
 ##### Higher-order React component example:
 
 ```js
+// setViewport.js
 import React, { Component } from 'react';
 import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 
@@ -179,4 +180,20 @@ function setViewport(ComposedComponent) {
 };
 
 export default setViewport;
+```
+
+```js
+// MyComponent.js
+import React from 'react';
+import setViewport from './setViewport';
+
+@setViewport
+class MyComponent {
+  render() {
+    let { width, height } = this.props.viewport;
+    return <div>{'Viewport: ' + width + 'x' + height}</div>;
+  }
+}
+
+export default MyComponent;
 ```

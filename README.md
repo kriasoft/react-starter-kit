@@ -3,8 +3,8 @@
 [![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/master.svg?style=flat-square)](http://travis-ci.org/kriasoft/react-starter-kit)
 [![Dependency Status](https://david-dm.org/kriasoft/react-starter-kit.svg?style=flat-square)](https://david-dm.org/kriasoft/react-starter-kit)
 [![devDependency Status](https://david-dm.org/kriasoft/react-starter-kit/dev-status.svg?style=flat-square)](https://david-dm.org/kriasoft/react-starter-kit#info=devDependencies)
-[![Tips](http://img.shields.io/gratipay/koistya.svg?style=flat-square)](https://gratipay.com/koistya)
 [![Gitter](http://img.shields.io/badge/chat-online-brightgreen.svg?style=flat-square)](https://gitter.im/kriasoft/react-starter-kit)
+[![Tips](http://img.shields.io/gratipay/koistya.svg?style=flat-square)](https://gratipay.com/koistya)
 
 > This project template is a skeleton for an [isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)
 > web application (SPA) based on Facebook's [React](https://facebook.github.io/react/)
@@ -34,6 +34,7 @@
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /templates/             # HTML templates for server-side rendering, emails etc.
+│   ├── /utils/                 # Utility classes and functions
 │   ├── /app.js                 # Client-side startup script
 │   └── /server.js              # Server-side startup script
 │── gulpfile.js                 # Configuration file for automated builds

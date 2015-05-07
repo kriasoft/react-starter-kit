@@ -34,13 +34,13 @@ function run() {
     onPageNotFound: emptyFunction
   };
   let element = React.createElement(App, props);
-  React.render(element, document.body);
+  React.render(element, document.getElementById('app'));
 
   // Update `Application.path` prop when `window.location` is changed
   Dispatcher.register((action) => {
     if (action.type === ActionTypes.CHANGE_LOCATION) {
       element = React.cloneElement(element, {path: action.path});
-      React.render(element, document.body);
+      React.render(element, document.getElementById('app'));
     }
   });
 }
