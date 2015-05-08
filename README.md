@@ -2,8 +2,7 @@
 
 [![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/master.svg?style=flat-square)](http://travis-ci.org/kriasoft/react-starter-kit)
 [![Dependency Status](https://david-dm.org/kriasoft/react-starter-kit.svg?style=flat-square)](https://david-dm.org/kriasoft/react-starter-kit)
-[![devDependency Status](https://david-dm.org/kriasoft/react-starter-kit/dev-status.svg?style=flat-square)](https://david-dm.org/kriasoft/react-starter-kit#info=devDependencies)
-[![Gitter](http://img.shields.io/badge/chat-online-brightgreen.svg?style=flat-square)](https://gitter.im/kriasoft/react-starter-kit)
+[![Gitter](http://img.shields.io/badge/chat_room-online-brightgreen.svg?style=flat-square)](https://gitter.im/kriasoft/react-starter-kit)
 [![Tips](http://img.shields.io/gratipay/koistya.svg?style=flat-square)](https://gratipay.com/koistya)
 
 > This project template is a skeleton for an [isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)
@@ -107,9 +106,12 @@ Test any javascript module by creating a `__tests__/` directory where
 the file is. Name the test by appending `-test.js` to the js file.
 [Jest](https://facebook.github.io/jest/) will do the rest.
 
+### Customizations
+
+ * [Azure deployment](https://github.com/kriasoft/react-starter-kit/pull/106)
+
 ### Related Projects
 
- * [React Starter Kit Add-ons](https://github.com/kriasoft/react-starter-kit-addons)
  * [React Component Starter Kit](https://github.com/kriasoft/react-component-starter)
  * [React Decorators](https://github.com/kriasoft/react-decorators) (higher-order components)
 
