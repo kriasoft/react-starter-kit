@@ -1,24 +1,26 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import http from 'superagent';
-import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';
+import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 import Dispatcher from '../core/Dispatcher';
 import { ActionTypes } from '../core/Constants';
 
 export default {
 
   navigateTo(path, options) {
-    if (ExecutionEnvironment.canUseDOM) {
-      if (options && options.replace) {
-        window.history.replaceState({}, document.title, path);
-      } else {
-        window.history.pushState({}, document.title, path);
+    this.loadPage(path, () => {
+      if (canUseDOM) {
+        if (options && options.replace) {
+          window.history.replaceState({}, document.title, path);
+        } else {
+          window.history.pushState({}, document.title, path);
+        }
       }
-    }
 
-    Dispatcher.dispatch({
-      type: ActionTypes.CHANGE_LOCATION,
-      path
+      Dispatcher.dispatch({
+        type: ActionTypes.CHANGE_LOCATION,
+        path
+      });
     });
   },
 
