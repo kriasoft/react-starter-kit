@@ -130,9 +130,7 @@ class App {
     var path = el.pathname + el.search + (el.hash || '');
 
     event.preventDefault();
-    AppActions.loadPage(path, () => {
-      AppActions.navigateTo(path);
-    });
+    AppActions.navigateTo(path);
   }
 
 }
