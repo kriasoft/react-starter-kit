@@ -2,6 +2,7 @@
 
 import React from 'react'; // eslint-disable-line no-unused-vars
 import './Header.less';
+import Link from '../../utils/Link';
 import Navigation from '../Navigation';
 
 class Header {
@@ -10,7 +11,7 @@ class Header {
     return (
       <div className="Header">
         <div className="Header-container">
-          <a className="Header-brand" href="/">
+          <a className="Header-brand" href="/" onClick={Link.handleClick}>
             <img className="Header-brandImg" src={require('./logo-small.png')} width="38" height="38" alt="React" />
             <span className="Header-brandTxt">Your Company</span>
           </a>
