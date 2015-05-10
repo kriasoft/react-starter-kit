@@ -15,7 +15,7 @@ function handleClick(event) {
     return;
   }
 
-  var el = event.target;
+  var el = event.currentTarget;
 
   invariant(el && el.nodeName === 'A', 'The target element must be a link.');
 
