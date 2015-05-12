@@ -11,6 +11,17 @@ import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 const SHORTNAME = 'example';
 const WEBSITE_URL = 'http://www.example.com';
 
+function renderDisqus() {
+  if (window.DISQUS === undefined) {
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://' + SHORTNAME + '.disqus.com/embed.js';
+    document.getElementsByTagName('head')[0].appendChild(script);
+  } else {
+    window.DISQUS.reset({reload: true});
+  }
+}
+
 class DisqusThread {
 
   static propTypes = {
@@ -26,14 +37,11 @@ class DisqusThread {
   }
 
   componentDidMount() {
-    if (window.DISQUS === undefined) {
-      var script = document.createElement('script');
-      script.async = true;
-      script.src = 'https://' + SHORTNAME + '.disqus.com/embed.js';
-      document.getElementsByTagName('head')[0].appendChild(script);
-    } else {
-      window.DISQUS.reset({reload: true});
-    }
+    renderDisqus();
+  }
+
+  componentDidUpdate() {
+    renderDisqus();
   }
 
   render() {
