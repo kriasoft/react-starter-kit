@@ -16,6 +16,8 @@
 ### Documentation
 
 - [React Style Guide](./docs/react-style-guide.md)
+- Recipes
+  - [How to Integrate Disqus](./docs/recipes/how-to-integrate-disqus.md)
 
 ### Directory Layout
 
