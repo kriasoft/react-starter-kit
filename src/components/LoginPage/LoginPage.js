@@ -1,17 +1,23 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React from 'react'; // eslint-disable-line no-unused-vars
-import './LoginPage.less';
+import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
+import styles from './LoginPage.less'; // eslint-disable-line no-unused-vars
+import { withStyles } from '../decorators'; // eslint-disable-line no-unused-vars
 
+@withStyles(styles)
 class LoginPage {
 
-  static title = 'Log In';
+  static contextTypes = {
+    onSetTitle: PropTypes.func.isRequired
+  };
 
   render() {
+    let title = 'Log In';
+    this.context.onSetTitle(title);
     return (
       <div className="LoginPage">
         <div className="LoginPage-container">
-          <h1>{LoginPage.title}</h1>
+          <h1>{title}</h1>
           <p>...</p>
         </div>
       </div>

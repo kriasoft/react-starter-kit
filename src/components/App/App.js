@@ -1,7 +1,8 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import './App.less';
 import React, { PropTypes } from 'react';
+import styles from './App.less'; // eslint-disable-line no-unused-vars
+import { withContext, withStyles } from '../decorators'; // eslint-disable-line no-unused-vars
 import AppActions from '../../actions/AppActions';
 import AppStore from '../../stores/AppStore';
 import Header from '../Header';
@@ -15,13 +16,12 @@ import Footer from '../Footer';
 
 const pages = { ContentPage, ContactPage, LoginPage, RegisterPage, NotFoundPage };
 
+@withContext
+@withStyles(styles)
 class App {
 
   static propTypes = {
-    path: PropTypes.string.isRequired,
-    onSetTitle: PropTypes.func.isRequired,
-    onSetMeta: PropTypes.func.isRequired,
-    onPageNotFound: PropTypes.func.isRequired
+    path: PropTypes.string.isRequired
   };
 
   componentDidMount() {
@@ -37,43 +37,38 @@ class App {
   }
 
   render() {
+    let component;
+
     switch (this.props.path) {
 
+      case '/':
+      case '/about':
+      case '/privacy':
+        let page = AppStore.getPage(this.props.path);
+        component = React.createElement(pages[page.component], page);
+        break;
+
       case '/contact':
-        this.props.onSetTitle(ContactPage.title);
-        this.component = <ContactPage />;
+        component = <ContactPage />;
         break;
 
       case '/login':
-        this.props.onSetTitle(LoginPage.title);
-        this.component = <LoginPage />;
+        component = <LoginPage />;
         break;
 
       case '/register':
-        this.props.onSetTitle(RegisterPage.title);
-        this.component = <RegisterPage />;
+        component = <RegisterPage />;
         break;
-
-      default:
-        let page = AppStore.getPage(this.props.path);
-        if (page) {
-          this.props.onSetTitle(page.title);
-          this.component = React.createElement(pages[page.component], page);
-        } else {
-          this.props.onSetTitle(NotFoundPage.title);
-          this.props.onPageNotFound();
-          this.component = <NotFoundPage />;
-        }
     }
 
-    return (
+    return component ? (
       <div>
         <Header />
-        {this.component}
+        {component}
         <Feedback />
         <Footer />
       </div>
-    );
+    ) : <NotFoundPage />;
   }
 
   handlePopState(event) {
