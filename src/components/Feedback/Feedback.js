@@ -1,8 +1,10 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React from 'react'; // eslint-disable-line no-unused-vars
-import './Feedback.less';
+import styles from './Feedback.less'; // eslint-disable-line no-unused-vars
+import { withStyles } from '../decorators'; // eslint-disable-line no-unused-vars
 
+@withStyles(styles)
 class Feedback {
 
   render() {

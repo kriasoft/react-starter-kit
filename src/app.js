@@ -3,14 +3,13 @@
 import 'babel/polyfill';
 import React from 'react';
 import FastClick from 'fastclick';
-import emptyFunction from 'react/lib/emptyFunction';
 import App from './components/App';
 import Dispatcher from './core/Dispatcher';
 import AppActions from './actions/AppActions';
 import { ActionTypes } from './core/Constants';
 
 let path = decodeURI(window.location.pathname);
-let setMetaTag = (name, content) => {
+let onSetMeta = (name, content) => {
   // Remove and create a new <meta /> tag in order to make it work
   // with bookmarks in Safari
   let elements = document.getElementsByTagName('meta');
@@ -29,12 +28,16 @@ function run() {
   // Render the top-level React component
   let props = {
     path: path,
-    onSetTitle: (title) => document.title = title,
-    onSetMeta: setMetaTag,
-    onPageNotFound: emptyFunction
+    context: {
+      onSetTitle: value => document.title = value,
+      onSetMeta
+    }
   };
   let element = React.createElement(App, props);
-  React.render(element, document.getElementById('app'));
+  React.render(element, document.getElementById('app'), () => {
+    let css = document.getElementById('css');
+    css.parentNode.removeChild(css);
+  });
 
   // Update `Application.path` prop when `window.location` is changed
   Dispatcher.register((action) => {

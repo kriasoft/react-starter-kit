@@ -1,9 +1,15 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
-import './ContentPage.less';
+import styles from './ContentPage.less'; // eslint-disable-line no-unused-vars
+import { withStyles } from '../decorators'; // eslint-disable-line no-unused-vars
 
+@withStyles(styles)
 class ContentPage {
+
+  static contextTypes = {
+    onSetTitle: PropTypes.func.isRequired
+  };
 
   static propTypes = {
     path: PropTypes.string.isRequired,
@@ -11,6 +17,7 @@ class ContentPage {
   };
 
   render() {
+    this.context.onSetTitle(this.props.title);
     return (
       <div className="ContentPage">
         <div className="ContentPage-container">

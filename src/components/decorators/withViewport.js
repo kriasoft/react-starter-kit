@@ -15,8 +15,12 @@ function handleWindowResize() {
   }
 }
 
-function setViewport(ComposedComponent) {
-  return class Viewport extends Component {
+function withViewport(ComposedComponent) {
+  return class WithViewport extends Component {
+
+    static displayName = (ComposedComponent.displayName && ComposedComponent.displayName.indexOf('.') !== -1 ?
+      ComposedComponent.displayName.substr(0, ComposedComponent.displayName.indexOf('.')) :
+      ComposedComponent.name) + '.' + WithViewport.name;
 
     constructor() {
       super();
@@ -55,4 +59,4 @@ function setViewport(ComposedComponent) {
   };
 }
 
-export default setViewport;
+export default { withViewport };

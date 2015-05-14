@@ -1,10 +1,12 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React from 'react'; // eslint-disable-line no-unused-vars
-import './Header.less';
+import styles from './Header.less'; // eslint-disable-line no-unused-vars
+import { withStyles } from '../decorators'; // eslint-disable-line no-unused-vars
 import Link from '../../utils/Link';
 import Navigation from '../Navigation';
 
+@withStyles(styles)
 class Header {
 
   render() {
