@@ -16,6 +16,9 @@
 ### Documentation
 
 - [React Style Guide](./docs/react-style-guide.md)
+- Questions
+  - [Which module bundler should I use?](https://github.com/kriasoft/react-starter-kit/issues/3)
+  - [Which Flux implementation should I use?](https://github.com/kriasoft/react-starter-kit/issues/22)
 - Recipes
   - [How to Integrate Disqus](./docs/recipes/how-to-integrate-disqus.md)
 
