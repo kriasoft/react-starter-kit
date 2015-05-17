@@ -2,12 +2,12 @@
 
 import fs from 'fs';
 import path from 'path';
-import jade from 'jade';
+import handlebars from 'handlebars';
 import fm from 'front-matter';
 import Dispatcher from './Dispatcher';
 import { ActionTypes } from './Constants';
 
-// A folder with Jade/Markdown/HTML content pages
+// A folder with Handlebars/HTML content pages
 const CONTENT_DIR = path.join(__dirname, './content');
 
 // Check if that directory exists, print an error message if not
@@ -18,9 +18,9 @@ fs.exists(CONTENT_DIR, (exists) => {
 });
 
 // Extract 'front matter' metadata and generate HTML
-function parseJade(uri, jadeContent) {
-  let content = fm(jadeContent);
-  let html = jade.render(content.body, null, '  ');
+function parseTemplate(uri, templateContent) {
+  let content = fm(templateContent);
+  let html = handlebars.compile(content.body)({});
   let page = Object.assign({path: uri, content: html}, content.attributes);
   return page;
 }
@@ -28,17 +28,17 @@ function parseJade(uri, jadeContent) {
 export default {
 
   getPage: (uri) => {
-    // Read page content from a Jade file
+    // Read page content from a Handlebars file
     return new Promise((resolve) => {
-      let fileName = path.join(CONTENT_DIR, (uri === '/' ? '/index' : uri) + '.jade');
+      let fileName = path.join(CONTENT_DIR, (uri === '/' ? '/index' : uri) + '.hbs');
       fs.readFile(fileName, {encoding: 'utf8'}, (err, data) => {
         if (err) {
-          fileName = path.join(CONTENT_DIR, uri + '/index.jade');
+          fileName = path.join(CONTENT_DIR, uri + '/index.hbs');
           fs.readFile(fileName, {encoding: 'utf8'}, (err2, data2) => {
-            resolve(err2 ? null : parseJade(uri, data2));
+            resolve(err2 ? null : parseTemplate(uri, data2));
           });
         }
-        resolve(parseJade(uri, data));
+        resolve(parseTemplate(uri, data));
       });
     }).then((page) => {
       Dispatcher.dispatch({

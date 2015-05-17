@@ -1,6 +1,6 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import './App.less';
+import './App.scss';
 import React, { PropTypes } from 'react';
 import AppActions from '../../actions/AppActions';
 import AppStore from '../../stores/AppStore';

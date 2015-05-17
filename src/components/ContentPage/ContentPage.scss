@@ -1,11 +1,11 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-@import '../variables.less';
+@import "../variables";
 
-.RegisterPage {
+.ContentPage {
   &-container {
     margin: 0 auto;
     padding: 0 0 40px;
-    max-width: @max-content-width;
+    max-width: $max-content-width;
   }
 }

@@ -2,7 +2,7 @@
 
 import React from 'react'; // eslint-disable-line no-unused-vars
 import cx from 'classnames';
-import './Navigation.less';
+import './Navigation.scss';
 import Link from '../../utils/Link';
 
 class Navigation {

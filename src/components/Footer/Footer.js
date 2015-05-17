@@ -1,7 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
-import './Footer.less';
+import './Footer.scss';
 import Link from '../../utils/Link';
 import Css from '../../utils/Css';
 import setViewport from '../decorators/setViewport'; // eslint-disable-line no-unused-vars

@@ -1,6 +1,6 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-//import './NotFoundPage.less';
+//import './NotFoundPage.scss';
 import React from 'react'; // eslint-disable-line no-unused-vars
 
 class NotFoundPage {
