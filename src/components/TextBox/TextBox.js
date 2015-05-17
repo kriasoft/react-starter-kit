@@ -1,6 +1,6 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import './TextBox.less';
+import './TextBox.scss';
 import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
 
 class TextBox {

@@ -3,10 +3,10 @@
 require('source-map-support').install();
 
 import 'babel/polyfill';
-import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
+import handlebars from 'handlebars';
 import React from 'react';
 import './core/Dispatcher';
 import './stores/AppStore';
@@ -28,8 +28,8 @@ require('./api/query')(server);
 // -----------------------------------------------------------------------------
 
 // The top-level React component + HTML template for it
-const templateFile = path.join(__dirname, 'templates/index.html');
-const template = _.template(fs.readFileSync(templateFile, 'utf8'));
+const templateFile = path.join(__dirname, 'templates/index.hbs');
+const template = handlebars.compile(fs.readFileSync(templateFile, 'utf8'));
 
 server.get('*', async (req, res, next) => {
   try {
