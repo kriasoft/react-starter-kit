@@ -35,22 +35,25 @@ server.get('*', async (req, res, next) => {
   try {
     let uri = req.path;
     let notFound = false;
+    let css = [];
     let data = {description: ''};
     let app = <App
       path={req.path}
-      onSetTitle={(title) => { data.title = title; }}
-      onSetMeta={(name, content) => { data[name] = content; }}
-      onPageNotFound={() => { notFound = true; }} />;
+      context={{
+        onInsertCss: value => css.push(value),
+        onSetTitle: value => data.title = value,
+        onSetMeta: (key, value) => data[key] = value,
+        onPageNotFound: () => notFound = true
+      }} />;
 
     await db.getPage(uri);
     data.body = React.renderToString(app);
-
+    data.css = css.join('');
+    let html = template(data);
     if (notFound) {
-      res.status(404).send();
-    } else {
-      let html = template(data);
-      res.send(html);
+      res.status(404);
     }
+    res.send(html);
   } catch (err) {
     next(err);
   }
