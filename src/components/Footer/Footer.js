@@ -1,14 +1,12 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
-import './Footer.less';
+import styles from './Footer.less'; // eslint-disable-line no-unused-vars
+import { withStyles, withViewport } from '../decorators'; // eslint-disable-line no-unused-vars
 import Link from '../../utils/Link';
-import Css from '../../utils/Css';
-import setViewport from '../decorators/setViewport'; // eslint-disable-line no-unused-vars
 
-const css = new Css();
-
-@setViewport
+@withViewport
+@withStyles(styles)
 class Footer {
 
   static propTypes = {
@@ -21,7 +19,7 @@ class Footer {
   render() {
     // This is just an example how one can render CSS
     let { width, height } = this.props.viewport;
-    css.set(`.Footer-viewport:after {content:' ${width}x${height}';}`);
+    this.renderCss(`.Footer-viewport:after {content:' ${width}x${height}';}`);
 
     return (
       <div className="Footer">
@@ -31,6 +29,8 @@ class Footer {
           <a className="Footer-link" href="/" onClick={Link.handleClick}>Home</a>
           <span className="Footer-spacer">·</span>
           <a className="Footer-link" href="/privacy" onClick={Link.handleClick}>Privacy</a>
+          <span className="Footer-spacer">·</span>
+          <a className="Footer-link" href="/not-found" onClick={Link.handleClick}>Not Found</a>
           <span className="Footer-spacer"> | </span>
           <span ref="viewport" className="Footer-viewport Footer-text Footer-text--muted">Viewport:</span>
         </div>
