@@ -36,6 +36,7 @@
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
 │   ├── /assets/                # Static files which are copied to ./build on compile
 │   ├── /components/            # React components
+│   ├── /constants/             # Constants (action types etc.)
 │   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /stores/                # Stores contain the application state and logic
