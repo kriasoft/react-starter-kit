@@ -3,7 +3,7 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import classNames from 'classnames';
 import styles from './Navigation.less'; // eslint-disable-line no-unused-vars
-import { withStyles } from '../decorators'; // eslint-disable-line no-unused-vars
+import withStyles from '../decorators/withStyles'; // eslint-disable-line no-unused-vars
 import Link from '../../utils/Link';
 
 @withStyles(styles)

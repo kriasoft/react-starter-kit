@@ -40,4 +40,4 @@ function withContext(ComposedComponent) {
   };
 }
 
-export default { withContext };
+export default withContext;
