@@ -3,7 +3,7 @@
 import http from 'superagent';
 import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 import Dispatcher from '../core/Dispatcher';
-import { ActionTypes } from '../core/Constants';
+import ActionTypes from '../constants/ActionTypes';
 
 export default {
 

@@ -5,7 +5,7 @@ import path from 'path';
 import jade from 'jade';
 import fm from 'front-matter';
 import Dispatcher from './Dispatcher';
-import { ActionTypes } from './Constants';
+import ActionTypes from '../constants/ActionTypes';
 
 // A folder with Jade/Markdown/HTML content pages
 const CONTENT_DIR = path.join(__dirname, './content');
