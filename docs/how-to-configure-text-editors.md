@@ -5,23 +5,23 @@
 
 ### WebStorm
 
-Create a new project based on React Starter Kit **project template**:
+Create a new project based on **React Starter Kit template**
 
 ![react-project-template-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-new-project.png)
 
-Enable **JSX** support for your project:
+Make sure that **JSX** support is enabled in your project. This is set by default, if you create a new project based on React.js template.
 
 ![jsx-support-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-jsx.png)
 
-Configure JavaScript libraries for **auto-complete**:
+Configure JavaScript libraries for **auto-complete**
 
 ![javascript-libraries-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-libraries.png)
 
-Enable **ESLint** support:
+Enable **ESLint** support
 
 ![eslint-support-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-eslint.png)
 
-Enable **CSSComb** by installing CSSReorder plug-in:
+Enable **CSSComb** by installing CSSReorder plug-in
 
 ![csscomb-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-csscomb.png)
 
