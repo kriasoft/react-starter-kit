@@ -1,4 +1,4 @@
-## How to Configure Text Editors and IDEs for React.js
+## How to Configure Text Editors and IDEs for React.js [![img](https://img.shields.io/badge/discussion-join-green.svg?style=flat-square)](https://github.com/kriasoft/react-starter-kit/issues/117)
 
 > Tips and tricks on how to configure your favorite text editor or IDE to work
 > with React.js/ES6+/JSX.
