@@ -39,6 +39,7 @@
 │   ├── /constants/             # Constants (action types etc.)
 │   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
+│   ├── /decorators/            # Higher-order React components
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /templates/             # HTML templates for server-side rendering, emails etc.
 │   ├── /utils/                 # Utility classes and functions
