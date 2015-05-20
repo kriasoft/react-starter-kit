@@ -7,74 +7,71 @@ import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 let count = 0;
 
 function withStyles(styles) {
-  return function (ComposedComponent) {
+  return (ComposedComponent) => class WithStyles {
 
-    return class WithStyles {
+    static contextTypes = {
+      onInsertCss: PropTypes.func
+    };
 
-      static contextTypes = {
-        onInsertCss: PropTypes.func
-      };
-
-      constructor() {
-        this.refCount = 0;
-        ComposedComponent.prototype.renderCss = function (css) {
-          let style;
-          if (canUseDOM) {
-            if (this.styleId && (style = document.getElementById(this.styleId))) {
-              if ('textContent' in style) {
-                style.textContent = css;
-              } else {
-                style.styleSheet.cssText = css;
-              }
+    constructor() {
+      this.refCount = 0;
+      ComposedComponent.prototype.renderCss = function (css) {
+        let style;
+        if (canUseDOM) {
+          if (this.styleId && (style = document.getElementById(this.styleId))) {
+            if ('textContent' in style) {
+              style.textContent = css;
             } else {
-              this.styleId = `dynamic-css-${count++}`;
-              style = document.createElement('style');
-              style.setAttribute('id', this.styleId);
-              style.setAttribute('type', 'text/css');
-
-              if ('textContent' in style) {
-                style.textContent = css;
-              } else {
-                style.styleSheet.cssText = css;
-              }
-
-              document.getElementsByTagName('head')[0].appendChild(style);
-              this.refCount++;
+              style.styleSheet.cssText = css;
             }
           } else {
-            this.context.onInsertCss(css);
-          }
-        }.bind(this);
-      }
+            this.styleId = `dynamic-css-${count++}`;
+            style = document.createElement('style');
+            style.setAttribute('id', this.styleId);
+            style.setAttribute('type', 'text/css');
 
-      componentWillMount() {
-        if (canUseDOM) {
-          invariant(styles.use, `The style-loader must be configured with reference-counted API.`);
-          styles.use();
-        } else {
-          this.context.onInsertCss(styles.toString());
-        }
-      }
-
-      componentWillUnmount() {
-        styles.unuse();
-        if (this.styleId) {
-          this.refCount--;
-          if (this.refCount < 1) {
-            let style = document.getElementById(this.styleId);
-            if (style) {
-              style.parentNode.removeChild(style);
+            if ('textContent' in style) {
+              style.textContent = css;
+            } else {
+              style.styleSheet.cssText = css;
             }
+
+            document.getElementsByTagName('head')[0].appendChild(style);
+            this.refCount++;
+          }
+        } else {
+          this.context.onInsertCss(css);
+        }
+      }.bind(this);
+    }
+
+    componentWillMount() {
+      if (canUseDOM) {
+        invariant(styles.use, `The style-loader must be configured with reference-counted API.`);
+        styles.use();
+      } else {
+        this.context.onInsertCss(styles.toString());
+      }
+    }
+
+    componentWillUnmount() {
+      styles.unuse();
+      if (this.styleId) {
+        this.refCount--;
+        if (this.refCount < 1) {
+          let style = document.getElementById(this.styleId);
+          if (style) {
+            style.parentNode.removeChild(style);
           }
         }
       }
+    }
 
-      render() {
-        return <ComposedComponent {...this.props} />;
-      }
+    render() {
+      return <ComposedComponent {...this.props} />;
+    }
 
-    };
   };
 }
 
-export default { withStyles };
+export default withStyles;

@@ -2,7 +2,8 @@
 
 import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
 import styles from './Footer.less'; // eslint-disable-line no-unused-vars
-import { withStyles, withViewport } from '../decorators'; // eslint-disable-line no-unused-vars
+import withViewport from '../decorators/withViewport'; // eslint-disable-line no-unused-vars
+import withStyles from '../decorators/withStyles'; // eslint-disable-line no-unused-vars
 import Link from '../../utils/Link';
 
 @withViewport

@@ -2,7 +2,7 @@
 
 import React from 'react'; // eslint-disable-line no-unused-vars
 import styles from './Feedback.less'; // eslint-disable-line no-unused-vars
-import { withStyles } from '../decorators'; // eslint-disable-line no-unused-vars
+import withStyles from '../decorators/withStyles'; // eslint-disable-line no-unused-vars
 
 @withStyles(styles)
 class Feedback {
