@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react'; // eslint-disable-line no-unused-vars
 import EventEmitter from 'eventemitter3';
-import { canUseDOM } from 'react/lib/ExecutionEnvironment';
+import { canUseDOM } from '../../node_modules/react/lib/ExecutionEnvironment';
 
 let EE;
 let viewport = {width: 1366, height: 768}; // Default size for server-side rendering

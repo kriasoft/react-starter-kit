@@ -2,8 +2,8 @@
 
 import React, { PropTypes } from 'react';
 import styles from './App.less'; // eslint-disable-line no-unused-vars
-import withContext from '../decorators/withContext'; // eslint-disable-line no-unused-vars
-import withStyles from '../decorators/withStyles'; // eslint-disable-line no-unused-vars
+import withContext from '../../decorators/withContext'; // eslint-disable-line no-unused-vars
+import withStyles from '../../decorators/withStyles'; // eslint-disable-line no-unused-vars
 import AppActions from '../../actions/AppActions';
 import AppStore from '../../stores/AppStore';
 import Header from '../Header';

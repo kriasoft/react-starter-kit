@@ -1,7 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
-import withStyles from '../decorators/withStyles'; // eslint-disable-line no-unused-vars
+import withStyles from '../../decorators/withStyles'; // eslint-disable-line no-unused-vars
 import styles from './TextBox.less'; // eslint-disable-line no-unused-vars
 
 @withStyles(styles)
