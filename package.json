@@ -64,7 +64,7 @@
   "scripts": {
     "start": "node server.js",
     "lint": "eslint src",
-    "test": "eslint src && jest",
+    "test": "eslint -c ./.eslintrc.jest src && jest",
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update"
   }
