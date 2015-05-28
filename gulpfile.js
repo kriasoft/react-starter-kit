@@ -52,9 +52,9 @@ gulp.task('assets', function() {
 
 // Bundle
 gulp.task('bundle', function(cb) {
-  var started = false;
   var config = require('./webpack.config.js');
   var bundler = webpack(config);
+  var bundlerRunCount = 0;
   var verbose = !!argv.verbose;
 
   function bundle(err, stats) {
@@ -73,8 +73,7 @@ gulp.task('bundle', function(cb) {
       cachedAssets: verbose
     }));
 
-    if (!started) {
-      started = true;
+    if (++bundlerRunCount == config.length) {
       return cb();
     }
   }
