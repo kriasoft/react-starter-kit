@@ -49,7 +49,7 @@ var AppStore = Object.assign({}, EventEmitter.prototype, {
    * @param {function} callback Callback function.
    */
   off(callback) {
-    this.off(CHANGE_EVENT, callback);
+    this.removeListener(CHANGE_EVENT, callback);
   }
 
 });
