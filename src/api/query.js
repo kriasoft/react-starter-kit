@@ -1,28 +1,29 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
+import express from 'express';
 import db from '../core/Database';
 
-function query(server) {
-  server.get('/api/query', async (req, res, next) => {
-    try {
-      let path = req.query.path;
+const router = express.Router();
 
-      if (!path) {
-        res.status(400).send({error: `The 'path' query parameter cannot be empty.`});
-      }
+router.get('/', async (req, res, next) => {
+  try {
+    let path = req.query.path;
 
-      let page = await db.getPage(path);
-
-      if (page) {
-        res.status(200).send(page);
-      } else {
-        res.status(404).send({error: `The page '${path}' is not found.`});
-      }
-    } catch (err) {
-      next(err);
+    if (!path) {
+      res.status(400).send({error: `The 'path' query parameter cannot be empty.`});
     }
-  });
-}
 
-export default query;
+    let page = await db.getPage(path);
+
+    if (page) {
+      res.status(200).send(page);
+    } else {
+      res.status(404).send({error: `The page '${path}' is not found.`});
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+export default router;
 

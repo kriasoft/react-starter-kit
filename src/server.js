@@ -21,7 +21,7 @@ server.use(express.static(path.join(__dirname)));
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-require('./api/query')(server);
+server.use('/api/query', require('./api/query'));
 
 //
 // Register server-side rendering middleware
