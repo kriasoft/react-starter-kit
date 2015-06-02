@@ -43,7 +43,6 @@ var config = {
 
   cache: DEBUG,
   debug: DEBUG,
-  devtool: DEBUG ? '#inline-source-map' : false,
 
   stats: {
     colors: true,
@@ -111,6 +110,7 @@ var appConfig = _.merge({}, config, {
   output: {
     filename: 'app.js'
   },
+  devtool: DEBUG ? 'source-map' : false,
   plugins: config.plugins.concat([
       new webpack.DefinePlugin(_.merge(GLOBALS, {'__SERVER__': false}))
     ].concat(DEBUG ? [] : [
@@ -141,8 +141,11 @@ var serverConfig = _.merge({}, config, {
     __filename: false,
     __dirname: false
   },
+  devtool: DEBUG ? 'source-map' : 'cheap-module-source-map',
   plugins: config.plugins.concat(
-    new webpack.DefinePlugin(_.merge(GLOBALS, {'__SERVER__': true}))
+    new webpack.DefinePlugin(_.merge(GLOBALS, {'__SERVER__': true})),
+    new webpack.BannerPlugin('require("source-map-support").install();',
+      { raw: true, entryOnly: false })
   ),
   module: {
     loaders: config.module.loaders.map(function(loader) {
