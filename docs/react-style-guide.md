@@ -137,12 +137,12 @@ Put custom methods and properties at the bottom of the file, after the render() 
 ##### Higher-order React component example:
 
 ```js
-// setViewport.js
+// withViewport.js
 import React, { Component } from 'react';
 import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 
-function setViewport(ComposedComponent) {
-  return class Viewport extends Component {
+function withViewport(ComposedComponent) {
+  return class WithViewport extends Component {
 
     constructor() {
       super();
@@ -152,14 +152,7 @@ function setViewport(ComposedComponent) {
           {width: window.innerWidth, height: window.innerHeight} :
           {width: 1366, height: 768} // Default size for server-side rendering
       };
-
-      this.handleResize = () => {
-        let viewport = {width: window.innerWidth, height: window.innerHeight};
-        if (this.state.viewport.width !== viewport.width ||
-          this.state.viewport.height !== viewport.height) {
-          this.setState({viewport: viewport});
-        }
-      };
+      this.handleResize = this.handleResize.bind(this);
     }
 
     componentDidMount() {
@@ -176,18 +169,26 @@ function setViewport(ComposedComponent) {
       return <ComposedComponent {...this.props} viewport={this.state.viewport}/>;
     }
 
+    handleResize() {
+      let viewport = {width: window.innerWidth, height: window.innerHeight};
+      if (this.state.viewport.width !== viewport.width ||
+        this.state.viewport.height !== viewport.height) {
+        this.setState({viewport: viewport});
+      }
+    }
+
   };
 };
 
-export default setViewport;
+export default withViewport;
 ```
 
 ```js
 // MyComponent.js
 import React from 'react';
-import setViewport from './setViewport';
+import withViewport from './withViewport';
 
-@setViewport
+@withViewport
 class MyComponent {
   render() {
     let { width, height } = this.props.viewport;
