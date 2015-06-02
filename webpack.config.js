@@ -10,12 +10,13 @@
 
 var _ = require('lodash');
 var webpack = require('webpack');
+var autoprefixer = require('autoprefixer-core');
 var argv = require('minimist')(process.argv.slice(2));
 
 var DEBUG = !argv.release;
 var STYLE_LOADER = 'style-loader/useable';
 var CSS_LOADER = DEBUG ? 'css-loader' : 'css-loader?minimize';
-var AUTOPREFIXER_LOADER = 'autoprefixer-loader?{browsers:' + JSON.stringify([
+var AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
   'Chrome >= 20',
@@ -23,7 +24,8 @@ var AUTOPREFIXER_LOADER = 'autoprefixer-loader?{browsers:' + JSON.stringify([
   'Explorer >= 8',
   'iOS >= 6',
   'Opera >= 12',
-  'Safari >= 6']) + '}';
+  'Safari >= 6'
+];
 var GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
   '__DEV__': DEBUG
@@ -69,12 +71,11 @@ var config = {
     loaders: [
       {
         test: /\.css$/,
-        loader: STYLE_LOADER + '!' + CSS_LOADER + '!' + AUTOPREFIXER_LOADER
+        loader: STYLE_LOADER + '!' + CSS_LOADER + '!postcss-loader'
       },
       {
         test: /\.less$/,
-        loader: STYLE_LOADER + '!' + CSS_LOADER + '!' + AUTOPREFIXER_LOADER +
-                '!less-loader'
+        loader: STYLE_LOADER + '!' + CSS_LOADER + '!postcss-loader!less-loader'
       },
       {
         test: /\.gif/,
@@ -98,7 +99,9 @@ var config = {
         loader: 'babel-loader'
       }
     ]
-  }
+  },
+
+  postcss: [autoprefixer(AUTOPREFIXER_BROWSERS)]
 };
 
 //
