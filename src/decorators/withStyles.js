@@ -7,7 +7,7 @@ import { canUseDOM } from '../../node_modules/react/lib/ExecutionEnvironment';
 let count = 0;
 
 function withStyles(styles) {
-  return (ComposedComponent) => class WithStyles {
+  return (ComposedComponent) => class WithStyles { // eslint-disable-line no-undef
 
     static contextTypes = {
       onInsertCss: PropTypes.func

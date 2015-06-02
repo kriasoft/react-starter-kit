@@ -1,9 +1,9 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import express from 'express';
+import { Router } from 'express';
 import db from '../core/Database';
 
-const router = new express.Router();
+const router = new Router();
 
 router.get('/', async (req, res, next) => {
   try {
