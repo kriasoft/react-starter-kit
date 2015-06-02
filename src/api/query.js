@@ -3,7 +3,7 @@
 import express from 'express';
 import db from '../core/Database';
 
-const router = express.Router();
+const router = new express.Router();
 
 router.get('/', async (req, res, next) => {
   try {

@@ -1,7 +1,5 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-require('source-map-support').install();
-
 import 'babel/polyfill';
 import _ from 'lodash';
 import fs from 'fs';
