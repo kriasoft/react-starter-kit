@@ -1,0 +1,19 @@
+{
+  "extends": "./.eslintrc",
+
+  "globals": {
+    "jest": true,
+    "expect": true,
+    "mockFn": true,
+    "config": true,
+
+    "afterEach": true,
+    "beforeEach": true,
+    "describe": true,
+    "it": true,
+    "pit": true,
+    "require": true,
+    "xdescribe": true,
+    "xit": true
+  }
+}
