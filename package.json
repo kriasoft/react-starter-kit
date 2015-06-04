@@ -65,7 +65,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "lint": "eslint src",
+    "lint": "eslint src gulpfile.babel.js webpack.config.js",
     "test": "eslint src && jest",
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update"

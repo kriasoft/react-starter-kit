@@ -6,38 +6,30 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-'use strict';
+import cp from 'child_process';
+import gulp from 'gulp';
+import gulpLoadPlugins from 'gulp-load-plugins';
+import del from 'del';
+import path from 'path';
+import runSequence from 'run-sequence';
+import webpack from 'webpack';
+import minimist from 'minimist';
 
-// Include Gulp and other build automation tools and utilities
-// See: https://github.com/gulpjs/gulp/blob/master/docs/API.md
-var gulp = require('gulp');
-var $ = require('gulp-load-plugins')();
-var del = require('del');
-var path = require('path');
-var runSequence = require('run-sequence');
-var webpack = require('webpack');
-var argv = require('minimist')(process.argv.slice(2));
+const $ = gulpLoadPlugins();
+const argv = minimist(process.argv.slice(2));
+const src = Object.create(null);
 
-var src = {};
-var watch = false;
-var browserSync;
+let watch = false;
+let browserSync;
 
 // The default task
 gulp.task('default', ['sync']);
 
 // Clean output directory
-gulp.task('clean', del.bind(
-  null, ['.tmp', 'build/*', '!build/.git'], {dot: true}
-));
-
-// 3rd party libraries
-gulp.task('vendor', function() {
-  return gulp.src('node_modules/bootstrap/dist/fonts/**')
-    .pipe(gulp.dest('build/fonts'));
-});
+gulp.task('clean', () => del(['.tmp', 'build/*', '!build/.git'], {dot: true}));
 
 // Static files
-gulp.task('assets', function() {
+gulp.task('assets', () => {
   src.assets = [
     'package.json',
     'src/assets/**',
@@ -51,11 +43,11 @@ gulp.task('assets', function() {
 });
 
 // Bundle
-gulp.task('bundle', function(cb) {
-  var config = require('./webpack.config.js');
-  var bundler = webpack(config);
-  var bundlerRunCount = 0;
-  var verbose = !!argv.verbose;
+gulp.task('bundle', cb => {
+  let config = require('./webpack.config.js');
+  const bundler = webpack(config);
+  const verbose = !!argv.verbose;
+  let bundlerRunCount = 0;
 
   function bundle(err, stats) {
     if (err) {
@@ -73,7 +65,7 @@ gulp.task('bundle', function(cb) {
       cachedAssets: verbose
     }));
 
-    if (++bundlerRunCount == config.length) {
+    if (++bundlerRunCount === config.length) {
       return cb();
     }
   }
@@ -86,36 +78,30 @@ gulp.task('bundle', function(cb) {
 });
 
 // Build the app from source code
-gulp.task('build', ['clean'], function(cb) {
-  runSequence(['vendor', 'assets', 'bundle'], cb);
-});
+gulp.task('build', ['clean'], cb => { runSequence(['assets', 'bundle'], cb); });
 
 // Build and start watching for modifications
-gulp.task('build:watch', function(cb) {
+gulp.task('build:watch', cb => {
   watch = true;
-  runSequence('build', function() {
+  runSequence('build', () => {
     gulp.watch(src.assets, ['assets']);
     cb();
   });
 });
 
 // Launch a Node.js/Express server
-gulp.task('serve', ['build:watch'], function(cb) {
+gulp.task('serve', ['build:watch'], cb => {
   src.server = [
     'build/server.js',
     'build/content/**/*',
     'build/templates/**/*'
   ];
-
-  var started = false;
-  var cp = require('child_process');
-  var assign = require('react/lib/Object.assign');
-
-  var server = (function startup() {
+  let started = false;
+  let server = (function startup() {
     var child = cp.fork('build/server.js', {
-      env: assign({NODE_ENV: 'development'}, process.env)
+      env: Object.assign({NODE_ENV: 'development'}, process.env)
     });
-    child.once('message', function(message) {
+    child.once('message', message => {
       if (message.match(/^online$/)) {
         if (browserSync) {
           browserSync.reload();
@@ -134,13 +120,11 @@ gulp.task('serve', ['build:watch'], function(cb) {
     return child;
   })();
 
-  process.on('exit', function() {
-    server.kill('SIGTERM');
-  });
+  process.on('exit', () => server.kill('SIGTERM'));
 });
 
 // Launch BrowserSync development server
-gulp.task('sync', ['serve'], function(cb) {
+gulp.task('sync', ['serve'], cb => {
   browserSync = require('browser-sync');
 
   browserSync({
@@ -155,31 +139,29 @@ gulp.task('sync', ['serve'], function(cb) {
     proxy: 'localhost:5000'
   }, cb);
 
-  process.on('exit', function() {
-    browserSync.exit();
-  });
+  process.on('exit', () => browserSync.exit());
 
   gulp.watch(['build/**/*.*'].concat(
-    src.server.map(function(file) { return '!' + file; })
-  ), function(file) {
+    src.server.map(file => '!' + file)
+  ), file => {
     browserSync.reload(path.relative(__dirname, file.path));
   });
 });
 
 // Deploy via Git
-gulp.task('deploy', function(cb) {
-  var push = require('git-push');
-  var remote = argv.production ?
+gulp.task('deploy', cb => {
+  const push = require('git-push');
+  const remote = argv.production ?
     'https://github.com/{user}/{repo}.git' :
     'https://github.com/{user}/{repo}-test.git';
   push('./build', remote, cb);
 });
 
 // Run PageSpeed Insights
-gulp.task('pagespeed', function(cb) {
-  var pagespeed = require('psi');
+gulp.task('pagespeed', cb => {
+  const pagespeed = require('psi');
   // Update the below URL to the public URL of your site
-  pagespeed.output('example.com', {
+  pagespeed('example.com', {
     strategy: 'mobile'
     // By default we use the PageSpeed Insights free (no API key) tier.
     // Use a Google Developer API key if you have one: http://goo.gl/RkN0vE
