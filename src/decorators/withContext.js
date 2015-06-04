@@ -4,7 +4,7 @@ import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
 import emptyFunction from '../../node_modules/react/lib/emptyFunction';
 
 function withContext(ComposedComponent) {
-  return class WithContext { // eslint-disable-line no-undef
+  return class WithContext {
 
     static propTypes = {
       context: PropTypes.shape({

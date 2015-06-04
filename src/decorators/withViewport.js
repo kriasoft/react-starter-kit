@@ -16,7 +16,7 @@ function handleWindowResize() {
 }
 
 function withViewport(ComposedComponent) {
-  return class WithViewport extends Component { // eslint-disable-line no-undef
+  return class WithViewport extends Component {
 
     constructor() {
       super();
