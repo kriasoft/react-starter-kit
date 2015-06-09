@@ -10,7 +10,7 @@
     "npm": ">= 2.1"
   },
   "dependencies": {
-    "babel": "5.5.5",
+    "babel": "5.5.6",
     "classnames": "2.1.2",
     "eventemitter3": "1.1.0",
     "express": "4.12.4",
@@ -26,11 +26,11 @@
   },
   "devDependencies": {
     "autoprefixer-core": "^5.2.0",
-    "babel-core": "^5.5.5",
-    "babel-eslint": "^3.1.14",
+    "babel-core": "^5.5.6",
+    "babel-eslint": "^3.1.15",
     "babel-loader": "^5.1.4",
-    "browser-sync": "^2.7.6",
-    "css-loader": "^0.14.4",
+    "browser-sync": "^2.7.7",
+    "css-loader": "^0.14.5",
     "del": "^1.2.0",
     "eslint": "^0.22.1",
     "eslint-loader": "^0.12.0",
@@ -43,7 +43,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-size": "^1.2.1",
     "gulp-util": "^3.0.5",
-    "jest-cli": "^0.4.7",
+    "jest-cli": "^0.4.10",
     "less": "^2.5.1",
     "less-loader": "^2.2.0",
     "minimist": "^1.1.1",
@@ -67,6 +67,9 @@
     "start": "node server.js",
     "lint": "eslint src gulpfile.babel.js webpack.config.js",
     "test": "eslint src && jest",
+    "build": "gulp build",
+    "serve": "gulp serve",
+    "sync": "gulp sync",
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update"
   }
