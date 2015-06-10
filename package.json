@@ -31,6 +31,7 @@
     "babel-loader": "^5.1.4",
     "browser-sync": "^2.7.7",
     "css-loader": "^0.14.5",
+    "csscomb": "^3.1.7",
     "del": "^1.2.0",
     "eslint": "^0.22.1",
     "eslint-loader": "^0.12.0",
@@ -65,7 +66,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "lint": "eslint src gulpfile.babel.js webpack.config.js",
+    "lint": "eslint src gulpfile.babel.js webpack.config.js && csscomb src/components --lint",
+    "comb": "csscomb src/components --verbose",
     "test": "eslint src && jest",
     "build": "gulp build",
     "serve": "gulp serve",
