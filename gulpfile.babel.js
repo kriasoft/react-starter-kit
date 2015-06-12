@@ -31,15 +31,25 @@ gulp.task('clean', () => del(['.tmp', 'build/*', '!build/.git'], {dot: true}));
 // Static files
 gulp.task('assets', () => {
   src.assets = [
+    'src/assets/**'
+  ];
+  return gulp.src(src.assets)
+    .pipe($.changed('build/public'))
+    .pipe(gulp.dest('build/public'))
+    .pipe($.size({title: 'assets'}));
+});
+
+// Resource files
+gulp.task('resources', () => {
+  src.resources = [
     'package.json',
-    'src/assets/**',
     'src/content*/**/*.*',
     'src/templates*/**/*.*'
   ];
-  return gulp.src(src.assets)
+  return gulp.src(src.resources)
     .pipe($.changed('build'))
     .pipe(gulp.dest('build'))
-    .pipe($.size({title: 'assets'}));
+    .pipe($.size({title: 'resources'}));
 });
 
 // Bundle
@@ -78,13 +88,14 @@ gulp.task('bundle', cb => {
 });
 
 // Build the app from source code
-gulp.task('build', ['clean'], cb => { runSequence(['assets', 'bundle'], cb); });
+gulp.task('build', ['clean'], cb => { runSequence(['assets', 'resources', 'bundle'], cb); });
 
 // Build and start watching for modifications
 gulp.task('build:watch', cb => {
   watch = true;
   runSequence('build', () => {
     gulp.watch(src.assets, ['assets']);
+    gulp.watch(src.resources, ['resources']);
     cb();
   });
 });
