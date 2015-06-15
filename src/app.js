@@ -25,6 +25,8 @@ let onSetMeta = (name, content) => {
 };
 
 function run() {
+  FastClick.attach(document.body);
+	
   // Render the top-level React component
   let props = {
     path: path,
@@ -48,15 +50,10 @@ function run() {
   });
 }
 
-// Run the application when both DOM is ready
-// and page content is loaded
-Promise.all([
-  new Promise((resolve) => {
-    if (window.addEventListener) {
-      window.addEventListener('DOMContentLoaded', resolve);
-    } else {
-      window.attachEvent('onload', resolve);
-    }
-  }).then(() => FastClick.attach(document.body)),
-  new Promise((resolve) => AppActions.loadPage(path, resolve))
-]).then(run);
+new Promise((resolve) => {
+  if (window.addEventListener) {
+    window.addEventListener('DOMContentLoaded', resolve);
+  } else {
+    window.attachEvent('onload', resolve);
+  }
+}).then(run);
