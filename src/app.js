@@ -5,7 +5,7 @@ import React from 'react';
 import FastClick from 'fastclick';
 import App from './components/App';
 import Dispatcher from './core/Dispatcher';
-import AppActions from './actions/AppActions';
+//import AppActions from './actions/AppActions';
 import ActionTypes from './constants/ActionTypes';
 
 let path = decodeURI(window.location.pathname);
@@ -26,7 +26,6 @@ let onSetMeta = (name, content) => {
 
 function run() {
   FastClick.attach(document.body);
-	
   // Render the top-level React component
   let props = {
     path: path,
