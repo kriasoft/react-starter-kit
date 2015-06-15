@@ -120,7 +120,7 @@ const router = new Router([{
 
 const container = document.getElementById('app');
 
-async fimctopm () {
+async function render() {
   try {
     const path = window.location.hash.substr(1) || '/';
     const component = await router.match(path) || <NotFoundPage />;
