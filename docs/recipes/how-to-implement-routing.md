@@ -1,4 +1,4 @@
-## How to Implement Routing in React.js Apps [![img](https://img.shields.io/badge/discussion-join-green.svg?style=flat-square)](https://github.com/kriasoft/react-starter-kit/issues/116)
+## How to Implement Routing and Navigation [![img](https://img.shields.io/badge/discussion-join-green.svg?style=flat-square)](https://github.com/kriasoft/react-starter-kit/issues/116)
 
  * [Step 1: Basic Routing](#step-1-basic-routing)
  * [Step 2: Asynchronous Routes](#step-2-asynchronous-routes)
