@@ -14,7 +14,7 @@ import App from './components/App';
 const server = express();
 
 server.set('port', (process.env.PORT || 5000));
-server.use(express.static(path.join(__dirname)));
+server.use(express.static(path.join(__dirname, 'public')));
 
 //
 // Register API middleware
