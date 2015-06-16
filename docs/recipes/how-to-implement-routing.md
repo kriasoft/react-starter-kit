@@ -80,7 +80,7 @@ async function render() {
   } catch (err) {
     React.render(<ErrorPage {...err} />, container);
   }
-};
+}
 
 window.addEventListener('hashchange', () => render());
 render();
@@ -128,7 +128,7 @@ async function render() {
   } catch (err) {
     React.render(<ErrorPage {...err} />, container);
   }
-};
+}
 
 window.addEventListener('hashchange', () => render());
 render();
