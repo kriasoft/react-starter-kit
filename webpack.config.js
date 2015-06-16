@@ -37,7 +37,6 @@ const GLOBALS = {
 
 const config = {
   output: {
-    path: './build/',
     publicPath: './',
     sourcePrefix: '  '
   },
@@ -110,6 +109,7 @@ const config = {
 const appConfig = merge({}, config, {
   entry: './src/app.js',
   output: {
+    path: './build/public',
     filename: 'app.js'
   },
   devtool: DEBUG ? 'source-map' : false,
@@ -130,6 +130,7 @@ const appConfig = merge({}, config, {
 const serverConfig = merge({}, config, {
   entry: './src/server.js',
   output: {
+    path: './build',
     filename: 'server.js',
     libraryTarget: 'commonjs2'
   },

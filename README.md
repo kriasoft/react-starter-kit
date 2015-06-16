@@ -35,12 +35,12 @@
 ├── /src/                       # The source code of the application
 │   ├── /api/                   # REST API / Relay endpoints
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
-│   ├── /assets/                # Static files which are copied to ./build on compile
 │   ├── /components/            # React components
 │   ├── /constants/             # Constants (action types etc.)
 │   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
 │   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
 │   ├── /decorators/            # Higher-order React components
+│   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /templates/             # HTML templates for server-side rendering, emails etc.
 │   ├── /utils/                 # Utility classes and functions
