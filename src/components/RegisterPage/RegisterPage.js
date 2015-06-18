@@ -1,8 +1,8 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
-import withStyles from '../../decorators/withStyles'; // eslint-disable-line no-unused-vars
-import styles from './RegisterPage.less'; // eslint-disable-line no-unused-vars
+import React, { PropTypes } from 'react';
+import withStyles from '../../decorators/withStyles';
+import styles from './RegisterPage.less';
 
 @withStyles(styles)
 class RegisterPage {

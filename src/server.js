@@ -35,14 +35,14 @@ server.get('*', async (req, res, next) => {
     let notFound = false;
     let css = [];
     let data = {description: ''};
-    let app = <App
+    let app = (<App
       path={req.path}
       context={{
         onInsertCss: value => css.push(value),
         onSetTitle: value => data.title = value,
         onSetMeta: (key, value) => data[key] = value,
         onPageNotFound: () => notFound = true
-      }} />;
+      }} />);
 
     await db.getPage(uri);
     data.body = React.renderToString(app);

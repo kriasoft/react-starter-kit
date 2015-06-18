@@ -1,13 +1,17 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import styles from './Navigation.less'; // eslint-disable-line no-unused-vars
-import withStyles from '../../decorators/withStyles'; // eslint-disable-line no-unused-vars
+import styles from './Navigation.less';
+import withStyles from '../../decorators/withStyles';
 import Link from '../../utils/Link';
 
 @withStyles(styles)
 class Navigation {
+
+  static propTypes = {
+    className: PropTypes.string
+  };
 
   render() {
     return (
