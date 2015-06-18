@@ -1,19 +1,20 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
-import styles from './ContentPage.less'; // eslint-disable-line no-unused-vars
-import withStyles from '../../decorators/withStyles'; // eslint-disable-line no-unused-vars
+import React, { PropTypes } from 'react';
+import styles from './ContentPage.less';
+import withStyles from '../../decorators/withStyles';
 
 @withStyles(styles)
 class ContentPage {
 
-  static contextTypes = {
-    onSetTitle: PropTypes.func.isRequired
-  };
-
   static propTypes = {
     path: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired
+    content: PropTypes.string.isRequired,
+    title: PropTypes.string
+  };
+
+  static contextTypes = {
+    onSetTitle: PropTypes.func.isRequired
   };
 
   render() {

@@ -1,9 +1,9 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
-import styles from './Footer.less'; // eslint-disable-line no-unused-vars
-import withViewport from '../../decorators/withViewport'; // eslint-disable-line no-unused-vars
-import withStyles from '../../decorators/withStyles'; // eslint-disable-line no-unused-vars
+import React, { PropTypes } from 'react';
+import styles from './Footer.less';
+import withViewport from '../../decorators/withViewport';
+import withStyles from '../../decorators/withStyles';
 import Link from '../../utils/Link';
 
 @withViewport
