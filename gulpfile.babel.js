@@ -109,7 +109,7 @@ gulp.task('serve', ['build:watch'], cb => {
   ];
   let started = false;
   let server = (function startup() {
-    var child = cp.fork('build/server.js', {
+    let child = cp.fork('build/server.js', {
       env: Object.assign({NODE_ENV: 'development'}, process.env)
     });
     child.once('message', message => {
