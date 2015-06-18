@@ -69,11 +69,11 @@ const config = {
     loaders: [
       {
         test: /\.css$/,
-        loader: STYLE_LOADER + '!' + CSS_LOADER + '!postcss-loader'
+        loader: `${STYLE_LOADER}!${CSS_LOADER}!postcss-loader`
       },
       {
         test: /\.less$/,
-        loader: STYLE_LOADER + '!' + CSS_LOADER + '!postcss-loader!less-loader'
+        loader: `${STYLE_LOADER}!${CSS_LOADER}!postcss-loader!less-loader`
       },
       {
         test: /\.gif/,
