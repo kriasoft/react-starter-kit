@@ -6,11 +6,12 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import path from 'path';
 import cp from 'child_process';
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import del from 'del';
-import path from 'path';
+import mkdirp from 'mkdirp';
 import runSequence from 'run-sequence';
 import webpack from 'webpack';
 import minimist from 'minimist';
@@ -26,7 +27,11 @@ let browserSync;
 gulp.task('default', ['sync']);
 
 // Clean output directory
-gulp.task('clean', () => del(['.tmp', 'build/*', '!build/.git'], {dot: true}));
+gulp.task('clean', cb => {
+  del(['.tmp', 'build/*', '!build/.git'], {dot: true}, () => {
+    mkdirp('build/public', cb);
+  });
+});
 
 // Static files
 gulp.task('assets', () => {
@@ -52,7 +57,7 @@ gulp.task('resources', () => {
 
 // Bundle
 gulp.task('bundle', cb => {
-  let config = require('./webpack.config.js');
+  const config = require('./webpack.config.js');
   const bundler = webpack(config);
   const verbose = !!argv.verbose;
   let bundlerRunCount = 0;
@@ -109,7 +114,7 @@ gulp.task('serve', ['build:watch'], cb => {
   ];
   let started = false;
   let server = (function startup() {
-    var child = cp.fork('build/server.js', {
+    const child = cp.fork('build/server.js', {
       env: Object.assign({NODE_ENV: 'development'}, process.env)
     });
     child.once('message', message => {
