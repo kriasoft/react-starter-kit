@@ -130,7 +130,7 @@ the file is. Name the test by appending `-test.js` to the js file.
  * [Getting Started with React.js](http://facebook.github.io/react/)
  * [React.js Wiki on GitHub](https://github.com/facebook/react/wiki)
  * [React.js Questions on StackOverflow](http://stackoverflow.com/questions/tagged/reactjs)
- * [React.js Discussion Board](https://groups.google.com/forum/#!forum/reactjs)
+ * [React.js Discussion Board](https://discuss.reactjs.org/)
  * [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
  * [Jest - Painless Unit Testing](http://facebook.github.io/jest/)
  * [Flow - A static type checker for JavaScript](http://flowtype.org/)
