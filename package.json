@@ -51,7 +51,6 @@
     "mkdirp": "^0.5.1",
     "postcss": "^4.1.11",
     "postcss-loader": "^0.4.4",
-    "protractor": "^2.1.0",
     "psi": "^1.0.6",
     "run-sequence": "^1.1.0",
     "style-loader": "^0.12.3",
@@ -72,8 +71,6 @@
     "test": "eslint src && jest",
     "build": "gulp build",
     "serve": "gulp serve",
-    "sync": "gulp sync",
-    "preupdate-webdriver": "npm install",
-    "update-webdriver": "webdriver-manager update"
+    "sync": "gulp sync"
   }
 }
