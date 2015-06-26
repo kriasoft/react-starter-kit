@@ -38,7 +38,10 @@ export default {
             resolve(err2 ? null : parseJade(uri, data2));
           });
         }
-        resolve(parseJade(uri, data));
+        else
+        {
+          resolve(parseJade(uri, data));
+        }
       });
     }).then((page) => {
       Dispatcher.dispatch({
