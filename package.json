@@ -1,0 +1,41 @@
+{
+  "name": "generator-react-fullstack",
+  "version": "0.0.1",
+  "description": "React Starter Kit (ES6+, Babel, React.js, Express.js, Webpack, BrowserSync)",
+  "license": "MIT",
+  "main": "app/index.js",
+  "repository": "https://github.com/kriasoft/react-starter-kit",
+  "author": {
+    "name": "Kriasoft",
+    "email": "support@kriasoft.com",
+    "url": "http://www.kriasoft.com"
+  },
+  "contributors": [
+    "Konstantin Tarkus <hello@tarkus.me>"
+  ],
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": [
+    "app"
+  ],
+  "keywords": [
+    "yeoman-generator",
+    "scaffold",
+    "boilerplate",
+    "component",
+    "front-end",
+    "web",
+    "react",
+    "reactjs"
+  ],
+  "dependencies": {
+    "chalk": "^1.0.0",
+    "glob": "^5.0.10",
+    "yeoman-generator": "^0.19.0",
+    "yosay": "^1.0.2"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  }
+}
