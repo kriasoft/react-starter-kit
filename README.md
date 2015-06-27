@@ -1,4 +1,6 @@
-# generator-react-fullstack [![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/yeoman-generator.svg?style=flat-square)](https://travis-ci.org/kriasoft/react-starter-kit)
+# Yeoman generator for React.js projects
+
+[![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/yeoman-generator.svg?style=flat-square)](https://travis-ci.org/kriasoft/react-starter-kit)
 
 > [Yeoman](http://yeoman.io) generator
 
