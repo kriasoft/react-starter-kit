@@ -1,8 +1,8 @@
 # Yeoman generator for React.js projects
 
-[![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/yeoman-generator.svg?style=flat-square)](https://travis-ci.org/kriasoft/react-starter-kit)
-
-> [Yeoman](http://yeoman.io) generator
+[![NPM version](http://img.shields.io/npm/v/generator-react-fullstack.svg?style=flat-square)](http://npmjs.org/generator-react-fullstack)
+[![NPM downloads](http://img.shields.io/npm/dm/generator-react-fullstack.svg?style=flat-square)](http://npmjs.org/generator-react-fullstack)
+[![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/yeoman-generator.svg?style=flat-square)](https://travis-ci.org/kriasoft/react-starter-kit/branches)
 
 ## Getting Started
 

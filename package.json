@@ -1,10 +1,10 @@
 {
   "name": "generator-react-fullstack",
-  "version": "0.0.2",
-  "description": "React Starter Kit (ES6+, Babel, React.js, Express.js, Webpack, BrowserSync)",
+  "version": "0.0.3",
+  "description": "Yeoman generator for React.js projects based on React Starter Kit (ES6+, Babel, React.js, Express.js, Webpack, BrowserSync)",
   "license": "MIT",
   "main": "app/index.js",
-  "repository": "https://github.com/kriasoft/react-starter-kit",
+  "repository": "https://github.com/kriasoft/react-starter-kit/tree/yeoman-generator",
   "author": {
     "name": "Kriasoft",
     "email": "support@kriasoft.com",
@@ -17,7 +17,8 @@
     "test": "mocha"
   },
   "files": [
-    "app"
+    "app",
+    "react-starter-kit"
   ],
   "keywords": [
     "yeoman-generator",

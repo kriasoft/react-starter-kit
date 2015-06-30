@@ -1,11 +1,16 @@
 'use strict';
 
+var path = require('path');
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var glob = require('glob');
 
 module.exports = yeoman.generators.Base.extend({
+
+  initializing: function () {
+    this.sourceRoot(path.join(this.sourceRoot(), '../../react-starter-kit'));
+  },
 
   prompting: function () {
     this.log(yosay(
