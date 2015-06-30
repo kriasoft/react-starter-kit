@@ -4,6 +4,15 @@
 [![NPM downloads](http://img.shields.io/npm/dm/generator-react-fullstack.svg?style=flat-square)](http://npmjs.org/generator-react-fullstack)
 [![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/yeoman-generator.svg?style=flat-square)](https://travis-ci.org/kriasoft/react-starter-kit/branches)
 
+> Yeoman generator based on [React Starter Kit](http://www.reactstarterkit.com) —
+> a skeleton of an "isomorphic" web application / SPA built with
+> [React.js](https://facebook.github.io/react/),
+> [Express](http://expressjs.com/), [Flux](https://facebook.github.io/flux),
+> [ES6+](https://github.com/lukehoban/es6features),
+> [JSX](https://facebook.github.io/react/docs/jsx-in-depth.html),
+> [Babel](http://babeljs.io/), [PostCSS](https://github.com/postcss/postcss),
+> [Webpack](http://webpack.github.io/), [BrowserSync](http://browsersync.io/).
+
 ## Getting Started
 
 ### What is Yeoman?
