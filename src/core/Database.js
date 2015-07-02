@@ -29,16 +29,13 @@ export default {
 
   getPage: (uri) => {
     // Read page content from a Jade file
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       let fileName = path.join(CONTENT_DIR, (uri === '/' ? '/index' : uri) + '.jade');
       fs.readFile(fileName, {encoding: 'utf8'}, (err, data) => {
-        if (err) {
-          fileName = path.join(CONTENT_DIR, uri + '/index.jade');
-          fs.readFile(fileName, {encoding: 'utf8'}, (err2, data2) => {
-            resolve(err2 ? null : parseJade(uri, data2));
-          });
-        } else {
+        if (!err) {
           resolve(parseJade(uri, data));
+        } else {
+          reject(err);
         }
       });
     }).then((page) => {
