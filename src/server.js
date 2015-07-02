@@ -31,7 +31,7 @@ const template = _.template(fs.readFileSync(templateFile, 'utf8'));
 
 server.get('*', async (req, res, next) => {
   try {
-    // This fixs work's for #159 and #151
+    // This fixs work's for #159 and #152
     await db.getPage(uri).catch(async (err) => {
       console.error('Error: ', err);
       // deafults is index (must be exits)
