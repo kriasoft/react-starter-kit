@@ -37,9 +37,7 @@ export default {
           fs.readFile(fileName, {encoding: 'utf8'}, (err2, data2) => {
             resolve(err2 ? null : parseJade(uri, data2));
           });
-        }
-        else
-        {
+        } else {
           resolve(parseJade(uri, data));
         }
       });
