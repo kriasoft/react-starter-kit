@@ -40,27 +40,8 @@ class App {
   render() {
     let component;
 
-    switch (this.props.path) {
-
-      case '/':
-      case '/about':
-      case '/privacy':
-        let page = AppStore.getPage(this.props.path);
-        component = React.createElement(pages[page.component], page);
-        break;
-
-      case '/contact':
-        component = <ContactPage />;
-        break;
-
-      case '/login':
-        component = <LoginPage />;
-        break;
-
-      case '/register':
-        component = <RegisterPage />;
-        break;
-    }
+    let page = AppStore.getPage(this.props.path);
+    component = page ? React.createElement(pages[page.component], page) : null;
 
     return component ? (
       <div>

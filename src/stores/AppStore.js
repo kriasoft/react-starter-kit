@@ -3,10 +3,18 @@
 import EventEmitter from 'eventemitter3';
 import Dispatcher from '../core/Dispatcher';
 import ActionTypes from '../constants/ActionTypes';
+import DefaultComponents from '../content/DefaultComponents';
 
 const CHANGE_EVENT = 'change';
 
 var pages = {};
+Object.keys(DefaultComponents).forEach(path => {
+  pages[path] = {
+    component: DefaultComponents[path],
+    path: path
+  };
+});
+
 var loading = false;
 
 var AppStore = Object.assign({}, EventEmitter.prototype, {
