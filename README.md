@@ -140,7 +140,9 @@ the file is. Name the test by appending `-test.js` to the js file.
 
 ### Support
 
-Have feedback, feature request or need help? Contact me on [codementor.io/koistya](https://www.codementor.io/koistya).
+ * [@koistya](https://www.codementor.io/koistya) on Codementor
+ * [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) on Gitter
+ * [Live help sessions](http://start.thinkful.com/react/?utm_source=github&utm_medium=badge&utm_campaign=react-starter-kit) on Thinkful
 
 ### Copyright
 
