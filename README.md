@@ -62,6 +62,7 @@ $ git clone -o react-starter-kit -b master --single-branch \
       https://github.com/kriasoft/react-starter-kit.git MyApp
 $ cd MyApp
 $ npm install -g gulp           # Install Gulp task runner globally
+$ npm install -g babel          # Install Babel compiler globally
 $ npm install                   # Install Node.js components listed in ./package.json
 ```
 
