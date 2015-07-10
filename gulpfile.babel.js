@@ -15,6 +15,7 @@ import mkdirp from 'mkdirp';
 import runSequence from 'run-sequence';
 import webpack from 'webpack';
 import minimist from 'minimist';
+import assign from'react/lib/Object.assign';
 
 const $ = gulpLoadPlugins();
 const argv = minimist(process.argv.slice(2));
@@ -115,7 +116,7 @@ gulp.task('serve', ['build:watch'], cb => {
   let started = false;
   let server = (function startup() {
     const child = cp.fork('build/server.js', {
-      env: Object.assign({NODE_ENV: 'development'}, process.env)
+      env: assign({NODE_ENV: 'development'}, process.env)
     });
     child.once('message', message => {
       if (message.match(/^online$/)) {
@@ -124,7 +125,7 @@ gulp.task('serve', ['build:watch'], cb => {
         }
         if (!started) {
           started = true;
-          gulp.watch(src.server, function() {
+          gulp.watch(src.server,() => {
             $.util.log('Restarting development server.');
             server.kill('SIGTERM');
             server = startup();

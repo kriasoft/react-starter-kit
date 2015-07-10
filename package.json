@@ -60,7 +60,9 @@
     ]
   },
   "scripts": {
+    "postinstall": "npm run babel",
     "start": "node server.js",
+    "babel": "babel gulpfile.babel.js --out-file gulpfile.js && babel webpack.config.babel.js --out-file webpack.config.js",
     "lint": "eslint src gulpfile.babel.js webpack.config.js && csscomb src/components --lint",
     "comb": "csscomb src/components --verbose",
     "test": "eslint src && jest",
