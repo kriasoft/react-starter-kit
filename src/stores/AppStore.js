@@ -65,7 +65,9 @@ AppStore.dispatchToken = Dispatcher.register((action) => {
 
     case ActionTypes.RECEIVE_PAGE:
       loading = false;
-      if (!action.err) {
+      // CUSTOM CODE
+      //if (!action.err) {
+      if (!action.err && action.page != null) {
         pages[action.page.path] = action.page;
       }
       AppStore.emitChange();
