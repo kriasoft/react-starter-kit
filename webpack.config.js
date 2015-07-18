@@ -1,10 +1,4 @@
-/*
- * React.js Starter Kit
- * Copyright (c) Konstantin Tarkus (@koistya), KriaSoft LLC
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
+/* -||- Ninja React.js Starter Kit > webpack config -||- */
 
 import webpack, { DefinePlugin, BannerPlugin } from 'webpack';
 import merge from 'lodash/object/merge';

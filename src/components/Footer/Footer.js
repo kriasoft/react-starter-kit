@@ -25,7 +25,7 @@ class Footer {
     return (
       <div className="Footer">
         <div className="Footer-container">
-          <span className="Footer-text">© Your Company</span>
+          <span className="Footer-text">© Company Juice</span>
           <span className="Footer-spacer">·</span>
           <a className="Footer-link" href="/" onClick={Link.handleClick}>Home</a>
           <span className="Footer-spacer">·</span>

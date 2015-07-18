@@ -9,12 +9,34 @@
 // -----------------------------------------------------------------------------
 
 html {
-  color: #222;
+  color: #DDD;
   font-weight: 100;
   font-size: 1em; // ~16px;
   font-family: @font-family-base;
   line-height: 1.375; // ~22px
 }
+
+//
+// CUSTOM CODE
+// -----------------------------------------------------------------------------
+
+body {
+  background-color: #111;
+}
+
+a,
+a:visited {
+  color: #80bd01;
+  text-decoration: none;
+}
+a:hover {
+  color: #80cd01;
+  text-decoration: underline;
+}
+
+//
+// END CUSTOM CODE
+// -----------------------------------------------------------------------------
 
 /*
  * Remove text-shadow in selection highlight:
@@ -25,12 +47,14 @@ html {
  */
 
 ::-moz-selection {
-  background: #b3d4fc;
+  //background: #b3d4fc;
+  background: #80bd01;
   text-shadow: none;
 }
 
 ::selection {
-  background: #b3d4fc;
+  //background: #b3d4fc;
+  background: #80bd01;
   text-shadow: none;
 }
 
