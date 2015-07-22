@@ -123,7 +123,7 @@ the file is. Name the test by appending `-test.js` to the js file.
 
 ### Related Projects
 
- * [React Component Starter Kit](https://github.com/kriasoft/react-component-starter)
+ * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-starter)
  * [React Decorators](https://github.com/kriasoft/react-decorators) (higher-order components)
 
 ### Learn More
@@ -144,9 +144,6 @@ the file is. Name the test by appending `-test.js` to the js file.
  * [Live help sessions](http://start.thinkful.com/react/?utm_source=github&utm_medium=badge&utm_campaign=react-starter-kit) on Thinkful
  * [@koistya](https://www.codementor.io/koistya) on Codementor
 
-### Copyright
+### License
 
-Source code is licensed under the MIT License (MIT). See [LICENSE.txt](./LICENSE.txt)
-file in the project root. Documentation to the project is licensed under the
-[CC BY 4.0](http://creativecommons.org/licenses/by/4.0/) license. React logo
-image is a trademark of Facebook, Inc.
+The MIT License © Konstantin Tarkus ([@koistya](https://twitter.com/koistya))
