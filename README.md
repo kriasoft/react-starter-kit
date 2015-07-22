@@ -46,7 +46,7 @@
 │   ├── /utils/                 # Utility classes and functions
 │   ├── /app.js                 # Client-side startup script
 │   └── /server.js              # Server-side startup script
-│── gulpfile.js                 # Configuration file for automated builds
+│── gulpfile.babel.js           # Configuration file for automated builds
 │── package.json                # The list of 3rd party libraries and utilities
 │── preprocessor.js             # ES6 transpiler settings for Jest
 └── webpack.config.js           # Webpack configuration for bundling and optimization
@@ -72,7 +72,8 @@ $ gulp build                    # or, `gulp build --release`
 ```
 
 By default, it builds in debug mode. If you need to build in release mode, add
-`--release` flag.
+`--release` flag.  This will minimize your JavaScript; you will also see some warnings from
+[uglify](https://github.com/mishoo/UglifyJS) where it removes unused code from your release.
 
 ### How to Run
 
@@ -90,7 +91,7 @@ $ gulp build --release          # Builds the project in release mode
 $ gulp deploy                   # or, `gulp deploy --production`
 ```
 
-For more information see `deploy` task in `gulpfile.js`.
+For more information see `deploy` task in `gulpfile.babel.js`.
 
 ### How to Update
 
