@@ -124,7 +124,7 @@ the file is. Name the test by appending `-test.js` to the js file.
 
 ### Related Projects
 
- * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-starter) — A boilerplate for authoring JavaScript/React.js libraries
+ * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — A boilerplate for authoring JavaScript/React.js libraries
  * [React Decorators](https://github.com/kriasoft/react-decorators) — A collection of higher-order React components
 
 ### Learn More
