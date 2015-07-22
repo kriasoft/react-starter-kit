@@ -4,24 +4,32 @@ import http from 'superagent';
 import { canUseDOM } from 'react/lib/ExecutionEnvironment';
 import Dispatcher from '../core/Dispatcher';
 import ActionTypes from '../constants/ActionTypes';
+import DefaultComponents from '../content/DefaultComponents';
 
 export default {
 
-  navigateTo(path, options) {
-    this.loadPage(path, () => {
-      if (canUseDOM) {
-        if (options && options.replace) {
-          window.history.replaceState({}, document.title, path);
-        } else {
-          window.history.pushState({}, document.title, path);
-        }
+  goToPath(path, options) {
+    if (canUseDOM) {
+      if (options && options.replace) {
+        window.history.replaceState({}, document.title, path);
+      } else {
+        window.history.pushState({}, document.title, path);
       }
+    }
 
-      Dispatcher.dispatch({
-        type: ActionTypes.CHANGE_LOCATION,
-        path
-      });
+    Dispatcher.dispatch({
+      type: ActionTypes.CHANGE_LOCATION,
+      path
     });
+  },
+
+  navigateTo(path, options) {
+    // don't load the page if you don't have to
+    if (DefaultComponents[path]) {
+      this.goToPath(path, options);
+    } else {
+      this.loadPage(path, this.goToPath.bind(this, path, options));
+    }
   },
 
   loadPage(path, cb) {
