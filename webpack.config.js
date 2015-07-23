@@ -87,16 +87,12 @@ const config = {
       {
         test: /\.jsx?$/,
         include: [
-          path.resolve(__dirname, 'node_modules/react-routing'),
+          path.resolve(__dirname, 'node_modules/react-routing/src'),
           path.resolve(__dirname, 'src')
         ],
         loader: 'babel-loader'
       }
     ]
-  },
-
-  resolveLoader: {
-    root: path.join(__dirname, 'node_modules')
   },
 
   postcss: [autoprefixer(AUTOPREFIXER_BROWSERS)]
@@ -135,7 +131,15 @@ const serverConfig = merge({}, config, {
     libraryTarget: 'commonjs2'
   },
   target: 'node',
-  externals: /^[a-z][a-z\.\-0-9]*$/,
+  externals: [
+    function (context, request, cb) {
+      var isExternal =
+        request.match(/^[a-z][a-z\/\.\-0-9]*$/i) &&
+        !request.match(/^react-routing/) &&
+        !context.match(/[\\/]react-routing/);
+      cb(null, Boolean(isExternal));
+    }
+  ],
   node: {
     console: false,
     global: false,
