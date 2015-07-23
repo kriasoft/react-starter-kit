@@ -6,6 +6,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import path from 'path';
 import webpack, { DefinePlugin, BannerPlugin } from 'webpack';
 import merge from 'lodash/object/merge';
 import autoprefixer from 'autoprefixer-core';
@@ -58,14 +59,6 @@ const config = {
   },
 
   module: {
-    preLoaders: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'eslint-loader'
-      }
-    ],
-
     loaders: [
       {
         test: /\.css$/,
@@ -93,10 +86,17 @@ const config = {
       },
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, 'node_modules/react-routing'),
+          path.resolve(__dirname, 'src')
+        ],
         loader: 'babel-loader'
       }
     ]
+  },
+
+  resolveLoader: {
+    root: path.join(__dirname, 'node_modules')
   },
 
   postcss: [autoprefixer(AUTOPREFIXER_BROWSERS)]

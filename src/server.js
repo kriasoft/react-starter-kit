@@ -5,13 +5,10 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
-import React from 'react';
-import './core/Dispatcher';
-import './stores/AppStore';
-import db from './core/Database';
-import App from './components/App';
+import ReactDOM from 'react-dom/server';
+import router from './router';
 
-const server = express();
+const server = global.server = express();
 
 server.set('port', (process.env.PORT || 5000));
 server.use(express.static(path.join(__dirname, 'public')));
@@ -19,7 +16,7 @@ server.use(express.static(path.join(__dirname, 'public')));
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-server.use('/api/query', require('./api/query'));
+server.use('/api/content', require('./api/content'));
 
 //
 // Register server-side rendering middleware
@@ -31,29 +28,23 @@ const template = _.template(fs.readFileSync(templateFile, 'utf8'));
 
 server.get('*', async (req, res, next) => {
   try {
-    // TODO: Temporary fix #159
-    if (['/', '/about', '/privacy'].indexOf(req.path) !== -1) {
-      await db.getPage(req.path);
-    }
-    let notFound = false;
-    let css = [];
-    let data = {description: ''};
-    let app = (<App
-      path={req.path}
-      context={{
-        onInsertCss: value => css.push(value),
-        onSetTitle: value => data.title = value,
-        onSetMeta: (key, value) => data[key] = value,
-        onPageNotFound: () => notFound = true
-      }} />);
+    let statusCode = 200;
+    const data = { title: '', description: '', css: '', body: '' };
+    const css = [];
+    const context = {
+      onInsertCss: value => css.push(value),
+      onSetTitle: value => data.title = value,
+      onSetMeta: (key, value) => data[key] = value,
+      onPageNotFound: () => statusCode = 404
+    };
 
-    data.body = React.renderToString(app);
-    data.css = css.join('');
-    let html = template(data);
-    if (notFound) {
-      res.status(404);
-    }
-    res.send(html);
+    await router.dispatch({ path: req.path, context }, (state, component) => {
+      data.body = ReactDOM.renderToString(component);
+      data.css = css.join('');
+    });
+
+    const html = template(data);
+    res.status(statusCode).send(html);
   } catch (err) {
     next(err);
   }
