@@ -33,7 +33,7 @@ const container = document.getElementById('app');
 
 function render() {
   try {
-    const path = window.location.path.substr(1) || '/';
+    const path = window.location.hash.substr(1) || '/';
     const component = routes[path] || <NotFoundPage />;
     React.render(component, container);
   } catch (err) {
@@ -51,7 +51,7 @@ Just wrap React components inside your routes into asynchronous functions:
 
 ```js
 import React from 'react';
-import http from './core/HttpClient';
+import http from './core/http';
 import Layout from './components/Layout';
 import HomePage from './components/HomePage';
 import AboutPage from './components/AboutPage';
@@ -96,7 +96,7 @@ for matching URL paths to React components.
 
 ```js
 import React from 'react';
-import Router from './core/Router';
+import Router from 'react-routing/src/Router';
 import http from './core/HttpClient';
 import Layout from './components/Layout';
 import ProductListing from './components/ProductListing';
@@ -104,30 +104,24 @@ import ProductInfo from './components/ProductInfo';
 import NotFoundPage from './components/NotFoundPage';
 import ErrorPage from './components/ErrorPage';
 
-const router = new Router([{
-  path: '/products',
-  action: async () => {
+const router = new Router(on => {
+  on('/products', async () => {
     const data = await http.get('/api/products');
     return <Layout><ProductListing {...data} /></Layout>
-  }
-}, {
-  path: '/products/:id',
-  action: async (id) => {
+  });
+  on('/products/:id', async (id) => {
     const data = await http.get(`/api/products/${id}`);
     return <Layout><ProductInfo {...data} /></Layout>;
-  }
+  });
 }]);
 
 const container = document.getElementById('app');
 
 async function render() {
-  try {
-    const path = window.location.hash.substr(1) || '/';
-    const component = await router.match(path) || <NotFoundPage />;
+  const state = { path: window.location.hash.substr(1) || '/' };
+  await router.dispatch(state, component => {
     React.render(component, container);
-  } catch (err) {
-    React.render(<ErrorPage {...err} />, container);
-  }
+  });
 }
 
 window.addEventListener('hashchange', () => render());
