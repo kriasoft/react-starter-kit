@@ -10,10 +10,10 @@
 
 ```
 /src/components/Navigation/icon.svg
+/src/components/Navigation/Navigation.css
 /src/components/Navigation/Navigation.js
-/src/components/Navigation/Navigation.less
 /src/components/Navigation/Navigation.test.js
-/src/components/Navigation/Navigation.ru-RU.less
+/src/components/Navigation/Navigation.ru-RU.css
 /src/components/Navigation/package.json
 ```
 
@@ -48,7 +48,9 @@ Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS
 ```
 
 ```less
-// LESS
+// CSS
+@import '../variables.css';
+
 .Navigation {
   &-items {
     margin: 0;
@@ -74,12 +76,12 @@ Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS
 
     &,
     .Navigation-items:hover & {
-      background: @default-bg-color;
+      background: var(--default-bg-color);
     }
 
     &--selected,
     .Navigation-items:hover &:hover {
-      background: @active-bg-color;
+      background: var(--active-bg-color);
     }
   }
 }
@@ -94,7 +96,7 @@ Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS
 ##### React component example:
 
 ```js
-import './SampleComponent.less';
+import './SampleComponent.css';
 import React, { Component } from 'react';
 
 class SampleComponent extends Component {

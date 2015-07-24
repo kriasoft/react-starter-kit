@@ -1,19 +1,19 @@
-@import (less) '../../../node_modules/normalize.css/normalize.css';
+@import '../../../node_modules/normalize.css/normalize.css';
 
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-@import '../variables.less';
+@import '../variables.css';
 
-//
-// Base styles
-// -----------------------------------------------------------------------------
+/*
+ * Base styles
+ * ========================================================================== */
 
 html {
   color: #222;
   font-weight: 100;
-  font-size: 1em; // ~16px;
-  font-family: @font-family-base;
-  line-height: 1.375; // ~22px
+  font-size: 1em; /* ~16px; */
+  font-family: var(--font-family-base);
+  line-height: 1.375; /* ~22px */
 }
 
 /*
@@ -80,9 +80,9 @@ textarea {
   resize: vertical;
 }
 
-//
-// Browser upgrade prompt
-// -----------------------------------------------------------------------------
+/*
+ * Browser upgrade prompt
+ * ========================================================================== */
 
 .browserupgrade {
   margin: 0.2em 0;
@@ -91,11 +91,11 @@ textarea {
   padding: 0.2em 0;
 }
 
-//
-// Print styles
-// Inlined to avoid the additional HTTP request:
-// http://www.phpied.com/delay-loading-your-print-css/
-// -----------------------------------------------------------------------------
+/*
+ * Print styles
+ * Inlined to avoid the additional HTTP request:
+ * http://www.phpied.com/delay-loading-your-print-css/
+ * ========================================================================== */
 
 @media print {
   *,
