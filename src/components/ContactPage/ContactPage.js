@@ -1,7 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React, { PropTypes } from 'react';
-import styles from './ContactPage.less';
+import styles from './ContactPage.css';
 import withStyles from '../../decorators/withStyles';
 
 @withStyles(styles)

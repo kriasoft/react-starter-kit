@@ -2,7 +2,7 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from '../../decorators/withStyles';
-import styles from './RegisterPage.less';
+import styles from './RegisterPage.css';
 
 @withStyles(styles)
 class RegisterPage {

@@ -2,7 +2,7 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from '../../decorators/withStyles';
-import styles from './TextBox.less';
+import styles from './TextBox.css';
 
 @withStyles(styles)
 class TextBox {
