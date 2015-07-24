@@ -60,11 +60,11 @@ import ErrorPage from './components/ErrorPage';
 
 const routes = {
   '/': async () => {
-    const data = await http.get('/api/data/home');
+    const data = await http.get('/api/content?path=/');
     return <Layout><HomePage {...data} /></Layout>
   },
   '/about': async () => {
-    const data = await http.get('/api/data/about');
+    const data = await http.get('/api/content?path=/about');
     return <Layout><AboutPage {...data} /></Layout>;
   }
 };
