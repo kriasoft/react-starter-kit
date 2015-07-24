@@ -1,7 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React, { PropTypes } from 'react';
-import styles from './ContentPage.less';
+import styles from './ContentPage.css';
 import withStyles from '../../decorators/withStyles';
 
 @withStyles(styles)
