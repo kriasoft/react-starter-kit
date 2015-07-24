@@ -9,7 +9,6 @@
 import path from 'path';
 import webpack, { DefinePlugin, BannerPlugin } from 'webpack';
 import merge from 'lodash/object/merge';
-import autoprefixer from 'autoprefixer-core';
 import minimist from 'minimist';
 
 const argv = minimist(process.argv.slice(2));
@@ -65,10 +64,6 @@ const config = {
         loader: `${STYLE_LOADER}!${CSS_LOADER}!postcss-loader`
       },
       {
-        test: /\.less$/,
-        loader: `${STYLE_LOADER}!${CSS_LOADER}!postcss-loader!less-loader`
-      },
-      {
         test: /\.gif/,
         loader: 'url-loader?limit=10000&mimetype=image/gif'
       },
@@ -95,7 +90,11 @@ const config = {
     ]
   },
 
-  postcss: [autoprefixer(AUTOPREFIXER_BROWSERS)]
+  postcss: [
+    require('postcss-nested')(),
+    require('cssnext')(),
+    require('autoprefixer-core')(AUTOPREFIXER_BROWSERS)
+  ]
 };
 
 //
