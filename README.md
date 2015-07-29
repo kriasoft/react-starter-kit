@@ -124,6 +124,7 @@ the file is. Name the test by appending `-test.js` to the js file.
 
 ### Related Projects
 
+ * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates a static website from React components
  * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — A boilerplate for authoring JavaScript/React.js libraries
  * [React Decorators](https://github.com/kriasoft/react-decorators) — A collection of higher-order React components
 
