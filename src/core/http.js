@@ -1,7 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import request from 'superagent';
-import ExecutionEnvironment from 'react/lib/ExecutionEnvironment';
+import ExecutionEnvironment from 'fbjs/lib/ExecutionEnvironment';
 
 const getBaseUrl = (() => {
   let baseUrl;
