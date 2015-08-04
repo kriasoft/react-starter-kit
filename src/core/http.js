@@ -3,16 +3,13 @@
 import request from 'superagent';
 import ExecutionEnvironment from 'fbjs/lib/ExecutionEnvironment';
 
-const getBaseUrl = (() => {
-  let baseUrl;
-  return () => baseUrl || (baseUrl = ExecutionEnvironment.canUseDOM ? '' :
+const getBaseUrl = () => ExecutionEnvironment.canUseDOM ? '' :
     process.env.WEBSITE_HOSTNAME ?
       `http://${process.env.WEBSITE_HOSTNAME}` :
-      `http://127.0.0.1:${global.server.get('port')}`);
-})();
+      `http://127.0.0.1:${global.server.get('port')}`;
 
 const http = {
-
+  
   get: path => new Promise((resolve, reject) => {
     request
       .get(getBaseUrl() + path)
