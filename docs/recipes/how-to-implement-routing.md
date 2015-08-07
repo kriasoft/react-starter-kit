@@ -97,7 +97,7 @@ for matching URL paths to React components.
 ```js
 import React from 'react';
 import Router from 'react-routing/src/Router';
-import http from './core/HttpClient';
+import http from './core/http';
 import Layout from './components/Layout';
 import ProductListing from './components/ProductListing';
 import ProductInfo from './components/ProductInfo';
