@@ -104,7 +104,7 @@ class SampleComponent extends Component {
   static propTypes = { ... };
 
   static defaultProps = { ... };
-  
+
   constructor() {
     super();
     this.state = { ... };
@@ -141,7 +141,7 @@ Put custom methods and properties at the bottom of the file, after the render() 
 ```js
 // withViewport.js
 import React, { Component } from 'react';
-import { canUseDOM } from 'react/lib/ExecutionEnvironment';
+import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
 function withViewport(ComposedComponent) {
   return class WithViewport extends Component {
