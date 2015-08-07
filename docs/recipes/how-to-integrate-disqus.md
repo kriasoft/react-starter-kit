@@ -6,7 +6,7 @@ https://disqus.com/admin/create/
 
 ```js
 import React, { PropTypes } from 'react';
-import { canUseDOM } from 'react/lib/ExecutionEnvironment';
+import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
 const SHORTNAME = 'example';
 const WEBSITE_URL = 'http://www.example.com';
