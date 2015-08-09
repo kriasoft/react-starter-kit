@@ -150,6 +150,8 @@ gulp.task('sync', ['serve'], cb => {
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
     https: false,
+    // Add delay to fix Chrome XHR pending bug
+    reloadDelay: 1000,
     // Informs browser-sync to proxy our Express app which would run
     // at the following location
     proxy: 'localhost:5000'
