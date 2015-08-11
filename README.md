@@ -1,17 +1,19 @@
-# React Starter Kit
+## React Starter Kit — "isomorphic" web app boilerplate
 
-[![Build Status](http://img.shields.io/travis/kriasoft/react-starter-kit/master.svg?style=flat-square)](http://travis-ci.org/kriasoft/react-starter-kit)
-[![Dependency Status](https://david-dm.org/kriasoft/react-starter-kit.svg?style=flat-square)](https://david-dm.org/kriasoft/react-starter-kit)
-[![Tips](http://img.shields.io/gratipay/koistya.svg?style=flat-square)](https://gratipay.com/koistya)
-[![Gitter](http://img.shields.io/badge/chat_room-%23react--starter--kit-blue.svg?style=flat-square)](https://gitter.im/kriasoft/react-starter-kit)
+[![Support us on Bountysource](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/banner.png)](https://salt.bountysource.com/teams/react-starter-kit)<br>
 
-> This project template is a skeleton for an [isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)
-> web application (SPA) based on Facebook's [React](https://facebook.github.io/react/)
-> library and [Flux](http://facebook.github.io/flux/) architecture. You can use
-> it to quickly bootstrap your web application projects. All the parts of this
-> project template are easily replaceable.
+> [React Starter Kit](http://www.reactstarterkit.com) is an opinionated
+> boilerplate for web development built on top of Facebook's
+> [React](https://facebook.github.io/react/) library,
+> [Node.js](https://nodejs.org/) / [Express](http://expressjs.com/) server
+> and [Flux](http://facebook.github.io/flux/) architecture. Containing
+> modern web development tools such as [Webpack](http://webpack.github.io/),
+> [Babel](http://babeljs.io/) and [BrowserSync](http://www.browsersync.io/).
+> Helping you to stay productive following the best practices. A solid starting
+> point for both professionals and newcomers to the industry.
 
-**Demo**: http://demo.reactstarterkit.com
+Demo: http://demo.reactstarterkit.com &nbsp;|&nbsp;
+Join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom on Gitter to stay up to date.
 
 ### Documentation
 
