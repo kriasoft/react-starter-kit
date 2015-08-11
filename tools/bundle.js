@@ -8,8 +8,8 @@
  */
 
 import webpack from 'webpack';
-import config from '../webpack.config';
 import minimist from 'minimist';
+import config from './config';
 
 const argv = minimist(process.argv.slice(2));
 
