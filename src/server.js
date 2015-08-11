@@ -1,12 +1,18 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import 'babel/polyfill';
+import dotenv from 'dotenv';
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
 import ReactDOM from 'react-dom/server';
 import router from './router';
+
+//
+// Load environment variables from .env
+// ----------------------------------------------------------------------------
+if (fs.existsSync('.env')) dotenv.load();
 
 const server = global.server = express();
 
