@@ -10,12 +10,10 @@
 import path from 'path';
 import webpack, { DefinePlugin, BannerPlugin } from 'webpack';
 import merge from 'lodash/object/merge';
-import minimist from 'minimist';
 
-const argv = minimist(process.argv.slice(2));
-const DEBUG = !argv.release;
+const DEBUG = !process.argv.includes('release');
 const WATCH = global.WATCH === undefined ? false : global.WATCH;
-const VERBOSE = global.VERBOSE === undefined ? false : global.VERBOSE;
+const VERBOSE = process.argv.includes('verbose');
 const STYLE_LOADER = 'style-loader/useable';
 const CSS_LOADER = DEBUG ? 'css-loader' : 'css-loader?minimize';
 const AUTOPREFIXER_BROWSERS = [
@@ -86,8 +84,8 @@ const config = {
     }, {
       test: /\.jsx?$/,
       include: [
-        path.resolve(__dirname, 'node_modules/react-routing/src'),
-        path.resolve(__dirname, 'src')
+        path.resolve(__dirname, '../node_modules/react-routing/src'),
+        path.resolve(__dirname, '../src')
       ],
       loaders: [...(WATCH ? ['react-hot'] : []), 'babel-loader']
     }]
@@ -111,21 +109,23 @@ const appConfig = merge({}, config, {
     './src/app.js'
   ],
   output: {
-    path: path.join(__dirname, 'build', 'public'),
+    path: path.join(__dirname, '../build/public'),
     filename: 'app.js'
   },
   devtool: DEBUG ? 'source-map' : false,
-  plugins: config.plugins.concat([
-      new DefinePlugin(merge(GLOBALS, {'__SERVER__': false}))
-    ].concat(DEBUG ? [] : [
+  plugins: [
+    ...config.plugins,
+    new DefinePlugin(merge(GLOBALS, {'__SERVER__': false})),
+    ...(DEBUG ? [] : [
       new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.UglifyJsPlugin({compress: {warnings: VERBOSE}}),
       new webpack.optimize.AggressiveMergingPlugin()
-    ]).concat(WATCH ? [
+    ]),
+    ...(WATCH ? [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NoErrorsPlugin()
     ] : [])
-  ),
+  ],
   module: {
     loaders: [...config.module.loaders, {
       test: /\.css$/,
@@ -164,11 +164,12 @@ const serverConfig = merge({}, config, {
     __dirname: false
   },
   devtool: DEBUG ? 'source-map' : 'cheap-module-source-map',
-  plugins: config.plugins.concat(
+  plugins: [
+    ...config.plugins,
     new DefinePlugin(merge(GLOBALS, {'__SERVER__': true})),
     new BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false })
-  ),
+  ],
   module: {
     loaders: [...config.module.loaders, {
       test: /\.css$/,

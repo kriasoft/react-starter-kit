@@ -8,10 +8,7 @@
  */
 
 import webpack from 'webpack';
-import minimist from 'minimist';
 import config from './config';
-
-const argv = minimist(process.argv.slice(2));
 
 /**
  * Bundles JavaScript, CSS and images into one or more packages
@@ -20,7 +17,6 @@ const argv = minimist(process.argv.slice(2));
 export default async () => new Promise((resolve, reject) => {
   console.log('bundle');
   const bundler = webpack(config);
-  const verbose = !!argv.verbose;
   let bundlerRunCount = 0;
 
   function bundle(err, stats) {
@@ -28,16 +24,7 @@ export default async () => new Promise((resolve, reject) => {
       return reject(err);
     }
 
-    console.log(stats.toString({
-      colors: true,
-      hash: verbose,
-      version: verbose,
-      timings: verbose,
-      chunks: verbose,
-      chunkModules: verbose,
-      cached: verbose,
-      cachedAssets: verbose
-    }));
+    console.log(stats.toString(config[0].stats));
 
     if (++bundlerRunCount === (global.watch ? config.length : 1)) {
       return resolve();
