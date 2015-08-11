@@ -1,6 +1,7 @@
-/*
- * React.js Starter Kit
- * Copyright (c) Konstantin Tarkus (@koistya), KriaSoft LLC
+/**
+ * React Starter Kit (http://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-2015 Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
@@ -9,10 +10,10 @@
 import path from 'path';
 import webpack, { DefinePlugin, BannerPlugin } from 'webpack';
 import merge from 'lodash/object/merge';
-import minimist from 'minimist';
 
-const argv = minimist(process.argv.slice(2));
-const DEBUG = !argv.release;
+const DEBUG = !process.argv.includes('release');
+const WATCH = global.WATCH === undefined ? false : global.WATCH;
+const VERBOSE = process.argv.includes('verbose');
 const STYLE_LOADER = 'style-loader/useable';
 const CSS_LOADER = DEBUG ? 'css-loader' : 'css-loader?minimize';
 const AUTOPREFIXER_BROWSERS = [
@@ -37,7 +38,7 @@ const GLOBALS = {
 
 const config = {
   output: {
-    publicPath: './',
+    publicPath: '/',
     sourcePrefix: '  '
   },
 
@@ -46,7 +47,14 @@ const config = {
 
   stats: {
     colors: true,
-    reasons: DEBUG
+    reasons: DEBUG,
+    hash: VERBOSE,
+    version: VERBOSE,
+    timings: VERBOSE,
+    chunks: VERBOSE,
+    chunkModules: VERBOSE,
+    cached: VERBOSE,
+    cachedAssets: VERBOSE
   },
 
   plugins: [
@@ -58,36 +66,29 @@ const config = {
   },
 
   module: {
-    loaders: [
-      {
-        test: /\.css$/,
-        loader: `${STYLE_LOADER}!${CSS_LOADER}!postcss-loader`
-      },
-      {
-        test: /\.gif/,
-        loader: 'url-loader?limit=10000&mimetype=image/gif'
-      },
-      {
-        test: /\.jpg/,
-        loader: 'url-loader?limit=10000&mimetype=image/jpg'
-      },
-      {
-        test: /\.png/,
-        loader: 'url-loader?limit=10000&mimetype=image/png'
-      },
-      {
-        test: /\.svg/,
-        loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
-      },
-      {
-        test: /\.jsx?$/,
-        include: [
-          path.resolve(__dirname, 'node_modules/react-routing/src'),
-          path.resolve(__dirname, 'src')
-        ],
-        loader: 'babel-loader'
-      }
-    ]
+    loaders: [{
+      test: /\.txt/,
+      loader: 'file?name=[path][name].[ext]'
+    }, {
+      test: /\.gif/,
+      loader: 'url-loader?limit=10000&mimetype=image/gif'
+    }, {
+      test: /\.jpg/,
+      loader: 'url-loader?limit=10000&mimetype=image/jpg'
+    }, {
+      test: /\.png/,
+      loader: 'url-loader?limit=10000&mimetype=image/png'
+    }, {
+      test: /\.svg/,
+      loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+    }, {
+      test: /\.jsx?$/,
+      include: [
+        path.resolve(__dirname, '../node_modules/react-routing/src'),
+        path.resolve(__dirname, '../src')
+      ],
+      loaders: [...(WATCH ? ['react-hot'] : []), 'babel-loader']
+    }]
   },
 
   postcss: [
@@ -102,20 +103,35 @@ const config = {
 // -----------------------------------------------------------------------------
 
 const appConfig = merge({}, config, {
-  entry: './src/app.js',
+  entry: [...(WATCH ? [
+    'webpack/hot/dev-server',
+    'webpack-hot-middleware/client'] : []),
+    './src/app.js'
+  ],
   output: {
-    path: './build/public',
+    path: path.join(__dirname, '../build/public'),
     filename: 'app.js'
   },
   devtool: DEBUG ? 'source-map' : false,
-  plugins: config.plugins.concat([
-      new DefinePlugin(merge(GLOBALS, {'__SERVER__': false}))
-    ].concat(DEBUG ? [] : [
+  plugins: [
+    ...config.plugins,
+    new DefinePlugin(merge(GLOBALS, {'__SERVER__': false})),
+    ...(DEBUG ? [] : [
       new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.UglifyJsPlugin({compress: {warnings: VERBOSE}}),
       new webpack.optimize.AggressiveMergingPlugin()
-    ])
-  )
+    ]),
+    ...(WATCH ? [
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NoErrorsPlugin()
+    ] : [])
+  ],
+  module: {
+    loaders: [...config.module.loaders, {
+      test: /\.css$/,
+      loader: `${STYLE_LOADER}!${CSS_LOADER}!postcss-loader`
+    }]
+  }
 });
 
 //
@@ -148,18 +164,17 @@ const serverConfig = merge({}, config, {
     __dirname: false
   },
   devtool: DEBUG ? 'source-map' : 'cheap-module-source-map',
-  plugins: config.plugins.concat(
+  plugins: [
+    ...config.plugins,
     new DefinePlugin(merge(GLOBALS, {'__SERVER__': true})),
     new BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false })
-  ),
+  ],
   module: {
-    loaders: config.module.loaders.map(function(loader) {
-      // Remove style-loader
-      return merge(loader, {
-        loader: loader.loader = loader.loader.replace(STYLE_LOADER + '!', '')
-      });
-    })
+    loaders: [...config.module.loaders, {
+      test: /\.css$/,
+      loader: `${CSS_LOADER}!postcss-loader`
+    }]
   }
 });
 

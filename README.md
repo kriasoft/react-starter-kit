@@ -48,7 +48,7 @@ Join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom
 │   ├── /utils/                 # Utility classes and functions
 │   ├── /app.js                 # Client-side startup script
 │   └── /server.js              # Server-side startup script
-│── gulpfile.babel.js           # Configuration file for automated builds
+├── /tools/                     # Build automation scripts and utilities
 │── package.json                # The list of 3rd party libraries and utilities
 │── preprocessor.js             # ES6 transpiler settings for Jest
 └── webpack.config.js           # Webpack configuration for bundling and optimization
@@ -63,37 +63,36 @@ Just [clone](github-windows://openRepo/https://github.com/kriasoft/react-starter
 $ git clone -o react-starter-kit -b master --single-branch \
       https://github.com/kriasoft/react-starter-kit.git MyApp
 $ cd MyApp
-$ npm install -g gulp           # Install Gulp task runner globally
 $ npm install                   # Install Node.js components listed in ./package.json
+$ npm start                     # Compile and launch
 ```
 
 ### How to Build
 
 ```shell
-$ gulp build                    # or, `gulp build --release`
+$ npm run build                 # or, `npm run build -- release`
 ```
 
-By default, it builds in debug mode. If you need to build in release mode, add
-`--release` flag.  This will minimize your JavaScript; you will also see some warnings from
-[uglify](https://github.com/mishoo/UglifyJS) where it removes unused code from your release.
+By default, it builds in a *debug* mode. If you need to build in a release
+mode, just add `-- release` flag. This will optimize the output bundle for
+production deployment.
 
 ### How to Run
 
 ```shell
-$ gulp                          # or, `gulp --release`
+$ npm start                     # or, `npm start -- release`
 ```
 
-This will start a lightweight development server with LiveReload and
+This will start a lightweight development server with "live reload" and
 synchronized browsing across multiple devices and browsers.
 
 ### How to Deploy
 
 ```shell
-$ gulp build --release          # Builds the project in release mode
-$ gulp deploy                   # or, `gulp deploy --production`
+$ npm run deploy                # or, `npm run deploy -- production`
 ```
 
-For more information see `deploy` task in `gulpfile.babel.js`.
+For more information see `tools/deploy.js`.
 
 ### How to Update
 
@@ -150,4 +149,10 @@ the file is. Name the test by appending `-test.js` to the js file.
 
 ### License
 
-The MIT License © Konstantin Tarkus ([@koistya](https://twitter.com/koistya)), [Kriasoft](http://www.kriasoft.com)
+Copyright © 2014-2015 Kriasoft, LLC. This source code is licensed under the MIT
+license found in the [LICENSE.txt](https://github.com/kriasoft/react-starter-kit/blob/master/LICENSE.txt)
+file. The documentation to the project is licensed under the
+[CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license.
+
+---
+Made with ♥ by Konstantin Tarkus ([@koistya](https://twitter.com/koistya)) and [contributors](https://github.com/kriasoft/react-starter-kit/graphs/contributors)
