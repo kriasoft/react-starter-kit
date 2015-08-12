@@ -55,7 +55,9 @@ export default async () => {
     // including full page reloads if HMR won't work
     files: [
       'build/public/**/*.css',
-      'build/public/**/*.html'
+      'build/public/**/*.html',
+      'build/content/**/*.*',
+      'build/templates/**/*.*'
     ]
   });
 };
