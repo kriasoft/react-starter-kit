@@ -7,47 +7,32 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import { ncp as copy } from 'ncp';
+import path from 'path';
+import copy from './lib/copy';
+import watch from './lib/watch';
 
 /**
  * Copies static files such as robots.txt, favicon.ico to the
  * output (build) folder.
  */
-export default () => {
+export default async () => {
   console.log('copy');
-  return Promise.all([
-
+  await Promise.all([
     // Static files
-    new Promise((resolve, reject) => {
-      copy('src/public', 'build/public', err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    }),
+    copy('src/public', 'build/public'),
 
     // Files with content (e.g. *.md files)
-    new Promise((resolve, reject) => {
-      copy('src/content', 'build/content', err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    }),
+    copy('src/content', 'build/content'),
 
     // Website and email templates
-    new Promise((resolve, reject) => {
-      copy('src/templates', 'build/templates', err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      })
-    })
+    copy('src/templates', 'build/templates')
   ]);
+
+  if (global.WATCH) {
+    const watcher = await watch('src/content/**/*.*');
+    watcher.on('changed', async (file) => {
+      file = file.substr(path.join(__dirname, '../src/content/').length);
+      await copy(`src/content/${file}`, `build/content/${file}`);
+    });
+  }
 };
