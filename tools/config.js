@@ -115,7 +115,7 @@ const appConfig = merge({}, config, {
   devtool: DEBUG ? 'source-map' : false,
   plugins: [
     ...config.plugins,
-    new DefinePlugin(merge(GLOBALS, {'__SERVER__': false})),
+    new DefinePlugin(merge({}, GLOBALS, {'__SERVER__': false})),
     ...(DEBUG ? [] : [
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({compress: {warnings: VERBOSE}}),
@@ -166,7 +166,7 @@ const serverConfig = merge({}, config, {
   devtool: DEBUG ? 'source-map' : 'cheap-module-source-map',
   plugins: [
     ...config.plugins,
-    new DefinePlugin(merge(GLOBALS, {'__SERVER__': true})),
+    new DefinePlugin(merge({}, GLOBALS, {'__SERVER__': true})),
     new BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false })
   ],
