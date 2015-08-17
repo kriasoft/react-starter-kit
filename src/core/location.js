@@ -1,10 +1,10 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
-import Dispatcher from '../core/Dispatcher';
+import dispatcher from '../core/dispatcher';
 import ActionTypes from '../constants/ActionTypes';
 
-export default {
+const location = {
 
   navigateTo(path, options) {
     if (canUseDOM) {
@@ -15,10 +15,12 @@ export default {
       }
     }
 
-    Dispatcher.dispatch({
+    dispatcher.dispatch({
       type: ActionTypes.CHANGE_LOCATION,
       path
     });
   }
 
 };
+
+export default location;

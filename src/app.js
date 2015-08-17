@@ -3,9 +3,9 @@
 import 'babel/polyfill';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
+import dispatcher from './core/dispatcher';
 import router from './router';
-import Dispatcher from './core/Dispatcher';
-import Location from './core/Location';
+import location from './core/location';
 import ActionTypes from './constants/ActionTypes';
 
 const container = document.getElementById('app');
@@ -35,7 +35,7 @@ function run() {
     });
   });
 
-  Dispatcher.register(action => {
+  dispatcher.register(action => {
     if (action.type === ActionTypes.CHANGE_LOCATION) {
       router.dispatch({ path: action.path, context }, (state, component) => {
         ReactDOM.render(component, container);
@@ -45,7 +45,7 @@ function run() {
 }
 
 function handlePopState(event) {
-  Location.navigateTo(window.location.pathname, { replace: !!event.state });
+  location.navigateTo(window.location.pathname, { replace: !!event.state });
 }
 
 // Run the application when both DOM is ready
