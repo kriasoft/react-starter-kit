@@ -8,6 +8,7 @@
  */
 
 import path from 'path';
+import replace from 'replace';
 import copy from './lib/copy';
 import watch from './lib/watch';
 
@@ -25,8 +26,18 @@ export default async () => {
     copy('src/content', 'build/content'),
 
     // Website and email templates
-    copy('src/templates', 'build/templates')
+    copy('src/templates', 'build/templates'),
+
+    copy('package.json', 'build/package.json')
   ]);
+
+  replace({
+    regex: '"start".*',
+    replacement: '"start": "node server.js"',
+    paths: ['build/package.json'],
+    recursive: false,
+    silent: false
+  });
 
   if (global.WATCH) {
     const watcher = await watch('src/content/**/*.*');
