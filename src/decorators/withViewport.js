@@ -32,7 +32,7 @@ function withViewport(ComposedComponent) {
         window.addEventListener('resize', handleWindowResize);
         window.addEventListener('orientationchange', handleWindowResize);
       }
-      EE.on('resize', this.handleResize, this);
+      EE.on(RESIZE_EVENT, this.handleResize, this);
     }
 
     componentWillUnmount() {
