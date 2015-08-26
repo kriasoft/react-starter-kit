@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import express from 'express';
 import ReactDOM from 'react-dom/server';
-import router from './router';
+import Router from './Router';
 
 const server = global.server = express();
 
@@ -38,7 +38,7 @@ server.get('*', async (req, res, next) => {
       onPageNotFound: () => statusCode = 404
     };
 
-    await router.dispatch({ path: req.path, context }, (state, component) => {
+    await Router.dispatch({ path: req.path, context }, (state, component) => {
       data.body = ReactDOM.renderToString(component);
       data.css = css.join('');
     });
