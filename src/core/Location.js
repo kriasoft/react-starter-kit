@@ -1,26 +1,9 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
-import Dispatcher from '../core/Dispatcher';
-import ActionTypes from '../constants/ActionTypes';
+import createHistory from 'history/lib/createBrowserHistory';
+import useQueries from 'history/lib/useQueries';
 
-const location = {
-
-  navigateTo(path, options) {
-    if (canUseDOM) {
-      if (options && options.replace) {
-        window.history.replaceState({}, document.title, path);
-      } else {
-        window.history.pushState({}, document.title, path);
-      }
-    }
-
-    Dispatcher.dispatch({
-      type: ActionTypes.CHANGE_LOCATION,
-      path
-    });
-  }
-
-};
+const location = canUseDOM ? useQueries(createHistory)({}) : {};
 
 export default location;

@@ -7,6 +7,7 @@ import Dispatcher from './core/Dispatcher';
 import Router from './Router';
 import Location from './core/Location';
 import ActionTypes from './constants/ActionTypes';
+import { addEventListener, removeEventListener } from './utils/DOMUtils';
 
 const container = document.getElementById('app');
 const context = {
@@ -27,37 +28,74 @@ const context = {
   }
 };
 
-function run() {
-  FastClick.attach(document.body);
-
-  Router.dispatch({ path: window.location.pathname, context }, (state, component) => {
-    ReactDOM.render(component, container, () => {
-      let css = document.getElementById('css');
+function cleanUp() {
+  let done = false;
+  if (!done) {
+    // Remove the pre-rendered CSS because it's no longer used
+    // after the React app is launched
+    const css = document.getElementById('css');
+    if (css) {
       css.parentNode.removeChild(css);
-    });
-  });
-
-  Dispatcher.register(action => {
-    if (action.type === ActionTypes.CHANGE_LOCATION) {
-      Router.dispatch({ path: action.path, context }, (state, component) => {
-        ReactDOM.render(component, container);
-      });
+      done = true;
     }
+  }
+}
+
+function render(state) {
+  Router.dispatch(state, (_, component) => {
+    ReactDOM.render(component, container, () => {
+      // Restore the scroll position if it was saved into the state
+      if (state.scrollY !== undefined) {
+        window.scrollTo(state.scrollX, state.scrollY);
+      } else {
+        window.scrollTo(0, 0);
+      }
+      cleanUp();
+    });
   });
 }
 
-function handlePopState(event) {
-  Location.navigateTo(window.location.pathname, { replace: !!event.state });
+function run() {
+  let currentLocation = null;
+  let currentState = null;
+
+  // Make taps on links and buttons work fast on mobiles
+  FastClick.attach(document.body);
+
+  // Re-render the app when window.location changes
+  const unlisten = Location.listen(location => {
+    currentLocation = location;
+    currentState = Object.assign({}, location.state, {
+      path: location.pathname,
+      query: location.query,
+      state: location.state,
+      context
+    });
+    render(currentState);
+  });
+
+  // Save the page scroll position into the current location's state
+  var supportPageOffset = window.pageXOffset !== undefined;
+  var isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
+  const setPageOffset = () => {
+    currentLocation.state = currentLocation.state || Object.create(null);
+    currentLocation.state.scrollX = supportPageOffset ? window.pageXOffset : isCSS1Compat ?
+      document.documentElement.scrollLeft : document.body.scrollLeft;
+    currentLocation.state.scrollY = supportPageOffset ? window.pageYOffset : isCSS1Compat ?
+      document.documentElement.scrollTop : document.body.scrollTop;
+  };
+
+  addEventListener(window, 'scroll', setPageOffset);
+  addEventListener(window, 'pagehide', () => {
+    removeEventListener(window, 'scroll', setPageOffset);
+    unlisten();
+  });
 }
 
 // Run the application when both DOM is ready
 // and page content is loaded
-new Promise(resolve => {
-  if (window.addEventListener) {
-    window.addEventListener('DOMContentLoaded', resolve);
-    window.addEventListener('popstate', handlePopState);
-  } else {
-    window.attachEvent('onload', resolve);
-    window.attachEvent('popstate', handlePopState);
-  }
-}).then(run);
+if (window.addEventListener) {
+  window.addEventListener('DOMContentLoaded', run);
+} else {
+  window.attachEvent('onload', run);
+}
