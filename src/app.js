@@ -3,9 +3,9 @@
 import 'babel/polyfill';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
-import dispatcher from './core/dispatcher';
-import router from './router';
-import location from './core/location';
+import Dispatcher from './core/Dispatcher';
+import Router from './Router';
+import Location from './core/Location';
 import ActionTypes from './constants/ActionTypes';
 
 const container = document.getElementById('app');
@@ -30,16 +30,16 @@ const context = {
 function run() {
   FastClick.attach(document.body);
 
-  router.dispatch({ path: window.location.pathname, context }, (state, component) => {
+  Router.dispatch({ path: window.location.pathname, context }, (state, component) => {
     ReactDOM.render(component, container, () => {
       let css = document.getElementById('css');
       css.parentNode.removeChild(css);
     });
   });
 
-  dispatcher.register(action => {
+  Dispatcher.register(action => {
     if (action.type === ActionTypes.CHANGE_LOCATION) {
-      router.dispatch({ path: action.path, context }, (state, component) => {
+      Router.dispatch({ path: action.path, context }, (state, component) => {
         ReactDOM.render(component, container);
       });
     }
@@ -47,7 +47,7 @@ function run() {
 }
 
 function handlePopState(event) {
-  location.navigateTo(window.location.pathname, { replace: !!event.state });
+  Location.navigateTo(window.location.pathname, { replace: !!event.state });
 }
 
 // Run the application when both DOM is ready

@@ -1,7 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import invariant from 'fbjs/lib/invariant';
-import location from '../core/location';
+import Location from '../core/Location';
 
 function handleClick(event) {
 
@@ -23,7 +23,7 @@ function handleClick(event) {
   var path = el.pathname + el.search + (el.hash || '');
 
   event.preventDefault();
-  location.navigateTo(path);
+  Location.navigateTo(path);
 }
 
 export default { handleClick };

@@ -1,7 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
-import dispatcher from '../core/dispatcher';
+import Dispatcher from '../core/Dispatcher';
 import ActionTypes from '../constants/ActionTypes';
 
 const location = {
@@ -15,7 +15,7 @@ const location = {
       }
     }
 
-    dispatcher.dispatch({
+    Dispatcher.dispatch({
       type: ActionTypes.CHANGE_LOCATION,
       path
     });
