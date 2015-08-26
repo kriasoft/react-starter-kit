@@ -28,6 +28,8 @@ const context = {
 };
 
 function run() {
+  FastClick.attach(document.body);
+
   router.dispatch({ path: window.location.pathname, context }, (state, component) => {
     ReactDOM.render(component, container, () => {
       let css = document.getElementById('css');
@@ -58,4 +60,4 @@ new Promise(resolve => {
     window.attachEvent('onload', resolve);
     window.attachEvent('popstate', handlePopState);
   }
-}).then(() => FastClick.attach(document.body)).then(run);
+}).then(run);
