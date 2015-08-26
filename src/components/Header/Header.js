@@ -3,7 +3,7 @@
 import React from 'react';
 import styles from './Header.css';
 import withStyles from '../../decorators/withStyles';
-import Link from '../../utils/Link';
+import Link from '../Link';
 import Navigation from '../Navigation';
 
 @withStyles(styles)
