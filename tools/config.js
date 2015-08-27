@@ -50,7 +50,7 @@ const config = {
     reasons: DEBUG,
     hash: VERBOSE,
     version: VERBOSE,
-    timings: VERBOSE,
+    timings: true,
     chunks: VERBOSE,
     chunkModules: VERBOSE,
     cached: VERBOSE,
@@ -103,11 +103,7 @@ const config = {
 // -----------------------------------------------------------------------------
 
 const appConfig = merge({}, config, {
-  entry: [...(WATCH ? [
-    'webpack/hot/dev-server',
-    'webpack-hot-middleware/client'] : []),
-    './src/app.js'
-  ],
+  entry: [...(WATCH ? ['webpack-hot-middleware/client'] : []), './src/app.js'],
   output: {
     path: path.join(__dirname, '../build/public'),
     filename: 'app.js'
