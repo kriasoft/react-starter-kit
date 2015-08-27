@@ -31,7 +31,7 @@ export default async () => new Promise((resolve, reject) => {
     }
   }
 
-  if (global.watch) {
+  if (global.WATCH) {
     bundler.watch(200, bundle);
   } else {
     bundler.run(bundle);
