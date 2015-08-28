@@ -82,6 +82,18 @@ const config = {
       test: /\.svg/,
       loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
     }, {
+      test: /\.eot/,
+      loader: 'url-loader?mimetype=application/vnd.ms-fontobject'
+    }, {
+      test: /\.woff2/,
+      loader: 'url-loader?mimetype=application/font-woff2'
+    }, {
+      test: /\.woff/,
+      loader: 'url-loader?mimetype=application/font-woff'
+    }, {
+      test: /\.ttf/,
+      loader: 'url-loader?mimetype=application/font-ttf'
+    }, {
       test: /\.jsx?$/,
       include: [
         path.resolve(__dirname, '../node_modules/react-routing/src'),
