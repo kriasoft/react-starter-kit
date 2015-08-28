@@ -103,7 +103,10 @@ const config = {
 // -----------------------------------------------------------------------------
 
 const appConfig = merge({}, config, {
-  entry: [...(WATCH ? ['webpack-hot-middleware/client'] : []), './src/app.js'],
+  entry: [
+    ...(WATCH && ['webpack-hot-middleware/client']),
+    './src/app.js'
+  ],
   output: {
     path: path.join(__dirname, '../build/public'),
     filename: 'app.js'
@@ -112,15 +115,14 @@ const appConfig = merge({}, config, {
   plugins: [
     ...config.plugins,
     new DefinePlugin(merge({}, GLOBALS, {'__SERVER__': false})),
-    ...(DEBUG ? [] : [
+    ...(!DEBUG && [
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({compress: {warnings: VERBOSE}}),
       new webpack.optimize.AggressiveMergingPlugin()
     ]),
-    ...(WATCH ? [
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin()
-    ] : [])
+    ...(WATCH && [
+      new webpack.HotModuleReplacementPlugin()
+    ])
   ],
   module: {
     loaders: [...config.module.loaders, {
