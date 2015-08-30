@@ -87,7 +87,7 @@ const config = {
         path.resolve(__dirname, '../node_modules/react-routing/src'),
         path.resolve(__dirname, '../src')
       ],
-      loaders: [...(WATCH ? ['react-hot'] : []), 'babel-loader']
+      loaders: [...(WATCH && ['react-hot']), 'babel-loader']
     }]
   },
 
