@@ -11,9 +11,10 @@ const CONTENT_DIR = join(__dirname, './content');
 
 // Extract 'front matter' metadata and generate HTML
 const parseJade = (path, jadeContent) => {
-  const content = fm(jadeContent);
-  const html = jade.render(content.body, null, '  ');
-  const page = Object.assign({ path, content: html }, content.attributes);
+  const fmContent = fm(jadeContent);
+  const jadeOptions = null; // TODO: Modify the parseJade to allow dynamic render option for Jade?
+  const htmlContent = jade.render(fmContent.body, jadeOptions);
+  const page = Object.assign({ path, content: htmlContent }, fmContent.attributes);
   return page;
 };
 
