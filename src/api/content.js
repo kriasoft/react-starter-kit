@@ -11,10 +11,9 @@ const CONTENT_DIR = join(__dirname, './content');
 
 // Extract 'front matter' metadata and generate HTML
 const parseJade = (path, jadeContent) => {
-  const content = fm(jadeContent);
-  const html = jade.render(content.body, null, '  ');
-  const page = Object.assign({ path, content: html }, content.attributes);
-  return page;
+  const fmContent = fm(jadeContent);
+  const htmlContent = jade.render(fmContent.body);
+  return Object.assign({ path, content: htmlContent }, fmContent.attributes);
 };
 
 const router = new Router();
