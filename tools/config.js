@@ -68,7 +68,7 @@ const config = {
   module: {
     loaders: [{
       test: /\.txt/,
-      loader: 'file?name=[path][name].[ext]'
+      loader: 'file-loader?name=[path][name].[ext]'
     }, {
       test: /\.gif/,
       loader: 'url-loader?limit=10000&mimetype=image/gif'
@@ -81,6 +81,18 @@ const config = {
     }, {
       test: /\.svg/,
       loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+    }, {
+      test: /\.eot/,
+      loader: 'url-loader?limit=100000&mimetype=application/vnd.ms-fontobject'
+    }, {
+      test: /\.woff2/,
+      loader: 'url-loader?limit=100000&mimetype=application/font-woff2'
+    }, {
+      test: /\.woff/,
+      loader: 'url-loader?limit=100000&mimetype=application/font-woff'
+    }, {
+      test: /\.ttf/,
+      loader: 'url-loader?limit=100000&mimetype=application/font-ttf'
     }, {
       test: /\.jsx?$/,
       include: [
