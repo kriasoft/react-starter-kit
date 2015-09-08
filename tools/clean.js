@@ -13,13 +13,8 @@ import fs from './lib/fs';
 /**
  * Cleans up the output (build) directory.
  */
-export default () => new Promise((resolve, reject) => {
+export default async () => {
   console.log('clean');
-  del(['.tmp', 'build/*', '!build/.git'], {dot: true}, err => {
-    if (err) {
-      reject(err);
-    } else {
-      fs.makeDir('build/public').then(resolve, reject);
-    }
-  });
-});
+  await del(['.tmp', 'build/*', '!build/.git'], {dot: true});
+  await fs.makeDir('build/public');
+};

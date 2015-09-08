@@ -67,39 +67,24 @@ const config = {
 
   module: {
     loaders: [{
-      test: /\.txt/,
-      loader: 'file-loader?name=[path][name].[ext]'
-    }, {
-      test: /\.gif/,
-      loader: 'url-loader?limit=10000&mimetype=image/gif'
-    }, {
-      test: /\.jpg/,
-      loader: 'url-loader?limit=10000&mimetype=image/jpg'
-    }, {
-      test: /\.png/,
-      loader: 'url-loader?limit=10000&mimetype=image/png'
-    }, {
-      test: /\.svg/,
-      loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
-    }, {
-      test: /\.eot/,
-      loader: 'url-loader?limit=100000&mimetype=application/vnd.ms-fontobject'
-    }, {
-      test: /\.woff2/,
-      loader: 'url-loader?limit=100000&mimetype=application/font-woff2'
-    }, {
-      test: /\.woff/,
-      loader: 'url-loader?limit=100000&mimetype=application/font-woff'
-    }, {
-      test: /\.ttf/,
-      loader: 'url-loader?limit=100000&mimetype=application/font-ttf'
-    }, {
       test: /\.jsx?$/,
       include: [
         path.resolve(__dirname, '../node_modules/react-routing/src'),
         path.resolve(__dirname, '../src')
       ],
       loaders: [...(WATCH && ['react-hot']), 'babel-loader']
+    }, {
+      test: /\.json$/,
+      loader: 'json-loader'
+    }, {
+      test: /\.txt$/,
+      loader: 'raw-loader'
+    }, {
+      test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
+      loader: 'url-loader?limit=10000'
+    }, {
+      test: /\.(eot|tft|wav|mp3)$/,
+      loader: 'file-loader'
     }]
   },
 
