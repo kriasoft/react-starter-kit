@@ -9,8 +9,9 @@ import Location from './core/Location';
 import ActionTypes from './constants/ActionTypes';
 import { addEventListener, removeEventListener } from './utils/DOMUtils';
 
-const container = document.getElementById('app');
-const context = {
+let appContainer = document.getElementById('app');
+let cssContainer = document.getElementById('css');
+let context = {
   onSetTitle: value => document.title = value,
   onSetMeta: (name, content) => {
     // Remove and create a new <meta /> tag in order to make it work
@@ -28,29 +29,21 @@ const context = {
   }
 };
 
-function cleanUp() {
-  let done = false;
-  if (!done) {
-    // Remove the pre-rendered CSS because it's no longer used
-    // after the React app is launched
-    const css = document.getElementById('css');
-    if (css) {
-      css.parentNode.removeChild(css);
-      done = true;
-    }
-  }
-}
-
 function render(state) {
   Router.dispatch(state, (_, component) => {
-    ReactDOM.render(component, container, () => {
+    ReactDOM.render(component, appContainer, () => {
       // Restore the scroll position if it was saved into the state
       if (state.scrollY !== undefined) {
         window.scrollTo(state.scrollX, state.scrollY);
       } else {
         window.scrollTo(0, 0);
       }
-      cleanUp();
+      // Remove the pre-rendered CSS because it's no longer used
+      // after the React app is launched
+      if (cssContainer) {
+        cssContainer.parentNode.removeChild(cssContainer);
+        cssContainer = null;
+      }
     });
   });
 }
