@@ -86,7 +86,7 @@ window.addEventListener('hashchange', () => render());
 render();
 ```
 
-### Step 3: Parametrized Routes
+### Step 3: Parameterized Routes
 
 **(1)** Convert the list of routes from hash table to an array, this way the
 order of routes will be preserved. **(2)** Wrap this collection into a Router
@@ -109,8 +109,8 @@ const router = new Router(on => {
     const data = await http.get('/api/products');
     return <Layout><ProductListing {...data} /></Layout>
   });
-  on('/products/:id', async (id) => {
-    const data = await http.get(`/api/products/${id}`);
+  on('/products/:id', async (req) => {
+    const data = await http.get(`/api/products/${req.params.id}`);
     return <Layout><ProductInfo {...data} /></Layout>;
   });
 }]);
