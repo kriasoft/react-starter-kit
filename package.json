@@ -67,11 +67,11 @@
     "csslint": "csscomb src/components --lint --verbose",
     "csscomb": "csscomb src/components --verbose",
     "test": "eslint src && jest",
-    "clean": "babel-node --eval \"require('./tools/clean')().catch(err => console.log(err.stack))\"",
-    "copy": "babel-node --eval \"require('./tools/copy')().catch(err => console.log(err.stack))\"",
-    "bundle": "babel-node --eval \"require('./tools/bundle')().catch(err => console.log(err.stack))\"",
-    "build": "babel-node --eval \"require('./tools/build')().catch(err => console.log(err.stack))\"",
-    "serve": "babel-node --eval \"require('./tools/serve')().catch(err => console.log(err.stack))\"",
-    "start": "babel-node --eval \"require('./tools/start')().catch(err => console.log(err.stack))\""
+    "clean": "babel-node --eval \"require('./tools/clean')().catch(err => console.error(err.stack))\"",
+    "copy": "babel-node --eval \"require('./tools/copy')().catch(err => console.error(err.stack))\"",
+    "bundle": "babel-node --eval \"require('./tools/bundle')().catch(err => console.error(err.stack))\"",
+    "build": "babel-node --eval \"require('./tools/build')().catch(err => console.error(err.stack))\"",
+    "serve": "babel-node --eval \"require('./tools/serve')().catch(err => console.error(err.stack))\"",
+    "start": "babel-node --eval \"require('./tools/start')().catch(err => console.error(err.stack))\""
   }
 }
