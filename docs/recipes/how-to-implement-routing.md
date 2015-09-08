@@ -2,7 +2,7 @@
 
  * [Step 1: Basic Routing](#step-1-basic-routing)
  * [Step 2: Asynchronous Routes](#step-2-asynchronous-routes)
- * [Step 3: Parametrized Routes](#step-3-parametrized-routes)
+ * [Step 3: Parameterized Routes](#step-3-parameterized-routes)
  * Step 4: Handling Redirects
  * Step 5: Setting Page Title and Meta Tags
  * Step 6: Code Splitting
