@@ -1,11 +1,11 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React from 'react';
+import React, { Component } from 'react';
 import styles from './Feedback.css';
 import withStyles from '../../decorators/withStyles';
 
 @withStyles(styles)
-class Feedback {
+class Feedback extends Component {
 
   render() {
     return (

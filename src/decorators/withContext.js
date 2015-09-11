@@ -1,10 +1,10 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
+import React, { PropTypes, Component } from 'react'; // eslint-disable-line no-unused-vars
 import emptyFunction from 'fbjs/lib/emptyFunction';
 
 function withContext(ComposedComponent) {
-  return class WithContext {
+  return class WithContext extends Component {
 
     static propTypes = {
       context: PropTypes.shape({
