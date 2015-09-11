@@ -1,19 +1,20 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes } from 'react'; // eslint-disable-line no-unused-vars
+import React, { PropTypes, Component } from 'react'; // eslint-disable-line no-unused-vars
 import invariant from 'fbjs/lib/invariant';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
 let count = 0;
 
 function withStyles(styles) {
-  return (ComposedComponent) => class WithStyles {
+  return (ComposedComponent) => class WithStyles extends Component {
 
     static contextTypes = {
       onInsertCss: PropTypes.func
     };
 
     constructor() {
+      super();
       this.refCount = 0;
       ComposedComponent.prototype.renderCss = function (css) {
         let style;
