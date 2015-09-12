@@ -1,7 +1,7 @@
 {
   "name": "generator-react-fullstack",
-  "version": "0.1.3",
-  "description": "Yeoman generator for React.js projects based on React Starter Kit (ES6+, Babel, React.js, Express.js, Webpack, BrowserSync)",
+  "version": "0.1.4",
+  "description": "Yeoman generator for React.js projects based on React Starter Kit (ES6+, Babel, React.js, Express, Webpack, BrowserSync)",
   "license": "MIT",
   "main": "app/index.js",
   "repository": "https://github.com/kriasoft/react-starter-kit/tree/yeoman-generator",
@@ -11,7 +11,7 @@
     "url": "http://www.kriasoft.com"
   },
   "contributors": [
-    "Konstantin Tarkus <hello@tarkus.me>"
+    "Konstantin Tarkus <hello@tarkus.me> (http://www.tarkus.me)"
   ],
   "scripts": {
     "test": "mocha"
@@ -31,10 +31,10 @@
     "reactjs"
   ],
   "dependencies": {
-    "chalk": "^1.0.0",
-    "glob": "^5.0.10",
-    "yeoman-generator": "^0.19.0",
-    "yosay": "^1.0.2"
+    "chalk": "^1.1.1",
+    "glob": "^5.0.14",
+    "yeoman-generator": "^0.20.3",
+    "yosay": "^1.0.5"
   },
   "devDependencies": {
     "mocha": "*"
