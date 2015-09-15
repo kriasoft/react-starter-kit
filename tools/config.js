@@ -12,19 +12,17 @@ import webpack, { DefinePlugin, BannerPlugin } from 'webpack';
 import merge from 'lodash/object/merge';
 
 const DEBUG = !process.argv.includes('release');
-const WATCH = global.WATCH === undefined ? false : global.WATCH;
 const VERBOSE = process.argv.includes('verbose');
-const STYLE_LOADER = 'style-loader/useable';
-const CSS_LOADER = DEBUG ? 'css-loader' : 'css-loader?minimize';
+const WATCH = global.WATCH === undefined ? false : global.WATCH;
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
-  'Chrome >= 20',
-  'Firefox >= 24',
-  'Explorer >= 8',
-  'iOS >= 6',
+  'Chrome >= 35',
+  'Firefox >= 31',
+  'Explorer >= 9',
+  'iOS >= 7',
   'Opera >= 12',
-  'Safari >= 6'
+  'Safari >= 7.1'
 ];
 const GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
@@ -88,11 +86,15 @@ const config = {
     }]
   },
 
-  postcss: [
-    require('postcss-nested')(),
-    require('cssnext')(),
-    require('autoprefixer-core')(AUTOPREFIXER_BROWSERS)
-  ]
+  postcss: function() {
+    return [
+      require('postcss-import')({
+        onImport: files => files.forEach(this.addDependency)
+      }),
+      require('postcss-nested')(),
+      require('postcss-cssnext')({autoprefixer: AUTOPREFIXER_BROWSERS})
+    ];
+  }
 };
 
 //
@@ -124,7 +126,7 @@ const appConfig = merge({}, config, {
   module: {
     loaders: [...config.module.loaders, {
       test: /\.css$/,
-      loader: `${STYLE_LOADER}!${CSS_LOADER}!postcss-loader`
+      loader: 'style-loader/useable!css-loader!postcss-loader'
     }]
   }
 });
@@ -168,7 +170,7 @@ const serverConfig = merge({}, config, {
   module: {
     loaders: [...config.module.loaders, {
       test: /\.css$/,
-      loader: `${CSS_LOADER}!postcss-loader`
+      loader: 'css-loader!postcss-loader'
     }]
   }
 });
