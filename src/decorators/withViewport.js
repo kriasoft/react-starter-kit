@@ -49,7 +49,7 @@ function withViewport(ComposedComponent) {
     }
 
     handleResize(value) {
-      this.setState({viewport: value});
+      this.setState({viewport: value}); // eslint-disable-line react/no-set-state
     }
 
   };
