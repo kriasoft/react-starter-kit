@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import express from 'express';
 import ReactDOM from 'react-dom/server';
-import Router from './Router';
+import Router from './routes';
 
 const server = global.server = express();
 
