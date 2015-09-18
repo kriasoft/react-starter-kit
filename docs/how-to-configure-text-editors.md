@@ -27,7 +27,27 @@ Enable **CSSComb** by installing CSSReorder plug-in
 
 ### Atom
 
-Coming soon.
+Install atom packages
+
+* [linter](https://atom.io/packages/linter)
+* [linter-eslint](https://atom.io/packages/linter-eslint)
+* [react](https://atom.io/packages/react)
+
+```shell
+apm install linter linter-eslint react
+```
+
+Install local npm packages
+
+* [eslint](https://www.npmjs.com/package/eslint)
+* [babel-eslint](https://www.npmjs.com/package/babel-eslint)
+* [eslint-plugin-react](https://www.npmjs.com/package/eslint-plugin-react)
+
+```shell
+npm install --save-dev eslint babel-eslint eslint-plugin-react
+```
+
+*You may need to restart atom for changes to take effect*
 
 ### SublimeText
 
