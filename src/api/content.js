@@ -20,7 +20,7 @@ const router = new Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    let path = req.query.path;
+    const path = req.query.path;
 
     if (!path || path === 'undefined') {
       res.status(400).send({error: `The 'path' query parameter cannot be empty.`});

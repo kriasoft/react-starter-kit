@@ -10,7 +10,7 @@ import Link from '../Link';
 class Navigation extends Component {
 
   static propTypes = {
-    className: PropTypes.string
+    className: PropTypes.string,
   };
 
   render() {

@@ -20,7 +20,7 @@ export default () => new Promise((resolve, reject) => {
   function start() {
     const server = cp.fork(path.join(__dirname, '../build/server.js'), {
       env: Object.assign({ NODE_ENV: 'development' }, process.env),
-      silent: false
+      silent: false,
     });
 
     server.once('message', message => {

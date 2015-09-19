@@ -14,7 +14,7 @@ class App extends Component {
 
   static propTypes = {
     children: PropTypes.element.isRequired,
-    error: PropTypes.object
+    error: PropTypes.object,
   };
 
   render() {

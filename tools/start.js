@@ -21,7 +21,6 @@ const bundler = webpack(config);
  * synchronizing URLs, interactions and code changes across multiple devices.
  */
 export default async () => {
-
   await require('./build')();
   await require('./serve')();
 
@@ -40,15 +39,15 @@ export default async () => {
           stats: config.stats,
 
           hot: true,
-          historyApiFallback: true
+          historyApiFallback: true,
 
           // for other settings see
           // http://webpack.github.io/docs/webpack-dev-middleware.html
         }),
 
         // bundler should be the same as above
-        webpackHotMiddleware(bundler)
-      ]
+        webpackHotMiddleware(bundler),
+      ],
     },
 
     // no need to watch '*.js' here, webpack will take care of it for us,
@@ -57,7 +56,7 @@ export default async () => {
       'build/public/**/*.css',
       'build/public/**/*.html',
       'build/content/**/*.*',
-      'build/templates/**/*.*'
-    ]
+      'build/templates/**/*.*',
+    ],
   });
 };

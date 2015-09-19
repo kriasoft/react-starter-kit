@@ -8,11 +8,11 @@ import withStyles from '../../decorators/withStyles';
 class ContactPage extends Component {
 
   static contextTypes = {
-    onSetTitle: PropTypes.func.isRequired
+    onSetTitle: PropTypes.func.isRequired,
   };
 
   render() {
-    let title = 'Contact Us';
+    const title = 'Contact Us';
     this.context.onSetTitle(title);
     return (
       <div className="ContactPage">

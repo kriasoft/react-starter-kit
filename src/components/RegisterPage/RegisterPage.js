@@ -8,11 +8,11 @@ import styles from './RegisterPage.css';
 class RegisterPage extends Component {
 
   static contextTypes = {
-    onSetTitle: PropTypes.func.isRequired
+    onSetTitle: PropTypes.func.isRequired,
   };
 
   render() {
-    let title = 'New User Registration';
+    const title = 'New User Registration';
     this.context.onSetTitle(title);
     return (
       <div className="RegisterPage">

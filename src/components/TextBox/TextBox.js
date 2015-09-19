@@ -8,11 +8,11 @@ import styles from './TextBox.css';
 class TextBox extends Component {
 
   static propTypes = {
-    maxLines: PropTypes.number
+    maxLines: PropTypes.number,
   };
 
   static defaultProps = {
-    maxLines: 1
+    maxLines: 1,
   };
 
   render() {
