@@ -8,11 +8,11 @@ import withStyles from '../../decorators/withStyles';
 class LoginPage extends Component {
 
   static contextTypes = {
-    onSetTitle: PropTypes.func.isRequired
+    onSetTitle: PropTypes.func.isRequired,
   };
 
   render() {
-    let title = 'Log In';
+    const title = 'Log In';
     this.context.onSetTitle(title);
     return (
       <div className="LoginPage">

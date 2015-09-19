@@ -9,11 +9,11 @@ class NotFoundPage extends Component {
 
   static contextTypes = {
     onSetTitle: PropTypes.func.isRequired,
-    onPageNotFound: PropTypes.func.isRequired
+    onPageNotFound: PropTypes.func.isRequired,
   };
 
   render() {
-    let title = 'Page Not Found';
+    const title = 'Page Not Found';
     this.context.onSetTitle(title);
     this.context.onPageNotFound();
     return (

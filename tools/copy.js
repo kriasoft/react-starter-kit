@@ -28,7 +28,7 @@ export default async () => {
     // Website and email templates
     copy('src/templates', 'build/templates'),
 
-    copy('package.json', 'build/package.json')
+    copy('package.json', 'build/package.json'),
   ]);
 
   replace({
@@ -36,14 +36,14 @@ export default async () => {
     replacement: '"start": "node server.js"',
     paths: ['build/package.json'],
     recursive: false,
-    silent: false
+    silent: false,
   });
 
   if (global.WATCH) {
     const watcher = await watch('src/content/**/*.*');
     watcher.on('changed', async (file) => {
-      file = file.substr(path.join(__dirname, '../src/content/').length);
-      await copy(`src/content/${file}`, `build/content/${file}`);
+      const relPath = file.substr(path.join(__dirname, '../src/content/').length);
+      await copy(`src/content/${relPath}`, `build/content/${relPath}`);
     });
   }
 };

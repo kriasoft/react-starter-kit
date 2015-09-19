@@ -12,7 +12,6 @@ import NotFoundPage from './components/NotFoundPage';
 import ErrorPage from './components/ErrorPage';
 
 const router = new Router(on => {
-
   on('*', async (state, next) => {
     const component = await next();
     return component && <App context={state.context}>{component}</App>;
@@ -33,7 +32,6 @@ const router = new Router(on => {
     <App context={state.context} error={error}><NotFoundPage /></App> :
     <App context={state.context} error={error}><ErrorPage /></App>
   );
-
 });
 
 export default router;

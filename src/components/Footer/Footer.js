@@ -13,13 +13,13 @@ class Footer extends Component {
   static propTypes = {
     viewport: PropTypes.shape({
       width: PropTypes.number.isRequired,
-      height: PropTypes.number.isRequired
-    }).isRequired
+      height: PropTypes.number.isRequired,
+    }).isRequired,
   };
 
   render() {
     // This is just an example how one can render CSS
-    let { width, height } = this.props.viewport;
+    const { width, height } = this.props.viewport;
     this.renderCss(`.Footer-viewport:after {content:' ${width}x${height}';}`);
 
     return (

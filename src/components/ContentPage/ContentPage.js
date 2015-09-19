@@ -10,11 +10,11 @@ class ContentPage extends Component {
   static propTypes = {
     path: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
-    title: PropTypes.string
+    title: PropTypes.string,
   };
 
   static contextTypes = {
-    onSetTitle: PropTypes.func.isRequired
+    onSetTitle: PropTypes.func.isRequired,
   };
 
   render() {

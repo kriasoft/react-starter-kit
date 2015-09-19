@@ -17,12 +17,12 @@ class Link extends Component {
     to: PropTypes.string.isRequired,
     children: PropTypes.element.isRequired,
     state: PropTypes.object,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
   };
 
   static handleClick = event => {
-    var allowTransition = true;
-    var clickResult;
+    let allowTransition = true;
+    let clickResult;
 
     if (this.props && this.props.onClick) {
       clickResult = this.props.onClick(event);

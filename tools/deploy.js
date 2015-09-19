@@ -20,19 +20,19 @@ export default () => new Promise((resolve, reject) => {
     remote = {
       name: 'production',
       url: 'https://example.scm.azurewebsites.net/example.git',
-      branch: 'master'
+      branch: 'master',
     };
   } else if (process.argv.includes('staging')) {
     remote = {
       name: 'staging',
       url: 'https://example-staging.scm.azurewebsites.net/example.git',
-      branch: 'master'
+      branch: 'master',
     };
   } else {
     remote = {
       name: 'test',
       url: 'https://example-test.scm.azurewebsites.net/example.git',
-      branch: 'master'
+      branch: 'master',
     };
   }
 

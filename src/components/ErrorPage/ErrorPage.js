@@ -9,11 +9,11 @@ class ErrorPage extends Component {
 
   static contextTypes = {
     onSetTitle: PropTypes.func.isRequired,
-    onPageNotFound: PropTypes.func.isRequired
+    onPageNotFound: PropTypes.func.isRequired,
   };
 
   render() {
-    let title = 'Error';
+    const title = 'Error';
     this.context.onSetTitle(title);
     return (
       <div>
