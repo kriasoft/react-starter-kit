@@ -26,7 +26,7 @@ const AUTOPREFIXER_BROWSERS = [
 ];
 const GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
-  '__DEV__': DEBUG,
+  __DEV__: DEBUG,
 };
 
 //
@@ -64,26 +64,28 @@ const config = {
   },
 
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
-      include: [
-        path.resolve(__dirname, '../node_modules/react-routing/src'),
-        path.resolve(__dirname, '../src'),
-      ],
-      loaders: [...(WATCH && ['react-hot']), 'babel-loader'],
-    }, {
-      test: /\.json$/,
-      loader: 'json-loader',
-    }, {
-      test: /\.txt$/,
-      loader: 'raw-loader',
-    }, {
-      test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-      loader: 'url-loader?limit=10000',
-    }, {
-      test: /\.(eot|ttf|wav|mp3)$/,
-      loader: 'file-loader',
-    }],
+    loaders: [
+      {
+        test: /\.jsx?$/,
+        include: [
+          path.resolve(__dirname, '../node_modules/react-routing/src'),
+          path.resolve(__dirname, '../src'),
+        ],
+        loaders: [...(WATCH && ['react-hot']), 'babel-loader'],
+      }, {
+        test: /\.json$/,
+        loader: 'json-loader',
+      }, {
+        test: /\.txt$/,
+        loader: 'raw-loader',
+      }, {
+        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
+        loader: 'url-loader?limit=10000',
+      }, {
+        test: /\.(eot|ttf|wav|mp3)$/,
+        loader: 'file-loader',
+      },
+    ],
   },
 
   postcss: function plugins() {
@@ -124,10 +126,12 @@ const appConfig = merge({}, config, {
     ]),
   ],
   module: {
-    loaders: [...config.module.loaders, {
-      test: /\.css$/,
-      loader: 'style-loader/useable!css-loader!postcss-loader',
-    }],
+    loaders: [
+      ...config.module.loaders, {
+        test: /\.css$/,
+        loader: 'style-loader/useable!css-loader!postcss-loader',
+      },
+    ],
   },
 });
 
@@ -168,10 +172,12 @@ const serverConfig = merge({}, config, {
       { raw: true, entryOnly: false }),
   ],
   module: {
-    loaders: [...config.module.loaders, {
-      test: /\.css$/,
-      loader: 'css-loader!postcss-loader',
-    }],
+    loaders: [
+      ...config.module.loaders, {
+        test: /\.css$/,
+        loader: 'css-loader!postcss-loader',
+      },
+    ],
   },
 });
 

@@ -36,6 +36,7 @@ function render(state) {
       } else {
         window.scrollTo(0, 0);
       }
+
       // Remove the pre-rendered CSS because it's no longer used
       // after the React app is launched
       if (cssContainer) {
