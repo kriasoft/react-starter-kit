@@ -32,6 +32,7 @@ function withViewport(ComposedComponent) {
         window.addEventListener('resize', handleWindowResize);
         window.addEventListener('orientationchange', handleWindowResize);
       }
+
       EE.on(RESIZE_EVENT, this.handleResize, this);
     }
 

@@ -7,6 +7,7 @@ function getUrl(path) {
   if (path.startsWith('http') || canUseDOM) {
     return path;
   }
+
   return process.env.WEBSITE_HOSTNAME ?
     `http://${process.env.WEBSITE_HOSTNAME}${path}` :
     `http://127.0.0.1:${global.server.get('port')}${path}`;
