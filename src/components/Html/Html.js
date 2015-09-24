@@ -17,8 +17,7 @@ class Html extends Component {
     description: '',
   };
 
-  goolgeAnalytics() {
-    // TODO: Change UA-XXXXX-X to be your site's ID.
+  trackingCode() {
     return ({__html:
       `(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=` +
       `function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;` +
@@ -44,7 +43,7 @@ class Html extends Component {
       <body>
         <div id="app" dangerouslySetInnerHTML={{__html: this.props.body}} />
         <script src="/app.js"></script>
-        <script dangerouslySetInnerHTML={this.goolgeAnalytics()} />
+        <script dangerouslySetInnerHTML={this.trackingCode()} />
       </body>
       </html>
     );
