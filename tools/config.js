@@ -9,7 +9,7 @@
 
 import path from 'path';
 import webpack, { DefinePlugin, BannerPlugin } from 'webpack';
-import merge from 'lodash/object/merge';
+import merge from 'lodash.merge';
 
 const DEBUG = !process.argv.includes('release');
 const VERBOSE = process.argv.includes('verbose');

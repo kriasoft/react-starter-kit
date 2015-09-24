@@ -19,18 +19,9 @@ import watch from './lib/watch';
 export default async () => {
   console.log('copy');
   await Promise.all([
-
-    // Static files
     copy('src/public', 'build/public'),
-
-    // Files with content (e.g. *.md files)
     copy('src/content', 'build/content'),
-
-    // Website and email templates
-    copy('src/templates', 'build/templates'),
-
     copy('package.json', 'build/package.json'),
-
   ]);
 
   replace({
