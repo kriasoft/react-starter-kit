@@ -9,14 +9,13 @@
 
 import path from 'path';
 import cp from 'child_process';
+import task from './lib/task';
 import watch from './lib/watch';
 
 /**
  * Launches Node.js/Express web server in a separate (forked) process.
  */
-export default () => new Promise((resolve, reject) => {
-  console.log('serve');
-
+export default task('serve', () => new Promise((resolve, reject) => {
   function start() {
     const server = cp.fork(path.join(__dirname, '../build/server.js'), {
       env: Object.assign({ NODE_ENV: 'development' }, process.env),
@@ -43,4 +42,4 @@ export default () => new Promise((resolve, reject) => {
       });
     });
   }
-});
+}));
