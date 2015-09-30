@@ -7,14 +7,15 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import task from './lib/task';
+
 /**
  * Compiles the project from source files into a distributable
  * format and copies it to the output (build) folder.
  */
-export default async () => {
-  console.log('build');
+export default task('build', async () => {
   await require('./clean')();
   await require('./copy')();
   await require('./bundle')();
-};
+});
 

@@ -9,6 +9,7 @@
 
 import path from 'path';
 import replace from 'replace';
+import task from './lib/task';
 import copy from './lib/copy';
 import watch from './lib/watch';
 
@@ -16,8 +17,7 @@ import watch from './lib/watch';
  * Copies static files such as robots.txt, favicon.ico to the
  * output (build) folder.
  */
-export default async () => {
-  console.log('copy');
+export default task('copy', async () => {
   await Promise.all([
     copy('src/public', 'build/public'),
     copy('src/content', 'build/content'),
@@ -39,4 +39,4 @@ export default async () => {
       await copy(`src/content/${relPath}`, `build/content/${relPath}`);
     });
   }
-};
+});
