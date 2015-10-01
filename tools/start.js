@@ -39,8 +39,7 @@ export default task('start', async () => {
           // pretty colored output
           stats: config.stats,
 
-          hot: true,
-          historyApiFallback: true,
+          historyApiFallback: true
 
           // for other settings see
           // http://webpack.github.io/docs/webpack-dev-middleware.html

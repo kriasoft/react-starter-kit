@@ -29,6 +29,15 @@ const GLOBALS = {
   __DEV__: DEBUG,
 };
 
+const defaultJSLoader = {
+  test: /\.jsx?$/,
+  include: [
+    path.resolve(__dirname, '../node_modules/react-routing/src'),
+    path.resolve(__dirname, '../src'),
+  ],
+  loader: 'babel-loader'
+};
+
 //
 // Common configuration chunk to be used for both
 // client-side (app.js) and server-side (server.js) bundles
@@ -66,13 +75,6 @@ const config = {
   module: {
     loaders: [
       {
-        test: /\.jsx?$/,
-        include: [
-          path.resolve(__dirname, '../node_modules/react-routing/src'),
-          path.resolve(__dirname, '../src'),
-        ],
-        loaders: [...(WATCH && ['react-hot']), 'babel-loader'],
-      }, {
         test: /\.json$/,
         loader: 'json-loader',
       }, {
@@ -127,10 +129,28 @@ const appConfig = merge({}, config, {
   ],
   module: {
     loaders: [
-      ...config.module.loaders, {
+      ...config.module.loaders,
+      {
         test: /\.css$/,
         loader: 'style-loader/useable!css-loader!postcss-loader',
       },
+      (WATCH ? merge({}, defaultJSLoader, {
+          query: {
+              'plugins': ['react-transform'],
+              'extra': {
+                  'react-transform': {
+                      'transforms': [{
+                          'transform': 'react-transform-hmr',
+                          'imports': ['react'],
+                          'locals': ['module']
+                      }, {
+                          'transform': 'react-transform-catch-errors',
+                          'imports': ['react', 'redbox-react']
+                      }]
+                  }
+              }
+          }
+        }) : defaultJSLoader)
     ],
   },
 });
@@ -173,7 +193,7 @@ const serverConfig = merge({}, config, {
   ],
   module: {
     loaders: [
-      ...config.module.loaders, {
+      ...config.module.loaders, defaultJSLoader, {
         test: /\.css$/,
         loader: 'css-loader!postcss-loader',
       },
