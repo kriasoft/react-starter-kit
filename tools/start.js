@@ -14,8 +14,8 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import task from './lib/task';
 
 global.WATCH = true;
-const config = require('./config')[0]; // Client-side bundle configuration
-const bundler = webpack(config);
+const webpackConfig = require('./config')[0]; // Client-side bundle configuration
+const bundler = webpack(webpackConfig);
 
 /**
  * Launches a development web server with "live reload" functionality -
@@ -34,15 +34,12 @@ export default task('start', async () => {
         webpackDevMiddleware(bundler, {
           // IMPORTANT: dev middleware can't access config, so we should
           // provide publicPath by ourselves
-          publicPath: config.output.publicPath,
+          publicPath: webpackConfig.output.publicPath,
 
-          // pretty colored output
-          stats: config.stats,
+          // Pretty colored output
+          stats: webpackConfig.stats,
 
-          hot: true,
-          historyApiFallback: true,
-
-          // for other settings see
+          // For other settings see
           // http://webpack.github.io/docs/webpack-dev-middleware.html
         }),
 

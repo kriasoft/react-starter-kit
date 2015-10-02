@@ -28,7 +28,7 @@ const context = {
 };
 
 function render(state) {
-  Router.dispatch(state, (_, component) => {
+  Router.dispatch(state, (newState, component) => {
     ReactDOM.render(component, appContainer, () => {
       // Restore the scroll position if it was saved into the state
       if (state.scrollY !== undefined) {
