@@ -8,7 +8,7 @@
  */
 
 import path from 'path';
-import webpack, { DefinePlugin, BannerPlugin } from 'webpack';
+import webpack from 'webpack';
 import merge from 'lodash.merge';
 
 const DEBUG = !process.argv.includes('release');
@@ -27,6 +27,14 @@ const AUTOPREFIXER_BROWSERS = [
 const GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
   __DEV__: DEBUG,
+};
+const JS_LOADER = {
+  test: /\.jsx?$/,
+  include: [
+    path.resolve(__dirname, '../node_modules/react-routing/src'),
+    path.resolve(__dirname, '../src'),
+  ],
+  loader: 'babel-loader',
 };
 
 //
@@ -66,13 +74,6 @@ const config = {
   module: {
     loaders: [
       {
-        test: /\.jsx?$/,
-        include: [
-          path.resolve(__dirname, '../node_modules/react-routing/src'),
-          path.resolve(__dirname, '../src'),
-        ],
-        loaders: [...(WATCH && ['react-hot']), 'babel-loader'],
-      }, {
         test: /\.json$/,
         loader: 'json-loader',
       }, {
@@ -94,7 +95,7 @@ const config = {
         onImport: files => files.forEach(this.addDependency),
       }),
       require('postcss-nested')(),
-      require('postcss-cssnext')({autoprefixer: AUTOPREFIXER_BROWSERS}),
+      require('postcss-cssnext')({ autoprefixer: AUTOPREFIXER_BROWSERS }),
     ];
   },
 };
@@ -105,29 +106,60 @@ const config = {
 
 const appConfig = merge({}, config, {
   entry: [
-    ...(WATCH && ['webpack-hot-middleware/client']),
+    ...(WATCH ? ['webpack-hot-middleware/client'] : []),
     './src/app.js',
   ],
   output: {
     path: path.join(__dirname, '../build/public'),
     filename: 'app.js',
   },
-  devtool: DEBUG ? 'source-map' : false,
+
+  // Choose a developer tool to enhance debugging
+  // http://webpack.github.io/docs/configuration.html#devtool
+  devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
   plugins: [
     ...config.plugins,
-    new DefinePlugin(GLOBALS),
-    ...(!DEBUG && [
+    new webpack.DefinePlugin(GLOBALS),
+    ...(!DEBUG ? [
       new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin({compress: {warnings: VERBOSE}}),
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: VERBOSE,
+        },
+      }),
       new webpack.optimize.AggressiveMergingPlugin(),
-    ]),
-    ...(WATCH && [
+    ] : []),
+    ...(WATCH ? [
       new webpack.HotModuleReplacementPlugin(),
-    ]),
+      new webpack.NoErrorsPlugin(),
+    ] : []),
   ],
   module: {
     loaders: [
-      ...config.module.loaders, {
+      WATCH ? {
+        ...JS_LOADER,
+        query: {
+          // Wraps all React components into arbitrary transforms
+          // https://github.com/gaearon/babel-plugin-react-transform
+          plugins: ['react-transform'],
+          extra: {
+            'react-transform': {
+              transforms: [
+                {
+                  transform: 'react-transform-hmr',
+                  imports: ['react'],
+                  locals: ['module'],
+                }, {
+                  transform: 'react-transform-catch-errors',
+                  imports: ['react', 'redbox-react'],
+                },
+              ],
+            },
+          },
+        },
+      } : JS_LOADER,
+      ...config.module.loaders,
+      {
         test: /\.css$/,
         loader: 'style-loader/useable!css-loader!postcss-loader',
       },
@@ -164,16 +196,18 @@ const serverConfig = merge({}, config, {
     __filename: false,
     __dirname: false,
   },
-  devtool: DEBUG ? 'source-map' : 'cheap-module-source-map',
+  devtool: 'source-map',
   plugins: [
     ...config.plugins,
-    new DefinePlugin(GLOBALS),
-    new BannerPlugin('require("source-map-support").install();',
+    new webpack.DefinePlugin(GLOBALS),
+    new webpack.BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false }),
   ],
   module: {
     loaders: [
-      ...config.module.loaders, {
+      JS_LOADER,
+      ...config.module.loaders,
+      {
         test: /\.css$/,
         loader: 'css-loader!postcss-loader',
       },
