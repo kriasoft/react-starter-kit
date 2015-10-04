@@ -1,6 +1,6 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import 'babel/polyfill';
+import 'babel-core/polyfill';
 import path from 'path';
 import express from 'express';
 import React from 'react';
