@@ -20,7 +20,7 @@ class Link extends Component {
     onClick: PropTypes.func,
   };
 
-  static handleClick = event => {
+  static handleClick(event) {
     let allowTransition = true;
     let clickResult;
 
