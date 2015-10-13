@@ -81,9 +81,9 @@ $ npm start                     # Compile and launch
 $ npm run build                 # or, `npm run build -- release`
 ```
 
-By default, it builds in a *debug* mode. If you need to build in a release
-mode, just add `-- release` flag. This will optimize the output bundle for
-production deployment.
+By default, it builds in *debug* mode. If you need to build in release
+mode, just add a `-- release` flag. This will optimize the output bundle for
+production.
 
 ### How to Run
 
@@ -91,7 +91,7 @@ production deployment.
 $ npm start                     # or, `npm start -- release`
 ```
 
-This will start a lightweight development server with "live reload" and
+This will start a light-weight development server with "live reload" and
 synchronized browsing across multiple devices and browsers.
 
 ### How to Deploy
@@ -104,7 +104,7 @@ For more information see `tools/deploy.js`.
 
 ### How to Update
 
-You can always fetch and merge the recent changes from this repo back into
+You can always fetch and merge recent changes from this repo back into
 your own project:
 
 ```shell
@@ -124,17 +124,16 @@ $ npm test
 ```
 
 Test any javascript module by creating a `__tests__/` directory where
-the file is. Name the test by appending `-test.js` to the js file.
-[Jest](https://facebook.github.io/jest/) will do the rest.
+the file is. Append `-test.js` to the filename and [Jest](https://facebook.github.io/jest/) will do the rest.
 
 ### Visit Our Sponsor
 
-[![https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/makers-academy.png]](http://www.makersacademy.com/?utm_source=ReactStarterKit&utm_medium=link&utm_campaign=ReactStarterKitGithub)
+[![Makers Academy](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/makers-academy.png)](http://www.makersacademy.com/?utm_source=ReactStarterKit&utm_medium=link&utm_campaign=ReactStarterKitGithub)
 
 ### Related Projects
 
-  * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates a static website from React components
-  * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — A boilerplate for authoring JavaScript/React.js libraries
+  * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates static websites from React components
+  * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
   * [React Decorators](https://github.com/kriasoft/react-decorators) — A collection of higher-order React components
 
 ### Learn More
