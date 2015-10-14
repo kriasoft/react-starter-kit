@@ -126,6 +126,10 @@ $ npm test
 Test any javascript module by creating a `__tests__/` directory where
 the file is. Append `-test.js` to the filename and [Jest](https://facebook.github.io/jest/) will do the rest.
 
+### Visit Our Sponsor
+
+[![Makers Academy](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/makers-academy.png)](http://www.makersacademy.com/?utm_source=ReactStarterKit&utm_medium=link&utm_campaign=ReactStarterKitGithub)
+
 ### Related Projects
 
   * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates static websites from React components
