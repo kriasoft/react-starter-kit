@@ -31,7 +31,6 @@ const GLOBALS = {
 const JS_LOADER = {
   test: /\.jsx?$/,
   include: [
-    path.resolve(__dirname, '../node_modules/react-routing/src'),
     path.resolve(__dirname, '../src'),
   ],
   loader: 'babel-loader',
@@ -181,10 +180,7 @@ const serverConfig = merge({}, config, {
   target: 'node',
   externals: [
     function filter(context, request, cb) {
-      const isExternal =
-        request.match(/^[a-z][a-z\/\.\-0-9]*$/i) &&
-        !request.match(/^react-routing/) &&
-        !context.match(/[\\/]react-routing/);
+      const isExternal = request.match(/^[a-z][a-z\/\.\-0-9]*$/i);
       cb(null, Boolean(isExternal));
     },
   ],
