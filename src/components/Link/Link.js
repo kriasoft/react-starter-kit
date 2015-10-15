@@ -15,12 +15,11 @@ class Link extends Component {
 
   static propTypes = {
     to: PropTypes.string.isRequired,
-    children: PropTypes.element.isRequired,
     state: PropTypes.object,
     onClick: PropTypes.func,
   };
 
-  static handleClick(event) {
+  static handleClick = (event) => {
     let allowTransition = true;
     let clickResult;
 
@@ -44,11 +43,11 @@ class Link extends Component {
         this.props && this.props.state || null,
         this.props && this.props.to || (link.pathname + link.search));
     }
-  }
+  };
 
   render() {
-    const { to, children, ...props } = this.props;
-    return <a onClick={Link.handleClick.bind(this)} {...props}>{children}</a>;
+    const { to, query, ...props } = this.props;
+    return <a href={Location.createHref(to, query)} onClick={Link.handleClick.bind(this)} {...props} />;
   }
 
 }
