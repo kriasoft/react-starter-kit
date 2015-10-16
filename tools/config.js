@@ -111,12 +111,14 @@ const appConfig = merge({}, config, {
   ],
   output: {
     path: path.join(__dirname, '../build/public'),
-    filename: 'app.js',
+    chunkFilename: DEBUG ? undefined : '[name].[chunkhash].js',
+    filename : DEBUG ? 'app.js' : '[name].[hash].js'
   },
 
   // Choose a developer tool to enhance debugging
   // http://webpack.github.io/docs/configuration.html#devtool
   devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
+
   plugins: [
     ...config.plugins,
     new webpack.DefinePlugin(GLOBALS),
@@ -124,16 +126,32 @@ const appConfig = merge({}, config, {
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
         compress: {
-          warnings: VERBOSE,
-        },
+          warnings: VERBOSE
+        }
       }),
-      new webpack.optimize.AggressiveMergingPlugin(),
+      new webpack.optimize.AggressiveMergingPlugin()
     ] : []),
     ...(WATCH ? [
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin(),
+      new webpack.NoErrorsPlugin()
     ] : []),
+    function() {
+      if(!DEBUG){
+        this.plugin("done", function(stats) {
+          var fs = require("fs");
+          var data = fs.readFileSync(
+            path.join(__dirname, "../src/components/Html/Html.js"), 'utf8');
+          var mainChunk = stats.toJson().assetsByChunkName.main;
+          mainChunk = mainChunk instanceof Array ? mainChunk[0] : mainChunk;
+          data = data.replace(/\<script src=\"\/.*\.js\"\>\<\/script\>/, '<script src="/' + mainChunk  + '"></script>')
+          fs.writeFileSync(path.join(__dirname, "../src/components/Html/Html.js"), data)
+        });
+      }
+    }
   ],
+
+
+
   module: {
     loaders: [
       WATCH ? {
