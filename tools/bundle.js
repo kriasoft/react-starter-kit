@@ -9,14 +9,14 @@
 
 import webpack from 'webpack';
 import task from './lib/task';
-import config from './config';
+import webpackConfig from './webpack.config';
 
 /**
  * Bundles JavaScript, CSS and images into one or more packages
  * ready to be used in a browser.
  */
 export default task('bundle', async () => new Promise((resolve, reject) => {
-  const bundler = webpack(config);
+  const bundler = webpack(webpackConfig);
   let bundlerRunCount = 0;
 
   function bundle(err, stats) {
@@ -24,9 +24,9 @@ export default task('bundle', async () => new Promise((resolve, reject) => {
       return reject(err);
     }
 
-    console.log(stats.toString(config[0].stats));
+    console.log(stats.toString(webpackConfig[0].stats));
 
-    if (++bundlerRunCount === (global.WATCH ? config.length : 1)) {
+    if (++bundlerRunCount === (global.WATCH ? webpackConfig.length : 1)) {
       return resolve();
     }
   }
