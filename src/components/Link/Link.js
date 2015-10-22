@@ -18,7 +18,6 @@ class Link extends Component {
     query: PropTypes.object,
     state: PropTypes.object,
     onClick: PropTypes.func,
-    query: PropTypes.object,
   };
 
   static handleClick = (event) => {
