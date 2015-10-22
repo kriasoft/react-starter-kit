@@ -8,7 +8,7 @@
  */
 
 import GitRepo from 'git-repository';
-import task from './lib/task';
+import run from './run';
 import fetch from './lib/fetch';
 
 // TODO: Update deployment URL
@@ -23,9 +23,9 @@ const getRemote = (slot) => ({
  * Deploy the contents of the `/build` folder to a remote
  * server via Git. Example: `npm run deploy -- production`
  */
-export default task('deploy', async () => {
+async function deploy() {
   // By default deploy to the staging deployment slot
-  const remote = getRemote(process.argv.includes('production') ? null : 'staging');
+  const remote = getRemote(process.argv.includes('--production') ? null : 'staging');
 
   // Initialize a new Git repository inside the `/build` folder
   // if it doesn't exist yet
@@ -41,8 +41,8 @@ export default task('deploy', async () => {
 
   // Build the project in RELEASE mode which
   // generates optimized and minimized bundles
-  process.argv.push('release');
-  await require('./build')();
+  process.argv.push('--release');
+  await run(require('./build'));
 
   // Push the contents of the build folder to the remote server via Git
   await repo.add('--all .');
@@ -52,4 +52,6 @@ export default task('deploy', async () => {
   // Check if the site was successfully deployed
   const response = await fetch(remote.website);
   console.log(`${remote.website} -> ${response.statusCode}`);
-});
+}
+
+export default deploy;

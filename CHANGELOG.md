@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Update build automation scripts to use plain functions
+- Add support of `--release` and `--verbose` flags to build scripts
 - Add `CHANGELOG.md` file with a list of notable changes to this project
 
 ### [v0.4.1] - 2015-10-04

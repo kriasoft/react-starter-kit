@@ -78,17 +78,17 @@ $ npm start                     # Compile and launch
 ### How to Build
 
 ```shell
-$ npm run build                 # or, `npm run build -- release`
+$ npm run build                 # or, `npm run build -- --release`
 ```
 
 By default, it builds in *debug* mode. If you need to build in release
-mode, just add a `-- release` flag. This will optimize the output bundle for
+mode, just add a `-- --release` flag. This will optimize the output bundle for
 production.
 
 ### How to Run
 
 ```shell
-$ npm start                     # or, `npm start -- release`
+$ npm start                     # or, `npm start -- --release`
 ```
 
 This will start a light-weight development server with "live reload" and
@@ -97,7 +97,7 @@ synchronized browsing across multiple devices and browsers.
 ### How to Deploy
 
 ```shell
-$ npm run deploy                # or, `npm run deploy -- production`
+$ npm run deploy                # or, `npm run deploy -- --production`
 ```
 
 For more information see `tools/deploy.js`.

@@ -9,19 +9,20 @@
 
 import path from 'path';
 import replace from 'replace';
-import task from './lib/task';
-import copy from './lib/copy';
+import Promise from 'bluebird';
 import watch from './lib/watch';
 
 /**
  * Copies static files such as robots.txt, favicon.ico to the
  * output (build) folder.
  */
-export default task('copy', async () => {
+async function copy() {
+  const ncp = Promise.promisify(require('ncp'));
+
   await Promise.all([
-    copy('src/public', 'build/public'),
-    copy('src/content', 'build/content'),
-    copy('package.json', 'build/package.json'),
+    ncp('src/public', 'build/public'),
+    ncp('src/content', 'build/content'),
+    ncp('package.json', 'build/package.json'),
   ]);
 
   replace({
@@ -36,7 +37,9 @@ export default task('copy', async () => {
     const watcher = await watch('src/content/**/*.*');
     watcher.on('changed', async (file) => {
       const relPath = file.substr(path.join(__dirname, '../src/content/').length);
-      await copy(`src/content/${relPath}`, `build/content/${relPath}`);
+      await ncp(`src/content/${relPath}`, `build/content/${relPath}`);
     });
   }
-});
+}
+
+export default copy;
