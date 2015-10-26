@@ -17,25 +17,24 @@ import watch from './lib/watch';
 function serve() {
   return new Promise((resolve, reject) => {
     function start() {
-      const server = cp.spawn('node', [path.join(__dirname, '../build/server.js')], {
-        env: Object.assign({ NODE_ENV: 'development' }, process.env),
-        silent: false,
-      });
-
+      const server = cp.spawn(
+        'node',
+        [path.join(__dirname, '../build/server.js')],
+        {
+          env: Object.assign({ NODE_ENV: 'development' }, process.env),
+          silent: false,
+        }
+      );
       server.stdout.on('data', data => {
-        const message = data.toString();
-        if (message.match(' running ')) {
-          console.log(message.trim());
+        let time = new Date().toTimeString();
+        time = time.replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
+        process.stdout.write(`[${time}] `);
+        process.stdout.write(data);
+        if (data.toString('utf8').includes('The server is running at')) {
           resolve();
-        } else {
-          console.log(message);
         }
       });
-
-      server.stderr.once('data', data => {
-        reject(data.toString());
-      });
-
+      server.stderr.on('data', data => process.stderr.write(data));
       server.on('error', err => reject(err));
       process.on('exit', () => server.kill('SIGTERM'));
       return server;
