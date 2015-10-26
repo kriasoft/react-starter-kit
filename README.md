@@ -54,7 +54,7 @@ Join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom
 │   ├── /build.js               # Builds the project from source to output (build) folder
 │   ├── /bundle.js              # Bundles the web resources into package(s) through Webpack
 │   ├── /clean.js               # Cleans up the output (build) folder
-│   ├── /config.js              # Webpack configuration for application bundles
+│   ├── /webpack.config.js      # Configurations for client-side and server-side bundles
 │   ├── /copy.js                # Copies static files to output (build) folder
 │   ├── /deploy.js              # Deploys your web application
 │   ├── /serve.js               # Launches the Node.js/Express web server
@@ -126,8 +126,9 @@ $ npm test
 Test any javascript module by creating a `__tests__/` directory where
 the file is. Append `-test.js` to the filename and [Jest](https://facebook.github.io/jest/) will do the rest.
 
-### Visit Our Sponsor
+### Our Sponsors
 
+[![Rollbar](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/) &nbsp;&nbsp;&nbsp;
 [![Makers Academy](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/makers-academy.png)](http://www.makersacademy.com/?utm_source=ReactStarterKit&utm_medium=link&utm_campaign=ReactStarterKitGithub)
 
 ### Related Projects
