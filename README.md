@@ -128,7 +128,7 @@ the file is. Append `-test.js` to the filename and [Jest](https://facebook.githu
 
 ### Our Sponsors
 
-[![Rollbar](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/) &nbsp;&nbsp;&nbsp;
+[![Rollbar](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;&nbsp;
 [![Makers Academy](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/makers-academy.png)](http://www.makersacademy.com/?utm_source=ReactStarterKit&utm_medium=link&utm_campaign=ReactStarterKitGithub)
 
 ### Related Projects
