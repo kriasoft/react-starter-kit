@@ -183,7 +183,7 @@ const serverConfig = merge({}, config, {
         ~request.search(/^[a-z][a-z\/\.\-0-9]*$/i) &&
         !~request.search(/^react-routing/) &&
         !~context.search(/[\\/]react-routing/);
-      cb(null, Boolean(isExternal));
+      cb(null, !!isExternal);
     },
   ],
   node: {
