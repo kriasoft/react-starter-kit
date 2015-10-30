@@ -147,16 +147,15 @@ import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
 function withViewport(ComposedComponent) {
   return class WithViewport extends Component {
+  
+    state = {
+      viewport: canUseDOM ?
+        {width: window.innerWidth, height: window.innerHeight} :
+        {width: 1366, height: 768} // Default size for server-side rendering
+    };
 
     constructor() {
       super();
-
-      this.state = {
-        viewport: canUseDOM ?
-          {width: window.innerWidth, height: window.innerHeight} :
-          {width: 1366, height: 768} // Default size for server-side rendering
-      };
-      this.handleResize = this.handleResize.bind(this);
     }
 
     componentDidMount() {
@@ -173,7 +172,7 @@ function withViewport(ComposedComponent) {
       return <ComposedComponent {...this.props} viewport={this.state.viewport}/>;
     }
 
-    handleResize() {
+    handleResize = () => {
       let viewport = {width: window.innerWidth, height: window.innerHeight};
       if (this.state.viewport.width !== viewport.width ||
         this.state.viewport.height !== viewport.height) {
