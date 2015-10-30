@@ -177,7 +177,7 @@ function withViewport(ComposedComponent) {
       let viewport = {width: window.innerWidth, height: window.innerHeight};
       if (this.state.viewport.width !== viewport.width ||
         this.state.viewport.height !== viewport.height) {
-        this.setState({viewport: viewport});
+        this.setState({ viewport });
       }
     }
 
@@ -196,7 +196,7 @@ import withViewport from './withViewport';
 class MyComponent {
   render() {
     let { width, height } = this.props.viewport;
-    return <div>{'Viewport: ' + width + 'x' + height}</div>;
+    return <div>{`Viewport: ${width}x${height}`}</div>;
   }
 }
 
