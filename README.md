@@ -57,6 +57,7 @@ Join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom
 │   ├── /webpack.config.js      # Configurations for client-side and server-side bundles
 │   ├── /copy.js                # Copies static files to output (build) folder
 │   ├── /deploy.js              # Deploys your web application
+│   ├── /run.js                 # Runs a specified task (start, serve, deploy, build, bundle, copy, clean)
 │   ├── /serve.js               # Launches the Node.js/Express web server
 │   └── /start.js               # Launches the development web server with "live reload"
 │── package.json                # The list of 3rd party libraries and utilities
