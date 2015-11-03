@@ -180,7 +180,7 @@ const serverConfig = merge({}, config, {
   externals: [
     function filter(context, request, cb) {
       const isExternal =
-        request.match(/^[a-z][a-z\/\.\-0-9]*$/i) &&
+        request.match(/^[@a-z][a-z\/\.\-0-9]*$/i) &&
         !request.match(/^react-routing/) &&
         !context.match(/[\\/]react-routing/);
       cb(null, Boolean(isExternal));
