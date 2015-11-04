@@ -50,5 +50,8 @@ npm install --save-dev eslint babel-eslint eslint-plugin-react
 *You may need to restart atom for changes to take effect*
 
 ### SublimeText
+```npm i -g eslint`
 
-Coming soon.
+* [Package Control](https://packagecontrol.io/)
+* [Sublime-linter](http://www.sublimelinter.com/en/latest/)
+* [SublimeLinter-contrib-eslint](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint)
