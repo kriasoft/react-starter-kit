@@ -13,7 +13,7 @@ import merge from 'lodash.merge';
 
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
-const WATCH = global.WATCH === undefined ? false : global.WATCH;
+const WATCH = !!global.WATCH;
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
@@ -180,10 +180,10 @@ const serverConfig = merge({}, config, {
   externals: [
     function filter(context, request, cb) {
       const isExternal =
-        request.match(/^[a-z][a-z\/\.\-0-9]*$/i) &&
-        !request.match(/^react-routing/) &&
-        !context.match(/[\\/]react-routing/);
-      cb(null, Boolean(isExternal));
+        ~request.search(/^[a-z][a-z\/\.\-0-9]*$/i) &&
+        !~request.search(/^react-routing/) &&
+        !~context.search(/[\\/]react-routing/);
+      cb(null, !!isExternal);
     },
   ],
   node: {
