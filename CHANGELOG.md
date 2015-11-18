@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Replace [cssnext](http://cssnext.io/) with [precss](https://github.com/jonathantneal/precss)
 - Update build automation scripts to use plain functions
 - Add support of `--release` and `--verbose` flags to build scripts
 - Add `CHANGELOG.md` file with a list of notable changes to this project
