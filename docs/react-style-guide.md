@@ -136,7 +136,7 @@ class SampleComponent extends Component {
 export default SampleComponent;
 ```
 
-Put custom methods and properties at the bottom of the file, after the render() method.
+Put custom methods and properties between React API methods and the `render()` method at the bottom.
 
 ##### Higher-order React component example:
 
@@ -148,16 +148,11 @@ import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 function withViewport(ComposedComponent) {
   return class WithViewport extends Component {
 
-    constructor() {
-      super();
-
-      this.state = {
-        viewport: canUseDOM ?
-          {width: window.innerWidth, height: window.innerHeight} :
-          {width: 1366, height: 768} // Default size for server-side rendering
-      };
-      this.handleResize = this.handleResize.bind(this);
-    }
+    state = {
+      viewport: canUseDOM ?
+        {width: window.innerWidth, height: window.innerHeight} :
+        {width: 1366, height: 768} // Default size for server-side rendering
+    };
 
     componentDidMount() {
       window.addEventListener('resize', this.handleResize);
@@ -169,16 +164,16 @@ function withViewport(ComposedComponent) {
       window.removeEventListener('orientationchange', this.handleResize);
     }
 
-    render() {
-      return <ComposedComponent {...this.props} viewport={this.state.viewport}/>;
-    }
-
-    handleResize() {
+    handleResize = () => {
       let viewport = {width: window.innerWidth, height: window.innerHeight};
       if (this.state.viewport.width !== viewport.width ||
         this.state.viewport.height !== viewport.height) {
-        this.setState({viewport: viewport});
+        this.setState({ viewport });
       }
+    };
+
+    render() {
+      return <ComposedComponent {...this.props} viewport={this.state.viewport}/>;
     }
 
   };
@@ -196,7 +191,7 @@ import withViewport from './withViewport';
 class MyComponent {
   render() {
     let { width, height } = this.props.viewport;
-    return <div>{'Viewport: ' + width + 'x' + height}</div>;
+    return <div>{`Viewport: ${width}x${height}`}</div>;
   }
 }
 
