@@ -40,11 +40,10 @@ Join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom
 │   ├── /components/            # React components
 │   ├── /constants/             # Constants (action types etc.)
 │   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
-│   ├── /core/                  # Core components (Flux dispatcher, base classes, utilities)
+│   ├── /core/                  # Core framework and utility functions
 │   ├── /decorators/            # Higher-order React components
 │   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /stores/                # Stores contain the application state and logic
-│   ├── /utils/                 # Utility classes and functions
 │   ├── /app.js                 # Client-side startup script
 │   ├── /config.js              # Global application settings
 │   ├── /routes.js              # Universal (isomorphic) application routes

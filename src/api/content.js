@@ -1,10 +1,11 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
+import fs from 'fs';
 import { join } from 'path';
 import { Router } from 'express';
+import Promise from 'bluebird';
 import jade from 'jade';
 import fm from 'front-matter';
-import fs from '../utils/fs';
 
 // A folder with Jade/Markdown/HTML content pages
 const CONTENT_DIR = join(__dirname, './content');
@@ -15,6 +16,11 @@ const parseJade = (path, jadeContent) => {
   const htmlContent = jade.render(fmContent.body);
   return Object.assign({ path, content: htmlContent }, fmContent.attributes);
 };
+
+const readFile = Promise.promisify(fs.readFile);
+const fileExists = filename => new Promise(resolve => {
+  fs.exists(filename, resolve);
+});
 
 const router = new Router();
 
@@ -28,14 +34,14 @@ router.get('/', async (req, res, next) => {
     }
 
     let fileName = join(CONTENT_DIR, (path === '/' ? '/index' : path) + '.jade');
-    if (!await fs.exists(fileName)) {
+    if (!await fileExists(fileName)) {
       fileName = join(CONTENT_DIR, path + '/index.jade');
     }
 
-    if (!await fs.exists(fileName)) {
+    if (!await fileExists(fileName)) {
       res.status(404).send({error: `The page '${path}' is not found.`});
     } else {
-      const source = await fs.readFile(fileName, { encoding: 'utf8' });
+      const source = await readFile(fileName, { encoding: 'utf8' });
       const content = parseJade(path, source);
       res.status(200).send(content);
     }
