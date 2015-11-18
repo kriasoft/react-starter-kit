@@ -2,7 +2,7 @@
 
 import React, { PropTypes, Component } from 'react';
 import withStyles from '../../decorators/withStyles';
-import styles from './ErrorPage.css';
+import styles from './ErrorPage.scss';
 
 @withStyles(styles)
 class ErrorPage extends Component {

@@ -1,10 +1,8 @@
 /* React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-@import '../variables.css';
+@import '../variables.scss';
 
-:root {
-  --brand-color: #61dafb;
-}
+$brand-color: #61dafb;
 
 .Header {
   background: #373277;
@@ -14,11 +12,11 @@
 .Header-container {
   margin: 0 auto;
   padding: 20px 0;
-  max-width: var(--max-content-width);
+  max-width: $max-content-width;
 }
 
 .Header-brand {
-  color: color(var(--brand-color) lightness(+10%));
+  color: color($brand-color lightness(+10%));
   text-decoration: none;
   font-size: 1.75em; /* ~28px */
 }

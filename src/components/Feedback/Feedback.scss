@@ -1,6 +1,6 @@
 /* React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-@import '../variables.css';
+@import '../variables.scss';
 
 .Feedback {
   background: #f5f5f5;
@@ -10,7 +10,7 @@
 .Feedback-container {
   margin: 0 auto;
   padding: 20px 8px;
-  max-width: var(--max-content-width);
+  max-width: $max-content-width;
   text-align: center;
   font-size: 1.5em; /* ~24px */
 }

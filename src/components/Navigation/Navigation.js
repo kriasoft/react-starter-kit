@@ -2,7 +2,7 @@
 
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
-import styles from './Navigation.css';
+import styles from './Navigation.scss';
 import withStyles from '../../decorators/withStyles';
 import Link from '../Link';
 

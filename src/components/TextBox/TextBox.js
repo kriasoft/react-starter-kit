@@ -2,7 +2,7 @@
 
 import React, { PropTypes, Component } from 'react';
 import withStyles from '../../decorators/withStyles';
-import styles from './TextBox.css';
+import styles from './TextBox.scss';
 
 @withStyles(styles)
 class TextBox extends Component {

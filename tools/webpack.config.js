@@ -28,14 +28,6 @@ const GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
   __DEV__: DEBUG,
 };
-const JS_LOADER = {
-  test: /\.jsx?$/,
-  include: [
-    path.resolve(__dirname, '../node_modules/react-routing/src'),
-    path.resolve(__dirname, '../src'),
-  ],
-  loader: 'babel-loader',
-};
 
 //
 // Common configuration chunk to be used for both
@@ -74,6 +66,13 @@ const config = {
   module: {
     loaders: [
       {
+        test: /\.jsx?$/,
+        include: [
+          path.resolve(__dirname, '../node_modules/react-routing/src'),
+          path.resolve(__dirname, '../src'),
+        ],
+        loader: 'babel-loader',
+      }, {
         test: /\.json$/,
         loader: 'json-loader',
       }, {
@@ -85,6 +84,9 @@ const config = {
       }, {
         test: /\.(eot|ttf|wav|mp3)$/,
         loader: 'file-loader',
+      }, {
+        test: /\.scss$/,
+        loader: 'style-loader/useable!css-loader!postcss-loader',
       },
     ],
   },
@@ -92,8 +94,8 @@ const config = {
   postcss: function plugins(bundler) {
     return [
       require('postcss-import')({ addDependencyTo: bundler }),
-      require('postcss-nested')(),
-      require('postcss-cssnext')({ autoprefixer: AUTOPREFIXER_BROWSERS }),
+      require('precss')(),
+      require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
     ];
   },
 };
@@ -131,37 +133,30 @@ const appConfig = merge({}, config, {
       new webpack.NoErrorsPlugin(),
     ] : []),
   ],
-  module: {
-    loaders: [
-      WATCH ? {
-        ...JS_LOADER,
-        query: {
-          // Wraps all React components into arbitrary transforms
-          // https://github.com/gaearon/babel-plugin-react-transform
-          plugins: ['react-transform'],
-          extra: {
-            'react-transform': {
-              transforms: [
-                {
-                  transform: 'react-transform-hmr',
-                  imports: ['react'],
-                  locals: ['module'],
-                }, {
-                  transform: 'react-transform-catch-errors',
-                  imports: ['react', 'redbox-react'],
-                },
-              ],
-            },
-          },
-        },
-      } : JS_LOADER,
-      {
-        test: /\.css$/,
-        loader: 'style-loader/useable!css-loader!postcss-loader',
-      },
-    ],
-  },
 });
+
+// Enable React Transform in the "watch" mode
+appConfig.module.loaders
+  .filter(x => WATCH && x.loader === 'babel-loader')
+  .forEach(x => x.query = {
+    // Wraps all React components into arbitrary transforms
+    // https://github.com/gaearon/babel-plugin-react-transform
+    plugins: ['react-transform'],
+    extra: {
+      'react-transform': {
+        transforms: [
+          {
+            transform: 'react-transform-hmr',
+            imports: ['react'],
+            locals: ['module'],
+          }, {
+            transform: 'react-transform-catch-errors',
+            imports: ['react', 'redbox-react'],
+          },
+        ],
+      },
+    },
+  });
 
 //
 // Configuration for the server-side bundle (server.js)
@@ -198,15 +193,11 @@ const serverConfig = merge({}, config, {
     new webpack.BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false }),
   ],
-  module: {
-    loaders: [
-      JS_LOADER,
-      {
-        test: /\.css$/,
-        loader: 'css-loader!postcss-loader',
-      },
-    ],
-  },
 });
+
+// Remove `style-loader` from the server-side bundle configuration
+serverConfig.module.loaders
+  .filter(x => x.loader.startsWith('style-loader/useable!'))
+  .forEach(x => x.loader = x.loader.substr(21));
 
 export default [appConfig, serverConfig];
