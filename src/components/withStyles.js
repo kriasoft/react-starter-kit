@@ -9,8 +9,8 @@
 
 import React, { Component, PropTypes } from 'react';
 
-function withStyles(...styles) {
-  return (BaseComponent) => class StyledComponent extends Component {
+function withStyles(BaseComponent, ...styles) {
+  return class StyledComponent extends Component {
     static contextTypes = {
       insertCss: PropTypes.func.isRequired,
     };
@@ -20,7 +20,7 @@ function withStyles(...styles) {
     }
 
     componentWillUnmount() {
-      this.removeCss();
+      setTimeout(this.removeCss, 0);
     }
 
     render() {

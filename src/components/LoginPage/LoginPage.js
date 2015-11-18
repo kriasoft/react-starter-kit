@@ -9,11 +9,10 @@
 
 import React, { Component, PropTypes } from 'react';
 import s from './LoginPage.scss';
-import withStyles from '../../decorators/withStyles';
+import withStyles from '../withStyles';
 
 const title = 'Log In';
 
-@withStyles(s)
 class LoginPage extends Component {
 
   static contextTypes = {
@@ -37,4 +36,4 @@ class LoginPage extends Component {
 
 }
 
-export default LoginPage;
+export default withStyles(LoginPage, s);

@@ -9,9 +9,8 @@
 
 import React, { Component } from 'react';
 import s from './Feedback.scss';
-import withStyles from '../../decorators/withStyles';
+import withStyles from '../withStyles';
 
-@withStyles(s)
 class Feedback extends Component {
 
   render() {
@@ -28,4 +27,4 @@ class Feedback extends Component {
 
 }
 
-export default Feedback;
+export default withStyles(Feedback, s);

@@ -9,10 +9,9 @@
 
 import React, { Component } from 'react';
 import s from './Footer.scss';
-import withStyles from '../../decorators/withStyles';
+import withStyles from '../withStyles';
 import Link from '../Link';
 
-@withStyles(s)
 class Footer extends Component {
 
   render() {
@@ -33,4 +32,4 @@ class Footer extends Component {
 
 }
 
-export default Footer;
+export default withStyles(Footer, s);

@@ -9,11 +9,10 @@
 
 import React, { Component, PropTypes } from 'react';
 import s from './ContactPage.scss';
-import withStyles from '../../decorators/withStyles';
+import withStyles from '../withStyles';
 
 const title = 'Contact Us';
 
-@withStyles(s)
 class ContactPage extends Component {
 
   static contextTypes = {
@@ -37,4 +36,4 @@ class ContactPage extends Component {
 
 }
 
-export default ContactPage;
+export default withStyles(ContactPage, s);
