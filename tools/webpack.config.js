@@ -116,7 +116,6 @@ const appConfig = merge({}, config, {
   // http://webpack.github.io/docs/configuration.html#devtool
   devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
   plugins: [
-    ...config.plugins,
     new webpack.DefinePlugin(GLOBALS),
     ...(!DEBUG ? [
       new webpack.optimize.DedupePlugin(),
@@ -156,7 +155,6 @@ const appConfig = merge({}, config, {
           },
         },
       } : JS_LOADER,
-      ...config.module.loaders,
       {
         test: /\.css$/,
         loader: 'style-loader/useable!css-loader!postcss-loader',
@@ -196,7 +194,6 @@ const serverConfig = merge({}, config, {
   },
   devtool: 'source-map',
   plugins: [
-    ...config.plugins,
     new webpack.DefinePlugin(GLOBALS),
     new webpack.BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false }),
@@ -204,7 +201,6 @@ const serverConfig = merge({}, config, {
   module: {
     loaders: [
       JS_LOADER,
-      ...config.module.loaders,
       {
         test: /\.css$/,
         loader: 'css-loader!postcss-loader',
