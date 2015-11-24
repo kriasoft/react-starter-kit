@@ -12,7 +12,7 @@
 
 ### Step 1: Basic Routing
 
-In its simplest form the routing looks like a collection or URLs where each URL
+In its simplest form the routing looks like a collection of URLs where each URL
 is mapped to a React component:
 
 ```js
