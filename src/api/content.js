@@ -34,11 +34,11 @@ router.get('/', async (req, res, next) => {
     }
 
     let fileName = join(CONTENT_DIR, (path === '/' ? '/index' : path) + '.jade');
-    if (!await fileExists(fileName)) {
+    if (!(await fileExists(fileName))) {
       fileName = join(CONTENT_DIR, path + '/index.jade');
     }
 
-    if (!await fileExists(fileName)) {
+    if (!(await fileExists(fileName))) {
       res.status(404).send({error: `The page '${path}' is not found.`});
     } else {
       const source = await readFile(fileName, { encoding: 'utf8' });
@@ -51,4 +51,3 @@ router.get('/', async (req, res, next) => {
 });
 
 export default router;
-
