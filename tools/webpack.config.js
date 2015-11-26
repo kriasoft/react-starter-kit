@@ -10,6 +10,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import merge from 'lodash.merge';
+import AssetsPlugin from 'assets-webpack-plugin';
 
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
@@ -105,13 +106,15 @@ const config = {
 // -----------------------------------------------------------------------------
 
 const appConfig = merge({}, config, {
-  entry: [
-    ...(WATCH ? ['webpack-hot-middleware/client'] : []),
-    './src/app.js',
-  ],
+  entry: {
+    app: [
+      ...(WATCH ? ['webpack-hot-middleware/client'] : []),
+      './src/app.js',
+    ],
+  },
   output: {
     path: path.join(__dirname, '../build/public'),
-    filename: 'app.js',
+    filename: DEBUG ? '[name].js?[hash]' : '[name].[hash].js',
   },
 
   // Choose a developer tool to enhance debugging
@@ -119,6 +122,10 @@ const appConfig = merge({}, config, {
   devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
   plugins: [
     new webpack.DefinePlugin(GLOBALS),
+    new AssetsPlugin({
+      path: path.join(__dirname, '../build'),
+      filename: 'assets.json',
+    }),
     ...(!DEBUG ? [
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
@@ -171,6 +178,7 @@ const serverConfig = merge({}, config, {
   },
   target: 'node',
   externals: [
+    /^\.\/assets\.json$/,
     function filter(context, request, cb) {
       const isExternal =
         request.match(/^[@a-z][a-z\/\.\-0-9]*$/i) &&
