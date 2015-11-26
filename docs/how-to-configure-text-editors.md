@@ -50,8 +50,26 @@ npm install --save-dev eslint babel-eslint eslint-plugin-react
 *You may need to restart atom for changes to take effect*
 
 ### SublimeText
-```npm i -g eslint`
 
-* [Package Control](https://packagecontrol.io/)
+Install SublimeText packages  
+Easiest with [Package Control](https://packagecontrol.io/) and then "Package Control: Install Package" (Ctrl+Shift+P)  
+
+* [Babel](https://packagecontrol.io/packages/Babel)
 * [Sublime-linter](http://www.sublimelinter.com/en/latest/)
 * [SublimeLinter-contrib-eslint](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint)
+
+You can also use [SublimeLinter-contrib-eslint_d](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint_d) for faster linting.
+
+Set Babel as default syntax for a particular extension:
+
+* Open a file with that extension,
+* Select `View` from the menu,
+* Then `Syntax` `->` `Open all with current extension as...` `->` `Babel` `->` `JavaScript (Babel)`.
+* Repeat this for each extension (e.g.: .js and .jsx).
+
+Install local npm packages
+```
+npm install eslint@latest
+npm install babel-eslint@latest
+npm install eslint-plugin-react
+```
