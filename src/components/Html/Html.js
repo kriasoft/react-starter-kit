@@ -10,6 +10,7 @@ class Html extends Component {
     description: PropTypes.string,
     css: PropTypes.string,
     body: PropTypes.string.isRequired,
+    entry: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -42,7 +43,7 @@ class Html extends Component {
       </head>
       <body>
         <div id="app" dangerouslySetInnerHTML={{__html: this.props.body}} />
-        <script src="/app.js"></script>
+        <script src={this.props.entry}></script>
         <script dangerouslySetInnerHTML={this.trackingCode()} />
       </body>
       </html>

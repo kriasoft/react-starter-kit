@@ -7,6 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/server';
 import Router from './routes';
 import Html from './components/Html';
+import assets from './assets.json';
 
 const server = global.server = express();
 const port = process.env.PORT || 5000;
@@ -28,7 +29,7 @@ server.use('/api/content', require('./api/content'));
 server.get('*', async (req, res, next) => {
   try {
     let statusCode = 200;
-    const data = { title: '', description: '', css: '', body: '' };
+    const data = { title: '', description: '', css: '', body: '', entry: assets.app.js };
     const css = [];
     const context = {
       onInsertCss: value => css.push(value),
