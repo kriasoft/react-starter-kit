@@ -1,10 +1,12 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes, Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import s from './ErrorPage.scss';
 import withStyles from '../../decorators/withStyles';
-import styles from './ErrorPage.scss';
 
-@withStyles(styles)
+const title = 'Error';
+
+@withStyles(s)
 class ErrorPage extends Component {
 
   static contextTypes = {
@@ -12,9 +14,11 @@ class ErrorPage extends Component {
     onPageNotFound: PropTypes.func.isRequired,
   };
 
-  render() {
-    const title = 'Error';
+  componentWillMount() {
     this.context.onSetTitle(title);
+  }
+
+  render() {
     return (
       <div>
         <h1>{title}</h1>

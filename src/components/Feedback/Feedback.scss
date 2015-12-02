@@ -2,12 +2,12 @@
 
 @import '../variables.scss';
 
-.Feedback {
+.root {
   background: #f5f5f5;
   color: #333;
 }
 
-.Feedback-container {
+.container {
   margin: 0 auto;
   padding: 20px 8px;
   max-width: $max-content-width;
@@ -15,19 +15,19 @@
   font-size: 1.5em; /* ~24px */
 }
 
-.Feedback-link,
-.Feedback-link:active,
-.Feedback-link:hover,
-.Feedback-link:visited {
+.link,
+.link:active,
+.link:hover,
+.link:visited {
   color: #333;
   text-decoration: none;
 }
 
-.Feedback-link:hover {
+.link:hover {
   text-decoration: underline;
 }
 
-.Feedback-spacer {
+.spacer {
   padding-right: 15px;
   padding-left: 15px;
 }

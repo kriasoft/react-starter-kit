@@ -1,6 +1,6 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes, Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Location from '../../core/Location';
 
 function isLeftClickEvent(event) {
