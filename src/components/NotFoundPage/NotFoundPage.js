@@ -1,10 +1,12 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes, Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import s from './NotFoundPage.scss';
 import withStyles from '../../decorators/withStyles';
-import styles from './NotFoundPage.scss';
 
-@withStyles(styles)
+const title = 'Page Not Found';
+
+@withStyles(s)
 class NotFoundPage extends Component {
 
   static contextTypes = {
@@ -12,10 +14,12 @@ class NotFoundPage extends Component {
     onPageNotFound: PropTypes.func.isRequired,
   };
 
-  render() {
-    const title = 'Page Not Found';
+  componentWillMount() {
     this.context.onSetTitle(title);
     this.context.onPageNotFound();
+  }
+
+  render() {
     return (
       <div>
         <h1>{title}</h1>

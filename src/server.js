@@ -32,7 +32,7 @@ server.get('*', async (req, res, next) => {
     const data = { title: '', description: '', css: '', body: '', entry: assets.app.js };
     const css = [];
     const context = {
-      onInsertCss: value => css.push(value),
+      insertCss: styles => css.push(styles._getCss()),
       onSetTitle: value => data.title = value,
       onSetMeta: (key, value) => data[key] = value,
       onPageNotFound: () => statusCode = 404,

@@ -2,43 +2,44 @@
 
 @import '../variables.scss';
 
-.Footer {
+.root {
   background: #333;
   color: #fff;
 }
 
-.Footer-container {
+.container {
   margin: 0 auto;
   padding: 20px 15px;
   max-width: $max-content-width;
   text-align: center;
 }
 
-.Footer-text {
+.text {
   color: rgba(255, 255, 255, .5);
 }
 
-.Footer-text--muted {
+.textMuted {
+  composes: text;
   color: rgba(255, 255, 255, .3);
 }
 
-.Footer-spacer {
+.spacer {
   color: rgba(255, 255, 255, .3);
 }
 
-.Footer-text,
-.Footer-link {
+.text,
+.link {
   padding: 2px 5px;
   font-size: 1em;
 }
 
-.Footer-link,
-.Footer-link:active,
-.Footer-link:visited {
+.link,
+.link:active,
+.link:visited {
   color: rgba(255, 255, 255, .6);
   text-decoration: none;
 }
 
-.Footer-link:hover {
+.link:hover {
   color: rgba(255, 255, 255, 1);
 }

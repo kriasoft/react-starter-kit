@@ -4,37 +4,37 @@
 
 $brand-color: #61dafb;
 
-.Header {
+.root {
   background: #373277;
   color: #fff;
 }
 
-.Header-container {
+.container {
   margin: 0 auto;
   padding: 20px 0;
   max-width: $max-content-width;
 }
 
-.Header-brand {
+.brand {
   color: color($brand-color lightness(+10%));
   text-decoration: none;
   font-size: 1.75em; /* ~28px */
 }
 
-.Header-brandTxt {
+.brandTxt {
   margin-left: 10px;
 }
 
-.Header-nav {
+.nav {
   float: right;
   margin-top: 6px;
 }
 
-.Header-banner {
+.banner {
   text-align: center;
 }
 
-.Header-bannerTitle {
+.bannerTitle {
   margin: 0;
   padding: 10px;
   font-weight: normal;
@@ -42,7 +42,7 @@ $brand-color: #61dafb;
   line-height: 1em;
 }
 
-.Header-bannerDesc {
+.bannerDesc {
   padding: 0;
   color: rgba(255, 255, 255, .5);
   font-size: 1.25em;

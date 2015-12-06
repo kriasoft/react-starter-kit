@@ -1,10 +1,13 @@
 ## React Style Guide
 
-### Folder Structure
+### Core Principles
 
 - Place each component in a separate folder
-- Avoid having shared resources between components (css, images etc.)
-- Keep all components' folders in the same parent folder (avoid nesting)
+- Avoid having shared resources between components (CSS, images etc.)
+- Avoid deeply nested folder structures
+- Prefer using class selectors in CSS (see [BEM](https://bem.info/))
+- Avoid nested CSS selectors (see [BEM](https://bem.info/))
+- Keep CSS simple and declarative, avoid loops, mixins etc.
 
 ##### File structure per component example:
 
@@ -19,70 +22,60 @@
 
 For more information google for [component-based UI development](https://google.com/search?q=component-based+ui+development).
 
-### CSS Class Names
-
-Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS](https://suitcss.github.io/) for inspiration.
-
-```less
-// CSS
-.ComponentName { }
-.ComponentName--modifier { }
-.ComponentName-elementName { }
-.ComponentName-elementName--modifier { }
-```
-
 ##### CSS styling example:
 
 ```jsx
 // JSX
-<nav className="Navigation">
-  <ul className="Navigation-items">
-    <li className="Navigation-item Navigation-item--selected">
-      <a className="Navigation-link" href="/products">Products</a>
+<nav className={cx(s.root, this.props.className)}>
+  <ul className={s.items}>
+    <li className={cx(s.item, s.selected)}>
+      <a className={s.link} href="/products">Products</a>
     </li>
-    <li className="Navigation-item">
-      <a className="Navigation-link" href="/services">Services</a>
+    <li className={s.item}>
+      <a className={s.link} href="/services">Services</a>
     </li>
   </ul>
 </nav>
 ```
 
-```less
+```scss
 // CSS
-@import '../variables.css';
+@import '../variables.scss';
 
-.Navigation {
-  &-items {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    text-align: center;
+.root {
+  width: 300px;
+}
+
+.items {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: center;
+}
+
+.item {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.link {
+  display: block;
+  padding: 0 25px;
+  outline: 0;
+  border: 0;
+  color: $default-color;
+  text-decoration: none;
+  line-height: 25px;
+  transition: background-color .3s ease;
+
+  &,
+  .items:hover & {
+    background: $default-bg-color;
   }
 
-  &-item {
-    display: inline-block;
-    vertical-align: top;
-  }
-
-  &-link {
-    display: block;
-    padding: 0 25px;
-    outline: 0;
-    border: 0;
-    color: @default-color;
-    text-decoration: none;
-    line-height: 25px;
-    transition: background-color .3s ease;
-
-    &,
-    .Navigation-items:hover & {
-      background: var(--default-bg-color);
-    }
-
-    &--selected,
-    .Navigation-items:hover &:hover {
-      background: var(--active-bg-color);
-    }
+  .selected,
+  .items:hover &:hover {
+    background: $active-bg-color;
   }
 }
 ```
@@ -96,9 +89,12 @@ Use [BEM](https://bem.info/) approach for naming CSS classes. See also [SUIT CSS
 ##### React component example:
 
 ```js
-import './SampleComponent.css';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import cx from 'classnames';
+import s from './SampleComponent.css';
+import withStyles from '../../decorators/withStyles';
 
+@withStyles(s)
 class SampleComponent extends Component {
 
   static propTypes = { ... };
@@ -124,9 +120,12 @@ class SampleComponent extends Component {
     // ...
   }
 
+  handleClick = (event) => { ... };
+
   render() {
     return (
-      <div className="SampleComponent">
+      <div className={cx(s.root, this.props.className)} onClick={this.handleClick}>
+        ...
       </div>
     );
   }

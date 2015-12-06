@@ -1,10 +1,10 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes, Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import s from './TextBox.scss';
 import withStyles from '../../decorators/withStyles';
-import styles from './TextBox.scss';
 
-@withStyles(styles)
+@withStyles(s)
 class TextBox extends Component {
 
   static propTypes = {
@@ -17,10 +17,10 @@ class TextBox extends Component {
 
   render() {
     return (
-      <div className="TextBox">
+      <div className={s.root}>
         {this.props.maxLines > 1 ?
-          <textarea {...this.props} className="TextBox-input" ref="input" key="input" rows={this.props.maxLines} /> :
-          <input {...this.props} className="TextBox-input" ref="input" key="input" />}
+          <textarea {...this.props} className={s.input} ref="input" key="input" rows={this.props.maxLines} /> :
+          <input {...this.props} className={s.input} ref="input" key="input" />}
       </div>
     );
   }

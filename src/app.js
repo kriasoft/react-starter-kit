@@ -10,6 +10,7 @@ import { addEventListener, removeEventListener } from './core/DOMUtils';
 let cssContainer = document.getElementById('css');
 const appContainer = document.getElementById('app');
 const context = {
+  insertCss: styles => styles._insertCss(),
   onSetTitle: value => document.title = value,
   onSetMeta: (name, content) => {
     // Remove and create a new <meta /> tag in order to make it work

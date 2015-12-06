@@ -1,22 +1,26 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
-import React, { PropTypes, Component } from 'react';
-import styles from './ContactPage.scss';
+import React, { Component, PropTypes } from 'react';
+import s from './ContactPage.scss';
 import withStyles from '../../decorators/withStyles';
 
-@withStyles(styles)
+const title = 'Contact Us';
+
+@withStyles(s)
 class ContactPage extends Component {
 
   static contextTypes = {
     onSetTitle: PropTypes.func.isRequired,
   };
 
-  render() {
-    const title = 'Contact Us';
+  componentWillMount() {
     this.context.onSetTitle(title);
+  }
+
+  render() {
     return (
-      <div className="ContactPage">
-        <div className="ContactPage-container">
+      <div className={s.root}>
+        <div className={s.container}>
           <h1>{title}</h1>
           <p>...</p>
         </div>

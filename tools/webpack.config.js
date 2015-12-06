@@ -74,6 +74,14 @@ const config = {
         ],
         loader: 'babel-loader',
       }, {
+        test: /\.scss$/,
+        loaders: [
+          'isomorphic-style-loader',
+          'css-loader?' + (DEBUG ? 'sourceMap&' : 'minimize&') +
+          'modules&localIdentName=[name]_[local]_[hash:base64:3]',
+          'postcss-loader',
+        ],
+      }, {
         test: /\.json$/,
         loader: 'json-loader',
       }, {
@@ -85,9 +93,6 @@ const config = {
       }, {
         test: /\.(eot|ttf|wav|mp3)$/,
         loader: 'file-loader',
-      }, {
-        test: /\.scss$/,
-        loader: 'style-loader/useable!css-loader!postcss-loader',
       },
     ],
   },
@@ -202,10 +207,5 @@ const serverConfig = merge({}, config, {
       { raw: true, entryOnly: false }),
   ],
 });
-
-// Remove `style-loader` from the server-side bundle configuration
-serverConfig.module.loaders
-  .filter(x => x.loader.startsWith('style-loader/useable!'))
-  .forEach(x => x.loader = x.loader.substr(21));
 
 export default [appConfig, serverConfig];
