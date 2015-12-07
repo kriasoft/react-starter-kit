@@ -29,7 +29,7 @@ router.get('/', async (req, res, next) => {
     const path = req.query.path;
 
     if (!path || path === 'undefined') {
-      res.status(400).send({error: `The 'path' query parameter cannot be empty.`});
+      res.status(400).send({ error: `The 'path' query parameter cannot be empty.` });
       return;
     }
 
@@ -39,7 +39,7 @@ router.get('/', async (req, res, next) => {
     }
 
     if (!(await fileExists(fileName))) {
-      res.status(404).send({error: `The page '${path}' is not found.`});
+      res.status(404).send({ error: `The page '${path}' is not found.` });
     } else {
       const source = await readFile(fileName, { encoding: 'utf8' });
       const content = parseJade(path, source);

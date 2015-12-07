@@ -19,7 +19,7 @@ class Html extends Component {
   };
 
   trackingCode() {
-    return ({__html:
+    return ({ __html:
       `(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=` +
       `function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;` +
       `e=o.createElement(i);r=o.getElementsByTagName(i)[0];` +
@@ -39,10 +39,10 @@ class Html extends Component {
         <meta name="description" content={this.props.description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-        <style id="css" dangerouslySetInnerHTML={{__html: this.props.css}} />
+        <style id="css" dangerouslySetInnerHTML={{ __html: this.props.css }} />
       </head>
       <body>
-        <div id="app" dangerouslySetInnerHTML={{__html: this.props.body}} />
+        <div id="app" dangerouslySetInnerHTML={{ __html: this.props.body }} />
         <script src={this.props.entry}></script>
         <script dangerouslySetInnerHTML={this.trackingCode()} />
       </body>
