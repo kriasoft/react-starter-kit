@@ -1,45 +1,82 @@
 ## React Style Guide
 
-### Core Principles
+> This style guide comes as an addition to [Airbnb React/JSX Guide](https://github.com/airbnb/javascript/tree/master/react).
+> Feel free to modify it to suite your project's needs. 
 
-- Place each component in a separate folder
-- Avoid having shared resources between components (CSS, images etc.)
-- Avoid deeply nested folder structures
-- Prefer using class selectors in CSS (see [BEM](https://bem.info/))
-- Avoid nested CSS selectors (see [BEM](https://bem.info/))
-- Keep CSS simple and declarative, avoid loops, mixins etc.
+### Table of Contents
 
-##### File structure per component example:
+* [Separate folder per UI component](#separate-folder-per-ui-component)
+* [Prefer using functional components](#prefer-using-functional-components)
+* [Use CSS Modules](#use-css-modules)
+* [Use higher-order components](#use-higher-order-components)
+
+### Separate folder per UI component
+
+* Place each major UI component along with its resources in a separate folder<br>
+  This will make it easier to find related resources for any particular UI
+  element (CSS, images, unit tests, localization files etc.). Removing such
+  components during refactorings should also be easy.
+* Avoid having CSS, images and other resource files shared between multiple components.<br>
+  This will make your code more maintainable, easy to refactor.
+* Add `package.json` file into each component's folder.<br>
+  This will allow to easily reference such components from other places in
+  your code.<br>
+  `import Nav from '../Nav'` vs `import Nav from '../Nav/Nav.js'`
 
 ```
-/src/components/Navigation/icon.svg
-/src/components/Navigation/Navigation.css
-/src/components/Navigation/Navigation.js
-/src/components/Navigation/Navigation.test.js
-/src/components/Navigation/Navigation.ru-RU.css
-/src/components/Navigation/package.json
+/components/Navigation/icon.svg
+/components/Navigation/Navigation.css
+/components/Navigation/Navigation.js
+/components/Navigation/Navigation.test.js
+/components/Navigation/Navigation.ru-RU.css
+/components/Navigation/package.json
+```
+
+```
+// components/Navigation/package.json 
+{
+  "name:": "Navigation",
+  "main": "./Navigation.js"
+}
 ```
 
 For more information google for [component-based UI development](https://google.com/search?q=component-based+ui+development).
 
-##### CSS styling example:
+### Prefer using functional components
+
+* Prefer using stateless functional components whenever possible.<br>
+  Components that don't use state are better to be written as simple pure functions.
 
 ```jsx
-// JSX
-<nav className={cx(s.root, this.props.className)}>
-  <ul className={s.items}>
-    <li className={cx(s.item, s.selected)}>
-      <a className={s.link} href="/products">Products</a>
-    </li>
-    <li className={s.item}>
-      <a className={s.link} href="/services">Services</a>
-    </li>
-  </ul>
-</nav>
+// Bad
+class Navigation extends Component {
+  static propTypes = { items: PropTypes.array.isRequired };
+  render() {
+    return <nav><ul>{this.props.items.map(x => <li>{x.text}</li>}</ul></nav>;
+  }
+}
+
+// Better
+function Navigation({ items }) {
+  return (
+    <nav><ul>{items.map(x => <li>{x.text}</li>}</ul></nav>;
+  );
+}
+Navigation.propTypes = { items: PropTypes.array.isRequired };
 ```
 
+### Use CSS Modules
+
+* Use CSS Modules<br>
+  This will allow using short CSS class names and at the same time avoid conflicts.
+* Keep CSS simple and declarative. Avoid loops, mixins etc.
+* Feel free to use variables in CSS via [precss](https://github.com/jonathantneal/precss) plugin for [PostCSS](https://github.com/postcss/postcss)
+* Prefer CSS class selectors instead of element and `id` selectors (see [BEM](https://bem.info/))
+* Avoid nested CSS selectors (see [BEM](https://bem.info/))
+* When in doubt, use `.root { }` class name for the root elements of your components
+
 ```scss
-// CSS
+// Navigation.scss
 @import '../variables.scss';
 
 .root {
@@ -80,64 +117,36 @@ For more information google for [component-based UI development](https://google.
 }
 ```
 
-### React Components
-
-- Use [Babel](https://babeljs.io/docs/learn-es6/) transpiler for your source code
-- Use [ES6 classes](https://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html#es6-classes) for creating new React components
-- Use higher-order components to extend the functionality of existing components
-
-##### React component example:
-
-```js
-import React, { Component, PropTypes } from 'react';
-import cx from 'classnames';
-import s from './SampleComponent.css';
+```jsx
+// Navigation.js
+import React, { PropTypes } from 'react';
+import s from './Navigation.scss';
 import withStyles from '../../decorators/withStyles';
 
-@withStyles(s)
-class SampleComponent extends Component {
-
-  static propTypes = { ... };
-
-  static defaultProps = { ... };
-
-  state = { ... };
-
-  constructor() {
-    super();
-    // componentWillMount handler
-  }
-
-  componentDidMount() {
-    // ...
-  }
-
-  componentWillUnmount() {
-    // ...
-  }
-
-  shouldComponentUpdate() {
-    // ...
-  }
-
-  handleClick = (event) => { ... };
-
-  render() {
-    return (
-      <div className={cx(s.root, this.props.className)} onClick={this.handleClick}>
-        ...
-      </div>
-    );
-  }
-
+function Navigation() {
+  return (
+    <nav className={[s.root, this.props.className]}>
+      <ul className={s.items}>
+        <li className={[s.item, s.selected]}>
+          <a className={s.link} href="/products">Products</a>
+        </li>
+        <li className={s.item}>
+          <a className={s.link} href="/services">Services</a>
+        </li>
+      </ul>
+    </nav>
+  );
 }
 
-export default SampleComponent;
+Navigation.propTypes = { className: PropTypes.string };
+
+export default withStyles(s)(Navigation);
 ```
 
-Put custom methods and properties between React API methods and the `render()` method at the bottom.
+### Use higher-order components
 
-##### Higher-order React component example:
+* Use higher-order components (HOC) to extend existing Rect components.<br>
+  Here is an example:
 
 ```js
 // withViewport.js
@@ -196,3 +205,5 @@ class MyComponent {
 
 export default MyComponent;
 ```
+
+**[⬆ back to top](#table-of-contents)**

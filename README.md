@@ -12,20 +12,13 @@
 > Helping you to stay productive following the best practices. A solid starting
 > point for both professionals and newcomers to the industry.
 
-Demo: http://demo.reactstarterkit.com &nbsp;|&nbsp;
-Join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom on Gitter to stay up to date.
+See [demo](http://demo.reactstarterkit.com) &nbsp;|&nbsp;
+[docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs) &nbsp;|&nbsp;
+[bugs & feature requests](https://waffle.io/kriasoft/react-starter-kit) &nbsp;|&nbsp;
+join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom to stay up to date
 
-### Documentation
-
-  * **General**
-    - [React Style Guide](./docs/react-style-guide.md)
-    - [How to configure text editors and IDEs](./docs/how-to-configure-text-editors.md)
-  * **Questions**
-    - [Which module bundler should I use?](https://github.com/kriasoft/react-starter-kit/issues/3)
-    - [Which Flux implementation should I use?](https://github.com/kriasoft/react-starter-kit/issues/22)
-  * **Recipes**
-    - [How to Implement Routing and Navigation](./docs/recipes/how-to-implement-routing.md)
-    - [How to Integrate Disqus](./docs/recipes/how-to-integrate-disqus.md)
+[![Rollbar - Full-stack error tracking for all apps in any language](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
+[![Localize - Translate your web app in minutes](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/localize.png)](https://localizejs.com/)
 
 ### Directory Layout
 
@@ -126,11 +119,6 @@ $ npm test
 Test any javascript module by creating a `__tests__/` directory where
 the file is. Append `-test.js` to the filename and [Jest](https://facebook.github.io/jest/) will do the rest.
 
-### Our Sponsors
-
-[![Rollbar](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;&nbsp;
-[![Makers Academy](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/makers-academy.png)](http://www.makersacademy.com/?utm_source=ReactStarterKit&utm_medium=link&utm_campaign=ReactStarterKitGithub)
-
 ### Related Projects
 
   * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates static websites from React components
@@ -152,8 +140,8 @@ the file is. Append `-test.js` to the filename and [Jest](https://facebook.githu
 ### Support
 
   * [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) on Gitter — Feedback, feature requests, Q&A
-  * [@koistya](https://www.codementor.io/koistya) on Codementor — Mentorship, code reviews
-  * support@kriasoft.com — Customization requests, help with GraphQL/Relay back-ends etc.
+  * [@koistya](https://www.codementor.io/koistya) on Codementor — Mentorship, pair coding, code reviews
+  * support@kriasoft.com — Customization requests, help with GraphQL/Relay, database design etc.
 
 ### License
 
