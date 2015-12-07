@@ -1,6 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import React, { Component, PropTypes } from 'react';
+import parsePath from 'history/lib/parsePath';
 import Location from '../../core/Location';
 
 function isLeftClickEvent(event) {
@@ -40,9 +41,18 @@ class Link extends Component {
 
     if (allowTransition) {
       const link = event.currentTarget;
-      Location.pushState(
-        this.props && this.props.state || null,
-        this.props && this.props.to || (link.pathname + link.search));
+      if (this.props && this.props.to) {
+        Location.push({
+          ...(parsePath(this.props.to)),
+          state: this.props && this.props.state || null,
+        });
+      } else {
+        Location.push({
+          pathname: link.pathname,
+          search: link.search,
+          state: this.props && this.props.state || null,
+        });
+      }
     }
   };
 
