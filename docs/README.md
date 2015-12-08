@@ -12,5 +12,5 @@
 
 ### Recipes
 
-* [How to Implement Routing and Navigation](./docs/recipes/how-to-implement-routing.md)
-* [How to Integrate Disqus](./docs/recipes/how-to-integrate-disqus.md)
+* [How to Implement Routing and Navigation](./recipes/how-to-implement-routing.md)
+* [How to Integrate Disqus](./recipes/how-to-integrate-disqus.md)
