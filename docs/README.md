@@ -12,5 +12,6 @@
 
 ### Recipes
 
+* [How to do Basic Operations](./recipes/how-to-do-basics.md)
 * [How to Implement Routing and Navigation](./recipes/how-to-implement-routing.md)
 * [How to Integrate Disqus](./recipes/how-to-integrate-disqus.md)
