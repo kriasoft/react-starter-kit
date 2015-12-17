@@ -8,10 +8,9 @@ import ReactDOM from 'react-dom/server';
 import Router from './routes';
 import Html from './components/Html';
 import assets from './assets.json';
+import { port } from './config';
 
 const server = global.server = express();
-const port = process.env.PORT || 5000;
-server.set('port', port);
 
 //
 // Register Node.js middleware

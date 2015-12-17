@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Router from 'react-routing/src/Router';
-import http from './core/HttpClient';
+import fetch from './core/fetch';
 import App from './components/App';
 import ContentPage from './components/ContentPage';
 import ContactPage from './components/ContactPage';
@@ -24,7 +24,8 @@ const router = new Router(on => {
   on('/register', async () => <RegisterPage />);
 
   on('*', async (state) => {
-    const content = await http.get(`/api/content?path=${state.path}`);
+    const response = await fetch(`/api/content?path=${state.path}`);
+    const content = await response.json();
     return content && <ContentPage {...content} />;
   });
 
