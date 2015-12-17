@@ -11,7 +11,6 @@ import assets from './assets.json';
 
 const server = global.server = express();
 const port = process.env.PORT || 5000;
-server.set('port', port);
 
 //
 // Register Node.js middleware
