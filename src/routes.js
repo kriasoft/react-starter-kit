@@ -11,6 +11,8 @@ import RegisterPage from './components/RegisterPage';
 import NotFoundPage from './components/NotFoundPage';
 import ErrorPage from './components/ErrorPage';
 
+const routes = {}; // Auto-generated via webpack loader. See tools/lib/routes-loader.js
+
 const router = new Router(on => {
   on('*', async (state, next) => {
     const component = await next();
@@ -24,8 +26,12 @@ const router = new Router(on => {
   on('/register', async () => <RegisterPage />);
 
   on('*', async (state) => {
-    const content = await http.get(`/api/content?path=${state.path}`);
-    return content && <ContentPage {...content} />;
+    console.log(state.path);
+    var handler = routes[state.path];
+    var result = await handler();
+    result.path = state.path;
+    //const content = await http.get(`/api/content?path=${state.path}`);
+    return result && <ContentPage {...result} />;
   });
 
   on('error', (state, error) => state.statusCode === 404 ?

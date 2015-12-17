@@ -74,11 +74,18 @@ const config = {
   module: {
     loaders: [
       {
+        test: /routes.js$/,
+        loader: path.join(__dirname, './lib/routes-loader.js'),
+      },
+      {
         test: /\.json$/,
         loader: 'json-loader',
       }, {
         test: /\.txt$/,
         loader: 'raw-loader',
+      }, {
+        test: /\.jade$/,
+        loader: 'json-loader!'+path.join(__dirname, './lib/jade-with-fm-loader.js'),
       }, {
         test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
         loader: 'url-loader?limit=10000',
