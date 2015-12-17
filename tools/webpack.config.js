@@ -32,7 +32,7 @@ const GLOBALS = {
 
 //
 // Common configuration chunk to be used for both
-// client-side (app.js) and server-side (server.js) bundles
+// client-side (client.js) and server-side (server.js) bundles
 // -----------------------------------------------------------------------------
 
 const config = {
@@ -107,16 +107,14 @@ const config = {
 };
 
 //
-// Configuration for the client-side bundle (app.js)
+// Configuration for the client-side bundle (client.js)
 // -----------------------------------------------------------------------------
 
-const appConfig = merge({}, config, {
-  entry: {
-    app: [
-      ...(WATCH ? ['webpack-hot-middleware/client'] : []),
-      './src/app.js',
-    ],
-  },
+const clientConfig = merge({}, config, {
+  entry: [
+    ...(WATCH ? ['webpack-hot-middleware/client'] : []),
+    './src/client.js',
+  ],
   output: {
     path: path.join(__dirname, '../build/public'),
     filename: DEBUG ? '[name].js?[hash]' : '[name].[hash].js',
@@ -148,7 +146,7 @@ const appConfig = merge({}, config, {
 });
 
 // Enable React Transform in the "watch" mode
-appConfig.module.loaders
+clientConfig.module.loaders
   .filter(x => WATCH && x.loader === 'babel-loader')
   .forEach(x => x.query = {
     // Wraps all React components into arbitrary transforms
@@ -208,4 +206,4 @@ const serverConfig = merge({}, config, {
   ],
 });
 
-export default [appConfig, serverConfig];
+export default [clientConfig, serverConfig];
