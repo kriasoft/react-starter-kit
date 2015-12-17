@@ -16,7 +16,7 @@ In its simplest form the routing looks like a collection of URLs where each URL
 is mapped to a React component:
 
 ```js
-// app.js
+// client.js
 import React from 'react';
 import Layout from './components/Layout';
 import HomePage from './components/HomePage';

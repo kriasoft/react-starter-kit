@@ -37,7 +37,7 @@ join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom
 │   ├── /decorators/            # Higher-order React components
 │   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /stores/                # Stores contain the application state and logic
-│   ├── /app.js                 # Client-side startup script
+│   ├── /client.js              # Client-side startup script
 │   ├── /config.js              # Global application settings
 │   ├── /routes.js              # Universal (isomorphic) application routes
 │   └── /server.js              # Server-side startup script
