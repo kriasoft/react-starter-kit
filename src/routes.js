@@ -26,7 +26,6 @@ const router = new Router(on => {
   on('/register', async () => <RegisterPage />);
 
   on('*', async (state) => {
-    console.log(state.path);
     var handler = routes[state.path];
     var result = await handler();
     result.path = state.path;
