@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Replace Superagent with WHATWG Fetch library
+- Rename `app.js` to `client.js` (aka client-side code)
 - Integrate [CSS Modules](https://github.com/css-modules/css-modules) and
   [isomorphic-style-loader](https://github.com/kriasoft/isomorphic-style-loader)
 - Move `DOMUtils.js` to `src/core` folder; remove `src/utils` folder
