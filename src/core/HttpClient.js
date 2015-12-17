@@ -4,7 +4,7 @@ import request from 'superagent';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
 function getUrl(path) {
-  if (path.startsWith('http') || canUseDOM) {
+  if (path.startsWith('http') || path.startsWith('https') || canUseDOM) {
     return path;
   }
 
