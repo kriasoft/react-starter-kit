@@ -8,6 +8,8 @@ import ReactDOM from 'react-dom/server';
 import Router from './routes';
 import Html from './components/Html';
 import assets from './assets.json';
+import morgan from 'morgan';
+import compress from 'compression';
 
 const server = global.server = express();
 const port = process.env.PORT || 5000;
@@ -15,6 +17,12 @@ const port = process.env.PORT || 5000;
 //
 // Register Node.js middleware
 // -----------------------------------------------------------------------------
+if (process.env.NODE_ENV === 'development') {
+  server.use(morgan('dev'));
+} else if (process.env.NODE_ENV === 'production') {
+  server.use(compress());
+}
+
 server.use(express.static(path.join(__dirname, 'public')));
 
 //
