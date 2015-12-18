@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Optimize the `tools/start.js` script that launches dev server with Browsersync and HMR
 - Replace Superagent with WHATWG Fetch library
 - Rename `app.js` to `client.js` (aka client-side code)
 - Integrate [CSS Modules](https://github.com/css-modules/css-modules) and

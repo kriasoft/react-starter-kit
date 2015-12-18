@@ -18,7 +18,7 @@ See [demo](http://demo.reactstarterkit.com) &nbsp;|&nbsp;
 join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom to stay up to date
 
 [![Rollbar - Full-stack error tracking for all apps in any language](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
-[![Localize - Translate your web app in minutes](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/localize.png)](https://localizejs.com/)
+[![Localize - Translate your web app in minutes](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/localize.png)](https://localizejs.com/?cid=802&utm_source=rsk)
 
 ### Directory Layout
 
@@ -46,12 +46,12 @@ join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom
 │   ├── /build.js               # Builds the project from source to output (build) folder
 │   ├── /bundle.js              # Bundles the web resources into package(s) through Webpack
 │   ├── /clean.js               # Cleans up the output (build) folder
-│   ├── /webpack.config.js      # Configurations for client-side and server-side bundles
 │   ├── /copy.js                # Copies static files to output (build) folder
 │   ├── /deploy.js              # Deploys your web application
 │   ├── /run.js                 # Helper function for running build automation tasks
-│   ├── /serve.js               # Launches the Node.js/Express web server
-│   └── /start.js               # Launches the development web server with "live reload"
+│   ├── /runServer.js           # Launches (or restarts) Node.js server
+│   ├── /start.js               # Launches the development web server with "live reload"
+│   └── /webpack.config.js      # Configurations for client-side and server-side bundles
 │── package.json                # The list of 3rd party libraries and utilities
 └── preprocessor.js             # ES6 transpiler settings for Jest
 ```

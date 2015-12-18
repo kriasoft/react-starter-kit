@@ -59,8 +59,8 @@
     "replace": "^0.3.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.9",
-    "webpack-dev-middleware": "^1.4.0",
-    "webpack-hot-middleware": "^2.6.0"
+    "webpack-hot-middleware": "^2.6.0",
+    "webpack-middleware": "^1.4.0"
   },
   "jest": {
     "rootDir": "./src",
@@ -80,7 +80,6 @@
     "bundle": "babel-node tools/run bundle",
     "build": "babel-node tools/run build",
     "deploy": "babel-node tools/run deploy",
-    "serve": "babel-node tools/run serve",
     "start": "babel-node tools/run start"
   }
 }
