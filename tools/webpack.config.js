@@ -14,7 +14,6 @@ import AssetsPlugin from 'assets-webpack-plugin';
 
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
-const WATCH = global.WATCH === undefined ? false : global.WATCH;
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
@@ -111,10 +110,7 @@ const config = {
 // -----------------------------------------------------------------------------
 
 const clientConfig = merge({}, config, {
-  entry: [
-    ...(WATCH ? ['webpack-hot-middleware/client'] : []),
-    './src/client.js',
-  ],
+  entry: './src/client.js',
   output: {
     path: path.join(__dirname, '../build/public'),
     filename: DEBUG ? '[name].js?[hash]' : '[name].[hash].js',
@@ -138,35 +134,8 @@ const clientConfig = merge({}, config, {
       }),
       new webpack.optimize.AggressiveMergingPlugin(),
     ] : []),
-    ...(WATCH ? [
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin(),
-    ] : []),
   ],
 });
-
-// Enable React Transform in the "watch" mode
-clientConfig.module.loaders
-  .filter(x => WATCH && x.loader === 'babel-loader')
-  .forEach(x => x.query = {
-    // Wraps all React components into arbitrary transforms
-    // https://github.com/gaearon/babel-plugin-react-transform
-    plugins: ['react-transform'],
-    extra: {
-      'react-transform': {
-        transforms: [
-          {
-            transform: 'react-transform-hmr',
-            imports: ['react'],
-            locals: ['module'],
-          }, {
-            transform: 'react-transform-catch-errors',
-            imports: ['react', 'redbox-react'],
-          },
-        ],
-      },
-    },
-  });
 
 //
 // Configuration for the server-side bundle (server.js)
