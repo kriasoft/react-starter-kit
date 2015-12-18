@@ -37,7 +37,7 @@ server.get('*', async (req, res, next) => {
       onPageNotFound: () => statusCode = 404,
     };
 
-    await Router.dispatch({ path: req.path, context }, (state, component) => {
+    await Router.dispatch({ path: req.path, query: req.query, context }, (state, component) => {
       data.body = ReactDOM.renderToString(component);
       data.css = css.join('');
     });
