@@ -15,10 +15,16 @@
 See [demo](http://demo.reactstarterkit.com) &nbsp;|&nbsp;
 [docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs) &nbsp;|&nbsp;
 [bugs & feature requests](https://waffle.io/kriasoft/react-starter-kit) &nbsp;|&nbsp;
-join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom to stay up to date
+join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom to stay up to date &nbsp;|&nbsp;
+visit our sponsors:
 
 [![Rollbar - Full-stack error tracking for all apps in any language](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
 [![Localize - Translate your web app in minutes](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/localize.png)](https://localizejs.com/?cid=802&utm_source=rsk)
+
+### Getting Started
+
+  * Follow the [getting started guide](./docs/getting-started.md) to download and run the project
+  * Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
 
 ### Directory Layout
 
@@ -55,69 +61,6 @@ join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom
 │── package.json                # The list of 3rd party libraries and utilities
 └── preprocessor.js             # ES6 transpiler settings for Jest
 ```
-
-### Getting Started
-
-Just clone the repo and start hacking:
-
-```shell
-$ git clone -o react-starter-kit -b master --single-branch \
-      https://github.com/kriasoft/react-starter-kit.git MyApp
-$ cd MyApp
-$ npm install                   # Install Node.js components listed in ./package.json
-$ npm start                     # Compile and launch
-```
-
-### How to Build
-
-```shell
-$ npm run build                 # or, `npm run build -- --release`
-```
-
-By default, it builds in *debug* mode. If you need to build in release
-mode, just add a `-- --release` flag. This will optimize the output bundle for
-production.
-
-### How to Run
-
-```shell
-$ npm start                     # or, `npm start -- --release`
-```
-
-This will start a light-weight development server with "live reload" and
-synchronized browsing across multiple devices and browsers.
-
-### How to Deploy
-
-```shell
-$ npm run deploy                # or, `npm run deploy -- --production`
-```
-
-For more information see `tools/deploy.js`.
-
-### How to Update
-
-You can always fetch and merge recent changes from this repo back into
-your own project:
-
-```shell
-$ git checkout master
-$ git fetch react-starter-kit
-$ git merge react-starter-kit/master
-$ npm install
-```
-
-### How to Test
-
-Run unit tests powered by [Jest](https://facebook.github.io/jest/) with the following
-[npm](https://www.npmjs.org/doc/misc/npm-scripts.html) command:
-
-```shell
-$ npm test
-```
-
-Test any javascript module by creating a `__tests__/` directory where
-the file is. Append `-test.js` to the filename and [Jest](https://facebook.github.io/jest/) will do the rest.
 
 ### Related Projects
 
