@@ -7,7 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/server';
 import Router from './routes';
 import Html from './components/Html';
-import assets from './assets.json';
+import assets from './assets';
 import { port } from './config';
 
 const server = global.server = express();

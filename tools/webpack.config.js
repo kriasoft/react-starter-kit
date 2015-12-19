@@ -123,7 +123,8 @@ const clientConfig = merge({}, config, {
     new webpack.DefinePlugin(GLOBALS),
     new AssetsPlugin({
       path: path.join(__dirname, '../build'),
-      filename: 'assets.json',
+      filename: 'assets.js',
+      processOutput: x => `module.exports = ${JSON.stringify(x)};`,
     }),
     ...(!DEBUG ? [
       new webpack.optimize.DedupePlugin(),
@@ -151,7 +152,7 @@ const serverConfig = merge({}, config, {
   },
   target: 'node',
   externals: [
-    /^\.\/assets\.json$/,
+    /^\.\/assets$/,
     function filter(context, request, cb) {
       const isExternal =
         request.match(/^[@a-z][a-z\/\.\-0-9]*$/i) &&
