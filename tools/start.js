@@ -85,14 +85,12 @@ async function start() {
             // including full page reloads if HMR won't work
             files: ['build/content/**/*.*'],
           }, resolve);
-          handleServerBundleComplete = () => runServer();
+          handleServerBundleComplete = runServer;
         }
       });
     };
 
-    bundler.compilers
-      .find(x => x.options.target === 'node')
-      .plugin('done', () => handleServerBundleComplete());
+    bundler.plugin('done', () => handleServerBundleComplete());
   });
 }
 
