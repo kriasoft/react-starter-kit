@@ -2,7 +2,7 @@
 
 ### Requirements
 
-  * Max OS X, Windows, or Linux
+  * Mac OS X, Windows, or Linux
   * [Node.js](https://nodejs.org/) v5.0 or newer
   * `npm` v3.3 or newer (new to [npm](https://docs.npmjs.com/)?)
   * `node-gyp` prerequisites mentioned [here](https://github.com/nodejs/node-gyp)
