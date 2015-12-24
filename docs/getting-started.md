@@ -6,7 +6,7 @@
   * [Node.js](https://nodejs.org/) v5.0 or newer
   * `npm` v3.3 or newer (new to [npm](https://docs.npmjs.com/)?)
   * `node-gyp` prerequisites mentioned [here](https://github.com/nodejs/node-gyp)
-  * Text editor or IDE pre-configured with React/JSX/Flow/ESlint ([learn more](./how-to-configure-text-edito.md))
+  * Text editor or IDE pre-configured with React/JSX/Flow/ESlint ([learn more](./how-to-configure-text-editors.md))
 
 ### Quick Start
 
