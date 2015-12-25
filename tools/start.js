@@ -33,6 +33,7 @@ async function start() {
       } else {
         config.entry = ['webpack-hot-middleware/client', config.entry];
       }
+
       config.plugins.push(new webpack.HotModuleReplacementPlugin());
       config.plugins.push(new webpack.NoErrorsPlugin());
       config.module.loaders
@@ -60,11 +61,14 @@ async function start() {
 
     const bundler = webpack(webpackConfig);
     const wpMiddleware = webpackMiddleware(bundler, {
+
       // IMPORTANT: webpack middleware can't access config,
       // so we should provide publicPath by ourselves
       publicPath: webpackConfig[0].output.publicPath,
+
       // Pretty colored output
       stats: webpackConfig[0].stats,
+
       // For other settings see
       // https://webpack.github.io/docs/webpack-dev-middleware
     });
@@ -81,6 +85,7 @@ async function start() {
               target: host,
               middleware: [wpMiddleware, ...hotMiddlewares],
             },
+
             // no need to watch '*.js' here, webpack will take care of it for us,
             // including full page reloads if HMR won't work
             files: ['build/content/**/*.*'],
