@@ -122,10 +122,11 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 import React, { PropTypes } from 'react';
 import s from './Navigation.scss';
 import withStyles from '../../decorators/withStyles';
+import cx from 'classnames';
 
 function Navigation() {
   return (
-    <nav className={[s.root, this.props.className]}>
+    <nav className={cx([s.root, this.props.className])}>
       <ul className={s.items}>
         <li className={[s.item, s.selected]}>
           <a className={s.link} href="/products">Products</a>
