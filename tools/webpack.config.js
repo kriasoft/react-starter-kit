@@ -76,9 +76,11 @@ const config = {
         test: /\.scss$/,
         loaders: [
           'isomorphic-style-loader',
-          'css-loader?' + (DEBUG ? 'sourceMap&' : 'minimize&') +
+          'css-loader?' + (DEBUG ? 'sourceMap&' : '') +
           'modules&localIdentName=[name]_[local]_[hash:base64:3]',
-          'postcss-loader',
+          'postcss-loader?pack=minimize',
+          'postcss-loader?parser=postcss-scss&pack=compile',
+          'postcss-loader?pack=import',
         ],
       }, {
         test: /\.json$/,
@@ -96,12 +98,22 @@ const config = {
     ],
   },
 
-  postcss: function plugins(bundler) {
-    return [
-      require('postcss-import')({ addDependencyTo: bundler }),
-      require('precss')(),
-      require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
-    ];
+  postcss: (bundler) => {
+    return {
+      import: [
+        require('postcss-import')({ addDependencyTo: bundler }),
+      ],
+      compile: [
+        require('precss')(),
+        require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
+      ],
+      minimize: DEBUG ? [] : [
+        require('cssnano')({
+          autoprefixer: false,
+          discardComments: { removeAll: true },
+        }),
+      ],
+    };
   },
 };
 
