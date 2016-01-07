@@ -79,7 +79,7 @@ const config = {
           'css-loader?' + (DEBUG ? 'sourceMap&' : '') +
           'modules&localIdentName=[name]_[local]_[hash:base64:3]',
           'postcss-loader?pack=minimize',
-          'postcss-loader?parser=postcss-scss&pack=compile',
+          'postcss-loader?pack=compile',
           'postcss-loader?pack=import',
         ],
       }, {
@@ -101,7 +101,13 @@ const config = {
   postcss: (bundler) => {
     return {
       import: [
-        require('postcss-import')({ addDependencyTo: bundler }),
+        require('postcss-import')({
+          addDependencyTo: bundler,
+          transform: contents => contents.replace(
+            /\/\*[^~]*?\*\/|\/\/(.*)/g,
+            '/*$1*/'
+          ),
+        }),
       ],
       compile: [
         require('precss')(),
