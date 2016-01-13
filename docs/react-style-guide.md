@@ -145,7 +145,7 @@ export default withStyles(s)(Navigation);
 
 ### Use higher-order components
 
-* Use higher-order components (HOC) to extend existing Rect components.<br>
+* Use higher-order components (HOC) to extend existing React components.<br>
   Here is an example:
 
 ```js
