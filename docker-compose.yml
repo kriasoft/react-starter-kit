@@ -1,0 +1,11 @@
+rsk:
+  build: "."
+  ports:
+    - "0.0.0.0:3000:3000"
+    - "0.0.0.0:3001:3001"
+    - "0.0.0.0:5000:5000"
+  volumes:
+    - ".:/usr/rsk"
+  environment:
+    WEBSITE_HOSTNAME: "0.0.0.0:5000"
+  command: npm start
