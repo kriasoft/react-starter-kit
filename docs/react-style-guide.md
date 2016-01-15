@@ -1,7 +1,7 @@
 ## React Style Guide
 
 > This style guide comes as an addition to [Airbnb React/JSX Guide](https://github.com/airbnb/javascript/tree/master/react).
-> Feel free to modify it to suite your project's needs. 
+> Feel free to modify it to suit your project's needs. 
 
 ### Table of Contents
 
