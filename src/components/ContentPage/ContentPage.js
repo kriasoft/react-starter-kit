@@ -14,23 +14,27 @@ import withStyles from '../../decorators/withStyles';
 @withStyles(s)
 class ContentPage extends Component {
 
-  static propTypes = {
-    path: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    title: PropTypes.string,
-  };
+  // static propTypes = {
+  //   path: PropTypes.string.isRequired,
+  //   content: PropTypes.string.isRequired,
+  //   title: PropTypes.string,
+  // };
 
   static contextTypes = {
     onSetTitle: PropTypes.func.isRequired,
   };
 
   render() {
-    this.context.onSetTitle(this.props.title);
+    let { path, content, title, error } = this.props.route.props;
+
+    let pageTitle = title || 'Not found';
+
+    this.context.onSetTitle(pageTitle);
     return (
       <div className={s.root}>
         <div className={s.container}>
-          {this.props.path === '/' ? null : <h1>{this.props.title}</h1>}
-          <div dangerouslySetInnerHTML={{ __html: this.props.content || '' }} />
+          {path === '/' ? null : <h1>{pageTitle}</h1>}
+          <div dangerouslySetInnerHTML={{ __html: content || error }} />
         </div>
       </div>
     );
