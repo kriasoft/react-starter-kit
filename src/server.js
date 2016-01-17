@@ -12,7 +12,12 @@ import path from 'path';
 import express from 'express';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import Router from './routes';
+// import Router from './routes';
+import routes from './routes';
+
+import { match } from 'react-router';
+import RouterContext from './CustomRouterContext';
+
 import Html from './components/Html';
 import assets from './assets';
 import { port } from './config';
@@ -44,13 +49,20 @@ server.get('*', async (req, res, next) => {
       onPageNotFound: () => statusCode = 404,
     };
 
-    await Router.dispatch({ path: req.path, query: req.query, context }, (state, component) => {
-      data.body = ReactDOM.renderToString(component);
-      data.css = css.join('');
+    match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
+      if (error) {
+        res.status(500).send(error.message)
+      } else if (redirectLocation) {
+        res.redirect(302, redirectLocation.pathname + redirectLocation.search)
+      } else if (renderProps) {
+        data.body = ReactDOM.renderToString(<RouterContext {...renderProps} context={context} />);
+        data.css = css.join('');
+        const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+        res.status(200).send('<!doctype html>\n' + html);
+      } else {
+        res.status(404).send('Not found')
+      }
     });
-
-    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-    res.status(statusCode).send('<!doctype html>\n' + html);
   } catch (err) {
     next(err);
   }
