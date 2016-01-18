@@ -93,7 +93,7 @@ textarea {
  * Browser upgrade prompt
  * ========================================================================== */
 
-.browserupgrade {
+:global(.browserupgrade) {
   margin: 0.2em 0;
   background: #ccc;
   color: #000;
