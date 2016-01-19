@@ -1,39 +1,29 @@
 /**
- * React Starter Kit (http://www.reactstarterkit.com/)
+ * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2015 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
 import webpack from 'webpack';
-import config from './config';
+import webpackConfig from './webpack.config';
 
 /**
- * Bundles JavaScript, CSS and images into one or more packages
- * ready to be used in a browser.
+ * Creates application bundles from the source files.
  */
-export default async () => new Promise((resolve, reject) => {
-  console.log('bundle');
-  const bundler = webpack(config);
-  let bundlerRunCount = 0;
+function bundle() {
+  return new Promise((resolve, reject) => {
+    webpack(webpackConfig).run((err, stats) => {
+      if (err) {
+        return reject(err);
+      }
 
-  function bundle(err, stats) {
-    if (err) {
-      return reject(err);
-    }
+      console.log(stats.toString(webpackConfig[0].stats));
+      resolve();
+    });
+  });
+}
 
-    console.log(stats.toString(config[0].stats));
-
-    if (++bundlerRunCount === (global.watch ? config.length : 1)) {
-      return resolve();
-    }
-  }
-
-  if (global.watch) {
-    bundler.watch(200, bundle);
-  } else {
-    bundler.run(bundle);
-  }
-});
+export default bundle;

@@ -1,16 +1,27 @@
-/*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
+/**
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
 
-import 'babel/polyfill';
-import _ from 'lodash';
-import fs from 'fs';
+import 'babel-core/polyfill';
 import path from 'path';
 import express from 'express';
+import React from 'react';
 import ReactDOM from 'react-dom/server';
-import router from './router';
+import Router from './routes';
+import Html from './components/Html';
+import assets from './assets';
+import { port } from './config';
 
 const server = global.server = express();
 
-server.set('port', (process.env.PORT || 5000));
+//
+// Register Node.js middleware
+// -----------------------------------------------------------------------------
 server.use(express.static(path.join(__dirname, 'public')));
 
 //
@@ -21,30 +32,25 @@ server.use('/api/content', require('./api/content'));
 //
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
-
-// The top-level React component + HTML template for it
-const templateFile = path.join(__dirname, 'templates/index.html');
-const template = _.template(fs.readFileSync(templateFile, 'utf8'));
-
 server.get('*', async (req, res, next) => {
   try {
     let statusCode = 200;
-    const data = { title: '', description: '', css: '', body: '' };
+    const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
     const css = [];
     const context = {
-      onInsertCss: value => css.push(value),
+      insertCss: styles => css.push(styles._getCss()),
       onSetTitle: value => data.title = value,
       onSetMeta: (key, value) => data[key] = value,
-      onPageNotFound: () => statusCode = 404
+      onPageNotFound: () => statusCode = 404,
     };
 
-    await router.dispatch({ path: req.path, context }, (state, component) => {
+    await Router.dispatch({ path: req.path, query: req.query, context }, (state, component) => {
       data.body = ReactDOM.renderToString(component);
       data.css = css.join('');
     });
 
-    const html = template(data);
-    res.status(statusCode).send(html);
+    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+    res.status(statusCode).send('<!doctype html>\n' + html);
   } catch (err) {
     next(err);
   }
@@ -53,11 +59,7 @@ server.get('*', async (req, res, next) => {
 //
 // Launch the server
 // -----------------------------------------------------------------------------
-
-server.listen(server.get('port'), () => {
-  if (process.send) {
-    process.send('online');
-  } else {
-    console.log('The server is running at http://localhost:' + server.get('port'));
-  }
+server.listen(port, () => {
+  /* eslint-disable no-console */
+  console.log(`The server is running at http://localhost:${port}/`);
 });

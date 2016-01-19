@@ -1,26 +1,33 @@
-/*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
+/**
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
 
-import React from 'react';
-import styles from './Header.css';
+import React, { Component } from 'react';
+import s from './Header.scss';
 import withStyles from '../../decorators/withStyles';
-import Link from '../../utils/Link';
+import Link from '../Link';
 import Navigation from '../Navigation';
 
-@withStyles(styles)
-class Header {
+@withStyles(s)
+class Header extends Component {
 
   render() {
     return (
-      <div className="Header">
-        <div className="Header-container">
-          <a className="Header-brand" href="/" onClick={Link.handleClick}>
-            <img className="Header-brandImg" src={require('./logo-small.png')} width="38" height="38" alt="React" />
-            <span className="Header-brandTxt">Your Company</span>
-          </a>
-          <Navigation className="Header-nav" />
-          <div className="Header-banner">
-            <h1 className="Header-bannerTitle">React</h1>
-            <p className="Header-bannerDesc">Complex web apps made easy</p>
+      <div className={s.root}>
+        <div className={s.container}>
+          <Navigation className={s.nav} />
+          <Link className={s.brand} to="/">
+            <img src={require('./logo-small.png')} width="38" height="38" alt="React" />
+            <span className={s.brandTxt}>Your Company</span>
+          </Link>
+          <div className={s.banner}>
+            <h1 className={s.bannerTitle}>React</h1>
+            <p className={s.bannerDesc}>Complex web apps made easy</p>
           </div>
         </div>
       </div>

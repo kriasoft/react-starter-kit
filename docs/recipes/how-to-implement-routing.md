@@ -2,7 +2,7 @@
 
  * [Step 1: Basic Routing](#step-1-basic-routing)
  * [Step 2: Asynchronous Routes](#step-2-asynchronous-routes)
- * [Step 3: Parametrized Routes](#step-3-parametrized-routes)
+ * [Step 3: Parameterized Routes](#step-3-parameterized-routes)
  * Step 4: Handling Redirects
  * Step 5: Setting Page Title and Meta Tags
  * Step 6: Code Splitting
@@ -12,11 +12,11 @@
 
 ### Step 1: Basic Routing
 
-In its simplest form the routing looks like a collection or URLs where each URL
+In its simplest form the routing looks like a collection of URLs where each URL
 is mapped to a React component:
 
 ```js
-// app.js
+// client.js
 import React from 'react';
 import Layout from './components/Layout';
 import HomePage from './components/HomePage';
@@ -51,7 +51,7 @@ Just wrap React components inside your routes into asynchronous functions:
 
 ```js
 import React from 'react';
-import http from './core/http';
+import fetch from './core/fetch';
 import Layout from './components/Layout';
 import HomePage from './components/HomePage';
 import AboutPage from './components/AboutPage';
@@ -60,11 +60,13 @@ import ErrorPage from './components/ErrorPage';
 
 const routes = {
   '/': async () => {
-    const data = await http.get('/api/data/home');
+    const response = await fetch('/api/data/home');
+    const data = await response.json();
     return <Layout><HomePage {...data} /></Layout>
   },
   '/about': async () => {
-    const data = await http.get('/api/data/about');
+    const response = await fetch('/api/data/about');
+    const data = await response.json();
     return <Layout><AboutPage {...data} /></Layout>;
   }
 };
@@ -86,7 +88,7 @@ window.addEventListener('hashchange', () => render());
 render();
 ```
 
-### Step 3: Parametrized Routes
+### Step 3: Parameterized Routes
 
 **(1)** Convert the list of routes from hash table to an array, this way the
 order of routes will be preserved. **(2)** Wrap this collection into a Router
@@ -97,7 +99,7 @@ for matching URL paths to React components.
 ```js
 import React from 'react';
 import Router from 'react-routing/src/Router';
-import http from './core/http';
+import fetch from './core/fetch';
 import Layout from './components/Layout';
 import ProductListing from './components/ProductListing';
 import ProductInfo from './components/ProductInfo';
@@ -106,11 +108,13 @@ import ErrorPage from './components/ErrorPage';
 
 const router = new Router(on => {
   on('/products', async () => {
-    const data = await http.get('/api/products');
+    const response = await fetch('/api/products');
+    const data = await response.json();
     return <Layout><ProductListing {...data} /></Layout>
   });
-  on('/products/:id', async (id) => {
-    const data = await http.get(`/api/products/${id}`);
+  on('/products/:id', async (req) => {
+    const response = await fetch(`/api/products/${req.params.id}`);
+    const data = await response.json();
     return <Layout><ProductInfo {...data} /></Layout>;
   });
 }]);
