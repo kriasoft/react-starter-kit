@@ -44,6 +44,10 @@ server.get('*', async (req, res, next) => {
       onPageNotFound: () => statusCode = 404,
     };
 
+    global.navigator = {
+      userAgent: req.headers['user-agent']
+    };
+
     await Router.dispatch({ path: req.path, query: req.query, context }, (state, component) => {
       data.body = ReactDOM.renderToString(component);
       data.css = css.join('');
