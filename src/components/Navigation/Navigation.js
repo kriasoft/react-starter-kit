@@ -9,8 +9,8 @@
 
 import React, { Component, PropTypes } from 'react';
 import cx from 'classnames';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.scss';
-import withStyles from '../withStyles';
 import Link from '../Link';
 
 class Navigation extends Component {

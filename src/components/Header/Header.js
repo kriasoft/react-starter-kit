@@ -8,8 +8,8 @@
  */
 
 import React, { Component } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Header.scss';
-import withStyles from '../withStyles';
 import Link from '../Link';
 import Navigation from '../Navigation';
 

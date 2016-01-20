@@ -8,8 +8,8 @@
  */
 
 import React, { Component } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Feedback.scss';
-import withStyles from '../withStyles';
 
 class Feedback extends Component {
 
