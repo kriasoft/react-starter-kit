@@ -33,7 +33,7 @@ const router = new Router(on => {
   on('*', async (state) => {
     const response = await fetch(`/api/content?path=${state.path}`);
     const content = await response.json();
-    return content && <ContentPage {...content} />;
+    return response.ok && content && <ContentPage {...content} />;
   });
 
   on('error', (state, error) => state.statusCode === 404 ?
