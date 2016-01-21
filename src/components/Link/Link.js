@@ -28,7 +28,7 @@ class Link extends Component {
     onClick: PropTypes.func,
   };
 
-  static handleClick = (event) => {
+  handleClick = (event) => {
     let allowTransition = true;
     let clickResult;
 
@@ -65,7 +65,7 @@ class Link extends Component {
 
   render() {
     const { to, query, ...props } = this.props;
-    return <a href={Location.createHref(to, query)} onClick={Link.handleClick.bind(this)} {...props} />;
+    return <a href={Location.createHref(to, query)} {...props} onClick={this.handleClick} />;
   }
 
 }

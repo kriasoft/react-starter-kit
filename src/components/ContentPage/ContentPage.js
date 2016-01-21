@@ -8,10 +8,9 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ContentPage.scss';
-import withStyles from '../../decorators/withStyles';
 
-@withStyles(s)
 class ContentPage extends Component {
 
   static propTypes = {
@@ -38,4 +37,4 @@ class ContentPage extends Component {
 
 }
 
-export default ContentPage;
+export default withStyles(ContentPage, s);

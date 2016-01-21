@@ -8,12 +8,11 @@
  */
 
 import React, { Component } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Header.scss';
-import withStyles from '../../decorators/withStyles';
 import Link from '../Link';
 import Navigation from '../Navigation';
 
-@withStyles(s)
 class Header extends Component {
 
   render() {
@@ -36,4 +35,4 @@ class Header extends Component {
 
 }
 
-export default Header;
+export default withStyles(Header, s);

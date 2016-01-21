@@ -41,9 +41,8 @@ async function start() {
         .forEach(x => x.query = {
           // Wraps all React components into arbitrary transforms
           // https://github.com/gaearon/babel-plugin-react-transform
-          plugins: ['react-transform'],
-          extra: {
-            'react-transform': {
+          plugins: [
+            ['react-transform', {
               transforms: [
                 {
                   transform: 'react-transform-hmr',
@@ -54,8 +53,8 @@ async function start() {
                   imports: ['react', 'redbox-react'],
                 },
               ],
-            },
-          },
+            }],
+          ],
         });
     });
 

@@ -8,12 +8,11 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ErrorPage.scss';
-import withStyles from '../../decorators/withStyles';
 
 const title = 'Error';
 
-@withStyles(s)
 class ErrorPage extends Component {
 
   static contextTypes = {
@@ -36,4 +35,4 @@ class ErrorPage extends Component {
 
 }
 
-export default ErrorPage;
+export default withStyles(ErrorPage, s);

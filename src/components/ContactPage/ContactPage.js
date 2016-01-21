@@ -8,12 +8,11 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ContactPage.scss';
-import withStyles from '../../decorators/withStyles';
 
 const title = 'Contact Us';
 
-@withStyles(s)
 class ContactPage extends Component {
 
   static contextTypes = {
@@ -37,4 +36,4 @@ class ContactPage extends Component {
 
 }
 
-export default ContactPage;
+export default withStyles(ContactPage, s);

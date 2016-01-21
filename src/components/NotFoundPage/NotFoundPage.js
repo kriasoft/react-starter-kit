@@ -8,12 +8,11 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './NotFoundPage.scss';
-import withStyles from '../../decorators/withStyles';
 
 const title = 'Page Not Found';
 
-@withStyles(s)
 class NotFoundPage extends Component {
 
   static contextTypes = {
@@ -37,4 +36,4 @@ class NotFoundPage extends Component {
 
 }
 
-export default NotFoundPage;
+export default withStyles(NotFoundPage, s);

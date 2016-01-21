@@ -10,7 +10,7 @@ export const path = '/products';
 export const action = async () => {
   const response = await fetch('/api/products');
   const data = await response.json();
-  return <Layout><Products {...data}</Layout>;
+  return <Layout><Products {...data} /></Layout>;
 };
 ```
 

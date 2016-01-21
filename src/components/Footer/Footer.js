@@ -8,11 +8,10 @@
  */
 
 import React, { Component } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Footer.scss';
-import withStyles from '../../decorators/withStyles';
 import Link from '../Link';
 
-@withStyles(s)
 class Footer extends Component {
 
   render() {
@@ -33,4 +32,4 @@ class Footer extends Component {
 
 }
 
-export default Footer;
+export default withStyles(Footer, s);

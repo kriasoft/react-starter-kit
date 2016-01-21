@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import 'babel-core/polyfill';
+import 'babel-polyfill';
 import path from 'path';
 import express from 'express';
 import React from 'react';
@@ -27,7 +27,7 @@ server.use(express.static(path.join(__dirname, 'public')));
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-server.use('/api/content', require('./api/content'));
+server.use('/api/content', require('./api/content').default);
 
 //
 // Register server-side rendering middleware
