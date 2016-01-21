@@ -9,8 +9,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import merge from 'lodash.merge';
-import cloneDeep from 'lodash.clonedeep';
+import extend from 'extend';
 import AssetsPlugin from 'assets-webpack-plugin';
 
 const DEBUG = !process.argv.includes('--release');
@@ -110,7 +109,7 @@ const config = {
 // Configuration for the client-side bundle (client.js)
 // -----------------------------------------------------------------------------
 
-const clientConfig = merge({}, cloneDeep(config), {
+const clientConfig = extend(true, {}, config, {
   entry: './src/client.js',
   output: {
     path: path.join(__dirname, '../build/public'),
@@ -147,7 +146,7 @@ const clientConfig = merge({}, cloneDeep(config), {
 // Configuration for the server-side bundle (server.js)
 // -----------------------------------------------------------------------------
 
-const serverConfig = merge({}, cloneDeep(config), {
+const serverConfig = extend(true, {}, config, {
   entry: './src/server.js',
   output: {
     path: './build',
