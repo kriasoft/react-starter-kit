@@ -12,7 +12,7 @@ import { host } from '../../config';
 
 function localUrl(url) {
   if (url.startsWith('//')) {
-    return 'https:' + url;
+    return `https:${url}`;
   }
 
   if (url.startsWith('http')) {

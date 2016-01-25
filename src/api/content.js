@@ -40,9 +40,9 @@ router.get('/', async (req, res, next) => {
       return;
     }
 
-    let fileName = join(CONTENT_DIR, (path === '/' ? '/index' : path) + '.jade');
+    let fileName = join(CONTENT_DIR, `${path === '/' ? '/index' : path}.jade`);
     if (!(await fileExists(fileName))) {
-      fileName = join(CONTENT_DIR, path + '/index.jade');
+      fileName = join(CONTENT_DIR, `${path}/index.jade`);
     }
 
     if (!(await fileExists(fileName))) {

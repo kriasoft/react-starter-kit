@@ -50,7 +50,7 @@ server.get('*', async (req, res, next) => {
     });
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-    res.status(statusCode).send('<!doctype html>\n' + html);
+    res.status(statusCode).send(`<!doctype html>\n${html}`);
   } catch (err) {
     next(err);
   }

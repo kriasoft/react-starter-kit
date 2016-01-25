@@ -15,8 +15,8 @@ import fetch from './lib/fetch';
 // For more information visit http://gitolite.com/deploy.html
 const getRemote = (slot) => ({
   name: slot ? slot : 'production',
-  url: `https://example${slot ? '-' + slot : ''}.scm.azurewebsites.net:443/example.git`,
-  website: `http://example${slot ? '-' + slot : ''}.azurewebsites.net`,
+  url: `https://example${slot ? `-${slot}` : ''}.scm.azurewebsites.net:443/example.git`,
+  website: `http://example${slot ? `-${slot}` : ''}.azurewebsites.net`,
 });
 
 /**
