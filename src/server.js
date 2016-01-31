@@ -16,10 +16,13 @@ import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import ReactDOM from 'react-dom/server';
+import React from 'react';
+import { match, RouterContext } from 'react-router';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
 import schema from './data/schema';
-import Router from './routes';
+import routes from './routes';
+import ContextHolder from './core/ContextHolder';
 import assets from './assets';
 import { port, auth, analytics } from './config';
 
@@ -80,29 +83,32 @@ server.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 server.get('*', async (req, res, next) => {
   try {
-    let statusCode = 200;
-    const template = require('./views/index.jade');
-    const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
+    match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
+      let statusCode = 200;
+      const template = require('./views/index.jade');
+      const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
 
-    if (process.env.NODE_ENV === 'production') {
-      data.trackingId = analytics.google.trackingId;
-    }
+      if (process.env.NODE_ENV === 'production') {
+        data.trackingId = analytics.google.trackingId;
+      }
 
-    const css = [];
-    const context = {
-      insertCss: styles => css.push(styles._getCss()),
-      onSetTitle: value => (data.title = value),
-      onSetMeta: (key, value) => (data[key] = value),
-      onPageNotFound: () => (statusCode = 404),
-    };
-
-    await Router.dispatch({ path: req.path, query: req.query, context }, (state, component) => {
-      data.body = ReactDOM.renderToString(component);
+      const css = [];
+      const context = {
+        insertCss: styles => css.push(styles._getCss()),
+        onSetTitle: value => (data.title = value),
+        onSetMeta: (key, value) => (data[key] = value),
+        onPageNotFound: () => (statusCode = 404),
+      };
+      data.body = ReactDOM.renderToString(
+        <ContextHolder context={context}>
+          <RouterContext {...renderProps} />
+        </ContextHolder>
+      );
       data.css = css.join('');
-    });
 
-    res.status(statusCode);
-    res.send(template(data));
+      res.status(statusCode);
+      res.send(template(data));
+    });
   } catch (err) {
     next(err);
   }

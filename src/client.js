@@ -8,10 +8,13 @@
  */
 
 import 'babel-polyfill';
-import ReactDOM from 'react-dom';
+import React from 'react';
+import { match, Router } from 'react-router';
+import { render } from 'react-dom';
 import FastClick from 'fastclick';
-import Router from './routes';
+import routes from './routes';
 import Location from './core/Location';
+import ContextHolder from './core/ContextHolder';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
 
 let cssContainer = document.getElementById('css');
@@ -41,59 +44,58 @@ const context = {
 // rendering, as it was already sent by the Html component.
 let trackPageview = () => (trackPageview = () => window.ga('send', 'pageview'));
 
-function render(state) {
-  Router.dispatch(state, (newState, component) => {
-    ReactDOM.render(component, appContainer, () => {
-      // Restore the scroll position if it was saved into the state
-      if (state.scrollY !== undefined) {
-        window.scrollTo(state.scrollX, state.scrollY);
-      } else {
-        window.scrollTo(0, 0);
-      }
-
-      trackPageview();
-
-      // Remove the pre-rendered CSS because it's no longer used
-      // after the React app is launched
-      if (cssContainer) {
-        cssContainer.parentNode.removeChild(cssContainer);
-        cssContainer = null;
-      }
-    });
-  });
-}
-
 function run() {
-  let currentLocation = null;
-  let currentState = null;
+  const scrollOffsets = new Map();
+  let currentScrollOffset = null;
 
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
-  // Re-render the app when window.location changes
   const unlisten = Location.listen(location => {
-    currentLocation = location;
-    currentState = Object.assign({}, location.state, {
-      path: location.pathname,
-      query: location.query,
-      state: location.state,
-      context,
-    });
-    render(currentState);
+    const locationId = location.pathname + location.search;
+    if (!scrollOffsets.get(locationId)) {
+      scrollOffsets.set(locationId, Object.create(null));
+    }
+    currentScrollOffset = scrollOffsets.get(locationId);
+    // Restore the scroll position if it was saved
+    if (currentScrollOffset.scrollY !== undefined) {
+      window.scrollTo(currentScrollOffset.scrollX, currentScrollOffset.scrollY);
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    trackPageview();
   });
 
-  // Save the page scroll position into the current location's state
+  const { pathname, search, hash } = window.location;
+  const location = `${pathname}${search}${hash}`;
+
+  match({ routes, location }, (error, redirectLocation, renderProps) => {
+    render(
+      <ContextHolder context={context}>
+        <Router {...renderProps} children={routes} history={Location} />
+      </ContextHolder>,
+      appContainer
+    );
+    // Remove the pre-rendered CSS because it's no longer used
+    // after the React app is launched
+    if (cssContainer) {
+      cssContainer.parentNode.removeChild(cssContainer);
+      cssContainer = null;
+    }
+  });
+
+  // Save the page scroll position
   const supportPageOffset = window.pageXOffset !== undefined;
   const isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
   const setPageOffset = () => {
-    currentLocation.state = currentLocation.state || Object.create(null);
     if (supportPageOffset) {
-      currentLocation.state.scrollX = window.pageXOffset;
-      currentLocation.state.scrollY = window.pageYOffset;
+      currentScrollOffset.scrollX = window.pageXOffset;
+      currentScrollOffset.scrollY = window.pageYOffset;
     } else {
-      currentLocation.state.scrollX = isCSS1Compat ?
+      currentScrollOffset.scrollX = isCSS1Compat ?
         document.documentElement.scrollLeft : document.body.scrollLeft;
-      currentLocation.state.scrollY = isCSS1Compat ?
+      currentScrollOffset.scrollY = isCSS1Compat ?
         document.documentElement.scrollTop : document.body.scrollTop;
     }
   };
