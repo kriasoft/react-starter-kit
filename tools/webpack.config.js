@@ -105,6 +105,18 @@ const config = {
   },
 };
 
+if (!DEBUG) {
+  config.module.loaders
+    .filter(x => x.loader === 'babel-loader')
+    .forEach(x => x.query = {// eslint-disable-line no-param-reassign
+      plugins: [
+        'transform-react-remove-prop-types',
+        'transform-react-constant-elements',
+        'transform-react-inline-elements',
+      ],
+    });
+}
+
 //
 // Configuration for the client-side bundle (client.js)
 // -----------------------------------------------------------------------------
