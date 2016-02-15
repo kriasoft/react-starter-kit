@@ -78,6 +78,7 @@
     ]
   },
   "scripts": {
+    "new" : "src/components/new.sh src/components/",
     "lint": "eslint src tools && jscs src tools",
     "csslint": "csscomb src/components --lint --verbose",
     "csscomb": "csscomb src/components --verbose",
