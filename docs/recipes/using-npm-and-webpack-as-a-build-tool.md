@@ -40,7 +40,7 @@ platforms (Mac OS X, Windows, Linux).
 
 The same way you can run [Webpack](http://webpack.github.io/) module bundler
 to compile the source code of your app into a distributable format. Since
-Webpack has numerous of [configuration options](http://webpack.github.io/docs/configuration),
+Webpack has numerous [configuration options](http://webpack.github.io/docs/configuration),
 it's a good idea to have all of them in a separate configuration file, as
 opposed to feeding them to Webpack's CLI as command line arguments. As a rule
 of thumb, you want to keep the "scripts" section in your `package.json` file
