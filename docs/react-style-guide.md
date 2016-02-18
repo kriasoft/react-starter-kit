@@ -125,9 +125,9 @@ import s from './Navigation.scss';
 
 function Navigation() {
   return (
-    <nav className={[s.root, this.props.className]}>
+    <nav className={`${s.root} ${this.props.className}`}>
       <ul className={s.items}>
-        <li className={[s.item, s.selected]}>
+        <li className={`${s.item} ${s.selected}`}>
           <a className={s.link} href="/products">Products</a>
         </li>
         <li className={s.item}>

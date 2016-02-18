@@ -8,7 +8,6 @@
  */
 
 import React, { Component, PropTypes } from 'react';
-import parsePath from 'history/lib/parsePath';
 import Location from '../../core/Location';
 
 function isLeftClickEvent(event) {
@@ -22,9 +21,7 @@ function isModifiedEvent(event) {
 class Link extends Component {
 
   static propTypes = {
-    to: PropTypes.string.isRequired,
-    query: PropTypes.object,
-    state: PropTypes.object,
+    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     onClick: PropTypes.func,
   };
 
@@ -49,23 +46,16 @@ class Link extends Component {
     if (allowTransition) {
       const link = event.currentTarget;
       if (this.props && this.props.to) {
-        Location.push({
-          ...(parsePath(this.props.to)),
-          state: this.props && this.props.state || null,
-        });
+        Location.push(this.props.to);
       } else {
-        Location.push({
-          pathname: link.pathname,
-          search: link.search,
-          state: this.props && this.props.state || null,
-        });
+        Location.push({ pathname: link.pathname, search: link.search });
       }
     }
   };
 
   render() {
-    const { to, query, ...props } = this.props;
-    return <a href={Location.createHref(to, query)} {...props} onClick={this.handleClick} />;
+    const { to, ...props } = this.props;
+    return <a href={Location.createHref(to)} {...props} onClick={this.handleClick} />;
   }
 
 }
