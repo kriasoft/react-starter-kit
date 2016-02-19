@@ -37,6 +37,7 @@ visit our sponsors:
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
 │   ├── /api/                   # REST API / Relay endpoints
 │   ├── /components/            # React components
+│   ├── /config/                # Configuration options for both client and server apps
 │   ├── /constants/             # Constants (action types etc.)
 │   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
 │   ├── /core/                  # Core framework and utility functions
@@ -44,7 +45,6 @@ visit our sponsors:
 │   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /client.js              # Client-side startup script
-│   ├── /config.js              # Global application settings
 │   ├── /routes.js              # Universal (isomorphic) application routes
 │   └── /server.js              # Server-side startup script
 ├── /tools/                     # Build automation scripts and utilities
