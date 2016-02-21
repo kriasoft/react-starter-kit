@@ -45,7 +45,8 @@ class App extends Component {
   }
 
   componentWillMount() {
-    this.removeCss = this.props.context.insertCss(s);
+    const { insertCss } = this.props.context;
+    this.removeCss = insertCss(s);
   }
 
   componentWillUnmount() {

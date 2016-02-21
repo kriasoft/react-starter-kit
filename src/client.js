@@ -18,12 +18,12 @@ let cssContainer = document.getElementById('css');
 const appContainer = document.getElementById('app');
 const context = {
   insertCss: styles => styles._insertCss(),
-  onSetTitle: value => document.title = value,
+  onSetTitle: value => (document.title = value),
   onSetMeta: (name, content) => {
     // Remove and create a new <meta /> tag in order to make it work
     // with bookmarks in Safari
     const elements = document.getElementsByTagName('meta');
-    [].slice.call(elements).forEach((element) => {
+    Array.from(elements).forEach((element) => {
       if (element.getAttribute('name') === name) {
         element.parentNode.removeChild(element);
       }
@@ -31,13 +31,15 @@ const context = {
     const meta = document.createElement('meta');
     meta.setAttribute('name', name);
     meta.setAttribute('content', content);
-    document.getElementsByTagName('head')[0].appendChild(meta);
+    document
+      .getElementsByTagName('head')[0]
+      .appendChild(meta);
   },
 };
 
 // Google Analytics tracking. Don't send 'pageview' event after the first
 // rendering, as it was already sent by the Html component.
-let trackPageview = () => trackPageview = () => window.ga('send', 'pageview');
+let trackPageview = () => (trackPageview = () => window.ga('send', 'pageview'));
 
 function render(state) {
   Router.dispatch(state, (newState, component) => {
