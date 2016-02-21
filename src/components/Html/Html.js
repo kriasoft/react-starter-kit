@@ -12,7 +12,7 @@ import { analytics } from '../../config';
 
 // https://analytics.google.com/
 const trackingCode =
-  `window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;` +
+  'window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;' +
   `ga('create','${analytics.google.trackingId}','auto');ga('send','pageview')`;
 
 class Html extends Component {

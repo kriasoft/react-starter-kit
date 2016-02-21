@@ -38,9 +38,11 @@ async function start() {
 
       config.plugins.push(new webpack.HotModuleReplacementPlugin());
       config.plugins.push(new webpack.NoErrorsPlugin());
-      config.module.loaders
+      config
+        .module
+        .loaders
         .filter(x => x.loader === 'babel-loader')
-        .forEach(x => x.query = { // eslint-disable-line no-param-reassign
+        .forEach(x => (x.query = { // eslint-disable-line no-param-reassign
           // Wraps all React components into arbitrary transforms
           // https://github.com/gaearon/babel-plugin-react-transform
           plugins: [
@@ -58,7 +60,7 @@ async function start() {
             },
             ],
           ],
-        });
+        }));
     });
 
     const bundler = webpack(webpackConfig);
@@ -74,7 +76,8 @@ async function start() {
       // For other settings see
       // https://webpack.github.io/docs/webpack-dev-middleware
     });
-    const hotMiddlewares = bundler.compilers
+    const hotMiddlewares = bundler
+      .compilers
       .filter(compiler => compiler.options.target !== 'node')
       .map(compiler => webpackHotMiddleware(compiler));
 

@@ -53,7 +53,7 @@ function withViewport(ComposedComponent) {
     }
 
     render() {
-      return <ComposedComponent {...this.props} viewport={this.state.viewport}/>;
+      return <ComposedComponent {...this.props} viewport={this.state.viewport} />;
     }
 
     handleResize(value) {
