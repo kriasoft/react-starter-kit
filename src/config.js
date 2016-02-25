@@ -13,6 +13,8 @@
 export const port = process.env.PORT || 5000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
 
+export const databaseUrl = process.env.DATABASE_URL || 'postgresql://demo:Lqk62xg6TBm5UhfR@demo.ctbl5itzitm4.us-east-1.rds.amazonaws.com:5432/membership01';
+
 export const analytics = {
 
   // https://analytics.google.com/
@@ -22,10 +24,12 @@ export const analytics = {
 
 export const auth = {
 
+  jwt: { secret: 'React Starter Kit' },
+
   // https://developers.facebook.com/
   facebook: {
-    id: process.env.FACEBOOK_ID || '183246425378777',
-    secret: process.env.FACEBOOK_SECRET || 'cb2b201f0249d15454221cbf00d6ff99',
+    id: process.env.FACEBOOK_APP_ID || '186244551745631',
+    secret: process.env.FACEBOOK_APP_SECRET || 'a970ae3240ab4b9b8aae0f9f0661c6fc',
   },
 
   // https://cloud.google.com/console/project
