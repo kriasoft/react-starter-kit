@@ -24,7 +24,7 @@ import { auth as config } from '../config';
 passport.use(new FacebookStrategy({
   clientID: config.facebook.id,
   clientSecret: config.facebook.secret,
-  callbackURL: `/login/facebook/return`,
+  callbackURL: '/login/facebook/return',
   profileFields: ['name', 'email', 'link', 'locale', 'timezone'],
   passReqToCallback: true,
 }, (req, accessToken, refreshToken, profile, done) => {
@@ -76,7 +76,7 @@ passport.use(new FacebookStrategy({
       if (result.rowCount) {
         done(null, result.rows[0]);
       } else {
-        result = await query(`SELECT 1 FROM user_account WHERE email = $1`, profile._json.email);
+        result = await query('SELECT 1 FROM user_account WHERE email = $1', profile._json.email);
         if (result.rowCount) {
           // There is already an account using this email address. Sign in to
           // that account and link it with Facebook manually from Account Settings.
@@ -100,7 +100,7 @@ passport.use(new FacebookStrategy({
             userId, profile.displayName, profile._json.gender,
             `https://graph.facebook.com/${profile.id}/picture?type=large`
           );
-          result = await query(`SELECT id, email FROM user_account WHERE id = $1;`, userId);
+          result = await query('SELECT id, email FROM user_account WHERE id = $1;', userId);
           done(null, result.rows[0]);
         }
       }
