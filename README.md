@@ -64,6 +64,7 @@ visit our sponsors:
 
 ### Related Projects
 
+  * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
   * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates static websites from React components
   * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
   * [React Decorators](https://github.com/kriasoft/react-decorators) — A collection of higher-order React components
