@@ -13,10 +13,12 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
+import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import passport from './core/passport';
+import schema from './data/schema';
 import Router from './routes';
 import Html from './components/Html';
 import assets from './assets';
@@ -68,6 +70,12 @@ server.get('/login/facebook/return',
 // Register API middleware
 // -----------------------------------------------------------------------------
 server.use('/api/content', require('./api/content').default);
+server.use('/graphql', expressGraphQL(req => ({
+  schema,
+  graphiql: true,
+  rootValue: { request: req },
+  pretty: process.env.NODE_ENV !== 'production',
+})));
 
 //
 // Register server-side rendering middleware

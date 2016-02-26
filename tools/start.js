@@ -89,12 +89,11 @@ async function start() {
           const bs = Browsersync.create();
           bs.init({
             ...(DEBUG ? {} : { notify: false, ui: false }),
+
             proxy: {
               target: host,
               middleware: [wpMiddleware, ...hotMiddlewares],
             },
-
-            notify: DEBUG,
 
             // no need to watch '*.js' here, webpack will take care of it for us,
             // including full page reloads if HMR won't work
