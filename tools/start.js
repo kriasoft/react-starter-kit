@@ -17,6 +17,8 @@ import webpackConfig from './webpack.config';
 import clean from './clean';
 import copy from './copy';
 
+const DEBUG = !process.argv.includes('--release');
+
 /**
  * Launches a development web server with "live reload" functionality -
  * synchronizing URLs, interactions and code changes across multiple devices.
@@ -86,6 +88,8 @@ async function start() {
         if (!err) {
           const bs = Browsersync.create();
           bs.init({
+            notify: DEBUG,
+            ui: DEBUG ? { port: 3001 } : false,
             proxy: {
               target: host,
               middleware: [wpMiddleware, ...hotMiddlewares],
