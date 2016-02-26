@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Change the default Node.js server port from `5000` to `3000`
+- Add a JWT-based authentication cookies (see `src/server.js`)
+- Add a reference implementation of Facebook authentication strategy (`src/core/passport.js`)
+- Add a sample database client utility for PostgreSQL (`src/core/db.js`)
 - Optimize the `tools/start.js` script that launches dev server with Browsersync and HMR
 - Replace Superagent with WHATWG Fetch library
 - Rename `app.js` to `client.js` (aka client-side code)
