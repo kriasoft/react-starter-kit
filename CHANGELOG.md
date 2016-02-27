@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- ...
+
+### [v0.5.0] - 2016-02-27
+
+- Replace RESTful API endpoint (`src/api`) with GraphQL (`src/data`)
 - Add a sample GraphQL endpoint [localhost:3000/graphql](https://localhost:3000/graphql)
 - Change the default Node.js server port from `5000` to `3000`
 - Add a JWT-based authentication cookies (see `src/server.js`)
@@ -29,5 +34,6 @@ All notable changes to this project will be documented in this file.
 - Update `docs/how-to-configure-text-editors.md` to cover Atom editor
 - Update NPM production and dev dependencies to use the latest versions
 
-[unreleased]: https://github.com/kriasoft/react-starter-kit/compare/v0.4.1...HEAD
+[unreleased]: https://github.com/kriasoft/react-starter-kit/compare/v0.5.0...HEAD
+[v0.5.0]: https://github.com/kriasoft/react-starter-kit/compare/v0.4.1...v0.5.0
 [v0.4.1]: https://github.com/kriasoft/react-starter-kit/compare/v0.4.0...v0.4.1
