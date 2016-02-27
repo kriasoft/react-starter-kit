@@ -31,7 +31,8 @@ const router = new Router(on => {
   on('/register', async () => <RegisterPage />);
 
   on('*', async (state) => {
-    const response = await fetch(`/graphql?query={content(path:"${state.path}"){path,title,content,component}}`);
+    const query = `/graphql?query={content(path:"${state.path}"){path,title,content,component}}`;
+    const response = await fetch(query);
     const { data } = await response.json();
     return data && data.content && <ContentPage {...data.content} />;
   });
