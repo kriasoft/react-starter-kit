@@ -8,7 +8,7 @@ import fetch from '../core/fetch';
 
 export const path = '/products';
 export const action = async () => {
-  const response = await fetch('/api/products');
+  const response = await fetch('/graphql?query={products{id,name}}');
   const data = await response.json();
   return <Layout><Products {...data} /></Layout>;
 };

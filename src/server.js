@@ -69,7 +69,6 @@ server.get('/login/facebook/return',
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-server.use('/api/content', require('./api/content').default);
 server.use('/graphql', expressGraphQL(req => ({
   schema,
   graphiql: true,

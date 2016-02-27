@@ -31,9 +31,9 @@ const router = new Router(on => {
   on('/register', async () => <RegisterPage />);
 
   on('*', async (state) => {
-    const response = await fetch(`/api/content?path=${state.path}`);
-    const content = await response.json();
-    return response.ok && content && <ContentPage {...content} />;
+    const response = await fetch(`/graphql?query={content(path:"${state.path}"){path,title,content,component}}`);
+    const { data } = await response.json();
+    return data && data.content && <ContentPage {...data.content} />;
   });
 
   on('error', (state, error) => state.statusCode === 404 ?

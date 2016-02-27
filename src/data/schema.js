@@ -17,6 +17,7 @@ const schema = new Schema({
     name: 'Query',
     fields: {
       me: require('./queries/me').default,
+      content: require('./queries/content').default,
     },
   }),
 });

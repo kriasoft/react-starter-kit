@@ -35,11 +35,11 @@ visit our sponsors:
 ├── /node_modules/              # 3rd-party libraries and utilities
 ├── /src/                       # The source code of the application
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
-│   ├── /api/                   # REST API / Relay endpoints
 │   ├── /components/            # React components
 │   ├── /constants/             # Constants (action types etc.)
 │   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
 │   ├── /core/                  # Core framework and utility functions
+│   ├── /data/                  # GraphQL server schema
 │   ├── /decorators/            # Higher-order React components
 │   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /stores/                # Stores contain the application state and logic
