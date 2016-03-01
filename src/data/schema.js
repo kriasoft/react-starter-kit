@@ -12,12 +12,15 @@ import {
   GraphQLObjectType as ObjectType,
 } from 'graphql';
 
+import me from './queries/me';
+import content from './queries/content';
+
 const schema = new Schema({
   query: new ObjectType({
     name: 'Query',
     fields: {
-      me: require('./queries/me').default,
-      content: require('./queries/content').default,
+      me,
+      content,
     },
   }),
 });

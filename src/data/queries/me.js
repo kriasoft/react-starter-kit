@@ -9,7 +9,7 @@
 
 import UserType from '../types/UserType';
 
-export default {
+const me = {
   type: UserType,
   resolve({ request }) {
     return request.user && {
@@ -18,3 +18,5 @@ export default {
     };
   },
 };
+
+export default me;
