@@ -12,6 +12,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Header.scss';
 import Link from '../Link';
 import Navigation from '../Navigation';
+import { appName } from '../../config';
 
 class Header extends Component {
 
@@ -22,7 +23,7 @@ class Header extends Component {
           <Navigation className={s.nav} />
           <Link className={s.brand} to="/">
             <img src={require('./logo-small.png')} width="38" height="38" alt="React" />
-            <span className={s.brandTxt}>Your Company</span>
+            <span className={s.brandTxt}>{appName}</span>
           </Link>
           <div className={s.banner}>
             <h1 className={s.bannerTitle}>React</h1>
