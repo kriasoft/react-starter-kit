@@ -12,6 +12,7 @@ import { join } from 'path';
 import Promise from 'bluebird';
 import jade from 'jade';
 import fm from 'front-matter';
+import md from 'markdown-it';
 
 import {
   GraphQLString as StringType,
@@ -20,7 +21,7 @@ import {
 
 import ContentType from '../types/ContentType';
 
-const md = require('markdown-it')();
+// const md = require('markdown-it')();
 
 // A folder with Jade/Markdown/HTML content pages
 const CONTENT_DIR = join(__dirname, './content');
@@ -42,7 +43,8 @@ const parseContent = (path, fileContent, extension) => {
     default:
       return null;
   }
-  return Object.assign({ path, content: htmlContent }, fmContent.attributes);
+  const smth = Object.assign({ path, content: htmlContent }, fmContent.attributes);
+  return smth;
 };
 
 const readFile = Promise.promisify(fs.readFile);
@@ -84,7 +86,7 @@ async function resolveFileName(path) {
   return { success: false, fileName: null, extension: null };
 }
 
-export default {
+const content = {
   type: ContentType,
   args: {
     path: { type: new NonNull(StringType) },
@@ -99,3 +101,5 @@ export default {
     return parseContent(path, source, extension);
   },
 };
+
+export default content;
