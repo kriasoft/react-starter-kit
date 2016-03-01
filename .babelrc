@@ -2,9 +2,11 @@
   "presets": [
     "es2015",
     "stage-0",
+    "es2015-native-modules",
     "react"
   ],
   "plugins": [
-    "transform-runtime"
+    "transform-runtime",
+    "transform-class-properties"
   ]
 }
