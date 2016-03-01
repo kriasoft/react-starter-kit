@@ -56,11 +56,15 @@ const config = {
   },
 
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(),
   ],
 
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
+    modules: [
+      path.resolve('./src'),
+      'node_modules',
+    ],
   },
 
   module: {
@@ -177,8 +181,10 @@ const serverConfig = extend(true, {}, config, {
   plugins: [
     ...config.plugins,
     new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false }),
-    new webpack.BannerPlugin('require("source-map-support").install();',
-      { raw: true, entryOnly: false }),
+    new webpack.BannerPlugin({
+      raw: true,
+      banner: 'require("source-map-support").install();',
+    }),
   ],
 });
 
