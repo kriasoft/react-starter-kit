@@ -12,7 +12,7 @@ import { join } from 'path';
 import Promise from 'bluebird';
 import jade from 'jade';
 import fm from 'front-matter';
-import md from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 
 import {
   GraphQLString as StringType,
@@ -21,7 +21,7 @@ import {
 
 import ContentType from '../types/ContentType';
 
-// const md = require('markdown-it')();
+const md = new MarkdownIt();
 
 // A folder with Jade/Markdown/HTML content pages
 const CONTENT_DIR = join(__dirname, './content');
