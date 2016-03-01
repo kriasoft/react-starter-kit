@@ -22,7 +22,7 @@ import schema from './data/schema';
 import Router from './routes';
 import Html from './components/Html';
 import assets from './assets';
-import { port, auth } from './config';
+import { titlePrefix, port, auth } from './config';
 
 const server = global.server = express();
 
@@ -86,7 +86,7 @@ server.get('*', async (req, res, next) => {
     const css = [];
     const context = {
       insertCss: styles => css.push(styles._getCss()),
-      onSetTitle: value => (data.title = value),
+      onSetTitle: value => (data.title = `${titlePrefix}${value}`),
       onSetMeta: (key, value) => (data[key] = value),
       onPageNotFound: () => (statusCode = 404),
     };
