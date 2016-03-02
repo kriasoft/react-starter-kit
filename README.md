@@ -42,6 +42,7 @@ visit our sponsors:
 │   ├── /data/                  # GraphQL server schema
 │   ├── /decorators/            # Higher-order React components
 │   ├── /public/                # Static files which are copied into the /build/public folder
+│   ├── /routes/                # Page/screen components along with the routing information
 │   ├── /stores/                # Stores contain the application state and logic
 │   ├── /views/                 # Express.js views for index and error pages
 │   ├── /client.js              # Client-side startup script
