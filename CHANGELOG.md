@@ -4,13 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
-- ...
+- Move page / screen components into the `src/routes` folder along with the routing information for them [PLANNED, BREAKING CHANGE].
 
 ### [v0.5.1] - 2016-03-02
 
-- Remove `Html` React component in favor of compiled Jade templates `src/views` (e188388f87069cdc7d501b385d6b0e46c98fed60)
-- Add global error handling in Node.js/Express app (e188388f87069cdc7d501b385d6b0e46c98fed60)
-- Add support for Markdown and HTML for static pages (#469, #477)
+- Remove `Html` React component in favor of compiled Jade templates `src/views` [BREAKING CHANGE]. [e188388](https://github.com/kriasoft/react-starter-kit/commit/e188388f87069cdc7d501b385d6b0e46c98fed60)
+- Add global error handling in Node.js/Express app. [e188388](https://github.com/kriasoft/react-starter-kit/commit/e188388f87069cdc7d501b385d6b0e46c98fed60)
+- Add support for Markdown and HTML for static pages. [#469](https://github.com/kriasoft/react-starter-kit/pull/469), [#477](https://github.com/kriasoft/react-starter-kit/pull/477)
 
 ### [v0.5.0] - 2016-02-27
 
