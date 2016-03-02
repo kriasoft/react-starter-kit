@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 - ...
 
+### [v0.5.1] - 2016-03-02
+
+- Remove `Html` React component in favor of compiled Jade templates `src/views` (e188388f87069cdc7d501b385d6b0e46c98fed60)
+- Add global error handling in Node.js/Express app (e188388f87069cdc7d501b385d6b0e46c98fed60)
+- Add support for Markdown and HTML for static pages (#469, #477)
+
 ### [v0.5.0] - 2016-02-27
 
 - Replace RESTful API endpoint (`src/api`) with GraphQL (`src/data`)
@@ -34,6 +40,7 @@ All notable changes to this project will be documented in this file.
 - Update `docs/how-to-configure-text-editors.md` to cover Atom editor
 - Update NPM production and dev dependencies to use the latest versions
 
-[unreleased]: https://github.com/kriasoft/react-starter-kit/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/kriasoft/react-starter-kit/compare/v0.5.1...HEAD
+[v0.5.1]: https://github.com/kriasoft/react-starter-kit/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/kriasoft/react-starter-kit/compare/v0.4.1...v0.5.0
 [v0.4.1]: https://github.com/kriasoft/react-starter-kit/compare/v0.4.0...v0.4.1
