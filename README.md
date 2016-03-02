@@ -14,7 +14,7 @@
 
 See [demo](http://demo.reactstarterkit.com) &nbsp;|&nbsp;
 [docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs) &nbsp;|&nbsp;
-[bugs & feature requests](https://waffle.io/kriasoft/react-starter-kit) &nbsp;|&nbsp;
+[to-do list](https://waffle.io/kriasoft/react-starter-kit) &nbsp;|&nbsp;
 join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chatroom to stay up to date &nbsp;|&nbsp;
 visit our sponsors:
 
@@ -43,6 +43,7 @@ visit our sponsors:
 │   ├── /decorators/            # Higher-order React components
 │   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /stores/                # Stores contain the application state and logic
+│   ├── /views/                 # Express.js views for index and error pages
 │   ├── /client.js              # Client-side startup script
 │   ├── /config.js              # Global application settings
 │   ├── /routes.js              # Universal (isomorphic) application routes
@@ -67,7 +68,6 @@ visit our sponsors:
   * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
   * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates static websites from React components
   * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
-  * [React Decorators](https://github.com/kriasoft/react-decorators) — A collection of higher-order React components
 
 ### Learn More
 
@@ -83,9 +83,11 @@ visit our sponsors:
 
 ### Support
 
-  * [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) on Gitter — Feedback, feature requests, Q&A
-  * [@koistya](https://www.codementor.io/koistya) on Codementor — Mentorship, pair coding, code reviews
-  * support@kriasoft.com — Customization requests, help with GraphQL/Relay, database design etc.
+  * [#react-starter-kit](http://stackoverflow.com/questions/tagged/react-starter-kit) on Stack Overflow — Questions and answers
+  * [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) on Gitter — Watch announcements, share ideas and feedback
+  * [GitHub issues](https://github.com/kriasoft/react-starter-kit/issues), or [Scrum board](https://waffle.io/kriasoft/react-starter-kit) — File issues, send feature requests
+  * [appear.in/react](https://appear.in/react) — Open hours! Exchange ideas and experiences (React, GraphQL, Startups, etc.)
+  * [@koistya](https://twitter.com/koistya) on [Codementor](https://www.codementor.io/koistya), or [Skype](http://hatscripts.com/addskype?koistya) — Private consulting
 
 ### License
 
