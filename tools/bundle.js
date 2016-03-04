@@ -7,8 +7,8 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import webpack from 'webpack';
-import webpackConfig from './webpack.config';
+const webpack = require('webpack');
+const webpackConfig = require('./webpack.config');
 
 /**
  * Creates application bundles from the source files.
@@ -26,4 +26,5 @@ function bundle() {
   });
 }
 
-export default bundle;
+module.exports = bundle;
+module.exports.default = bundle;

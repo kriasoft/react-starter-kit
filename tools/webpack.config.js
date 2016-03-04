@@ -7,10 +7,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import path from 'path';
-import webpack from 'webpack';
-import extend from 'extend';
-import AssetsPlugin from 'assets-webpack-plugin';
+const path = require('path');
+const webpack = require('webpack');
+const extend = require('extend');
+const AssetsPlugin = require('assets-webpack-plugin');
 
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
@@ -56,11 +56,17 @@ const config = {
   },
 
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(),
   ],
 
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
+    modules: [
+      path.resolve('./src'),
+      path.resolve('./tools'),
+      'node_modules',
+    ],
+    moduleExtensions: ['-loader'],
   },
 
   module: {
@@ -71,30 +77,30 @@ const config = {
           path.resolve(__dirname, '../node_modules/react-routing/src'),
           path.resolve(__dirname, '../src'),
         ],
-        loader: 'babel-loader',
+        loader: 'babel',
       }, {
         test: /\.scss$/,
         loaders: [
-          'isomorphic-style-loader',
-          `css-loader?${DEBUG ? 'sourceMap&' : 'minimize&'}modules&localIdentName=` +
+          'isomorphic-style',
+          `css?${DEBUG ? 'sourceMap&' : 'minimize&'}modules&localIdentName=` +
           `${DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]'}`,
-          'postcss-loader?parser=postcss-scss',
+          'postcss?parser=postcss-scss',
         ],
       }, {
         test: /\.json$/,
-        loader: 'json-loader',
+        loader: 'json',
       }, {
         test: /\.txt$/,
-        loader: 'raw-loader',
+        loader: 'raw',
       }, {
         test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-        loader: 'url-loader?limit=10000',
+        loader: 'url?limit=10000',
       }, {
         test: /\.(eot|ttf|wav|mp3)$/,
-        loader: 'file-loader',
+        loader: 'file',
       }, {
         test: /\.jade$/,
-        loader: 'jade-loader',
+        loader: 'jade',
       },
     ],
   },
@@ -113,9 +119,10 @@ const config = {
 // -----------------------------------------------------------------------------
 
 const clientConfig = extend(true, {}, config, {
-  entry: './src/client.js',
+  entry: ['babel-polyfill', './src/client.js'],
   output: {
     path: path.join(__dirname, '../build/public'),
+    chunkFilename: DEBUG ? '[name].js?[chunkHash]' : '[name].[chunkHash].js',
     filename: DEBUG ? '[name].js?[hash]' : '[name].[hash].js',
   },
 
@@ -128,6 +135,7 @@ const clientConfig = extend(true, {}, config, {
     new AssetsPlugin({
       path: path.join(__dirname, '../build'),
       filename: 'assets.js',
+      update: true,
       processOutput: x => `module.exports = ${JSON.stringify(x)};`,
     }),
     ...(!DEBUG ? [
@@ -136,13 +144,20 @@ const clientConfig = extend(true, {}, config, {
         compress: {
           // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
           screw_ie8: true,
-
+          output: {
+            comments: false,
+          },
           // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
           warnings: VERBOSE,
         },
       }),
       new webpack.optimize.AggressiveMergingPlugin(),
-    ] : []),
+    ] : [
+      new webpack.LoaderOptionsPlugin({
+        minimize: false,
+        debug: true,
+      }),
+    ]),
   ],
 });
 
@@ -151,7 +166,7 @@ const clientConfig = extend(true, {}, config, {
 // -----------------------------------------------------------------------------
 
 const serverConfig = extend(true, {}, config, {
-  entry: './src/server.js',
+  entry: ['babel-polyfill', './src/server.js'],
   output: {
     path: './build',
     filename: 'server.js',
@@ -180,9 +195,11 @@ const serverConfig = extend(true, {}, config, {
   plugins: [
     ...config.plugins,
     new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false }),
-    new webpack.BannerPlugin('require("source-map-support").install();',
-      { raw: true, entryOnly: false }),
+    new webpack.BannerPlugin({
+      raw: true,
+      banner: 'require("source-map-support").install();',
+    }),
   ],
 });
 
-export default [clientConfig, serverConfig];
+module.exports = [clientConfig, serverConfig];

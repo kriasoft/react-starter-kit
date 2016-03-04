@@ -7,9 +7,9 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import GitRepo from 'git-repository';
-import run from './run';
-import fetch from './lib/fetch';
+const GitRepo = require('git-repository');
+const run = require('./run');
+const fetch = require('./lib/fetch');
 
 // TODO: Update deployment URL
 // For more information visit http://gitolite.com/deploy.html
@@ -54,4 +54,5 @@ async function deploy() {
   console.log(`${remote.website} -> ${response.statusCode}`);
 }
 
-export default deploy;
+module.exports = deploy;
+module.exports.default = deploy;

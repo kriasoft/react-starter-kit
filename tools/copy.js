@@ -7,10 +7,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import path from 'path';
-import gaze from 'gaze';
-import replace from 'replace';
-import Promise from 'bluebird';
+const path = require('path');
+const gaze = require('gaze');
+const replace = require('replace');
+const Promise = require('bluebird');
 
 /**
  * Copies static files such as robots.txt, favicon.ico to the
@@ -44,4 +44,5 @@ async function copy({ watch } = {}) {
   }
 }
 
-export default copy;
+module.exports = copy;
+module.exports.default = copy;
