@@ -7,9 +7,9 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import path from 'path';
-import cp from 'child_process';
-import webpackConfig from './webpack.config';
+const path = require('path');
+const cp = require('child_process');
+const webpackConfig = require('./webpack.config');
 
 // Should match the text string used in `src/server.js/server.listen(...)`
 const RUNNING_REGEXP = /The server is running at http:\/\/(.*?)\//;
@@ -55,4 +55,4 @@ process.on('exit', () => {
   }
 });
 
-export default runServer;
+module.exports = runServer;

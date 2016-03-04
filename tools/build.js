@@ -7,10 +7,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import run from './run';
-import clean from './clean';
-import copy from './copy';
-import bundle from './bundle';
+const run = require('./run');
+const clean = require('./clean');
+const copy = require('./copy');
+const bundle = require('./bundle');
 
 /**
  * Compiles the project from source files into a distributable
@@ -22,4 +22,4 @@ async function build() {
   await run(bundle);
 }
 
-export default build;
+module.exports = build;

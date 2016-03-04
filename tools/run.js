@@ -24,8 +24,9 @@ function run(fn, options) {
 
 if (process.mainModule.children.length === 0 && process.argv.length > 2) {
   delete require.cache[__filename];
-  const module = require(`./${process.argv[2]}.js`).default;
-  run(module).catch(err => console.error(err.stack));
+  const task = require(`./${process.argv[2]}.js`).default;
+  run(task).catch(err => console.error(err.stack));
 }
 
-export default run;
+module.exports = run;
+module.exports.default = run;

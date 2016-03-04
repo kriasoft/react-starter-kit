@@ -7,15 +7,15 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import Browsersync from 'browser-sync';
-import webpack from 'webpack';
-import webpackMiddleware from 'webpack-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import run from './run';
-import runServer from './runServer';
-import webpackConfig from './webpack.config';
-import clean from './clean';
-import copy from './copy';
+const Browsersync = require('browser-sync');
+const webpack = require('webpack');
+const webpackMiddleware = require('webpack-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const run = require('./run');
+const runServer = require('./runServer');
+const webpackConfig = require('./webpack.config');
+const clean = require('./clean.js');
+const copy = require('./copy');
 
 const DEBUG = !process.argv.includes('--release');
 
@@ -108,4 +108,5 @@ async function start() {
   });
 }
 
-export default start;
+module.exports = start;
+module.exports.default = start;

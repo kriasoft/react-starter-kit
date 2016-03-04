@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import Home from './Home';
+import Home from './home';
 import fetch from '../../core/fetch';
 
 export const path = '/';

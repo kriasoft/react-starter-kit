@@ -7,8 +7,8 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import del from 'del';
-import fs from './lib/fs';
+const del = require('del');
+const fs = require('./lib/fs');
 
 /**
  * Cleans up the output (build) directory.
@@ -18,4 +18,5 @@ async function clean() {
   await fs.makeDir('build/public');
 }
 
-export default clean;
+module.exports = clean;
+module.exports.default = clean;

@@ -7,8 +7,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import http from 'http';
+const http = require('http');
 
-export default async (url) => new Promise((resolve, reject) =>
+const fetch = async (url) => new Promise((resolve, reject) =>
     http.get(url, res => resolve(res)).on('error', err => reject(err))
 );
+
+module.exports = fetch;
