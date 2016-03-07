@@ -7,8 +7,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import Promise from 'bluebird';
 import fetch, { Request, Headers, Response } from 'node-fetch';
 import { host } from '../../config';
+
+fetch.Promise = Promise;
 
 function localUrl(url) {
   if (url.startsWith('//')) {

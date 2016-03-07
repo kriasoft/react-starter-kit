@@ -26,7 +26,7 @@ const news = {
       return lastFetchTask;
     }
 
-    if ((new Date() - lastFetchTime) > 1000 * 60 * 10 /* 10 mins */) {
+    if ((new Date() - lastFetchTime) > 1000 * 3 /* 10 mins */) {
       lastFetchTime = new Date();
       lastFetchTask = fetch(url)
         .then(response => response.json())
@@ -36,7 +36,14 @@ const news = {
           }
 
           return items;
+        })
+        .finally(() => {
+          lastFetchTask = null;
         });
+
+      if (items.length) {
+        return items;
+      }
 
       return lastFetchTask;
     }
