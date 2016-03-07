@@ -4,6 +4,10 @@
   "globals": {
     "__DEV__": true
   },
+  "env": {
+    "browser": true,
+    "jest": true
+  },
   "rules": {
     "no-confusing-arrow": 0,
     "react/jsx-quotes": 0,
