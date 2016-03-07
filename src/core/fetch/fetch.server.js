@@ -12,6 +12,7 @@ import fetch, { Request, Headers, Response } from 'node-fetch';
 import { host } from '../../config';
 
 fetch.Promise = Promise;
+Response.Promise = Promise;
 
 function localUrl(url) {
   if (url.startsWith('//')) {
