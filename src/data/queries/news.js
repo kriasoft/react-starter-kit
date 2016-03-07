@@ -16,11 +16,16 @@ const url = 'http://ajax.googleapis.com/ajax/services/feed/load' +
             '?v=1.0&num=10&q=https://reactjsnews.com/feed.xml';
 
 let items = [];
+let fetching = null;
 let lastFetchTime = new Date(1970, 0, 1);
 
 const news = {
   type: new List(NewsItemType),
   resolve() {
+    if (fetching) {
+      return fetching;
+    }
+
     if ((new Date() - lastFetchTime) > 1000 * 60 * 10 /* 10 mins */) {
       lastFetchTime = new Date();
       fetch(url)
@@ -28,7 +33,10 @@ const news = {
         .then(data => {
           if (data.responseStatus === 200) {
             items = data.responseData.feed.entries;
+            fetching = null;
           }
+
+          return items;
         });
     }
 

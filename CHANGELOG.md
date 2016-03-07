@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Convert `Feedback`, `Footer`, `Header`, and `Navigation` to functional stateless components
 - Move page / screen components into the `src/routes` folder along with the routing information for them [BREAKING CHANGE]. [6553936](https://github.com/kriasoft/react-starter-kit/commit/6553936e693e24a8ac6178f4962af15e0ea87dfd)
 
 ### [v0.5.1] - 2016-03-02

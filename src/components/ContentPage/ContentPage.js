@@ -23,8 +23,11 @@ class ContentPage extends Component {
     onSetTitle: PropTypes.func.isRequired,
   };
 
-  render() {
+  componentWillMount() {
     this.context.onSetTitle(this.props.title);
+  }
+
+  render() {
     return (
       <div className={s.root}>
         <div className={s.container}>
