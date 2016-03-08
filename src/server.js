@@ -15,7 +15,7 @@ import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
-import ReactDOM from 'react-dom/server';
+import ReactDOMServer from 'react-dom/server';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
 import schema from './data/schema';
@@ -97,7 +97,7 @@ server.get('*', async (req, res, next) => {
     };
 
     await Router.dispatch({ path: req.path, query: req.query, context }, (state, component) => {
-      data.body = ReactDOM.renderToString(component);
+      data.body = ReactDOMServer.renderToString(component);
       data.css = css.join('');
     });
 
