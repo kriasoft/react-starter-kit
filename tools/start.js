@@ -83,8 +83,8 @@ async function start() {
       .filter(compiler => compiler.options.target !== 'node')
       .map(compiler => webpackHotMiddleware(compiler));
 
-    let handleServerBundleComplete = () => {
-      runServer((err, host) => {
+    var handleServerBundleComplete = () => { // eslint-disable-line no-var,vars-on-top
+      runServer((err, host) => {             // github.com/kriasoft/react-starter-kit/issues/490
         if (!err) {
           const bs = Browsersync.create();
           bs.init({
