@@ -35,9 +35,82 @@ const GLOBALS = {
 // -----------------------------------------------------------------------------
 
 const config = {
+  context: path.join(__dirname, '../src'),
+
   output: {
     publicPath: '/',
     sourcePrefix: '  ',
+  },
+
+  module: {
+    loaders: [
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        include: [
+          path.resolve(__dirname, '../node_modules/react-routing/src'),
+          path.resolve(__dirname, '../src'),
+        ],
+        query: {
+          // https://github.com/babel/babel-loader#options
+          cacheDirectory: DEBUG,
+
+          // https://babeljs.io/docs/usage/options/
+          babelrc: false,
+          presets: [
+            'react',
+            'es2015',
+            'stage-0',
+          ],
+          plugins: [
+            'transform-runtime',
+          ],
+        },
+      },
+      {
+        test: /\.scss$/,
+        loaders: [
+          'isomorphic-style-loader',
+          `css-loader?${JSON.stringify({
+            sourceMap: DEBUG,
+
+            // CSS Modules https://github.com/css-modules/css-modules
+            modules: true,
+            localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]',
+
+            // CSS Nano http://cssnano.co/options/
+            minimize: !DEBUG,
+          })}`,
+          'postcss-loader?parser=postcss-scss',
+        ],
+      },
+      {
+        test: /\.json$/,
+        loader: 'json-loader',
+      },
+      {
+        test: /\.txt$/,
+        loader: 'raw-loader',
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
+        loader: 'url-loader?limit=10000',
+      },
+      {
+        test: /\.(eot|ttf|wav|mp3)$/,
+        loader: 'file-loader',
+      },
+      {
+        test: /\.jade$/,
+        loader: 'jade-loader',
+      },
+    ],
+  },
+
+  resolve: {
+    root: path.join(__dirname, '../src'),
+    modulesDirectories: ['node_modules'],
+    extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
   },
 
   cache: DEBUG,
@@ -55,59 +128,7 @@ const config = {
     cachedAssets: VERBOSE,
   },
 
-  plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-  ],
-
-  resolve: {
-    extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
-  },
-
-  module: {
-    loaders: [
-      {
-        test: /\.jsx?$/,
-        include: [
-          path.resolve(__dirname, '../node_modules/react-routing/src'),
-          path.resolve(__dirname, '../src'),
-        ],
-        loader: 'babel-loader',
-      }, {
-        test: /\.scss$/,
-        loaders: [
-          'isomorphic-style-loader',
-          `css-loader?${JSON.stringify({
-            sourceMap: DEBUG,
-
-            // CSS Modules https://github.com/css-modules/css-modules
-            modules: true,
-            localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]',
-
-            // CSS Nano http://cssnano.co/options/
-            minimize: !DEBUG,
-          })}`,
-          'postcss-loader?parser=postcss-scss',
-        ],
-      }, {
-        test: /\.json$/,
-        loader: 'json-loader',
-      }, {
-        test: /\.txt$/,
-        loader: 'raw-loader',
-      }, {
-        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-        loader: 'url-loader?limit=10000',
-      }, {
-        test: /\.(eot|ttf|wav|mp3)$/,
-        loader: 'file-loader',
-      }, {
-        test: /\.jade$/,
-        loader: 'jade-loader',
-      },
-    ],
-  },
-
-  postcss: function plugins(bundler) {
+  postcss(bundler) {
     return [
       require('postcss-import')({ addDependencyTo: bundler }),
       require('precss')(),
@@ -121,37 +142,58 @@ const config = {
 // -----------------------------------------------------------------------------
 
 const clientConfig = extend(true, {}, config, {
-  entry: './src/client.js',
+  entry: './client.js',
+
   output: {
     path: path.join(__dirname, '../build/public'),
     filename: DEBUG ? '[name].js?[hash]' : '[name].[hash].js',
+    chunkFilename: DEBUG ? '[name].[id].js?[hash]' : '[name].[id].[hash].js',
   },
 
-  // Choose a developer tool to enhance debugging
-  // http://webpack.github.io/docs/configuration.html#devtool
-  devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
+  target: 'web',
+
   plugins: [
-    ...config.plugins,
+
+    // Define free variables
+    // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
     new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': true }),
+
+    // Emit a file with assets paths
+    // https://github.com/sporto/assets-webpack-plugin#options
     new AssetsPlugin({
       path: path.join(__dirname, '../build'),
       filename: 'assets.js',
       processOutput: x => `module.exports = ${JSON.stringify(x)};`,
     }),
-    ...(!DEBUG ? [
+
+    ...(DEBUG ? [] : [
+
+      // Search for equal or similar files and deduplicate them in the output
+      // https://webpack.github.io/docs/list-of-plugins.html#dedupeplugin
       new webpack.optimize.DedupePlugin(),
+
+      // Assign the module and chunk ids by occurrence count
+      // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
+      new webpack.optimize.OccurenceOrderPlugin(true),
+
+      // Minimize all JavaScript output of chunks
+      // https://github.com/mishoo/UglifyJS2#compressor-options
       new webpack.optimize.UglifyJsPlugin({
         compress: {
-          // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-          screw_ie8: true,
-
-          // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
+          screw_ie8: true, // jscs:ignore requireCamelCaseOrUpperCaseIdentifiers
           warnings: VERBOSE,
         },
       }),
+
+      // A plugin for a more aggressive chunk merging strategy
+      // https://webpack.github.io/docs/list-of-plugins.html#aggressivemergingplugin
       new webpack.optimize.AggressiveMergingPlugin(),
-    ] : []),
+    ]),
   ],
+
+  // Choose a developer tool to enhance debugging
+  // http://webpack.github.io/docs/configuration.html#devtool
+  devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
 });
 
 //
@@ -159,13 +201,16 @@ const clientConfig = extend(true, {}, config, {
 // -----------------------------------------------------------------------------
 
 const serverConfig = extend(true, {}, config, {
-  entry: './src/server.js',
+  entry: './server.js',
+
   output: {
-    path: './build',
+    path: path.join(__dirname, '../build'),
     filename: 'server.js',
     libraryTarget: 'commonjs2',
   },
+
   target: 'node',
+
   externals: [
     /^\.\/assets$/,
     function filter(context, request, cb) {
@@ -176,6 +221,19 @@ const serverConfig = extend(true, {}, config, {
       cb(null, Boolean(isExternal));
     },
   ],
+
+  plugins: [
+
+    // Define free variables
+    // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
+    new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false }),
+
+    // Adds a banner to the top of each generated chunk
+    // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
+    new webpack.BannerPlugin('require("source-map-support").install();',
+      { raw: true, entryOnly: false }),
+  ],
+
   node: {
     console: false,
     global: false,
@@ -184,13 +242,8 @@ const serverConfig = extend(true, {}, config, {
     __filename: false,
     __dirname: false,
   },
+
   devtool: 'source-map',
-  plugins: [
-    ...config.plugins,
-    new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false }),
-    new webpack.BannerPlugin('require("source-map-support").install();',
-      { raw: true, entryOnly: false }),
-  ],
 });
 
 export default [clientConfig, serverConfig];
