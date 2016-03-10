@@ -37,7 +37,7 @@ This command will build the app from the source files (`/src`) into the output
 Node.js server (`node build/server.js`) and [Browsersync](https://browsersync.io/)
 with [HMR](https://webpack.github.io/docs/hot-module-replacement) on top of it.
 
-> [http://localhost:3000/](http://localhost:3000/) — Node.js server (`build/sever.js`)<br>
+> [http://localhost:3000/](http://localhost:3000/) — Node.js server (`build/server.js`)<br>
 > [http://localhost:3000/graphql](http://localhost:3000/graphql) — GraphQL server and IDE<br>
 > [http://localhost:3001/](http://localhost:3001/) — BrowserSync proxy with HMR, React Hot Transform<br>
 > [http://localhost:3002/](http://localhost:3002/) — BrowserSync control panel (UI)
