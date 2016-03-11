@@ -45,9 +45,12 @@ async function start() {
         .loaders
         .filter(x => x.loader === 'babel-loader')
         .forEach(x => (x.query = { // eslint-disable-line no-param-reassign
+          ...x.query,
+
           // Wraps all React components into arbitrary transforms
           // https://github.com/gaearon/babel-plugin-react-transform
           plugins: [
+            ...(x.query ? x.query.plugins : []),
             ['react-transform', {
               transforms: [
                 {
