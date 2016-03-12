@@ -35,10 +35,11 @@ const GLOBALS = {
 // -----------------------------------------------------------------------------
 
 const config = {
-  context: path.join(__dirname, '../src'),
+  context: path.resolve(__dirname, '../src'),
 
   output: {
-    publicPath: '/',
+    path: path.resolve(__dirname, '../build/public/assets'),
+    publicPath: '/assets/',
     sourcePrefix: '  ',
   },
 
@@ -94,11 +95,18 @@ const config = {
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-        loader: 'url-loader?limit=10000',
+        loader: 'url-loader',
+        query: {
+          name: DEBUG ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
+          limit: 10000,
+        },
       },
       {
         test: /\.(eot|ttf|wav|mp3)$/,
         loader: 'file-loader',
+        query: {
+          name: DEBUG ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
+        },
       },
       {
         test: /\.jade$/,
@@ -108,7 +116,7 @@ const config = {
   },
 
   resolve: {
-    root: path.join(__dirname, '../src'),
+    root: path.resolve(__dirname, '../src'),
     modulesDirectories: ['node_modules'],
     extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
   },
@@ -145,9 +153,8 @@ const clientConfig = extend(true, {}, config, {
   entry: './client.js',
 
   output: {
-    path: path.join(__dirname, '../build/public'),
-    filename: DEBUG ? '[name].js?[hash]' : '[name].[hash].js',
-    chunkFilename: DEBUG ? '[name].[id].js?[hash]' : '[name].[id].[hash].js',
+    filename: DEBUG ? '[name].js?[chunkhash]' : '[name].[chunkhash].js',
+    chunkFilename: DEBUG ? '[name].[id].js?[chunkhash]' : '[name].[id].[chunkhash].js',
   },
 
   target: 'web',
@@ -161,20 +168,21 @@ const clientConfig = extend(true, {}, config, {
     // Emit a file with assets paths
     // https://github.com/sporto/assets-webpack-plugin#options
     new AssetsPlugin({
-      path: path.join(__dirname, '../build'),
+      path: path.resolve(__dirname, '../build'),
       filename: 'assets.js',
       processOutput: x => `module.exports = ${JSON.stringify(x)};`,
     }),
+
+    // Assign the module and chunk ids by occurrence count
+    // Consistent ordering of modules required if using any hashing ([hash] or [chunkhash])
+    // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
+    new webpack.optimize.OccurenceOrderPlugin(true),
 
     ...(DEBUG ? [] : [
 
       // Search for equal or similar files and deduplicate them in the output
       // https://webpack.github.io/docs/list-of-plugins.html#dedupeplugin
       new webpack.optimize.DedupePlugin(),
-
-      // Assign the module and chunk ids by occurrence count
-      // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
-      new webpack.optimize.OccurenceOrderPlugin(true),
 
       // Minimize all JavaScript output of chunks
       // https://github.com/mishoo/UglifyJS2#compressor-options
@@ -204,8 +212,7 @@ const serverConfig = extend(true, {}, config, {
   entry: './server.js',
 
   output: {
-    path: path.join(__dirname, '../build'),
-    filename: 'server.js',
+    filename: '../../server.js',
     libraryTarget: 'commonjs2',
   },
 
