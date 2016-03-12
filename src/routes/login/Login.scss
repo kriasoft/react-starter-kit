@@ -44,15 +44,15 @@
   border: 1px solid #ccc;
   border-radius: 0;
   background: #fff;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   color: #616161;
   font-size: 18px;
   line-height: 1.3333333;
-  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 
   &:focus {
     border-color: #0074c2;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(0, 116, 194, .6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 116, 194, 0.6);
   }
 }
 
@@ -79,7 +79,7 @@
 
   &:focus {
     border-color: #0074c2;
-    box-shadow: 0 0 8px rgba(0, 116, 194, .6);
+    box-shadow: 0 0 8px rgba(0, 116, 194, 0.6);
   }
 }
 
@@ -132,7 +132,7 @@
   text-align: center;
   font-size: 80%;
 
-  &:before {
+  &::before {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -145,7 +145,7 @@
     content: '';
   }
 
-  &:after {
+  &::after {
     position: absolute;
     top: 49%;
     z-index: -2;

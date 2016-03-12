@@ -53,7 +53,6 @@
     "browser-sync": "^2.11.1",
     "core-js": "^2.1.4",
     "css-loader": "^0.23.1",
-    "csscomb": "^3.1.8",
     "del": "^2.2.0",
     "enzyme": "^2.1.0",
     "eslint": "^2.3.0",
@@ -83,6 +82,8 @@
     "react-transform-hmr": "^1.0.4",
     "redbox-react": "^1.2.2",
     "replace": "^0.3.0",
+    "stylelint": "^5.0.1",
+    "stylelint-config-standard": "^4.0.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.14",
     "webpack-hot-middleware": "^2.10.0",
@@ -109,11 +110,18 @@
       "enzyme"
     ]
   },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "string-quotes": "single"
+    }
+  },
   "scripts": {
-    "lint": "eslint src tools && jscs src tools --verbose",
-    "csslint": "csscomb src/components --lint --verbose",
-    "csscomb": "csscomb src/components --verbose",
-    "test": "eslint src && jest",
+    "eslint": "eslint src tools",
+    "jscs": "jscs src tools --verbose",
+    "stylelint": "stylelint \"src/**/*.scss\" --syntax scss",
+    "lint": "npm run eslint && npm run jscs && npm run stylelint",
+    "test": "npm run lint && jest",
     "clean": "babel-node tools/run clean",
     "copy": "babel-node tools/run copy",
     "bundle": "babel-node tools/run bundle",
