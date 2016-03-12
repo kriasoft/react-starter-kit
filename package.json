@@ -95,6 +95,27 @@
       "stage-0"
     ]
   },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": "airbnb",
+    "globals": {
+      "__DEV__": true
+    },
+    "env": {
+      "browser": true,
+      "jest": true
+    },
+    "rules": {
+      "no-confusing-arrow": 0,
+      "react/jsx-quotes": 0,
+      "jsx-quotes": [2, "prefer-double"]
+    }
+  },
+  "jscsConfig": {
+    "preset": "airbnb",
+    "excludeFiles": ["build/**", "node_modules/**"],
+    "disallowSpacesInsideTemplateStringPlaceholders": null
+  },
   "jest": {
     "rootDir": "./src",
     "testPathDirs": [
