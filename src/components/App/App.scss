@@ -112,8 +112,8 @@ textarea {
 
 @media print {
   *,
-  *:before,
-  *:after {
+  *::before,
+  *::after {
     background: transparent !important;
     color: #000 !important; /* Black prints faster: http://www.sanbeiji.com/archives/953 */
     box-shadow: none !important;
@@ -125,12 +125,12 @@ textarea {
     text-decoration: underline;
   }
 
-  a[href]:after {
-    content: " (" attr(href) ")";
+  a[href]::after {
+    content: ' (' attr(href) ')';
   }
 
-  abbr[title]:after {
-    content: " (" attr(title) ")";
+  abbr[title]::after {
+    content: ' (' attr(title) ')';
   }
 
   /*
@@ -138,9 +138,9 @@ textarea {
    * or use the `javascript:` pseudo protocol
    */
 
-  a[href^="#"]:after,
-  a[href^="javascript:"]:after {
-    content: "";
+  a[href^='#']::after,
+  a[href^='javascript:']::after {
+    content: '';
   }
 
   pre,
