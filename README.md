@@ -51,12 +51,15 @@ visit our sponsors:
 │   └── /server.js              # Server-side startup script
 ├── /tools/                     # Build automation scripts and utilities
 │   ├── /lib/                   # Library for utility snippets
+│   ├── /templates/             # Templates for generator to use
+│   │   └── /component/         # Templates for component
 │   ├── /build.js               # Builds the project from source to output (build) folder
 │   ├── /bundle.js              # Bundles the web resources into package(s) through Webpack
 │   ├── /clean.js               # Cleans up the output (build) folder
 │   ├── /copy.js                # Copies static files to output (build) folder
 │   ├── /deploy.js              # Deploys your web application
 │   ├── /run.js                 # Helper function for running build automation tasks
+│   ├── /generate.js            # Generate a new component with templates
 │   ├── /runServer.js           # Launches (or restarts) Node.js server
 │   ├── /start.js               # Launches the development web server with "live reload"
 │   └── /webpack.config.js      # Configurations for client-side and server-side bundles
