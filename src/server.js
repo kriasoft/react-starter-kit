@@ -116,7 +116,7 @@ pe.skipNodeFiles();
 pe.skipPackage('express');
 
 server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-  console.log(pe.render(err)); // eslint-disable-line no-console
+  console.error(pe.render(err)); // eslint-disable-line no-console
   const template = require('./views/error.jade');
   const statusCode = err.status || 500;
   res.status(statusCode);
