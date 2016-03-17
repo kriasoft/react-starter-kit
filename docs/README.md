@@ -11,6 +11,8 @@
 
 * [Which module bundler should I use?](https://github.com/kriasoft/react-starter-kit/issues/3)
 * [Which Flux implementation should I use?](https://github.com/kriasoft/react-starter-kit/issues/22)
+* [Why should I use pre-commit](https://github.com/nlf/precommit-hook#why-should-i-use-it)
+  and [Why it is not working?](./pre-commit-manual.md)
 
 ### Recipes
 
