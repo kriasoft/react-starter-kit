@@ -19,11 +19,13 @@ import Promise from 'bluebird';
 async function copy({ watch } = {}) {
   const ncp = Promise.promisify(require('ncp'));
 
-  await Promise.all([
-    ncp('src/public', 'build/public'),
-    ncp('src/content', 'build/content'),
-    ncp('package.json', 'build/package.json'),
-  ]);
+  await Promise
+    .all([
+      ncp('src/public', 'build/public'),
+      ncp('src/content', 'build/content'),
+      ncp('package.json', 'build/package.json'),
+    ])
+    .catch(e => {throw new Error(e)});
 
   replace({
     regex: '"start".*',
