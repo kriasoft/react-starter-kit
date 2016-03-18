@@ -38,10 +38,12 @@ async function copy({ watch } = {}) {
   if (watch) {
     const watcher = await new Promise((resolve, reject) => {
       gaze('src/content/**/*.*', (err, val) => err ? reject(err) : resolve(val));
-    });
+    })
+    .catch(e => {throw new Error(e)});
     watcher.on('changed', async (file) => {
       const relPath = file.substr(path.join(__dirname, '../src/content/').length);
-      await ncp(`src/content/${relPath}`, `build/content/${relPath}`);
+      await ncp(`src/content/${relPath}`, `build/content/${relPath}`)
+      .catch(e => {throw new Error(e)});
     });
   }
 }
