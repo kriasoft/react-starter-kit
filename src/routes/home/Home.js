@@ -17,7 +17,7 @@ function Home({ news }) {
       <div className={s.container}>
         <h1 className={s.title}>React.js News</h1>
         <ul className={s.news}>
-          {news.map((item, index) => (
+          {(news || []).map((item, index) => (
             <li key={index} className={s.newsItem}>
               <a href={item.link} className={s.newsTitle}>{item.title}</a>
               <span
