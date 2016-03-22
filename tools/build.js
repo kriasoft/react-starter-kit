@@ -11,6 +11,7 @@ import run from './run';
 import clean from './clean';
 import copy from './copy';
 import bundle from './bundle';
+import cleanPackage from './cleanPackage';
 
 /**
  * Compiles the project from source files into a distributable
@@ -19,6 +20,7 @@ import bundle from './bundle';
 async function build() {
   await run(clean);
   await run(copy);
+  await run(cleanPackage);
   await run(bundle);
 }
 
