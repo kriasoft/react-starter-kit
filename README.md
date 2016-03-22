@@ -60,8 +60,7 @@ visit our sponsors:
 │   ├── /runServer.js           # Launches (or restarts) Node.js server
 │   ├── /start.js               # Launches the development web server with "live reload"
 │   └── /webpack.config.js      # Configurations for client-side and server-side bundles
-│── package.json                # The list of 3rd party libraries and utilities
-└── preprocessor.js             # ES6 transpiler settings for Jest
+└── package.json                # The list of 3rd party libraries and utilities
 ```
 
 ### Related Projects
