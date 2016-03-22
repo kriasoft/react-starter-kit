@@ -9,7 +9,6 @@
 
 import path from 'path';
 import gaze from 'gaze';
-import replace from 'replace';
 import Promise from 'bluebird';
 
 /**
@@ -22,16 +21,7 @@ async function copy({ watch } = {}) {
   await Promise.all([
     ncp('src/public', 'build/public'),
     ncp('src/content', 'build/content'),
-    ncp('package.json', 'build/package.json'),
   ]);
-
-  replace({
-    regex: '"start".*',
-    replacement: '"start": "node server.js"',
-    paths: ['build/package.json'],
-    recursive: false,
-    silent: false,
-  });
 
   if (watch) {
     const watcher = await new Promise((resolve, reject) => {
