@@ -24,7 +24,7 @@ async function copy({ watch } = {}) {
     ncp('src/public', 'build/public'),
     ncp('src/content', 'build/content'),
   ]);
-  
+
   await fs.writeFile('./build/package.json', JSON.stringify({
     private: true,
     engines: pkg.engines,
