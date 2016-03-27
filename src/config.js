@@ -13,7 +13,7 @@
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
 
-export const databaseUrl = process.env.DATABASE_URL || 'postgresql://demo:Lqk62xg6TBm5UhfR@demo.ctbl5itzitm4.us-east-1.rds.amazonaws.com:5432/membership01';
+export const databaseUrl = process.env.DATABASE_URL || 'sqlite:database.sqlite';
 
 export const analytics = {
 
