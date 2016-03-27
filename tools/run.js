@@ -14,11 +14,15 @@ function format(time) {
 function run(fn, options) {
   const task = typeof fn.default === 'undefined' ? fn : fn.default;
   const start = new Date();
-  console.log(`[${format(start)}] Starting '${task.name}'...`);
+  console.log(
+    `[${format(start)}] Starting '${task.name}${options ? `(${options})` : ''}'...`
+  );
   return task(options).then(() => {
     const end = new Date();
     const time = end.getTime() - start.getTime();
-    console.log(`[${format(end)}] Finished '${task.name}' after ${time} ms`);
+    console.log(
+      `[${format(end)}] Finished '${task.name}${options ? `(${options})` : ''}' after ${time} ms`
+    );
   });
 }
 
