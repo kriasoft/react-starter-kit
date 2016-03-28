@@ -59,7 +59,7 @@ passport.use(new FacebookStrategy({
           UPDATE user_profile SET
             display_name = COALESCE(NULLIF(display_name, ''), $2),
             gender       = COALESCE(NULLIF(gender, ''), $3),
-            picture      = COALESCE(NULLIF(picture, ''), $4),
+            picture      = COALESCE(NULLIF(picture, ''), $4)
           WHERE user_id = $1;`,
           req.user.id, profile.displayName, profile._json.gender,
           `https://graph.facebook.com/${profile.id}/picture?type=large`);
