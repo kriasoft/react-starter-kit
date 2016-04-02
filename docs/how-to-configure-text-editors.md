@@ -25,6 +25,8 @@ Enable **CSSComb** by installing CSSReorder plug-in
 
 ![csscomb-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-csscomb.png)
 
+**If you have trouble with autoreloading** try to disable "safe write" in `File > Settings > System Settings > Use "safe write" (save chnages to a temporary file first)`
+
 ### Atom
 
 Install atom packages
