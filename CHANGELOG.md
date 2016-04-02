@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Move Babel, ESLint and JSCS configurations to `pacakge.json` [#497](https://github.com/kriasoft/react-starter-kit/pull/497)
 - Convert `Feedback`, `Footer`, `Header`, and `Navigation` to functional stateless components
 - Move page / screen components into the `src/routes` folder along with the routing information for them [BREAKING CHANGE]. [6553936](https://github.com/kriasoft/react-starter-kit/commit/6553936e693e24a8ac6178f4962af15e0ea87dfd)
 
