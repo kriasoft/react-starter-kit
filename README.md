@@ -56,6 +56,7 @@ visit our sponsors:
 │   ├── /clean.js               # Cleans up the output (build) folder
 │   ├── /copy.js                # Copies static files to output (build) folder
 │   ├── /deploy.js              # Deploys your web application
+│   ├── /generate.js            # Generate initial structure to componenet and route
 │   ├── /run.js                 # Helper function for running build automation tasks
 │   ├── /runServer.js           # Launches (or restarts) Node.js server
 │   ├── /start.js               # Launches the development web server with "live reload"
