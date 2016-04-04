@@ -7,11 +7,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import fs from '../lib/fs';
+import fs from './lib/fs';
 
 const type = process.argv[3];
 const name = process.argv[4];
-const stateless = process.argb.includes('--stateless');
+const stateless = process.argv.includes('--stateless');
 
 function lowercaseFirstLetter(string) {
   return string.charAt(0).toLowerCase() + string.slice(1);
@@ -115,17 +115,17 @@ const templates = {
       {
         name: `${name}.js`,
         template: {
-          default: componentTemplate,
-          stateless: componentStatelessTemplate,
+          default: componentTemplate.join('\n'),
+          stateless: componentStatelessTemplate.join('\n'),
         },
       },
       {
         name: `${name}.scss`,
-        template: componentStyleTemplate,
+        template: componentStyleTemplate.join('\n'),
       },
       {
         name: 'package.json',
-        template: componentPackageTemplate,
+        template: componentPackageTemplate.join('\n'),
       },
     ],
   },
@@ -135,17 +135,17 @@ const templates = {
       {
         name: `${name}.js`,
         template: {
-          default: componentTemplate,
-          stateless: componentStatelessTemplate,
+          default: componentTemplate.join('\n'),
+          stateless: componentStatelessTemplate.join('\n'),
         },
       },
       {
         name: `${name}.scss`,
-        template: routeStyleTemplate,
+        template: routeStyleTemplate.join('\n'),
       },
       {
         name: 'index.js',
-        template: routeIndexTemplate,
+        template: routeIndexTemplate.join('\n'),
       },
     ],
   },
