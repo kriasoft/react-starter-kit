@@ -34,6 +34,19 @@ const GLOBALS = {
 // client-side (client.js) and server-side (server.js) bundles
 // -----------------------------------------------------------------------------
 
+let babelLoaderPlugins = [
+  'transform-runtime',
+];
+
+if (!DEBUG) {
+  babelLoaderPlugins = [
+    ...babelLoaderPlugins,
+    'transform-react-remove-prop-types',
+    'transform-react-constant-elements',
+    'transform-react-inline-elements',
+  ];
+}
+
 const config = {
   context: path.resolve(__dirname, '../src'),
 
@@ -63,9 +76,7 @@ const config = {
             'es2015',
             'stage-0',
           ],
-          plugins: [
-            'transform-runtime',
-          ],
+          plugins: babelLoaderPlugins,
         },
       },
       {
