@@ -31,12 +31,7 @@ async function start() {
     // to enable Hot Module Replacement (HMR) and React Transform
     webpackConfig.filter(x => x.target !== 'node').forEach(config => {
       /* eslint-disable no-param-reassign */
-      if (Array.isArray(config.entry)) {
-        config.entry.unshift('webpack-hot-middleware/client');
-      } else {
-        config.entry = ['webpack-hot-middleware/client', config.entry];
-      }
-
+      config.entry = ['webpack-hot-middleware/client'].concat(config.entry);
       config.output.filename = config.output.filename.replace('[chunkhash]', '[hash]');
       config.output.chunkFilename = config.output.chunkFilename.replace('[chunkhash]', '[hash]');
       config.plugins.push(new webpack.HotModuleReplacementPlugin());
