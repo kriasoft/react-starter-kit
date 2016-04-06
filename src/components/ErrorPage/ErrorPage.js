@@ -11,7 +11,8 @@ import React, { Component, PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ErrorPage.scss';
 
-const title = 'Error';
+let title = 'Error';
+let content = 'Sorry, a critical error occurred on this page.';
 
 class ErrorPage extends Component {
 
@@ -20,15 +21,24 @@ class ErrorPage extends Component {
     onPageNotFound: PropTypes.func.isRequired,
   };
 
+  static propTypes = {
+    statusCode: PropTypes.number,
+  };
+
   componentWillMount() {
     this.context.onSetTitle(title);
   }
 
   render() {
+    if (this.props.statusCode === 404) {
+      title = 'Page Not Found';
+      content = 'Sorry, the page you were trying to view does not exist.';
+    }
+
     return (
       <div>
         <h1>{title}</h1>
-        <p>Sorry, an critical error occurred on this page.</p>
+        <p>{content}</p>
       </div>
     );
   }
