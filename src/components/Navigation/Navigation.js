@@ -12,17 +12,21 @@ import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.scss';
 import Link from '../Link';
+import pages from './pages';
 
-function Navigation({ className }) {
+function Navigation() {
   return (
-    <div className={cx(s.root, className)} role="navigation">
-      <Link className={s.link} to="/about">About</Link>
-      <Link className={s.link} to="/contact">Contact</Link>
-      <span className={s.spacer}> | </span>
-      <Link className={s.link} to="/login">Log in</Link>
-      <span className={s.spacer}>or</span>
-      <Link className={cx(s.link, s.highlight)} to="/register">Sign up</Link>
-    </div>
+    <nav className={s.navigation} role="navigation">
+      {pages.map((page, i) => {
+        let linkStyle = {
+          animationDelay: `${4 + i*1}s`
+        };
+
+        return (
+          <Link className={s.link} key={i} to={page.route} style={linkStyle}>{page.name}</Link>
+        )
+      })}
+    </nav>
   );
 }
 

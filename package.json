@@ -5,6 +5,7 @@
     "npm": ">=3.3 <4"
   },
   "dependencies": {
+    "animate.css": "^3.5.1",
     "babel-polyfill": "6.7.4",
     "babel-runtime": "6.6.1",
     "bluebird": "3.3.4",
@@ -33,6 +34,7 @@
     "pg": "4.5.1",
     "pretty-error": "2.0.0",
     "react": "15.0.0-rc.2",
+    "react-bootstrap": "^0.28.5",
     "react-dom": "15.0.0-rc.2",
     "react-routing": "0.0.7",
     "source-map-support": "0.4.0",
@@ -111,12 +113,18 @@
     "rules": {
       "no-confusing-arrow": 0,
       "react/jsx-quotes": 0,
-      "jsx-quotes": [2, "prefer-double"]
+      "jsx-quotes": [
+        2,
+        "prefer-double"
+      ]
     }
   },
   "jscsConfig": {
     "preset": "airbnb",
-    "excludeFiles": ["build/**", "node_modules/**"],
+    "excludeFiles": [
+      "build/**",
+      "node_modules/**"
+    ],
     "disallowSpacesInsideTemplateStringPlaceholders": null
   },
   "jest": {

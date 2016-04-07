@@ -1,45 +1,24 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
+@import '../../styles/variables.scss';
+@import '../../../node_modules/animate.css/animate.css';
 
-.root {
-  margin: 0;
+.navigation {
 }
 
 .link {
-  display: inline-block;
-  padding: 3px 8px;
+  display: block;
+  color: #333;
+  position: relative;
   text-decoration: none;
-  font-size: 1.125em; /* ~18px */
+  transition: color .25s;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .7);
+  text-align: center;
+  padding: 15px 0;
+  opacity: 0;
+  animation: fadeIn 2.5s ease-in-out forwards;
+
+  &:hover {
+    color: $blue;
+    text-decoration: none;
+  }
 }
 
-.link,
-.link:active,
-.link:visited {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.link:hover {
-  color: rgba(255, 255, 255, 1);
-}
-
-.highlight {
-  margin-right: 8px;
-  margin-left: 8px;
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.15);
-  color: #fff;
-}
-
-.highlight:hover {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.spacer {
-  color: rgba(255, 255, 255, 0.3);
-}
