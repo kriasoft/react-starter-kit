@@ -14,8 +14,8 @@ import s from './ContentPage.scss';
 class ContentPage extends Component {
 
   static propTypes = {
-    path: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
+    path: PropTypes.string,
+    content: PropTypes.string,
     title: PropTypes.string,
   };
 
