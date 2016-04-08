@@ -10,16 +10,16 @@
 import 'babel-polyfill';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
-import Router from './routes';
+import { match } from 'universal-router';
+import routes from './routes';
 import Location from './core/Location';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
 
-let cssContainer = document.getElementById('css');
-const appContainer = document.getElementById('app');
+const container = document.getElementById('app');
 const context = {
   insertCss: styles => styles._insertCss(),
-  onSetTitle: value => (document.title = value),
-  onSetMeta: (name, content) => {
+  setTitle: value => (document.title = value),
+  setMeta: (name, content) => {
     // Remove and create a new <meta /> tag in order to make it work
     // with bookmarks in Safari
     const elements = document.getElementsByTagName('meta');
@@ -37,49 +37,61 @@ const context = {
   },
 };
 
-// Google Analytics tracking. Don't send 'pageview' event after the first
-// rendering, as it was already sent by the Html component.
-let trackPageview = () => (trackPageview = () => window.ga('send', 'pageview'));
+// Restore the scroll position if it was saved into the state
+function restoreScrollPosition(state) {
+  if (state && state.scrollY !== undefined) {
+    window.scrollTo(state.scrollX, state.scrollY);
+  } else {
+    window.scrollTo(0, 0);
+  }
+}
 
-function render(state) {
-  Router.dispatch(state, (newState, component) => {
-    ReactDOM.render(component, appContainer, () => {
-      // Restore the scroll position if it was saved into the state
-      if (state.scrollY !== undefined) {
-        window.scrollTo(state.scrollX, state.scrollY);
-      } else {
-        window.scrollTo(0, 0);
-      }
+let renderComplete = (state, callback) => {
+  restoreScrollPosition(state);
+  const elem = document.getElementById('css');
+  if (elem) elem.parentNode.removeChild(elem);
+  callback(true);
+  renderComplete = (s) => {
+    restoreScrollPosition(s);
 
-      trackPageview();
+    // Google Analytics tracking. Don't send 'pageview' event after
+    // the initial rendering, as it was already sent
+    window.ga('send', 'pageview');
 
-      // Remove the pre-rendered CSS because it's no longer used
-      // after the React app is launched
-      if (cssContainer) {
-        cssContainer.parentNode.removeChild(cssContainer);
-        cssContainer = null;
-      }
-    });
+    callback(true);
+  };
+};
+
+function render(state, component) {
+  return new Promise((resolve, reject) => {
+    try {
+      ReactDOM.render(
+        component,
+        container,
+        renderComplete.bind(undefined, state, resolve)
+      );
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
 function run() {
   let currentLocation = null;
-  let currentState = null;
 
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
   // Re-render the app when window.location changes
-  const unlisten = Location.listen(location => {
+  const removeLocationListener = Location.listen(location => {
     currentLocation = location;
-    currentState = Object.assign({}, location.state, {
+    match(routes, {
       path: location.pathname,
       query: location.query,
       state: location.state,
       context,
-    });
-    render(currentState);
+      render: render.bind(undefined, location.state),
+    }).catch(err => console.error(err)); // eslint-disable-line no-console
   });
 
   // Save the page scroll position into the current location's state
@@ -101,7 +113,7 @@ function run() {
   addEventListener(window, 'scroll', setPageOffset);
   addEventListener(window, 'pagehide', () => {
     removeEventListener(window, 'scroll', setPageOffset);
-    unlisten();
+    removeLocationListener();
   });
 }
 

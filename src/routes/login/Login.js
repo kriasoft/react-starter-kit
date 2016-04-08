@@ -11,7 +11,10 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.scss';
 
-function Login({ title }) {
+const title = 'Log In';
+
+function Login(props, context) {
+  context.setTitle(title);
   return (
     <div className={s.root}>
       <div className={s.container}>
@@ -112,6 +115,6 @@ function Login({ title }) {
   );
 }
 
-Login.propTypes = { title: PropTypes.string.isRequired };
+Login.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default withStyles(Login, s);

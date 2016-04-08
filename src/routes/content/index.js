@@ -8,14 +8,14 @@
  */
 
 import React from 'react';
-import Home from './Home';
+import Content from './Content';
 import fetch from '../../core/fetch';
 
 export default {
 
-  path: '/',
+  path: '*',
 
-  async action() {
+  async action({ path }) { // eslint-disable-line react/prop-types
     const resp = await fetch('/graphql', {
       method: 'post',
       headers: {
@@ -23,13 +23,14 @@ export default {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: '{news{title,link,contentSnippet}}',
+        query: `{content(path:"${path}"){path,title,content,component}}`,
       }),
       credentials: 'include',
     });
+    if (resp.status !== 200) throw new Error(resp.statusText);
     const { data } = await resp.json();
-    if (!data || !data.news) throw new Error('Failed to load the news feed.');
-    return <Home news={data.news} />;
+    if (!data || !data.content) return undefined;
+    return <Content {...data.content} />;
   },
 
 };

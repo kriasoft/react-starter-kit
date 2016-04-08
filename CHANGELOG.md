@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Rename `onSetTitle`, `onSetMeta` context variables to `setTitle`, `setMeta`
+- Move `Content` component to `src/routes/content`
+- Move `ErrorPage` component to `src/routes/error`
+- Move the list of top-level routes to `src/routes/index`
+- Update routing to use `universal-router` library
 - Move Babel, ESLint and JSCS configurations to `package.json` [#497](https://github.com/kriasoft/react-starter-kit/pull/497)
 - Convert `Feedback`, `Footer`, `Header`, and `Navigation` to functional stateless components
 - Move page / screen components into the `src/routes` folder along with the routing information for them [BREAKING CHANGE]. [6553936](https://github.com/kriasoft/react-starter-kit/commit/6553936e693e24a8ac6178f4962af15e0ea87dfd)
