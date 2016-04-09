@@ -9,9 +9,13 @@
 
 import React, { Component, PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './ContentPage.scss';
+import s from './Content.scss';
 
-class ContentPage extends Component {
+class Content extends Component {
+
+  static contextTypes = {
+    setTitle: PropTypes.func.isRequired,
+  };
 
   static propTypes = {
     path: PropTypes.string.isRequired,
@@ -19,12 +23,8 @@ class ContentPage extends Component {
     title: PropTypes.string,
   };
 
-  static contextTypes = {
-    onSetTitle: PropTypes.func.isRequired,
-  };
-
   componentWillMount() {
-    this.context.onSetTitle(this.props.title);
+    this.context.setTitle(this.props.title);
   }
 
   render() {
@@ -40,4 +40,4 @@ class ContentPage extends Component {
 
 }
 
-export default withStyles(ContentPage, s);
+export default withStyles(Content, s);
