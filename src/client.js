@@ -15,7 +15,6 @@ import routes from './routes';
 import Location from './core/Location';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
 
-const container = document.getElementById('app');
 const context = {
   insertCss: styles => styles._insertCss(),
   setTitle: value => (document.title = value),
@@ -47,7 +46,6 @@ function restoreScrollPosition(state) {
 }
 
 let renderComplete = (state, callback) => {
-  restoreScrollPosition(state);
   const elem = document.getElementById('css');
   if (elem) elem.parentNode.removeChild(elem);
   callback(true);
@@ -62,7 +60,7 @@ let renderComplete = (state, callback) => {
   };
 };
 
-function render(state, component) {
+function render(container, state, component) {
   return new Promise((resolve, reject) => {
     try {
       ReactDOM.render(
@@ -78,6 +76,7 @@ function render(state, component) {
 
 function run() {
   let currentLocation = null;
+  const container = document.getElementById('app');
 
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
@@ -90,7 +89,7 @@ function run() {
       query: location.query,
       state: location.state,
       context,
-      render: render.bind(undefined, location.state),
+      render: render.bind(undefined, container, location.state),
     }).catch(err => console.error(err)); // eslint-disable-line no-console
   });
 
