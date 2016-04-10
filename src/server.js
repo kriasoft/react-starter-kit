@@ -19,6 +19,7 @@ import ReactDOM from 'react-dom/server';
 import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
+import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets';
@@ -135,7 +136,9 @@ server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 //
 // Launch the server
 // -----------------------------------------------------------------------------
-server.listen(port, () => {
-  /* eslint-disable no-console */
-  console.log(`The server is running at http://localhost:${port}/`);
+models.sync().then(() => {
+  server.listen(port, () => {
+    /* eslint-disable no-console */
+    console.log(`The server is running at http://localhost:${port}/`);
+  });
 });
