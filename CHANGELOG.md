@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Rename `server` variable in `server.js` to `app`
+- Integrate [Sequelize](http://docs.sequelizejs.com/) to make the project compatible with different types of databases
 - Rename `onSetTitle`, `onSetMeta` context variables to `setTitle`, `setMeta`
 - Move `Content` component to `src/routes/content`
 - Move `ErrorPage` component to `src/routes/error`
