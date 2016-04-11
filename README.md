@@ -5,7 +5,7 @@
 > [Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
 > [React](https://facebook.github.io/react/). Containing modern web development
 > tools such as [Webpack](http://webpack.github.io/), [Babel](http://babeljs.io/)
-> and [BrowserSync](http://www.browsersync.io/). Helping you to stay productive
+> and [Browsersync](http://www.browsersync.io/). Helping you to stay productive
 > following the best practices. A solid starting point for both professionals
 > and newcomers to the industry.
 
@@ -26,7 +26,9 @@ visit our sponsors:<br><br>
 
 ### Backers
 
-♥ Universal Router? Help us keep it alive by [donating funds](https://salt.bountysource.com/teams/react-starter-kit) to cover project expenses!
+♥ React Starter Kit? Help us keep it alive by donating funds to cover project
+expenses via [Bountysource](https://salt.bountysource.com/teams/react-starter-kit)
+or [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RETHAJHV3T972)!
 
 <a href="http://www.nekst.me/" target="_blank" title="lehneres">
   <img src="https://github.com/lehneres.png?size=64" width="64" height="64" alt="lehneres">
