@@ -12,7 +12,7 @@ import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import { match } from 'universal-router';
 import routes from './routes';
-import Location from './core/Location';
+import history from './core/history';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
 
 const context = {
@@ -82,7 +82,7 @@ function run() {
   FastClick.attach(document.body);
 
   // Re-render the app when window.location changes
-  const removeLocationListener = Location.listen(location => {
+  const removeHistoryListener = history.listen(location => {
     currentLocation = location;
     match(routes, {
       path: location.pathname,
@@ -112,7 +112,7 @@ function run() {
   addEventListener(window, 'scroll', setPageOffset);
   addEventListener(window, 'pagehide', () => {
     removeEventListener(window, 'scroll', setPageOffset);
-    removeLocationListener();
+    removeHistoryListener();
   });
 }
 

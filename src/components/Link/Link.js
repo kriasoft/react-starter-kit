@@ -8,7 +8,7 @@
  */
 
 import React, { Component, PropTypes } from 'react';
-import Location from '../../core/Location';
+import history from '../../core/history';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -44,9 +44,9 @@ class Link extends Component { // eslint-disable-line react/prefer-stateless-fun
 
     if (allowTransition) {
       if (this.props.to) {
-        Location.push(this.props.to);
+        history.push(this.props.to);
       } else {
-        Location.push({
+        history.push({
           pathname: event.currentTarget.pathname,
           search: event.currentTarget.search,
         });
@@ -56,7 +56,7 @@ class Link extends Component { // eslint-disable-line react/prefer-stateless-fun
 
   render() {
     const { to, ...props } = this.props; // eslint-disable-line no-use-before-define
-    return <a href={Location.createHref(to)} {...props} onClick={this.handleClick} />;
+    return <a href={history.createHref(to)} {...props} onClick={this.handleClick} />;
   }
 
 }
