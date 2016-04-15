@@ -82,7 +82,7 @@ function run() {
   FastClick.attach(document.body);
 
   // Re-render the app when window.location changes
-  const removeLocationListener = history.listen(location => {
+  const removeHistoryListener = history.listen(location => {
     currentLocation = location;
     match(routes, {
       path: location.pathname,
@@ -112,7 +112,7 @@ function run() {
   addEventListener(window, 'scroll', setPageOffset);
   addEventListener(window, 'pagehide', () => {
     removeEventListener(window, 'scroll', setPageOffset);
-    removeLocationListener();
+    removeHistoryListener();
   });
 }
 
