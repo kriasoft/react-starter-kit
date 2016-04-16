@@ -10,7 +10,7 @@ html(class="no-js", lang="")
     style#css!= css
   body
     #app!= body
-    script(src=entry)
+    script#source(src=entry, data-initial-state=state)
     script.
       window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
       ga('create','#{trackingId}','auto');ga('send','pageview')
