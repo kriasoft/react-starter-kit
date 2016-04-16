@@ -28,4 +28,4 @@ function Footer() {
   );
 }
 
-export default withStyles(Footer, s);
+export default withStyles(s)(Footer);

@@ -27,4 +27,4 @@ function Contact(props, context) {
 
 Contact.contextTypes = { setTitle: PropTypes.func.isRequired };
 
-export default withStyles(Contact, s);
+export default withStyles(s)(Contact);

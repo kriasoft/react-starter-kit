@@ -117,4 +117,4 @@ function Login(props, context) {
 
 Login.contextTypes = { setTitle: PropTypes.func.isRequired };
 
-export default withStyles(Login, s);
+export default withStyles(s)(Login);

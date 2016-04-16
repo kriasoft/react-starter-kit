@@ -1,6 +1,16 @@
 ## Getting Started
 
+### Requirements
+
+  * Mac OS X, Windows, or Linux
+  * [Node.js](https://nodejs.org/) v5.0 or newer
+  * `npm` v3.3 or newer (new to [npm](https://docs.npmjs.com/)?)
+  * `node-gyp` prerequisites mentioned [here](https://github.com/nodejs/node-gyp)
+  * Text editor or IDE pre-configured with React/JSX/Flow/ESlint ([learn more](./how-to-configure-text-editors.md))
+
 ### Directory Layout
+
+Before you start, take a moment to see how the project structure looks like:
 
 ```
 .
@@ -8,21 +18,17 @@
 ├── /docs/                      # Documentation files for the project
 ├── /node_modules/              # 3rd-party libraries and utilities
 ├── /src/                       # The source code of the application
-│   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
 │   ├── /components/            # React components
-│   ├── /constants/             # Constants (action types etc.)
-│   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
+│   ├── /content/               # Static pages like About Us, Privacy Policy etc.
 │   ├── /core/                  # Core framework and utility functions
-│   ├── /data/                  # GraphQL server schema
-│   ├── /decorators/            # Higher-order React components
+│   ├── /data/                  # GraphQL server schema and data models
 │   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /routes/                # Page/screen components along with the routing information
-│   ├── /stores/                # Stores contain the application state and logic
-│   ├── /views/                 # Express.js views for index and error pages
+│   ├── /views/                 # Express.js views (templates) for index and error pages
 │   ├── /client.js              # Client-side startup script
 │   ├── /config.js              # Global application settings
-│   ├── /routes.js              # Universal (isomorphic) application routes
 │   └── /server.js              # Server-side startup script
+├── /test/                      # Unit and end-to-end tests
 ├── /tools/                     # Build automation scripts and utilities
 │   ├── /lib/                   # Library for utility snippets
 │   ├── /build.js               # Builds the project from source to output (build) folder
@@ -37,13 +43,10 @@
 └── package.json                # The list of 3rd party libraries and utilities
 ```
 
-### Requirements
-
-  * Mac OS X, Windows, or Linux
-  * [Node.js](https://nodejs.org/) v5.0 or newer
-  * `npm` v3.3 or newer (new to [npm](https://docs.npmjs.com/)?)
-  * `node-gyp` prerequisites mentioned [here](https://github.com/nodejs/node-gyp)
-  * Text editor or IDE pre-configured with React/JSX/Flow/ESlint ([learn more](./how-to-configure-text-editors.md))
+**Note**: The current version of RSK does not contain a Flux implementation.
+It can be easily integrated with any Flux library of your choice. The most
+commonly used Flux libraries are [Flux](http://facebook.github.io/flux/),
+[Redux](http://redux.js.org/), and [Relay](http://facebook.github.io/relay/).
 
 ### Quick Start
 
@@ -122,12 +125,13 @@ $ npm run lint
 To launch unit tests:
 
 ```shell
-$ npm test
+$ npm test              # Run unit tests with Mocha
+$ npm run test:watch    # Launch unit test runner and start watching for changes
 ```
 
-Test any javascript module by creating a `__tests__/` directory where
-the file is. Append `-test.js` to the filename and
-[Jest](https://facebook.github.io/jest/) will do the rest.
+By default, [Mocha](https://mochajs.org/) test runner is looking for test files
+matching the `src/**/*.test.js` pattern. Take a look at `src/components/App/App.test.js`
+as an example.
 
 To deploy the app, run:
 

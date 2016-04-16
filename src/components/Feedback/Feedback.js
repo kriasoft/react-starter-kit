@@ -29,4 +29,4 @@ function Feedback() {
   );
 }
 
-export default withStyles(Feedback, s);
+export default withStyles(s)(Feedback);

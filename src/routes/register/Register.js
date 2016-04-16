@@ -27,4 +27,4 @@ function Register(props, context) {
 
 Register.contextTypes = { setTitle: PropTypes.func.isRequired };
 
-export default withStyles(Register, s);
+export default withStyles(s)(Register);

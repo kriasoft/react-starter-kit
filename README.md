@@ -9,7 +9,7 @@
 > following the best practices. A solid starting point for both professionals
 > and newcomers to the industry.
 
-See [homepage](https://www.reactstarterkit.com) &nbsp;|&nbsp;
+See [getting started](./docs/getting-started.md) &nbsp;|&nbsp;
 [demo](http://demo.reactstarterkit.com) &nbsp;|&nbsp;
 [docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs) &nbsp;|&nbsp;
 [to-do list](https://waffle.io/kriasoft/react-starter-kit) &nbsp;|&nbsp;
@@ -27,8 +27,8 @@ visit our sponsors:<br><br>
 ### Backers
 
 ♥ React Starter Kit? Help us keep it alive by donating funds to cover project
-expenses via [Bountysource](https://salt.bountysource.com/teams/react-starter-kit)
-or [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RETHAJHV3T972)!
+expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
+[PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RETHAJHV3T972)!
 
 <a href="http://www.nekst.me/" target="_blank" title="lehneres">
   <img src="https://github.com/lehneres.png?size=64" width="64" height="64" alt="lehneres">
@@ -48,15 +48,9 @@ or [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id
 <a href="http://zanehitchcox.com/" target="_blank" title="Zane Hitchcox">
   <img src="https://github.com/zwhitchcox.png?size=64" width="64" height="64" alt="Zane Hitchcox">
 </a>
-<a href="https://salt.bountysource.com/teams/react-starter-kit" target="_blank">
+<a href="https://opencollective.com/react-starter-kit" target="_blank">
   <img src="https://opencollective.com/static/images/become_backer.svg" width="64" height="64" alt="">
 </a>
-
-### Related Projects
-
-  * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
-  * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates static websites from React components
-  * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
 
 ### Learn More
 
@@ -65,10 +59,16 @@ or [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id
   * [React.js Questions on StackOverflow](http://stackoverflow.com/questions/tagged/reactjs)
   * [React.js Discussion Board](https://discuss.reactjs.org/)
   * [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
-  * [Jest - Painless Unit Testing](http://facebook.github.io/jest/)
-  * [Flow - A static type checker for JavaScript](http://flowtype.org/)
+  * [Enzyme — JavaScript Testing utilities for React](http://airbnb.io/enzyme/)
+  * [Flow — A static type checker for JavaScript](http://flowtype.org/)
   * [The Future of React](https://github.com/reactjs/react-future)
   * [Learn ES6](https://babeljs.io/docs/learn-es6/), [ES6 Features](https://github.com/lukehoban/es6features#readme)
+
+### Related Projects
+
+  * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
+  * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates static websites from React components
+  * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
 
 ### Support
 
