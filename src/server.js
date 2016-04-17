@@ -8,13 +8,16 @@
  */
 
 import 'babel-polyfill';
+import './serverIntlPolyfill';
 import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import requestLanguage from 'express-request-language';
 import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
+import React from 'react';
 import ReactDOM from 'react-dom/server';
 import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
@@ -23,10 +26,11 @@ import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets';
-import { port, auth, analytics } from './config';
+import { port, auth, analytics, locales } from './config';
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
-import provide from './components/provide';
+import Provide from './components/Provide';
+import { setLocale } from './actions/intl';
 
 const app = express();
 
@@ -42,6 +46,15 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 // -----------------------------------------------------------------------------
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
+app.use(requestLanguage({
+  languages: locales,
+  queryName: 'lang',
+  cookie: {
+    name: 'language',
+    options: { maxAge: 24 * 3600 * 1000 },
+    url: '/lang/{language}',
+  },
+}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -88,7 +101,15 @@ app.get('*', async (req, res, next) => {
     let css = [];
     let statusCode = 200;
     const template = require('./views/index.jade');
-    const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
+    const locale = req.language;
+    const data = {
+      lang: locale,
+      title: '',
+      description: '',
+      css: '',
+      body: '',
+      entry: assets.main.js,
+    };
 
     if (process.env.NODE_ENV === 'production') {
       data.trackingId = analytics.google.trackingId;
@@ -99,6 +120,15 @@ app.get('*', async (req, res, next) => {
     store.dispatch(setRuntimeVariable({
       name: 'initialNow',
       value: Date.now(),
+    }));
+
+    store.dispatch(setRuntimeVariable({
+      name: 'availableLocales',
+      value: locales,
+    }));
+
+    await store.dispatch(setLocale({
+      locale,
     }));
 
     await match(routes, {
@@ -115,14 +145,14 @@ app.get('*', async (req, res, next) => {
         statusCode = status;
 
         // Fire all componentWill... hooks
-        data.body = ReactDOM.renderToString(provide(store, component));
+        data.body = ReactDOM.renderToString(<Provide store={store}>{component}</Provide>);
 
-        // If you have async actions, wait for store stabilizes here.
+        // If you have async actions, wait for store when stabilizes here.
         // This may be asynchronous loop if you have complicated structure.
         // Then render again
 
-        // If store has not changes, you do not need render again!
-        // data.body = ReactDOM.renderToString(provide(store, component));
+        // If store has no changes, you do not need render again!
+        // data.body = ReactDOM.renderToString(<Provide store={store}>{component}</Provide>);
 
         // It is important to have rendered output and state in sync,
         // otherwise React will write error to console when mounting on client
