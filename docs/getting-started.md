@@ -95,7 +95,7 @@ You can use `--release` command line argument to check how your app works
 in release (production) mode:
 
 ```shell
-$ npm start -- --release
+$ npm start --release
 ```
 
 ### How to Build, Test, Deploy
