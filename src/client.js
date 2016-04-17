@@ -17,6 +17,13 @@ import configureStore from './store/configureStore';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
 import provide from './components/provide';
 
+import { addLocaleData } from 'react-intl';
+
+import en from 'react-intl/locale-data/en';
+import cs from 'react-intl/locale-data/cs';
+
+[en, cs].forEach(addLocaleData);
+
 const context = {
   store: null,
   insertCss: styles => styles._insertCss(),
