@@ -1,5 +1,5 @@
 ## React Starter Kit — "isomorphic" web app boilerplate
-
+[![OpenCollective](https://opencollective.com/react-starter-kit/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/react-starter-kit/sponsors/badge.svg)](#sponsors)
 > [React Starter Kit](https://www.reactstarterkit.com) is an opinionated
 > boilerplate for web development built on top of [Node.js](https://nodejs.org/),
 > [Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
@@ -48,9 +48,72 @@ expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
 <a href="http://zanehitchcox.com/" target="_blank" title="Zane Hitchcox">
   <img src="https://github.com/zwhitchcox.png?size=64" width="64" height="64" alt="Zane Hitchcox">
 </a>
-<a href="https://opencollective.com/react-starter-kit" target="_blank">
-  <img src="https://opencollective.com/static/images/become_backer.svg" width="64" height="64" alt="">
-</a>
+<a href="https://opencollective.com/react-starter-kit/backer/0/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/0/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/1/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/1/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/2/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/2/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/3/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/3/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/4/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/4/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/5/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/5/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/6/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/6/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/7/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/7/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/8/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/8/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/9/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/9/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/10/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/10/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/11/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/11/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/12/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/12/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/13/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/13/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/14/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/14/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/15/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/15/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/16/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/16/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/17/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/17/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/18/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/18/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/19/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/19/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/20/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/20/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/21/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/21/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/22/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/22/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/23/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/23/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/24/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/24/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/25/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/25/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/26/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/26/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/27/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/27/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/28/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/28/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/backer/29/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/backer/29/avatar"></a>
+
+### Sponsors
+
+Become a sponsor and get your logo here with a link to your site. [[Become a sponsor](https://opencollective.com/react-starter-kit#sponsor)]
+
+<a href="https://opencollective.com/react-starter-kit/sponsor/0/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/0/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/1/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/1/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/2/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/2/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/3/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/3/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/4/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/4/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/5/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/5/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/6/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/6/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/7/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/7/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/8/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/8/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/9/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/9/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/10/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/10/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/11/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/11/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/12/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/12/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/13/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/13/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/14/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/14/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/15/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/15/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/16/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/16/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/17/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/17/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/18/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/18/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/19/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/19/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/20/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/20/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/21/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/21/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/22/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/22/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/23/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/23/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/24/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/24/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/25/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/25/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/26/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/26/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/27/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/27/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/28/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/28/avatar"></a>
+<a href="https://opencollective.com/react-starter-kit/sponsor/29/website" target="_blank"><img src="https://opencollective.com/react-starter-kit/sponsor/29/avatar"></a>
+
 
 ### Learn More
 
@@ -84,6 +147,7 @@ Copyright © 2014-2016 Kriasoft, LLC. This source code is licensed under the MIT
 license found in the [LICENSE.txt](https://github.com/kriasoft/react-starter-kit/blob/master/LICENSE.txt)
 file. The documentation to the project is licensed under the
 [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license.
+
 
 ---
 Made with ♥ by Konstantin Tarkus ([@koistya](https://twitter.com/koistya)) and [contributors](https://github.com/kriasoft/react-starter-kit/graphs/contributors)
