@@ -26,6 +26,7 @@ import assets from './assets';
 import { port, auth, analytics } from './config';
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
+import provide from './components/provide';
 
 const app = express();
 
@@ -112,8 +113,21 @@ app.get('*', async (req, res, next) => {
       render(component, status = 200) {
         css = [];
         statusCode = status;
+
+        // Fire all componentWill... hooks
+        data.body = ReactDOM.renderToString(provide(store, component));
+
+        // If you have async actions, wait for store stabilizes here.
+        // This may be asynchronous loop if you have complicated structure.
+        // Then render again
+
+        // If store has not changes, you do not need render again!
+        // data.body = ReactDOM.renderToString(provide(store, component));
+
+        // It is important to have rendered output and state in sync,
+        // otherwise React will write error to console when mounting on client
         data.state = JSON.stringify(store.getState());
-        data.body = ReactDOM.renderToString(component);
+
         data.css = css.join('');
         return true;
       },
