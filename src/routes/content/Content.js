@@ -40,4 +40,4 @@ class Content extends Component {
 
 }
 
-export default withStyles(Content, s);
+export default withStyles(s)(Content);

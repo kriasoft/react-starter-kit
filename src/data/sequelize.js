@@ -7,8 +7,13 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import keyMirror from 'fbjs/lib/keyMirror';
+import Sequelize from 'sequelize';
+import { databaseUrl } from '../config';
 
-export default keyMirror({
-
+const sequelize = new Sequelize(databaseUrl, {
+  define: {
+    freezeTableName: true,
+  },
 });
+
+export default sequelize;

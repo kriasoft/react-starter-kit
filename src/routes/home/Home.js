@@ -44,4 +44,4 @@ Home.propTypes = {
 };
 Home.contextTypes = { setTitle: PropTypes.func.isRequired };
 
-export default withStyles(Home, s);
+export default withStyles(s)(Home);

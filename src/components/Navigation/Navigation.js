@@ -30,4 +30,4 @@ Navigation.propTypes = {
   className: PropTypes.string,
 };
 
-export default withStyles(Navigation, s);
+export default withStyles(s)(Navigation);

@@ -31,4 +31,4 @@ function Header() {
   );
 }
 
-export default withStyles(Header, s);
+export default withStyles(s)(Header);

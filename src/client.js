@@ -12,10 +12,12 @@ import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import { match } from 'universal-router';
 import routes from './routes';
-import Location from './core/Location';
+import history from './core/history';
+import configureStore from './store/configureStore';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
 
 const context = {
+  store: null,
   insertCss: styles => styles._insertCss(),
   setTitle: value => (document.title = value),
   setMeta: (name, content) => {
@@ -77,12 +79,19 @@ function render(container, state, component) {
 function run() {
   let currentLocation = null;
   const container = document.getElementById('app');
+  const initialState = JSON.parse(
+    document.
+      getElementById('source').
+      getAttribute('data-initial-state')
+  );
 
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
+  context.store = configureStore(initialState);
+
   // Re-render the app when window.location changes
-  const removeLocationListener = Location.listen(location => {
+  const removeHistoryListener = history.listen(location => {
     currentLocation = location;
     match(routes, {
       path: location.pathname,
@@ -112,7 +121,7 @@ function run() {
   addEventListener(window, 'scroll', setPageOffset);
   addEventListener(window, 'pagehide', () => {
     removeEventListener(window, 'scroll', setPageOffset);
-    removeLocationListener();
+    removeHistoryListener();
   });
 }
 
