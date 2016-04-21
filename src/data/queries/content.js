@@ -43,8 +43,7 @@ const parseContent = (path, fileContent, extension) => {
     default:
       return null;
   }
-  const smth = Object.assign({ path, content: htmlContent }, fmContent.attributes);
-  return smth;
+  return Object.assign({ path, content: htmlContent }, fmContent.attributes);
 };
 
 const readFile = Promise.promisify(fs.readFile);
