@@ -13,13 +13,11 @@ import s from './App.scss';
 import Header from '../Header';
 import Feedback from '../Feedback';
 import Footer from '../Footer';
-import { Provider } from 'react-redux';
 
 class App extends Component {
 
   static propTypes = {
     context: PropTypes.shape({
-      store: PropTypes.object.isRequired,
       insertCss: PropTypes.func,
       setTitle: PropTypes.func,
       setMeta: PropTypes.func,
@@ -57,16 +55,13 @@ class App extends Component {
       return this.props.children;
     }
 
-    const store = this.props.context.store;
     return (
-      <Provider store={store}>
-        <div>
-          <Header />
-          {this.props.children}
-          <Feedback />
-          <Footer />
-        </div>
-      </Provider>
+      <div>
+        <Header />
+        {this.props.children}
+        <Feedback />
+        <Footer />
+      </div>
     );
   }
 
