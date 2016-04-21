@@ -14,6 +14,7 @@ import AssetsPlugin from 'assets-webpack-plugin';
 
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
+const INTL_REQUIRE_DESCRIPTIONS = true;
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
@@ -69,6 +70,13 @@ const config = {
               'transform-react-remove-prop-types',
               'transform-react-constant-elements',
               'transform-react-inline-elements',
+            ],
+
+            // https://github.com/yahoo/babel-plugin-react-intl#options
+            ['react-intl',
+              {
+                enforceDescriptions: INTL_REQUIRE_DESCRIPTIONS,
+              },
             ],
           ],
         },

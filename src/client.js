@@ -15,6 +15,14 @@ import routes from './routes';
 import history from './core/history';
 import configureStore from './store/configureStore';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
+import provide from './components/provide';
+
+import { addLocaleData } from 'react-intl';
+
+import en from 'react-intl/locale-data/en';
+import cs from 'react-intl/locale-data/cs';
+
+[en, cs].forEach(addLocaleData);
 
 const context = {
   store: null,
@@ -62,11 +70,15 @@ let renderComplete = (state, callback) => {
   };
 };
 
-function render(container, state, component) {
+function render(container, state, store, component) {
   return new Promise((resolve, reject) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('React rendering. State:', store.getState()); // eslint-disable-line no-console
+    }
+
     try {
       ReactDOM.render(
-        component,
+        provide(store, component),
         container,
         renderComplete.bind(undefined, state, resolve)
       );
@@ -88,7 +100,8 @@ function run() {
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
-  context.store = configureStore(initialState);
+  const store = configureStore(initialState);
+  context.store = store;
 
   // Re-render the app when window.location changes
   const removeHistoryListener = history.listen(location => {
@@ -98,7 +111,7 @@ function run() {
       query: location.query,
       state: location.state,
       context,
-      render: render.bind(undefined, container, location.state),
+      render: render.bind(undefined, container, location.state, store),
     }).catch(err => console.error(err)); // eslint-disable-line no-console
   });
 

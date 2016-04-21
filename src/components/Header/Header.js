@@ -8,10 +8,29 @@
  */
 
 import React from 'react';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Header.scss';
 import Link from '../Link';
 import Navigation from '../Navigation';
+
+const messages = defineMessages({
+  brand: {
+    id: 'header.brand',
+    defaultMessage: 'Your Company Brand',
+    description: 'Brand name displayed in header',
+  },
+  bannerTitle: {
+    id: 'header.banner.title',
+    defaultMessage: 'React',
+    description: 'Title in page header',
+  },
+  bannerDesc: {
+    id: 'header.banner.desc',
+    defaultMessage: 'Complex web apps made easy',
+    description: 'Description in header',
+  },
+});
 
 function Header() {
   return (
@@ -20,15 +39,19 @@ function Header() {
         <Navigation className={s.nav} />
         <Link className={s.brand} to="/">
           <img src={require('./logo-small.png')} width="38" height="38" alt="React" />
-          <span className={s.brandTxt}>Your Company</span>
+          <span className={s.brandTxt}>
+            <FormattedMessage {...messages.brand} />
+          </span>
         </Link>
         <div className={s.banner}>
-          <h1 className={s.bannerTitle}>React</h1>
-          <p className={s.bannerDesc}>Complex web apps made easy</p>
+          <h1 className={s.bannerTitle}>
+            <FormattedMessage {...messages.bannerTitle} />
+          </h1>
+          <FormattedMessage tagName="p" {...messages.bannerDesc} />
         </div>
       </div>
     </div>
   );
 }
 
-export default withStyles(s)(Header);
+export default injectIntl(withStyles(s)(Header));
