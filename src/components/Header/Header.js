@@ -9,8 +9,8 @@
 
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { Link } from 'universal-router/react';
 import s from './Header.scss';
-import Link from '../Link';
 import Navigation from '../Navigation';
 
 function Header() {

@@ -11,20 +11,15 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Register.scss';
 
-const title = 'New User Registration';
-
-function Register(props, context) {
-  context.setTitle(title);
+function Register() {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <h1>{title}</h1>
+        <h1>New User Registration</h1>
         <p>...</p>
       </div>
     </div>
   );
 }
-
-Register.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default withStyles(s)(Register);

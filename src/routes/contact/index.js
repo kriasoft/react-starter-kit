@@ -9,13 +9,17 @@
 
 import React from 'react';
 import Contact from './Contact';
+import Layout from '../../components/Layout';
 
 export default {
 
   path: '/contact',
 
   action() {
-    return <Contact />;
+    return {
+      title: 'Contact Us',
+      component: <Layout><Contact /></Layout>,
+    };
   },
 
 };

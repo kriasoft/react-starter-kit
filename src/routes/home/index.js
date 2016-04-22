@@ -9,6 +9,7 @@
 
 import React from 'react';
 import Home from './Home';
+import Layout from '../../components/Layout';
 import fetch from '../../core/fetch';
 
 export default {
@@ -27,9 +28,17 @@ export default {
       }),
       credentials: 'include',
     });
+
     const { data } = await resp.json();
-    if (!data || !data.news) throw new Error('Failed to load the news feed.');
-    return <Home news={data.news} />;
+
+    if (!data || !data.news) {
+      throw new Error('Failed to load the news feed.');
+    }
+
+    return {
+      title: 'React Starter Kit',
+      component: <Layout><Home news={data.news} /></Layout>,
+    };
   },
 
 };
