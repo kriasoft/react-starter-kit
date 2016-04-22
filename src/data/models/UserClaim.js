@@ -17,7 +17,7 @@ const UserClaim = Model.define('UserClaim', {
   },
 
   value: {
-    type: DataType.STRING,
+    type: DataType.INTEGER,
   },
 
 });
