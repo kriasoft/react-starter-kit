@@ -8,8 +8,7 @@
  */
 
 import React, { Component, PropTypes } from 'react';
-import parsePath from 'history/lib/parsePath';
-import Location from '../../core/Location';
+import history from '../../core/history';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -19,53 +18,45 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-class Link extends Component {
+class Link extends Component { // eslint-disable-line react/prefer-stateless-function
 
   static propTypes = {
-    to: PropTypes.string.isRequired,
-    query: PropTypes.object,
-    state: PropTypes.object,
+    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     onClick: PropTypes.func,
   };
 
-  static handleClick = (event) => {
+  handleClick = (event) => {
     let allowTransition = true;
-    let clickResult;
 
-    if (this.props && this.props.onClick) {
-      clickResult = this.props.onClick(event);
+    if (this.props.onClick) {
+      this.props.onClick(event);
     }
 
     if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
       return;
     }
 
-    if (clickResult === false || event.defaultPrevented === true) {
+    if (event.defaultPrevented === true) {
       allowTransition = false;
     }
 
     event.preventDefault();
 
     if (allowTransition) {
-      const link = event.currentTarget;
-      if (this.props && this.props.to) {
-        Location.push({
-          ...(parsePath(this.props.to)),
-          state: this.props && this.props.state || null,
-        });
+      if (this.props.to) {
+        history.push(this.props.to);
       } else {
-        Location.push({
-          pathname: link.pathname,
-          search: link.search,
-          state: this.props && this.props.state || null,
+        history.push({
+          pathname: event.currentTarget.pathname,
+          search: event.currentTarget.search,
         });
       }
     }
   };
 
   render() {
-    const { to, query, ...props } = this.props;
-    return <a href={Location.createHref(to, query)} onClick={Link.handleClick.bind(this)} {...props} />;
+    const { to, ...props } = this.props; // eslint-disable-line no-use-before-define
+    return <a href={history.createHref(to)} {...props} onClick={this.handleClick} />;
   }
 
 }

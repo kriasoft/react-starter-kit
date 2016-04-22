@@ -52,14 +52,14 @@ For more information google for [component-based UI development](https://google.
 class Navigation extends Component {
   static propTypes = { items: PropTypes.array.isRequired };
   render() {
-    return <nav><ul>{this.props.items.map(x => <li>{x.text}</li>}</ul></nav>;
+    return <nav><ul>{this.props.items.map(x => <li>{x.text}</li>)}</ul></nav>;
   }
 }
 
 // Better
 function Navigation({ items }) {
   return (
-    <nav><ul>{items.map(x => <li>{x.text}</li>}</ul></nav>;
+    <nav><ul>{items.map(x => <li>{x.text}</li>)}</ul></nav>;
   );
 }
 Navigation.propTypes = { items: PropTypes.array.isRequired };
@@ -120,14 +120,14 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 ```jsx
 // Navigation.js
 import React, { PropTypes } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.scss';
-import withStyles from '../../decorators/withStyles';
 
 function Navigation() {
   return (
-    <nav className={[s.root, this.props.className]}>
+    <nav className={`${s.root} ${this.props.className}`}>
       <ul className={s.items}>
-        <li className={[s.item, s.selected]}>
+        <li className={`${s.item} ${s.selected}`}>
           <a className={s.link} href="/products">Products</a>
         </li>
         <li className={s.item}>
@@ -140,7 +140,7 @@ function Navigation() {
 
 Navigation.propTypes = { className: PropTypes.string };
 
-export default withStyles(s)(Navigation);
+export default withStyles(Navigation, s);
 ```
 
 ### Use higher-order components
@@ -195,7 +195,6 @@ export default withViewport;
 import React from 'react';
 import withViewport from './withViewport';
 
-@withViewport
 class MyComponent {
   render() {
     let { width, height } = this.props.viewport;
@@ -203,7 +202,7 @@ class MyComponent {
   }
 }
 
-export default MyComponent;
+export default withViewport(MyComponent);
 ```
 
 **[⬆ back to top](#table-of-contents)**

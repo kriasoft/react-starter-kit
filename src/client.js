@@ -7,23 +7,22 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import 'babel-core/polyfill';
+import 'babel-polyfill';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
-import Router from './routes';
-import Location from './core/Location';
+import { match } from 'universal-router';
+import routes from './routes';
+import history from './core/history';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
 
-let cssContainer = document.getElementById('css');
-const appContainer = document.getElementById('app');
 const context = {
   insertCss: styles => styles._insertCss(),
-  onSetTitle: value => document.title = value,
-  onSetMeta: (name, content) => {
+  setTitle: value => (document.title = value),
+  setMeta: (name, content) => {
     // Remove and create a new <meta /> tag in order to make it work
     // with bookmarks in Safari
     const elements = document.getElementsByTagName('meta');
-    [].slice.call(elements).forEach((element) => {
+    Array.from(elements).forEach((element) => {
       if (element.getAttribute('name') === name) {
         element.parentNode.removeChild(element);
       }
@@ -31,47 +30,67 @@ const context = {
     const meta = document.createElement('meta');
     meta.setAttribute('name', name);
     meta.setAttribute('content', content);
-    document.getElementsByTagName('head')[0].appendChild(meta);
+    document
+      .getElementsByTagName('head')[0]
+      .appendChild(meta);
   },
 };
 
-function render(state) {
-  Router.dispatch(state, (newState, component) => {
-    ReactDOM.render(component, appContainer, () => {
-      // Restore the scroll position if it was saved into the state
-      if (state.scrollY !== undefined) {
-        window.scrollTo(state.scrollX, state.scrollY);
-      } else {
-        window.scrollTo(0, 0);
-      }
+// Restore the scroll position if it was saved into the state
+function restoreScrollPosition(state) {
+  if (state && state.scrollY !== undefined) {
+    window.scrollTo(state.scrollX, state.scrollY);
+  } else {
+    window.scrollTo(0, 0);
+  }
+}
 
-      // Remove the pre-rendered CSS because it's no longer used
-      // after the React app is launched
-      if (cssContainer) {
-        cssContainer.parentNode.removeChild(cssContainer);
-        cssContainer = null;
-      }
-    });
+let renderComplete = (state, callback) => {
+  const elem = document.getElementById('css');
+  if (elem) elem.parentNode.removeChild(elem);
+  callback(true);
+  renderComplete = (s) => {
+    restoreScrollPosition(s);
+
+    // Google Analytics tracking. Don't send 'pageview' event after
+    // the initial rendering, as it was already sent
+    window.ga('send', 'pageview');
+
+    callback(true);
+  };
+};
+
+function render(container, state, component) {
+  return new Promise((resolve, reject) => {
+    try {
+      ReactDOM.render(
+        component,
+        container,
+        renderComplete.bind(undefined, state, resolve)
+      );
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
 function run() {
   let currentLocation = null;
-  let currentState = null;
+  const container = document.getElementById('app');
 
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
   // Re-render the app when window.location changes
-  const unlisten = Location.listen(location => {
+  const removeHistoryListener = history.listen(location => {
     currentLocation = location;
-    currentState = Object.assign({}, location.state, {
+    match(routes, {
       path: location.pathname,
       query: location.query,
       state: location.state,
       context,
-    });
-    render(currentState);
+      render: render.bind(undefined, container, location.state),
+    }).catch(err => console.error(err)); // eslint-disable-line no-console
   });
 
   // Save the page scroll position into the current location's state
@@ -93,7 +112,7 @@ function run() {
   addEventListener(window, 'scroll', setPageOffset);
   addEventListener(window, 'pagehide', () => {
     removeEventListener(window, 'scroll', setPageOffset);
-    unlisten();
+    removeHistoryListener();
   });
 }
 

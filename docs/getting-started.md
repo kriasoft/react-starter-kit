@@ -8,6 +8,46 @@
   * `node-gyp` prerequisites mentioned [here](https://github.com/nodejs/node-gyp)
   * Text editor or IDE pre-configured with React/JSX/Flow/ESlint ([learn more](./how-to-configure-text-editors.md))
 
+### Directory Layout
+
+Before you start, take a moment to see how the project structure looks like:
+
+```
+.
+├── /build/                     # The folder for compiled output
+├── /docs/                      # Documentation files for the project
+├── /node_modules/              # 3rd-party libraries and utilities
+├── /src/                       # The source code of the application
+│   ├── /components/            # React components
+│   ├── /content/               # Static pages like About Us, Privacy Policy etc.
+│   ├── /core/                  # Core framework and utility functions
+│   ├── /data/                  # GraphQL server schema and data models
+│   ├── /public/                # Static files which are copied into the /build/public folder
+│   ├── /routes/                # Page/screen components along with the routing information
+│   ├── /views/                 # Express.js views (templates) for index and error pages
+│   ├── /client.js              # Client-side startup script
+│   ├── /config.js              # Global application settings
+│   └── /server.js              # Server-side startup script
+├── /test/                      # Unit and end-to-end tests
+├── /tools/                     # Build automation scripts and utilities
+│   ├── /lib/                   # Library for utility snippets
+│   ├── /build.js               # Builds the project from source to output (build) folder
+│   ├── /bundle.js              # Bundles the web resources into package(s) through Webpack
+│   ├── /clean.js               # Cleans up the output (build) folder
+│   ├── /copy.js                # Copies static files to output (build) folder
+│   ├── /deploy.js              # Deploys your web application
+│   ├── /run.js                 # Helper function for running build automation tasks
+│   ├── /runServer.js           # Launches (or restarts) Node.js server
+│   ├── /start.js               # Launches the development web server with "live reload"
+│   └── /webpack.config.js      # Configurations for client-side and server-side bundles
+└── package.json                # The list of 3rd party libraries and utilities
+```
+
+**Note**: The current version of RSK does not contain a Flux implementation.
+It can be easily integrated with any Flux library of your choice. The most
+commonly used Flux libraries are [Flux](http://facebook.github.io/flux/),
+[Redux](http://redux.js.org/), and [Relay](http://facebook.github.io/relay/).
+
 ### Quick Start
 
 #### 1. Get the latest version
@@ -36,6 +76,11 @@ This command will build the app from the source files (`/src`) into the output
 `/build` folder. As soon as the initial build completes, it will start the
 Node.js server (`node build/server.js`) and [Browsersync](https://browsersync.io/)
 with [HMR](https://webpack.github.io/docs/hot-module-replacement) on top of it.
+
+> [http://localhost:3000/](http://localhost:3000/) — Node.js server (`build/server.js`)<br>
+> [http://localhost:3000/graphql](http://localhost:3000/graphql) — GraphQL server and IDE<br>
+> [http://localhost:3001/](http://localhost:3001/) — BrowserSync proxy with HMR, React Hot Transform<br>
+> [http://localhost:3002/](http://localhost:3002/) — BrowserSync control panel (UI)
 
 Now you can open your web app in a browser, on mobile devices and start
 hacking. Whenever you modify any of the source files inside the `/src` folder,
@@ -80,12 +125,13 @@ $ npm run lint
 To launch unit tests:
 
 ```shell
-$ npm test
+$ npm test              # Run unit tests with Mocha
+$ npm run test:watch    # Launch unit test runner and start watching for changes
 ```
 
-Test any javascript module by creating a `__tests__/` directory where
-the file is. Append `-test.js` to the filename and
-[Jest](https://facebook.github.io/jest/) will do the rest.
+By default, [Mocha](https://mochajs.org/) test runner is looking for test files
+matching the `src/**/*.test.js` pattern. Take a look at `src/components/App/App.test.js`
+as an example.
 
 To deploy the app, run:
 

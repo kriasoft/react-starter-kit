@@ -1,4 +1,3 @@
-sudo: false
 language: node_js
 node_js:
   - '5'
@@ -10,3 +9,6 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+script:
+  - npm run lint
+  - npm run test

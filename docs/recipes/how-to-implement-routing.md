@@ -60,12 +60,12 @@ import ErrorPage from './components/ErrorPage';
 
 const routes = {
   '/': async () => {
-    const response = await fetch('/api/data/home');
+    const response = await fetch('/graphql?query={content(path:"/"){title,html}}');
     const data = await response.json();
     return <Layout><HomePage {...data} /></Layout>
   },
   '/about': async () => {
-    const response = await fetch('/api/data/about');
+    const response = await fetch('/graphql?query={content(path:"/about"){title,html}}');
     const data = await response.json();
     return <Layout><AboutPage {...data} /></Layout>;
   }
@@ -108,12 +108,12 @@ import ErrorPage from './components/ErrorPage';
 
 const router = new Router(on => {
   on('/products', async () => {
-    const response = await fetch('/api/products');
+    const response = await fetch('/graphql?query={products{id,name}}');
     const data = await response.json();
     return <Layout><ProductListing {...data} /></Layout>
   });
-  on('/products/:id', async (req) => {
-    const response = await fetch(`/api/products/${req.params.id}`);
+  on('/products/:id', async ({ params }) => {
+    const response = await fetch('/graphql?query={product(id:"${params.id}"){name,summary}}');
     const data = await response.json();
     return <Layout><ProductInfo {...data} /></Layout>;
   });
