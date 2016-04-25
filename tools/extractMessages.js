@@ -19,6 +19,10 @@ const GLOB_PATTERN = 'src/**/*.{js,jsx}';
 const fileToMessages = {};
 let messages = {};
 
+async function writeMessages(fileName, messages) {
+  await fs.writeFile(fileName, JSON.stringify(messages, null, 2) + '\n');
+}
+
 // merge messages to source files
 async function mergeToFile(locale, toBuild) {
   const fileName = `src/messages/${locale}.json`;
@@ -56,14 +60,14 @@ async function mergeToFile(locale, toBuild) {
     .map(key => originalMessages[key])
     .filter(msg => msg.files || msg.message);
 
-  await fs.writeFile(fileName, JSON.stringify(result, null, 2));
+  await writeMessages(fileName, result);
 
   console.log(`Messages updated: ${fileName}`);
 
   if (toBuild && locale !== '_default') {
     const buildFileName = `build/messages/${locale}.json`;
     try {
-      await fs.writeFile(buildFileName, JSON.stringify(result, null, 2));
+      await writeMessages(buildFileName, result);
       console.log(`Build messages updated: ${buildFileName}`);
     } catch (err) {
       console.error(`Failed to update ${buildFileName}`);
