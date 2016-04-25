@@ -19,8 +19,8 @@ const GLOB_PATTERN = 'src/**/*.{js,jsx}';
 const fileToMessages = {};
 let messages = {};
 
-async function writeMessages(fileName, messages) {
-  await fs.writeFile(fileName, JSON.stringify(messages, null, 2) + '\n');
+async function writeMessages(fileName, msgs) {
+  await fs.writeFile(fileName, `${JSON.stringify(msgs, null, 2)}\n`);
 }
 
 // merge messages to source files
