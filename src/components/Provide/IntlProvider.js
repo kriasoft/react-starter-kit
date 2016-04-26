@@ -1,13 +1,11 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { IntlProvider, intlShape } from 'react-intl';
+import { IntlProvider } from 'react-intl';
 
 function ProvideIntl({ intl, children }) {
   return (
     <IntlProvider
-      key={intl.locale}
-      locale={intl.locale}
-      initialNow={intl.initialNow}
+      {...intl}
       messages={intl.messages[intl.locale]}
     >
       {children}
@@ -16,11 +14,10 @@ function ProvideIntl({ intl, children }) {
 }
 
 ProvideIntl.propTypes = {
-  intl: intlShape,
+  ...IntlProvider.propTypes,
   children: PropTypes.element.isRequired,
 };
 
 export default connect(state => ({
-  runtime: state.runtime,
   intl: state.intl,
 }))(ProvideIntl);
