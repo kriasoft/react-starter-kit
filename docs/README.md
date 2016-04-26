@@ -16,3 +16,4 @@
 
 * [How to Implement Routing and Navigation](./recipes/how-to-implement-routing.md)
 * [How to Integrate Disqus](./recipes/how-to-integrate-disqus.md)
+* [How to Configure Facebook Login](./recipes/how-to-configure-facebook-login.md)
