@@ -19,6 +19,5 @@ ProvideIntl.propTypes = {
 };
 
 export default connect(state => ({
-  runtime: state.runtime,
   intl: state.intl,
 }))(ProvideIntl);
