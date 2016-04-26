@@ -3,8 +3,7 @@
 This is rough, PRs are welcome. [Check Contributing.md](../CONTRIBUTING.md)
 
 1. Navigate and Login to https://developers.facebook.com/apps
-2. ![alt text](http://goldplugins.com/wp-content/uploads/2013/07/ss11.png "")
- (C) by https://goldplugins.com
+2. Click "Add New App"
 3. Chose "Website" as your Platform
 4. Go through the process of getting a App ID.
 5. Go to your [Apps Center](developers.facebook.com/apps) and then to Settings.
