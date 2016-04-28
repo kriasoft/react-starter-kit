@@ -1,6 +1,6 @@
 ## How to configure Facebook Login
 
-This is rough, PRs are welcome. [Check Contributing.md](../CONTRIBUTING.md)
+This is rough, PRs are welcome. [Check Contributing.md](../../CONTRIBUTING.md)
 
 1. Navigate and Login to https://developers.facebook.com/apps
 2. Click "Add New App"
