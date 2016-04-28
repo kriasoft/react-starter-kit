@@ -52,6 +52,25 @@ expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
   <img src="https://opencollective.com/static/images/become_backer.svg" width="64" height="64" alt="">
 </a>
 
+### Feature branches
+
+Some features aren't provided by default, but you can optionally add them.
+To do so, simply merge the corresponding feature branch.
+These branches should be in sync with master and all other features branches
+so there should not be any merging conflicts.
+If conflicts occur, please [report to us](https://github.com/kriasoft/react-starter-kit/issues).
+
+  * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) – isomorphic redux support.
+  Use [`connect()`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options)
+  higher order component to access state in redux store and to get actions mapped on dispatch.
+  You can see [LanguageSwitcher](https://github.com/kriasoft/react-starter-kit/blob/86eadfd3d11d804cf858aa21f657022fcc098752/src/components/LanguageSwitcher/LanguageSwitcher.js) component how to use `connect()`
+  <br/>
+  [Read full recipe](./docs/recipes/feature-redux.md)
+
+  * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) – [`react-intl`](https://github.com/yahoo/react-intl#react-intl) integration based on `feature/redux`
+  <br/>
+  [Read full recipe](./docs/recipes/feature-react-intl.md)
+
 ### Learn More
 
   * [Getting Started with React.js](http://facebook.github.io/react/)
