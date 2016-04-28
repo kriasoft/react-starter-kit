@@ -10,6 +10,19 @@
 /* eslint-disable max-len */
 /* jscs:disable maximumLineLength */
 
+/**
+ * WARNING: Do not include this file in client build.
+ */
+const DO_NOT_USE_THIS_FILE_IN_CLIENT = `
+Configuration file contaions sensitive information and
+MUST NOT be included in the client build.
+`;
+
+if (process.env.BROWSER) {
+  alert(DO_NOT_USE_THIS_FILE_IN_CLIENT); // eslint-disable-line no-alert
+  throw new Error(DO_NOT_USE_THIS_FILE_IN_CLIENT);
+}
+
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
 
