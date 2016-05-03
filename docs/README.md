@@ -15,4 +15,6 @@
 ### Recipes
 
 * [How to Implement Routing and Navigation](./recipes/how-to-implement-routing.md)
+* [How to Integrate Redux](./recipes/feature-redux.md)
+* [How to Integrate React-Intl](./recipes/feature-react-intl.md)
 * [How to Integrate Disqus](./recipes/how-to-integrate-disqus.md)
