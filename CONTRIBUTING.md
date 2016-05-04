@@ -49,6 +49,7 @@ forked repo, check that it meets these guidelines:
 * [Squash](http://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)
   your commits into one for each PR.
 * Run `npm test` to make sure that your code style is OK and there are no any regression bugs. 
+* When contributing to an opt-in feature, apply the `[feature/...]` tag as a prefix to your PR title
 
 #### Style Guide
 
