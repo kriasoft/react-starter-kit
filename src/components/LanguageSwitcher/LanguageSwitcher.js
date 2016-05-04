@@ -14,7 +14,7 @@ function LanguageSwitcher({ currentLocale, availableLocales, setLocale }) {
             <span>{locale}</span>
           ) : (
             <a
-              href={`?locale=${locale}`}
+              href={`?lang=${locale}`}
               onClick={(e) => {
                 setLocale({ locale });
                 e.preventDefault();

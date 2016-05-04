@@ -50,8 +50,11 @@ app.use(requestLanguage({
   languages: locales,
   queryName: 'lang',
   cookie: {
-    name: 'language',
-    options: { maxAge: 24 * 3600 * 1000 },
+    name: 'lang',
+    options: {
+      path: '/',
+      maxAge: 3650 * 24 * 3600 * 1000, // 10 years in miliseconds
+    },
     url: '/lang/{language}',
   },
 }));

@@ -39,6 +39,12 @@ export function setLocale({ locale }) {
           messages,
         },
       });
+
+      // remember locale for every new request
+      if (process.env.BROWSER) {
+        const maxAge = 3650 * 24 * 3600; // 10 years in seconds
+        document.cookie = `lang=${locale};path=/;max-age=${maxAge}`;
+      }
     } catch (error) {
       dispatch({
         type: SET_LOCALE_ERROR,
