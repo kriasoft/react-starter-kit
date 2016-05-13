@@ -9,13 +9,17 @@
 
 import React from 'react';
 import Login from './Login';
+import Layout from '../../components/Layout';
 
 export default {
 
   path: '/login',
 
   action() {
-    return <Login />;
+    return {
+      title: 'Log In',
+      component: <Layout><Login /></Layout>,
+    };
   },
 
 };

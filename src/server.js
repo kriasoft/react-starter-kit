@@ -15,15 +15,14 @@ import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
-import ReactDOM from 'react-dom/server';
-import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
+import { createRouter } from 'universal-router/react';
+import Html from './components/Html';
+import routes from './routes';
 import passport from './core/passport';
 import models from './data/models';
 import schema from './data/schema';
-import routes from './routes';
-import assets from './assets';
-import { port, auth, analytics } from './config';
+import { port, auth } from './config';
 
 const app = express();
 
@@ -79,41 +78,15 @@ app.use('/graphql', expressGraphQL(req => ({
 
 //
 // Register server-side rendering middleware
+// https://github.com/kriasoft/universal-router
 // -----------------------------------------------------------------------------
-app.get('*', async (req, res, next) => {
-  try {
-    let css = [];
-    let statusCode = 200;
-    const template = require('./views/index.jade');
-    const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
-
-    if (process.env.NODE_ENV === 'production') {
-      data.trackingId = analytics.google.trackingId;
-    }
-
-    await match(routes, {
-      path: req.path,
-      query: req.query,
-      context: {
-        insertCss: styles => css.push(styles._getCss()),
-        setTitle: value => (data.title = value),
-        setMeta: (key, value) => (data[key] = value),
-      },
-      render(component, status = 200) {
-        css = [];
-        statusCode = status;
-        data.body = ReactDOM.renderToString(component);
-        data.css = css.join('');
-        return true;
-      },
-    });
-
-    res.status(statusCode);
-    res.send(template(data));
-  } catch (err) {
-    next(err);
-  }
-});
+app.use(createRouter(routes, {
+  template: Html,
+  context: (req) => ({
+    userId: req.user && req.user.id || null,
+    store: {}, // TODO: Initialize Flux/Redux store
+  }),
+}));
 
 //
 // Error handling

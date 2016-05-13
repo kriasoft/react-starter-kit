@@ -9,13 +9,17 @@
 
 import React from 'react';
 import Register from './Register';
+import Layout from '../../components/Layout';
 
 export default {
 
   path: '/register',
 
   action() {
-    return <Register />;
+    return {
+      title: 'New User Registration',
+      component: <Layout><Register /></Layout>,
+    };
   },
 
 };

@@ -9,6 +9,7 @@
 
 import React from 'react';
 import Content from './Content';
+import Layout from '../../components/Layout';
 import fetch from '../../core/fetch';
 
 export default {
@@ -27,10 +28,21 @@ export default {
       }),
       credentials: 'include',
     });
-    if (resp.status !== 200) throw new Error(resp.statusText);
+
+    if (resp.status !== 200) {
+      throw new Error(resp.statusText);
+    }
+
     const { data } = await resp.json();
-    if (!data || !data.content) return undefined;
-    return <Content {...data.content} />;
+
+    if (!data || !data.content) {
+      return undefined;
+    }
+
+    return {
+      title: data.content.title,
+      component: <Layout><Content {...data.content} /></Layout>,
+    };
   },
 
 };
