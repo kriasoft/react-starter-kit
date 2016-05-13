@@ -20,6 +20,8 @@ async function copy({ watch } = {}) {
   const ncp = Promise.promisify(require('ncp'));
 
   await Promise.all([
+    ncp('node_modules/bootstrap/dist/css', 'build/public/css'),
+    ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'),
     ncp('src/public', 'build/public'),
     ncp('src/content', 'build/content'),
   ]);
