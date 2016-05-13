@@ -60,7 +60,7 @@ const config = {
           babelrc: false,
           presets: [
             'react',
-            'es2015',
+            'es2015-native-modules',
             'stage-0',
           ],
           plugins: [
@@ -175,13 +175,14 @@ const clientConfig = extend(true, {}, config, {
     new AssetsPlugin({
       path: path.resolve(__dirname, '../build'),
       filename: 'assets.js',
+      update: true,
       processOutput: x => `module.exports = ${JSON.stringify(x)};`,
     }),
 
     // Assign the module and chunk ids by occurrence count
     // Consistent ordering of modules required if using any hashing ([hash] or [chunkhash])
     // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
-    new webpack.optimize.OccurenceOrderPlugin(true),
+    new webpack.optimize.OccurrenceOrderPlugin(true),
 
     ...DEBUG ? [] : [
 
@@ -242,8 +243,11 @@ const serverConfig = extend(true, {}, config, {
 
     // Adds a banner to the top of each generated chunk
     // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
-    new webpack.BannerPlugin('require("source-map-support").install();',
-      { raw: true, entryOnly: false }),
+    new webpack.BannerPlugin({
+      banner: 'require("source-map-support").install();',
+      raw: true,
+      entryOnly: false,
+    }),
   ],
 
   node: {
