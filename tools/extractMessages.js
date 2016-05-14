@@ -127,7 +127,7 @@ async function extractMessages({ watch } = {}) {
         delete fileToMessages[fileName];
       }
     } catch (err) {
-      console.error(`In ${fileName}:\n`, err.codeFrame);
+      console.error(`extractMessages: In ${fileName}:\n`, err.codeFrame || err);
     }
   };
 
