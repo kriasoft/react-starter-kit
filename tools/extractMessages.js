@@ -51,6 +51,7 @@ async function mergeToFile(locale, toBuild) {
     const newMsg = messages[id];
     originalMessages[id] = originalMessages[id] || { id };
     const msg = originalMessages[id];
+    msg.description = newMsg.description || msg.description;
     msg.defaultMessage = newMsg.defaultMessage || msg.defaultMessage;
     msg.message = msg.message || '';
     msg.files = newMsg.files;
