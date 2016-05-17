@@ -22,7 +22,7 @@ import passport from './core/passport';
 import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
-import assets from './assets';
+import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics } from './config';
 
 const app = express();
@@ -84,7 +84,7 @@ app.get('*', async (req, res, next) => {
   try {
     let css = [];
     let statusCode = 200;
-    const template = require('./views/index.jade');
+    const template = require('./views/index.jade'); // eslint-disable-line global-require
     const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
 
     if (process.env.NODE_ENV === 'production') {
@@ -95,7 +95,7 @@ app.get('*', async (req, res, next) => {
       path: req.path,
       query: req.query,
       context: {
-        insertCss: styles => css.push(styles._getCss()),
+        insertCss: styles => css.push(styles._getCss()), // eslint-disable-line no-underscore-dangle
         setTitle: value => (data.title = value),
         setMeta: (key, value) => (data[key] = value),
       },
@@ -124,7 +124,7 @@ pe.skipPackage('express');
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.log(pe.render(err)); // eslint-disable-line no-console
-  const template = require('./views/error.jade');
+  const template = require('./views/error.jade'); // eslint-disable-line global-require
   const statusCode = err.status || 500;
   res.status(statusCode);
   res.send(template({
