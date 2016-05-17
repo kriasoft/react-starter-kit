@@ -1,30 +1,43 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
+import createHelpers from './createHelpers';
 
-const middleware = [thunk];
+export default function configureStore(initialState, helpersConfig) {
+  const helpers = createHelpers(helpersConfig);
+  const middleware = [thunk.withExtraArgument(helpers)];
 
-let enhancer;
+  let enhancer;
 
-if (__DEV__ && process.env.BROWSER) {
-  const createLogger = require('redux-logger');
-  const logger = createLogger({
-    collapsed: true,
-  });
-  middleware.push(logger);
-
-  enhancer = compose(
-    applyMiddleware(...middleware),
+  if (__DEV__) {
+    if (process.env.BROWSER) {
+      const createLogger = require('redux-logger');
+      middleware.push(createLogger({
+        collapsed: true,
+      }));
+    } else {
+      // Server side redux action logger
+      middleware.push(store => next => action => { // eslint-disable-line no-unused-vars
+        const payload = JSON.stringify(action.payload);
+        console.log(` * ${action.type}: ${payload}`); // eslint-disable-line no-console
+        return next(action);
+      });
+    }
 
     // https://github.com/zalmoxisus/redux-devtools-extension#redux-devtools-extension
-    window.devToolsExtension ? window.devToolsExtension() : f => f,
-  );
-} else {
-  enhancer = applyMiddleware(...middleware);
-}
+    let devToolsExtension = f => f;
+    if (process.env.BROWSER && window.devToolsExtension) {
+      devToolsExtension = window.devToolsExtension();
+    }
 
-export default function configureStore(initialState) {
-  // Note: only Redux >= 3.1.0 supports passing enhancer as third argument.
+    enhancer = compose(
+      applyMiddleware(...middleware),
+      devToolsExtension,
+    );
+  } else {
+    enhancer = applyMiddleware(...middleware);
+  }
+
   // See https://github.com/rackt/redux/releases/tag/v3.1.0
   const store = createStore(rootReducer, initialState, enhancer);
 

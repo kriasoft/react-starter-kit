@@ -93,7 +93,9 @@ app.get('*', async (req, res, next) => {
       data.trackingId = analytics.google.trackingId;
     }
 
-    const store = configureStore({});
+    const store = configureStore({}, {
+      cookie: req.headers.cookie,
+    });
 
     store.dispatch(setRuntimeVariable({
       name: 'initialNow',
