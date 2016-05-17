@@ -51,6 +51,7 @@ async function mergeToFile(locale, toBuild) {
     const newMsg = messages[id];
     originalMessages[id] = originalMessages[id] || { id };
     const msg = originalMessages[id];
+    msg.description = newMsg.description || msg.description;
     msg.defaultMessage = newMsg.defaultMessage || msg.defaultMessage;
     msg.message = msg.message || '';
     msg.files = newMsg.files;
@@ -126,7 +127,7 @@ async function extractMessages({ watch } = {}) {
         delete fileToMessages[fileName];
       }
     } catch (err) {
-      console.error(`In ${fileName}:\n`, err.codeFrame);
+      console.error(`extractMessages: In ${fileName}:\n`, err.codeFrame || err);
     }
   };
 
