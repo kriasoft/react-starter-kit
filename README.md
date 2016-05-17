@@ -1,5 +1,29 @@
 ## React Starter Kit — "isomorphic" web app boilerplate
 
+### 快速开始
+
+1. 在项目目录中建立自己的版本库
+2. 添加remote
+  ```
+  $ git remote add nagu-rsk https://github.com/nagucc/react-starter-kit
+  ```
+3. 合并版本库
+  ```
+  $ git checkout master
+  $ git fetch nagu-rsk
+  $ git merge nagu-rsk/master
+  $ npm install
+  ```
+4. 解决冲突
+合并之后可能会发送冲突，此时应该手动解决冲突。
+
+5. 运行`npm install`
+6. 运行`npm start`启动程序
+### 如何升级
+类似上述合并版本库步骤
+
+
+
 > [React Starter Kit](https://www.reactstarterkit.com) is an opinionated
 > boilerplate for web development built on top of [Node.js](https://nodejs.org/),
 > [Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
