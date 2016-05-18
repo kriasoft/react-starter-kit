@@ -27,7 +27,7 @@ import cs from 'react-intl/locale-data/cs';
 
 const context = {
   store: null,
-  insertCss: styles => styles._insertCss(),
+  insertCss: styles => styles._insertCss(), // eslint-disable-line no-underscore-dangle
   setTitle: value => (document.title = value),
   setMeta: (name, content) => {
     // Remove and create a new <meta /> tag in order to make it work
@@ -106,7 +106,7 @@ function run() {
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
-  const store = configureStore(initialState);
+  const store = configureStore(initialState, {});
   context.store = store;
 
   // Re-render the app when window.location changes

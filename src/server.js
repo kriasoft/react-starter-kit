@@ -25,7 +25,7 @@ import passport from './core/passport';
 import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
-import assets from './assets';
+import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics, locales } from './config';
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
@@ -96,6 +96,26 @@ app.use('/graphql', expressGraphQL(req => ({
   pretty: process.env.NODE_ENV !== 'production',
 })));
 
+async function prepareStore(request, { locale }) {
+  const store = configureStore({ }, {
+    cookie: request.headers.cookie,
+  });
+
+  store.dispatch(setRuntimeVariable({
+    name: 'initialNow',
+    value: Date.now(),
+  }));
+
+  store.dispatch(setRuntimeVariable({
+    name: 'availableLocales',
+    value: locales,
+  }));
+
+  await store.dispatch(setLocale({ locale }));
+
+  return store;
+}
+
 //
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
@@ -103,7 +123,7 @@ app.get('*', async (req, res, next) => {
   try {
     let css = [];
     let statusCode = 200;
-    const template = require('./views/index.jade');
+    const template = require('./views/index.jade'); // eslint-disable-line global-require
     const locale = req.language;
     const data = {
       lang: locale,
@@ -118,28 +138,18 @@ app.get('*', async (req, res, next) => {
       data.trackingId = analytics.google.trackingId;
     }
 
-    const store = configureStore({});
+    if (__DEV__) {
+      console.log(`${req.method} ${req.path}`, req.query); // eslint-disable-line no-console
+    }
 
-    store.dispatch(setRuntimeVariable({
-      name: 'initialNow',
-      value: Date.now(),
-    }));
-
-    store.dispatch(setRuntimeVariable({
-      name: 'availableLocales',
-      value: locales,
-    }));
-
-    await store.dispatch(setLocale({
-      locale,
-    }));
+    const store = await prepareStore(req, { locale });
 
     await match(routes, {
       path: req.path,
       query: req.query,
       context: {
         store,
-        insertCss: styles => css.push(styles._getCss()),
+        insertCss: styles => css.push(styles._getCss()), // eslint-disable-line no-underscore-dangle
         setTitle: value => (data.title = value),
         setMeta: (key, value) => (data[key] = value),
       },
@@ -182,7 +192,7 @@ pe.skipPackage('express');
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.log(pe.render(err)); // eslint-disable-line no-console
-  const template = require('./views/error.jade');
+  const template = require('./views/error.jade'); // eslint-disable-line global-require
   const statusCode = err.status || 500;
   res.status(statusCode);
   res.send(template({
