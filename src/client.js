@@ -88,7 +88,7 @@ function run() {
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
-  context.store = configureStore(initialState);
+  context.store = configureStore(initialState, {});
 
   // Re-render the app when window.location changes
   const removeHistoryListener = history.listen(location => {
