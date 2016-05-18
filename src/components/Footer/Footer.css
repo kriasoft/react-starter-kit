@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-@import '../variables.scss';
+@import '../variables.css';
 
 .root {
   background: #333;
@@ -17,7 +17,7 @@
 .container {
   margin: 0 auto;
   padding: 20px 15px;
-  max-width: $max-content-width;
+  max-width: var(--max-content-width);
   text-align: center;
 }
 
