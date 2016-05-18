@@ -9,7 +9,7 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './ErrorPage.scss';
+import s from './ErrorPage.css';
 
 function ErrorPage({ error }, context) {
   let title = 'Error';
