@@ -10,7 +10,7 @@
 import React, { PropTypes } from 'react';
 import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Navigation.scss';
+import s from './Navigation.css';
 import Link from '../Link';
 
 function Navigation({ className }) {
