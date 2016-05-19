@@ -12,6 +12,7 @@ import clean from './clean';
 import extractMessages from './extractMessages';
 import copy from './copy';
 import bundle from './bundle';
+import render from './render';
 
 /**
  * Compiles the project from source files into a distributable
@@ -22,6 +23,10 @@ async function build() {
   await run(extractMessages);
   await run(copy);
   await run(bundle);
+
+  if (process.argv.includes('--static')) {
+    await run(render);
+  }
 }
 
 export default build;

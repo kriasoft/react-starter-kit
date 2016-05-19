@@ -6,7 +6,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
-@import '../../components/variables.scss';
+@import '../../components/variables.css';
 
 .root {
   padding-left: 20px;
@@ -49,11 +49,11 @@
   font-size: 18px;
   line-height: 1.3333333;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
 
-  &:focus {
-    border-color: #0074c2;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 116, 194, 0.6);
-  }
+.input:focus {
+  border-color: #0074c2;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 116, 194, 0.6);
 }
 
 .button {
@@ -72,45 +72,45 @@
   font-size: 18px;
   line-height: 1.3333333;
   cursor: pointer;
+}
 
-  &:hover {
-    background: rgba(54, 50, 119, 0.8);
-  }
+.button:hover {
+  background: rgba(54, 50, 119, 0.8);
+}
 
-  &:focus {
-    border-color: #0074c2;
-    box-shadow: 0 0 8px rgba(0, 116, 194, 0.6);
-  }
+.button:focus {
+  border-color: #0074c2;
+  box-shadow: 0 0 8px rgba(0, 116, 194, 0.6);
 }
 
 .facebook {
   border-color: #3b5998;
   background: #3b5998;
   composes: button;
+}
 
-  &:hover {
-    background: #2d4373;
-  }
+.facebook:hover {
+  background: #2d4373;
 }
 
 .google {
   border-color: #dd4b39;
   background: #dd4b39;
   composes: button;
+}
 
-  &:hover {
-    background: #c23321;
-  }
+.google:hover {
+  background: #c23321;
 }
 
 .twitter {
   border-color: #55acee;
   background: #55acee;
   composes: button;
+}
 
-  &:hover {
-    background: #2795e9;
-  }
+.twitter:hover {
+  background: #2795e9;
 }
 
 .icon {
@@ -131,27 +131,27 @@
   color: #757575;
   text-align: center;
   font-size: 80%;
+}
 
-  &::before {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: -1;
-    margin-top: -5px;
-    margin-left: -20px;
-    width: 40px;
-    height: 10px;
-    background-color: #fff;
-    content: '';
-  }
+.lineThrough::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  margin-top: -5px;
+  margin-left: -20px;
+  width: 40px;
+  height: 10px;
+  background-color: #fff;
+  content: '';
+}
 
-  &::after {
-    position: absolute;
-    top: 49%;
-    z-index: -2;
-    display: block;
-    width: 100%;
-    border-bottom: 1px solid #ddd;
-    content: '';
-  }
+.lineThrough::after {
+  position: absolute;
+  top: 49%;
+  z-index: -2;
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+  content: '';
 }
