@@ -15,6 +15,7 @@ import run from './run';
 import runServer from './runServer';
 import webpackConfig from './webpack.config';
 import clean from './clean';
+import extractMessages from './extractMessages';
 import copy from './copy';
 
 const DEBUG = !process.argv.includes('--release');
@@ -25,6 +26,7 @@ const DEBUG = !process.argv.includes('--release');
  */
 async function start() {
   await run(clean);
+  await run(extractMessages.bind(undefined, { watch: true }));
   await run(copy.bind(undefined, { watch: true }));
   await new Promise(resolve => {
     // Patch the client-side bundle configurations

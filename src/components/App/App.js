@@ -21,7 +21,7 @@ class App extends Component {
       insertCss: PropTypes.func,
       setTitle: PropTypes.func,
       setMeta: PropTypes.func,
-    }),
+    }).isRequired,
     children: PropTypes.element.isRequired,
     error: PropTypes.object,
   };
@@ -51,14 +51,18 @@ class App extends Component {
   }
 
   render() {
-    return !this.props.error ? (
+    if (this.props.error) {
+      return this.props.children;
+    }
+
+    return (
       <div>
         <Header />
         {this.props.children}
         <Feedback />
         <Footer />
       </div>
-    ) : this.props.children;
+    );
   }
 
 }

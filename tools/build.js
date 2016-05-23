@@ -9,6 +9,7 @@
 
 import run from './run';
 import clean from './clean';
+import extractMessages from './extractMessages';
 import copy from './copy';
 import bundle from './bundle';
 import render from './render';
@@ -19,6 +20,7 @@ import render from './render';
  */
 async function build() {
   await run(clean);
+  await run(extractMessages);
   await run(copy);
   await run(bundle);
 
