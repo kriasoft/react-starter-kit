@@ -94,7 +94,7 @@ function render(container, state, config, component) {
   });
 }
 
-function run() {
+export default function main() {
   let currentLocation = null;
   const container = document.getElementById('app');
   const initialState = JSON.parse(
@@ -142,11 +142,4 @@ function run() {
     removeEventListener(window, 'scroll', setPageOffset);
     removeHistoryListener();
   });
-}
-
-// Run the application when both DOM is ready and page content is loaded
-if (['complete', 'loaded', 'interactive'].includes(document.readyState) && document.body) {
-  run();
-} else {
-  document.addEventListener('DOMContentLoaded', run, false);
 }
