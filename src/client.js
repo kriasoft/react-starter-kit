@@ -18,8 +18,8 @@ import configureStore from './store/configureStore';
 import { addEventListener, removeEventListener } from './core/DOMUtils';
 import Provide from './components/Provide';
 
+import { locales } from './config.js';
 import { addLocaleData } from 'react-intl';
-
 import en from 'react-intl/locale-data/en';
 import cs from 'react-intl/locale-data/cs';
 
@@ -109,12 +109,15 @@ function run() {
   const store = configureStore(initialState);
   context.store = store;
 
+  const locale = (store.getState().intl && store.getState().intl.locale) || locales[0];
+
   // Re-render the app when window.location changes
   const removeHistoryListener = history.listen(location => {
     currentLocation = location;
     match(routes, {
       path: location.pathname,
       query: location.query,
+      locale,
       state: location.state,
       context,
       render: render.bind(undefined, container, location.state, { store }),

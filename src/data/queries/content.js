@@ -51,17 +51,32 @@ const fileExists = filename => new Promise(resolve => {
   fs.exists(filename, resolve);
 });
 
-async function resolveExtension(path, extension) {
+async function resolveExtension(path, locale, extension) {
   let fileNameBase = join(CONTENT_DIR, `${path === '/' ? '/index' : path}`);
   let ext = extension;
   if (!ext.startsWith('.')) {
     ext = `.${extension}`;
   }
 
-  let fileName = fileNameBase + ext;
+  // detect locale-specific files
+  // e.g. about.en.jade
+  let fileName = `${fileNameBase}.${locale}${ext}`;
+
+  if (!(await fileExists(fileName))) {
+    // e.g. about.jade
+    fileName = fileNameBase + ext;
+  }
+
+  if (!(await fileExists(fileName))) {
+    fileNameBase = join(CONTENT_DIR, `${path}/${locale}`);
+    // e.g. about/en.jade
+    fileName = fileNameBase + ext;
+  }
+
 
   if (!(await fileExists(fileName))) {
     fileNameBase = join(CONTENT_DIR, `${path}/index`);
+    // e.g. about/index.jade
     fileName = fileNameBase + ext;
   }
 
@@ -72,11 +87,11 @@ async function resolveExtension(path, extension) {
   return { success: true, fileName };
 }
 
-async function resolveFileName(path) {
+async function resolveFileName(path, locale) {
   const extensions = ['.jade', '.md', '.html'];
 
   for (const extension of extensions) {
-    const maybeFileName = await resolveExtension(path, extension);
+    const maybeFileName = await resolveExtension(path, locale, extension);
     if (maybeFileName.success) {
       return { success: true, fileName: maybeFileName.fileName, extension };
     }
@@ -89,9 +104,10 @@ const content = {
   type: ContentType,
   args: {
     path: { type: new NonNull(StringType) },
+    locale: { type: StringType },
   },
-  async resolve({ request }, { path }) {
-    const { success, fileName, extension } = await resolveFileName(path);
+  async resolve({ request }, { path, locale }) {
+    const { success, fileName, extension } = await resolveFileName(path, locale);
     if (!success) {
       return null;
     }
