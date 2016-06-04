@@ -137,6 +137,7 @@ app.get('*', async (req, res, next) => {
     await match(routes, {
       path: req.path,
       query: req.query,
+      locale,
       context: {
         store,
         insertCss: styles => css.push(styles._getCss()), // eslint-disable-line no-underscore-dangle
