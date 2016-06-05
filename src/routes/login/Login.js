@@ -7,16 +7,17 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { PropTypes } from 'react';
+import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
+import Helmet from 'react-helmet';
 
 const title = 'Log In';
 
-function Login(props, context) {
-  context.setTitle(title);
+function Login() {
   return (
     <div className={s.root}>
+      <Helmet title={title} />
       <div className={s.container}>
         <h1>{title}</h1>
         <p className={s.lead}>Log in with your username or company email address.</p>
@@ -116,7 +117,5 @@ function Login(props, context) {
     </div>
   );
 }
-
-Login.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default withStyles(s)(Login);

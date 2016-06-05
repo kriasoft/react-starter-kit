@@ -24,6 +24,7 @@ import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics } from './config';
+import { getHeadString } from './core/HelmetHelper';
 
 const app = express();
 
@@ -85,7 +86,7 @@ app.get('*', async (req, res, next) => {
     let css = [];
     let statusCode = 200;
     const template = require('./views/index.jade'); // eslint-disable-line global-require
-    const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
+    const data = { head: '', css: '', body: '', entry: assets.main.js };
 
     if (process.env.NODE_ENV === 'production') {
       data.trackingId = analytics.google.trackingId;
@@ -96,13 +97,12 @@ app.get('*', async (req, res, next) => {
       query: req.query,
       context: {
         insertCss: styles => css.push(styles._getCss()), // eslint-disable-line no-underscore-dangle
-        setTitle: value => (data.title = value),
-        setMeta: (key, value) => (data[key] = value),
       },
       render(component, status = 200) {
         css = [];
         statusCode = status;
         data.body = ReactDOM.renderToString(component);
+        data.head = getHeadString();
         data.css = css.join('');
         return true;
       },

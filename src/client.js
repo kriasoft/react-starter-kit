@@ -17,23 +17,6 @@ import { addEventListener, removeEventListener } from './core/DOMUtils';
 
 const context = {
   insertCss: styles => styles._insertCss(), // eslint-disable-line no-underscore-dangle
-  setTitle: value => (document.title = value),
-  setMeta: (name, content) => {
-    // Remove and create a new <meta /> tag in order to make it work
-    // with bookmarks in Safari
-    const elements = document.getElementsByTagName('meta');
-    Array.from(elements).forEach((element) => {
-      if (element.getAttribute('name') === name) {
-        element.parentNode.removeChild(element);
-      }
-    });
-    const meta = document.createElement('meta');
-    meta.setAttribute('name', name);
-    meta.setAttribute('content', content);
-    document
-      .getElementsByTagName('head')[0]
-      .appendChild(meta);
-  },
 };
 
 // Restore the scroll position if it was saved into the state

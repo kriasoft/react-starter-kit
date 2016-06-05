@@ -7,16 +7,17 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { PropTypes } from 'react';
+import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Register.css';
+import Helmet from 'react-helmet';
 
 const title = 'New User Registration';
 
-function Register(props, context) {
-  context.setTitle(title);
+function Register() {
   return (
     <div className={s.root}>
+      <Helmet title={title} />
       <div className={s.container}>
         <h1>{title}</h1>
         <p>...</p>
@@ -24,7 +25,5 @@ function Register(props, context) {
     </div>
   );
 }
-
-Register.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default withStyles(s)(Register);

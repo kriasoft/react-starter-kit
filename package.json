@@ -33,6 +33,7 @@
     "pretty-error": "2.0.0",
     "react": "15.1.0",
     "react-dom": "15.1.0",
+    "react-helmet": "^3.1.0",
     "sequelize": "3.23.2",
     "source-map-support": "0.4.0",
     "sqlite3": "3.1.4",
@@ -144,7 +145,15 @@
     "extends": "stylelint-config-standard",
     "rules": {
       "string-quotes": "single",
-      "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global", "local"] }]
+      "selector-pseudo-class-no-unknown": [
+        true,
+        {
+          "ignorePseudoClasses": [
+            "global",
+            "local"
+          ]
+        }
+      ]
     }
   },
   "scripts": {

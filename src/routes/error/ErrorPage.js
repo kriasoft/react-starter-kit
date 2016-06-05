@@ -10,8 +10,9 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ErrorPage.css';
+import Helmet from 'react-helmet';
 
-function ErrorPage({ error }, context) {
+function ErrorPage({ error }) {
   let title = 'Error';
   let content = 'Sorry, a critical error occurred on this page.';
   let errorMessage = null;
@@ -23,10 +24,9 @@ function ErrorPage({ error }, context) {
     errorMessage = <pre>{error.stack}</pre>;
   }
 
-  context.setTitle(title);
-
   return (
     <div>
+      <Helmet title={title} />
       <h1>{title}</h1>
       <p>{content}</p>
       {errorMessage}
@@ -35,6 +35,5 @@ function ErrorPage({ error }, context) {
 }
 
 ErrorPage.propTypes = { error: PropTypes.object.isRequired };
-ErrorPage.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default withStyles(s)(ErrorPage);
