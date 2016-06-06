@@ -17,7 +17,10 @@ import { addEventListener, removeEventListener } from './core/DOMUtils';
 
 const context = {
   insertCss: (...styles) => {
-    styles.forEach(style => style._insertCss()); // eslint-disable-line no-underscore-dangle
+    const removeCss = styles.map(style => style._insertCss()); // eslint-disable-line no-underscore-dangle, max-len
+    return () => {
+      removeCss.forEach(f => f());
+    };
   },
   setTitle: value => (document.title = value),
   setMeta: (name, content) => {
