@@ -22,7 +22,12 @@ import {
 } from './core/DOMUtils';
 
 const context = {
-  insertCss: styles => styles._insertCss(), // eslint-disable-line no-underscore-dangle
+  insertCss: (...styles) => {
+    const removeCss = styles.map(style => style._insertCss()); // eslint-disable-line no-underscore-dangle, max-len
+    return () => {
+      removeCss.forEach(f => f());
+    };
+  },
   setTitle: value => (document.title = value),
   setMeta: (name, content) => {
     // Remove and create a new <meta /> tag in order to make it work
