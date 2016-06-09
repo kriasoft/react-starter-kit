@@ -21,7 +21,7 @@
     "front-matter": "2.0.8",
     "graphiql": "0.7.1",
     "graphql": "0.6.0",
-    "history": "2.1.1",
+    "history": "3.0.0",
     "isomorphic-style-loader": "1.0.0",
     "jade": "1.11.0",
     "jsonwebtoken": "7.0.0",
@@ -144,7 +144,15 @@
     "extends": "stylelint-config-standard",
     "rules": {
       "string-quotes": "single",
-      "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global", "local"] }]
+      "selector-pseudo-class-no-unknown": [
+        true,
+        {
+          "ignorePseudoClasses": [
+            "global",
+            "local"
+          ]
+        }
+      ]
     }
   },
   "scripts": {
