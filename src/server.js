@@ -16,7 +16,7 @@ import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import ReactDOM from 'react-dom/server';
-import { match } from 'universal-router';
+import UniversalRouter from 'universal-router';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
 import models from './data/models';
@@ -91,7 +91,7 @@ app.get('*', async (req, res, next) => {
       data.trackingId = analytics.google.trackingId;
     }
 
-    await match(routes, {
+    await UniversalRouter.resolve(routes, {
       path: req.path,
       query: req.query,
       context: {
