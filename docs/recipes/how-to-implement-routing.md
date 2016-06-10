@@ -12,11 +12,11 @@
 
 ### Step 1: Basic Routing
 
-In its simplest form the routing looks like a collection or URLs where each URL
+In its simplest form the routing looks like a collection of URLs where each URL
 is mapped to a React component:
 
 ```js
-// app.js
+// client.js
 import React from 'react';
 import Layout from './components/Layout';
 import HomePage from './components/HomePage';
@@ -51,7 +51,7 @@ Just wrap React components inside your routes into asynchronous functions:
 
 ```js
 import React from 'react';
-import http from './core/http';
+import fetch from './core/fetch';
 import Layout from './components/Layout';
 import HomePage from './components/HomePage';
 import AboutPage from './components/AboutPage';
@@ -60,11 +60,13 @@ import ErrorPage from './components/ErrorPage';
 
 const routes = {
   '/': async () => {
-    const data = await http.get('/api/data/home');
+    const response = await fetch('/graphql?query={content(path:"/"){title,html}}');
+    const data = await response.json();
     return <Layout><HomePage {...data} /></Layout>
   },
   '/about': async () => {
-    const data = await http.get('/api/data/about');
+    const response = await fetch('/graphql?query={content(path:"/about"){title,html}}');
+    const data = await response.json();
     return <Layout><AboutPage {...data} /></Layout>;
   }
 };
@@ -97,7 +99,7 @@ for matching URL paths to React components.
 ```js
 import React from 'react';
 import Router from 'react-routing/src/Router';
-import http from './core/http';
+import fetch from './core/fetch';
 import Layout from './components/Layout';
 import ProductListing from './components/ProductListing';
 import ProductInfo from './components/ProductInfo';
@@ -106,11 +108,13 @@ import ErrorPage from './components/ErrorPage';
 
 const router = new Router(on => {
   on('/products', async () => {
-    const data = await http.get('/api/products');
+    const response = await fetch('/graphql?query={products{id,name}}');
+    const data = await response.json();
     return <Layout><ProductListing {...data} /></Layout>
   });
-  on('/products/:id', async (req) => {
-    const data = await http.get(`/api/products/${req.params.id}`);
+  on('/products/:id', async ({ params }) => {
+    const response = await fetch('/graphql?query={product(id:"${params.id}"){name,summary}}');
+    const data = await response.json();
     return <Layout><ProductInfo {...data} /></Layout>;
   });
 }]);

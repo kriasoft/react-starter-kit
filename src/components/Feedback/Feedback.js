@@ -1,24 +1,32 @@
-/*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
+/**
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
 
-import React, { Component } from 'react';
-import styles from './Feedback.css';
-import withStyles from '../../decorators/withStyles';
+import React from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import s from './Feedback.css';
 
-@withStyles(styles)
-class Feedback extends Component {
-
-  render() {
-    return (
-      <div className="Feedback">
-        <div className="Feedback-container">
-          <a className="Feedback-link" href="https://gitter.im/kriasoft/react-starter-kit">Ask a question</a>
-          <span className="Feedback-spacer">|</span>
-          <a className="Feedback-link" href="https://github.com/kriasoft/react-starter-kit/issues/new">Report an issue</a>
-        </div>
+function Feedback() {
+  return (
+    <div className={s.root}>
+      <div className={s.container}>
+        <a
+          className={s.link}
+          href="https://gitter.im/kriasoft/react-starter-kit"
+        >Ask a question</a>
+        <span className={s.spacer}>|</span>
+        <a
+          className={s.link}
+          href="https://github.com/kriasoft/react-starter-kit/issues/new"
+        >Report an issue</a>
       </div>
-    );
-  }
-
+    </div>
+  );
 }
 
-export default Feedback;
+export default withStyles(s)(Feedback);
