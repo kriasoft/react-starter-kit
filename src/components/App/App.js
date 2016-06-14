@@ -9,10 +9,7 @@
 
 import React, { Component, PropTypes } from 'react';
 import emptyFunction from 'fbjs/lib/emptyFunction';
-import s from './App.css';
-import Header from '../Header';
-import Feedback from '../Feedback';
-import Footer from '../Footer';
+import Layout from '../Layout';
 
 class App extends Component {
 
@@ -22,12 +19,10 @@ class App extends Component {
       setTitle: PropTypes.func,
       setMeta: PropTypes.func,
     }),
-    children: PropTypes.element.isRequired,
-    error: PropTypes.object,
   };
 
   static childContextTypes = {
-    insertCss: PropTypes.func.isRequired,
+    insertCss: PropTypes.func,
     setTitle: PropTypes.func.isRequired,
     setMeta: PropTypes.func.isRequired,
   };
@@ -35,30 +30,14 @@ class App extends Component {
   getChildContext() {
     const context = this.props.context;
     return {
-      insertCss: context.insertCss || emptyFunction,
+      insertCss: context.insertCss,
       setTitle: context.setTitle || emptyFunction,
       setMeta: context.setMeta || emptyFunction,
     };
   }
 
-  componentWillMount() {
-    const { insertCss } = this.props.context;
-    this.removeCss = insertCss(s);
-  }
-
-  componentWillUnmount() {
-    this.removeCss();
-  }
-
   render() {
-    return !this.props.error ? (
-      <div>
-        <Header />
-        {this.props.children}
-        <Feedback />
-        <Footer />
-      </div>
-    ) : this.props.children;
+    return <Layout {...this.props} />;
   }
 
 }

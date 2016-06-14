@@ -1,16 +1,16 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import runServer from './runServer';
-import fs from './lib/fs';
+import path from 'path';
 import fetch from 'node-fetch';
-import { host } from '../src/config';
+import { writeFile, makeDir } from './lib/fs';
+import runServer from './runServer';
 
 // Enter your paths here which you want to render as static
 const routes = [
@@ -24,22 +24,20 @@ const routes = [
 ];
 
 async function render() {
-  let server;
-  await new Promise(resolve => (server = runServer(resolve)));
-
-  await routes.reduce((promise, route) => promise.then(async () => {
-    const url = `http://${host}${route}`;
-    const dir = `build/public${route.replace(/[^\/]*$/, '')}`;
-    const name = route.endsWith('/') ? 'index.html' : `${route.match(/[^/]+$/)[0]}.html`;
+  const server = await runServer();
+  const result = await Promise.all(routes.map(async route => {
+    const url = `http://${server.host}${route}`;
+    const dir = path.resolve('build/public', path.dirname(route));
+    const name = route.endsWith('/') ? 'index.html' : `${path.basename(route, '.html')}.html`;
     const dist = `${dir}${name}`;
     const res = await fetch(url);
     const text = await res.text();
-    await fs.makeDir(dir);
-    await fs.writeFile(dist, text);
-    console.log(`${dist} => ${res.status} ${res.statusText}`);
-  }), Promise.resolve());
-
+    await makeDir(dir);
+    await writeFile(dist, text);
+    return `${dist} => ${res.status} ${res.statusText}`;
+  }));
   server.kill('SIGTERM');
+  console.log(result.join('\n'));
 }
 
 export default render;

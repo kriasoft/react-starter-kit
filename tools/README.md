@@ -4,17 +4,17 @@
 
 * Cleans up the output `/build` directory (`clean.js`)
 * Copies static files to the output folder (`copy.js`)
-* Launches [Webpack](https://webpack.github.io/) compiler in a watch mode (via [webpack-middleware](https://github.com/kriasoft/webpack-middleware))
+* Launches [Webpack](https://webpack.github.io/) compiler in a watch mode (via [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware))
 * Launches Node.js server from the compiled output folder (`runServer.js`)
 * Launches [Browsersync](https://browsersync.io/),
-  [HMR](https://webpack.github.io/docs/hot-module-replacement), and
-  [React Transform](https://github.com/gaearon/babel-plugin-react-transform)
+  [Hot Module Replacement](https://webpack.github.io/docs/hot-module-replacement), and
+  [React Hot Loader](https://github.com/gaearon/react-hot-loader)
 
 ##### `npm run build` (`build.js`)
 
 * Cleans up the output `/build` folder (`clean.js`)
 * Copies static files to the output folder (`copy.js`)
-* Creates application bundles with Webpack (`bundle.js`, `webpack.config.js`)
+* Compiles application (`compile.js`, `compileClient.js`, `compileServer.js`, `webpack.config.js`)
 
 ##### `npm run deploy` (`deploy.js`)
 
@@ -43,6 +43,6 @@ $ npm start -- --release                 # Launch dev server in production mode
 
 #### Misc
 
-* `webpack.config.js` - Webpack configuration for both client-side and server-side bundles
+* `webpack.config.js` - Webpack configuration for client-side bundle
 * `run.js` - Helps to launch other scripts with `babel-node` (e.g. `babel-node tools/run build`)
 * `.eslintrc` - ESLint overrides for built automation scripts

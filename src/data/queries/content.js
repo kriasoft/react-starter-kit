@@ -23,7 +23,7 @@ import ContentType from '../types/ContentType';
 const md = new MarkdownIt();
 
 // A folder with Markdown/HTML content pages
-const CONTENT_DIR = join(__dirname, './content');
+const CONTENT_DIR = join(__dirname, '../../content');
 
 // Extract 'front matter' metadata and generate HTML
 const parseContent = (path, fileContent, extension) => {

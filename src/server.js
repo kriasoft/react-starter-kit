@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import 'babel-polyfill';
+import 'source-map-support/register';
 import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
@@ -84,7 +84,7 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
-    let css = [];
+    let style = [];
     let statusCode = 200;
     const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
 
@@ -92,17 +92,15 @@ app.get('*', async (req, res, next) => {
       path: req.path,
       query: req.query,
       context: {
-        insertCss: (...styles) => {
-          styles.forEach(style => css.push(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
-        },
+        insertCss: (s) => style.push(s()),
         setTitle: value => (data.title = value),
         setMeta: (key, value) => (data[key] = value),
       },
       render(component, status = 200) {
-        css = [];
+        style = [];
         statusCode = status;
         data.children = ReactDOM.renderToString(component);
-        data.style = css.join('');
+        data.style = style;
         return true;
       },
     });
@@ -130,7 +128,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     <Html
       title="Internal Server Error"
       description={err.message}
-      style={errorPageStyle._getCss()} // eslint-disable-line no-underscore-dangle
+      style={[errorPageStyle()]}
     >
       {ReactDOM.renderToString(<ErrorPage error={err} />)}
     </Html>
