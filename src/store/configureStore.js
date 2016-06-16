@@ -11,7 +11,7 @@ export default function configureStore(initialState, helpersConfig) {
 
   if (__DEV__) {
     if (process.env.BROWSER) {
-      const createLogger = require('redux-logger');
+      const createLogger = require('redux-logger'); // eslint-disable-line global-require
       middleware.push(createLogger({
         collapsed: true,
       }));
@@ -44,7 +44,7 @@ export default function configureStore(initialState, helpersConfig) {
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
   if (__DEV__ && module.hot) {
     module.hot.accept('../reducers', () =>
-      store.replaceReducer(require('../reducers').default)
+      store.replaceReducer(require('../reducers').default) // eslint-disable-line global-require
     );
   }
 
