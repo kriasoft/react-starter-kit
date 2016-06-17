@@ -120,10 +120,6 @@ const config = {
           name: DEBUG ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
         },
       },
-      {
-        test: /\.jade$/,
-        loader: 'jade-loader',
-      },
     ],
   },
 
