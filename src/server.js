@@ -106,6 +106,7 @@ app.get('*', async (req, res, next) => {
       path: req.path,
       query: req.query,
       context: {
+        store,
         insertCss: (...styles) => {
           styles.forEach(style => css.push(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
