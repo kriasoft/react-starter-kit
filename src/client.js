@@ -114,14 +114,15 @@ function run() {
       });
     }
     currentLocation = location;
-
+    /* eslint-disable no-console, react/jsx-no-bind */
     UniversalRouter.resolve(routes, {
       path: location.pathname,
       query: location.query,
       state: location.state,
       context,
       render: render.bind(undefined, container, location.state),
-    }).catch(err => console.error(err)); // eslint-disable-line no-console
+    }).catch(err => console.error(err));
+    /* eslint-enable no-console, react/jsx-no-bind */
   }
 
   // Add History API listener and trigger initial change
