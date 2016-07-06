@@ -29,6 +29,7 @@ class App extends Component {
   };
 
   static childContextTypes = {
+    store: PropTypes.object.isRequired,
     insertCss: PropTypes.func.isRequired,
     setTitle: PropTypes.func.isRequired,
     setMeta: PropTypes.func.isRequired,
@@ -37,6 +38,7 @@ class App extends Component {
   getChildContext() {
     const context = this.props.context;
     return {
+      store: context.store || {},
       insertCss: context.insertCss || emptyFunction,
       setTitle: context.setTitle || emptyFunction,
       setMeta: context.setMeta || emptyFunction,
