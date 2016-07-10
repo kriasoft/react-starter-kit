@@ -65,7 +65,9 @@ let renderComplete = (state, callback) => {
 
     // Google Analytics tracking. Don't send 'pageview' event after
     // the initial rendering, as it was already sent
-    window.ga('send', 'pageview');
+    if (window.ga) {
+      window.ga('send', 'pageview');
+    }
 
     callback(true);
   };
@@ -109,7 +111,7 @@ function run() {
       query: location.query,
       state: location.state,
       context,
-      render: render.bind(undefined, container, location.state),
+      render: render.bind(undefined, container, location.state), // eslint-disable-line react/jsx-no-bind, max-len
     }).catch(err => console.error(err)); // eslint-disable-line no-console
   }
 
