@@ -37,7 +37,7 @@ branches that you can use either as a reference or merge into your project:
     isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel) (see [how
     to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md))
 
-If you think that any of these features should be on `master`, or vise versa, some features should
+If you think that any of these features should be on `master`, or vice versa, some features should
 removed from the `master` branch, please [let us know](https://gitter.im/kriasoft/react-starter-kit).
 We love your feedback!
 

@@ -11,7 +11,7 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ErrorPage.css';
 
-function ErrorPage({ error }, context) {
+export function ErrorPage({ error }, context) {
   let title = 'Error';
   let content = 'Sorry, a critical error occurred on this page.';
   let errorMessage = null;
@@ -23,7 +23,9 @@ function ErrorPage({ error }, context) {
     errorMessage = <pre>{error.stack}</pre>;
   }
 
-  context.setTitle(title);
+  if (context.setTitle) {
+    context.setTitle(title);
+  }
 
   return (
     <div>
