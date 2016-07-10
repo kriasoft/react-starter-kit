@@ -207,7 +207,7 @@ const config = {
 // -----------------------------------------------------------------------------
 
 const clientConfig = extend(true, {}, config, {
-  entry: './client.js',
+  entry: './clientLoader.js',
 
   output: {
     filename: DEBUG ? '[name].js?[chunkhash]' : '[name].[chunkhash].js',

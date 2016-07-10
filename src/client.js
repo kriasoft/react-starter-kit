@@ -107,7 +107,7 @@ function render(container, state, config, component) {
   });
 }
 
-function run() {
+export default function main() {
   const container = document.getElementById('app');
   const initialState = JSON.parse(
     document.
@@ -163,11 +163,4 @@ function run() {
       originalScrollRestoration = undefined;
     }
   });
-}
-
-// Run the application when both DOM is ready and page content is loaded
-if (['complete', 'loaded', 'interactive'].includes(document.readyState) && document.body) {
-  run();
-} else {
-  document.addEventListener('DOMContentLoaded', run, false);
 }
