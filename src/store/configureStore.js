@@ -2,6 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
 import createHelpers from './createHelpers';
+import createLogger from './logger';
 
 export default function configureStore(initialState, helpersConfig) {
   const helpers = createHelpers(helpersConfig);
@@ -10,19 +11,7 @@ export default function configureStore(initialState, helpersConfig) {
   let enhancer;
 
   if (__DEV__) {
-    if (process.env.BROWSER) {
-      const createLogger = require('redux-logger'); // eslint-disable-line global-require
-      middleware.push(createLogger({
-        collapsed: true,
-      }));
-    } else {
-      // Server side redux action logger
-      middleware.push(store => next => action => { // eslint-disable-line no-unused-vars
-        const payload = JSON.stringify(action.payload);
-        console.log(` * ${action.type}: ${payload}`); // eslint-disable-line no-console
-        return next(action);
-      });
-    }
+    middleware.push(createLogger());
 
     // https://github.com/zalmoxisus/redux-devtools-extension#redux-devtools-extension
     let devToolsExtension = f => f;
