@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ### [Unreleased][unreleased]
 
+- Remove Jade dependency in favor of React-based templates: `src/views/index.jade => src/components/Html`
+  (BREAKING CHANGE) [#711](https://github.com/kriasoft/react-starter-kit/pull/711)
 - Update `isomorphic-style-loader` to `v1.0.0`, it adds comparability with ES2015+ decorators.
   Code such as `export default withStyles(MyComponent, style1, style2)` must be replaced with
   `export default withStyles(style1, style2)(MyComponent)` (BREAKING CHANGE).
