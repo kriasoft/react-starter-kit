@@ -10,6 +10,7 @@
 import fs from 'fs';
 import { join } from 'path';
 import Promise from 'bluebird';
+import jade from 'jade';
 import fm from 'front-matter';
 import MarkdownIt from 'markdown-it';
 
@@ -22,7 +23,7 @@ import ContentType from '../types/ContentType';
 
 const md = new MarkdownIt();
 
-// A folder with Markdown/HTML content pages
+// A folder with Jade/Markdown/HTML content pages
 const CONTENT_DIR = join(__dirname, './content');
 
 // Extract 'front matter' metadata and generate HTML
@@ -30,6 +31,9 @@ const parseContent = (path, fileContent, extension) => {
   const fmContent = fm(fileContent);
   let htmlContent;
   switch (extension) {
+    case '.jade':
+      htmlContent = jade.render(fmContent.body);
+      break;
     case '.md':
       htmlContent = md.render(fmContent.body);
       break;
@@ -69,7 +73,7 @@ async function resolveExtension(path, extension) {
 }
 
 async function resolveFileName(path) {
-  const extensions = ['.md', '.html'];
+  const extensions = ['.jade', '.md', '.html'];
 
   for (const extension of extensions) {
     const maybeFileName = await resolveExtension(path, extension);
