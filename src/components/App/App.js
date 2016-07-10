@@ -13,15 +13,17 @@ import s from './App.css';
 import Header from '../Header';
 import Feedback from '../Feedback';
 import Footer from '../Footer';
+import { Provider } from 'react-redux';
 
 class App extends Component {
 
   static propTypes = {
     context: PropTypes.shape({
+      store: PropTypes.object.isRequired,
       insertCss: PropTypes.func,
       setTitle: PropTypes.func,
       setMeta: PropTypes.func,
-    }),
+    }).isRequired,
     children: PropTypes.element.isRequired,
     error: PropTypes.object,
   };
@@ -51,14 +53,21 @@ class App extends Component {
   }
 
   render() {
-    return !this.props.error ? (
-      <div>
-        <Header />
-        {this.props.children}
-        <Feedback />
-        <Footer />
-      </div>
-    ) : this.props.children;
+    if (this.props.error) {
+      return this.props.children;
+    }
+
+    const store = this.props.context.store;
+    return (
+      <Provider store={store}>
+        <div>
+          <Header />
+          {this.props.children}
+          <Feedback />
+          <Footer />
+        </div>
+      </Provider>
+    );
   }
 
 }

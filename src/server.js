@@ -27,6 +27,8 @@ import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
+import configureStore from './store/configureStore';
+import { setRuntimeVariable } from './actions/runtime';
 import { port, auth } from './config';
 
 const app = express();
@@ -88,10 +90,20 @@ app.get('*', async (req, res, next) => {
     let statusCode = 200;
     const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
 
+    const store = configureStore({}, {
+      cookie: req.headers.cookie,
+    });
+
+    store.dispatch(setRuntimeVariable({
+      name: 'initialNow',
+      value: Date.now(),
+    }));
+
     await UniversalRouter.resolve(routes, {
       path: req.path,
       query: req.query,
       context: {
+        store,
         insertCss: (...styles) => {
           styles.forEach(style => css.push(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
@@ -103,6 +115,7 @@ app.get('*', async (req, res, next) => {
         statusCode = status;
         data.children = ReactDOM.renderToString(component);
         data.style = css.join('');
+        data.state = store.getState();
         return true;
       },
     });
