@@ -13,7 +13,7 @@ const UserProfile = Model.define('UserProfile', {
   },
 
   picture: {
-    type: DataType.STRING(256),
+    type: DataType.STRING(255),
   },
 
   gender: {
@@ -25,7 +25,7 @@ const UserProfile = Model.define('UserProfile', {
   },
 
   website: {
-    type: DataType.STRING(256),
+    type: DataType.STRING(255),
   },
 
 });
