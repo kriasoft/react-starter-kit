@@ -120,6 +120,10 @@ const config = {
           name: DEBUG ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
         },
       },
+      {
+        test: /\.jade$/,
+        loader: 'jade-loader',
+      },
     ],
   },
 
@@ -225,7 +229,7 @@ const clientConfig = extend(true, {}, config, {
     // Assign the module and chunk ids by occurrence count
     // Consistent ordering of modules required if using any hashing ([hash] or [chunkhash])
     // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
-    new webpack.optimize.OccurrenceOrderPlugin(true),
+    new webpack.optimize.OccurenceOrderPlugin(true),
 
     ...DEBUG ? [] : [
 

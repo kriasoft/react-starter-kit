@@ -100,7 +100,7 @@ passport.use(new FacebookStrategy({
               { type: claimType, value: accessToken },
             ],
             profile: {
-              displayName: profile.displayName,
+              displaynName: profile.displayName,
               gender: profile._json.gender,
               picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
             },

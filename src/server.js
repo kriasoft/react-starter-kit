@@ -15,21 +15,17 @@ import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
-import React from 'react';
 import ReactDOM from 'react-dom/server';
-import Html from './components/Html';
-import { ErrorPage } from './routes/error/ErrorPage';
-import errorPageStyle from './routes/error/ErrorPage.css';
-import UniversalRouter from 'universal-router';
+import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
 import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
+import { port, auth, analytics } from './config';
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
-import { port, auth } from './config';
 
 const app = express();
 
@@ -54,7 +50,9 @@ app.use(bodyParser.json());
 app.use(expressJwt({
   secret: auth.jwt.secret,
   credentialsRequired: false,
+  /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
   getToken: req => req.cookies.id_token,
+  /* jscs:enable requireCamelCaseOrUpperCaseIdentifiers */
 }));
 app.use(passport.initialize());
 
@@ -88,7 +86,12 @@ app.get('*', async (req, res, next) => {
   try {
     let css = [];
     let statusCode = 200;
-    const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
+    const template = require('./views/index.jade'); // eslint-disable-line global-require
+    const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
+
+    if (process.env.NODE_ENV === 'production') {
+      data.trackingId = analytics.google.trackingId;
+    }
 
     const store = configureStore({}, {
       cookie: req.headers.cookie,
@@ -99,31 +102,27 @@ app.get('*', async (req, res, next) => {
       value: Date.now(),
     }));
 
-    await UniversalRouter.resolve(routes, {
+    await match(routes, {
       path: req.path,
       query: req.query,
       context: {
         store,
-        insertCss: (...styles) => {
-          styles.forEach(style => css.push(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
-        },
+        insertCss: styles => css.push(styles._getCss()), // eslint-disable-line no-underscore-dangle
         setTitle: value => (data.title = value),
         setMeta: (key, value) => (data[key] = value),
       },
       render(component, status = 200) {
         css = [];
         statusCode = status;
-        data.children = ReactDOM.renderToString(component);
-        data.style = css.join('');
-        data.state = store.getState();
+        data.state = JSON.stringify(store.getState());
+        data.body = ReactDOM.renderToString(component);
+        data.css = css.join('');
         return true;
       },
     });
 
-    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-
     res.status(statusCode);
-    res.send(`<!doctype html>${html}`);
+    res.send(template(data));
   } catch (err) {
     next(err);
   }
@@ -138,18 +137,13 @@ pe.skipPackage('express');
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.log(pe.render(err)); // eslint-disable-line no-console
+  const template = require('./views/error.jade'); // eslint-disable-line global-require
   const statusCode = err.status || 500;
-  const html = ReactDOM.renderToStaticMarkup(
-    <Html
-      title="Internal Server Error"
-      description={err.message}
-      style={errorPageStyle._getCss()} // eslint-disable-line no-underscore-dangle
-    >
-      {ReactDOM.renderToString(<ErrorPage error={err} />)}
-    </Html>
-  );
   res.status(statusCode);
-  res.send(`<!doctype html>${html}`);
+  res.send(template({
+    message: err.message,
+    stack: process.env.NODE_ENV === 'production' ? '' : err.stack,
+  }));
 });
 
 //

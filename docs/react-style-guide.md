@@ -21,7 +21,7 @@
 * Add `package.json` file into each component's folder.<br>
   This will allow to easily reference such components from other places in
   your code.<br>
-  Use `import Nav from '../Navigation'` instead of `import Nav from '../Navigation/Navigation.js'`
+  `import Nav from '../Nav'` vs `import Nav from '../Nav/Nav.js'`
 
 ```
 /components/Navigation/icon.svg
