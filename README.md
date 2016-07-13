@@ -3,11 +3,16 @@
 > [React Starter Kit](https://www.reactstarterkit.com) is an opinionated
 > boilerplate for web development built on top of [Node.js](https://nodejs.org/),
 > [Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
-> [React](https://facebook.github.io/react/). Containing modern web development
+> [React](https://facebook.github.io/react/), containing modern web development
 > tools such as [Webpack](http://webpack.github.io/), [Babel](http://babeljs.io/)
 > and [Browsersync](http://www.browsersync.io/). Helping you to stay productive
 > following the best practices. A solid starting point for both professionals
 > and newcomers to the industry.
+
+> "Isomorphic" JavaScript apps are JavaScript applications that can run both 
+> client-side and server-side: the backend and frontend share the same code. 
+> If you are looking for a simple, client-side only React kit, you may want to look at 
+> [React Static Boilerplate](https://github.com/kriasoft/react-static-boilerplate) instead.
 
 See [getting started](./docs/getting-started.md) &nbsp;|&nbsp;
 [demo](http://demo.reactstarterkit.com) &nbsp;|&nbsp;
