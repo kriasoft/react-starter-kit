@@ -24,7 +24,6 @@ Before you start, take a moment to see how the project structure looks like:
 │   ├── /data/                  # GraphQL server schema and data models
 │   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /routes/                # Page/screen components along with the routing information
-│   ├── /views/                 # Express.js views (templates) for index and error pages
 │   ├── /client.js              # Client-side startup script
 │   ├── /config.js              # Global application settings
 │   └── /server.js              # Server-side startup script
