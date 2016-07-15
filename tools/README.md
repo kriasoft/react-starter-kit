@@ -27,6 +27,7 @@ Flag        | Description
 ----------- | -------------------------------------------------- 
 `--release` | Minimizes and optimizes the compiled output
 `--verbose` | Prints detailed information to the console
+`--static`  | Renders [specified routes](./render.js#L15) as static html files
 
 For example:
 
