@@ -1,28 +1,29 @@
-## React Starter Kit — "isomorphic" web app boilerplate
+## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate
 
 > [React Starter Kit](https://www.reactstarterkit.com) is an opinionated
 > boilerplate for web development built on top of [Node.js](https://nodejs.org/),
 > [Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
-> [React](https://facebook.github.io/react/). Containing modern web development
+> [React](https://facebook.github.io/react/), containing modern web development
 > tools such as [Webpack](http://webpack.github.io/), [Babel](http://babeljs.io/)
 > and [Browsersync](http://www.browsersync.io/). Helping you to stay productive
 > following the best practices. A solid starting point for both professionals
 > and newcomers to the industry.
 
-See [getting started](./docs/getting-started.md) &nbsp;|&nbsp;
-[demo](http://demo.reactstarterkit.com) &nbsp;|&nbsp;
-[docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs) &nbsp;|&nbsp;
+**See** [getting started](./docs/getting-started.md) guide,
+[demo](http://demo.reactstarterkit.com), [docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs),
 [to-do list](https://waffle.io/kriasoft/react-starter-kit) &nbsp;|&nbsp;
-join [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chat room to stay up to date &nbsp;|&nbsp;
-visit our sponsors:<br><br>
+**Join** [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chat room to stay up to date &nbsp;|&nbsp;
+**Visit our sponsors**:<br><br>
 
 [![Rollbar - Full-stack error tracking for all apps in any language](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
 [![Localize - Translate your web app in minutes](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/localize.png)](https://localizejs.com/?cid=802&utm_source=rsk)
+
 
 ### Getting Started
 
   * Follow the [getting started guide](./docs/getting-started.md) to download and run the project
   * Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
+
 
 ### Customization
 
@@ -41,11 +42,110 @@ If you think that any of these features should be on `master`, or vice versa, so
 removed from the `master` branch, please [let us know](https://gitter.im/kriasoft/react-starter-kit).
 We love your feedback!
 
+
+### Comparison
+
+<table width="100%">
+  <tr>
+    <th>&nbsp;</th>
+    <th>
+      <p>React Starter Kit</p>
+      <a href="https://github.com/kriasoft/react-starter-kit"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=~react-starter-kit" height="20"></a>
+      <a href="https://twitter.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=@ReactStarter" height="20"></a>
+    </th>
+    <th>
+      <p>React Static Boilerplate</p>
+      <a href="https://github.com/kriasoft/react-static-boilerplate"><img src="https://img.shields.io/github/stars/kriasoft/react-static-boilerplate.svg?style=social&label=~react-static-boilerplate" height="20"></a>
+      <a href="https://twitter.com/ReactStatic"><img src="https://img.shields.io/twitter/follow/ReactStatic.svg?style=social&label=@ReactStatic" height="20"></a>
+    </th>
+    <th>
+      <p>ASP.NET Core Starter Kit</p>
+      <a href="https://github.com/kriasoft/aspnet-starter-kit"><img src="https://img.shields.io/github/stars/kriasoft/aspnet-starter-kit.svg?style=social&label=~aspnet-starter-kit" height="20"></a>
+      <a href="https://twitter.com/dotnetreact"><img src="https://img.shields.io/twitter/follow/dotnetreact.svg?style=social&label=@dotnetreact" height="20"></a>
+    </th>
+  <tr>
+  <tr>
+    <th align="right">App type</th>
+    <td align="center"><a href="http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/">Isomorphic</a> (universal)</td>
+    <td align="center"><a href="https://en.wikipedia.org/wiki/Single-page_application">Single-page application</a></td>
+    <td align="center"><a href="https://en.wikipedia.org/wiki/Single-page_application">Single-page application</a></td>
+  </tr>
+  <tr>
+    <th colspan="4">Frontend</th>
+  <tr>
+  <tr>
+    <th align="right">Language</th>
+    <td align="center">JavaScript (ES2015+, JSX)</td>
+    <td align="center">JavaScript (ES2015+, JSX)</td>
+    <td align="center">JavaScript (ES2015+, JSX)</td>
+  </tr>
+  <tr>
+    <th align="right">Libraries</th>
+    <td align="center">
+      <a href="https://github.com/facebook/react">React</a>,
+      <a href="https://github.com/ReactJSTraining/history">History</a>,
+      <a href="https://github.com/kriasoft/universal-router">Universal Router</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/facebook/react">React</a>,
+      <a href="https://github.com/ReactJSTraining/history">History</a>,
+      <a href="https://github.com/reactjs/redux">Redux</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/facebook/react">React</a>,
+      <a href="https://github.com/ReactJSTraining/history">History</a>,
+      <a href="https://github.com/reactjs/redux">Redux</a>
+    </td>
+  </tr>
+  <tr>
+    <th align="right">Routes</th>
+    <td align="center">Imperative (functional)</td>
+    <td align="center">Declarative</td>
+    <td align="center">Declarative, cross-stack</td>
+  </tr>
+  <tr>
+    <th colspan="4">Backend</th>
+  <tr>
+  <tr>
+    <th align="right">Language</th>
+    <td align="center">JavaScript (ES2015+, JSX)</td>
+    <td align="center">n/a</td>
+    <td align="center">C#, F#</td>
+  </tr>
+  <tr>
+    <th align="right">Libraries</th>
+    <td align="center">
+      <a href="https://nodejs.org">Node.js</a>,
+      <a href="http://expressjs.com/">Express</a>,
+      <a href="http://docs.sequelizejs.com/en/latest/">Sequelize</a>,<br>
+      <a href="https://github.com/graphql/graphql-js">GraphQL</a></td>
+    <td align="center">n/a</td>
+    <td align="center">
+      <a href="https://docs.asp.net/en/latest/">ASP.NET Core</a>,
+      <a href="https://ef.readthedocs.io/en/latest/">EF Core</a>,<br>
+      <a href="https://docs.asp.net/en/latest/security/authentication/identity.html">ASP.NET Identity</a>
+    </td>
+  </tr>
+  <tr>
+    <th align="right"><a href="https://www.quora.com/What-are-the-tradeoffs-of-client-side-rendering-vs-server-side-rendering">SSR</a></th>
+    <td align="center">Yes</td>
+    <td align="center">n/a</td>
+    <td align="center">n/a</td>
+  </tr>
+  <tr>
+    <th align="right">Data API</th>
+    <td align="center"><a href="http://graphql.org/">GraphQL</a></td>
+    <td align="center">n/a</td>
+    <td align="center"><a href="https://docs.asp.net/en/latest/tutorials/first-web-api.html">Web API</a></td>
+  </tr>
+</table>
+
+
 ### Backers
 
 ♥ React Starter Kit? Help us keep it alive by donating funds to cover project
 expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
-[PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RETHAJHV3T972)!
+[Bountysource](https://salt.bountysource.com/teams/react-starter-kit)!
 
 <a href="http://www.nekst.me/" target="_blank" title="lehneres">
   <img src="https://github.com/lehneres.png?size=64" width="64" height="64" alt="lehneres">
@@ -69,6 +169,17 @@ expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
   <img src="https://opencollective.com/static/images/become_backer.svg" width="64" height="64" alt="">
 </a>
 
+
+### How to Contribute
+
+Anyone and everyone is welcome to [contribute](CONTRIBUTING.md) to this project. The best way to
+start is by checking our [open issues](https://github.com/kriasoft/react-starter-kit/issues),
+[submit a new issues](https://github.com/kriasoft/react-starter-kit/issues/new?labels=bug) or
+[feature request](https://github.com/kriasoft/react-starter-kit/issues/new?labels=enhancement),
+participate in discussions, upvote or downvote the issues you like or dislike, send [pull
+requests](CONTRIBUTING.md#pull-requests).
+
+
 ### Learn More
 
   * [Getting Started with React.js](http://facebook.github.io/react/)
@@ -81,18 +192,19 @@ expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
   * [The Future of React](https://github.com/reactjs/react-future)
   * [Learn ES6](https://babeljs.io/docs/learn-es6/), [ES6 Features](https://github.com/lukehoban/es6features#readme)
 
+
 ### Related Projects
 
   * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
-  * [React Static Boilerplate](https://github.com/koistya/react-static-boilerplate) — Generates static websites from React components
   * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
+
 
 ### Support
 
   * [#react-starter-kit](http://stackoverflow.com/questions/tagged/react-starter-kit) on Stack Overflow — Questions and answers
   * [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) on Gitter — Watch announcements, share ideas and feedback
   * [GitHub issues](https://github.com/kriasoft/react-starter-kit/issues), or [Scrum board](https://waffle.io/kriasoft/react-starter-kit) — File issues, send feature requests
-  * [appear.in/react](https://appear.in/react) — Open hours! Exchange ideas and experiences (React, GraphQL, Startups, etc.)
+  * [appear.in/react](https://appear.in/react) — Open hours! Exchange ideas and experiences (React, GraphQL, startups and pet projects)
   * [@koistya](https://twitter.com/koistya) on [Codementor](https://www.codementor.io/koistya), or [Skype](http://hatscripts.com/addskype?koistya) — Private consulting
 
 ### License

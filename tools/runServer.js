@@ -20,6 +20,8 @@ const serverPath = path.join(output.path, output.filename);
 
 // Launch or restart the Node.js server
 function runServer(cb) {
+  let cbIsPending = !!cb;
+
   function onStdOut(data) {
     const time = new Date().toTimeString();
     const match = data.toString('utf8').match(RUNNING_REGEXP);
@@ -31,6 +33,7 @@ function runServer(cb) {
       server.stdout.removeListener('data', onStdOut);
       server.stdout.on('data', x => process.stdout.write(x));
       if (cb) {
+        cbIsPending = false;
         cb(null, match[1]);
       }
     }
@@ -44,6 +47,13 @@ function runServer(cb) {
     env: Object.assign({ NODE_ENV: 'development' }, process.env),
     silent: false,
   });
+  if (cbIsPending) {
+    server.once('exit', (code, signal) => {
+      if (cbIsPending) {
+        throw new Error(`Server terminated unexpectedly with code: ${code} signal: ${signal}`);
+      }
+    });
+  }
 
   server.stdout.on('data', onStdOut);
   server.stderr.on('data', x => process.stderr.write(x));
