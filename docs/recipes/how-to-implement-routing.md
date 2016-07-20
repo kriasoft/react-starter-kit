@@ -25,7 +25,7 @@ If you're using RSK, read the two notes (below) that give information about usin
 - [How to Implement Routing and Navigation](https://github.com/kriasoft/react-starter-kit/issues/748)
 - [How to Add a Route to RSK?](https://github.com/kriasoft/react-starter-kit/issues/754)
 
-For more information, you can ask questions on the [universal-router group on Gitter.](https://gitter.im/kriasoft/universal-router)
+For more information, you can review [You might not need React Router](https://medium.freecodecamp.com/you-might-not-need-react-router-38673620f3d) or ask questions on the [universal-router group on Gitter.](https://gitter.im/kriasoft/universal-router)
 
 ---------
 _**DEPRECATION NOTICE** This page formerly contained the information below. With the arrival of `universal-router` in react-starter-kit, these descriptions are no longer correct._
