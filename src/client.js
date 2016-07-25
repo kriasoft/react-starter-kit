@@ -8,9 +8,11 @@
  */
 
 import 'babel-polyfill';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
-import UniversalRouter from 'universal-router';
+import { Router } from 'react-router';
+import ContextHolder from './components/ContextHolder';
 import routes from './routes';
 import history from './core/history';
 import { readState, saveState } from 'history/lib/DOMStateStorage';
@@ -56,10 +58,9 @@ function restoreScrollPosition(state) {
   }
 }
 
-let renderComplete = (state, callback) => {
+let renderComplete = () => {
   const elem = document.getElementById('css');
   if (elem) elem.parentNode.removeChild(elem);
-  callback(true);
   renderComplete = (s) => {
     restoreScrollPosition(s);
 
@@ -68,28 +69,12 @@ let renderComplete = (state, callback) => {
     if (window.ga) {
       window.ga('send', 'pageview');
     }
-
-    callback(true);
   };
 };
 
-function render(container, state, component) {
-  return new Promise((resolve, reject) => {
-    try {
-      ReactDOM.render(
-        component,
-        container,
-        renderComplete.bind(undefined, state, resolve)
-      );
-    } catch (err) {
-      reject(err);
-    }
-  });
-}
-
 function run() {
   const container = document.getElementById('app');
-  let currentLocation = history.getCurrentLocation();
+  let currentLocation = history.current;
 
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
@@ -97,7 +82,7 @@ function run() {
   // Re-render the app when window.location changes
   function onLocationChange(location) {
     // Save the page scroll position into the current location's state
-    if (currentLocation.key) {
+    if (currentLocation && currentLocation.key) {
       saveState(currentLocation.key, {
         ...readState(currentLocation.key),
         scrollX: windowScrollX(),
@@ -106,13 +91,16 @@ function run() {
     }
     currentLocation = location;
 
-    UniversalRouter.resolve(routes, {
-      path: location.pathname,
-      query: location.query,
-      state: location.state,
-      context,
-      render: render.bind(undefined, container, location.state), // eslint-disable-line react/jsx-no-bind, max-len
-    }).catch(err => console.error(err)); // eslint-disable-line no-console
+    ReactDOM.render(
+      <ContextHolder context={context}>
+        <Router
+          history={history}
+          routes={routes}
+        />
+      </ContextHolder>,
+      container,
+      renderComplete
+    );
   }
 
   // Add History API listener and trigger initial change

@@ -16,11 +16,11 @@ export function ErrorPage({ error }, context) {
   let content = 'Sorry, a critical error occurred on this page.';
   let errorMessage = null;
 
-  if (error.status === 404) {
+  if (error && error.status === 404) {
     title = 'Page Not Found';
     content = 'Sorry, the page you were trying to view does not exist.';
   } else if (process.env.NODE_ENV !== 'production') {
-    errorMessage = <pre>{error.stack}</pre>;
+    errorMessage = <pre>{error ? error.stack : 'No stack found'}</pre>;
   }
 
   if (context.setTitle) {

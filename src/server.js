@@ -18,9 +18,10 @@ import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import Html from './components/Html';
+import ContextHolder from './components/ContextHolder';
 import { ErrorPage } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
-import UniversalRouter from 'universal-router';
+import { match, RouterContext } from 'react-router';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
 import models from './data/models';
@@ -84,33 +85,38 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
-    let css = [];
     let statusCode = 200;
+    const css = [];
+    const location = req.url;
     const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
 
-    await UniversalRouter.resolve(routes, {
-      path: req.path,
-      query: req.query,
-      context: {
-        insertCss: (...styles) => {
-          styles.forEach(style => css.push(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
-        },
-        setTitle: value => (data.title = value),
-        setMeta: (key, value) => (data[key] = value),
-      },
-      render(component, status = 200) {
-        css = [];
-        statusCode = status;
-        data.children = ReactDOM.renderToString(component);
-        data.style = css.join('');
-        return true;
-      },
+    const context = {
+      insertCss: styles => css.push(styles._getCss()), // eslint-disable-line no-underscore-dangle
+      setTitle: value => (data.title = value),
+      setMeta: value => (data.meta = value),
+      onPageNotFound: () => (statusCode = 404),
+    };
+
+    match({ routes, location }, (error, redirectLocation, renderProps) => {
+      if (error) {
+        return next(error);
+      } else if (redirectLocation) {
+        return res.redirect(redirectLocation.pathname + redirectLocation.search, '/');
+      } else if (renderProps) {
+        data.body = ReactDOM.renderToString(
+          <ContextHolder context={context}>
+            <RouterContext {...renderProps} />
+          </ContextHolder>
+        );
+        data.css = css.join('');
+
+        const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+
+        return res.status(statusCode).send(`<!DOCTYPE html>\n${html}`);
+      }
+
+      return res.status(404).send('Not Found');
     });
-
-    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-
-    res.status(statusCode);
-    res.send(`<!doctype html>${html}`);
   } catch (err) {
     next(err);
   }

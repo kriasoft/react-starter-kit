@@ -18,25 +18,57 @@ class Content extends Component {
   };
 
   static propTypes = {
-    path: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    title: PropTypes.string,
+    location: PropTypes.object,
   };
 
-  componentWillMount() {
-    this.context.setTitle(this.props.title);
+  constructor(props) {
+    super(props);
+    this.state = { path: '', content: '', title: '' };
+  }
+
+  componentDidMount() {
+    const currentPath = this.props.location.pathname;
+    this.loadContent(currentPath);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.context.setTitle(nextProps.title);
+    const nextPath = nextProps.location.pathname;
+    this.loadContent(nextPath);
+  }
+
+  loadContent(path) {
+    return fetch('/graphql', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: `{content(path:"${path}"){path,title,content,component}}`,
+      }),
+      credentials: 'include',
+    })
+    .then((resp) => {
+      if (resp.status !== 200) throw new Error(resp.statusText);
+      return resp.json();
+    })
+    .then((json) => {
+      const { data } = json;
+      if (!data || !data.content) throw new Error('Invalid data object');
+      this.setState({ ...data.content });
+      this.context.setTitle(this.state.title);
+    })
+    .catch((err) =>
+      console.error(`Failed to load content: ${err}`) // eslint-disable-line no-console
+    );
   }
 
   render() {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          {this.props.path === '/' ? null : <h1>{this.props.title}</h1>}
-          <div dangerouslySetInnerHTML={{ __html: this.props.content || '' }} />
+          {this.state.path === '/' ? null : <h1>{this.state.title}</h1>}
+          <div dangerouslySetInnerHTML={{ __html: this.state.content || '' }} />
         </div>
       </div>
     );

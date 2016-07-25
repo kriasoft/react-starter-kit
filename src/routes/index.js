@@ -1,42 +1,24 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
+import { IndexRoute, Route } from 'react-router';
+
 import App from '../components/App';
+import Contact from './contact';
+import Content from './content';
+import ErrorPage from './error';
+import Home from './home';
+import Login from './login';
+import Register from './register';
 
-// Child routes
-import home from './home';
-import contact from './contact';
-import login from './login';
-import register from './register';
-import content from './content';
-import error from './error';
-
-export default {
-
-  path: '/',
-
-  children: [
-    home,
-    contact,
-    login,
-    register,
-    content,
-    error,
-  ],
-
-  async action({ next, render, context }) {
-    const component = await next();
-    if (component === undefined) return component;
-    return render(
-      <App context={context}>{component}</App>
-    );
-  },
-
-};
+/**
+ * all routes
+ */
+export default (
+  <Route path="/" component={App}>
+    <IndexRoute component={Home} />
+    <Route path="contact" components={Contact} />
+    <Route path="login" components={Login} />
+    <Route path="register" components={Register} />
+    <Route path="error" components={ErrorPage} />
+    <Route path="*" components={Content} />
+  </Route>
+);
