@@ -27,6 +27,10 @@ class Content extends Component {
     this.context.setTitle(this.props.title);
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.context.setTitle(nextProps.title);
+  }
+
   render() {
     return (
       <div className={s.root}>
