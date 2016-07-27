@@ -22,11 +22,14 @@ export default {
 
   path: '/',
 
+  // keep in mind, routes are evaluated in order
   children: [
     home,
     contact,
     login,
     register,
+
+    // place new routes before...
     content,
     error,
   ],
