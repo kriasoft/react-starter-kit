@@ -13,6 +13,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import {createStore} from 'redux';
 import App from './App';
 
 describe('App', () => {
