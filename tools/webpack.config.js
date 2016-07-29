@@ -261,7 +261,9 @@ const serverConfig = extend(true, {}, config, {
   entry: './server.js',
 
   output: {
-    filename: '../../server.js',
+    path: path.resolve(__dirname, '../build'),
+    filename: 'server.js',
+    chunkFilename: 'server.[name].js',
     libraryTarget: 'commonjs2',
   },
 
