@@ -12,7 +12,7 @@ import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import UniversalRouter from 'universal-router';
 import routes from './routes';
-import history from './core/history';
+import createHistory from './core/createHistory';
 import configureStore from './store/configureStore';
 import { readState, saveState } from 'history/lib/DOMStateStorage';
 import {
@@ -90,6 +90,7 @@ function render(container, state, component) {
 }
 
 function run() {
+  const history = createHistory();
   const container = document.getElementById('app');
   const initialState = JSON.parse(
     document.
@@ -101,7 +102,8 @@ function run() {
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
-  context.store = configureStore(initialState, {});
+  context.store = configureStore(initialState, { history });
+  context.createHref = history.createHref;
 
   // Re-render the app when window.location changes
   function onLocationChange(location) {
