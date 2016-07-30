@@ -84,7 +84,7 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
-    let css = [];
+    let css = new Set();
     let statusCode = 200;
     const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
 
@@ -93,16 +93,16 @@ app.get('*', async (req, res, next) => {
       query: req.query,
       context: {
         insertCss: (...styles) => {
-          styles.forEach(style => css.push(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
+          styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
         setTitle: value => (data.title = value),
         setMeta: (key, value) => (data[key] = value),
       },
       render(component, status = 200) {
-        css = [];
+        css = new Set();
         statusCode = status;
         data.children = ReactDOM.renderToString(component);
-        data.style = css.join('');
+        data.style = [...css].join('');
         return true;
       },
     });
