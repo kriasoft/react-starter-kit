@@ -8,7 +8,8 @@
  */
 
 import React, { Component, PropTypes } from 'react';
-import history from '../../core/history';
+import { connect } from 'react-redux';
+import { navigate } from '../../actions/route';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -23,6 +24,13 @@ class Link extends Component { // eslint-disable-line react/prefer-stateless-fun
   static propTypes = {
     to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     onClick: PropTypes.func,
+
+    // actions
+    navigate: PropTypes.func,
+  };
+
+  static contextTypes = {
+    createHref: PropTypes.func.isRequired,
   };
 
   handleClick = (event) => {
@@ -44,9 +52,9 @@ class Link extends Component { // eslint-disable-line react/prefer-stateless-fun
 
     if (allowTransition) {
       if (this.props.to) {
-        history.push(this.props.to);
+        this.props.navigate(this.props.to);
       } else {
-        history.push({
+        this.props.navigate({
           pathname: event.currentTarget.pathname,
           search: event.currentTarget.search,
         });
@@ -56,9 +64,15 @@ class Link extends Component { // eslint-disable-line react/prefer-stateless-fun
 
   render() {
     const { to, ...props } = this.props; // eslint-disable-line no-use-before-define
-    return <a href={history.createHref(to)} {...props} onClick={this.handleClick} />;
+    return <a href={this.context.createHref(to)} {...props} onClick={this.handleClick} />;
   }
 
 }
 
-export default Link;
+const mapState = null;
+
+const mapDispatch = {
+  navigate,
+};
+
+export default connect(mapState, mapDispatch)(Link);

@@ -18,6 +18,8 @@ class App extends Component {
 
   static propTypes = {
     context: PropTypes.shape({
+      createHref: PropTypes.func.isRequired,
+      store: PropTypes.object.isRequired,
       insertCss: PropTypes.func,
       setTitle: PropTypes.func,
       setMeta: PropTypes.func,
@@ -27,6 +29,7 @@ class App extends Component {
   };
 
   static childContextTypes = {
+    createHref: PropTypes.func.isRequired,
     insertCss: PropTypes.func.isRequired,
     setTitle: PropTypes.func.isRequired,
     setMeta: PropTypes.func.isRequired,
@@ -35,6 +38,7 @@ class App extends Component {
   getChildContext() {
     const context = this.props.context;
     return {
+      createHref: context.createHref,
       insertCss: context.insertCss || emptyFunction,
       setTitle: context.setTitle || emptyFunction,
       setMeta: context.setMeta || emptyFunction,

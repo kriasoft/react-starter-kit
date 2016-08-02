@@ -46,5 +46,6 @@ export default function createHelpers(config) {
   return {
     fetch: fetchKnowingCookie,
     graphqlRequest,
+    history: config.history,
   };
 }
