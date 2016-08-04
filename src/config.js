@@ -28,6 +28,12 @@ export const analytics = {
 
 };
 
+export const google = {
+  maps: {
+    apiKey: process.env.GOOGLE_MAPS_API_KEY || null,
+  },
+};
+
 export const auth = {
 
   jwt: { secret: process.env.JWT_SECRET || 'React Starter Kit' },
