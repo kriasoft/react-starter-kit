@@ -8,6 +8,8 @@
  */
 
 /* eslint-disable max-len */
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
