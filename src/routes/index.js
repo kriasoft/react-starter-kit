@@ -17,6 +17,7 @@ import login from './login';
 import register from './register';
 import content from './content';
 import error from './error';
+import map from './map';
 
 export default {
 
@@ -28,6 +29,7 @@ export default {
     contact,
     login,
     register,
+    map,
 
     // place new routes before...
     content,
