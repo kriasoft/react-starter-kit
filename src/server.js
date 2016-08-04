@@ -102,18 +102,6 @@ app.use('/graphql', expressGraphQL(req => ({
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
-  let css = [];
-  let statusCode = 200;
-  const locale = req.language;
-  const data = {
-    lang: locale,
-    title: '',
-    description: '',
-    style: '',
-    script: assets.main.js,
-    children: '',
-  };
-
   const history = createHistory(req.url);
   // let currentLocation = history.getCurrentLocation();
   let sent = false;
@@ -141,6 +129,17 @@ app.get('*', async (req, res, next) => {
       name: 'initialNow',
       value: Date.now(),
     }));
+    let css = new Set();
+    let statusCode = 200;
+    const locale = req.language;
+    const data = {
+      lang: locale,
+      title: '',
+      description: '',
+      style: '',
+      script: assets.main.js,
+      children: '',
+    };
 
     store.dispatch(setRuntimeVariable({
       name: 'availableLocales',
@@ -158,13 +157,13 @@ app.get('*', async (req, res, next) => {
         store,
         createHref: history.createHref,
         insertCss: (...styles) => {
-          styles.forEach(style => css.push(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
+          styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
         setTitle: value => (data.title = value),
         setMeta: (key, value) => (data[key] = value),
       },
       render(component, status = 200) {
-        css = [];
+        css = new Set();
         statusCode = status;
 
         // Fire all componentWill... hooks
@@ -181,7 +180,7 @@ app.get('*', async (req, res, next) => {
         // otherwise React will write error to console when mounting on client
         data.state = store.getState();
 
-        data.style = css.join('');
+        data.style = [...css].join('');
         return true;
       },
     });
