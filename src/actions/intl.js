@@ -1,12 +1,20 @@
-import fetch from '../core/fetch';
 import {
   SET_LOCALE_START,
   SET_LOCALE_SUCCESS,
   SET_LOCALE_ERROR,
 } from '../constants';
 
+const query = `
+  query ($locale:String!) {
+    intl (locale:$locale) {
+      id
+      message
+    }
+  }
+`;
+
 export function setLocale({ locale }) {
-  return async (dispatch) => {
+  return async (dispatch, getState, { graphqlRequest }) => {
     dispatch({
       type: SET_LOCALE_START,
       payload: {
@@ -15,19 +23,7 @@ export function setLocale({ locale }) {
     });
 
     try {
-      const resp = await fetch('/graphql', {
-        method: 'post',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: `query{intl(locale:${JSON.stringify(locale)}){id,message}}`,
-        }),
-        credentials: 'include',
-      });
-      if (resp.status !== 200) throw new Error(resp.statusText);
-      const { data } = await resp.json();
+      const { data } = await graphqlRequest(query, { locale });
       const messages = data.intl.reduce((msgs, msg) => {
         msgs[msg.id] = msg.message; // eslint-disable-line no-param-reassign
         return msgs;
