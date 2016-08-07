@@ -22,7 +22,9 @@ import { ErrorPage } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
 import UniversalRouter from 'universal-router';
 import PrettyError from 'pretty-error';
-import passport from './core/passport';
+import passport from 'passport';
+import * as facebook from './passport/facebook';
+import * as google from './passport/google';
 import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
@@ -56,18 +58,19 @@ app.use(expressJwt({
 }));
 app.use(passport.initialize());
 
-app.get('/login/facebook',
-  passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false })
-);
-app.get('/login/facebook/return',
-  passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
-  (req, res) => {
-    const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
-    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-    res.redirect('/');
-  }
-);
+const handleAuth = (req, res) => {
+  const expiresIn = 60 * 60 * 24 * 180; // 180 days
+  const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
+  res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+  res.redirect('/');
+}
+
+// facebook
+app.get('/login/facebook', facebook.login);
+app.get('/login/facebook/return', facebook.auth, handleAuth);
+// google
+app.get('/login/google', google.login);
+app.get('/login/google/return', google.auth, handleAuth);
 
 //
 // Register API middleware
@@ -83,6 +86,7 @@ app.use('/graphql', expressGraphQL(req => ({
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
+  console.log('user', req.user)
   try {
     let css = new Set();
     let statusCode = 200;
