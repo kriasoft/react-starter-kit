@@ -19,6 +19,8 @@ const GLOB_PATTERN = 'src/**/*.{js,jsx}';
 const fileToMessages = {};
 let messages = {};
 
+const posixPath = fileName => fileName.replace(/\\/g, '/');
+
 async function writeMessages(fileName, msgs) {
   await fs.writeFile(fileName, `${JSON.stringify(msgs, null, 2)}\n`);
 }
@@ -117,14 +119,15 @@ async function extractMessages({ watch } = {}) {
   const processFile = async (fileName) => {
     try {
       const code = await fs.readFile(fileName);
+      const posixName = posixPath(fileName);
       const result = transform(code, {
         presets: pkg.babel.presets,
         plugins: ['react-intl'],
       }).metadata['react-intl'];
       if (result.messages && result.messages.length) {
-        fileToMessages[fileName] = result.messages.sort(compareMessages);
+        fileToMessages[posixName] = result.messages.sort(compareMessages);
       } else {
-        delete fileToMessages[fileName];
+        delete fileToMessages[posixName];
       }
     } catch (err) {
       console.error(`extractMessages: In ${fileName}:\n`, err.codeFrame || err);
