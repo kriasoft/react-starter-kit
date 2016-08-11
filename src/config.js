@@ -8,6 +8,8 @@
  */
 
 /* eslint-disable max-len */
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
@@ -24,6 +26,12 @@ export const analytics = {
     trackingId: process.env.GOOGLE_TRACKING_ID, // UA-XXXXX-X
   },
 
+};
+
+export const google = {
+  maps: {
+    apiKey: process.env.GOOGLE_MAPS_API_KEY || null,
+  },
 };
 
 export const auth = {

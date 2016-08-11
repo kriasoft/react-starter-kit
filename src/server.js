@@ -34,7 +34,7 @@ import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
 import Provide from './components/Provide';
 import { setLocale } from './actions/intl';
-import { port, auth, locales } from './config';
+import { port, auth, locales, google } from './config';
 
 const app = express();
 
@@ -120,7 +120,19 @@ app.get('*', async (req, res, next) => {
   });
 
   try {
-    const store = configureStore({}, {
+    const initialState = {
+      runtime: {
+        google,
+      },
+    };
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log( // eslint-disable-line no-console
+        `initialState ${JSON.stringify(initialState, null, 2)}`
+      );
+    }
+
+    const store = configureStore(initialState, {
       cookie: req.headers.cookie,
       history,
     });
