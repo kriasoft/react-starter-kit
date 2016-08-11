@@ -12,6 +12,7 @@ import gaze from 'gaze';
 import Promise from 'bluebird';
 import fs from './lib/fs';
 import pkg from '../package.json';
+import _fs from 'fs';
 /**
  * Copies static files such as robots.txt, favicon.ico to the
  * output (build) folder.
@@ -19,12 +20,18 @@ import pkg from '../package.json';
 async function copy({ watch } = {}) {
   const ncp = Promise.promisify(require('ncp'));
 
-  await Promise.all([
-    ncp('node_modules/bootstrap/dist/css', 'build/public/css'),
-    ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'),
+  var ncpArray = [
     ncp('src/public', 'build/public'),
     ncp('src/content', 'build/content'),
-  ]);
+    ncp('node_modules/bootstrap/dist/css', 'build/public/css')
+  ];
+  try {
+    _fs.statSync('node_modules/bootstrap/dist/fonts');
+    ncpArray.push(ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'));
+  } catch(err) {
+    console.warn('node_modules/bootstrap/dist/fonts not found');
+  }
+  await Promise.all(ncpArray);
 
   await fs.writeFile('./build/package.json', JSON.stringify({
     private: true,
