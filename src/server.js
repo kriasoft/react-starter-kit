@@ -26,7 +26,10 @@ import passport from './core/passport';
 import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
+import createHistory from './core/createHistory';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
+import configureStore from './store/configureStore';
+import { setRuntimeVariable } from './actions/runtime';
 import { port, auth } from './config';
 
 const app = express();
@@ -83,7 +86,33 @@ app.use('/graphql', expressGraphQL(req => ({
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
+  const history = createHistory(req.url);
+  // let currentLocation = history.getCurrentLocation();
+  let sent = false;
+  const removeHistoryListener = history.listen(location => {
+    const newUrl = `${location.pathname}${location.search}`;
+    if (req.originalUrl !== newUrl) {
+      // console.log(`R ${req.originalUrl} -> ${newUrl}`); // eslint-disable-line no-console
+      if (!sent) {
+        res.redirect(303, newUrl);
+        sent = true;
+        next();
+      } else {
+        console.error(`${req.path}: Already sent!`); // eslint-disable-line no-console
+      }
+    }
+  });
+
   try {
+    const store = configureStore({}, {
+      cookie: req.headers.cookie,
+      history,
+    });
+
+    store.dispatch(setRuntimeVariable({
+      name: 'initialNow',
+      value: Date.now(),
+    }));
     let css = new Set();
     let statusCode = 200;
     const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
@@ -92,6 +121,8 @@ app.get('*', async (req, res, next) => {
       path: req.path,
       query: req.query,
       context: {
+        store,
+        createHref: history.createHref,
         insertCss: (...styles) => {
           styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
@@ -102,17 +133,21 @@ app.get('*', async (req, res, next) => {
         css = new Set();
         statusCode = status;
         data.children = ReactDOM.renderToString(component);
+        data.state = store.getState();
         data.style = [...css].join('');
         return true;
       },
     });
 
-    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-
-    res.status(statusCode);
-    res.send(`<!doctype html>${html}`);
+    if (!sent) {
+      const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+      res.status(statusCode);
+      res.send(`<!doctype html>${html}`);
+    }
   } catch (err) {
     next(err);
+  } finally {
+    removeHistoryListener();
   }
 });
 
