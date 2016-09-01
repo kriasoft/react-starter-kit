@@ -7,9 +7,9 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import fetch from 'node-fetch';
 import runServer from './runServer';
 import fs from './lib/fs';
-import fetch from 'node-fetch';
 import { host } from '../src/config';
 
 // Enter your paths here which you want to render as static
