@@ -7,44 +7,48 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-/**
- * Passport.js reference implementation.
- * The database schema used in this sample is available at
- * https://github.com/membership/membership.db/tree/master/postgres
- */
-
 import passport from 'passport';
-import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
 import { auth as config } from '../config';
 
+export const login = passport.authenticate('google', { scope: [
+      'https://www.googleapis.com/auth/plus.login',
+      'https://www.googleapis.com/auth/plus.profile.emails.read',
+    ], session: false }
+);
+
+export const auth = passport.authenticate('google', {
+  failureRedirect: '/login',
+  session: false,
+});
+
 /**
- * Sign in with Facebook.
+ * Sign in with google.
  */
-passport.use(new FacebookStrategy({
-  clientID: config.facebook.id,
-  clientSecret: config.facebook.secret,
-  callbackURL: '/login/facebook/return',
-  profileFields: ['name', 'email', 'link', 'locale', 'timezone'],
+passport.use(new GoogleStrategy({
+  clientID: config.google.id,
+  clientSecret: config.google.secret,
+  callbackURL: '/login/google/return',
   passReqToCallback: true,
 }, (req, accessToken, refreshToken, profile, done) => {
   /* eslint-disable no-underscore-dangle */
-  const loginName = 'facebook';
-  const claimType = 'urn:facebook:access_token';
+  const loginName = 'google';
+  const claimType = 'urn:google:access_token';
   const fooBar = async () => {
     if (req.user) {
       const userLogin = await UserLogin.findOne({
         attributes: ['name', 'key'],
         where: { name: loginName, key: profile.id },
       });
+
       if (userLogin) {
-        // There is already a Facebook account that belongs to you.
         // Sign in with that account or delete it, then link it with your current account.
         done();
       } else {
         const user = await User.create({
           id: req.user.id,
-          email: profile._json.email,
+          email: profile.email,
           logins: [
             { name: loginName, key: profile.id },
           ],
@@ -54,7 +58,7 @@ passport.use(new FacebookStrategy({
           profile: {
             displayName: profile.displayName,
             gender: profile._json.gender,
-            picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
+            picture: profile._json.image.url,
           },
         }, {
           include: [
@@ -91,7 +95,7 @@ passport.use(new FacebookStrategy({
           done(null);
         } else {
           user = await User.create({
-            email: profile._json.email,
+            email: profile.email,
             emailVerified: true,
             logins: [
               { name: loginName, key: profile.id },
@@ -102,7 +106,7 @@ passport.use(new FacebookStrategy({
             profile: {
               displayName: profile.displayName,
               gender: profile._json.gender,
-              picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
+              picture: profile._json.image.url,
             },
           }, {
             include: [
@@ -122,5 +126,3 @@ passport.use(new FacebookStrategy({
 
   fooBar().catch(done);
 }));
-
-export default passport;
