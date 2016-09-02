@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 import {
   SET_LOCALE_START,
   SET_LOCALE_SUCCESS,

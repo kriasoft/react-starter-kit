@@ -12,10 +12,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import UniversalRouter from 'universal-router';
+import { readState, saveState } from 'history/lib/DOMStateStorage';
+import { addLocaleData } from 'react-intl';
+import en from 'react-intl/locale-data/en';
+import cs from 'react-intl/locale-data/cs';
 import routes from './routes';
 import createHistory from './core/createHistory';
 import configureStore from './store/configureStore';
-import { readState, saveState } from 'history/lib/DOMStateStorage';
 import {
   addEventListener,
   removeEventListener,
@@ -23,11 +26,6 @@ import {
   windowScrollY,
 } from './core/DOMUtils';
 import Provide from './components/Provide';
-
-import { addLocaleData } from 'react-intl';
-
-import en from 'react-intl/locale-data/en';
-import cs from 'react-intl/locale-data/cs';
 
 [en, cs].forEach(addLocaleData);
 
@@ -59,20 +57,30 @@ const context = {
 };
 
 // Restore the scroll position if it was saved into the state
-function restoreScrollPosition(state) {
+function restoreScrollPosition({ state, hash }) {
   if (state && state.scrollY !== undefined) {
     window.scrollTo(state.scrollX, state.scrollY);
-  } else {
-    window.scrollTo(0, 0);
+    return;
   }
+
+  const targetHash = hash && hash.substr(1);
+  if (targetHash) {
+    const target = document.getElementById(targetHash);
+    if (target) {
+      window.scrollTo(0, windowScrollY() + target.getBoundingClientRect().top);
+      return;
+    }
+  }
+
+  window.scrollTo(0, 0);
 }
 
-let renderComplete = (state, callback) => {
+let renderComplete = (location, callback) => {
   const elem = document.getElementById('css');
   if (elem) elem.parentNode.removeChild(elem);
   callback(true);
-  renderComplete = (s) => {
-    restoreScrollPosition(s);
+  renderComplete = (l) => {
+    restoreScrollPosition(l);
 
     // Google Analytics tracking. Don't send 'pageview' event after
     // the initial rendering, as it was already sent
@@ -84,7 +92,7 @@ let renderComplete = (state, callback) => {
   };
 };
 
-function render(container, state, config, component) {
+function render(container, location, config, component) {
   return new Promise((resolve, reject) => {
     if (process.env.NODE_ENV === 'development') {
       console.log(// eslint-disable-line no-console
@@ -99,7 +107,7 @@ function render(container, state, config, component) {
           {component}
         </Provide>,
         container,
-        renderComplete.bind(undefined, state, resolve)
+        renderComplete.bind(undefined, location, resolve)
       );
     } catch (err) {
       reject(err);
@@ -111,9 +119,9 @@ export default function main() {
   const history = createHistory();
   const container = document.getElementById('app');
   const initialState = JSON.parse(
-    document.
-      getElementById('source').
-      getAttribute('data-initial-state')
+    document
+      .getElementById('source')
+      .getAttribute('data-initial-state')
   );
   let currentLocation = history.getCurrentLocation();
 
@@ -141,7 +149,7 @@ export default function main() {
       query: location.query,
       state: location.state,
       context,
-      render: render.bind(undefined, container, location.state, { store }), // eslint-disable-line react/jsx-no-bind, max-len
+      render: render.bind(undefined, container, location, { store }), // eslint-disable-line react/jsx-no-bind, max-len
     }).catch(err => console.error(err)); // eslint-disable-line no-console
   }
 

@@ -9,8 +9,8 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Home.css';
 import { FormattedRelative } from 'react-intl';
+import s from './Home.css';
 
 const title = 'React Starter Kit';
 

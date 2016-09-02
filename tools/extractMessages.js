@@ -10,9 +10,9 @@
 import path from 'path';
 import gaze from 'gaze';
 import Promise from 'bluebird';
+import { transform } from 'babel-core';
 import fs from './lib/fs';
 import pkg from '../package.json';
-import { transform } from 'babel-core';
 import { locales } from '../src/config';
 
 const GLOB_PATTERN = 'src/**/*.{js,jsx}';
