@@ -9,8 +9,6 @@
 
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Header.css';
-import Link from '../Link';
 import {
   Navbar,
   Nav,
@@ -18,6 +16,8 @@ import {
   NavDropdown,
   MenuItem,
 } from 'react-bootstrap';
+import Link from '../Link';
+import s from './Header.css';
 
 function Header() {
   return (
