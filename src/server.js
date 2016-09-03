@@ -17,11 +17,11 @@ import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import Html from './components/Html';
-import { ErrorPage } from './routes/error/ErrorPage';
-import errorPageStyle from './routes/error/ErrorPage.css';
 import UniversalRouter from 'universal-router';
 import PrettyError from 'pretty-error';
+import Html from './components/Html';
+import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
+import errorPageStyle from './routes/error/ErrorPage.css';
 import passport from './core/passport';
 import models from './data/models';
 import schema from './data/schema';
@@ -84,7 +84,7 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
-    let css = [];
+    let css = new Set();
     let statusCode = 200;
     const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
 
@@ -93,16 +93,16 @@ app.get('*', async (req, res, next) => {
       query: req.query,
       context: {
         insertCss: (...styles) => {
-          styles.forEach(style => css.push(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
+          styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
         setTitle: value => (data.title = value),
         setMeta: (key, value) => (data[key] = value),
       },
       render(component, status = 200) {
-        css = [];
+        css = new Set();
         statusCode = status;
         data.children = ReactDOM.renderToString(component);
-        data.style = css.join('');
+        data.style = [...css].join('');
         return true;
       },
     });
@@ -132,7 +132,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
       description={err.message}
       style={errorPageStyle._getCss()} // eslint-disable-line no-underscore-dangle
     >
-      {ReactDOM.renderToString(<ErrorPage error={err} />)}
+      {ReactDOM.renderToString(<ErrorPageWithoutStyle error={err} />)}
     </Html>
   );
   res.status(statusCode);

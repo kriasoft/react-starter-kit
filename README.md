@@ -32,11 +32,14 @@ advanced integrations. Nevertheless, we have some integrations available to you 
 branches that you can use either as a reference or merge into your project:
 
   * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) — isomorphic
-    Redux by [Pavel Lang](https://github.com/langpavel) (see [how to integrate
-    Redux](./docs/recipes/how-to-integrate-redux.md))
+    Redux by [Pavel Lang](https://github.com/langpavel)
+    (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
   * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) —
-    isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel) (see [how
-    to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md))
+    isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
+    (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/redux`)
+  * [feature/bootstrap3](https://github.com/kriasoft/react-starter-kit/tree/feature/bootstrap3) —
+    Simplest possible integration of [react-bootstrap](https://react-bootstrap.github.io/)
+    by [Pavel Lang](https://github.com/langpavel) (based on `master`)
 
 If you think that any of these features should be on `master`, or vice versa, some features should
 removed from the `master` branch, please [let us know](https://gitter.im/kriasoft/react-starter-kit).
