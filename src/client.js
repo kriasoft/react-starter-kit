@@ -30,7 +30,7 @@ const context = {
   },
   setTitle: value => (document.title = value),
   setDescription: value => {
-    document.querySelector(`meta[name='description']`).setAttribute('content', value);
+    document.querySelector('meta[name="description"]').setAttribute('content', value);
   },
   setMeta: (name, content) => {
     // Remove and create a new <meta /> tag in order to make it work
