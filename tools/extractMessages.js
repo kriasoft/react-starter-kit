@@ -88,7 +88,7 @@ function mergeMessages() {
         description: newMsg.description || message.description,
         defaultMessage: newMsg.defaultMessage || message.defaultMessage,
         message: newMsg.message || message.message || '',
-        files: message.files ? [...message.files, fileName] : [fileName],
+        files: message.files ? [...message.files, fileName].sort() : [fileName],
       };
     });
   });
