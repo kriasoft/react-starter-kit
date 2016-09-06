@@ -96,6 +96,7 @@ app.get('*', async (req, res, next) => {
           styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
         setTitle: value => (data.title = value),
+        setDescription: value => (data.description = value),
         setMeta: (key, value) => (data[key] = value),
       },
       render(component, status = 200) {
