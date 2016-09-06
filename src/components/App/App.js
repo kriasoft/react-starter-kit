@@ -21,6 +21,7 @@ class App extends Component {
       insertCss: PropTypes.func,
       setTitle: PropTypes.func,
       setMeta: PropTypes.func,
+      setDescription: PropTypes.func,
     }),
     children: PropTypes.element.isRequired,
     error: PropTypes.object,
@@ -30,6 +31,7 @@ class App extends Component {
     insertCss: PropTypes.func.isRequired,
     setTitle: PropTypes.func.isRequired,
     setMeta: PropTypes.func.isRequired,
+    setDescription: PropTypes.func.isRequired,
   };
 
   getChildContext() {
@@ -38,6 +40,7 @@ class App extends Component {
       insertCss: context.insertCss || emptyFunction,
       setTitle: context.setTitle || emptyFunction,
       setMeta: context.setMeta || emptyFunction,
+      setDescription: context.setDescription || emptyFunction,
     };
   }
 
