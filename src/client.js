@@ -121,7 +121,7 @@ function run() {
       query: location.query,
       state: location.state,
       context,
-      render: render.bind(undefined, container, location), // eslint-disable-line react/jsx-no-bind, max-len
+      render: render.bind(undefined, container, location),
     }).catch(err => console.error(err)); // eslint-disable-line no-console
   }
 
