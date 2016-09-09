@@ -27,7 +27,7 @@ import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
-import { port, auth } from './config';
+import { port, auth, serverSideRendering } from './config';
 
 const app = express();
 
@@ -84,31 +84,30 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
-    let css = new Set();
     let statusCode = 200;
     const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
-
-    await UniversalRouter.resolve(routes, {
-      path: req.path,
-      query: req.query,
-      context: {
-        insertCss: (...styles) => {
-          styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
+    if (serverSideRendering) {
+      let css = new Set();
+      await UniversalRouter.resolve(routes, {
+        path: req.path,
+        query: req.query,
+        context: {
+          insertCss: (...styles) => {
+            styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
+          },
+          setTitle: value => (data.title = value),
+          setMeta: (key, value) => (data[key] = value),
         },
-        setTitle: value => (data.title = value),
-        setMeta: (key, value) => (data[key] = value),
-      },
-      render(component, status = 200) {
-        css = new Set();
-        statusCode = status;
-        data.children = ReactDOM.renderToString(component);
-        data.style = [...css].join('');
-        return true;
-      },
-    });
-
+        render(component, status = 200) {
+          css = new Set();
+          statusCode = status;
+          data.children = ReactDOM.renderToString(component);
+          data.style = [...css].join('');
+          return true;
+        },
+      });
+    }
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-
     res.status(statusCode);
     res.send(`<!doctype html>${html}`);
   } catch (err) {
