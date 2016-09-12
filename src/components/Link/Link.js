@@ -19,10 +19,11 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-class Link extends Component { // eslint-disable-line react/prefer-stateless-function
+class Link extends Component {
 
   static propTypes = {
     to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+    children: PropTypes.node,
     onClick: PropTypes.func,
 
     // actions
@@ -63,8 +64,17 @@ class Link extends Component { // eslint-disable-line react/prefer-stateless-fun
   };
 
   render() {
-    const { to, navigate: _, ...props } = this.props; // eslint-disable-line no-unused-vars
-    return <a href={this.context.createHref(to)} {...props} onClick={this.handleClick} />;
+    const {
+      to,
+      navigate, // eslint-disable-line no-unused-vars, no-shadow
+      children,
+      ...props,
+    } = this.props;
+    return (
+      <a href={this.context.createHref(to)} {...props} onClick={this.handleClick}>
+        {children}
+      </a>
+    );
   }
 
 }

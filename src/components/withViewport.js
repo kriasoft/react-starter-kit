@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Component } from 'react'; // eslint-disable-line no-unused-vars
+import React, { Component } from 'react';
 import EventEmitter from 'eventemitter3';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
@@ -57,7 +57,7 @@ function withViewport(ComposedComponent) {
     }
 
     handleResize(value) {
-      this.setState({ viewport: value }); // eslint-disable-line react/no-set-state
+      this.setState({ viewport: value });
     }
 
   };

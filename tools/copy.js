@@ -35,7 +35,7 @@ async function copy({ watch } = {}) {
 
   if (watch) {
     const watcher = await new Promise((resolve, reject) => {
-      gaze('src/content/**/*.*', (err, val) => err ? reject(err) : resolve(val));
+      gaze('src/content/**/*.*', (err, val) => (err ? reject(err) : resolve(val)));
     });
 
     const cp = async (file) => {
