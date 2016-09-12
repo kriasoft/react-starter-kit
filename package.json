@@ -75,6 +75,7 @@
     "eslint": "^3.4.0",
     "eslint-config-airbnb": "^11.0.0",
     "eslint-loader": "^1.5.0",
+    "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-import": "^1.14.0",
     "eslint-plugin-jsx-a11y": "^2.2.1",
     "eslint-plugin-react": "^6.2.0",
@@ -132,6 +133,9 @@
   },
   "eslintConfig": {
     "parser": "babel-eslint",
+    "plugins": [
+      "babel"
+    ],
     "extends": "airbnb",
     "globals": {
       "__DEV__": true
@@ -141,12 +145,23 @@
     },
     "rules": {
       "generator-star-spacing": "off",
+      "new-cap": "off",
+      "array-bracket-spacing": "off",
+      "object-curly-spacing": "off",
+      "object-shorthand": "off",
+      "arrow-parens": "off",
       "import/no-extraneous-dependencies": "off",
       "react/forbid-prop-types": "off",
       "react/jsx-filename-extension": "off",
       "react/no-danger": "off",
       "react/no-unused-prop-types": "off",
-      "react/require-extension": "off"
+      "react/require-extension": "off",
+      "babel/generator-star-spacing": 1,
+      "babel/new-cap": "off",
+      "babel/array-bracket-spacing": 1,
+      "babel/object-curly-spacing": "off",
+      "babel/object-shorthand": 1,
+      "babel/arrow-parens": "off"
     }
   },
   "stylelint": {

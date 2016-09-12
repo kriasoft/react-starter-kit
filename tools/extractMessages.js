@@ -141,7 +141,7 @@ async function extractMessages({ watch } = {}) {
 
   if (watch) {
     const watcher = await new Promise((resolve, reject) => {
-      gaze(GLOB_PATTERN, (err, val) => err ? reject(err) : resolve(val));
+      gaze(GLOB_PATTERN, (err, val) => (err ? reject(err) : resolve(val)));
     });
     watcher.on('changed', async (file) => {
       const relPath = file.substr(path.join(__dirname, '../').length);
