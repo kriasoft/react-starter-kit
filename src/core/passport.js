@@ -15,7 +15,7 @@
 
 
 import passport from 'passport';
-import facebook from './facebook';
-import google from './google';
+import facebook from './facebook'; // eslint-disable-line no-unused-vars
+import google from './google';// eslint-disable-line no-unused-vars
 
 export default passport;
