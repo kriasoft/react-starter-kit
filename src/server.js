@@ -58,9 +58,9 @@ app.use((req, res, next) => {
   const token = req.cookies['id-token'];
   if (token) {
     try {
-      req.user = jwt.verify(token, auth.jwt.secret);
+      req.user = jwt.verify(token, auth.jwt.secret); // eslint-disable-line no-param-reassign
     } catch (e) {
-      console.log(e);
+      console.log(e); // eslint-disable-line no-console
     }
   }
   next();

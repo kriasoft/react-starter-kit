@@ -16,8 +16,12 @@ function Profile({ title }) {
     <div className={s.root}>
       <div className={s.container}>
         <h1>{title}</h1>
-        <p>Username : {user.username}</p>
-        <p>Email : {user.email}</p>
+        <p>Username : ...</p>
+        <p>Email : ...</p>
+        {/*
+          <p>Username : {user.username}</p>
+          <p>Email : {user.email}</p>
+        */}
       </div>
     </div>
   );

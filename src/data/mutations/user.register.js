@@ -24,7 +24,7 @@ const userRegister = {
     let user = null;
 
     if (password.length < 8) {
-      errors.push({ key: 'password', message: 'Password must be at least 8 letter long' });
+      errors.push({ key: 'password', message: 'Password must be at least 8 characters long' });
     }
 
     // check to see if there's already a user with that email

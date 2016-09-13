@@ -19,12 +19,7 @@ class Register extends Component {
     title: PropTypes.string.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
-
-  async onSubmit(username, email, password) {
+  static async onSubmit(username, email, password) {
     const resp = await fetch('/graphql', {
       method: 'post',
       headers: {
@@ -40,6 +35,11 @@ class Register extends Component {
     if (data.id) {
       // Redirect
     }
+  }
+
+  constructor(props) {
+    super(props);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
   render() {

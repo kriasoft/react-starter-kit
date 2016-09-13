@@ -8,8 +8,8 @@
  */
 
 import DataType from 'sequelize';
-import Model from '../sequelize';
 import bcrypt from 'bcrypt-nodejs';
+import Model from '../sequelize';
 
 const User = Model.define('User', {
 
@@ -43,9 +43,7 @@ const User = Model.define('User', {
 }, {
 
   instanceMethods: {
-    comparePassword: (password) => {
-      return bcrypt.compareSync(password, this.password);
-    },
+    comparePassword: (password) => bcrypt.compareSync(password, this.password),
   },
 
   indexes: [
@@ -54,8 +52,6 @@ const User = Model.define('User', {
 
 });
 
-User.generateHash = (password) => {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
+User.generateHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 
 export default User;

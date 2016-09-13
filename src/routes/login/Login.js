@@ -19,12 +19,7 @@ class Login extends Component {
     title: PropTypes.string.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
-
-  async onSubmit(usernameOrEmail, password) {
+  static async onSubmit(usernameOrEmail, password) {
     const resp = await fetch('/graphql', {
       method: 'post',
       headers: {
@@ -40,6 +35,11 @@ class Login extends Component {
     if (data.id) {
       // Redirect
     }
+  }
+
+  constructor(props) {
+    super(props);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
   render() {
