@@ -37,6 +37,7 @@ export const auth = {
   google: {
     id: process.env.GOOGLE_CLIENT_ID || '251410730550-ahcg0ou5mgfhl8hlui1urru7jn5s12km.apps.googleusercontent.com',
     secret: process.env.GOOGLE_CLIENT_SECRET || 'Y8yR9yZAhm9jQ8FKAL8QIEcd',
+    returnURL: process.env.GOOGLE_CLIENT_URL || 'http://localhost:3001/login/google/return',
   },
 
   // https://apps.twitter.com/
