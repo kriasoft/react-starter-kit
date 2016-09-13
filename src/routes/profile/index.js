@@ -7,17 +7,23 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import UserType from '../types/UserType';
+import React from 'react';
+import Profile from './Profile';
 
-const me = {
-  type: UserType,
-  resolve({ request }) {
-    return request.user && {
-      id: request.user.id,
-      email: request.user.email,
-      token: request.user.token,
+const title = 'Profile';
+
+export default {
+
+  path: '/profile',
+
+  action() {
+    // if (!user.isAuthenticated)
+    //   return 404;
+
+    return {
+      title,
+      component: <Profile title={title} />,
     };
   },
-};
 
-export default me;
+};

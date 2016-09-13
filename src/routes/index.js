@@ -15,6 +15,7 @@ import home from './home';
 import contact from './contact';
 import login from './login';
 import register from './register';
+import profile from './profile';
 import content from './content';
 import notFound from './notFound';
 
@@ -28,6 +29,7 @@ export default {
     contact,
     login,
     register,
+    profile,
 
     // place new routes before...
     content,
