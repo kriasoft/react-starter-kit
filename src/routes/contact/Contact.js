@@ -11,10 +11,7 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Contact.css';
 
-const title = 'Contact Us';
-
-function Contact(props, context) {
-  context.setTitle(title);
+function Contact({ title }) {
   return (
     <div className={s.root}>
       <div className={s.container}>
@@ -25,6 +22,6 @@ function Contact(props, context) {
   );
 }
 
-Contact.contextTypes = { setTitle: PropTypes.func.isRequired };
+Contact.propTypes = { title: PropTypes.string.isRequired };
 
 export default withStyles(s)(Contact);

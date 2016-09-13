@@ -11,10 +11,7 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
 
-const title = 'React Starter Kit';
-
-function Home({ news }, context) {
-  context.setTitle(title);
+function Home({ news }) {
   return (
     <div className={s.root}>
       <div className={s.container}>
@@ -42,6 +39,5 @@ Home.propTypes = {
     contentSnippet: PropTypes.string,
   })).isRequired,
 };
-Home.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default withStyles(s)(Home);

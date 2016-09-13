@@ -84,32 +84,24 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
-    let css = new Set();
-    let statusCode = 200;
-    const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
-
-    await UniversalRouter.resolve(routes, {
+    const css = new Set();
+    const route = await UniversalRouter.resolve(routes, {
       path: req.path,
       query: req.query,
       context: {
         insertCss: (...styles) => {
           styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
-        setTitle: value => (data.title = value),
-        setMeta: (key, value) => (data[key] = value),
-      },
-      render(component, status = 200) {
-        css = new Set();
-        statusCode = status;
-        data.children = ReactDOM.renderToString(component);
-        data.style = [...css].join('');
-        return true;
       },
     });
 
+    const data = { ...route };
+    data.children = ReactDOM.renderToString(route.component);
+    data.style = [...css].join('');
+    data.script = assets.main.js;
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
 
-    res.status(statusCode);
+    res.status(route.status || 200);
     res.send(`<!doctype html>${html}`);
   } catch (err) {
     next(err);
@@ -125,7 +117,6 @@ pe.skipPackage('express');
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.log(pe.render(err)); // eslint-disable-line no-console
-  const statusCode = err.status || 500;
   const html = ReactDOM.renderToStaticMarkup(
     <Html
       title="Internal Server Error"
@@ -135,7 +126,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
       {ReactDOM.renderToString(<ErrorPageWithoutStyle error={err} />)}
     </Html>
   );
-  res.status(statusCode);
+  res.status(err.status || 500);
   res.send(`<!doctype html>${html}`);
 });
 
