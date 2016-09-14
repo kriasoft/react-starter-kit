@@ -109,16 +109,16 @@ app.get('*', async (req, res, next) => {
       history,
     });
     // user, query, params
-    ['user','query', 'params'].map( v => {
-      store.dispatch(setRuntimeVariable({ name:v, value: req[v] }));
-    });
+    ['user', 'query', 'params'].map(v => (
+      store.dispatch(setRuntimeVariable({ name: v, value: req[v] }))
+    ));
 
     store.dispatch(setRuntimeVariable({
       name: 'initialNow',
       value: Date.now(),
     }));
     // ip
-    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     store.dispatch(setRuntimeVariable({ name: 'ip', value: ip }));
 
     let css = new Set();
