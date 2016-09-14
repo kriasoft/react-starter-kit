@@ -108,11 +108,19 @@ app.get('*', async (req, res, next) => {
       cookie: req.headers.cookie,
       history,
     });
+    // user, query, params
+    ['user','query', 'params'].map( v => {
+      store.dispatch(setRuntimeVariable({ name:v, value: req[v] }));
+    });
 
     store.dispatch(setRuntimeVariable({
       name: 'initialNow',
       value: Date.now(),
     }));
+    // ip
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    store.dispatch(setRuntimeVariable({ name: 'ip', value: ip }));
+
     let css = new Set();
     let statusCode = 200;
     const data = { title: '', description: '', style: '', script: assets.main.js, children: '' };
