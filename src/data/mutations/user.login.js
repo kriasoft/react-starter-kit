@@ -20,10 +20,9 @@ const userLogin = {
   },
   resolve: async (root, { usernameOrEmail, password }) => {
     const errors = [];
-    let user = null;
-
     const usernameOrEmailLC = usernameOrEmail.toLowerCase();
-    const findUser = await User.findOne({
+
+    const user = await User.findOne({
       attributes: ['id', 'username', 'email'],
       where: {
         $or: [{ username: usernameOrEmailLC }, { email: usernameOrEmailLC }],
@@ -31,7 +30,6 @@ const userLogin = {
     });
 
     if (user && user.comparePassword(password)) {
-      user = findUser;
       user.token = jwt.sign({ id: user.id }, auth.jwt.secret, { expiresIn: auth.jwt.expires });
     } else {
       errors.push({ key: 'general', message: 'Invalid credentials' });

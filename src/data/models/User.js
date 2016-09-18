@@ -41,17 +41,19 @@ const User = Model.define('User', {
   },
 
 }, {
-
-  instanceMethods: {
-    comparePassword: (password) => bcrypt.compareSync(password, this.password),
+  classMethods: {
+    generateHash: function (password) { // eslint-disable-line
+      return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+    },
   },
-
+  instanceMethods: {
+    comparePassword: function (password) { // eslint-disable-line
+      return bcrypt.compareSync(password, this.password);
+    },
+  },
   indexes: [
     { fields: ['email'] },
   ],
-
 });
-
-User.generateHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 
 export default User;
