@@ -8,6 +8,7 @@
  */
 
 import DataType from 'sequelize';
+import bcrypt from 'bcrypt-nodejs';
 import Model from '../sequelize';
 
 const User = Model.define('User', {
@@ -16,6 +17,12 @@ const User = Model.define('User', {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
     primaryKey: true,
+  },
+
+  username: {
+    type: DataType.STRING(100),
+    unique: true,
+    allowNull: false,
   },
 
   email: {
@@ -28,12 +35,25 @@ const User = Model.define('User', {
     defaultValue: false,
   },
 
-}, {
+  password: {
+    type: DataType.STRING,
+    allowNull: false,
+  },
 
+}, {
+  classMethods: {
+    generateHash: function (password) { // eslint-disable-line
+      return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+    },
+  },
+  instanceMethods: {
+    comparePassword: function (password) { // eslint-disable-line
+      return bcrypt.compareSync(password, this.password);
+    },
+  },
   indexes: [
     { fields: ['email'] },
   ],
-
 });
 
 export default User;

@@ -19,6 +19,7 @@ const UserType = new ObjectType({
   fields: {
     id: { type: new NonNull(ID) },
     email: { type: StringType },
+    token: { type: StringType },
   },
 });
 
