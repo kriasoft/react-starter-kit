@@ -11,8 +11,8 @@ import 'babel-polyfill';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import UniversalRouter from 'universal-router';
-import { readState, saveState } from 'history/lib/DOMStateStorage';
-import history from './core/history';
+import createBrowserHistory from 'history/createBrowserHistory';
+import { parse as parseQueryString } from 'query-string';
 import {
   addEventListener,
   removeEventListener,
@@ -20,7 +20,9 @@ import {
   windowScrollY,
 } from './core/DOMUtils';
 
+const history = createBrowserHistory();
 const context = {
+  history,
   insertCss: (...styles) => {
     const removeCss = styles.map(style => style._insertCss()); // eslint-disable-line no-underscore-dangle, max-len
     return () => {
@@ -44,33 +46,36 @@ function updateTag(tag, nameKey, valueKey, name, value) {
     }
   }
 }
-function updateMeta(name, value) {
-  updateTag('meta', 'name', 'content', name, value);
+function updateMeta(name, content) {
+  updateTag('meta', 'name', 'content', name, content);
 }
-function updateLink(name, value) { // eslint-disable-line no-unused-vars
-  updateTag('link', 'rel', 'href', name, value);
+function updateLink(rel, href) { // eslint-disable-line no-unused-vars
+  updateTag('link', 'rel', 'href', rel, href);
 }
-function updateCustomMeta(name, value) { // eslint-disable-line no-unused-vars
-  updateTag('meta', 'property', 'content', name, value);
+function updateCustomMeta(property, content) { // eslint-disable-line no-unused-vars
+  updateTag('meta', 'property', 'content', property, content);
 }
 
 // Restore the scroll position if it was saved into the state
-function restoreScrollPosition({ state, hash }) {
-  if (state && state.scrollY !== undefined) {
-    window.scrollTo(state.scrollX, state.scrollY);
-    return;
-  }
-
-  const targetHash = hash && hash.substr(1);
-  if (targetHash) {
-    const target = document.getElementById(targetHash);
-    if (target) {
-      window.scrollTo(0, windowScrollY() + target.getBoundingClientRect().top);
-      return;
+let locationStates = {};
+function restoreScrollPosition({ key, hash }) {
+  let scrollX = 0;
+  let scrollY = 0;
+  const state = locationStates[key];
+  if (state) {
+    scrollX = state.scrollX;
+    scrollY = state.scrollY;
+  } else {
+    const targetHash = hash && hash.substr(1);
+    if (targetHash) {
+      const target = document.getElementById(targetHash);
+      if (target) {
+        scrollY = windowScrollY() + target.getBoundingClientRect().top;
+      }
     }
   }
 
-  window.scrollTo(0, 0);
+  window.scrollTo(scrollX, scrollY);
 }
 
 let onRenderComplete = function initialRenderComplete() {
@@ -115,32 +120,34 @@ function render(route, location) {
 // Make taps on links and buttons work fast on mobiles
 FastClick.attach(document.body);
 
-let currentLocation = history.getCurrentLocation();
+let currentLocation = history.location;
 let routes = require('./routes').default;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location) {
   // Save the page scroll position into the current location's state
-  if (currentLocation.key) {
-    saveState(currentLocation.key, {
-      ...readState(currentLocation.key),
-      scrollX: windowScrollX(),
-      scrollY: windowScrollY(),
-    });
+  locationStates[currentLocation.key] = {
+    scrollX: windowScrollX(),
+    scrollY: windowScrollY(),
+  };
+  if (history.action === 'PUSH') {
+    delete locationStates[location.key];
   }
   currentLocation = location;
 
   try {
     const route = await UniversalRouter.resolve(routes, {
       path: location.pathname,
-      query: location.query,
+      query: parseQueryString(location.search),
       state: location.state,
       context,
     });
 
     await render(route, location);
   } catch (err) {
-    // TODO: Inform the user about the failed page transition.
+    if (process.env.NODE_ENV !== 'production') {
+      throw err;
+    }
     console.error(err); // eslint-disable-line no-console
   }
 }
@@ -161,6 +168,7 @@ if (window.history && 'scrollRestoration' in window.history) {
 addEventListener(window, 'pagehide', function onPageHide() {
   removeEventListener(window, 'pagehide', onPageHide);
   removeHistoryListener();
+  locationStates = {};
   if (originalScrollRestoration) {
     window.history.scrollRestoration = originalScrollRestoration;
     originalScrollRestoration = undefined;
@@ -172,6 +180,6 @@ if (module.hot) {
   module.hot.accept('./routes', () => {
     routes = require('./routes').default; // eslint-disable-line global-require
 
-    onLocationChange(history.getCurrentLocation());
+    onLocationChange(history.location);
   });
 }

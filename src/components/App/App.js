@@ -18,26 +18,23 @@ class App extends Component {
 
   static propTypes = {
     context: PropTypes.shape({
+      history: PropTypes.object.isRequired,
       insertCss: PropTypes.func,
-      setTitle: PropTypes.func,
-      setMeta: PropTypes.func,
     }),
     children: PropTypes.element.isRequired,
     error: PropTypes.object,
   };
 
   static childContextTypes = {
+    history: PropTypes.object,
     insertCss: PropTypes.func.isRequired,
-    setTitle: PropTypes.func.isRequired,
-    setMeta: PropTypes.func.isRequired,
   };
 
   getChildContext() {
     const context = this.props.context;
     return {
+      history: context.history,
       insertCss: context.insertCss || emptyFunction,
-      setTitle: context.setTitle || emptyFunction,
-      setMeta: context.setMeta || emptyFunction,
     };
   }
 

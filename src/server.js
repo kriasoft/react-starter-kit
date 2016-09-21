@@ -15,6 +15,7 @@ import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
+import createMemoryHistory from 'history/createMemoryHistory';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import UniversalRouter from 'universal-router';
@@ -84,11 +85,13 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
+    const history = createMemoryHistory({ initialEntries: [req.originalUrl] });
     const css = new Set();
     const route = await UniversalRouter.resolve(routes, {
       path: req.path,
       query: req.query,
       context: {
+        history,
         insertCss: (...styles) => {
           styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
         },
