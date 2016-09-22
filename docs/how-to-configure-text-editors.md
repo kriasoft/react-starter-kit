@@ -21,9 +21,7 @@ Enable **ESLint** support
 
 ![eslint-support-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-eslint.png)
 
-Enable **CSSComb** by installing CSSReorder plug-in
-
-![csscomb-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-csscomb.png)
+Enable **CSSComb** by following the instructions [here](https://github.com/csscomb/jetbrains-csscomb).
 
 **If you have trouble with autoreloading** try to disable "safe write" in `File > Settings > System Settings > Use "safe write" (save chnages to a temporary file first)`
 
