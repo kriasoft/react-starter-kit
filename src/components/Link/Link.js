@@ -30,8 +30,6 @@ class Link extends Component {
   };
 
   handleClick = (event) => {
-    let allowTransition = true;
-
     if (this.props.onClick) {
       this.props.onClick(event);
     }
@@ -41,21 +39,11 @@ class Link extends Component {
     }
 
     if (event.defaultPrevented === true) {
-      allowTransition = false;
+      return;
     }
 
     event.preventDefault();
-
-    if (allowTransition) {
-      if (this.props.to) {
-        this.context.history.push(this.props.to);
-      } else {
-        this.context.history.push({
-          pathname: event.currentTarget.pathname,
-          search: event.currentTarget.search,
-        });
-      }
-    }
+    this.context.history.push(this.props.to);
   };
 
   render() {

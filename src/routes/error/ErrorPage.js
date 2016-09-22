@@ -9,6 +9,7 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import Layout from '../../components/Layout';
 import s from './ErrorPage.css';
 
 function ErrorPage({ error }) {
@@ -22,15 +23,19 @@ function ErrorPage({ error }) {
   }
 
   return (
-    <div>
-      <h1>{error.name}</h1>
-      <p>{error.message}</p>
-      <pre>{error.stack}</pre>
-    </div>
+    <Layout>
+      <div>
+        <h1>{error.name}</h1>
+        <p>{error.message}</p>
+        <pre>{error.stack}</pre>
+      </div>
+    </Layout>
   );
 }
 
-ErrorPage.propTypes = { error: PropTypes.object.isRequired };
+ErrorPage.propTypes = {
+  error: PropTypes.object.isRequired,
+};
 
 export { ErrorPage as ErrorPageWithoutStyle };
 export default withStyles(s)(ErrorPage);

@@ -88,7 +88,7 @@ app.get('*', async (req, res, next) => {
   try {
     const css = new Set();
 
-    // GGlobal (context) variables that can be easily accessed from any React component
+    // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
       // Navigation manager, e.g. history.push('/home')

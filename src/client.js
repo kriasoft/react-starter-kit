@@ -63,22 +63,25 @@ function updateCustomMeta(name, value) { // eslint-disable-line no-unused-vars
 }
 
 // Restore the scroll position if it was saved into the state
-function restoreScrollPosition({ state, hash }) {
-  if (state && state.scrollY !== undefined) {
-    window.scrollTo(state.scrollX, state.scrollY);
-    return;
-  }
-
-  const targetHash = hash && hash.substr(1);
-  if (targetHash) {
-    const target = document.getElementById(targetHash);
-    if (target) {
-      window.scrollTo(0, windowScrollY() + target.getBoundingClientRect().top);
-      return;
+let locationStates = {};
+function restoreScrollPosition({ key, hash }) {
+  let scrollX = 0;
+  let scrollY = 0;
+  const state = locationStates[key];
+  if (state) {
+    scrollX = state.scrollX;
+    scrollY = state.scrollY;
+  } else {
+    const targetHash = hash && hash.substr(1);
+    if (targetHash) {
+      const target = document.getElementById(targetHash);
+      if (target) {
+        scrollY = windowScrollY() + target.getBoundingClientRect().top;
+      }
     }
   }
 
-  window.scrollTo(0, 0);
+  window.scrollTo(scrollX, scrollY);
 }
 
 let onRenderComplete = function initialRenderComplete() {
@@ -129,19 +132,20 @@ let routes = require('./routes').default;
 // Re-render the app when window.location changes
 async function onLocationChange(location) {
   // Save the page scroll position into the current location's state
-  /* eslint-disable no-param-reassign */
-  if (location.state === undefined) location.state = {};
-  location.state.scrollX = windowScrollX();
-  location.state.scrollY = windowScrollY();
+  locationStates[currentLocation.key] = {
+    scrollX: windowScrollX(),
+    scrollY: windowScrollY(),
+  };
+  if (history.action === 'PUSH') {
+    delete locationStates[location.key];
+  }
   currentLocation = location;
-  /* eslint-enable no-param-reassign */
 
   try {
     const route = await UniversalRouter.resolve(routes, {
       path: location.pathname,
       query: queryString.parse(location.search),
       state: location.state,
-      context,
     });
 
     await render(route, location);
@@ -153,7 +157,7 @@ async function onLocationChange(location) {
 
 // Add History API listener and trigger initial change
 const removeHistoryListener = context.history.listen(onLocationChange);
-context.history.replace(currentLocation);
+onLocationChange(currentLocation);
 
 // Switch off the native scroll restoration behavior and handle it manually
 // https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
@@ -167,6 +171,7 @@ if (window.history && 'scrollRestoration' in window.history) {
 addEventListener(window, 'pagehide', function onPageHide() {
   removeEventListener(window, 'pagehide', onPageHide);
   removeHistoryListener();
+  locationStates = {};
   if (originalScrollRestoration) {
     window.history.scrollRestoration = originalScrollRestoration;
     originalScrollRestoration = undefined;

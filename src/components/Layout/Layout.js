@@ -7,31 +7,26 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Layout.css';
 import Header from '../Header';
 import Feedback from '../Feedback';
 import Footer from '../Footer';
 
-class Layout extends Component {
-
-  static propTypes = {
-    children: PropTypes.element.isRequired,
-    error: PropTypes.object,
-  };
-
-  render() {
-    return !this.props.error ? (
-      <div>
-        <Header />
-        {this.props.children}
-        <Feedback />
-        <Footer />
-      </div>
-    ) : React.Children.only(this.props.children);
-  }
-
+function Layout({ children }) {
+  return (
+    <div>
+      <Header />
+      {React.Children.only(children)}
+      <Feedback />
+      <Footer />
+    </div>
+  );
 }
+
+Layout.propTypes = {
+  children: PropTypes.element.isRequired,
+};
 
 export default withStyles(s)(Layout);
