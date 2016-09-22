@@ -8,11 +8,13 @@
  */
 
 import 'babel-polyfill';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import UniversalRouter from 'universal-router';
-import { readState, saveState } from 'history/lib/DOMStateStorage';
-import history from './core/history';
+import queryString from 'query-string';
+import createBrowserHistory from 'history/createBrowserHistory';
+import App from './components/App';
 import {
   addEventListener,
   removeEventListener,
@@ -20,12 +22,18 @@ import {
   windowScrollY,
 } from './core/DOMUtils';
 
+// Global (context) variables that can be easily accessed from any React component
+// https://facebook.github.io/react/docs/context.html
 const context = {
+  // Navigation manager, e.g. history.push('/home')
+  // https://github.com/mjackson/history
+  history: createBrowserHistory(),
+  // Enables critical path CSS rendering
+  // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: (...styles) => {
-    const removeCss = styles.map(style => style._insertCss()); // eslint-disable-line no-underscore-dangle, max-len
-    return () => {
-      removeCss.forEach(f => f());
-    };
+    // eslint-disable-next-line no-underscore-dangle
+    const removeCss = styles.map(x => x._insertCss());
+    return () => { removeCss.forEach(f => f()); };
   },
 };
 
@@ -102,7 +110,7 @@ function render(route, location) {
   return new Promise((resolve, reject) => {
     try {
       ReactDOM.render(
-        route.component,
+        <App context={context}>{route.component}</App>,
         container,
         onRenderComplete.bind(undefined, route, location)
       );
@@ -115,25 +123,23 @@ function render(route, location) {
 // Make taps on links and buttons work fast on mobiles
 FastClick.attach(document.body);
 
-let currentLocation = history.getCurrentLocation();
+let currentLocation = context.history.location;
 let routes = require('./routes').default;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location) {
   // Save the page scroll position into the current location's state
-  if (currentLocation.key) {
-    saveState(currentLocation.key, {
-      ...readState(currentLocation.key),
-      scrollX: windowScrollX(),
-      scrollY: windowScrollY(),
-    });
-  }
+  /* eslint-disable no-param-reassign */
+  if (location.state === undefined) location.state = {};
+  location.state.scrollX = windowScrollX();
+  location.state.scrollY = windowScrollY();
   currentLocation = location;
+  /* eslint-enable no-param-reassign */
 
   try {
     const route = await UniversalRouter.resolve(routes, {
       path: location.pathname,
-      query: location.query,
+      query: queryString.parse(location.search),
       state: location.state,
       context,
     });
@@ -146,8 +152,8 @@ async function onLocationChange(location) {
 }
 
 // Add History API listener and trigger initial change
-const removeHistoryListener = history.listen(onLocationChange);
-history.replace(currentLocation);
+const removeHistoryListener = context.history.listen(onLocationChange);
+context.history.replace(currentLocation);
 
 // Switch off the native scroll restoration behavior and handle it manually
 // https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
@@ -172,6 +178,6 @@ if (module.hot) {
   module.hot.accept('./routes', () => {
     routes = require('./routes').default; // eslint-disable-line global-require
 
-    onLocationChange(history.getCurrentLocation());
+    onLocationChange(context.history.location);
   });
 }

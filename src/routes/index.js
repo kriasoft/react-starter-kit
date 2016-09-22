@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import App from '../components/App';
+import Layout from '../components/Layout';
 
 // Child routes
 import home from './home';
@@ -34,7 +34,7 @@ export default {
     notFound,
   ],
 
-  async action({ next, context }) {
+  async action({ next }) {
     let route;
 
     // Execute each child route until one of them return the result
@@ -49,7 +49,7 @@ export default {
       // Override the result of child route with extensions
       title: `${route.title || 'Untitled Page'} - www.reactstarterkit.com`,
       description: route.description || '',
-      component: <App context={context}>{route.component}</App>,
+      component: <Layout>{route.component}</Layout>,
     };
   },
 
