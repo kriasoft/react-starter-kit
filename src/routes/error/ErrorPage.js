@@ -9,27 +9,24 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import Layout from '../../components/Layout';
 import s from './ErrorPage.css';
 
 function ErrorPage({ error }) {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     return (
-      <div>
-        <h1>Error</h1>
-        <p>Sorry, a critical error occurred on this page.</p>
-      </div>
-    );
-  }
-
-  return (
-    <Layout>
       <div>
         <h1>{error.name}</h1>
         <p>{error.message}</p>
         <pre>{error.stack}</pre>
       </div>
-    </Layout>
+    );
+  }
+
+  return (
+    <div>
+      <h1>Error</h1>
+      <p>Sorry, a critical error occurred on this page.</p>
+    </div>
   );
 }
 
