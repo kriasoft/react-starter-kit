@@ -15,12 +15,6 @@ import UniversalRouter from 'universal-router';
 import queryString from 'query-string';
 import createBrowserHistory from 'history/createBrowserHistory';
 import App from './components/App';
-import {
-  addEventListener,
-  removeEventListener,
-  windowScrollX,
-  windowScrollY,
-} from './core/DOMUtils';
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
@@ -37,51 +31,36 @@ const context = {
   },
 };
 
-function updateTag(tag, nameKey, valueKey, name, value) {
-  // Remove and create a new <meta /> tag in order to make it work with bookmarks in Safari
-  let meta = document.head.querySelector(`${tag}[${nameKey}=${name}]`);
-  if (!meta || meta.getAttribute(valueKey) !== value) {
-    if (meta) {
-      meta.parentNode.removeChild(meta);
-    }
-    if (typeof value === 'string') {
-      meta = document.createElement(tag);
-      meta.setAttribute(nameKey, name);
-      meta.setAttribute(valueKey, value);
-      document.head.appendChild(meta);
-    }
+function updateTag(tagName, keyName, keyValue, attrName, attrValue) {
+  const node = document.head.querySelector(`${tagName}[${keyName}=${keyValue}]`);
+  if (node && node.getAttribute(attrName) === attrValue) return;
+
+  // Remove and create a new tag in order to make it work with bookmarks in Safari
+  if (node) {
+    node.parentNode.removeChild(node);
+  }
+  if (typeof attrValue === 'string') {
+    const nextNode = document.createElement(tagName);
+    nextNode.setAttribute(keyName, keyValue);
+    nextNode.setAttribute(attrName, attrValue);
+    document.head.appendChild(nextNode);
   }
 }
-function updateMeta(name, value) {
-  updateTag('meta', 'name', 'content', name, value);
+function updateMeta(name, content) {
+  updateTag('meta', 'name', name, 'content', content);
 }
-function updateLink(name, value) { // eslint-disable-line no-unused-vars
-  updateTag('link', 'rel', 'href', name, value);
+function updateCustomMeta(property, content) { // eslint-disable-line no-unused-vars
+  updateTag('meta', 'property', property, 'content', content);
 }
-function updateCustomMeta(name, value) { // eslint-disable-line no-unused-vars
-  updateTag('meta', 'property', 'content', name, value);
+function updateLink(rel, href) { // eslint-disable-line no-unused-vars
+  updateTag('link', 'rel', rel, 'href', href);
 }
 
-// Restore the scroll position if it was saved into the state
-let locationStates = {};
-function restoreScrollPosition({ key, hash }) {
-  let scrollX = 0;
-  let scrollY = 0;
-  const state = locationStates[key];
-  if (state) {
-    scrollX = state.scrollX;
-    scrollY = state.scrollY;
-  } else {
-    const targetHash = hash && hash.substr(1);
-    if (targetHash) {
-      const target = document.getElementById(targetHash);
-      if (target) {
-        scrollY = windowScrollY() + target.getBoundingClientRect().top;
-      }
-    }
-  }
-
-  window.scrollTo(scrollX, scrollY);
+// Switch off the native scroll restoration behavior and handle it manually
+// https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
+const scrollPositionsHistory = {};
+if (window.history && 'scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual';
 }
 
 let onRenderComplete = function initialRenderComplete() {
@@ -91,19 +70,38 @@ let onRenderComplete = function initialRenderComplete() {
     document.title = route.title;
 
     updateMeta('description', route.description);
-    // Update necessary custom tags at runtime here, ie:
+    // Update necessary tags in <head> at runtime here, ie:
     // updateMeta('keywords', route.keywords);
-    // updateLink('canonical', route.canonicalUrl);
     // updateCustomMeta('og:url', route.canonicalUrl);
     // updateCustomMeta('og:image', route.imageUrl);
+    // updateLink('canonical', route.canonicalUrl);
     // etc.
 
-    restoreScrollPosition(location);
+    let scrollX = 0;
+    let scrollY = 0;
+    const pos = scrollPositionsHistory[location.key];
+    if (pos) {
+      scrollX = pos.scrollX;
+      scrollY = pos.scrollY;
+    } else {
+      const targetHash = location.hash.substr(1);
+      if (targetHash) {
+        const target = document.getElementById(targetHash);
+        if (target) {
+          scrollY = window.pageYOffset + target.getBoundingClientRect().top;
+        }
+      }
+    }
+
+    // Restore the scroll position if it was saved into the state
+    // or scroll to the given #hash anchor
+    // or scroll to top of the page
+    window.scrollTo(scrollX, scrollY);
 
     // Google Analytics tracking. Don't send 'pageview' event after
     // the initial rendering, as it was already sent
     if (window.ga) {
-      window.ga('send', 'pageview', location.pathname + location.search);
+      window.ga('send', 'pageview', `${location.pathname}${location.search}`);
     }
   };
 };
@@ -131,13 +129,14 @@ let routes = require('./routes').default;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location) {
-  // Save the page scroll position into the current location's state
-  locationStates[currentLocation.key] = {
-    scrollX: windowScrollX(),
-    scrollY: windowScrollY(),
+  // Remember the latest scroll position for the previous location
+  scrollPositionsHistory[currentLocation.key] = {
+    scrollX: window.pageXOffset,
+    scrollY: window.pageYOffset,
   };
+  // Delete stored scroll position for next page if any
   if (history.action === 'PUSH') {
-    delete locationStates[location.key];
+    delete scrollPositionsHistory[location.key];
   }
   currentLocation = location;
 
@@ -145,44 +144,27 @@ async function onLocationChange(location) {
     const route = await UniversalRouter.resolve(routes, {
       path: location.pathname,
       query: queryString.parse(location.search),
-      state: location.state,
     });
 
     await render(route, location);
   } catch (err) {
-    // TODO: Inform the user about the failed page transition.
+    if (process.env.NODE_ENV !== 'production') {
+      throw err;
+    }
     console.error(err); // eslint-disable-line no-console
   }
 }
 
-// Add History API listener and trigger initial change
-const removeHistoryListener = context.history.listen(onLocationChange);
+// Handle client-side navigation by using HTML5 History API
+// For more information visit https://github.com/mjackson/history#readme
+context.history.listen(onLocationChange);
 onLocationChange(currentLocation);
-
-// Switch off the native scroll restoration behavior and handle it manually
-// https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
-let originalScrollRestoration;
-if (window.history && 'scrollRestoration' in window.history) {
-  originalScrollRestoration = window.history.scrollRestoration;
-  window.history.scrollRestoration = 'manual';
-}
-
-// Prevent listeners collisions during history navigation
-addEventListener(window, 'pagehide', function onPageHide() {
-  removeEventListener(window, 'pagehide', onPageHide);
-  removeHistoryListener();
-  locationStates = {};
-  if (originalScrollRestoration) {
-    window.history.scrollRestoration = originalScrollRestoration;
-    originalScrollRestoration = undefined;
-  }
-});
 
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
   module.hot.accept('./routes', () => {
     routes = require('./routes').default; // eslint-disable-line global-require
 
-    onLocationChange(context.history.location);
+    onLocationChange(currentLocation);
   });
 }

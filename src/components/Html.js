@@ -41,16 +41,11 @@ function Html({ title, description, style, script, children }) {
 }
 
 Html.propTypes = {
-  title: PropTypes.string,
-  description: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
   style: PropTypes.string,
   script: PropTypes.string,
   children: PropTypes.string,
-};
-
-Html.defaultProps = {
-  title: '',
-  description: '',
 };
 
 export default Html;
