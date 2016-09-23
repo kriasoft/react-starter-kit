@@ -18,7 +18,9 @@ import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import UniversalRouter from 'universal-router';
+import createMemoryHistory from 'history/createMemoryHistory';
 import PrettyError from 'pretty-error';
+import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
@@ -85,18 +87,31 @@ app.use('/graphql', expressGraphQL(req => ({
 app.get('*', async (req, res, next) => {
   try {
     const css = new Set();
+
+    // Global (context) variables that can be easily accessed from any React component
+    // https://facebook.github.io/react/docs/context.html
+    const context = {
+      // Navigation manager, e.g. history.push('/home')
+      // https://github.com/mjackson/history
+      history: createMemoryHistory({
+        initialEntries: [req.url],
+      }),
+      // Enables critical path CSS rendering
+      // https://github.com/kriasoft/isomorphic-style-loader
+      insertCss: (...styles) => {
+        // eslint-disable-next-line no-underscore-dangle
+        styles.forEach(style => css.add(style._getCss()));
+      },
+    };
+
     const route = await UniversalRouter.resolve(routes, {
       path: req.path,
       query: req.query,
-      context: {
-        insertCss: (...styles) => {
-          styles.forEach(style => css.add(style._getCss())); // eslint-disable-line no-underscore-dangle, max-len
-        },
-      },
+      context,
     });
 
     const data = { ...route };
-    data.children = ReactDOM.renderToString(route.component);
+    data.children = ReactDOM.renderToString(<App context={context}>{route.component}</App>);
     data.style = [...css].join('');
     data.script = assets.main.js;
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
