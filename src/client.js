@@ -14,6 +14,7 @@ import FastClick from 'fastclick';
 import UniversalRouter from 'universal-router';
 import queryString from 'query-string';
 import createBrowserHistory from 'history/createBrowserHistory';
+import { createPath } from 'history/PathUtils';
 import App from './components/App';
 
 // Global (context) variables that can be easily accessed from any React component
@@ -101,7 +102,7 @@ let onRenderComplete = function initialRenderComplete() {
     // Google Analytics tracking. Don't send 'pageview' event after
     // the initial rendering, as it was already sent
     if (window.ga) {
-      window.ga('send', 'pageview', `${location.pathname}${location.search}`);
+      window.ga('send', 'pageview', createPath(location));
     }
   };
 };
@@ -151,7 +152,10 @@ async function onLocationChange(location) {
     if (process.env.NODE_ENV !== 'production') {
       throw err;
     }
+
+    // Avoid broken navigation in production mode by a full page reload on error
     console.error(err); // eslint-disable-line no-console
+    window.location.href = createPath(location);
   }
 }
 
