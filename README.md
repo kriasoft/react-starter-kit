@@ -1,5 +1,8 @@
 ## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate
 
+[![Build Status](https://travis-ci.org/kriasoft/react-starter-kit.svg?branch=master)](https://travis-ci.org/kriasoft/react-starter-kit)
+[![Dependency Status](https://img.shields.io/david/kriasoft/react-starter-kit.svg)](https://david-dm.org/kriasoft/react-starter-kit)
+
 > [React Starter Kit](https://www.reactstarterkit.com) is an opinionated
 > boilerplate for web development built on top of [Node.js](https://nodejs.org/),
 > [Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
