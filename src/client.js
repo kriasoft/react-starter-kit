@@ -33,7 +33,7 @@ const context = {
 };
 
 function updateTag(tagName, keyName, keyValue, attrName, attrValue) {
-  const node = document.head.querySelector(`${tagName}[${keyName}=${keyValue}]`);
+  const node = document.head.querySelector(`${tagName}[${keyName}="${keyValue}"]`);
   if (node && node.getAttribute(attrName) === attrValue) return;
 
   // Remove and create a new tag in order to make it work with bookmarks in Safari
@@ -107,24 +107,10 @@ let onRenderComplete = function initialRenderComplete() {
   };
 };
 
-const container = document.getElementById('app');
-function render(route, location) {
-  return new Promise((resolve, reject) => {
-    try {
-      ReactDOM.render(
-        <App context={context}>{route.component}</App>,
-        container,
-        onRenderComplete.bind(undefined, route, location)
-      );
-    } catch (err) {
-      reject(err);
-    }
-  });
-}
-
 // Make taps on links and buttons work fast on mobiles
 FastClick.attach(document.body);
 
+const container = document.getElementById('app');
 let currentLocation = context.history.location;
 let routes = require('./routes').default;
 
@@ -136,18 +122,29 @@ async function onLocationChange(location) {
     scrollY: window.pageYOffset,
   };
   // Delete stored scroll position for next page if any
-  if (history.action === 'PUSH') {
+  if (context.history.action === 'PUSH') {
     delete scrollPositionsHistory[location.key];
   }
   currentLocation = location;
 
   try {
+    // Traverses the list of routes in the order they are defined until
+    // it finds the first route that matches provided URL path string
+    // and whose action method returns anything other than `undefined`.
     const route = await UniversalRouter.resolve(routes, {
       path: location.pathname,
       query: queryString.parse(location.search),
     });
 
-    await render(route, location);
+    // Render the result of the resolved route into the DOM
+    // if the location was not changed during the routing process
+    if (currentLocation.key === location.key) {
+      ReactDOM.render(
+        <App context={context}>{route.component}</App>,
+        container,
+        () => onRenderComplete(route, location)
+      );
+    }
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
       throw err;
