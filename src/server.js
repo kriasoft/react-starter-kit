@@ -28,6 +28,7 @@ import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
+import createStore from './core/createStore';
 import { port, auth } from './config';
 
 const app = express();
@@ -96,6 +97,11 @@ app.get('*', async (req, res, next) => {
         // eslint-disable-next-line no-underscore-dangle
         styles.forEach(style => css.add(style._getCss()));
       },
+      // Initialize a new Redux store
+      // http://redux.js.org/docs/basics/UsageWithReact.html
+      store: createStore({
+        user: req.user || null,
+      }),
     };
 
     const route = await UniversalRouter.resolve(routes, {
@@ -112,6 +118,7 @@ app.get('*', async (req, res, next) => {
     data.children = ReactDOM.renderToString(<App context={context}>{route.component}</App>);
     data.style = [...css].join('');
     data.script = assets.main.js;
+    data.state = context.store.getState();
     data.chunk = assets[route.chunk] && assets[route.chunk].js;
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
 

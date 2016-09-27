@@ -16,6 +16,7 @@ import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
 import history from './core/history';
 import App from './components/App';
+import createStore from './core/createStore';
 import { ErrorReporter, deepForceUpdate } from './core/devUtils';
 
 // Global (context) variables that can be easily accessed from any React component
@@ -28,6 +29,9 @@ const context = {
     const removeCss = styles.map(x => x._insertCss());
     return () => { removeCss.forEach(f => f()); };
   },
+  // Initialize a new Redux store
+  // http://redux.js.org/docs/basics/UsageWithReact.html
+  store: createStore(window.APP_STATE),
 };
 
 function updateTag(tagName, keyName, keyValue, attrName, attrValue) {
