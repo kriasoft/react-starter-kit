@@ -162,16 +162,20 @@ async function onLocationChange(location) {
   }
 }
 
-// Handle client-side navigation by using HTML5 History API
-// For more information visit https://github.com/mjackson/history#readme
-context.history.listen(onLocationChange);
-onLocationChange(currentLocation);
+export default function main() {
+  // Handle client-side navigation by using HTML5 History API
+  // For more information visit https://github.com/mjackson/history#readme
+  currentLocation = context.history.location;
+  context.history.listen(onLocationChange);
+  onLocationChange(currentLocation);
+}
 
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
   module.hot.accept('./routes', () => {
     routes = require('./routes').default; // eslint-disable-line global-require
 
+    currentLocation = context.history.location;
     onLocationChange(currentLocation);
   });
 }
