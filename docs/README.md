@@ -19,3 +19,4 @@
 * [How to Integrate Redux](./recipes/how-to-integrate-redux.md)
 * [How to Integrate React Intl](./recipes/how-to-integrate-react-intl.md)
 * [How to Integrate Disqus](./recipes/how-to-integrate-disqus.md)
+* [How to Use Sass/SCSS](./recipes/how-to-use-sass.md)

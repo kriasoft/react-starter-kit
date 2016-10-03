@@ -34,21 +34,24 @@ npm test
 ### Basic example
 
 To help you on your way RSK comes with the following
-[basic test case](https://github.com/kriasoft/react-starter-kit/blob/master/src/components/App/App.test.js)
+[basic test case](https://github.com/kriasoft/react-starter-kit/blob/master/src/components/Layout/Layout.test.js)
 you can use as a starting point:
 
 ```js
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import App from './App';
+import App from '../App';
+import Layout from './Layout';
 
-describe('App', () => {
+describe('Layout', () => {
 
   it('renders children correctly', () => {
     const wrapper = shallow(
       <App context={{ insertCss: () => {} }}>
-        <div className="child" />
+        <Layout>
+          <div className="child" />
+        </Layout>
       </App>
     );
 
@@ -58,7 +61,7 @@ describe('App', () => {
 });
 ```
 
-### React-intl example
+### React-intl exampleß
 
 React-intl users MUST render/wrap components inside an IntlProvider like the example below:
 

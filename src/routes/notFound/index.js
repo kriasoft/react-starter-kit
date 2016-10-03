@@ -8,18 +8,19 @@
  */
 
 import React from 'react';
-import ErrorPage from './ErrorPage';
+import NotFound from './NotFound';
+
+const title = 'Page Not Found';
 
 export default {
 
-  path: '/error',
+  path: '*',
 
-  action({ error }) {
+  action() {
     return {
-      title: error.name,
-      description: error.message,
-      component: <ErrorPage error={error} />,
-      status: error.status || 500,
+      title,
+      component: <NotFound title={title} />,
+      status: 404,
     };
   },
 
