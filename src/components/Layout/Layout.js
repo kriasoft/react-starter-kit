@@ -9,24 +9,24 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import Layout from '../../components/Layout';
-import s from './Contact.css';
+import s from './Layout.css';
+import Header from '../Header';
+import Feedback from '../Feedback';
+import Footer from '../Footer';
 
-function Contact({ title }) {
+function Layout({ children }) {
   return (
-    <Layout>
-      <div className={s.root}>
-        <div className={s.container}>
-          <h1>{title}</h1>
-          <p>...</p>
-        </div>
-      </div>
-    </Layout>
+    <div>
+      <Header />
+      {React.Children.only(children)}
+      <Feedback />
+      <Footer />
+    </div>
   );
 }
 
-Contact.propTypes = {
-  title: PropTypes.string.isRequired,
+Layout.propTypes = {
+  children: PropTypes.element.isRequired,
 };
 
-export default withStyles(s)(Contact);
+export default withStyles(s)(Layout);

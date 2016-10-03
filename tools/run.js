@@ -29,7 +29,7 @@ function run(fn, options) {
 
 if (require.main === module && process.argv.length > 2) {
   delete require.cache[__filename]; // eslint-disable-line no-underscore-dangle
-  const module = require(`./${process.argv[2]}.js`).default;
+  const module = require(`./${process.argv[2]}.js`).default; // eslint-disable-line import/no-dynamic-require
   run(module).catch(err => { console.error(err.stack); process.exit(1); });
 }
 
