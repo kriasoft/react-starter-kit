@@ -7,7 +7,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
@@ -15,8 +14,13 @@ import UniversalRouter from 'universal-router';
 import queryString from 'query-string';
 import createBrowserHistory from 'history/createBrowserHistory';
 import { createPath } from 'history/PathUtils';
+import { addLocaleData } from 'react-intl';
+import en from 'react-intl/locale-data/en';
+import cs from 'react-intl/locale-data/cs';
 import App from './components/App';
 import configureStore from './store/configureStore';
+
+[en, cs].forEach(addLocaleData);
 
 // Navigation manager, e.g. history.push('/home')
 // https://github.com/mjackson/history

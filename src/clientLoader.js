@@ -12,17 +12,19 @@ function run() {
   }
 }
 
-const needHeavyPolyfills = false;
-
-if (needHeavyPolyfills) {
+if (!global.Intl) {
   // You can show loading banner here
 
   require.ensure([
     // Add all large polyfills here
-  ], (require) => { // eslint-disable-line no-unused-vars
+    'intl',
+    'intl/locale-data/jsonp/en.js',
+    'intl/locale-data/jsonp/cs.js',
+  ], require => {
     // and require them here
-    // require('intl');
-    // require('intl/locale-data/jsonp/en.js');
+    require('intl');
+    require('intl/locale-data/jsonp/en.js');
+    require('intl/locale-data/jsonp/cs.js');
 
     run();
   }, 'polyfills');

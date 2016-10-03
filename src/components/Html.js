@@ -11,9 +11,9 @@ import React, { PropTypes } from 'react';
 import serialize from 'serialize-javascript';
 import { analytics } from '../config';
 
-function Html({ title, description, style, script, state, children }) {
+function Html({ title, description, style, script, state, lang, children }) {
   return (
-    <html className="no-js" lang="en">
+    <html className="no-js" lang={lang}>
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
@@ -52,6 +52,7 @@ Html.propTypes = {
   style: PropTypes.string,
   script: PropTypes.string,
   state: PropTypes.object,
+  lang: PropTypes.string,
   children: PropTypes.string,
 };
 

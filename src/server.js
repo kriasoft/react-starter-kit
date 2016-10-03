@@ -11,6 +11,7 @@ import 'babel-polyfill';
 import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import requestLanguage from 'express-request-language';
 import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
@@ -20,6 +21,9 @@ import ReactDOM from 'react-dom/server';
 import UniversalRouter from 'universal-router';
 import createMemoryHistory from 'history/createMemoryHistory';
 import PrettyError from 'pretty-error';
+import { IntlProvider } from 'react-intl';
+
+import './serverIntlPolyfill';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
@@ -31,7 +35,8 @@ import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
-import { port, auth } from './config';
+import { setLocale } from './actions/intl';
+import { port, auth, locales } from './config';
 
 const app = express();
 
@@ -47,6 +52,18 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 // -----------------------------------------------------------------------------
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
+app.use(requestLanguage({
+  languages: locales,
+  queryName: 'lang',
+  cookie: {
+    name: 'lang',
+    options: {
+      path: '/',
+      maxAge: 3650 * 24 * 3600 * 1000, // 10 years in miliseconds
+    },
+    url: '/lang/{language}',
+  },
+}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -119,6 +136,16 @@ app.get('*', async (req, res, next) => {
       value: Date.now(),
     }));
 
+    store.dispatch(setRuntimeVariable({
+      name: 'availableLocales',
+      value: locales,
+    }));
+
+    const locale = req.language;
+    await store.dispatch(setLocale({
+      locale,
+    }));
+
     const css = new Set();
 
     // Global (context) variables that can be easily accessed from any React component
@@ -148,6 +175,7 @@ app.get('*', async (req, res, next) => {
     data.style = [...css].join('');
     data.script = assets.main.js;
     data.state = context.store.getState();
+    data.lang = locale;
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
 
     res.status(route.status || 200);
@@ -168,13 +196,19 @@ pe.skipPackage('express');
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.log(pe.render(err)); // eslint-disable-line no-console
+  const locale = req.language;
   const html = ReactDOM.renderToStaticMarkup(
     <Html
       title="Internal Server Error"
       description={err.message}
       style={errorPageStyle._getCss()} // eslint-disable-line no-underscore-dangle
+      lang={locale}
     >
-      {ReactDOM.renderToString(<ErrorPageWithoutStyle error={err} />)}
+      <IntlProvider
+        locale={locale}
+      >
+        {ReactDOM.renderToString(<ErrorPageWithoutStyle error={err} />)}
+      </IntlProvider>
     </Html>
   );
   res.status(err.status || 500);

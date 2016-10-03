@@ -8,6 +8,7 @@
  */
 
 import React, { PropTypes } from 'react';
+import { IntlProvider } from 'react-intl';
 
 const ContextType = {
   // Navigation manager, e.g. history.push('/home')
@@ -53,10 +54,46 @@ class App extends React.Component {
     return this.props.context;
   }
 
+  componentDidMount() {
+    const store = this.props.context && this.props.context.store;
+    if (store) {
+      this.unsubscribe = store.subscribe(() => {
+        const state = store.getState();
+        const newIntl = state.intl;
+        if (this.intl !== newIntl) {
+          this.intl = newIntl;
+          console.log('Intl changed'); // eslint-disable-line no-console
+          this.forceUpdate();
+        }
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
+  }
+
   render() {
     // NOTE: If you need to add or modify header, footer etc. of the app,
     // please do that inside the Layout component.
-    return React.Children.only(this.props.children);
+    const store = this.props.context && this.props.context.store;
+    const state = store && store.getState();
+    this.intl = (state && state.intl) || {};
+    const { initialNow, locale, messages } = this.intl;
+    const localeMessages = (messages && messages[locale]) || {};
+    return (
+      <IntlProvider
+        initialNow={initialNow}
+        locale={locale}
+        messages={localeMessages}
+        defaultLocale="en-US"
+      >
+        {React.Children.only(this.props.children)}
+      </IntlProvider>
+    );
   }
 
 }
