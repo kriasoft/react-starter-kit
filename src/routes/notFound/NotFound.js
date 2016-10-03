@@ -10,23 +10,23 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Layout from '../../components/Layout';
-import s from './Contact.css';
+import s from './NotFound.css';
 
-function Contact({ title }) {
+function NotFound({ title }) {
   return (
-    <Layout>
+    <Layout full={false}>
       <div className={s.root}>
         <div className={s.container}>
           <h1>{title}</h1>
-          <p>...</p>
+          <p>Sorry, the page you were trying to view does not exist.</p>
         </div>
       </div>
     </Layout>
   );
 }
 
-Contact.propTypes = {
+NotFound.propTypes = {
   title: PropTypes.string.isRequired,
 };
 
-export default withStyles(s)(Contact);
+export default withStyles(s)(NotFound);

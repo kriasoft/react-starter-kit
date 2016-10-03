@@ -11,33 +11,28 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ErrorPage.css';
 
-function ErrorPage({ error }, context) {
-  let title = 'Error';
-  let content = 'Sorry, a critical error occurred on this page.';
-  let errorMessage = null;
-
-  if (error.status === 404) {
-    title = 'Page Not Found';
-    content = 'Sorry, the page you were trying to view does not exist.';
-  } else if (process.env.NODE_ENV !== 'production') {
-    errorMessage = <pre>{error.stack}</pre>;
-  }
-
-  if (context.setTitle) {
-    context.setTitle(title);
+function ErrorPage({ error }) {
+  if (process.env.NODE_ENV !== 'production') {
+    return (
+      <div>
+        <h1>{error.name}</h1>
+        <p>{error.message}</p>
+        <pre>{error.stack}</pre>
+      </div>
+    );
   }
 
   return (
     <div>
-      <h1>{title}</h1>
-      <p>{content}</p>
-      {errorMessage}
+      <h1>Error</h1>
+      <p>Sorry, a critical error occurred on this page.</p>
     </div>
   );
 }
 
-ErrorPage.propTypes = { error: PropTypes.object.isRequired };
-ErrorPage.contextTypes = { setTitle: PropTypes.func.isRequired };
+ErrorPage.propTypes = {
+  error: PropTypes.object.isRequired,
+};
 
 export { ErrorPage as ErrorPageWithoutStyle };
 export default withStyles(s)(ErrorPage);

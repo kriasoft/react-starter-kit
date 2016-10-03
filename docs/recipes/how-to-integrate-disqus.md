@@ -21,7 +21,7 @@ function renderDisqus() {
   }
 }
 
-class DisqusThread {
+class DisqusThread extends React.Component{
 
   static propTypes = {
     id: PropTypes.string.isRequired,
@@ -67,7 +67,7 @@ export default DisqusThread;
 import React from 'react';
 import DisqusThread from './DisqusThread.js';
 
-class MyComponent {
+class MyComponent extends React.Component{
 
   render() {
     return (
