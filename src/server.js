@@ -29,7 +29,8 @@ import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
-import createStore from './core/createStore';
+import configureStore from './store/configureStore';
+import { setRuntimeVariable } from './actions/runtime';
 import { port, auth } from './config';
 
 const app = express();
@@ -86,7 +87,38 @@ app.use('/graphql', expressGraphQL(req => ({
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
+  const history = createMemoryHistory({
+    initialEntries: [req.url],
+  });
+  // let currentLocation = history.getCurrentLocation();
+  let sent = false;
+  const removeHistoryListener = history.listen(location => {
+    const newUrl = `${location.pathname}${location.search}`;
+    if (req.originalUrl !== newUrl) {
+      // console.log(`R ${req.originalUrl} -> ${newUrl}`); // eslint-disable-line no-console
+      if (!sent) {
+        res.redirect(303, newUrl);
+        sent = true;
+        next();
+      } else {
+        console.error(`${req.path}: Already sent!`); // eslint-disable-line no-console
+      }
+    }
+  });
+
   try {
+    const store = configureStore({
+      user: req.user || null,
+    }, {
+      cookie: req.headers.cookie,
+      history,
+    });
+
+    store.dispatch(setRuntimeVariable({
+      name: 'initialNow',
+      value: Date.now(),
+    }));
+
     const css = new Set();
 
     // Global (context) variables that can be easily accessed from any React component
@@ -94,9 +126,7 @@ app.get('*', async (req, res, next) => {
     const context = {
       // Navigation manager, e.g. history.push('/home')
       // https://github.com/mjackson/history
-      history: createMemoryHistory({
-        initialEntries: [req.url],
-      }),
+      history,
       // Enables critical path CSS rendering
       // https://github.com/kriasoft/isomorphic-style-loader
       insertCss: (...styles) => {
@@ -105,9 +135,7 @@ app.get('*', async (req, res, next) => {
       },
       // Initialize a new Redux store
       // http://redux.js.org/docs/basics/UsageWithReact.html
-      store: createStore({
-        user: req.user || null,
-      }),
+      store,
     };
 
     const route = await UniversalRouter.resolve(routes, {
@@ -126,6 +154,8 @@ app.get('*', async (req, res, next) => {
     res.send(`<!doctype html>${html}`);
   } catch (err) {
     next(err);
+  } finally {
+    removeHistoryListener();
   }
 });
 
