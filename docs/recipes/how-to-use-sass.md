@@ -18,7 +18,7 @@ $ npm install sass-loader --save-dev
 
 ### Step 2
 
-Update [`webpack.config.js`](../../webpack.config.js) file to use `sass-loader` for `.scss` files:
+Update [`webpack.config.js`](../../tools/webpack.config.js) file to use `sass-loader` for `.scss` files:
 
 ```js
 const config = {
