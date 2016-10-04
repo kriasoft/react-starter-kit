@@ -152,7 +152,7 @@ async function onLocationChange(location) {
 
     // Avoid broken navigation in production mode by a full page reload on error
     console.error(err); // eslint-disable-line no-console
-    window.location.href = createPath(location);
+    window.location.reload();
   }
 }
 
