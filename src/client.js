@@ -138,6 +138,7 @@ async function onLocationChange(location) {
     // it finds the first route that matches provided URL path string
     // and whose action method returns anything other than `undefined`.
     const route = await UniversalRouter.resolve(routes, {
+      ...context,
       path: location.pathname,
       query: queryString.parse(location.search),
     });
