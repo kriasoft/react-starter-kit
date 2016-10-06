@@ -10,9 +10,6 @@
 import React, { PropTypes } from 'react';
 
 const ContextType = {
-  // Navigation manager, e.g. history.push('/home')
-  // https://github.com/mjackson/history
-  history: PropTypes.object.isRequired,
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: PropTypes.func.isRequired,
