@@ -8,6 +8,7 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import history from '../../core/history';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -25,10 +26,6 @@ class Link extends Component {
     onClick: PropTypes.func,
   };
 
-  static contextTypes = {
-    history: PropTypes.object.isRequired,
-  };
-
   handleClick = (event) => {
     if (this.props.onClick) {
       this.props.onClick(event);
@@ -43,7 +40,7 @@ class Link extends Component {
     }
 
     event.preventDefault();
-    this.context.history.push(this.props.to);
+    history.push(this.props.to);
   };
 
   render() {
