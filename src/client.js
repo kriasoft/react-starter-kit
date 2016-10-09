@@ -13,19 +13,14 @@ import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import UniversalRouter from 'universal-router';
 import queryString from 'query-string';
-import createBrowserHistory from 'history/createBrowserHistory';
 import { createPath } from 'history/PathUtils';
+import history from './core/history';
 import App from './components/App';
 import configureStore from './store/configureStore';
-
-// Navigation manager, e.g. history.push('/home')
-// https://github.com/mjackson/history
-const history = createBrowserHistory();
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
 const context = {
-  history,
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: (...styles) => {
@@ -117,7 +112,7 @@ let onRenderComplete = function initialRenderComplete() {
 FastClick.attach(document.body);
 
 const container = document.getElementById('app');
-let currentLocation = context.history.location;
+let currentLocation = history.location;
 let routes = require('./routes').default;
 
 // Re-render the app when window.location changes
@@ -128,7 +123,7 @@ async function onLocationChange(location) {
     scrollY: window.pageYOffset,
   };
   // Delete stored scroll position for next page if any
-  if (context.history.action === 'PUSH') {
+  if (history.action === 'PUSH') {
     delete scrollPositionsHistory[location.key];
   }
   currentLocation = location;
@@ -143,15 +138,21 @@ async function onLocationChange(location) {
       query: queryString.parse(location.search),
     });
 
-    // Render the result of the resolved route into the DOM
-    // if the location was not changed during the routing process
-    if (currentLocation.key === location.key) {
-      ReactDOM.render(
-        <App context={context}>{route.component}</App>,
-        container,
-        () => onRenderComplete(route, location)
-      );
+    // Prevent multiple page renders during the routing process
+    if (currentLocation.key !== location.key) {
+      return;
     }
+
+    if (route.redirect) {
+      history.replace(route.redirect);
+      return;
+    }
+
+    ReactDOM.render(
+      <App context={context}>{route.component}</App>,
+      container,
+      () => onRenderComplete(route, location)
+    );
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
       throw err;
@@ -159,13 +160,13 @@ async function onLocationChange(location) {
 
     // Avoid broken navigation in production mode by a full page reload on error
     console.error(err); // eslint-disable-line no-console
-    window.location.href = createPath(location);
+    window.location.reload();
   }
 }
 
 // Handle client-side navigation by using HTML5 History API
 // For more information visit https://github.com/mjackson/history#readme
-context.history.listen(onLocationChange);
+history.listen(onLocationChange);
 onLocationChange(currentLocation);
 
 // Enable Hot Module Replacement (HMR)

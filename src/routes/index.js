@@ -20,6 +20,7 @@ export default {
     require('./contact').default,
     require('./login').default,
     require('./register').default,
+    require('./admin').default,
 
     // place new routes before...
     require('./content').default,
