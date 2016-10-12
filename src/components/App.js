@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { PropTypes } from 'react';
+import React, { Children, PropTypes } from 'react';
 import { IntlProvider } from 'react-intl';
 
 const ContextType = {
@@ -88,7 +88,7 @@ class App extends React.Component {
         messages={localeMessages}
         defaultLocale="en-US"
       >
-        {React.Children.only(this.props.children)}
+        {Children.only(this.props.children)}
       </IntlProvider>
     );
   }
