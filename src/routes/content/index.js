@@ -15,7 +15,7 @@ export default {
 
   path: '*',
 
-  async action({ path }) { // eslint-disable-line react/prop-types
+  async action({ path, locale }) { // eslint-disable-line react/prop-types
     const resp = await fetch('/graphql', {
       method: 'post',
       headers: {
@@ -23,7 +23,7 @@ export default {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: `{content(path:"${path}"){path,title,content,component}}`,
+        query: `{content(path:"${path}",locale:"${locale}"){path,title,content,component}}`,
       }),
       credentials: 'include',
     });

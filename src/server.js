@@ -145,6 +145,7 @@ app.get('*', async (req, res, next) => {
       ...context,
       path: req.path,
       query: req.query,
+      locale,
     });
 
     if (route.redirect) {

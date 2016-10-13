@@ -22,6 +22,7 @@ import configureStore from './store/configureStore';
 
 [en, cs].forEach(addLocaleData);
 
+const store = configureStore(window.APP_STATE, { history });
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
 const context = {
@@ -34,7 +35,7 @@ const context = {
   },
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
-  store: configureStore(window.APP_STATE, { history }),
+  store,
 };
 
 function updateTag(tagName, keyName, keyValue, attrName, attrValue) {
@@ -140,6 +141,7 @@ async function onLocationChange(location) {
       ...context,
       path: location.pathname,
       query: queryString.parse(location.search),
+      locale: store.getState().intl.locale,
     });
 
     // Prevent multiple page renders during the routing process

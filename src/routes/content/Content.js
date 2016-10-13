@@ -11,6 +11,7 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Layout from '../../components/Layout';
 import s from './Content.css';
+import localeDetect from './localeDetect';
 
 function Content({ path, title, content }) {
   return (
@@ -31,4 +32,6 @@ Content.propTypes = {
   title: PropTypes.string,
 };
 
-export default withStyles(s)(Content);
+const EnhancedContent = localeDetect(Content);
+
+export default withStyles(s)(EnhancedContent);
