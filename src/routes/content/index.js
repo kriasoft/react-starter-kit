@@ -9,30 +9,25 @@
 
 import React from 'react';
 import Content from './Content';
-import fetch from '../../core/fetch';
+import { getLocaleContent } from '../../actions/content';
 
 export default {
 
   path: '*',
 
-  async action({ path, locale }) { // eslint-disable-line react/prop-types
-    const resp = await fetch('/graphql', {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `{content(path:"${path}",locale:"${locale}"){path,title,content,component}}`,
-      }),
-      credentials: 'include',
-    });
-    if (resp.status !== 200) throw new Error(resp.statusText);
-    const { data } = await resp.json();
-    if (!data || !data.content) return undefined;
+  async action({ path, locale, store }) { // eslint-disable-line react/prop-types
+    try {
+      await store.dispatch(getLocaleContent(path, locale));
+      const data = store.getState().content.data;
+      if (!data || !data.content) {
+        return undefined;
+      }
+    } catch (e) {
+      throw new Error(e);
+    }
     return {
-      title: data.content.title,
-      component: <Content {...data.content} />,
+      title: store.getState().content.data.title,
+      component: <Content path={path} />,
     };
   },
 

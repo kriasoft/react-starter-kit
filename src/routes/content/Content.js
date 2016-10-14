@@ -7,31 +7,54 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Layout from '../../components/Layout';
 import s from './Content.css';
-import localeDetect from './localeDetect';
+import { getLocaleContent } from '../../actions/content';
 
-function Content({ path, title, content }) {
-  return (
-    <Layout>
-      <div className={s.root}>
-        <div className={s.container}>
-          {title && path !== '/' && <h1>{title}</h1>}
-          <div dangerouslySetInnerHTML={{ __html: content }} />
+class Content extends Component {
+  static propTypes = {
+    path: PropTypes.string.isRequired,
+    locale: PropTypes.string.isRequired,
+    data: PropTypes.shape({
+      content: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+    }).isRequired,
+    getLocaleContent: PropTypes.func.isRequired,
+  };
+  componentDidUpdate(prevProp) {
+    // client-side fetching when language changes
+    const { path, locale } = this.props;
+    if (prevProp.locale !== locale) {
+      this.props.getLocaleContent(path, locale);
+    }
+  }
+  render() {
+    const { path, data } = this.props;
+    return (
+      <Layout>
+        <div className={s.root}>
+          <div className={s.container}>
+            {data.title && path !== '/' && <h1>{data.title}</h1>}
+            <div dangerouslySetInnerHTML={{ __html: data.content }} />
+          </div>
         </div>
-      </div>
-    </Layout>
-  );
+      </Layout>
+    );
+  }
 }
 
-Content.propTypes = {
-  path: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
-  title: PropTypes.string,
+const mapState = (state) => ({
+  locale: state.intl.locale,
+  data: state.content.data,
+});
+
+const mapDispatch = {
+  getLocaleContent,
 };
 
-const EnhancedContent = localeDetect(Content);
+const EnhancedContent = connect(mapState, mapDispatch)(Content);
 
 export default withStyles(s)(EnhancedContent);

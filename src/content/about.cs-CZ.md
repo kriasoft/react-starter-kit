@@ -1,5 +1,5 @@
 ---
-title: About Us
+title: O nás
 component: ContentPage
 ---
 Lorem ipsum dolor sit amet, consectetur adipiscing ELIT. Aenean consequat dignissim fermentum tortor fermentum. Nullam lobortis vel ipsum ut ligula Elementum. Maecenas Podělte, massa laoreet lacinia pretium, nisi urna venenatis tortor, imperdiet Tellus libero přinesla strachu. Fusce sempre posuere ligula, facilisis Metus Bibendum, a někdy. Mauris pharetra commodo mezi EU a Leo At mauris sit amet SEM. Ve skutečnosti, ale není to smích průběhu velkého člověka. Nam feugiat augue libero, id consectetur tortor Bibendum non. Každý fringilla lorem. Nullam vulputate mauris je vyroben, a největší lev fotbal.
