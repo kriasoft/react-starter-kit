@@ -7,15 +7,25 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import del from 'del';
-import fs from './lib/fs';
+import { cleanDir } from './lib/fs';
 
 /**
  * Cleans up the output (build) directory.
  */
-async function clean() {
-  await del(['.tmp', 'build/*', '!build/.git'], { dot: true });
-  await fs.makeDir('build/public');
+function clean() {
+  return Promise.all([
+    cleanDir('build/*', {
+      nosort: true,
+      dot: true,
+      ignore: ['build/.git', 'build/public'],
+    }),
+
+    cleanDir('build/public/*', {
+      nosort: true,
+      dot: true,
+      ignore: ['build/public/.git'],
+    }),
+  ]);
 }
 
 export default clean;

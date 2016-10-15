@@ -7,8 +7,8 @@
 * Launches [Webpack](https://webpack.github.io/) compiler in a watch mode (via [webpack-middleware](https://github.com/kriasoft/webpack-middleware))
 * Launches Node.js server from the compiled output folder (`runServer.js`)
 * Launches [Browsersync](https://browsersync.io/),
-  [HMR](https://webpack.github.io/docs/hot-module-replacement), and
-  [React Transform](https://github.com/gaearon/babel-plugin-react-transform)
+  [Hot Module Replacement](https://webpack.github.io/docs/hot-module-replacement), and
+  [React Hot Loader](https://github.com/gaearon/react-hot-loader)
 
 ##### `npm run build` (`build.js`)
 
