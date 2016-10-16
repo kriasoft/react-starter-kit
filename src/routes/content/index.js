@@ -9,7 +9,7 @@
 
 import React from 'react';
 import Content from './Content';
-import { getLocaleContent } from '../../actions/content';
+import { getContent } from '../../actions/content';
 
 export default {
 
@@ -17,18 +17,18 @@ export default {
 
   async action({ path, locale, store }) { // eslint-disable-line react/prop-types
     try {
-      await store.dispatch(getLocaleContent(path, locale));
-      const data = store.getState().content.data;
+      await store.dispatch(getContent({ path, locale }));
+      const data = store.getState().content[`${locale}:${path}`];
       if (!data || !data.content) {
         return undefined;
       }
+      return {
+        title: data.title,
+        component: <Content path={path} />,
+      };
     } catch (e) {
       throw new Error(e);
     }
-    return {
-      title: store.getState().content.data.title,
-      component: <Content path={path} />,
-    };
   },
 
 };

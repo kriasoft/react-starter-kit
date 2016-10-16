@@ -1,9 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 
 import {
-  GET_LOCALE_CONTENT,
-  GET_LOCALE_CONTENT_SUCCESS,
-  GET_LOCALE_CONTENT_ERROR,
+  FETCH_CONTENT_START,
+  FETCH_CONTENT_SUCCESS,
+  FETCH_CONTENT_ERROR,
 } from '../constants';
 
 const query = `
@@ -14,25 +14,33 @@ const query = `
   }
 `;
 
-export function getLocaleContent(path, locale) {
+export function getContent({ path, locale }) {
   return async (dispatch, getState, { graphqlRequest }) => {
     dispatch({
-      type: GET_LOCALE_CONTENT,
+      type: FETCH_CONTENT_START,
+      payload: {
+        path,
+        locale,
+      },
     });
 
     try {
       const { data } = await graphqlRequest(query, { path, locale });
       dispatch({
-        type: GET_LOCALE_CONTENT_SUCCESS,
+        type: FETCH_CONTENT_SUCCESS,
         payload: {
-          data: data.content,
+          ...data.content,
+          path,
+          locale,
         },
       });
     } catch (error) {
       dispatch({
-        type: GET_LOCALE_CONTENT_ERROR,
+        type: FETCH_CONTENT_ERROR,
         payload: {
           error,
+          path,
+          locale,
         },
       });
       return false;

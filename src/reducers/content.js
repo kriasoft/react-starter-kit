@@ -1,34 +1,38 @@
 import {
-  GET_LOCALE_CONTENT,
-  GET_LOCALE_CONTENT_SUCCESS,
-  GET_LOCALE_CONTENT_ERROR,
+  FETCH_CONTENT_START,
+  FETCH_CONTENT_SUCCESS,
+  FETCH_CONTENT_ERROR,
 } from '../constants';
 
-const defaultState = {
-  isFetching: false,
-  data: {
-    title: '', content: '',
-  },
-};
+const defaultState = {};
 
 export default function runtime(state = defaultState, action) {
+  const key = action.payload && `${action.payload.locale}:${action.payload.path}`;
   switch (action.type) {
-    case GET_LOCALE_CONTENT:
+    case FETCH_CONTENT_START:
       return {
         ...state,
-        isFetching: true,
+        [key]: {
+          ...state[key],
+          isFetching: true,
+        },
       };
-    case GET_LOCALE_CONTENT_SUCCESS:
+    case FETCH_CONTENT_SUCCESS:
       return {
         ...state,
-        isFetching: false,
-        data: action.payload.data,
+        [key]: {
+          ...action.payload,
+          isFetching: false,
+        },
+        currentAvailableKey: key,
       };
-    case GET_LOCALE_CONTENT_ERROR:
+    case FETCH_CONTENT_ERROR:
       return {
         ...state,
-        isFetching: false,
-        error: action.payload.error,
+        [key]: {
+          ...action.payload,
+          isFetching: false,
+        },
       };
     default:
       return state;
