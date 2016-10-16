@@ -30,6 +30,7 @@ export default function runtime(state = defaultState, action) {
       return {
         ...state,
         [key]: {
+          ...state[key],
           ...action.payload,
           isFetching: false,
         },
