@@ -56,7 +56,7 @@ All notable changes to this project will be documented in this file.
 ### [v0.4.1]
 > 2015-10-04
 
-- Replace React Hot Loader (depricated) with React Transform
+- Replace React Hot Loader (deprecated) with React Transform
 - Replace `index.html` template with `Html` (shell) React component
 - Update the deployment script (`tools/deploy.js`), add Git-based deployment example
 - Update ESLint and JSCS settings to use AirBnb JavaScript style guide
