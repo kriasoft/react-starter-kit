@@ -13,15 +13,15 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import configureStore from 'redux-mock-store';
 import App from '../App';
 import Layout from './Layout';
-import configureStore from 'redux-mock-store';
 
 describe('Layout', () => {
 
   it('renders children correctly', () => {
     const mockStore = configureStore();
-    const store = mockStore()
+    const store = mockStore();
 
     const wrapper = shallow(
       <App context={{ insertCss: () => {}, store }}>
