@@ -15,12 +15,16 @@ import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import App from '../App';
 import Layout from './Layout';
+import configureStore from 'redux-mock-store';
 
 describe('Layout', () => {
 
   it('renders children correctly', () => {
+    const mockStore = configureStore();
+    const store = mockStore()
+
     const wrapper = shallow(
-      <App context={{ insertCss: () => {} }}>
+      <App context={{ insertCss: () => {}, store }}>
         <Layout>
           <div className="child" />
         </Layout>
