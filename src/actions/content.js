@@ -6,6 +6,8 @@ import {
   FETCH_CONTENT_ERROR,
 } from '../constants';
 
+import { selectContent } from '../reducers/content';
+
 const query = `
   query($path:String!,$locale:String!) {
     content(path:$path,locale:$locale) {
@@ -14,14 +16,27 @@ const query = `
   }
 `;
 
-export function getContent({ path, locale }) {
+export function getContent({ path, locale, force }) {
   return async (dispatch, getState, { graphqlRequest }) => {
+    const state = getState();
+
+    // eslint-disable-next-line no-param-reassign
+    locale = locale || state.intl.locale;
+    const payload = {
+      path,
+      locale,
+    };
+
+    if (!force) {
+      const cachedContent = selectContent(state, payload);
+      if (cachedContent) {
+        return true;
+      }
+    }
+
     dispatch({
       type: FETCH_CONTENT_START,
-      payload: {
-        path,
-        locale,
-      },
+      payload,
     });
 
     try {

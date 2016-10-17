@@ -6,10 +6,19 @@ import {
 
 const defaultState = {};
 
-export default function runtime(state = defaultState, action) {
-  const key = action.payload && `${action.payload.locale}:${action.payload.path}`;
+const createKey = (path, locale) => `${locale}:${path}`;
+
+// selectors
+export function selectContent(state, { path, locale }) {
+  const key = createKey(path, locale || state.intl.locale);
+  return state.content[key] || null;
+}
+
+// reducer
+export default function content(state = defaultState, action) {
   switch (action.type) {
-    case FETCH_CONTENT_START:
+    case FETCH_CONTENT_START: {
+      const key = createKey(action.payload.path, action.payload.locale);
       return {
         ...state,
         [key]: {
@@ -17,16 +26,21 @@ export default function runtime(state = defaultState, action) {
           isFetching: true,
         },
       };
-    case FETCH_CONTENT_SUCCESS:
+    }
+
+    case FETCH_CONTENT_SUCCESS: {
+      const key = createKey(action.payload.path, action.payload.locale);
       return {
         ...state,
         [key]: {
           ...action.payload,
           isFetching: false,
         },
-        currentAvailableKey: key,
       };
-    case FETCH_CONTENT_ERROR:
+    }
+
+    case FETCH_CONTENT_ERROR: {
+      const key = createKey(action.payload.path, action.payload.locale);
       return {
         ...state,
         [key]: {
@@ -35,7 +49,10 @@ export default function runtime(state = defaultState, action) {
           isFetching: false,
         },
       };
-    default:
+    }
+
+    default: {
       return state;
+    }
   }
 }

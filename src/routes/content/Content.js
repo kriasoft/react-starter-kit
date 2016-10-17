@@ -12,45 +12,64 @@ import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Layout from '../../components/Layout';
 import s from './Content.css';
-import { getContent } from '../../actions/content';
+import { getContent as getContentAction } from '../../actions/content';
+import { selectContent } from '../../reducers/content';
 
 class Content extends Component {
+
   static propTypes = {
     path: PropTypes.string.isRequired,
-    locale: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    locale: PropTypes.string,
+    content: PropTypes.shape({
+      isFetching: PropTypes.bool.isRequired,
+      title: PropTypes.string,
+      content: PropTypes.string,
+    }),
     getContent: PropTypes.func.isRequired,
   };
-  componentDidUpdate(prevProp) {
-    // client-side fetching when language changes
-    const { path, locale } = this.props;
-    if (prevProp.locale !== locale) {
-      this.props.getContent({ path, locale });
+
+  componentDidMount() {
+    this.maybeFetchData();
+  }
+
+  componentWillUpdate(nextProps) {
+    this.maybeFetchData(nextProps);
+  }
+
+  maybeFetchData(props) {
+    const { path, locale, content, getContent } = props || this.props;
+    if (!content) {
+      getContent({ path, locale });
     }
   }
+
   render() {
-    const { path, title, content } = this.props;
+    const { path, content } = this.props;
     return (
       <Layout>
         <div className={s.root}>
-          <div className={s.container}>
-            {title && path !== '/' && <h1>{title}</h1>}
-            <div dangerouslySetInnerHTML={{ __html: content }} />
-          </div>
+          {(!content || content.isFetching) ? (
+            <div className={`${s.container} ${s.fetching}`}>
+              {path !== '/' && <h1>...</h1>}
+            </div>
+          ) : (
+            <div className={s.container}>
+              {content.title && path !== '/' && <h1>{content.title}</h1>}
+              <div dangerouslySetInnerHTML={{ __html: content.content }} />
+            </div>
+          )}
         </div>
       </Layout>
     );
   }
 }
 
-const mapState = (state) => ({
-  ...state.content[state.content.currentAvailableKey],
-  locale: state.intl.locale,
+const mapState = (state, props) => ({
+  content: selectContent(state, props),
 });
 
 const mapDispatch = {
-  getContent,
+  getContent: getContentAction,
 };
 
 const EnhancedContent = connect(mapState, mapDispatch)(Content);
