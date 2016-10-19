@@ -83,44 +83,8 @@
   box-shadow: 0 0 8px rgba(0, 116, 194, 0.6);
 }
 
-.facebook {
-  border-color: #3b5998;
-  background: #3b5998;
-  composes: button;
-}
 
-.facebook:hover {
-  background: #2d4373;
-}
 
-.google {
-  border-color: #dd4b39;
-  background: #dd4b39;
-  composes: button;
-}
-
-.google:hover {
-  background: #c23321;
-}
-
-.twitter {
-  border-color: #55acee;
-  background: #55acee;
-  composes: button;
-}
-
-.twitter:hover {
-  background: #2795e9;
-}
-
-.icon {
-  display: inline-block;
-  margin: -2px 12px -2px 0;
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
-  fill: currentColor;
-}
 
 .lineThrough {
   position: relative;
