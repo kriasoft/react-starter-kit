@@ -10,9 +10,12 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Layout from '../../components/Layout';
+
 import LoginFacebook from '../../components/LoginFacebook';
 import LoginGoogle from '../../components/LoginGoogle';
 import LoginTwitter from '../../components/LoginTwitter';
+import LoginForm from '../../components/LoginForm';
+
 import s from './Login.css';
 
 function Login({ title }) {
@@ -29,36 +32,8 @@ function Login({ title }) {
           <LoginTwitter className={s.formGroup}></LoginTwitter>
 
           <strong className={s.lineThrough}>OR</strong>
-          <form method="post">
-            <div className={s.formGroup}>
-              <label className={s.label} htmlFor="usernameOrEmail">
-                Username or email address:
-              </label>
-              <input
-                className={s.input}
-                id="usernameOrEmail"
-                type="text"
-                name="usernameOrEmail"
-                autoFocus
-              />
-            </div>
-            <div className={s.formGroup}>
-              <label className={s.label} htmlFor="password">
-                Password:
-              </label>
-              <input
-                className={s.input}
-                id="password"
-                type="password"
-                name="password"
-              />
-            </div>
-            <div className={s.formGroup}>
-              <button className={s.button} type="submit">
-                Log in
-              </button>
-            </div>
-          </form>
+
+          <LoginForm></LoginForm>
         </div>
       </div>
     </Layout>
