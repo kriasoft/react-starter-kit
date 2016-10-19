@@ -84,9 +84,13 @@ app.use('/graphql', expressGraphQL(req => ({
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
-  try {
+  /**
+   * Renders the final html
+   * @param res - the response object
+   * @param route - the matched route
+   */
+  const renderPage = (res, route) => {
     const css = new Set();
-
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
@@ -98,6 +102,44 @@ app.get('*', async (req, res, next) => {
       },
     };
 
+    const data = { ...route };
+    data.children = ReactDOM.renderToString(<App context={context}>{route.component}</App>);
+    data.style = [...css].join('');
+    data.script = assets.main.js;
+    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+
+    res.status(route.status || 200);
+    res.send(`<!doctype html>${html}`);
+  };
+
+  /**
+   * Determines if a path is a static resource
+   * @param path - the path of the requested resource. e.g. /images/lucky.png
+   * @returns {boolean} - true if the path is a static resource; false otherwise
+   */
+  const isStaticResource = path => {
+    const periodIndex = path.indexOf('.');
+    // if the path contains a period and has at least two characters after said period then it is a static resource
+    if (periodIndex > -1 && path.substring(periodIndex + 1).length > 2) {
+      return true;
+    }
+    return false;
+  };
+
+  // don't allow static resources to enumerate routes. wastes valuable CPU and bandwidth
+  if (isStaticResource(req.path)) {
+    try {
+      console.log(`${req.path} is a static resource; 404`); // todo: remove me
+      renderPage(res, require('./routes/notFound').default.action());
+      return;
+    }
+    catch (e1) {
+      next(e1);
+    }
+  }
+
+  try {
+    console.log(`resolving ${req.path}`); // todo: remove me
     const route = await UniversalRouter.resolve(routes, {
       path: req.path,
       query: req.query,
@@ -108,14 +150,7 @@ app.get('*', async (req, res, next) => {
       return;
     }
 
-    const data = { ...route };
-    data.children = ReactDOM.renderToString(<App context={context}>{route.component}</App>);
-    data.style = [...css].join('');
-    data.script = assets.main.js;
-    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-
-    res.status(route.status || 200);
-    res.send(`<!doctype html>${html}`);
+    renderPage(res, route);
   } catch (err) {
     next(err);
   }
