@@ -9,22 +9,6 @@
 @import '../variables.css';
 @import '../LoginForm/Button.css';
 
-
-.root {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.container {
-  margin: 0 auto;
-  padding: 0 0 40px;
-  max-width: 380px;
-}
-
-.lead {
-  font-size: 1.25em;
-}
-
 .formGroup {
   margin-bottom: 15px;
 }
@@ -56,38 +40,4 @@
 .input:focus {
   border-color: #0074c2;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 116, 194, 0.6);
-}
-
-.lineThrough {
-  position: relative;
-  z-index: 1;
-  display: block;
-  margin-bottom: 15px;
-  width: 100%;
-  color: #757575;
-  text-align: center;
-  font-size: 80%;
-}
-
-.lineThrough::before {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: -1;
-  margin-top: -5px;
-  margin-left: -20px;
-  width: 40px;
-  height: 10px;
-  background-color: #fff;
-  content: '';
-}
-
-.lineThrough::after {
-  position: absolute;
-  top: 49%;
-  z-index: -2;
-  display: block;
-  width: 100%;
-  border-bottom: 1px solid #ddd;
-  content: '';
 }

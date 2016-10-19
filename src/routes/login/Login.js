@@ -25,15 +25,15 @@ function Login({ title }) {
         <div className={s.container}>
           <h1>{title}</h1>
           <p className={s.lead}>Log in with your username or company email address.</p>
-          <LoginFacebook className={s.formGroup}></LoginFacebook>
+          <LoginFacebook className={s.formGroup} />
 
-          <LoginGoogle className={s.formGroup}></LoginGoogle>
+          <LoginGoogle className={s.formGroup} />
 
-          <LoginTwitter className={s.formGroup}></LoginTwitter>
+          <LoginTwitter className={s.formGroup} />
 
           <strong className={s.lineThrough}>OR</strong>
 
-          <LoginForm></LoginForm>
+          <LoginForm />
         </div>
       </div>
     </Layout>
