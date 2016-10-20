@@ -86,10 +86,10 @@ app.use('/graphql', expressGraphQL(req => ({
 app.get('*', async (req, res, next) => {
   /**
    * Renders the final html
-   * @param res - the response object
+   * @param response - the response object
    * @param route - the matched route
    */
-  const renderPage = (res, route) => {
+  const renderPage = (response, route) => {
     const css = new Set();
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
@@ -108,19 +108,22 @@ app.get('*', async (req, res, next) => {
     data.script = assets.main.js;
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
 
-    res.status(route.status || 200);
-    res.send(`<!doctype html>${html}`);
+    response.status(route.status || 200);
+    response.send(`<!doctype html>${html}`);
   };
 
   /**
    * Determines if a path is a static resource
-   * @param path - the path of the requested resource. e.g. /images/lucky.png
+   * @param resourcePath - the path of the requested resource. e.g. /images/lucky.png
    * @returns {boolean} - true if the path is a static resource; false otherwise
    */
-  const isStaticResource = path => {
-    const periodIndex = path.indexOf('.');
-    // if the path contains a period and has at least two characters after said period then it is a static resource
-    if (periodIndex > -1 && path.substring(periodIndex + 1).length > 2) {
+  const isStaticResource = resourcePath => {
+    const periodIndex = resourcePath.indexOf('.');
+    /*
+      if the path contains a period and has at least two characters after said period then it is
+      a static resource
+     */
+    if (periodIndex > -1 && resourcePath.substring(periodIndex + 1).length > 2) {
       return true;
     }
     return false;
@@ -129,17 +132,17 @@ app.get('*', async (req, res, next) => {
   // don't allow static resources to enumerate routes. wastes valuable CPU and bandwidth
   if (isStaticResource(req.path)) {
     try {
-      console.log(`${req.path} is a static resource; 404`); // todo: remove me
-      renderPage(res, require('./routes/notFound').default.action());
+      console.log(`${req.path} is a static resource; 404`); // todo: exclude from final pull
+      renderPage(res, require('./routes/notFound').default.action()); // eslint-disable-line global-require,
+      // newline-after-import
       return;
-    }
-    catch (e1) {
+    } catch (e1) {
       next(e1);
     }
   }
 
   try {
-    console.log(`resolving ${req.path}`); // todo: remove me
+    console.log(`resolving ${req.path}`); // todo: exclude from final pull
     const route = await UniversalRouter.resolve(routes, {
       path: req.path,
       query: req.query,
