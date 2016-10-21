@@ -147,8 +147,11 @@ const config = {
     return {
       default: [
         // Transfer @import rule by inlining content, e.g. @import 'normalize.css'
-        // https://github.com/postcss/postcss-import
-        require('postcss-import')({ addDependencyTo: bundler }),
+        // https://github.com/jonathantneal/postcss-partial-import
+        require('postcss-partial-import')({ addDependencyTo: bundler }),
+        // Allow you to fix url() according to postcss to and/or from options
+        // https://github.com/postcss/postcss-url
+        require('postcss-url')(),
         // W3C variables, e.g. :root { --color: red; } div { background: var(--color); }
         // https://github.com/postcss/postcss-custom-properties
         require('postcss-custom-properties')(),
@@ -167,6 +170,9 @@ const config = {
         // Allows you to nest one style rule inside another
         // https://github.com/jonathantneal/postcss-nesting
         require('postcss-nesting')(),
+        // Unwraps nested rules like how Sass does it
+        // https://github.com/postcss/postcss-nested
+        require('postcss-nested')(),
         // W3C color() function, e.g. div { background: color(red alpha(90%)); }
         // https://github.com/postcss/postcss-color-function
         require('postcss-color-function')(),
@@ -267,7 +273,12 @@ const serverConfig = extend(true, {}, config, {
 
   externals: [
     /^\.\/assets$/,
-    /^[@a-z][a-z\/\.\-0-9]*$/i,
+    (context, request, callback) => {
+      const isExternal =
+        request.match(/^[@a-z][a-z\/\.\-0-9]*$/i) &&
+        !request.match(/\.(css|less|scss|sss)$/i);
+      callback(null, Boolean(isExternal));
+    },
   ],
 
   plugins: [
