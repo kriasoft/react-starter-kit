@@ -12,13 +12,9 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './LoginThirdParty.css';
 
 function LoginThirdParty({ to, buttonText, buttonClass, ...props }) {
-  // const { to, buttonText, buttonClass, ...props } = this.props;
-  var classNameButton = s[buttonClass];
-  var to = to;
-  console.log(s,classNameButton);
   return (
     <div {...props}>
-      <a className={classNameButton} href={to}>
+      <a className={s[buttonClass]} href={to}>
         <svg
           className={s.icon}
           width="30"

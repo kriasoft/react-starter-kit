@@ -24,9 +24,9 @@ function Login({ title }) {
         <div className={s.container}>
           <h1>{title}</h1>
           <p className={s.lead}>Log in with your username or company email address.</p>
-          <LoginThirdParty className={s.formGroup} to="/login/facebook" buttonText="Log in with Facebook" buttonClass="facebook"/>
-          <LoginThirdParty className={s.formGroup} to="/login/google" buttonText="Log in with Google" buttonClass="google"/>
-          <LoginThirdParty className={s.formGroup} to="/login/twitter" buttonText="Log in with Twitter" buttonClass="twitter"/>
+          <LoginThirdParty className={s.formGroup} to="/login/facebook" buttonText="Log in with Facebook" buttonClass="facebook" />
+          <LoginThirdParty className={s.formGroup} to="/login/google" buttonText="Log in with Google" buttonClass="google" />
+          <LoginThirdParty className={s.formGroup} to="/login/twitter" buttonText="Log in with Twitter" buttonClass="twitter" />
 
           <strong className={s.lineThrough}>OR</strong>
 
