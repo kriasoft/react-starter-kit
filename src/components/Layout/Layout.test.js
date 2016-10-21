@@ -15,12 +15,34 @@ import { expect } from 'chai';
 import { render } from 'enzyme';
 import App from '../App';
 import Layout from './Layout';
+import reducer from '../../reducers';
+
+function createStoreMock() {
+  const initialState = {
+    runtime: {
+      availableLocales: ['en-US'],
+    },
+    intl: {
+      locale: 'en-US',
+    }
+  };
+  const state = reducer(initialState, { type: '@@TEST' });
+  return {
+    getState() {
+      return state;
+    },
+
+    subscribe() {},
+
+    dispatch() {},
+  };
+}
 
 describe('Layout', () => {
-
   it('renders children correctly', () => {
+    const store = createStoreMock();
     const wrapper = render(
-      <App context={{ insertCss: () => {} }}>
+      <App context={{ insertCss: () => {}, store }}>
         <Layout>
           <div className="child" />
         </Layout>
