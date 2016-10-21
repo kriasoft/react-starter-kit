@@ -9,42 +9,55 @@
 
 import path from 'path';
 import gaze from 'gaze';
-import Promise from 'bluebird';
-import fs from './lib/fs';
+import { writeFile, copyFile, makeDir, copyDir, cleanDir } from './lib/fs';
 import pkg from '../package.json';
+
 /**
  * Copies static files such as robots.txt, favicon.ico to the
  * output (build) folder.
  */
-async function copy({ watch } = {}) {
-  const ncp = Promise.promisify(require('ncp'));
-
+async function copy() {
+  await makeDir('build');
   await Promise.all([
-    ncp('src/public', 'build/public'),
-    ncp('src/content', 'build/content'),
+    writeFile('build/package.json', JSON.stringify({
+      private: true,
+      engines: pkg.engines,
+      dependencies: pkg.dependencies,
+      scripts: {
+        start: 'node server.js',
+      },
+    }, null, 2)),
+    copyFile('LICENSE.txt', 'build/LICENSE.txt'),
+    copyDir('src/content', 'build/content'),
+    copyDir('src/public', 'build/public'),
   ]);
 
-  await fs.writeFile('./build/package.json', JSON.stringify({
-    private: true,
-    engines: pkg.engines,
-    dependencies: pkg.dependencies,
-    scripts: {
-      start: 'node server.js',
-    },
-  }, null, 2));
-
-  if (watch) {
+  if (process.argv.includes('--watch')) {
     const watcher = await new Promise((resolve, reject) => {
-      gaze('src/content/**/*.*', (err, val) => (err ? reject(err) : resolve(val)));
+      gaze([
+        'src/content/**/*',
+        'src/public/**/*',
+      ], (err, val) => (err ? reject(err) : resolve(val)));
     });
 
-    const cp = async (file) => {
-      const relPath = file.substr(path.join(__dirname, '../src/content/').length);
-      await ncp(`src/content/${relPath}`, `build/content/${relPath}`);
-    };
-
-    watcher.on('changed', cp);
-    watcher.on('added', cp);
+    watcher.on('all', async (event, filePath) => {
+      const dist = path.join('build/', path.relative('src', filePath));
+      switch (event) {
+        case 'added':
+        case 'renamed':
+        case 'changed':
+          if (filePath.endsWith('/')) return;
+          await makeDir(path.dirname(dist));
+          await copyFile(filePath, dist);
+          break;
+        case 'deleted':
+          cleanDir(dist, { nosort: true, dot: true });
+          break;
+        default:
+          return;
+      }
+      console.log(`[file ${event}] ${dist}`);
+    });
   }
 }
 
