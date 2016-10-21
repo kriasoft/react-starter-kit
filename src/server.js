@@ -130,6 +130,7 @@ app.get('*', async (req, res, next) => {
     data.style = [...css].join('');
     data.script = assets.main.js;
     data.state = context.store.getState();
+    data.chunk = assets[route.chunk] && assets[route.chunk].js;
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
 
     res.status(route.status || 200);
