@@ -24,7 +24,7 @@ function createStoreMock() {
     },
     intl: {
       locale: 'en-US',
-    }
+    },
   };
   const state = reducer(initialState, { type: '@@TEST' });
   return {

@@ -11,7 +11,7 @@ import path from 'path';
 import gaze from 'gaze';
 import Promise from 'bluebird';
 import { transform } from 'babel-core';
-import fs from './lib/fs';
+import { readFile, writeFile, glob } from './lib/fs';
 import pkg from '../package.json';
 import { locales } from '../src/config';
 
@@ -22,7 +22,7 @@ let messages = {};
 const posixPath = fileName => fileName.replace(/\\/g, '/');
 
 async function writeMessages(fileName, msgs) {
-  await fs.writeFile(fileName, `${JSON.stringify(msgs, null, 2)}\n`);
+  await writeFile(fileName, `${JSON.stringify(msgs, null, 2)}\n`);
 }
 
 // merge messages to source files
@@ -30,7 +30,7 @@ async function mergeToFile(locale, toBuild) {
   const fileName = `src/messages/${locale}.json`;
   const originalMessages = {};
   try {
-    const oldFile = await fs.readFile(fileName);
+    const oldFile = await readFile(fileName);
 
     let oldJson;
     try {
@@ -105,7 +105,7 @@ async function updateMessages(toBuild) {
  * Extract react-intl messages and write it to src/messages/_default.json
  * Also extends known localizations
  */
-async function extractMessages({ watch } = {}) {
+async function extractMessages() {
   const compare = (a, b) => {
     if (a === b) {
       return 0;
@@ -118,7 +118,7 @@ async function extractMessages({ watch } = {}) {
 
   const processFile = async (fileName) => {
     try {
-      const code = await fs.readFile(fileName);
+      const code = await readFile(fileName);
       const posixName = posixPath(fileName);
       const result = transform(code, {
         presets: pkg.babel.presets,
@@ -134,12 +134,12 @@ async function extractMessages({ watch } = {}) {
     }
   };
 
-  const files = await fs.glob(GLOB_PATTERN);
+  const files = await glob(GLOB_PATTERN);
 
   await Promise.all(files.map(processFile));
   await updateMessages(false);
 
-  if (watch) {
+  if (process.argv.includes('--watch')) {
     const watcher = await new Promise((resolve, reject) => {
       gaze(GLOB_PATTERN, (err, val) => (err ? reject(err) : resolve(val)));
     });
