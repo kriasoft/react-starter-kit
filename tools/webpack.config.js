@@ -243,10 +243,6 @@ const clientConfig = extend(true, {}, config, {
           warnings: VERBOSE,
         },
       }),
-
-      // A plugin for a more aggressive chunk merging strategy
-      // https://webpack.github.io/docs/list-of-plugins.html#aggressivemergingplugin
-      new webpack.optimize.AggressiveMergingPlugin(),
     ],
   ],
 
@@ -263,9 +259,7 @@ const serverConfig = extend(true, {}, config, {
   entry: './server.js',
 
   output: {
-    path: path.resolve(__dirname, '../build'),
-    filename: 'server.js',
-    chunkFilename: 'server.[name].js',
+    filename: '../../server.js',
     libraryTarget: 'commonjs2',
   },
 
@@ -286,6 +280,10 @@ const serverConfig = extend(true, {}, config, {
     // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
     new webpack.BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false }),
+
+    // Do not create separate chunks of the server bundle
+    // https://webpack.github.io/docs/list-of-plugins.html#limitchunkcountplugin
+    new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
   ],
 
   node: {
