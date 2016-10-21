@@ -11,9 +11,8 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Layout from '../../components/Layout';
 
-import LoginFacebook from '../../components/LoginFacebook';
-import LoginGoogle from '../../components/LoginGoogle';
-import LoginTwitter from '../../components/LoginTwitter';
+import LoginThirdParty from '../../components/LoginThirdParty';
+
 import LoginForm from '../../components/LoginForm';
 
 import s from './Login.css';
@@ -25,11 +24,9 @@ function Login({ title }) {
         <div className={s.container}>
           <h1>{title}</h1>
           <p className={s.lead}>Log in with your username or company email address.</p>
-          <LoginFacebook className={s.formGroup} />
-
-          <LoginGoogle className={s.formGroup} />
-
-          <LoginTwitter className={s.formGroup} />
+          <LoginThirdParty className={s.formGroup} to="/login/facebook" buttonText="Log in with Facebook" buttonClass="facebook"/>
+          <LoginThirdParty className={s.formGroup} to="/login/google" buttonText="Log in with Google" buttonClass="google"/>
+          <LoginThirdParty className={s.formGroup} to="/login/twitter" buttonText="Log in with Twitter" buttonClass="twitter"/>
 
           <strong className={s.lineThrough}>OR</strong>
 
