@@ -14,10 +14,9 @@ import React from 'react';
 import { expect } from 'chai';
 import { render } from 'enzyme';
 import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk'
+import thunk from 'redux-thunk';
 import App from '../App';
 import Layout from './Layout';
-import reducer from '../../reducers';
 
 const middlewares = [thunk];
 const mockStore = configureStore(middlewares);
