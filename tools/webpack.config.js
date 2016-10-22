@@ -43,6 +43,11 @@ const config = {
     sourcePrefix: '  ',
   },
 
+  watchOptions: {
+    poll: false,
+    ignored: /node_modules/,
+  },
+
   module: {
     loaders: [
       {
