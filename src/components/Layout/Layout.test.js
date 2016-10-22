@@ -13,14 +13,18 @@
 import React from 'react';
 import { expect } from 'chai';
 import { render } from 'enzyme';
+import configureStore from 'redux-mock-store';
 import App from '../App';
 import Layout from './Layout';
 
 describe('Layout', () => {
 
   it('renders children correctly', () => {
+    const mockStore = configureStore();
+    const store = mockStore();
+
     const wrapper = render(
-      <App context={{ insertCss: () => {} }}>
+      <App context={{ insertCss: () => {}, store }}>
         <Layout>
           <div className="child" />
         </Layout>
