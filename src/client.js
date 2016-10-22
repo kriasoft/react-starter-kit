@@ -13,16 +13,13 @@ import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import UniversalRouter from 'universal-router';
 import queryString from 'query-string';
-import createBrowserHistory from 'history/createBrowserHistory';
 import { createPath } from 'history/PathUtils';
+import history from './core/history';
 import App from './components/App';
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
 const context = {
-  // Navigation manager, e.g. history.push('/home')
-  // https://github.com/mjackson/history
-  history: createBrowserHistory(),
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: (...styles) => {
@@ -33,7 +30,7 @@ const context = {
 };
 
 function updateTag(tagName, keyName, keyValue, attrName, attrValue) {
-  const node = document.head.querySelector(`${tagName}[${keyName}=${keyValue}]`);
+  const node = document.head.querySelector(`${tagName}[${keyName}="${keyValue}"]`);
   if (node && node.getAttribute(attrName) === attrValue) return;
 
   // Remove and create a new tag in order to make it work with bookmarks in Safari
@@ -107,25 +104,11 @@ let onRenderComplete = function initialRenderComplete() {
   };
 };
 
-const container = document.getElementById('app');
-function render(route, location) {
-  return new Promise((resolve, reject) => {
-    try {
-      ReactDOM.render(
-        <App context={context}>{route.component}</App>,
-        container,
-        onRenderComplete.bind(undefined, route, location)
-      );
-    } catch (err) {
-      reject(err);
-    }
-  });
-}
-
 // Make taps on links and buttons work fast on mobiles
 FastClick.attach(document.body);
 
-let currentLocation = context.history.location;
+const container = document.getElementById('app');
+let currentLocation = history.location;
 let routes = require('./routes').default;
 
 // Re-render the app when window.location changes
@@ -142,12 +125,29 @@ async function onLocationChange(location) {
   currentLocation = location;
 
   try {
+    // Traverses the list of routes in the order they are defined until
+    // it finds the first route that matches provided URL path string
+    // and whose action method returns anything other than `undefined`.
     const route = await UniversalRouter.resolve(routes, {
       path: location.pathname,
       query: queryString.parse(location.search),
     });
 
-    await render(route, location);
+    // Prevent multiple page renders during the routing process
+    if (currentLocation.key !== location.key) {
+      return;
+    }
+
+    if (route.redirect) {
+      history.replace(route.redirect);
+      return;
+    }
+
+    ReactDOM.render(
+      <App context={context}>{route.component}</App>,
+      container,
+      () => onRenderComplete(route, location)
+    );
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
       throw err;
@@ -155,13 +155,13 @@ async function onLocationChange(location) {
 
     // Avoid broken navigation in production mode by a full page reload on error
     console.error(err); // eslint-disable-line no-console
-    window.location.href = createPath(location);
+    window.location.reload();
   }
 }
 
 // Handle client-side navigation by using HTML5 History API
 // For more information visit https://github.com/mjackson/history#readme
-context.history.listen(onLocationChange);
+history.listen(onLocationChange);
 onLocationChange(currentLocation);
 
 // Enable Hot Module Replacement (HMR)
