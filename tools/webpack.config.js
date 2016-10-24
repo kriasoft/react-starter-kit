@@ -12,22 +12,8 @@ import webpack from 'webpack';
 import extend from 'extend';
 import AssetsPlugin from 'assets-webpack-plugin';
 
-const DEBUG = !process.argv.includes('--release');
-const VERBOSE = process.argv.includes('--verbose');
-const AUTOPREFIXER_BROWSERS = [
-  'Android 2.3',
-  'Android >= 4',
-  'Chrome >= 35',
-  'Firefox >= 31',
-  'Explorer >= 9',
-  'iOS >= 7',
-  'Opera >= 12',
-  'Safari >= 7.1',
-];
-const GLOBALS = {
-  'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
-  __DEV__: DEBUG,
-};
+const isDebug = !process.argv.includes('--release');
+const isVerbose = process.argv.includes('--verbose');
 
 //
 // Common configuration chunk to be used for both
@@ -53,20 +39,42 @@ const config = {
         ],
         query: {
           // https://github.com/babel/babel-loader#options
-          cacheDirectory: DEBUG,
+          cacheDirectory: isDebug,
 
           // https://babeljs.io/docs/usage/options/
           babelrc: false,
           presets: [
+            // JSX, Flow
+            // https://github.com/babel/babel/tree/master/packages/babel-preset-react
             'react',
-            'es2015',
+            // Latest stable ECMAScript features
+            // https://github.com/babel/babel/tree/master/packages/babel-preset-latest
+            'latest',
+            // Experimental ECMAScript proposals
+            // https://github.com/babel/babel/tree/master/packages/babel-preset-stage-0
             'stage-0',
           ],
           plugins: [
+            // Externalise references to helpers and builtins,
+            // automatically polyfilling your code without polluting globals.
+            // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-runtime
             'transform-runtime',
-            ...DEBUG ? [] : [
+            ...isDebug ? [
+              // Adds component stack to warning messages
+              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
+              'transform-react-jsx-source',
+              // Adds __self attribute to JSX which React will use for some warnings
+              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
+              'transform-react-jsx-self',
+            ] : [
+              // Remove unnecessary React propTypes from the production build
+              // https://github.com/oliviertassinari/babel-plugin-transform-react-remove-prop-types
               'transform-react-remove-prop-types',
+              // Treat React JSX elements as value types and hoist them to the highest scope
+              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-constant-elements
               'transform-react-constant-elements',
+              // Turn JSX elements into exploded React objects
+              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-inline-elements
               'transform-react-inline-elements',
             ],
           ],
@@ -77,12 +85,14 @@ const config = {
         loaders: [
           'isomorphic-style-loader',
           `css-loader?${JSON.stringify({
-            sourceMap: DEBUG,
+            // CSS Loader https://github.com/webpack/css-loader
+            importLoaders: 1,
+            sourceMap: isDebug,
             // CSS Modules https://github.com/css-modules/css-modules
             modules: true,
-            localIdentName: DEBUG ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]',
+            localIdentName: isDebug ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]',
             // CSS Nano http://cssnano.co/options/
-            minimize: !DEBUG,
+            minimize: !isDebug,
           })}`,
           'postcss-loader?pack=default',
         ],
@@ -91,7 +101,7 @@ const config = {
         test: /\.scss$/,
         loaders: [
           'isomorphic-style-loader',
-          `css-loader?${JSON.stringify({ sourceMap: DEBUG, minimize: !DEBUG })}`,
+          `css-loader?${JSON.stringify({ sourceMap: isDebug, minimize: !isDebug })}`,
           'postcss-loader?pack=sass',
           'sass-loader',
         ],
@@ -108,7 +118,7 @@ const config = {
         test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
         loader: 'url-loader',
         query: {
-          name: DEBUG ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
+          name: isDebug ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
           limit: 10000,
         },
       },
@@ -116,7 +126,7 @@ const config = {
         test: /\.(eot|ttf|wav|mp3)$/,
         loader: 'file-loader',
         query: {
-          name: DEBUG ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
+          name: isDebug ? '[path][name].[ext]?[hash]' : '[hash].[ext]',
         },
       },
     ],
@@ -128,21 +138,23 @@ const config = {
     extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
   },
 
-  cache: DEBUG,
-  debug: DEBUG,
+  cache: isDebug,
+  debug: isDebug,
 
   stats: {
     colors: true,
-    reasons: DEBUG,
-    hash: VERBOSE,
-    version: VERBOSE,
+    reasons: isDebug,
+    hash: isVerbose,
+    version: isVerbose,
     timings: true,
-    chunks: VERBOSE,
-    chunkModules: VERBOSE,
-    cached: VERBOSE,
-    cachedAssets: VERBOSE,
+    chunks: isVerbose,
+    chunkModules: isVerbose,
+    cached: isVerbose,
+    cachedAssets: isVerbose,
   },
 
+  // The list of plugins for PostCSS
+  // https://github.com/postcss/postcss
   postcss(bundler) {
     return {
       default: [
@@ -193,10 +205,10 @@ const config = {
         require('postcss-flexbugs-fixes')(),
         // Add vendor prefixes to CSS rules using values from caniuse.com
         // https://github.com/postcss/autoprefixer
-        require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
+        require('autoprefixer')(),
       ],
       sass: [
-        require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
+        require('autoprefixer')(),
       ],
     };
   },
@@ -210,8 +222,8 @@ const clientConfig = extend(true, {}, config, {
   entry: './client.js',
 
   output: {
-    filename: DEBUG ? '[name].js?[chunkhash]' : '[name].[chunkhash].js',
-    chunkFilename: DEBUG ? '[name].[id].js?[chunkhash]' : '[name].[id].[chunkhash].js',
+    filename: isDebug ? '[name].js?[chunkhash]' : '[name].[chunkhash].js',
+    chunkFilename: isDebug ? '[name].[id].js?[chunkhash]' : '[name].[id].[chunkhash].js',
   },
 
   target: 'web',
@@ -220,7 +232,11 @@ const clientConfig = extend(true, {}, config, {
 
     // Define free variables
     // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
-    new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': true }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
+      'process.env.BROWSER': true,
+      __DEV__: isDebug,
+    }),
 
     // Emit a file with assets paths
     // https://github.com/sporto/assets-webpack-plugin#options
@@ -235,8 +251,7 @@ const clientConfig = extend(true, {}, config, {
     // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
     new webpack.optimize.OccurrenceOrderPlugin(true),
 
-    ...DEBUG ? [] : [
-
+    ...isDebug ? [] : [
       // Search for equal or similar files and deduplicate them in the output
       // https://webpack.github.io/docs/list-of-plugins.html#dedupeplugin
       new webpack.optimize.DedupePlugin(),
@@ -245,8 +260,8 @@ const clientConfig = extend(true, {}, config, {
       // https://github.com/mishoo/UglifyJS2#compressor-options
       new webpack.optimize.UglifyJsPlugin({
         compress: {
-          screw_ie8: true, // jscs:ignore requireCamelCaseOrUpperCaseIdentifiers
-          warnings: VERBOSE,
+          screw_ie8: true,
+          warnings: isVerbose,
         },
       }),
     ],
@@ -254,7 +269,7 @@ const clientConfig = extend(true, {}, config, {
 
   // Choose a developer tool to enhance debugging
   // http://webpack.github.io/docs/configuration.html#devtool
-  devtool: DEBUG ? 'source-map' : false,
+  devtool: isDebug ? 'source-map' : false,
 });
 
 //
@@ -282,10 +297,13 @@ const serverConfig = extend(true, {}, config, {
   ],
 
   plugins: [
-
     // Define free variables
     // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
-    new webpack.DefinePlugin({ ...GLOBALS, 'process.env.BROWSER': false }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
+      'process.env.BROWSER': false,
+      __DEV__: isDebug,
+    }),
 
     // Adds a banner to the top of each generated chunk
     // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
