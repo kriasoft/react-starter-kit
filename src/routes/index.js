@@ -28,13 +28,8 @@ export default {
   ],
 
   async action({ next }) {
-    let route;
-
     // Execute each child route until one of them return the result
-    // TODO: move this logic to the `next` function
-    do {
-      route = await next();
-    } while (!route);
+    const route = await next();
 
     // Provide default values for title, description etc.
     route.title = `${route.title || 'Untitled Page'} - www.reactstarterkit.com`;
