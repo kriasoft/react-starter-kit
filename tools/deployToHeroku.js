@@ -39,7 +39,7 @@ async function deployToHeroku() {
   // Initialize the parameters of remote repository
   // with the name given to the Heroku app
   const remote = getRemote(process.argv[3]);
-  
+
   // Initialize a new Git repository inside the `/build` folder
   // if it doesn't exist yet
   const repo = await GitRepo.open('build', { init: true });
