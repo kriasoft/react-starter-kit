@@ -138,12 +138,20 @@ To deploy the app, run:
 $ npm run deploy
 ```
 
-The deployment script `tools/deploy.js` is configured to push the contents of
+The deployment script `tools/deployToAzureWebApps.js` is configured to push the contents of
 the `/build` folder to a remote server via Git. You can easily deploy your app
-to [Azure Web Apps](https://azure.microsoft.com/en-us/services/app-service/web/),
-or [Heroku](https://www.heroku.com/) this way. Both will execute `npm install --production`
-upon receiving new files from you. Note, you should only deploy the contents
-of the `/build` folder to a remote server.
+to [Azure Web Apps](https://azure.microsoft.com/en-us/services/app-service/web/) this way.
+It will execute `npm install --production` upon receiving new files from you. Note, you
+should only deploy the contents of the `/build` folder to a remote server.
+
+#### Deploy to Heroku
+
+```shell
+$ npm run deploy app-name
+```
+
+All-in-one solution to build and deploy to Heroku at the same time. You will need
+to create an empty Heroku project first, and then use the same name for `app-name`.
 
 ### How to Update
 
