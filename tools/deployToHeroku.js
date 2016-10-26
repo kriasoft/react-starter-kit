@@ -13,15 +13,16 @@ import fs from 'fs';
 import run from './run';
 import build from './build';
 
+// The appName should be the same as your Heroku's app name
+const appName = 'name';
+
 // For more information visit http://gitolite.com/deploy.html
-function getRemote(appName) {
-  return {
-    name: 'heroku',
-    url: `https://git.heroku.com/${appName}.git`,
-    branch: 'master',
-    website: `https://${appName}.herokuapp.com`,
-  };
-}
+const remote = {
+  name: 'heroku',
+  url: `https://git.heroku.com/${appName}.git`,
+  branch: 'master',
+  website: `https://${appName}.herokuapp.com`,
+};
 
 /**
  * Deploy the contents of the `/build` folder to a remote
@@ -35,10 +36,6 @@ async function deployToHeroku() {
     fs.mkdirSync('build');
     console.log('Creating build directory');
   }
-
-  // Initialize the parameters of remote repository
-  // with the name given to the Heroku app
-  const remote = getRemote(process.argv[3]);
 
   // Initialize a new Git repository inside the `/build` folder
   // if it doesn't exist yet

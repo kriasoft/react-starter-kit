@@ -21,13 +21,6 @@
 * Builds the project from source files (`build.js`)
 * Pushes the contents of the `/build` folder to a remote server with Git
 
-#### Deploy to Heroku
-
-##### `npm run deploy app-name` (`deployToHeroku.js`)
-
-* Builds and deploys the project to Heroku
-* Needs an empty Heroku project to link to with `app-name`
-
 ##### Options
 
 Flag        | Description
