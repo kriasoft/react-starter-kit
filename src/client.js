@@ -19,6 +19,7 @@ import cs from 'react-intl/locale-data/cs';
 import history from './core/history';
 import App from './components/App';
 import configureStore from './store/configureStore';
+import { ErrorReporter, deepForceUpdate } from './core/devUtils';
 
 [en, cs].forEach(addLocaleData);
 
@@ -117,6 +118,7 @@ let onRenderComplete = function initialRenderComplete() {
 FastClick.attach(document.body);
 
 const container = document.getElementById('app');
+let appInstance;
 let currentLocation = history.location;
 let routes = require('./routes').default;
 
@@ -154,18 +156,28 @@ async function onLocationChange(location) {
       return;
     }
 
-    ReactDOM.render(
+    appInstance = ReactDOM.render(
       <App context={context}>{route.component}</App>,
       container,
       () => onRenderComplete(route, location)
     );
-  } catch (err) {
+  } catch (error) {
+    console.error(error); // eslint-disable-line no-console
+
+    // Current url has been changed during navigation process, do nothing
+    if (currentLocation.key !== location.key) {
+      return;
+    }
+
+    // Display the error in full-screen for development mode
     if (process.env.NODE_ENV !== 'production') {
-      throw err;
+      appInstance = null;
+      document.title = `Error: ${error.message}`;
+      ReactDOM.render(<ErrorReporter error={error} />, container);
+      return;
     }
 
     // Avoid broken navigation in production mode by a full page reload on error
-    console.error(err); // eslint-disable-line no-console
     window.location.reload();
   }
 }
@@ -180,10 +192,21 @@ export default function main() {
 
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
-  module.hot.accept('./routes', () => {
+  module.hot.accept('./routes', async () => {
     routes = require('./routes').default; // eslint-disable-line global-require
 
     currentLocation = history.location;
-    onLocationChange(currentLocation);
+    await onLocationChange(currentLocation);
+    if (appInstance) {
+      try {
+        // Force-update the whole tree, including components that refuse to update
+        deepForceUpdate(appInstance);
+      } catch (error) {
+        appInstance = null;
+        document.title = `Hot Update Error: ${error.message}`;
+        ReactDOM.render(<ErrorReporter error={error} />, container);
+        return;
+      }
+    }
   });
 }
