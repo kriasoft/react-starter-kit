@@ -290,7 +290,7 @@ const serverConfig = extend(true, {}, config, {
     /^\.\/assets$/,
     (context, request, callback) => {
       const isExternal =
-        request.match(/^[@a-z][a-z\/\.\-0-9]*$/i) &&
+        request.match(/^[@a-z][a-z/.\-0-9]*$/i) &&
         !request.match(/\.(css|less|scss|sss)$/i);
       callback(null, Boolean(isExternal));
     },
