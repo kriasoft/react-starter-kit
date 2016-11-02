@@ -20,7 +20,7 @@ function createGraphqlRequest(fetchKnowingCookie) {
 function createFetchKnowingCookie({ cookie }) {
   if (!process.env.BROWSER) {
     return (url, options = {}) => {
-      const isLocalUrl = /^\/($|[^\/])/.test(url);
+      const isLocalUrl = /^\/($|[^/])/.test(url);
 
       // pass cookie only for itself.
       // We can't know cookies for other sites BTW
