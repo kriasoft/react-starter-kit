@@ -12,7 +12,7 @@
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
 
-export const databaseUrl = process.env.DATABASE_URL || 'sqlite:database.sqlite';
+export const databaseUrl = process.env.DATABASE_URL || 'mssql://sa:Lomejor12@localhost:1433/Empleos';
 
 export const analytics = {
 
@@ -25,12 +25,12 @@ export const analytics = {
 
 export const auth = {
 
-  jwt: { secret: process.env.JWT_SECRET || 'React Starter Kit' },
+  jwt: { secret: process.env.JWT_SECRET || 'kjeoieofejoifjoijijiij' },
 
   // https://developers.facebook.com/
   facebook: {
-    id: process.env.FACEBOOK_APP_ID || '186244551745631',
-    secret: process.env.FACEBOOK_APP_SECRET || 'a970ae3240ab4b9b8aae0f9f0661c6fc',
+    id: process.env.FACEBOOK_APP_ID || '171032266279919',
+    secret: process.env.FACEBOOK_APP_SECRET || 'af3bdc08ae85bcafec6c3b62980f84f3',
   },
 
   // https://cloud.google.com/console/project

@@ -7,14 +7,21 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import {User, UserProfile} from '../models'
+
 import UserType from '../types/UserType';
 
 const me = {
   type: UserType,
   resolve({ request }) {
-    return request.user && {
+    return {
       id: request.user.id,
       email: request.user.email,
+      Profile: UserProfile.findOne({
+        where: {
+          userId: request.user.id
+        }
+      })
     };
   },
 };

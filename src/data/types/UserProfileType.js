@@ -14,15 +14,12 @@ import {
   GraphQLString as StringType,
 } from 'graphql';
 
-import UserProfileType from './UserProfileType'
-
-const UserType = new ObjectType({
-  name: 'User',
+const UserProfileType = new ObjectType({
+  name: 'UserProfile',
   fields: {
-    id: { type: new NonNull(ID) },
-    email: { type: StringType },
-    Profile: { type: UserProfileType },
+    userId: { type: new NonNull(ID) },
+    picture: { type: StringType },
   },
 });
 
-export default UserType;
+export default UserProfileType;

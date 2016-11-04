@@ -13,10 +13,11 @@
  * https://github.com/membership/membership.db/tree/master/postgres
  */
 
-import passport from 'passport';
+import { User, UserClaim, UserLogin, UserProfile } from '../data/models';
+
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
 import { auth as config } from '../config';
+import passport from 'passport';
 
 /**
  * Sign in with Facebook.
@@ -29,6 +30,7 @@ passport.use(new FacebookStrategy({
   passReqToCallback: true,
 }, (req, accessToken, refreshToken, profile, done) => {
   /* eslint-disable no-underscore-dangle */
+  console.log(profile);
   const loginName = 'facebook';
   const claimType = 'urn:facebook:access_token';
   const fooBar = async () => {
@@ -40,8 +42,10 @@ passport.use(new FacebookStrategy({
       if (userLogin) {
         // There is already a Facebook account that belongs to you.
         // Sign in with that account or delete it, then link it with your current account.
-        done();
+        console.log("User has already a Facebook auth method");
+        done(null);
       } else {
+        console.log("Not have credentials")
         const user = await User.create({
           id: req.user.id,
           email: profile._json.email,
@@ -82,7 +86,10 @@ passport.use(new FacebookStrategy({
         ],
       });
       if (users.length) {
-        done(null, users[0]);
+        done(null, {
+          id: profile.id,
+          email: profile._json.email,
+        });
       } else {
         let user = await User.findOne({ where: { email: profile._json.email } });
         if (user) {

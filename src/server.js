@@ -8,27 +8,29 @@
  */
 
 import 'babel-polyfill';
-import path from 'path';
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import expressJwt from 'express-jwt';
-import expressGraphQL from 'express-graphql';
-import jwt from 'jsonwebtoken';
+
+import { auth, port } from './config';
+
+import App from './components/App';
+import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
+import Html from './components/Html';
+import PrettyError from 'pretty-error';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import UniversalRouter from 'universal-router';
-import PrettyError from 'pretty-error';
-import App from './components/App';
-import Html from './components/Html';
-import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
-import errorPageStyle from './routes/error/ErrorPage.css';
-import passport from './core/passport';
-import models from './data/models';
-import schema from './data/schema';
-import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
-import { port, auth } from './config';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import errorPageStyle from './routes/error/ErrorPage.css';
+import express from 'express';
+import expressGraphQL from 'express-graphql';
+import expressJwt from 'express-jwt';
+import jwt from 'jsonwebtoken';
+import models from './data/models';
+import passport from './core/passport';
+import path from 'path';
+import routes from './routes';
+import schema from './data/schema';
 
 const app = express();
 
@@ -55,6 +57,7 @@ app.use(expressJwt({
   credentialsRequired: false,
   getToken: req => req.cookies.id_token,
 }));
+
 app.use(passport.initialize());
 
 app.get('/login/facebook',
