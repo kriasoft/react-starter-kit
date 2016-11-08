@@ -148,7 +148,7 @@ async function onLocationChange(location) {
     appInstance = ReactDOM.render(
       <App context={context}>{route.component}</App>,
       container,
-      () => onRenderComplete(route, location)
+      () => onRenderComplete(route, location),
     );
   } catch (error) {
     console.error(error); // eslint-disable-line no-console
