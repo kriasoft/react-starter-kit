@@ -46,12 +46,10 @@
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
     "babel-plugin-rewire": "^1.0.0",
-    "babel-plugin-transform-react-constant-elements": "^6.9.1",
-    "babel-plugin-transform-react-inline-elements": "^6.8.0",
-    "babel-plugin-transform-react-remove-prop-types": "^0.2.10",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-latest": "^6.16.0",
     "babel-preset-react": "^6.16.0",
+    "babel-preset-react-optimize": "^1.0.1",
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.18.0",
     "babel-template": "^6.16.0",
@@ -146,7 +144,8 @@
       "react/forbid-prop-types": "off",
       "react/jsx-filename-extension": "off",
       "react/no-danger": "off",
-      "react/no-unused-prop-types": "off"
+      "react/no-unused-prop-types": "off",
+      "react/prefer-stateless-function": "off"
     }
   },
   "stylelint": {
