@@ -9,7 +9,6 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import Layout from '../../components/Layout';
 import s from './Register.css';
 
 class Register extends React.Component {
@@ -19,14 +18,12 @@ class Register extends React.Component {
 
   render() {
     return (
-      <Layout>
-        <div className={s.root}>
-          <div className={s.container}>
-            <h1>{this.props.title}</h1>
-            <p>...</p>
-          </div>
+      <div className={s.root}>
+        <div className={s.container}>
+          <h1>{this.props.title}</h1>
+          <p>...</p>
         </div>
-      </Layout>
+      </div>
     );
   }
 }

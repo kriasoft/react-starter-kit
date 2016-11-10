@@ -8,8 +8,9 @@
  */
 
 import React from 'react';
-import Content from './Content';
 import fetch from '../../core/fetch';
+import Layout from '../../components/Layout';
+import Content from './Content';
 
 export default {
 
@@ -32,7 +33,7 @@ export default {
     if (!data || !data.content) return undefined;
     return {
       title: data.content.title,
-      component: <Content {...data.content} />,
+      component: <Layout><Content {...data.content} /></Layout>,
     };
   },
 

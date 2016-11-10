@@ -9,7 +9,6 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import Layout from '../../components/Layout';
 import s from './NotFound.css';
 
 class NotFound extends React.Component {
@@ -19,14 +18,12 @@ class NotFound extends React.Component {
 
   render() {
     return (
-      <Layout full={false}>
-        <div className={s.root}>
-          <div className={s.container}>
-            <h1>{this.props.title}</h1>
-            <p>Sorry, the page you were trying to view does not exist.</p>
-          </div>
+      <div className={s.root}>
+        <div className={s.container}>
+          <h1>{this.props.title}</h1>
+          <p>Sorry, the page you were trying to view does not exist.</p>
         </div>
-      </Layout>
+      </div>
     );
   }
 }
