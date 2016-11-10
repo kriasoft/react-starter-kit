@@ -12,19 +12,23 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Layout from '../../components/Layout';
 import s from './Register.css';
 
-function Register({ title }) {
-  return (
-    <Layout>
-      <div className={s.root}>
-        <div className={s.container}>
-          <h1>{title}</h1>
-          <p>...</p>
-        </div>
-      </div>
-    </Layout>
-  );
-}
+class Register extends React.Component {
+  static propTypes = {
+    title: PropTypes.string.isRequired,
+  };
 
-Register.propTypes = { title: PropTypes.string.isRequired };
+  render() {
+    return (
+      <Layout>
+        <div className={s.root}>
+          <div className={s.container}>
+            <h1>{this.props.title}</h1>
+            <p>...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+}
 
 export default withStyles(s)(Register);
