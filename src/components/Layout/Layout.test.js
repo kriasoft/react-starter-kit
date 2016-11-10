@@ -31,7 +31,7 @@ describe('Layout', () => {
         <Layout>
           <div className="child" />
         </Layout>
-      </App>
+      </App>,
     );
     expect(wrapper.find('div.child').length).to.eq(1);
   });
