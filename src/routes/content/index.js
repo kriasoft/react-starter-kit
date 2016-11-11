@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import Layout from '../../components/Layout';
 import Content from './Content';
 import { getContent } from '../../actions/content';
 import { selectContent } from '../../reducers/content';
@@ -25,7 +26,7 @@ export default {
       }
       return {
         title: data.title,
-        component: <Content path={path} />,
+        component: <Layout><Content path={path} /></Layout>,
       };
     } catch (e) {
       throw new Error(e);

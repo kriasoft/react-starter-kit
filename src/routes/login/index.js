@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import Layout from '../../components/Layout';
 import Login from './Login';
 
 const title = 'Log In';
@@ -19,7 +20,7 @@ export default {
   action() {
     return {
       title,
-      component: <Login title={title} />,
+      component: <Layout><Login title={title} /></Layout>,
     };
   },
 

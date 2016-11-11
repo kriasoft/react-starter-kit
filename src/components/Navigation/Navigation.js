@@ -42,31 +42,35 @@ const messages = defineMessages({
   },
 });
 
-function Navigation({ className }) {
-  return (
-    <div className={cx(s.root, className)} role="navigation">
-      <Link className={s.link} to="/about">
-        <FormattedMessage {...messages.about} />
-      </Link>
-      <Link className={s.link} to="/contact">
-        <FormattedMessage {...messages.contact} />
-      </Link>
-      <span className={s.spacer}> | </span>
-      <Link className={s.link} to="/login">
-        <FormattedMessage {...messages.login} />
-      </Link>
-      <span className={s.spacer}>
-        <FormattedMessage {...messages.or} />
-      </span>
-      <Link className={cx(s.link, s.highlight)} to="/register">
-        <FormattedMessage {...messages.signup} />
-      </Link>
-    </div>
-  );
-}
+class Navigation extends React.Component {
 
-Navigation.propTypes = {
-  className: PropTypes.string,
-};
+  static propTypes = {
+    className: PropTypes.string,
+  };
+
+  render() {
+    const { className } = this.props;
+    return (
+      <div className={cx(s.root, className)} role="navigation">
+        <Link className={s.link} to="/about">
+          <FormattedMessage {...messages.about} />
+        </Link>
+        <Link className={s.link} to="/contact">
+          <FormattedMessage {...messages.contact} />
+        </Link>
+        <span className={s.spacer}> | </span>
+        <Link className={s.link} to="/login">
+          <FormattedMessage {...messages.login} />
+        </Link>
+        <span className={s.spacer}>
+          <FormattedMessage {...messages.or} />
+        </span>
+        <Link className={cx(s.link, s.highlight)} to="/register">
+          <FormattedMessage {...messages.signup} />
+        </Link>
+      </div>
+    );
+  }
+}
 
 export default withStyles(s)(Navigation);

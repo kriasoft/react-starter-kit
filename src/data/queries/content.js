@@ -84,7 +84,8 @@ async function resolveExtension(path, locale, extension) {
 async function resolveFileName(path, locale) {
   const extensions = ['.md', '.html'];
 
-  for (const extension of extensions) {
+  for (let i = 0; i < extensions.length; i += 1) {
+    const extension = extensions[i];
     const maybeFileName = await resolveExtension(path, locale, extension);
     if (maybeFileName.success) {
       return { success: true, fileName: maybeFileName.fileName, extension };

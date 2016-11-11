@@ -18,6 +18,8 @@ function LanguageSwitcher({ currentLocale, availableLocales, setLocale }) {
           {isSelected(locale) ? (
             <span>{localeName(locale)}</span>
           ) : (
+            // github.com/yannickcr/eslint-plugin-react/issues/945
+            // eslint-disable-next-line react/jsx-indent
             <a
               href={`?lang=${locale}`}
               onClick={(e) => {

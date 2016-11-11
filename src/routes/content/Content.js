@@ -10,7 +10,6 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import Layout from '../../components/Layout';
 import s from './Content.css';
 import { getContent as getContentAction } from '../../actions/content';
 import { selectContent } from '../../reducers/content';
@@ -46,20 +45,20 @@ class Content extends Component {
   render() {
     const { path, content } = this.props;
     return (
-      <Layout>
-        <div className={s.root}>
-          {(!content || content.isFetching) ? (
-            <div className={`${s.container} ${s.fetching}`}>
-              {path !== '/' && <h1>...</h1>}
-            </div>
-          ) : (
-            <div className={s.container}>
-              {content.title && path !== '/' && <h1>{content.title}</h1>}
-              <div dangerouslySetInnerHTML={{ __html: content.content }} />
-            </div>
-          )}
-        </div>
-      </Layout>
+      <div className={s.root}>
+        {(!content || content.isFetching) ? (
+          <div className={`${s.container} ${s.fetching}`}>
+            {path !== '/' && <h1>...</h1>}
+          </div>
+        ) : (
+          // github.com/yannickcr/eslint-plugin-react/issues/945
+          // eslint-disable-next-line react/jsx-indent
+          <div className={s.container}>
+            {content.title && path !== '/' && <h1>{content.title}</h1>}
+            <div dangerouslySetInnerHTML={{ __html: content.content }} />
+          </div>
+        )}
+      </div>
     );
   }
 }
