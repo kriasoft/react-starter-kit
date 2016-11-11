@@ -22,7 +22,7 @@ export default {
     require('./register').default,
     require('./admin').default,
 
-    // place new routes before...
+    // Wildcard routes, e.g. { path: '*', ... } (must go last)
     require('./content').default,
     require('./notFound').default,
   ],

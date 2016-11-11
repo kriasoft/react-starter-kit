@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import Layout from '../../components/Layout';
 
 const title = 'Admin Page';
 const isAdmin = false;
@@ -28,7 +29,7 @@ export default {
     return {
       title,
       chunk: 'admin',
-      component: <Admin title={title} />,
+      component: <Layout><Admin title={title} /></Layout>,
     };
   },
 
