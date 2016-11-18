@@ -75,7 +75,7 @@ app.get('/login/facebook/return',
 // -----------------------------------------------------------------------------
 app.use('/graphql', expressGraphQL(req => ({
   schema,
-  graphiql: true,
+  graphiql: process.env.NODE_ENV !== 'production',
   rootValue: { request: req },
   pretty: process.env.NODE_ENV !== 'production',
 })));
