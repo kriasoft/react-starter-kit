@@ -30,7 +30,8 @@ async function start() {
   await new Promise(resolve => {
     // Hot Module Replacement (HMR) + React Hot Reload
     if (config.debug) {
-      config.entry = ['react-hot-loader/patch', 'webpack-hot-middleware/client', config.entry];
+      config.entry.client = ['react-hot-loader/patch', 'webpack-hot-middleware/client']
+        .concat(config.entry.client);
       config.output.filename = config.output.filename.replace('[chunkhash]', '[hash]');
       config.output.chunkFilename = config.output.chunkFilename.replace('[chunkhash]', '[hash]');
       config.module.loaders.find(x => x.loader === 'babel-loader')
