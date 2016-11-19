@@ -66,6 +66,9 @@ async function start() {
         proxy: {
           target: server.host,
           middleware: [wpMiddleware, hotMiddleware],
+          proxyOptions: {
+            xfwd: true,
+          },
         },
       }, resolve);
     };
