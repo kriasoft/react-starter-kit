@@ -27,6 +27,7 @@ const config = {
     path: path.resolve(__dirname, '../build/public/assets'),
     publicPath: '/assets/',
     sourcePrefix: '  ',
+    pathinfo: isVerbose,
   },
 
   module: {
@@ -247,6 +248,13 @@ const clientConfig = extend(true, {}, config, {
     // Consistent ordering of modules required if using any hashing ([hash] or [chunkhash])
     // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
     new webpack.optimize.OccurrenceOrderPlugin(true),
+
+    // Move modules that occur in multiple entry chunks to a new entry chunk (the commons chunk).
+    // http://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: module => /node_modules/.test(module.resource),
+    }),
 
     ...isDebug ? [] : [
       // Search for equal or similar files and deduplicate them in the output

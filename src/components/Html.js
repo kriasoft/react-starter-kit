@@ -15,13 +15,12 @@ class Html extends React.Component {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     style: PropTypes.string,
-    script: PropTypes.string,
-    chunk: PropTypes.string,
+    scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
     children: PropTypes.string,
   };
 
   render() {
-    const { title, description, style, script, chunk, children } = this.props;
+    const { title, description, style, scripts, children } = this.props;
     return (
       <html className="no-js" lang="en">
         <head>
@@ -35,8 +34,7 @@ class Html extends React.Component {
         </head>
         <body>
           <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
-          {script && <script src={script} />}
-          {chunk && <script src={chunk} />}
+          {scripts && scripts.map(script => <script key={script} src={script} />)}
           {analytics.google.trackingId &&
             <script
               dangerouslySetInnerHTML={{ __html:
