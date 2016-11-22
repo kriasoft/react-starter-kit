@@ -57,6 +57,9 @@ app.use(expressJwt({
 }));
 app.use(passport.initialize());
 
+if (process.env.NODE_ENV !== 'production') {
+  app.enable('trust proxy');
+}
 app.get('/login/facebook',
   passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false }),
 );
