@@ -17,12 +17,12 @@ Before you start, take a moment to see how the project structure looks like:
 ├── /build/                     # The folder for compiled output
 ├── /docs/                      # Documentation files for the project
 ├── /node_modules/              # 3rd-party libraries and utilities
+├── /public/                    # Static files which are copied into the /build/public folder
 ├── /src/                       # The source code of the application
 │   ├── /components/            # React components
 │   ├── /content/               # Static pages like About Us, Privacy Policy etc.
 │   ├── /core/                  # Core framework and utility functions
 │   ├── /data/                  # GraphQL server schema and data models
-│   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /routes/                # Page/screen components along with the routing information
 │   ├── /client.js              # Client-side startup script
 │   ├── /config.js              # Global application settings
