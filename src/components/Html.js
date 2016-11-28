@@ -8,6 +8,7 @@
  */
 
 import React, { PropTypes } from 'react';
+import serialize from 'serialize-javascript';
 import { analytics } from '../config';
 
 class Html extends React.Component {
@@ -35,7 +36,7 @@ class Html extends React.Component {
         </head>
         <body>
           <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
-	        {state && (
+          {state && (
             <script
               dangerouslySetInnerHTML={{ __html:
               `window.APP_STATE=${serialize(state, { isJSON: true })}` }}
