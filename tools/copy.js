@@ -29,7 +29,7 @@ async function copy() {
     }, null, 2)),
     copyFile('LICENSE.txt', 'build/LICENSE.txt'),
     copyDir('src/content', 'build/content'),
-    copyDir('src/public', 'build/public'),
+    copyDir('public', 'build/public'),
     copyDir('src/messages', 'build/messages'),
   ]);
 
@@ -38,12 +38,13 @@ async function copy() {
       gaze([
         'src/content/**/*',
         'src/messages/**/*',
-        'src/public/**/*',
+        'public/**/*',
       ], (err, val) => (err ? reject(err) : resolve(val)));
     });
 
     watcher.on('all', async (event, filePath) => {
-      const dist = path.join('build/', path.relative('src', filePath));
+      const src = path.relative('./', filePath);
+      const dist = path.join('build/', src.startsWith('src') ? path.relative('src', src) : src);
       switch (event) {
         case 'added':
         case 'renamed':

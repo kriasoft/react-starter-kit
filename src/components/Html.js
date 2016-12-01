@@ -16,15 +16,14 @@ class Html extends React.Component {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     style: PropTypes.string,
-    script: PropTypes.string,
-    chunk: PropTypes.string,
+    scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
     state: PropTypes.object,
     lang: PropTypes.string,
     children: PropTypes.string,
   };
 
   render() {
-    const { title, description, style, script, chunk, state, lang, children } = this.props;
+    const { title, description, style, scripts, state, lang, children } = this.props;
     return (
       <html className="no-js" lang={lang}>
         <head>
@@ -44,8 +43,7 @@ class Html extends React.Component {
               `window.APP_STATE=${serialize(state, { isJSON: true })}` }}
             />
           )}
-          {script && <script src={script} />}
-          {chunk && <script src={chunk} />}
+          {scripts && scripts.map(script => <script key={script} src={script} />)}
           {analytics.google.trackingId &&
             <script
               dangerouslySetInnerHTML={{ __html:

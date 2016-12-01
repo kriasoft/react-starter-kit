@@ -15,6 +15,7 @@ import Link from '../Link';
 import Navigation from '../Navigation';
 import LanguageSwitcher from '../LanguageSwitcher';
 import logoUrl from './logo-small.png';
+import logoUrl2x from './logo-small@2x.png';
 
 const messages = defineMessages({
   brand: {
@@ -41,7 +42,7 @@ class Header extends React.Component {
         <div className={s.container}>
           <Navigation className={s.nav} />
           <Link className={s.brand} to="/">
-            <img src={logoUrl} width="38" height="38" alt="React" />
+            <img src={logoUrl} srcSet={`${logoUrl2x} 2x`} width="38" height="38" alt="React" />
             <span className={s.brandTxt}>
               <FormattedMessage {...messages.brand} />
             </span>
