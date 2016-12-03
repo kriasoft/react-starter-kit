@@ -17,7 +17,12 @@ export default {
 
   path: '/login',
 
-  action() {
+  action({ store }) {
+    const { auth } = store.getState();
+    if (auth.user.id) {
+      return { redirect: '/profile' };
+    }
+
     return {
       title,
       component: <Layout><Login title={title} /></Layout>,

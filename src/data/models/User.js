@@ -7,31 +7,56 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import bcrypt from 'bcrypt-nodejs';
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
 const User = Model.define('User', {
 
   id: {
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV1,
+    type: DataType.INTEGER,
     primaryKey: true,
+    autoIncrement: true,
+  },
+
+  username: {
+    type: DataType.STRING(120),
+    unique: true,
+    allowNull: false,
   },
 
   email: {
     type: DataType.STRING(255),
+    unique: true,
     validate: { isEmail: true },
+    allowNull: false,
   },
 
-  emailConfirmed: {
-    type: DataType.BOOLEAN,
-    defaultValue: false,
+  password: {
+    type: DataType.STRING(255),
+    allowNull: false,
   },
 
 }, {
 
+  timestamps: true,
+
+  updatedAt: false,
+
+  classMethods: {
+    generateHash: function (password) { // eslint-disable-line
+      return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+    },
+  },
+
+  instanceMethods: {
+    comparePassword: function (password) { // eslint-disable-line
+      return bcrypt.compareSync(password, this.password);
+    },
+  },
+
   indexes: [
-    { fields: ['email'] },
+    { fields: ['username', 'email'] },
   ],
 
 });

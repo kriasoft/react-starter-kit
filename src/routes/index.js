@@ -20,6 +20,7 @@ export default {
     require('./contact').default,
     require('./login').default,
     require('./register').default,
+    require('./profile').default,
     require('./admin').default,
 
     // Wildcard routes, e.g. { path: '*', ... } (must go last)

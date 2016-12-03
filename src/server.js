@@ -29,7 +29,6 @@ import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
-import { setRuntimeVariable } from './actions/runtime';
 import { port, auth } from './config';
 
 const app = express();
@@ -58,22 +57,21 @@ app.use(expressJwt({
   getToken: req => req.cookies.id_token,
 }));
 app.use(passport.initialize());
+app.use((req, res, next) => {
+  const token = req.cookies['id_token']; // eslint-disable-line dot-notation
+  if (token) {
+    try {
+      req.user = jwt.verify(token, auth.jwt.secret); // eslint-disable-line no-param-reassign
+    } catch (e) {
+      console.log(e); // eslint-disable-line no-console
+    }
+  }
+  next();
+});
 
 if (process.env.NODE_ENV !== 'production') {
   app.enable('trust proxy');
 }
-app.get('/login/facebook',
-  passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false }),
-);
-app.get('/login/facebook/return',
-  passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
-  (req, res) => {
-    const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
-    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-    res.redirect('/');
-  },
-);
 
 //
 // Register API middleware
@@ -91,15 +89,15 @@ app.use('/graphql', expressGraphQL(req => ({
 app.get('*', async (req, res, next) => {
   try {
     const store = configureStore({
-      user: req.user || null,
+      auth: {
+        isFetching: false,
+        user: req.user || {},
+        token: req.cookies.id_token || null,
+        errors: [],
+      },
     }, {
       cookie: req.headers.cookie,
     });
-
-    store.dispatch(setRuntimeVariable({
-      name: 'initialNow',
-      value: Date.now(),
-    }));
 
     const css = new Set();
 

@@ -11,14 +11,14 @@ import React from 'react';
 import Layout from '../../components/Layout';
 
 const title = 'Admin Page';
-const isAdmin = false;
 
 export default {
 
   path: '/admin',
 
-  async action() {
-    if (!isAdmin) {
+  async action({ store }) {
+    const { auth } = store.getState();
+    if (!auth.user.id) {
       return { redirect: '/login' };
     }
 

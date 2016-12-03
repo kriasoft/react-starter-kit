@@ -17,7 +17,12 @@ export default {
 
   path: '/register',
 
-  action() {
+  action({ store }) {
+    const { auth } = store.getState();
+    if (auth.user.id) {
+      return { redirect: '/profile' };
+    }
+
     return {
       title,
       component: <Layout><Register title={title} /></Layout>,

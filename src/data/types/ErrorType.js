@@ -8,20 +8,18 @@
  */
 
 import {
+  GraphQLList as List,
   GraphQLObjectType as ObjectType,
-  GraphQLID as ID,
   GraphQLString as StringType,
   GraphQLNonNull as NonNull,
 } from 'graphql';
 
-const UserType = new ObjectType({
-  name: 'User',
+const ErrorType = new List(new ObjectType({
+  name: 'Error',
   fields: {
-    id: { type: new NonNull(ID) },
-    username: { type: StringType },
-    email: { type: StringType },
-    createdAt: { type: StringType },
+    key: { type: new NonNull(StringType) },
+    message: { type: StringType },
   },
-});
+}));
 
-export default UserType;
+export default ErrorType;
