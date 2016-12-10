@@ -24,7 +24,7 @@ class Home extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1 className={s.title}>React.js News</h1>
+          <h1>React.js News</h1>
           <ul className={s.news}>
             {this.props.news.map((item, index) => (
               <li key={index} className={s.newsItem}>
