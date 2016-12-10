@@ -30,7 +30,7 @@ const config = {
         test: /\.scss$/,
         loaders: [
           'isomorphic-style-loader',
-          `css-loader?${JSON.stringify({ sourceMap: DEBUG, minimize: !DEBUG })}`,
+          `css-loader?${JSON.stringify({ sourceMap: isDebug, minimize: !isDebug })}`,
           'postcss-loader?pack=sass',
           'sass-loader',
         ],
