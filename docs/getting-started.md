@@ -105,7 +105,7 @@ If you need just to build the app (without running a dev server), simply run:
 $ npm run build
 ```
 
-or, for a production build:
+or, for a production build (NOTE: double dashes are required):
 
 ```shell
 $ npm run build -- --release
