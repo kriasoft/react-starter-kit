@@ -96,6 +96,8 @@ in release (production) mode:
 ```shell
 $ npm start -- --release
 ```
+*NOTE: double dashes are required*
+
 
 ### How to Build, Test, Deploy
 
@@ -105,11 +107,12 @@ If you need just to build the app (without running a dev server), simply run:
 $ npm run build
 ```
 
-or, for a production build (NOTE: double dashes are required):
+or, for a production build:
 
 ```shell
 $ npm run build -- --release
 ```
+*NOTE: double dashes are required*
 
 After running this command, the `/build` folder will contain the compiled
 version of the app. For example, you can launch Node.js server normally by
