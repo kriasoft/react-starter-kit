@@ -3,7 +3,7 @@
 React Starter Kit is currently the most widely adopted Node.js/React boilerplate used by many
 tech startups around the globe. We're working hard to keep it up to date, making sure that it
 follows best practices and high coding standards, paying extremely close attention to details.
- 
+
 Your contributions are welcome and are greatly appreciated! Every little bit helps, and credit
 will always be given.
 
@@ -21,7 +21,7 @@ Feedback is the breakfast for champions! We'd love to hear your opinions, discus
 improvements, architecture, theory, internal implementation, etc. Please, join or start a new
 conversation in our [issue tracker](https://github.com/kriasoft/react-starter-kit/issues),
 [Gitter](https://gitter.im/kriasoft/react-starter-kit) chat room, or let's talk face-to-face on
-[Appear.in](https://appear.in/react) or [Skype](http://hatscripts.com/addskype?koistya). 
+[Appear.in](https://appear.in/react) or [Skype](http://hatscripts.com/addskype?koistya).
 
 ### Documentation
 
@@ -48,7 +48,7 @@ forked repo, check that it meets these guidelines:
 * Create a separate PR for each small feature or bug fix.
 * [Squash](http://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)
   your commits into one for each PR.
-* Run `npm test` to make sure that your code style is OK and there are no any regression bugs. 
+* Run `npm test` to make sure that your code style is OK and there are no any regression bugs.
 * When contributing to an opt-in feature, apply the `[feature/...]` tag as a prefix to your PR title
 
 #### Style Guide
