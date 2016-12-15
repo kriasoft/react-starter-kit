@@ -8,7 +8,7 @@
  */
 
 import path from 'path';
-import gaze from 'gaze';
+import chokidar from 'chokidar';
 import { writeFile, copyFile, makeDir, copyDir, cleanDir } from './lib/fs';
 import pkg from '../package.json';
 
@@ -33,25 +33,22 @@ async function copy() {
   ]);
 
   if (process.argv.includes('--watch')) {
-    const watcher = await new Promise((resolve, reject) => {
-      gaze([
-        'src/content/**/*',
-        'public/**/*',
-      ], (err, val) => (err ? reject(err) : resolve(val)));
-    });
+    const watcher = chokidar.watch([
+      'src/content/**/*',
+      'public/**/*',
+    ]);
 
     watcher.on('all', async (event, filePath) => {
       const src = path.relative('./', filePath);
       const dist = path.join('build/', src.startsWith('src') ? path.relative('src', src) : src);
       switch (event) {
-        case 'added':
-        case 'renamed':
-        case 'changed':
+        case 'add':
+        case 'change':
           if (filePath.endsWith('/')) return;
           await makeDir(path.dirname(dist));
           await copyFile(filePath, dist);
           break;
-        case 'deleted':
+        case 'unlink':
           cleanDir(dist, { nosort: true, dot: true });
           break;
         default:
