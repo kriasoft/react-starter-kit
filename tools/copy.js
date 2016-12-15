@@ -11,6 +11,7 @@ import path from 'path';
 import chokidar from 'chokidar';
 import { writeFile, copyFile, makeDir, copyDir, cleanDir } from './lib/fs';
 import pkg from '../package.json';
+import { format } from './run';
 
 /**
  * Copies static files such as robots.txt, favicon.ico to the
@@ -36,25 +37,28 @@ async function copy() {
     const watcher = chokidar.watch([
       'src/content/**/*',
       'public/**/*',
-    ]);
+    ], { ignoreInitial: true });
 
     watcher.on('all', async (event, filePath) => {
+      const start = new Date();
       const src = path.relative('./', filePath);
       const dist = path.join('build/', src.startsWith('src') ? path.relative('src', src) : src);
       switch (event) {
         case 'add':
         case 'change':
-          if (filePath.endsWith('/')) return;
           await makeDir(path.dirname(dist));
           await copyFile(filePath, dist);
           break;
         case 'unlink':
+        case 'unlinkDir':
           cleanDir(dist, { nosort: true, dot: true });
           break;
         default:
           return;
       }
-      console.log(`[file ${event}] ${dist}`);
+      const end = new Date();
+      const time = end.getTime() - start.getTime();
+      console.log(`[${format(end)}] ${event} '${dist}' after ${time} ms`);
     });
   }
 }
