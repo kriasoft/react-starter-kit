@@ -7,8 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import path from 'path';
-import gaze from 'gaze';
+import chokidar from 'chokidar';
 import Promise from 'bluebird';
 import { transform } from 'babel-core';
 import { readFile, writeFile, glob } from './lib/fs';
@@ -140,12 +139,9 @@ async function extractMessages() {
   await updateMessages(false);
 
   if (process.argv.includes('--watch')) {
-    const watcher = await new Promise((resolve, reject) => {
-      gaze(GLOB_PATTERN, (err, val) => (err ? reject(err) : resolve(val)));
-    });
+    const watcher = chokidar.watch(GLOB_PATTERN, { ignoreInitial: true });
     watcher.on('changed', async (file) => {
-      const relPath = file.substr(path.join(__dirname, '../').length);
-      await processFile(relPath);
+      await processFile(file);
       await updateMessages(true);
     });
   }
