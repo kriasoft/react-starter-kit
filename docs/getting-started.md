@@ -110,7 +110,7 @@ $ npm run build
 or, for a production build:
 
 ```shell
-$ npm run build -- --release
+$ npm run build --release
 ```
 *NOTE: double dashes are required*
 
