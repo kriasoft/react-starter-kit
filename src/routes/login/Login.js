@@ -10,8 +10,6 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
-import Layout from '../../components/Layout';
-
 import LoginThirdParty from '../../components/LoginThirdParty';
 
 import LoginForm from '../../components/LoginForm';
