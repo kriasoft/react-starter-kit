@@ -28,9 +28,16 @@ const ContextType = {
  *     store: createStore(),
  *   };
  *
- *   ReactDOM.render(<App context={context}><HomePage /></App>, container);
+ *   ReactDOM.render(
+ *     <App context={context}>
+ *       <Layout>
+ *         <LandingPage />
+ *       </Layout>
+ *     </App>,
+ *     container,
+ *   );
  */
-class App extends React.Component {
+class App extends React.PureComponent {
 
   static propTypes = {
     context: PropTypes.shape(ContextType).isRequired,

@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import history from '../../core/history';
 
 function isLeftClickEvent(event) {
@@ -18,8 +18,7 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-class Link extends Component {
-
+class Link extends React.Component {
   static propTypes = {
     to: PropTypes.string.isRequired,
     children: PropTypes.node,
@@ -47,7 +46,6 @@ class Link extends Component {
     const { to, children, ...props } = this.props;
     return <a href={to} {...props} onClick={this.handleClick}>{children}</a>;
   }
-
 }
 
 export default Link;
