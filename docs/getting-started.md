@@ -112,6 +112,13 @@ or, for a production build:
 ```shell
 $ npm run build -- --release
 ```
+
+or, for a production docker build:
+
+```shell
+$ npm run build -- --release --docker
+```
+
 *NOTE: double dashes are required*
 
 After running this command, the `/build` folder will contain the compiled
