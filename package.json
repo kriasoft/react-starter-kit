@@ -66,6 +66,7 @@
     "eslint": "^3.10.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-loader": "^1.6.1",
+    "eslint-plugin-css-modules": "^1.0.9",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.7.1",
@@ -134,7 +135,13 @@
   },
   "eslintConfig": {
     "parser": "babel-eslint",
-    "extends": "airbnb",
+    "extends": [
+      "airbnb",
+      "plugin:css-modules/recommended"
+    ],
+    "plugins": [
+      "css-modules"
+    ],
     "globals": {
       "__DEV__": true
     },
