@@ -48,7 +48,7 @@ class Content extends Component {
       <div className={s.root}>
         {(!content || content.isFetching) ? (
           <div className={`${s.container} ${s.fetching}`}>
-            {path !== '/' && <h1>...</h1>}
+            {path !== '/' && <h1>loading ...</h1>}
           </div>
         ) : (
           // github.com/yannickcr/eslint-plugin-react/issues/945
