@@ -9,7 +9,8 @@
 
 import path from 'path';
 import chokidar from 'chokidar';
-import { writeFile, copyFile, makeDir, copyDir, cleanDir } from './lib/fs';
+import rimraf from 'rimraf';
+import { writeFile, copyFile, makeDir, copyDir } from './lib/fs';
 import pkg from '../package.json';
 import { format } from './run';
 
@@ -51,7 +52,7 @@ async function copy() {
           break;
         case 'unlink':
         case 'unlinkDir':
-          cleanDir(dist, { nosort: true, dot: true });
+          rimraf.sync(dist, { nosort: true, dot: true });
           break;
         default:
           return;

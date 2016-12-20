@@ -63,7 +63,3 @@ export const copyDir = async (source, target) => {
     await copyFile(from, to);
   }));
 };
-
-export const cleanDir = (pattern, options) => new Promise((resolve, reject) =>
-  rimraf(pattern, { glob: options }, (err, result) => (err ? reject(err) : resolve(result))),
-);
