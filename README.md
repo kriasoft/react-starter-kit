@@ -1,22 +1,22 @@
-## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate
+## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate &nbsp; <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a> <a href="https://twitter.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
-> [React Starter Kit](https://www.reactstarterkit.com) is an opinionated
-> boilerplate for web development built on top of [Node.js](https://nodejs.org/),
-> [Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
-> [React](https://facebook.github.io/react/), containing modern web development
-> tools such as [Webpack](http://webpack.github.io/), [Babel](http://babeljs.io/)
-> and [Browsersync](http://www.browsersync.io/). Helping you to stay productive
-> following the best practices. A solid starting point for both professionals
-> and newcomers to the industry.
+[React Starter Kit](https://www.reactstarterkit.com) is an opinionated boilerplate for web
+development built on top of [Node.js](https://nodejs.org/),
+[Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
+[React](https://facebook.github.io/react/), containing modern web development
+tools such as [Webpack](http://webpack.github.io/), [Babel](http://babeljs.io/)
+and [Browsersync](http://www.browsersync.io/). Helping you to stay productive
+following the best practices. A solid starting point for both professionals
+and newcomers to the industry.
 
-**See** [getting started](./docs/getting-started.md) guide,
-[demo](http://demo.reactstarterkit.com), [docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs),
-[to-do list](https://waffle.io/kriasoft/react-starter-kit) &nbsp;|&nbsp;
-**Join** [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chat room to stay up to date &nbsp;|&nbsp;
+**See** [getting started guide](./docs/getting-started.md), [demo][demo],
+[docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs),
+[roadmap](https://github.com/kriasoft/react-starter-kit/projects/1) &nbsp;|&nbsp;
+**Join** [#react-starter-kit][chat] chat room on Gitter &nbsp;|&nbsp;
 **Visit our sponsors**:<br><br>
 
-[![Rollbar - Full-stack error tracking for all apps in any language](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
-[![Localize - Translate your web app in minutes](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/localize.png)](https://localizejs.com/?cid=802&utm_source=rsk)
+[![Rollbar - Full-stack error tracking for all apps in any language](https://koistya.github.io/files/rsk/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
+[![Localize - Translate your web app in minutes](https://koistya.github.io/files/rsk/localize.png)](https://localizejs.com/?cid=802&utm_source=rsk)
 
 
 ### Getting Started
@@ -201,6 +201,7 @@ requests](CONTRIBUTING.md#pull-requests).
 
 ### Related Projects
 
+  * [GraphQL Starter Kit](https://github.com/kriasoft/graphql-starter-kit) — Boilerplate for building data APIs with Node.js, JavaScript (via Babel) and GraphQL
   * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
   * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
 
@@ -213,6 +214,7 @@ requests](CONTRIBUTING.md#pull-requests).
   * [appear.in/react](https://appear.in/react) — Open hours! Exchange ideas and experiences (React, GraphQL, startups and pet projects)
   * [@koistya](https://twitter.com/koistya) on [Codementor](https://www.codementor.io/koistya), or [Skype](http://hatscripts.com/addskype?koistya) — Private consulting
 
+
 ### License
 
 Copyright © 2014-2016 Kriasoft, LLC. This source code is licensed under the MIT
@@ -222,3 +224,8 @@ file. The documentation to the project is licensed under the
 
 ---
 Made with ♥ by Konstantin Tarkus ([@koistya](https://twitter.com/koistya)) and [contributors](https://github.com/kriasoft/react-starter-kit/graphs/contributors)
+
+[rsk]: https://www.reactstarterkit.com
+[demo]: http://demo.reactstarterkit.com
+[node]: https://nodejs.org
+[chat]: https://gitter.im/kriasoft/react-starter-kit
