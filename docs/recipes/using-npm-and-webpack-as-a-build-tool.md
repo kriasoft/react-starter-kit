@@ -1,6 +1,6 @@
-## Using NPM and Webpack as a Build Tool
+## Using Yarn and Webpack as a Build Tool
 
-The [npm](https://docs.npmjs.com/) command line utility that comes with Node.js
+The [Yarn](https://yarnpkg.com/) command line utility that comes with Node.js
 allows you to run arbitrary scripts and [Node.js modules](https://www.npmjs.com/)
 without them being globally installed. This is very convenient, because other
 developers in your team don't need to worry about having some set of tools
@@ -11,7 +11,7 @@ For example, if you need to lint your JavaScript code with [ESLint](http://eslin
 and [JSCS](http://jscs.info/), you just install them as project's dependencies:
 
 ```shell
-$ npm install eslint jscs --save-dev
+$ yarn add eslint jscs --dev
 ```
 
 Add a new command line to `package.json/scripts`:
@@ -31,7 +31,7 @@ Add a new command line to `package.json/scripts`:
 And execute it by running:
 
 ```shell
-$ npm run lint         # npm run <script-name>
+$ yarn run lint        # yarn run <script-name>
 ```
 
 Which will be the same as running `./node_modules/bin/eslint src && ./node_modules/bin/jscs src`,
@@ -89,5 +89,5 @@ The `npm` script for it may look like this:
 You can run it as follows:
 
 ```shell
-$ npm run build
+$ yarn run build
 ```

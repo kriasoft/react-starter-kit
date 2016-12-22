@@ -46,7 +46,7 @@ Install local npm packages
 * [stylelint](https://www.npmjs.com/package/stylelint)
 
 ```shell
-npm install --save-dev eslint babel-eslint eslint-plugin-react stylelint
+yarn add --dev eslint babel-eslint eslint-plugin-react stylelint
 ```
 
 *You may need to restart atom for changes to take effect*
@@ -71,9 +71,10 @@ Set Babel as default syntax for a particular extension:
 * Repeat this for each extension (e.g.: .js and .jsx).
 
 Install local npm packages
+
 ```
-npm install eslint@latest
-npm install babel-eslint@latest
-npm install eslint-plugin-react
-npm install stylelint
+yarn add --dev eslint@latest
+yarn add --dev babel-eslint@latest
+yarn add --dev eslint-plugin-react
+yarn add --dev stylelint
 ```
