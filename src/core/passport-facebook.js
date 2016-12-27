@@ -128,7 +128,7 @@ function facebookPassportInit(passportLib: passport) {
 
 function facebookExpressInit(app) {
   app.get('/login/facebook',
-    passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false })
+    passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false }),
   );
   app.get('/login/facebook/return',
     passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
@@ -137,7 +137,7 @@ function facebookExpressInit(app) {
       const token = jwt.sign(req.user, config.jwt.secret, { expiresIn });
       res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
       res.redirect('/');
-    }
+    },
   );
 }
 

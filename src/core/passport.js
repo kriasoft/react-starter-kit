@@ -21,5 +21,9 @@ passportFacebook(passport);
 export default function passportInit(app) {
   app.use(passport.initialize());
 
+  if (process.env.NODE_ENV !== 'production') {
+    app.enable('trust proxy');
+  }
+
   passportFacebook.passportFacebookExpressInit(app);
 }

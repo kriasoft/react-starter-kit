@@ -20,21 +20,17 @@ export default {
     require('./contact').default,
     require('./login').default,
     require('./register').default,
+    require('./about').default,
+    require('./privacy').default,
     require('./admin').default,
 
-    // place new routes before...
-    require('./content').default,
+    // Wildcard routes, e.g. { path: '*', ... } (must go last)
     require('./notFound').default,
   ],
 
   async action({ next }) {
-    let route;
-
     // Execute each child route until one of them return the result
-    // TODO: move this logic to the `next` function
-    do {
-      route = await next();
-    } while (!route);
+    const route = await next();
 
     // Provide default values for title, description etc.
     route.title = `${route.title || 'Untitled Page'} - www.reactstarterkit.com`;

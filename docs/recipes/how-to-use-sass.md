@@ -12,8 +12,8 @@ Install [`node-sass`](https://github.com/sass/node-sass) and
 [`sass-loader`](https://github.com/jtangelder/sass-loader) modules as dev dependencies:
 
 ```sh
-$ npm install node-sass --save-dev
-$ npm install sass-loader --save-dev
+$ yarn add node-sass --dev
+$ yarn add sass-loader --dev
 ```
 
 ### Step 2
@@ -30,7 +30,7 @@ const config = {
         test: /\.scss$/,
         loaders: [
           'isomorphic-style-loader',
-          `css-loader?${JSON.stringify({ sourceMap: DEBUG, minimize: !DEBUG })}`,
+          `css-loader?${JSON.stringify({ sourceMap: isDebug, minimize: !isDebug })}`,
           'postcss-loader?pack=sass',
           'sass-loader',
         ],

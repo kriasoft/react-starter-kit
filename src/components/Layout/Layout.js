@@ -14,19 +14,21 @@ import Header from '../Header';
 import Feedback from '../Feedback';
 import Footer from '../Footer';
 
-function Layout({ children }) {
-  return (
-    <div>
-      <Header />
-      {React.Children.only(children)}
-      <Feedback />
-      <Footer />
-    </div>
-  );
-}
+class Layout extends React.Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+  };
 
-Layout.propTypes = {
-  children: PropTypes.element.isRequired,
-};
+  render() {
+    return (
+      <div>
+        <Header />
+        {this.props.children}
+        <Feedback />
+        <Footer />
+      </div>
+    );
+  }
+}
 
 export default withStyles(s)(Layout);
