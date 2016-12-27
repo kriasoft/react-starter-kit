@@ -14,17 +14,16 @@
  */
 
 import passport from 'passport';
+import jwt from 'jsonwebtoken';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
 import { auth as config } from '../config';
 
-
-
-export default function (passport: passport){
+function facebookPassportInit(passportLib: passport) {
   /**
    * Sign in with Facebook.
    */
-  passport.use(new FacebookStrategy({
+  passportLib.use(new FacebookStrategy({
     clientID: config.facebook.id,
     clientSecret: config.facebook.secret,
     callbackURL: '/login/facebook/return',
@@ -125,5 +124,21 @@ export default function (passport: passport){
 
     fooBar().catch(done);
   }));
+}
 
-};
+function facebookExpressInit(app) {
+  app.get('/login/facebook',
+    passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false })
+  );
+  app.get('/login/facebook/return',
+    passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
+    (req, res) => {
+      const expiresIn = 60 * 60 * 24 * 180; // 180 days
+      const token = jwt.sign(req.user, config.jwt.secret, { expiresIn });
+      res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+      res.redirect('/');
+    }
+  );
+}
+
+export { facebookPassportInit, facebookExpressInit };

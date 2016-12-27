@@ -14,11 +14,12 @@
  */
 
 import passport from 'passport';
-import passportFacebook from './passport-facebook';
-
-
-
+import * as passportFacebook from './passport-facebook';
 
 passportFacebook(passport);
 
-export default passport;
+export default function passportInit(app) {
+  app.use(passport.initialize());
+
+  passportFacebook.passportFacebookExpressInit(app);
+}
