@@ -11,6 +11,7 @@ import React, {PropTypes} from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Layout.css';
 import WEUI from 'react-weui';
+import history from '../../core/history';
 const {
   Tab,
   TabBody,
@@ -22,6 +23,10 @@ const {
 
 
 class Layout extends React.Component {
+  state = {
+    tab: 0
+  };
+
   static propTypes = {
     children: PropTypes.node.isRequired,
   };
@@ -34,25 +39,32 @@ class Layout extends React.Component {
             {this.props.children}
           </TabBody>
           <TabBar>
-            <TabBarItem
-              active={true}
-              icon={<span className="iconfont icon-message"/>}
-              label="微信"
-            />
-            <TabBarItem>
-              <TabBarIcon>
-                <span className="iconfont icon-contact"/>
-              </TabBarIcon>
-              <TabBarLabel>通讯录</TabBarLabel>
-            </TabBarItem>
-            <TabBarItem
-              icon={<span className="iconfont icon-discover" />}
-              label="发现"
-            />
-            <TabBarItem
-              icon={<span className="iconfont icon-my" />}
-              label="我"
-            />
+              <TabBarItem
+                active={this.state.tab == 0}
+                onClick={e=>{this.setState({tab: 0});history.push("/")}}
+                icon={<span className="iconfont icon-message"/>}
+                label="微信"
+              />
+              <TabBarItem
+                active={this.state.tab == 1}
+                onClick={e=>{this.setState({tab: 1});history.push("/contact")}}>
+                <TabBarIcon>
+                  <span className="iconfont icon-contact"/>
+                </TabBarIcon>
+                <TabBarLabel>通讯录</TabBarLabel>
+              </TabBarItem>
+              <TabBarItem
+                active={this.state.tab == 2}
+                onClick={e=>{this.setState({tab: 2});history.push("/discover")}}
+                icon={<span className="iconfont icon-discover"/>}
+                label="发现"
+              />
+              <TabBarItem
+                active={this.state.tab == 3}
+                onClick={e=>{this.setState({tab: 3});history.push("/me")}}
+                icon={<span className="iconfont icon-my"/>}
+                label="我"
+              />
           </TabBar>
         </Tab>
       </div>

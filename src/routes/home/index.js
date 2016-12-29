@@ -31,19 +31,10 @@ export default {
     // const { data } = await resp.json();
     let data = {}
     data.news = [
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'},
-      {title:'aaaa',link:'asdfa',contentSnippet:'sdfasdf'}];
+      {title:'张三',uid:'1',description:'四姓18家'},
+      {title:'李四',uid:'2',description:'四姓18家'},
+      {title:'王五',uid:'3',description:'四姓18家'},
+      {title:'赵六',uid:'4',description:'四姓18家'}];
     if (!data || !data.news) throw new Error('Failed to load the news feed.');
     return {
       title: '微信',
