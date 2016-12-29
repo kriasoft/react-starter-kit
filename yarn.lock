@@ -1375,7 +1375,7 @@ clap@^1.0.9:
   dependencies:
     chalk "^1.1.3"
 
-classnames@^2.2.5:
+classnames@^2.2.0, classnames@^2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
 
@@ -4004,6 +4004,10 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   dependencies:
     minimist "0.0.8"
 
+mobile-detect@^1.3.3, mobile-detect@^1.3.5:
+  version "1.3.5"
+  resolved "http://registry.npm.taobao.org/mobile-detect/download/mobile-detect-1.3.5.tgz#96d6511284f35d352eaf71baef459c61aebd30b2"
+
 mocha@^3.1.2:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.2.0.tgz#7dc4f45e5088075171a68896814e6ae9eb7a85e3"
@@ -5154,6 +5158,15 @@ react-proxy@^3.0.0-alpha.0:
   dependencies:
     lodash "^4.6.1"
 
+react-weui@^1.0.3:
+  version "1.0.4"
+  resolved "http://registry.npm.taobao.org/react-weui/download/react-weui-1.0.4.tgz#2a972a1343df131a0601c0e9157765d40480946b"
+  dependencies:
+    babel-runtime "^6.18.0"
+    classnames "^2.2.0"
+    mobile-detect "^1.3.3"
+    warning "^3.0.0"
+
 react@^15.4.1:
   version "15.4.1"
   resolved "https://registry.yarnpkg.com/react/-/react-15.4.1.tgz#498e918602677a3983cd0fd206dfe700389a0dd6"
@@ -5349,7 +5362,7 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
-request@2, request@^2.79.0:
+request@2, request@^2.61.0, request@^2.79.0:
   version "2.79.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.79.0.tgz#4dfe5bf6be8b8cdc37fcf93e04b65577722710de"
   dependencies:
@@ -5374,7 +5387,7 @@ request@2, request@^2.79.0:
     tunnel-agent "~0.4.1"
     uuid "^3.0.0"
 
-request@2.78.0, request@^2.61.0:
+request@2.78.0:
   version "2.78.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.78.0.tgz#e1c8dec346e1c81923b24acdb337f11decabe9cc"
   dependencies:
@@ -6375,6 +6388,10 @@ weinre@^2.0.0-pre-I0Z7U9OV:
     express "2.5.x"
     nopt "3.0.x"
     underscore "1.7.x"
+
+weui@^1.1.0:
+  version "1.1.0"
+  resolved "http://registry.npm.taobao.org/weui/download/weui-1.1.0.tgz#a6f4ba86bc0396a88360f104af0f51ba70bb9948"
 
 whatwg-fetch@>=0.10.0, whatwg-fetch@^2.0.1:
   version "2.0.1"

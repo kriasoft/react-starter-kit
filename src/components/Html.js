@@ -28,8 +28,10 @@ class Html extends React.Component {
           <meta httpEquiv="x-ua-compatible" content="ie=edge" />
           <title>{title}</title>
           <meta name="description" content={description} />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0" />
           <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+          <link rel="stylesheet" href="assets/css/weui.min.css" />
+          <link rel="stylesheet" href="assets/fonts/iconfont.css" />
           {style && <style id="css" dangerouslySetInnerHTML={{ __html: style }} />}
         </head>
         <body>
