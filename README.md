@@ -43,6 +43,9 @@ branches that you can use either as a reference or merge into your project:
   * [feature/bootstrap3](https://github.com/kriasoft/react-starter-kit/tree/feature/bootstrap3) —
     Simplest possible integration of [react-bootstrap](https://react-bootstrap.github.io/)
     by [Pavel Lang](https://github.com/langpavel) (based on `master`)
+  * [feature/weui](https://github.com/kriasoft/react-starter-kit/tree/feature/weui) —
+      Simplest possible integration of [react-weui](https://github.com/weui/react-weui)
+      by [calcYu](https://github.com/calcyu) (based on `feature/weui`)
 
 If you think that any of these features should be on `master`, or vice versa, some features should
 removed from the `master` branch, please [let us know](https://gitter.im/kriasoft/react-starter-kit).
