@@ -48,13 +48,13 @@ forked repo, check that it meets these guidelines:
 * Create a separate PR for each small feature or bug fix.
 * [Squash](http://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)
   your commits into one for each PR.
-* Run `npm test` to make sure that your code style is OK and there are no any regression bugs. 
+* Run `yarn test` to make sure that your code style is OK and there are no any regression bugs. 
 * When contributing to an opt-in feature, apply the `[feature/...]` tag as a prefix to your PR title
 
 #### Style Guide
 
 Our linter will catch most styling issues that may exist in your code. You can check the status
-of your code styling by simply running: `npm run lint`
+of your code styling by simply running: `yarn lint`
 
 However, there are still some styles that the linter cannot pick up. If you are unsure about
 something, looking at [Airbnb's Style Guide](https://github.com/airbnb/javascript) will guide you
