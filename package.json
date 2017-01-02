@@ -57,6 +57,7 @@
     "chai": "^3.5.0",
     "chokidar": "^1.6.1",
     "css-loader": "^0.26.0",
+    "editorconfig-tools": "^0.1.1",
     "enzyme": "^2.6.0",
     "eslint": "^3.10.2",
     "eslint-config-airbnb": "^13.0.0",
@@ -71,6 +72,7 @@
     "git-repository": "^0.1.4",
     "glob": "^7.1.1",
     "json-loader": "^0.5.4",
+    "lint-staged": "^3.2.2",
     "markdown-it": "^8.2.2",
     "mkdirp": "^0.5.1",
     "mocha": "^3.1.2",
@@ -92,6 +94,7 @@
     "postcss-selector-matches": "^2.0.5",
     "postcss-selector-not": "^2.0.0",
     "postcss-url": "^5.1.2",
+    "pre-commit": "^1.2.2",
     "raw-loader": "^0.5.1",
     "react-addons-test-utils": "15.4.1",
     "react-deep-force-update": "^2.0.1",
@@ -99,6 +102,7 @@
     "redbox-react": "^1.3.3",
     "rimraf": "^2.5.4",
     "sinon": "^2.0.0-pre.3",
+    "stylefmt": "^5.0.2",
     "stylelint": "^7.6.0",
     "stylelint-config-standard": "^15.0.0",
     "url-loader": "^0.5.7",
@@ -178,9 +182,26 @@
       ]
     }
   },
+  "pre-commit": "lint:staged",
+  "lint-staged": {
+    "*": [
+      "editorconfig-tools fix",
+      "git add"
+    ],
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{css,less,scss,sss}": [
+      "stylefmt",
+      "stylelint",
+      "git add"
+    ]
+  },
   "scripts": {
     "lint:js": "eslint src tools",
     "lint:css": "stylelint \"src/**/*.{css,less,scss,sss}\"",
+    "lint:staged": "lint-staged",
     "lint": "npm run lint:js && npm run lint:css",
     "test": "mocha \"src/**/*.test.js\" --require babel-register --require test/setup.js",
     "test:watch": "npm run test -- --reporter min --watch",

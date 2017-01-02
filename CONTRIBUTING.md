@@ -3,7 +3,7 @@
 React Starter Kit is currently the most widely adopted Node.js/React boilerplate used by many
 tech startups around the globe. We're working hard to keep it up to date, making sure that it
 follows best practices and high coding standards, paying extremely close attention to details.
- 
+
 Your contributions are welcome and are greatly appreciated! Every little bit helps, and credit
 will always be given.
 
@@ -21,7 +21,7 @@ Feedback is the breakfast for champions! We'd love to hear your opinions, discus
 improvements, architecture, theory, internal implementation, etc. Please, join or start a new
 conversation in our [issue tracker](https://github.com/kriasoft/react-starter-kit/issues),
 [Gitter](https://gitter.im/kriasoft/react-starter-kit) chat room, or let's talk face-to-face on
-[Appear.in](https://appear.in/react) or [Skype](http://hatscripts.com/addskype?koistya). 
+[Appear.in](https://appear.in/react) or [Skype](http://hatscripts.com/addskype?koistya).
 
 ### Documentation
 
