@@ -184,7 +184,7 @@
   },
   "pre-commit": "lint:staged",
   "lint-staged": {
-    "*": [
+    "*.{md,sh,txt,xml,html,json}": [
       "editorconfig-tools fix",
       "git add"
     ],
