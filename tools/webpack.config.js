@@ -95,6 +95,10 @@ const config = {
         ],
       },
       {
+        test: /\.md$/,
+        loader: path.resolve(__dirname, './lib/markdown-loader.js'),
+      },
+      {
         test: /\.json$/,
         loader: 'json-loader',
       },

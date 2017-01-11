@@ -27,12 +27,12 @@
     [en, cs].forEach(addLocaleData);
     ```
 
- 5. Execute `npm run extractMessages` or `npm start` to strip out messages.
+ 5. Execute `yarn run extractMessages` or `yarn start` to strip out messages.
     Message files are created in `src/messages` directory.
 
  6. Edit `src/messages/*.json` files, change only `message` property.
 
- 7. Execute `npm run build`,
+ 7. Execute `yarn run build`,
     your translations should be copied to `build/messages/` directory.
 
 
@@ -49,7 +49,7 @@ the [`defineMessages()`](https://github.com/yahoo/react-intl/wiki/API#definemess
 [`<FormattedDate>`](https://github.com/yahoo/react-intl/wiki/Components#formatteddate)
 [`<FormattedTime>`](https://github.com/yahoo/react-intl/wiki/Components#formattedtime)
 [`<FormattedRelative>`](https://github.com/yahoo/react-intl/wiki/Components#formattedrelative)
- 
+
 - For numbers and currencies:
 [`<FormattedNumber>`](https://github.com/yahoo/react-intl/wiki/Components#formattednumber)
 [`<FormattedPlural>`](https://github.com/yahoo/react-intl/wiki/Components#formattedplural)
