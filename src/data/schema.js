@@ -13,7 +13,6 @@ import {
 } from 'graphql';
 
 import me from './queries/me';
-import content from './queries/content';
 import news from './queries/news';
 import intl from './queries/intl';
 
@@ -22,7 +21,6 @@ const schema = new Schema({
     name: 'Query',
     fields: {
       me,
-      content,
       news,
       intl,
     },
