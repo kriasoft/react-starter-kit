@@ -270,6 +270,8 @@ const clientConfig = extend(true, {}, config, {
         compress: {
           screw_ie8: true, // React doesn't support IE8
           warnings: isVerbose,
+          unused: true,
+          dead_code: true,
         },
         mangle: {
           screw_ie8: true,
