@@ -1,6 +1,6 @@
 ## Build Automation Tools
 
-##### `npm start` (`start.js`)
+##### `yarn start` (`start.js`)
 
 * Cleans up the output `/build` directory (`clean.js`)
 * Copies static files to the output folder (`copy.js`)
@@ -10,13 +10,13 @@
   [Hot Module Replacement](https://webpack.github.io/docs/hot-module-replacement), and
   [React Hot Loader](https://github.com/gaearon/react-hot-loader)
 
-##### `npm run build` (`build.js`)
+##### `yarn run build` (`build.js`)
 
 * Cleans up the output `/build` folder (`clean.js`)
 * Copies static files to the output folder (`copy.js`)
 * Creates application bundles with Webpack (`bundle.js`, `webpack.config.js`)
 
-##### `npm run deploy` (`deploy.js`)
+##### `yarn run deploy` (`deploy.js`)
 
 * Builds the project from source files (`build.js`)
 * Pushes the contents of the `/build` folder to a remote server with Git
@@ -24,7 +24,7 @@
 ##### Options
 
 Flag        | Description
------------ | -------------------------------------------------- 
+----------- | --------------------------------------------------
 `--release` | Minimizes and optimizes the compiled output
 `--verbose` | Prints detailed information to the console
 `--static`  | Renders [specified routes](./render.js#L15) as static html files
@@ -32,13 +32,13 @@ Flag        | Description
 For example:
 
 ```sh
-$ npm run build -- --release --verbose   # Build the app in production mode
+$ yarn run build -- --release --verbose   # Build the app in production mode
 ```
 
 or
 
 ```sh
-$ npm start -- --release                 # Launch dev server in production mode
+$ yarn start -- --release                 # Launch dev server in production mode
 ```
 
 #### Misc

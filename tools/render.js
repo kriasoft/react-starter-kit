@@ -45,7 +45,7 @@ async function render() {
     const url = `http://${server.host}${route}`;
     const fileName = route.endsWith('/') ? 'index.html' : `${path.basename(route, '.html')}.html`;
     const dirName = path.join('build/public', route.endsWith('/') ? route : path.dirname(route));
-    const dist = `${dirName}${fileName}`;
+    const dist = path.join(dirName, fileName);
     const timeStart = new Date();
     const response = await fetch(url);
     const timeEnd = new Date();
