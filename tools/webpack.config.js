@@ -12,7 +12,7 @@ import webpack from 'webpack';
 import extend from 'extend';
 import AssetsPlugin from 'assets-webpack-plugin';
 
-const isDebug = !process.argv.includes('--release');
+const __DEV__ = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
 
 //
@@ -40,7 +40,7 @@ const config = {
         ],
         query: {
           // https://github.com/babel/babel-loader#options
-          cacheDirectory: isDebug,
+          cacheDirectory: __DEV__,
 
           // https://babeljs.io/docs/usage/options/
           babelrc: false,
@@ -54,7 +54,7 @@ const config = {
             // JSX, Flow
             // https://github.com/babel/babel/tree/master/packages/babel-preset-react
             'react',
-            ...isDebug ? [] : [
+            ...__DEV__ ? [] : [
               // Optimize React code for the production build
               // https://github.com/thejameskyle/babel-react-optimize
               'react-optimize',
@@ -65,7 +65,7 @@ const config = {
             // automatically polyfilling your code without polluting globals.
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-runtime
             'transform-runtime',
-            ...!isDebug ? [] : [
+            ...!__DEV__ ? [] : [
               // Adds component stack to warning messages
               // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
               'transform-react-jsx-source',
@@ -83,12 +83,12 @@ const config = {
           `css-loader?${JSON.stringify({
             // CSS Loader https://github.com/webpack/css-loader
             importLoaders: 1,
-            sourceMap: isDebug,
+            sourceMap: __DEV__,
             // CSS Modules https://github.com/css-modules/css-modules
             modules: true,
-            localIdentName: isDebug ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]',
+            localIdentName: __DEV__ ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]',
             // CSS Nano http://cssnano.co/options/
-            minimize: !isDebug,
+            minimize: !__DEV__,
             discardComments: { removeAll: true },
           })}`,
           'postcss-loader?pack=default',
@@ -110,14 +110,14 @@ const config = {
         test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
         loader: 'file-loader',
         query: {
-          name: isDebug ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]',
+          name: __DEV__ ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]',
         },
       },
       {
         test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)(\?.*)?$/,
         loader: 'url-loader',
         query: {
-          name: isDebug ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]',
+          name: __DEV__ ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]',
           limit: 10000,
         },
       },
@@ -131,14 +131,14 @@ const config = {
   },
 
   // Don't attempt to continue if there are any errors.
-  bail: !isDebug,
+  bail: !__DEV__,
 
-  cache: isDebug,
-  debug: isDebug,
+  cache: __DEV__,
+  debug: __DEV__,
 
   stats: {
     colors: true,
-    reasons: isDebug,
+    reasons: __DEV__,
     hash: isVerbose,
     version: isVerbose,
     timings: true,
@@ -223,8 +223,8 @@ const clientConfig = extend(true, {}, config, {
   },
 
   output: {
-    filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
-    chunkFilename: isDebug ? '[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
+    filename: __DEV__ ? '[name].js' : '[name].[chunkhash:8].js',
+    chunkFilename: __DEV__ ? '[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
   },
 
   target: 'web',
@@ -234,9 +234,9 @@ const clientConfig = extend(true, {}, config, {
     // Define free variables
     // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
+      'process.env.NODE_ENV': __DEV__ ? '"development"' : '"production"',
       'process.env.BROWSER': true,
-      __DEV__: isDebug,
+      __DEV__,
     }),
 
     // Emit a file with assets paths
@@ -254,7 +254,7 @@ const clientConfig = extend(true, {}, config, {
       minChunks: module => /node_modules/.test(module.resource),
     }),
 
-    ...isDebug ? [] : [
+    ...__DEV__ ? [] : [
       // Assign the module and chunk ids by occurrence count
       // Consistent ordering of modules required if using any hashing ([hash] or [chunkhash])
       // https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
@@ -286,7 +286,7 @@ const clientConfig = extend(true, {}, config, {
 
   // Choose a developer tool to enhance debugging
   // http://webpack.github.io/docs/configuration.html#devtool
-  devtool: isDebug ? 'cheap-module-source-map' : false,
+  devtool: __DEV__ ? 'cheap-module-source-map' : false,
 
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
@@ -329,9 +329,9 @@ const serverConfig = extend(true, {}, config, {
     // Define free variables
     // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
+      'process.env.NODE_ENV': __DEV__ ? '"development"' : '"production"',
       'process.env.BROWSER': false,
-      __DEV__: isDebug,
+      __DEV__,
     }),
 
     // Do not create separate chunks of the server bundle
@@ -353,7 +353,7 @@ const serverConfig = extend(true, {}, config, {
     __dirname: false,
   },
 
-  devtool: isDebug ? 'cheap-module-source-map' : 'source-map',
+  devtool: __DEV__ ? 'cheap-module-source-map' : 'source-map',
 });
 
 export default [clientConfig, serverConfig];
