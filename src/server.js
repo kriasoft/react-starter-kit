@@ -56,7 +56,7 @@ app.use(expressJwt({
 }));
 app.use(passport.initialize());
 
-if (process.env.NODE_ENV !== 'production') {
+if (__DEV__) {
   app.enable('trust proxy');
 }
 app.get('/login/facebook',
@@ -77,9 +77,9 @@ app.get('/login/facebook/return',
 // -----------------------------------------------------------------------------
 app.use('/graphql', expressGraphQL(req => ({
   schema,
-  graphiql: process.env.NODE_ENV !== 'production',
+  graphiql: __DEV__,
   rootValue: { request: req },
-  pretty: process.env.NODE_ENV !== 'production',
+  pretty: __DEV__,
 })));
 
 //
