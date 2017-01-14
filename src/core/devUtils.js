@@ -9,7 +9,7 @@
 
 /* eslint-disable global-require */
 
-if (module.hot || process.env.NODE_ENV !== 'production') {
+if (module.hot || __DEV__) {
   module.exports = {
     // The red box (aka red screen of death) component to display your errors
     // https://github.com/commissure/redbox-react

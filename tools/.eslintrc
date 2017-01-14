@@ -1,6 +1,14 @@
 {
   "rules": {
     "no-console": 0,
-    "global-require": 0
+    "global-require": 0,
+    "no-underscore-dangle": [
+      1,
+      {
+        "allow": [
+          "__DEV__"
+        ]
+      }
+    ]
   }
 }
