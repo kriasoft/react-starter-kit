@@ -16,11 +16,7 @@ export default {
   path: '/about',
 
   async action() {
-    const data = await new Promise((resolve) => {
-      require.ensure([], require => {
-        resolve(require('./about.md'));
-      }, 'about');
-    });
+    const data = await require.ensure([], require => require('./about.md'), 'about');
 
     return {
       title: data.title,
