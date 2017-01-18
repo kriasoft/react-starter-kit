@@ -9,8 +9,9 @@
 
 import browserSync from 'browser-sync';
 import webpack from 'webpack';
-import webpackMiddleware from 'webpack-middleware';
+import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import WriteFilePlugin from 'write-file-webpack-plugin';
 import run from './run';
 import runServer from './runServer';
 import webpackConfig from './webpack.config';
@@ -28,6 +29,12 @@ async function start() {
   await run(clean);
   await run(copy);
   await new Promise(resolve => {
+    // Save the server-side bundle on after compilation
+    // https://github.com/webpack/webpack-dev-server/issues/62
+    webpackConfig.find(x => x.target === 'node').plugins.push(
+      new WriteFilePlugin({ log: false }),
+    );
+
     // Hot Module Replacement (HMR) + React Hot Reload
     if (config.debug) {
       config.entry.client = ['react-hot-loader/patch', 'webpack-hot-middleware/client']
@@ -41,7 +48,7 @@ async function start() {
     }
 
     const bundler = webpack(webpackConfig);
-    const wpMiddleware = webpackMiddleware(bundler, {
+    const wpMiddleware = webpackDevMiddleware(bundler, {
       // IMPORTANT: webpack middleware can't access config,
       // so we should provide publicPath by ourselves
       publicPath: config.output.publicPath,

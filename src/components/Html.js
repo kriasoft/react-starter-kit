@@ -14,9 +14,9 @@ class Html extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    style: PropTypes.string,
-    scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
-    children: PropTypes.string,
+    style: PropTypes.string.isRequired,
+    scripts: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    children: PropTypes.string.isRequired,
   };
 
   render() {
