@@ -8,7 +8,7 @@ steps:
   push_to_registry:
     title: Pushing to Docker Registry
     type: push
-    candidate: '${{build_image}}'
+    candidate: '${{build_step}}'
     tag: '${{CF_BRANCH}}'
     credentials:
       username: '${{DOCKER_USER_NANE}}'
