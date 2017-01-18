@@ -11,5 +11,5 @@ steps:
     candidate: '${{build_image}}'
     tag: '${{CF_BRANCH}}'
     credentials:
-      username: '${DOCKER_USER_NANE}'
-      password: '${DOCKER_PASSWORD}'
+      username: '${{DOCKER_USER_NANE}}'
+      password: '${{DOCKER_PASSWORD}}'
