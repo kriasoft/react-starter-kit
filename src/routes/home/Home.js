@@ -16,7 +16,7 @@ class Home extends React.Component {
     news: PropTypes.arrayOf(PropTypes.shape({
       title: PropTypes.string.isRequired,
       link: PropTypes.string.isRequired,
-      contentSnippet: PropTypes.string,
+      content: PropTypes.string,
     })).isRequired,
   };
 
@@ -31,7 +31,7 @@ class Home extends React.Component {
                 <a href={item.link} className={s.newsTitle}>{item.title}</a>
                 <span
                   className={s.newsDesc}
-                  dangerouslySetInnerHTML={{ __html: item.contentSnippet }}
+                  dangerouslySetInnerHTML={{ __html: item.content.substring(0, 100) }}
                 />
               </li>
             ))}
