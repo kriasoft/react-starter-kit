@@ -1,10 +1,14 @@
-FROM node:7.2.1-alpine
-
+FROM node:6.9.2
+RUN npm install --global yarn
 # Copy application files
-COPY ./build /usr/src/app
-WORKDIR /usr/src/app
+
+COPY ./package.json /app/
+RUN cd /app && yarn install
+COPY . /app/
+WORKDIR /app
 
 # Install Node.js dependencies
-RUN npm install --production --silent
+# RUN npm install --production --silent
 
-CMD [ "node", "server.js" ]
+CMD [ "yarn", "start" ]
+EXPOSE 3000
