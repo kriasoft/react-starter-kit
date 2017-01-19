@@ -1,4 +1,6 @@
-![codefresh](./images/logo.png)
+<p align="center">
+  <img src="./images/logo.png">
+</p>
 
 | pipeline name   | Last build status  |
 |---|---|
@@ -12,32 +14,76 @@
 #### 1. Fork this repo.
 ![codefresh](./images/fork.png)
 #### 2. Login into codefresh using your github account.
-![codefresh](./images/signup.png)
+
+<p align="center">
+  <img src="./images/signup.png" width="500">
+</p>
+
 #### 3. Add your first service and build it.
-![codefresh](./images/add.png)
 
-![codefresh](./images/next.png)
+<p align="center">
+  <b>Start by adding new service</b><br>
+  <img src="./images/add.png" width="500">
+</p>
 
-![codefresh](./images/select.png)
 
-![codefresh](./images/dockerfile.png)
+<p align="center">
+  <b>Select the repo you just forked and click next</b><br>
+  <img src="./images/next.png" width="500">
+</p>
 
-![codefresh](./images/review.png)
 
-![codefresh](./images/build.png)
-#### 4. Wait until the build is done.
+<p align="center">
+  <b>Select Dockerfile option</b><br>
+  <img src="./images/select.png" width="500">
+</p>
 
-![codefresh](./images/building.png)
 
-![codefresh](./images/build-done.png)
+<p align="center">
+  <b>Click next</b><br>
+  <img src="./images/dockerfile.png" width="500">
+</p>
 
-#### 5. Open images and click 'lunch'.
+<p align="center">
+  <b>Review the Dockerfile, click next than</b><br>
+  <img src="./images/review.png" width="500">
+</p>
 
-![codefresh](./images/images.png)
+<p align="center">
+  <b>Click Build</b><br>
+  <img src="./images/build.png" width="500">
+</p>
 
-![codefresh](./images/launch.png)
+
+#### 4. Wait a bit until the build is done.
+
+<p align="center">
+  <b>Make yourself a cup of coffee in the time we build an image for you</b><br>
+</p>
+<p align="center">
+  <img src="./images/building.png" width="500">
+</p>
+
+<p align="center">
+  <img src="./images/build-done.png" width="500">
+</p>
+
+#### 5. Open images and click 'lunch' and choose 'standalone'.
+
+<p align="center">
+  <img src="./images/images.png" width="500">
+</p>
+
+<p align="center">
+  <img src="./images/launch.png" width="500">
+</p>
+
 
 #### 5. VOILÀ   ![codefresh](./images/superfresh.png)
+
+<p align="center">
+  <img src="./images/finish.png" width="500">
+</p>
 
 
 ### Start using codefresh.yml
