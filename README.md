@@ -1,18 +1,21 @@
 <p align="center">
-  <img src="./images/logo.png">
+  <img src="./images/logo2.png">
 </p>
+
 
 | pipeline name   | Last build status  |
 |---|---|
 |Build-first-image   | [![Codefresh build status]( https://g.codefresh.io/api/badges/build?repoOwner=containers101&repoName=react-starter-kit&branch=codefresh&pipelineName=react-starter-kit&accountName=containers101&type=cf-2)]( https://g.codefresh.io/repositories/containers101/react-starter-kit/builds?filter=trigger:build;branch:codefresh;service:587f93d2bb28d1010059ed16~react-starter-kit)  |
 |Build-codefresh-yml   | [![Codefresh build status]( https://g.codefresh.io/api/badges/build?repoOwner=containers101&repoName=react-starter-kit&branch=codefresh&pipelineName=react-starter-kit&accountName=containers101&type=cf-2)]( https://g.codefresh.io/repositories/containers101/react-starter-kit/builds?filter=trigger:build;branch:codefresh;service:587f93d2bb28d1010059ed16~react-starter-kit)  |
-###### Full credit for the application [react-starter-kit](https://github.com/kriasoft/react-starter-kit)
 
 ## Setup your first service using [Codefresh](https://codefresh.io/).
 
 ### Step-by-step tutorial:
 #### 1. Fork this repo.
-![codefresh](./images/fork.png)
+<p align="center">
+  <img src="./images/fork.png" width="500">
+</p>
+
 #### 2. Login into codefresh using your github account.
 
 <p align="center">
@@ -98,3 +101,5 @@ We at Codefresh already build for you the basic `codefresh.yml` template, use it
 - Dont forget to encrypt them!
 - Save your updated pipeline
 - Build and launch
+
+###### Full credit for the application [react-starter-kit](https://github.com/kriasoft/react-starter-kit)
