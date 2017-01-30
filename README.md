@@ -1,3 +1,13 @@
+## 前言
+本项目不属于创新项目，是React -starter-kit和weui两个项目的二合一。
+## 功效
+1. 作为以React+Express全栈开发的学习项目。
+2. 作为Weui-react的应用学习项目。
+3. 作为开发微信公众号，支付宝，钉钉等微服务的基础项目。
+
+## 感谢
+React-starter-kit项目的贡献者 [React Starter Kit](https://www.reactstarterkit.com)
+
 ## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate &nbsp; <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a> <a href="https://twitter.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
 [React Starter Kit](https://www.reactstarterkit.com) is an opinionated boilerplate for web
