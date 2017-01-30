@@ -13,7 +13,7 @@ import build from './build';
 
 const remote = {
   name: 'github',
-  url: 'https://github.com/{user}/{repo}.git',
+  url: 'https://github.com/calcyu/react-starter-kit.git',
   branch: 'gh-pages',
 };
 

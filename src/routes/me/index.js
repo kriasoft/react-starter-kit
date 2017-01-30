@@ -20,7 +20,7 @@ export default {
   action() {
     return {
       title,
-      component: <Layout><Me/></Layout>,
+      component: <Layout><Me /></Layout>,
     };
   },
 

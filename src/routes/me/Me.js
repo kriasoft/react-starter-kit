@@ -6,8 +6,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
-
-import React, { PropTypes } from 'react';
+import WEUI from 'react-weui';
+import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Me.css';
 
@@ -19,9 +19,9 @@ import IconSetting from './assets/icon_me_setting.png';
 import IconSmail from './assets/icon_me_smail.png';
 import IconGeek5 from './assets/geek5_link.png';
 
-const smallIcon = <img className={s.iconRight} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAMAAABgZ9sFAAAAVFBMVEXx8fHMzMzr6+vn5+fv7+/t7e3d3d2+vr7W1tbHx8eysrKdnZ3p6enk5OTR0dG7u7u3t7ejo6PY2Njh4eHf39/T09PExMSvr6+goKCqqqqnp6e4uLgcLY/OAAAAnklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlvG+Lw7ONXg/pTld52BjgSSkA3PV2OOemjIDcZQWgVvONw60q7sIpR38EnHPSMDQ4MjDjLPozhAkGrVbr/z0ANjAF4AcbXmYAAAAASUVORK5CYII="/>;
 
-import WEUI from 'react-weui';
+const smallIcon = <img className={s.iconRight} alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAMAAABgZ9sFAAAAVFBMVEXx8fHMzMzr6+vn5+fv7+/t7e3d3d2+vr7W1tbHx8eysrKdnZ3p6enk5OTR0dG7u7u3t7ejo6PY2Njh4eHf39/T09PExMSvr6+goKCqqqqnp6e4uLgcLY/OAAAAnklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlvG+Lw7ONXg/pTld52BjgSSkA3PV2OOemjIDcZQWgVvONw60q7sIpR38EnHPSMDQ4MjDjLPozhAkGrVbr/z0ANjAF4AcbXmYAAAAASUVORK5CYII=" />;
+
 const {
   Panel,
   PanelBody,
@@ -42,8 +42,8 @@ class Contact extends React.Component {
           <PanelBody>
             <MediaBox type="small_appmsg">
               <Cells>
-                <Cell href="javascript:;" access>
-                  <CellHeader><img className={s.iconLeft} src={IconGeek5}/></CellHeader>
+                <Cell access>
+                  <CellHeader><img className={s.iconLeft} alt="" src={IconGeek5} /></CellHeader>
                   <CellBody>
                     <p>Geek5.cn</p>
                     <p>微信号：calcYu</p>
@@ -58,47 +58,47 @@ class Contact extends React.Component {
           <PanelBody>
             <MediaBox type="small_appmsg">
               <Cells>
-                <Cell href="javascript:;" access>
-                  <CellHeader><img className={s.icon} src={IconPhoto}/></CellHeader>
+                <Cell access>
+                  <CellHeader><img className={s.icon} alt="" src={IconPhoto} /></CellHeader>
                   <CellBody>
                     <p>相册</p>
                   </CellBody>
-                  <CellFooter/>
+                  <CellFooter />
                 </Cell>
               </Cells>
             </MediaBox>
             <MediaBox type="small_appmsg">
               <Cells>
-                <Cell href="javascript:;" access>
-                  <CellHeader><img className={s.icon} src={IconCollect}/></CellHeader>
+                <Cell access>
+                  <CellHeader><img className={s.icon} alt="" src={IconCollect} /></CellHeader>
                   <CellBody>
                     <p>收藏</p>
                   </CellBody>
-                  <CellFooter/>
+                  <CellFooter />
                 </Cell>
               </Cells>
             </MediaBox>
             <MediaBox type="small_appmsg">
               <Cells>
-                <Cell href="javascript:;" access>
-                  <CellHeader><img className={s.icon} src={IconMoney}/></CellHeader>
+                <Cell access>
+                  <CellHeader><img className={s.icon} alt="" src={IconMoney} /></CellHeader>
                   <CellBody>
                     <p>钱包</p>
                   </CellBody>
-                  <CellFooter/>
+                  <CellFooter />
                 </Cell>
               </Cells>
             </MediaBox>
             <MediaBox type="small_appmsg">
               <Cells>
-                <Cell href="javascript:;" access>
+                <Cell access>
                   <CellHeader>
-                    <img className={s.icon} src={IconCard}/>
+                    <img className={s.icon} alt="" src={IconCard} />
                   </CellHeader>
                   <CellBody>
                     <p>卡包</p>
                   </CellBody>
-                  <CellFooter/>
+                  <CellFooter />
                 </Cell>
               </Cells>
             </MediaBox>
@@ -108,12 +108,12 @@ class Contact extends React.Component {
           <PanelBody>
             <MediaBox type="small_appmsg">
               <Cells>
-                <Cell href="javascript:;" access>
-                  <CellHeader><img className={s.icon} src={IconSmail}/></CellHeader>
+                <Cell access>
+                  <CellHeader><img className={s.icon} alt="" src={IconSmail} /></CellHeader>
                   <CellBody>
                     <p>表情</p>
                   </CellBody>
-                  <CellFooter/>
+                  <CellFooter />
                 </Cell>
               </Cells>
             </MediaBox>
@@ -123,12 +123,12 @@ class Contact extends React.Component {
           <PanelBody>
             <MediaBox type="small_appmsg">
               <Cells>
-                <Cell href="javascript:;" access>
-                  <CellHeader><img className={s.icon} src={IconSetting}/></CellHeader>
+                <Cell access>
+                  <CellHeader><img className={s.icon} alt="" src={IconSetting} /></CellHeader>
                   <CellBody>
                     <p>设置</p>
                   </CellBody>
-                  <CellFooter/>
+                  <CellFooter />
                 </Cell>
               </Cells>
             </MediaBox>
