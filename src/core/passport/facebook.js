@@ -16,10 +16,10 @@
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
-import { auth as config } from '../config';
+import { User, UserLogin, UserClaim, UserProfile } from '../../data/models';
+import { auth as config } from '../../config';
 
-function facebookPassportInit(passportLib: passport) {
+function passportInit(passportLib: passport) {
   /**
    * Sign in with Facebook.
    */
@@ -126,7 +126,7 @@ function facebookPassportInit(passportLib: passport) {
   }));
 }
 
-function facebookExpressInit(app) {
+function expressInit(app) {
   app.get('/login/facebook',
     passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false }),
   );
@@ -141,4 +141,4 @@ function facebookExpressInit(app) {
   );
 }
 
-export { facebookPassportInit, facebookExpressInit };
+export { passportInit, expressInit };

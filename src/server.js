@@ -12,7 +12,6 @@ import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
@@ -27,7 +26,7 @@ import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
-import { port, auth } from './config';
+import { port } from './config';
 
 const app = express();
 
@@ -49,11 +48,6 @@ app.use(bodyParser.json());
 //
 // Authentication
 // -----------------------------------------------------------------------------
-app.use(expressJwt({
-  secret: auth.jwt.secret,
-  credentialsRequired: false,
-  getToken: req => req.cookies.id_token,
-}));
 
 passport(app);
 
