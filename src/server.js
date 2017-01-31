@@ -112,6 +112,7 @@ app.get('*', async (req, res, next) => {
         // eslint-disable-next-line no-underscore-dangle
         styles.forEach(style => css.add(style._getCss()));
       },
+
       // Initialize a new Redux store
       // http://redux.js.org/docs/basics/UsageWithReact.html
       store,
