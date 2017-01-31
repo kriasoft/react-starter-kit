@@ -12,7 +12,7 @@
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
 
-export const databaseUrl = process.env.DATABASE_URL || 'mysql://gamebuyremote:7V0c4D9c@185.63.188.130:3306/gamebuy';
+export const databaseUrl = process.env.DATABASE_URL || '';
 
 export const analytics = {
 

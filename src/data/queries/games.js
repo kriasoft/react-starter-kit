@@ -18,7 +18,9 @@ import GameItemType from '../types/GameItemType';
 // let lastFetchTask;
 // const lastFetchTime = new Date(1970, 0, 1);
 
-const gamesByNid = {
+export const nullVar = null;
+
+export const gamesByNid = {
   type: new List(GameItemType),
 
   // resolve: resolver(Node),
@@ -66,4 +68,4 @@ const gamesByNid = {
   },
 };
 
-export default gamesByNid;
+// export default nullVar;
