@@ -1,4 +1,5 @@
-/**
+/* eslint prefer-const: ["error", {"ignoreReadBeforeAssign": true}]*/
+/* eslint-env es6*//**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
  * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
@@ -23,8 +24,7 @@ import * as passportCustom from '../../custom/passport';
 const fs = require('fs');
 
 const pathCustom = '../../custom/passport/';
-
-let loadedPassportStrategies = [];
+let loadedPassportStrategies;
 
 function detectCustomPassportStrategy(item, callbackNotFound) {
   const customPath = `${pathCustom}${item}.js`;
@@ -58,6 +58,7 @@ export default function passportInit(app) {
   }));
 
   app.use(passport.initialize());
+  loadedPassportStrategies = [];
 
   if (process.env.NODE_ENV !== 'production') {
     app.enable('trust proxy');
