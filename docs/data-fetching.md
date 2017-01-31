@@ -28,5 +28,3 @@ Both `whatwg-fetch` and `node-fetch` modules have almost identical API. If
 you're new to this API, the following article may give you a good introduction:
 
 https://jakearchibald.com/2015/thats-so-fetch/
-
-

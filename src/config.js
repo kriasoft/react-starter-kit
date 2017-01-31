@@ -12,7 +12,7 @@
 export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
 
-export const databaseUrl = process.env.DATABASE_URL || 'sqlite:database.sqlite';
+export const databaseUrl = process.env.DATABASE_URL || '';
 
 export const analytics = {
 
@@ -25,7 +25,7 @@ export const analytics = {
 
 export const auth = {
 
-  jwt: { secret: process.env.JWT_SECRET || 'React Starter Kit' },
+  jwt: { secret: process.env.JWT_SECRET || 'GameBuy Secret Takin' },
 
   // https://developers.facebook.com/
   facebook: {
