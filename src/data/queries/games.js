@@ -7,12 +7,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import { resolver } from 'graphql-sequelize';
 import { GraphQLList as List, GraphQLInt,
 GraphQLString } from 'graphql';
 import { Node } from '../models';
 import GameItemType from '../types/GameItemType';
-
-// import { resolver } from 'graphql-sequelize';
 
 // const items = [];
 // let lastFetchTask;
@@ -23,7 +22,6 @@ export const nullVar = null;
 export const gamesByNid = {
   type: new List(GameItemType),
 
-  // resolve: resolver(Node),
   args: {
     nid: {
       description: 'game nid',
@@ -37,7 +35,8 @@ export const gamesByNid = {
     },
   },
 
-  resolve: async (_, query) => {
+  resolve: resolver(Node),
+  resolve2: async (_, query) => {
     // if (lastFetchTask) {
     //   return lastFetchTask;
     // }

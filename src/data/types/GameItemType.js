@@ -18,11 +18,11 @@ import {
   // resolver,
   attributeFields } from 'graphql-sequelize';
 
-import { Node } from '../models';
+import { Node, GbUcProducts } from '../models';
 
 const GameItemType = new ObjectType({
   name: 'GameItem',
-  fields: attributeFields(Node),
+  fields: Object.assign({}, attributeFields(Node), attributeFields(GbUcProducts)),
 
   // id: {
   //   description: 'id of the game',

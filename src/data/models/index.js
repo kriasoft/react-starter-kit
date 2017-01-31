@@ -13,6 +13,7 @@ import UserLogin from './UserLogin';
 import UserClaim from './UserClaim';
 import UserProfile from './UserProfile';
 
+import GbUcProducts from './GbUcProducts';
 import Node from './Node';
 
 User.hasMany(UserLogin, {
@@ -36,9 +37,16 @@ User.hasOne(UserProfile, {
   onDelete: 'cascade',
 });
 
+Node.hasOne(GbUcProducts, {
+  foreignKey: 'nid',
+  as: 'price',
+  onUpdate: 'cascade',
+  onDelete: 'cascade',
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, UserLogin, UserClaim, UserProfile, Node };
+export { User, UserLogin, UserClaim, UserProfile, Node, GbUcProducts };
