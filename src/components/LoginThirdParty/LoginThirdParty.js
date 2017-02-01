@@ -1,3 +1,5 @@
+/* eslint-disable css-modules/no-unused-class */
+/* eslint-disable css-modules/no-undef-class */
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
