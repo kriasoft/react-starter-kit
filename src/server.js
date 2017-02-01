@@ -27,7 +27,7 @@ import passport from './core/passport';
 import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
-import assets from './assets'; // eslint-disable-line import/no-unresolved
+import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
 import { port, auth } from './config';

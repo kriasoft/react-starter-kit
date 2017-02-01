@@ -22,7 +22,7 @@ and newcomers to the industry.
 ### Getting Started
 
   * Follow the [getting started guide](./docs/getting-started.md) to download and run the project
-    ([node](https://nodejs.org/) >= 5,
+    ([node](https://nodejs.org/) >= 6,
     **[node-gyp](https://github.com/nodejs/node-gyp#readme)**
     and **[prerequisites](https://github.com/nodejs/node-gyp#installation)**)
   * Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
