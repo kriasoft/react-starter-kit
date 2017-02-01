@@ -23,7 +23,7 @@ Enable **ESLint** support
 
 Enable **CSSComb** by following the instructions [here](https://github.com/csscomb/jetbrains-csscomb).
 
-**If you have trouble with autoreloading** try to disable "safe write" in `File > Settings > System Settings > Use "safe write" (save chnages to a temporary file first)`
+**If you have trouble with autoreloading** try to disable "safe write" in `File > Settings > System Settings > Use "safe write" (save changes to a temporary file first)`
 
 ### Atom
 
@@ -53,8 +53,8 @@ yarn add --dev eslint babel-eslint eslint-plugin-react stylelint
 
 ### SublimeText
 
-Install SublimeText packages  
-Easiest with [Package Control](https://packagecontrol.io/) and then "Package Control: Install Package" (Ctrl+Shift+P)  
+Install SublimeText packages
+Easiest with [Package Control](https://packagecontrol.io/) and then "Package Control: Install Package" (Ctrl+Shift+P)
 
 * [Babel](https://packagecontrol.io/packages/Babel)
 * [Sublime-linter](http://www.sublimelinter.com/en/latest/)

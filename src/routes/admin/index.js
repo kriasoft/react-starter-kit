@@ -22,9 +22,7 @@ export default {
       return { redirect: '/login' };
     }
 
-    const Admin = await new Promise((resolve) => {
-      require.ensure([], (require) => resolve(require('./Admin').default), 'admin');
-    });
+    const Admin = await require.ensure([], require => require('./Admin').default, 'admin');
 
     return {
       title,

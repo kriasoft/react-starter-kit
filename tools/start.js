@@ -9,8 +9,9 @@
 
 import browserSync from 'browser-sync';
 import webpack from 'webpack';
-import webpackMiddleware from 'webpack-middleware';
+import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import WriteFilePlugin from 'write-file-webpack-plugin';
 import run from './run';
 import runServer from './runServer';
 import webpackConfig from './webpack.config';
@@ -19,6 +20,7 @@ import copy from './copy';
 
 process.argv.push('--watch');
 const [config] = webpackConfig;
+const isDebug = !process.argv.includes('--release');
 
 /**
  * Launches a development web server with "live reload" functionality -
@@ -28,20 +30,26 @@ async function start() {
   await run(clean);
   await run(copy);
   await new Promise(resolve => {
+    // Save the server-side bundle files to the file system after compilation
+    // https://github.com/webpack/webpack-dev-server/issues/62
+    webpackConfig.find(x => x.target === 'node').plugins.push(
+      new WriteFilePlugin({ log: false }),
+    );
+
     // Hot Module Replacement (HMR) + React Hot Reload
-    if (config.debug) {
+    if (isDebug) {
       config.entry.client = ['react-hot-loader/patch', 'webpack-hot-middleware/client']
         .concat(config.entry.client);
       config.output.filename = config.output.filename.replace('[chunkhash', '[hash');
       config.output.chunkFilename = config.output.chunkFilename.replace('[chunkhash', '[hash');
-      config.module.loaders.find(x => x.loader === 'babel-loader')
+      config.module.rules.find(x => x.loader === 'babel-loader')
         .query.plugins.unshift('react-hot-loader/babel');
       config.plugins.push(new webpack.HotModuleReplacementPlugin());
-      config.plugins.push(new webpack.NoErrorsPlugin());
+      config.plugins.push(new webpack.NoEmitOnErrorsPlugin());
     }
 
     const bundler = webpack(webpackConfig);
-    const wpMiddleware = webpackMiddleware(bundler, {
+    const wpMiddleware = webpackDevMiddleware(bundler, {
       // IMPORTANT: webpack middleware can't access config,
       // so we should provide publicPath by ourselves
       publicPath: config.output.publicPath,
@@ -61,7 +69,7 @@ async function start() {
       const bs = browserSync.create();
 
       bs.init({
-        ...(config.debug ? {} : { notify: false, ui: false }),
+        ...isDebug ? {} : { notify: false, ui: false },
 
         proxy: {
           target: server.host,

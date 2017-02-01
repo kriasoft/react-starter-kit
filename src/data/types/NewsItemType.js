@@ -19,8 +19,8 @@ const NewsItemType = new ObjectType({
     title: { type: new NonNull(StringType) },
     link: { type: new NonNull(StringType) },
     author: { type: StringType },
-    publishedDate: { type: new NonNull(StringType) },
-    contentSnippet: { type: StringType },
+    pubDate: { type: new NonNull(StringType) },
+    content: { type: StringType },
   },
 });
 
