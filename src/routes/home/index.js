@@ -24,7 +24,7 @@ export default {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: '{news{title,link,publishedDate,contentSnippet}}',
+        query: '{news{title,link,pubDate,content}}',
       }),
       credentials: 'include',
     });

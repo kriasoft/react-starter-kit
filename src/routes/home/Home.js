@@ -32,7 +32,7 @@ class Home extends React.Component {
                 <a href={item.link} className={s.newsTitle}>{item.title}</a>
                 {' '}
                 <span className={s.publishedDate}>
-                  <FormattedRelative value={item.publishedDate} />
+                  <FormattedRelative value={item.pubDate} />
                 </span>
                 <span
                   className={s.newsDesc}
