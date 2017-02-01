@@ -1,231 +1,105 @@
-## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate &nbsp; <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a> <a href="https://twitter.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
-
-[React Starter Kit](https://www.reactstarterkit.com) is an opinionated boilerplate for web
-development built on top of [Node.js](https://nodejs.org/),
-[Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
-[React](https://facebook.github.io/react/), containing modern web development
-tools such as [Webpack](http://webpack.github.io/), [Babel](http://babeljs.io/)
-and [Browsersync](http://www.browsersync.io/). Helping you to stay productive
-following the best practices. A solid starting point for both professionals
-and newcomers to the industry.
-
-**See** [getting started guide](./docs/getting-started.md), [demo][demo],
-[docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs),
-[roadmap](https://github.com/kriasoft/react-starter-kit/projects/1) &nbsp;|&nbsp;
-**Join** [#react-starter-kit][chat] chat room on Gitter &nbsp;|&nbsp;
-**Visit our sponsors**:<br><br>
-
-[![Rollbar - Full-stack error tracking for all apps in any language](https://koistya.github.io/files/rsk/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
-[![Localize - Translate your web app in minutes](https://koistya.github.io/files/rsk/localize.png)](https://localizejs.com/?cid=802&utm_source=rsk)
+<p align="center">
+  <img src="./images/logo2.png">
+</p>
 
 
-### Getting Started
+| pipeline name   | Last build status  |
+|---|---|
+|Build-first-image   | [![Codefresh build status]( https://g.codefresh.io/api/badges/build?repoOwner=containers101&repoName=react-starter-kit&branch=codefresh&pipelineName=react-starter-kit&accountName=containers101&type=cf-2)]( https://g.codefresh.io/repositories/containers101/react-starter-kit/builds?filter=trigger:build;branch:codefresh;service:587f93d2bb28d1010059ed16~react-starter-kit)  |
+|Build-codefresh-yml   | [![Codefresh build status]( https://g.codefresh.io/api/badges/build?repoOwner=containers101&repoName=react-starter-kit&branch=codefresh&pipelineName=react-starter-kit&accountName=containers101&type=cf-2)]( https://g.codefresh.io/repositories/containers101/react-starter-kit/builds?filter=trigger:build;branch:codefresh;service:587f93d2bb28d1010059ed16~react-starter-kit)  |
 
-  * Follow the [getting started guide](./docs/getting-started.md) to download and run the project
-    ([node](https://nodejs.org/) >= 5,
-    **[node-gyp](https://github.com/nodejs/node-gyp#readme)**
-    and **[prerequisites](https://github.com/nodejs/node-gyp#installation)**)
-  * Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
+## Setup your first service using [Codefresh](https://codefresh.io/).
 
+### Step-by-step tutorial:
+#### 1. Fork this repo.
+<p align="center">
+  <img src="./images/fork.png" width="500">
+</p>
 
-### Customization
+#### 2. Login into codefresh using your github account.
 
-The `master` branch of React Starter Kit doesn't include a Flux implementation or any other
-advanced integrations. Nevertheless, we have some integrations available to you in *feature*
-branches that you can use either as a reference or merge into your project:
+<p align="center">
+  <img src="./images/signup.png" width="500">
+</p>
 
-  * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) — isomorphic
-    Redux by [Pavel Lang](https://github.com/langpavel)
-    (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
-  * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) —
-    isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
-    (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/redux`)
-  * [feature/bootstrap3](https://github.com/kriasoft/react-starter-kit/tree/feature/bootstrap3) —
-    Simplest possible integration of [react-bootstrap](https://react-bootstrap.github.io/)
-    by [Pavel Lang](https://github.com/langpavel) (based on `master`)
+#### 3. Add your first service and build it.
 
-If you think that any of these features should be on `master`, or vice versa, some features should
-removed from the `master` branch, please [let us know](https://gitter.im/kriasoft/react-starter-kit).
-We love your feedback!
+<p align="center">
+  <b>Start by adding new service</b><br>
+  <img src="./images/add.png" width="500">
+</p>
 
 
-### Comparison
-
-<table width="100%">
-  <tr>
-    <th>&nbsp;</th>
-    <th>
-      <p>React Starter Kit</p>
-      <a href="https://github.com/kriasoft/react-starter-kit"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=~react-starter-kit" height="20"></a>
-      <a href="https://twitter.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=@ReactStarter" height="20"></a>
-    </th>
-    <th>
-      <p>React Static Boilerplate</p>
-      <a href="https://github.com/kriasoft/react-static-boilerplate"><img src="https://img.shields.io/github/stars/kriasoft/react-static-boilerplate.svg?style=social&label=~react-static-boilerplate" height="20"></a>
-      <a href="https://twitter.com/ReactStatic"><img src="https://img.shields.io/twitter/follow/ReactStatic.svg?style=social&label=@ReactStatic" height="20"></a>
-    </th>
-    <th>
-      <p>ASP.NET Core Starter Kit</p>
-      <a href="https://github.com/kriasoft/aspnet-starter-kit"><img src="https://img.shields.io/github/stars/kriasoft/aspnet-starter-kit.svg?style=social&label=~aspnet-starter-kit" height="20"></a>
-      <a href="https://twitter.com/dotnetreact"><img src="https://img.shields.io/twitter/follow/dotnetreact.svg?style=social&label=@dotnetreact" height="20"></a>
-    </th>
-  <tr>
-  <tr>
-    <th align="right">App type</th>
-    <td align="center"><a href="http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/">Isomorphic</a> (universal)</td>
-    <td align="center"><a href="https://en.wikipedia.org/wiki/Single-page_application">Single-page application</a></td>
-    <td align="center"><a href="https://en.wikipedia.org/wiki/Single-page_application">Single-page application</a></td>
-  </tr>
-  <tr>
-    <th colspan="4">Frontend</th>
-  <tr>
-  <tr>
-    <th align="right">Language</th>
-    <td align="center">JavaScript (ES2015+, JSX)</td>
-    <td align="center">JavaScript (ES2015+, JSX)</td>
-    <td align="center">JavaScript (ES2015+, JSX)</td>
-  </tr>
-  <tr>
-    <th align="right">Libraries</th>
-    <td align="center">
-      <a href="https://github.com/facebook/react">React</a>,
-      <a href="https://github.com/ReactJSTraining/history">History</a>,
-      <a href="https://github.com/kriasoft/universal-router">Universal Router</a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/facebook/react">React</a>,
-      <a href="https://github.com/ReactJSTraining/history">History</a>,
-      <a href="https://github.com/reactjs/redux">Redux</a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/facebook/react">React</a>,
-      <a href="https://github.com/ReactJSTraining/history">History</a>,
-      <a href="https://github.com/reactjs/redux">Redux</a>
-    </td>
-  </tr>
-  <tr>
-    <th align="right">Routes</th>
-    <td align="center">Imperative (functional)</td>
-    <td align="center">Declarative</td>
-    <td align="center">Declarative, cross-stack</td>
-  </tr>
-  <tr>
-    <th colspan="4">Backend</th>
-  <tr>
-  <tr>
-    <th align="right">Language</th>
-    <td align="center">JavaScript (ES2015+, JSX)</td>
-    <td align="center">n/a</td>
-    <td align="center">C#, F#</td>
-  </tr>
-  <tr>
-    <th align="right">Libraries</th>
-    <td align="center">
-      <a href="https://nodejs.org">Node.js</a>,
-      <a href="http://expressjs.com/">Express</a>,
-      <a href="http://docs.sequelizejs.com/en/latest/">Sequelize</a>,<br>
-      <a href="https://github.com/graphql/graphql-js">GraphQL</a></td>
-    <td align="center">n/a</td>
-    <td align="center">
-      <a href="https://docs.asp.net/en/latest/">ASP.NET Core</a>,
-      <a href="https://ef.readthedocs.io/en/latest/">EF Core</a>,<br>
-      <a href="https://docs.asp.net/en/latest/security/authentication/identity.html">ASP.NET Identity</a>
-    </td>
-  </tr>
-  <tr>
-    <th align="right"><a href="https://www.quora.com/What-are-the-tradeoffs-of-client-side-rendering-vs-server-side-rendering">SSR</a></th>
-    <td align="center">Yes</td>
-    <td align="center">n/a</td>
-    <td align="center">n/a</td>
-  </tr>
-  <tr>
-    <th align="right">Data API</th>
-    <td align="center"><a href="http://graphql.org/">GraphQL</a></td>
-    <td align="center">n/a</td>
-    <td align="center"><a href="https://docs.asp.net/en/latest/tutorials/first-web-api.html">Web API</a></td>
-  </tr>
-</table>
+<p align="center">
+  <b>Select the repo you just forked and click next</b><br>
+  <img src="./images/next.png" width="500">
+</p>
 
 
-### Backers
-
-♥ React Starter Kit? Help us keep it alive by donating funds to cover project
-expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
-[Bountysource](https://salt.bountysource.com/teams/react-starter-kit)!
-
-<a href="http://www.nekst.me/" target="_blank" title="lehneres">
-  <img src="https://github.com/lehneres.png?size=64" width="64" height="64" alt="lehneres">
-</a>
-<a href="http://www.vidpanel.com/" target="_blank" title="Tarkan Anlar">
-  <img src="https://github.com/tarkanlar.png?size=64" width="64" height="64" alt="Tarkan Anlar">
-</a>
-<a href="https://morten.olsen.io/" target="_blank" title="Morten Olsen">
-  <img src="https://github.com/mortenolsendk.png?size=64" width="64" height="64" alt="Morten Olsen">
-</a>
-<a href="https://twitter.com/adamthomann" target="_blank" title="Adam">
-  <img src="https://github.com/athomann.png?size=64" width="64" height="64" alt="Adam">
-</a>
-<a href="http://dsernst.com/" target="_blank" title="David Ernst">
-  <img src="https://github.com/dsernst.png?size=64" width="64" height="64" alt="David Ernst">
-</a>
-<a href="http://zanehitchcox.com/" target="_blank" title="Zane Hitchcox">
-  <img src="https://github.com/zwhitchcox.png?size=64" width="64" height="64" alt="Zane Hitchcox">
-</a>
-<a href="https://opencollective.com/react-starter-kit" target="_blank">
-  <img src="https://opencollective.com/static/images/become_backer.svg" width="64" height="64" alt="">
-</a>
+<p align="center">
+  <b>Select Dockerfile option</b><br>
+  <img src="./images/select.png" width="500">
+</p>
 
 
-### How to Contribute
+<p align="center">
+  <b>Click next</b><br>
+  <img src="./images/dockerfile.png" width="500">
+</p>
 
-Anyone and everyone is welcome to [contribute](CONTRIBUTING.md) to this project. The best way to
-start is by checking our [open issues](https://github.com/kriasoft/react-starter-kit/issues),
-[submit a new issues](https://github.com/kriasoft/react-starter-kit/issues/new?labels=bug) or
-[feature request](https://github.com/kriasoft/react-starter-kit/issues/new?labels=enhancement),
-participate in discussions, upvote or downvote the issues you like or dislike, send [pull
-requests](CONTRIBUTING.md#pull-requests).
+<p align="center">
+  <b>Review the Dockerfile, click next than</b><br>
+  <img src="./images/review.png" width="500">
+</p>
 
-
-### Learn More
-
-  * [Getting Started with React.js](http://facebook.github.io/react/)
-  * [Getting Started with GraphQL and Relay](https://quip.com/oLxzA1gTsJsE)
-  * [React.js Questions on StackOverflow](http://stackoverflow.com/questions/tagged/reactjs)
-  * [React.js Discussion Board](https://discuss.reactjs.org/)
-  * [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
-  * [Enzyme — JavaScript Testing utilities for React](http://airbnb.io/enzyme/)
-  * [Flow — A static type checker for JavaScript](http://flowtype.org/)
-  * [The Future of React](https://github.com/reactjs/react-future)
-  * [Learn ES6](https://babeljs.io/docs/learn-es6/), [ES6 Features](https://github.com/lukehoban/es6features#readme)
+<p align="center">
+  <b>Click Build</b><br>
+  <img src="./images/build.png" width="500">
+</p>
 
 
-### Related Projects
+#### 4. Wait a bit until the build is done.
 
-  * [GraphQL Starter Kit](https://github.com/kriasoft/graphql-starter-kit) — Boilerplate for building data APIs with Node.js, JavaScript (via Babel) and GraphQL
-  * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
-  * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
+<p align="center">
+  <b>Make yourself a cup of coffee in the time we build an image for you</b><br>
+</p>
+<p align="center">
+  <img src="./images/building.png" width="500">
+</p>
+
+<p align="center">
+  <img src="./images/build-done.png" width="500">
+</p>
+
+#### 5. Open images and click 'lunch' and choose 'standalone'.
+
+<p align="center">
+  <img src="./images/images.png" width="500">
+</p>
+
+<p align="center">
+  <img src="./images/launch.png" width="500">
+</p>
 
 
-### Support
+#### 5. VOILÀ   ![codefresh](./images/superfresh.png)
 
-  * [#react-starter-kit](http://stackoverflow.com/questions/tagged/react-starter-kit) on Stack Overflow — Questions and answers
-  * [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) on Gitter — Watch announcements, share ideas and feedback
-  * [GitHub issues](https://github.com/kriasoft/react-starter-kit/issues), or [Scrum board](https://waffle.io/kriasoft/react-starter-kit) — File issues, send feature requests
-  * [appear.in/react](https://appear.in/react) — Open hours! Exchange ideas and experiences (React, GraphQL, startups and pet projects)
-  * [@koistya](https://twitter.com/koistya) on [Codementor](https://www.codementor.io/koistya), or [Skype](http://hatscripts.com/addskype?koistya) — Private consulting
+<p align="center">
+  <img src="./images/finish.png" width="500">
+</p>
 
 
-### License
+### Start using codefresh.yml
+#### Using codefresh.yml you can customize your pipeline
+Now when your first service is setup and your first pipeline produced an image, lets move forward and push the image to Dockerhub registry.
+We at Codefresh already build for you the basic `codefresh.yml` template, use it.
+- Click on your service `react-starter-kit`.
+- Switch to `Use YML build`.
+- Under Environment variables fill your Dockerhub credentials to be.
+  - `DOCKER_USER_NANE` your Dockerhub user name
+  - `DOCKER_PASSWORD` your Dockerhub password
+- Dont forget to encrypt them!
+- Save your updated pipeline
+- Build and launch
 
-Copyright © 2014-2016 Kriasoft, LLC. This source code is licensed under the MIT
-license found in the [LICENSE.txt](https://github.com/kriasoft/react-starter-kit/blob/master/LICENSE.txt)
-file. The documentation to the project is licensed under the
-[CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license.
-
----
-Made with ♥ by Konstantin Tarkus ([@koistya](https://twitter.com/koistya)) and [contributors](https://github.com/kriasoft/react-starter-kit/graphs/contributors)
-
-[rsk]: https://www.reactstarterkit.com
-[demo]: http://demo.reactstarterkit.com
-[node]: https://nodejs.org
-[chat]: https://gitter.im/kriasoft/react-starter-kit
+###### Full credit for the application [react-starter-kit](https://github.com/kriasoft/react-starter-kit)
