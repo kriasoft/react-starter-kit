@@ -13,6 +13,7 @@
  * https://github.com/membership/membership.db/tree/master/postgres
  */
 
+import Promise from 'bluebird';
 import passport from 'passport';
 import expressJwt from 'express-jwt';
 import { auth } from '../../config';
@@ -25,15 +26,13 @@ const fs = require('fs');
 const pathCustom = '../../custom/passport/';
 let loadedPassportStrategies;
 
-function detectCustomPassportStrategy(item, callbackNotFound) {
+function detectCustomPassportStrategy(item) {
   const customPath = `${pathCustom}${item}.js`;
 
-  fs.exists(customPath, (existsCustom) => {
-    if (existsCustom) {
-      return;
-    }
-
-    callbackNotFound();
+  return new Promise((fulfilledHandler) => {
+    fs.exists(customPath, (existsCustom) => {
+      fulfilledHandler(existsCustom);
+    });
   });
 }
 
@@ -71,19 +70,31 @@ export default function passportInit(app) {
     // github: passportGithub,
   };
 
-  usedAuth.forEach((passportStrategyName) => {
-    if (passportStrategyName in PASSPORT_STRATEGIES) {
-      // detect custom overwrite
-      // use callback if not exists
-      detectCustomPassportStrategy(passportStrategyName, () => {
+
+  Promise.map(usedAuth, (passportStrategyName) => {
+    // check wanted strategy is a core
+    if (passportStrategyName in PASSPORT_STRATEGIES === false) {
+      return;
+    }
+
+    // detect custom overwrite
+    // use callback if not exists
+    detectCustomPassportStrategy(passportStrategyName)
+      .then((customExists) => {
+        if (customExists) {
+          return;
+        }
+
         PASSPORT_STRATEGIES[passportStrategyName].passportInit(passport);
         PASSPORT_STRATEGIES[passportStrategyName].expressInit(app);
         addLoadedStrategy(passportStrategyName);
+        console.log('PassportStrategyLoader: load', passportStrategyName);// eslint-disable-line no-console
       });
-    }
+  })
+  .then(() => {
+    // load custom if exists
+    passportCustom.passportInit(passport);
+    passportCustom.expressInit(app);
+    console.log('PassportStrategyLoader: load', 'custom');// eslint-disable-line no-console
   });
-
-  // load custom if exists
-  passportCustom.passportInit(passport);
-  passportCustom.expressInit(app);
 }
