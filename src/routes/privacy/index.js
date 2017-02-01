@@ -16,11 +16,7 @@ export default {
   path: '/privacy',
 
   async action() {
-    const data = await new Promise((resolve) => {
-      require.ensure([], require => {
-        resolve(require('./privacy.md'));
-      }, 'privacy');
-    });
+    const data = await require.ensure([], require => require('./privacy.md'), 'privacy');
 
     return {
       title: data.title,
