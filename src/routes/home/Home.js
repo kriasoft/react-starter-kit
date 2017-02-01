@@ -16,7 +16,7 @@ class Home extends React.Component {
     news: PropTypes.arrayOf(PropTypes.shape({
       title: PropTypes.string.isRequired,
       link: PropTypes.string.isRequired,
-      contentSnippet: PropTypes.string,
+      content: PropTypes.string,
     })).isRequired,
   };
 
@@ -24,14 +24,14 @@ class Home extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1 className={s.title}>React.js News</h1>
+          <h1>React.js News</h1>
           <ul className={s.news}>
             {this.props.news.map((item, index) => (
               <li key={index} className={s.newsItem}>
                 <a href={item.link} className={s.newsTitle}>{item.title}</a>
                 <span
                   className={s.newsDesc}
-                  dangerouslySetInnerHTML={{ __html: item.contentSnippet }}
+                  dangerouslySetInnerHTML={{ __html: item.content.substring(0, 100) }}
                 />
               </li>
             ))}

@@ -9,25 +9,18 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-
-const title = 'Admin Page';
-const isAdmin = false;
+import Page from '../../components/Page';
 
 export default {
 
-  path: '/admin',
+  path: '/privacy',
 
   async action() {
-    if (!isAdmin) {
-      return { redirect: '/login' };
-    }
-
-    const Admin = await require.ensure([], require => require('./Admin').default, 'admin');
+    const data = await require.ensure([], require => require('./privacy.md'), 'privacy');
 
     return {
-      title,
-      chunk: 'admin',
-      component: <Layout><Admin title={title} /></Layout>,
+      title: data.title,
+      component: <Layout><Page {...data} /></Layout>,
     };
   },
 

@@ -12,8 +12,8 @@ Install [`node-sass`](https://github.com/sass/node-sass) and
 [`sass-loader`](https://github.com/jtangelder/sass-loader) modules as dev dependencies:
 
 ```sh
-$ npm install node-sass --save-dev
-$ npm install sass-loader --save-dev
+$ yarn add node-sass --dev
+$ yarn add sass-loader --dev
 ```
 
 ### Step 2
@@ -24,15 +24,30 @@ Update [`webpack.config.js`](../../tools/webpack.config.js) file to use `sass-lo
 const config = {
   ...
   module: {
-    loaders: [
+    rules: [
       ...
       {
         test: /\.scss$/,
-        loaders: [
-          'isomorphic-style-loader',
-          `css-loader?${JSON.stringify({ sourceMap: isDebug, minimize: !isDebug })}`,
-          'postcss-loader?pack=sass',
-          'sass-loader',
+        use: [
+          {
+            loader: 'isomorphic-style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: isDebug,
+              minimize: !isDebug,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              config: './tools/postcss.sass.js',
+            },
+          },
+          {
+            loader: 'sass-loader',
+          },
         ],
       },
       ...
@@ -44,24 +59,15 @@ const config = {
 
 ### Step 3
 
-Add one more configuration (pack) for [PostCSS](https://github.com/postcss/postcss) named `sass` to
+Add one more configuration (`tools/postcss.sass.js`) for [PostCSS](https://github.com/postcss/postcss) to
 enable [Autoprefixer](https://github.com/postcss/autoprefixer) for your `.scss` files:
 
 ```js
-const config = {
-  ...
-  postcss(bundler) {
-    return {
-      defaults: [
-        ...
-      ],
-      sass: [
-        require('autoprefixer')(),
-      ],
-    };
-  }
-  ...
-}
+module.exports = () => ({
+  plugins: [
+    require('autoprefixer')(),
+  ],
+});
 ```
 
 For more information visit https://github.com/jtangelder/sass-loader and https://github.com/sass/node-sass
