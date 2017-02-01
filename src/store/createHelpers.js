@@ -13,7 +13,7 @@ function createGraphqlRequest(fetchKnowingCookie) {
     };
     const resp = await fetchKnowingCookie('/graphql', fetchConfig);
     if (resp.status !== 200) throw new Error(resp.statusText);
-    return await resp.json();
+    return resp.json();
   };
 }
 

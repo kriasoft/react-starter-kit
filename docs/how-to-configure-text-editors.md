@@ -23,7 +23,7 @@ Enable **ESLint** support
 
 Enable **CSSComb** by following the instructions [here](https://github.com/csscomb/jetbrains-csscomb).
 
-**If you have trouble with autoreloading** try to disable "safe write" in `File > Settings > System Settings > Use "safe write" (save chnages to a temporary file first)`
+**If you have trouble with autoreloading** try to disable "safe write" in `File > Settings > System Settings > Use "safe write" (save changes to a temporary file first)`
 
 ### Atom
 
