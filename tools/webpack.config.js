@@ -194,7 +194,7 @@ const clientConfig = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': __DEV__ ? '"development"' : '"production"',
       'process.env.BROWSER': true,
-      __DEV__: __DEV__, // eslint-disable-line
+      __DEV__,
     }),
 
     // Emit a file with assets paths
