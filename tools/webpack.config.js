@@ -332,7 +332,7 @@ const serverConfig = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': __DEV__ ? '"development"' : '"production"',
       'process.env.BROWSER': false,
-      __DEV__: __DEV__, // eslint-disable-line
+      __DEV__,
     }),
 
     // Do not create separate chunks of the server bundle
