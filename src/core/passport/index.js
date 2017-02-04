@@ -19,6 +19,9 @@ import expressJwt from 'express-jwt';
 import { auth } from '../../config';
 
 import * as passportFacebook from './facebook';
+import * as passportGoogle from './google';
+import * as passportGithub from './github';
+import * as passportTwitter from './twitter';
 import * as passportCustom from '../../custom/passport';
 
 const fs = require('fs');
@@ -48,7 +51,7 @@ export function strategyIsLoaded(strategyName) {
   return strategyName in loadedPassportStrategies;
 }
 
-export default function passportInit(app) {
+export function passportInit(app) {
   app.use(expressJwt({
     secret: auth.jwt.secret,
     credentialsRequired: false,
@@ -66,8 +69,9 @@ export default function passportInit(app) {
 
   const PASSPORT_STRATEGIES = {
     facebook: passportFacebook,
-    // google: passportGoogle,
-    // github: passportGithub,
+    google: passportGoogle,
+    github: passportGithub,
+    twitter: passportTwitter,
   };
 
 

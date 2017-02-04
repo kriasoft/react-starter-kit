@@ -9,6 +9,7 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
+import fetch from '../../core/fetch';
 import Login from './Login';
 
 const title = 'Log In';
@@ -17,10 +18,24 @@ export default {
 
   path: '/login',
 
-  action() {
+  async action() {
+    const resp = await fetch('/graphql', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: '{auth{loginName,buttonClass,buttonText,routeTo,icon}}',
+      }),
+      credentials: 'include',
+    });
+    const { data } = await resp.json();
+    if (!data || !data.auth) throw new Error('Failed to load the auth feed.');
+
     return {
       title,
-      component: <Layout><Login title={title} /></Layout>,
+      component: <Layout><Login title={title} thirdPartyAuth={data.auth} /></Layout>,
     };
   },
 

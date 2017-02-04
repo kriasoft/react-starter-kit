@@ -19,19 +19,27 @@ import s from './Login.css';
 class Login extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
+    thirdPartyAuth: PropTypes.array.isRequired,
   };
 
   render() {
+    let thirdParty = '';
+    if (this.props.thirdPartyAuth.length) {
+      thirdParty = (
+        <div>
+          <LoginThirdParty thirdPartyAuth={this.props.thirdPartyAuth} />
+          <strong className={s.lineThrough}>OR</strong>
+        </div>
+      );
+    }
+
+
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
           <p className={s.lead}>Log in with your username or company email address.</p>
-          <LoginThirdParty className={s.formGroup} to="/login/facebook" buttonText="Log in with Facebook" buttonClass="facebook" />
-          <LoginThirdParty className={s.formGroup} to="/login/google" buttonText="Log in with Google" buttonClass="google" />
-          <LoginThirdParty className={s.formGroup} to="/login/twitter" buttonText="Log in with Twitter" buttonClass="twitter" />
-
-          <strong className={s.lineThrough}>OR</strong>
+          {thirdParty}
 
           <LoginForm />
         </div>
