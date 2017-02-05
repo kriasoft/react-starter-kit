@@ -176,6 +176,17 @@ async function onLocationChange(location) {
 history.listen(onLocationChange);
 onLocationChange(currentLocation);
 
+// Handle errors that might happen after rendering
+// Display the error in full-screen for development mode
+if (process.env.NODE_ENV !== 'production') {
+  window.addEventListener('error', (e) => {
+    console.error(e.error); // eslint-disable-line no-console
+
+    document.title = `Error: ${e.error.message}`;
+    ReactDOM.render(<ErrorReporter error={e.error} />, container);
+  });
+}
+
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
   module.hot.accept('./routes', () => {
