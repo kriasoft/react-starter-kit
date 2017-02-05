@@ -20,6 +20,7 @@ export default {
 
     return {
       title: data.title,
+      chunk: 'about',
       component: <Layout><Page {...data} /></Layout>,
     };
   },

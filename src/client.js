@@ -7,7 +7,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
@@ -114,7 +113,7 @@ let currentLocation = history.location;
 let routes = require('./routes').default;
 
 // Re-render the app when window.location changes
-async function onLocationChange(location) {
+async function onLocationChange(location, initial) {
   // Remember the latest scroll position for the previous location
   scrollPositionsHistory[currentLocation.key] = {
     scrollX: window.pageXOffset,
@@ -166,24 +165,25 @@ async function onLocationChange(location) {
       return;
     }
 
-    // Avoid broken navigation in production mode by a full page reload on error
-    window.location.reload();
+    if (!initial) {
+      // Avoid broken navigation in production mode by a full page reload on error
+      window.location.reload();
+    }
   }
 }
 
 // Handle client-side navigation by using HTML5 History API
 // For more information visit https://github.com/mjackson/history#readme
 history.listen(onLocationChange);
-onLocationChange(currentLocation);
+onLocationChange(currentLocation, true);
 
 // Handle errors that might happen after rendering
 // Display the error in full-screen for development mode
 if (process.env.NODE_ENV !== 'production') {
-  window.addEventListener('error', (e) => {
-    console.error(e.error); // eslint-disable-line no-console
-
-    document.title = `Error: ${e.error.message}`;
-    ReactDOM.render(<ErrorReporter error={e.error} />, container);
+  window.addEventListener('error', (event) => {
+    appInstance = null;
+    document.title = `Runtime Error: ${event.error.message}`;
+    ReactDOM.render(<ErrorReporter error={event.error} />, container);
   });
 }
 
