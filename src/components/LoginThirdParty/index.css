@@ -7,36 +7,9 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 @import '../variables.css';
-@import '../LoginForm/Button.css';
 
-.facebook {
-  border-color: #3b5998;
-  background: #3b5998;
-  composes: button;
-}
-
-.facebook:hover {
-  background: #2d4373;
-}
-
-.google {
-  border-color: #dd4b39;
-  background: #dd4b39;
-  composes: button;
-}
-
-.google:hover {
-  background: #c23321;
-}
-
-.twitter {
-  border-color: #55acee;
-  background: #55acee;
-  composes: button;
-}
-
-.twitter:hover {
-  background: #2795e9;
+.formGroup {
+  margin-bottom: 15px;
 }
 
 .lineThrough {

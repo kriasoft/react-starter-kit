@@ -14,32 +14,21 @@ import LoginThirdParty from '../../components/LoginThirdParty';
 
 import LoginForm from '../../components/LoginForm';
 
+// eslint-disable-next-line
 import s from './Login.css';
 
 class Login extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    thirdPartyAuth: PropTypes.array.isRequired,
   };
 
   render() {
-    let thirdParty = '';
-    if (this.props.thirdPartyAuth.length) {
-      thirdParty = (
-        <div>
-          <LoginThirdParty thirdPartyAuth={this.props.thirdPartyAuth} />
-          <strong className={s.lineThrough}>OR</strong>
-        </div>
-      );
-    }
-
-
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
           <p className={s.lead}>Log in with your username or company email address.</p>
-          {thirdParty}
+          <LoginThirdParty />
 
           <LoginForm />
         </div>

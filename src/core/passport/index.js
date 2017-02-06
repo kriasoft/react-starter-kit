@@ -86,13 +86,14 @@ export function passportInit(app) {
     detectCustomPassportStrategy(passportStrategyName)
       .then((customExists) => {
         if (customExists) {
-          return;
+          return null;
         }
 
         PASSPORT_STRATEGIES[passportStrategyName].passportInit(passport);
         PASSPORT_STRATEGIES[passportStrategyName].expressInit(app);
         addLoadedStrategy(passportStrategyName);
         console.log('PassportStrategyLoader: load', passportStrategyName);// eslint-disable-line no-console
+        return null;
       });
   })
   .then(() => {
@@ -100,5 +101,6 @@ export function passportInit(app) {
     passportCustom.passportInit(passport);
     passportCustom.expressInit(app);
     console.log('PassportStrategyLoader: load', 'custom');// eslint-disable-line no-console
+    return null;
   });
 }

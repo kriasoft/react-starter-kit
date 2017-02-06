@@ -22,37 +22,3 @@
 .lead {
   font-size: 1.25em;
 }
-
-.lineThrough {
-  position: relative;
-  z-index: 1;
-  display: block;
-  margin-bottom: 15px;
-  width: 100%;
-  color: #757575;
-  text-align: center;
-  font-size: 80%;
-}
-
-.lineThrough::before {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: -1;
-  margin-top: -5px;
-  margin-left: -20px;
-  width: 40px;
-  height: 10px;
-  background-color: #fff;
-  content: '';
-}
-
-.lineThrough::after {
-  position: absolute;
-  top: 49%;
-  z-index: -2;
-  display: block;
-  width: 100%;
-  border-bottom: 1px solid #ddd;
-  content: '';
-}
