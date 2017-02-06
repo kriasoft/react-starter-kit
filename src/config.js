@@ -27,7 +27,7 @@ export const auth = {
 
   jwt: { secret: process.env.JWT_SECRET || 'React Starter Kit' },
   authConfig: {
-    usedAuth: process.env.AUTH_CONFIG_USED_AUTH || 'facebook,twitter,google',
+    usedAuth: process.env.AUTH_CONFIG_USED_AUTH || 'facebook,twitter,google,github',
     loginButtons: {
       facebook: {
         icon: 'M22 16l1-5h-5V7c0-1.544.784-2 3-2h2V0h-4c-4.072 0-7 2.435-7 7v4H7v5h5v14h6V16h4z',
@@ -91,6 +91,12 @@ export const auth = {
   twitter: {
     key: process.env.TWITTER_CONSUMER_KEY || 'Ie20AZvLJI2lQD5Dsgxgjauns',
     secret: process.env.TWITTER_CONSUMER_SECRET || 'KTZ6cxoKnEakQCeSpZlaUCJWGAlTEBJj0y2EMkUBujA7zWSvaQ',
+  },
+
+  // https://github.com/
+  github: {
+    id: process.env.TWITTER_CONSUMER_KEY || 'xxxxxxxxxxxxxxxxxxxxx',
+    secret: process.env.TWITTER_CONSUMER_SECRET || 'xyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxy',
   },
 
 };

@@ -39,6 +39,16 @@
   background: #2795e9;
 }
 
+.github {
+  border-color: #497e71;
+  background: #497e71;
+  composes: button;
+}
+
+.github:hover {
+  background: #257461;
+}
+
 .lineThrough {
   position: relative;
   z-index: 1;

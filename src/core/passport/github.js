@@ -16,21 +16,43 @@
 /* eslint-disable no-unused-vars */
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-// import { Strategy as GithubStrategy } from 'passport-github';
+import { Strategy as GitHubStrategy } from 'passport-github2';
 import { User, UserLogin, UserClaim, UserProfile } from '../../data/models';
 import { auth as config } from '../../config';
 /* eslint-enable no-unused-vars */
 
 // eslint-disable-next-line no-unused-vars
 function passportInit(passportLib: passport) {
-  // eslint-disable-next-line no-console
-  console.log('github passport init need logic');
+  passportLib.use(new GitHubStrategy({
+    clientID: config.github.id,
+    clientSecret: config.github.secret,
+    callbackURL: 'http://localhost:3000/login/github/callback',
+  },
+  (accessToken, refreshToken, profile, done) => {
+    User.findOrCreate({ githubId: profile.id },
+      (err, user) => {
+        done(err, user);
+      });
+  },
+));
 }
 
 // eslint-disable-next-line no-unused-vars
 function expressInit(app) {
   // eslint-disable-next-line no-console
   console.log('github express init need logic');
+
+  app.get('/github',
+    passport.authenticate('github', { scope: ['user:email'] }),
+  );
+
+  app.get('/github/callback',
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    (req, res, next) => {
+      // Successful authentication, redirect home.
+      res.redirect('/');
+      next();
+    });
 }
 
 export { passportInit, expressInit };
