@@ -16,6 +16,7 @@
 import Promise from 'bluebird';
 import passport from 'passport';
 import expressJwt from 'express-jwt';
+import { Router as ExpressRouter } from 'express';
 import { auth } from '../../config';
 
 import * as passportFacebook from './facebook';
@@ -58,7 +59,13 @@ export function passportInit(app) {
     getToken: req => req.cookies.id_token,
   }));
 
+  const router = new ExpressRouter();
+
   app.use(passport.initialize());
+
+  // add a sub router to fix the routing order
+  app.use('/login', router);
+
   loadedPassportStrategies = [];
 
   if (process.env.NODE_ENV !== 'production') {
@@ -78,7 +85,7 @@ export function passportInit(app) {
   Promise.map(usedAuth, (passportStrategyName) => {
     // check wanted strategy is a core
     if (passportStrategyName in PASSPORT_STRATEGIES === false) {
-      return;
+      return null;
     }
 
     // detect custom overwrite
@@ -90,16 +97,17 @@ export function passportInit(app) {
         }
 
         PASSPORT_STRATEGIES[passportStrategyName].passportInit(passport);
-        PASSPORT_STRATEGIES[passportStrategyName].expressInit(app);
+        PASSPORT_STRATEGIES[passportStrategyName].expressInit(router);
         addLoadedStrategy(passportStrategyName);
         console.log('PassportStrategyLoader: load', passportStrategyName);// eslint-disable-line no-console
         return null;
       });
+    return null;
   })
   .then(() => {
     // load custom if exists
     passportCustom.passportInit(passport);
-    passportCustom.expressInit(app);
+    passportCustom.expressInit(router);
     console.log('PassportStrategyLoader: load', 'custom');// eslint-disable-line no-console
     return null;
   });
