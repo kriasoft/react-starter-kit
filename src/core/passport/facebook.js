@@ -127,10 +127,10 @@ function passportInit(passportLib: passport) {
 }
 
 function expressInit(app) {
-  app.get('/login/facebook',
+  app.get('/facebook',
     passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false }),
   );
-  app.get('/login/facebook/return',
+  app.get('/facebook/return',
     passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
     (req, res) => {
       const expiresIn = 60 * 60 * 24 * 180; // 180 days
