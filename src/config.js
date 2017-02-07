@@ -95,8 +95,8 @@ export const auth = {
 
   // https://github.com/
   github: {
-    id: process.env.TWITTER_CONSUMER_KEY || 'xxxxxxxxxxxxxxxxxxxxx',
-    secret: process.env.TWITTER_CONSUMER_SECRET || 'xyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxy',
+    id: process.env.GITHUB_CONSUMER_KEY || 'xxxxxxxxxxxxxxxxxxxxx',
+    secret: process.env.GITHUB_CONSUMER_SECRET || 'xyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxyxy',
   },
 
 };
