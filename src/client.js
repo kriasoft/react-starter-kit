@@ -159,7 +159,7 @@ async function onLocationChange(location) {
     }
 
     // Display the error in full-screen for development mode
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       appInstance = null;
       document.title = `Error: ${error.message}`;
       ReactDOM.render(<ErrorReporter error={error} />, container);
