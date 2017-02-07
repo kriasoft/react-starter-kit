@@ -13,13 +13,11 @@
  * https://github.com/membership/membership.db/tree/master/postgres
  */
 
-/* eslint-disable no-unused-vars */
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { User, UserLogin, UserClaim, UserProfile } from '../../data/models';
 import { auth as config, host } from '../../config';
-/* eslint-enable no-unused-vars */
 
 const loginName = 'github';
 const claimType = 'urn:github:access_token';
@@ -125,7 +123,6 @@ async function handleSearchUserByProfileId(profile, done) {
   return false;
 }
 
-// eslint-disable-next-line no-unused-vars
 function passportInit(passportLib: passport) {
   passportLib.use(new GitHubStrategy({
     clientID: config.github.id,
@@ -150,11 +147,7 @@ function passportInit(passportLib: passport) {
 ));
 }
 
-// eslint-disable-next-line no-unused-vars
 function expressInit(app) {
-  // eslint-disable-next-line no-console
-  console.log('github express init need logic');
-
   app.get(routeLogin,
     passport.authenticate('github', { scope: ['user:email'], session: false }),
   );
