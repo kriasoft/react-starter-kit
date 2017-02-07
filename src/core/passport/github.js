@@ -64,6 +64,18 @@ function getCreateUserOption(req, profile, accessToken) {
   /* eslint-enable no-underscore-dangle */
 }
 
+async function handleCreateUser(profile, done, accessToken, req) {
+  const user = await User.create(
+    getCreateUserOption(req, profile, accessToken),
+    createUserModel,
+  );
+
+  done(null, {
+    id: user.id,
+    email: user.email,
+  });
+}
+
 async function handleRequestHasUserObject(profile, done, accessToken, req) {
   const userLogin = await UserLogin.findOne({
     attributes: ['name', 'key'],
@@ -76,27 +88,7 @@ async function handleRequestHasUserObject(profile, done, accessToken, req) {
     return;
   }
 
-  const user = await User.create(
-    getCreateUserOption(req, profile, accessToken),
-    createUserModel,
-  );
-
-  done(null, {
-    id: user.id,
-    email: user.email,
-  });
-}
-
-async function handleCreateUser(profile, done, accessToken, req) {
-  const user = await User.create(
-    getCreateUserOption(req, profile, accessToken),
-    createUserModel,
-  );
-
-  done(null, {
-    id: user.id,
-    email: user.email,
-  });
+  handleCreateUser(profile, done, accessToken, req);
 }
 
 async function handleSearchUserByEmail(profile, done) {
