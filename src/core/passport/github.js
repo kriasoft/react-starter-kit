@@ -155,8 +155,10 @@ function expressInit(app) {
   app.get(routeLoginCallback,
     passport.authenticate('github', { failureRedirect: '/login', session: false }),
     (req, res) => {
+      console.log(req.user);
       const expiresIn = 60 * 60 * 24 * 180; // 180 days
       const token = jwt.sign(req.user, config.jwt.secret, { expiresIn });
+      console.log(token, expiresIn);
       res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
       res.redirect('/');
     },
