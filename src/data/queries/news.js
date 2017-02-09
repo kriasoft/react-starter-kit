@@ -30,7 +30,7 @@ const news = {
       lastFetchTime = new Date();
       lastFetchTask = fetch(url)
         .then(response => response.json())
-        .then(data => {
+        .then((data) => {
           if (data.status === 'ok') {
             items = data.items;
           }
