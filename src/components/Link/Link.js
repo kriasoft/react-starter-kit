@@ -21,6 +21,11 @@ function isModifiedEvent(event) {
 class Link extends React.Component {
   static propTypes = {
     to: PropTypes.string.isRequired,
+    query: PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.object,
+    ]),
+    state: PropTypes.object,
     children: PropTypes.node,
     onClick: PropTypes.func,
   };
@@ -39,11 +44,30 @@ class Link extends React.Component {
     }
 
     event.preventDefault();
-    history.push(this.props.to);
+    history.push({
+      pathname: this.props.to,
+      state: this.props.state ? this.props.state : undefined,
+      search: this.props.query ? this.params(this.props.query) : undefined,
+    });
   };
 
+  params = (arg) => {
+    let params;
+
+    if (typeof arg === 'string') {
+      params = arg.startsWith('?') ? arg : `?${arg}`;
+    } else if (arg === Object(arg) && Object.prototype.toString.call(arg) === '[object Object]') {
+      params = `?${Object.keys(this.props.query).map((key) => (
+        `${encodeURIComponent(key)}=${encodeURIComponent(this.props.query[key])}`
+      )).join('&')}`;
+    }
+
+    return params;
+  }
+
   render() {
-    const { to, children, ...props } = this.props;
+    // eslint-disable-next-line no-unused-vars
+    const { to, children, query, state, ...props } = this.props;
     return <a href={to} {...props} onClick={this.handleClick}>{children}</a>;
   }
 }
