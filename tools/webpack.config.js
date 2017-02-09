@@ -9,8 +9,8 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import extend from 'extend';
 import AssetsPlugin from 'assets-webpack-plugin';
+import pkg from '../package.json';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
@@ -31,50 +31,6 @@ const config = {
 
   module: {
     rules: [
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        include: [
-          path.resolve(__dirname, '../src'),
-        ],
-        query: {
-          // https://github.com/babel/babel-loader#options
-          cacheDirectory: isDebug,
-
-          // https://babeljs.io/docs/usage/options/
-          babelrc: false,
-          presets: [
-            // Latest stable ECMAScript features
-            // https://github.com/babel/babel/tree/master/packages/babel-preset-latest
-            ['latest', { es2015: { modules: false } }],
-            // Experimental ECMAScript proposals
-            // https://github.com/babel/babel/tree/master/packages/babel-preset-stage-0
-            'stage-0',
-            // JSX, Flow
-            // https://github.com/babel/babel/tree/master/packages/babel-preset-react
-            'react',
-            ...isDebug ? [] : [
-              // Optimize React code for the production build
-              // https://github.com/thejameskyle/babel-react-optimize
-              'react-optimize',
-            ],
-          ],
-          plugins: [
-            // Externalise references to helpers and builtins,
-            // automatically polyfilling your code without polluting globals.
-            // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-runtime
-            'transform-runtime',
-            ...!isDebug ? [] : [
-              // Adds component stack to warning messages
-              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
-              'transform-react-jsx-source',
-              // Adds __self attribute to JSX which React will use for some warnings
-              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
-              'transform-react-jsx-self',
-            ],
-          ],
-        },
-      },
       {
         test: /\.css/,
         use: [
@@ -155,17 +111,60 @@ const config = {
 // Configuration for the client-side bundle (client.js)
 // -----------------------------------------------------------------------------
 
-const clientConfig = extend(true, {}, config, {
+const clientConfig = {
+  ...config,
+
+  name: 'client',
+  target: 'web',
+
   entry: {
-    client: './client.js',
+    client: ['babel-polyfill', './client.js'],
   },
 
   output: {
+    ...config.output,
     filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
     chunkFilename: isDebug ? '[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
   },
 
-  target: 'web',
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        include: [
+          path.resolve(__dirname, '../src'),
+        ],
+        query: {
+          // https://github.com/babel/babel-loader#options
+          cacheDirectory: isDebug,
+
+          // https://babeljs.io/docs/usage/options/
+          presets: [ // override package.json/babel.presets
+            // A Babel preset that can automatically determine the Babel plugins and polyfills
+            // https://github.com/babel/babel-preset-env
+            ['env', {
+              targets: {
+                browsers: pkg.browserslist,
+              },
+              modules: false,
+              useBuiltIns: false,
+              debug: false,
+            }],
+            // Experimental ECMAScript proposals
+            // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
+            'stage-2',
+            // JSX, Flow
+            // https://github.com/babel/babel/tree/master/packages/babel-preset-react
+            'react',
+          ],
+        },
+      },
+      ...config.module.rules,
+    ],
+  },
+
+  resolve: { ...config.resolve },
 
   plugins: [
     // For compatability with old loaders
@@ -233,23 +232,57 @@ const clientConfig = extend(true, {}, config, {
     net: 'empty',
     tls: 'empty',
   },
-});
+};
 
 //
 // Configuration for the server-side bundle (server.js)
 // -----------------------------------------------------------------------------
 
-const serverConfig = extend(true, {}, config, {
+const serverConfig = {
+  ...config,
+
+  name: 'server',
+  target: 'node',
+
   entry: {
-    server: './server.js',
+    server: ['babel-polyfill', './server.js'],
   },
 
   output: {
+    ...config.output,
     filename: '../../server.js',
     libraryTarget: 'commonjs2',
   },
 
-  target: 'node',
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        include: [
+          path.resolve(__dirname, '../src'),
+        ],
+        query: {
+          cacheDirectory: isDebug,
+          presets: [ // override package.json/babel.presets
+            ['env', {
+              targets: {
+                node: parseFloat(pkg.engines.node.replace(/^\D+/g, '')),
+              },
+              modules: false,
+              useBuiltIns: false,
+              debug: false,
+            }],
+            'stage-2',
+            'react',
+          ],
+        },
+      },
+      ...config.module.rules,
+    ],
+  },
+
+  resolve: { ...config.resolve },
 
   externals: [
     /^\.\/assets\.json$/,
@@ -293,6 +326,6 @@ const serverConfig = extend(true, {}, config, {
   },
 
   devtool: isDebug ? 'cheap-module-source-map' : 'source-map',
-});
+};
 
 export default [clientConfig, serverConfig];
