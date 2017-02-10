@@ -20,20 +20,30 @@
   max-width: var(--max-content-width);
 }
 
-.news {
-  padding: 0;
-}
-
 .newsItem {
-  list-style-type: none;
-  padding-bottom: 6px;
+  margin: 0 0 2rem;
 }
 
 .newsTitle {
-  font-size: 1.125em;
+  font-size: 1.5rem;
 }
 
-.newsTitle,
 .newsDesc {
-  display: block;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: 1.125rem;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+  }
+
+  img {
+    max-width: 100%;
+  }
 }

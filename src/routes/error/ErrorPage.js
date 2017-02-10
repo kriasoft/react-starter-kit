@@ -13,7 +13,11 @@ import s from './ErrorPage.css';
 
 class ErrorPage extends React.Component {
   static propTypes = {
-    error: PropTypes.object.isRequired,
+    error: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      message: PropTypes.string.isRequired,
+      stack: PropTypes.string.isRequired,
+    }).isRequired,
   };
 
   render() {
