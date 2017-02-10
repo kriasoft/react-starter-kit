@@ -34,7 +34,7 @@ async function start() {
   await new Promise((resolve) => {
     // Save the server-side bundle files to the file system after compilation
     // https://github.com/webpack/webpack-dev-server/issues/62
-    webpackConfig.find(x => x.target === 'node').plugins.push(
+    webpackConfig.find(x => x.name === 'server').plugins.push(
       new WriteFilePlugin({ log: false }),
     );
 
