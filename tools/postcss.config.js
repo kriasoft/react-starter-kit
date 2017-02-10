@@ -7,8 +7,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-/* eslint-disable global-require */
-
 module.exports = () => ({
   // The list of plugins for PostCSS
   // https://github.com/postcss/postcss

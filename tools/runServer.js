@@ -16,8 +16,8 @@ const RUNNING_REGEXP = /The server is running at http:\/\/(.*?)\//;
 
 let server;
 let pending = true;
-const { output } = webpackConfig.find(x => x.name === 'server');
-const serverPath = path.join(output.path, output.filename);
+const [, serverConfig] = webpackConfig;
+const serverPath = path.join(serverConfig.output.path, serverConfig.output.filename);
 
 // Launch or restart the Node.js server
 function runServer() {

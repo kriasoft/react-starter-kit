@@ -167,13 +167,6 @@ const clientConfig = {
   resolve: { ...config.resolve },
 
   plugins: [
-    // For compatability with old loaders
-    // https://webpack.js.org/guides/migrating/#loaderoptionsplugin-context
-    new webpack.LoaderOptionsPlugin({
-      minimize: !isDebug,
-      debug: isDebug,
-    }),
-
     // Define free variables
     // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
     new webpack.DefinePlugin({

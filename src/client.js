@@ -150,23 +150,18 @@ async function onLocationChange(location, initial) {
       () => onRenderComplete(route, location),
     );
   } catch (error) {
-    console.error(error); // eslint-disable-line no-console
-
-    // Current url has been changed during navigation process, do nothing
-    if (currentLocation.key !== location.key) {
-      return;
-    }
-
     // Display the error in full-screen for development mode
     if (process.env.NODE_ENV !== 'production') {
       appInstance = null;
       document.title = `Error: ${error.message}`;
       ReactDOM.render(<ErrorReporter error={error} />, container);
-      return;
+      throw error;
     }
 
-    if (!initial) {
-      // Avoid broken navigation in production mode by a full page reload on error
+    console.error(error); // eslint-disable-line no-console
+
+    // Avoid broken navigation in production mode by a full page reload on error
+    if (!initial && currentLocation.key === location.key) {
       window.location.reload();
     }
   }
