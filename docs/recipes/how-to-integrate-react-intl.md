@@ -109,11 +109,11 @@ export default injectIntl(Example);
 When running the development server, every source file is watched and parsed for changed messages.
 
 Messages files are updated on the fly.
-If a new definition is found, this definition is added to the end of every used `src/messages/xx-XX.json` file so when commiting, new translations will be at the tail of file.
+If a new definition is found, this definition is added to the end of every used `src/messages/xx-XX.json` file so when committing, new translations will be at the tail of file.
 
 When an untranslated message is removed and its `message` field is empty as well, the message will be deleted from all translation files. This is why the `files` array is present.
 
-When editiong a translation file, it should be copied to `build/messages/` directory.
+When editing a translation file, it should be copied to `build/messages/` directory.
 
 ### Other References
 
