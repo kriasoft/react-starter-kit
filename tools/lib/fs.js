@@ -1,7 +1,7 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
@@ -13,7 +13,7 @@ import glob from 'glob';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
 
-export const readFile = (file) => new Promise((resolve, reject) => {
+export const readFile = file => new Promise((resolve, reject) => {
   fs.readFile(file, 'utf8', (err, data) => (err ? reject(err) : resolve(data)));
 });
 
@@ -46,7 +46,7 @@ export const readDir = (pattern, options) => new Promise((resolve, reject) =>
   glob(pattern, options, (err, result) => (err ? reject(err) : resolve(result))),
 );
 
-export const makeDir = (name) => new Promise((resolve, reject) => {
+export const makeDir = name => new Promise((resolve, reject) => {
   mkdirp(name, err => (err ? reject(err) : resolve()));
 });
 
@@ -56,7 +56,7 @@ export const copyDir = async (source, target) => {
     nosort: true,
     dot: true,
   });
-  await Promise.all(dirs.map(async dir => {
+  await Promise.all(dirs.map(async (dir) => {
     const from = path.resolve(source, dir);
     const to = path.resolve(target, dir);
     await makeDir(path.dirname(to));
@@ -67,3 +67,13 @@ export const copyDir = async (source, target) => {
 export const cleanDir = (pattern, options) => new Promise((resolve, reject) =>
   rimraf(pattern, { glob: options }, (err, result) => (err ? reject(err) : resolve(result))),
 );
+
+export default {
+  readFile,
+  writeFile,
+  copyFile,
+  readDir,
+  makeDir,
+  copyDir,
+  cleanDir,
+};

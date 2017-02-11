@@ -6,19 +6,24 @@
     "node": ">=6.5",
     "npm": ">=3.10"
   },
+  "browserslist": [
+    ">1%",
+    "last 4 versions",
+    "Firefox ESR",
+    "not ie < 9"
+  ],
   "dependencies": {
     "babel-polyfill": "^6.22.0",
-    "babel-runtime": "^6.22.0",
     "bluebird": "^3.4.7",
     "body-parser": "^1.16.0",
     "classnames": "^2.2.5",
     "cookie-parser": "^1.4.3",
     "core-js": "^2.4.1",
     "express": "^4.14.1",
-    "express-graphql": "^0.6.2",
+    "express-graphql": "^0.6.3",
     "express-jwt": "^5.1.0",
     "fastclick": "^1.0.6",
-    "fbjs": "^0.8.8",
+    "fbjs": "^0.8.9",
     "graphql": "^0.9.1",
     "history": "^4.5.1",
     "isomorphic-style-loader": "^1.1.0",
@@ -50,11 +55,10 @@
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.10",
     "babel-plugin-rewire": "^1.0.0",
-    "babel-plugin-transform-runtime": "^6.22.0",
-    "babel-preset-latest": "^6.22.0",
+    "babel-preset-env": "^1.1.8",
     "babel-preset-react": "^6.22.0",
     "babel-preset-react-optimize": "^1.0.1",
-    "babel-preset-stage-0": "^6.22.0",
+    "babel-preset-stage-2": "^6.22.0",
     "babel-register": "^6.22.0",
     "babel-template": "^6.22.0",
     "babel-types": "^6.22.0",
@@ -64,17 +68,15 @@
     "css-loader": "^0.26.1",
     "editorconfig-tools": "^0.1.1",
     "enzyme": "^2.7.1",
-    "eslint": "^3.14.1",
-    "eslint-config-airbnb": "^14.0.0",
+    "eslint": "^3.15.0",
+    "eslint-config-airbnb": "^14.1.0",
     "eslint-loader": "^1.6.1",
-    "eslint-plugin-css-modules": "^2.1.0",
+    "eslint-plugin-css-modules": "^2.2.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^3.0.2",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.9.0",
-    "extend": "^3.0.0",
     "file-loader": "^0.10.0",
     "front-matter": "^2.1.2",
-    "git-repository": "^0.1.4",
     "glob": "^7.1.1",
     "json-loader": "^0.5.4",
     "lint-staged": "^3.3.0",
@@ -83,11 +85,11 @@
     "mocha": "^3.2.0",
     "pixrem": "^3.0.2",
     "pleeease-filters": "^3.0.0",
-    "postcss": "^5.2.11",
+    "postcss": "^5.2.12",
     "postcss-calc": "^5.3.1",
-    "postcss-color-function": "^2.0.1",
+    "postcss-color-function": "^3.0.0",
     "postcss-custom-media": "^5.0.1",
-    "postcss-custom-properties": "^5.0.1",
+    "postcss-custom-properties": "^5.0.2",
     "postcss-custom-selectors": "^3.0.0",
     "postcss-flexbugs-fixes": "^2.1.0",
     "postcss-loader": "^1.2.2",
@@ -109,30 +111,39 @@
     "rimraf": "^2.5.4",
     "sinon": "^2.0.0-pre.5",
     "stylefmt": "^5.1.1",
-    "stylelint": "^7.7.1",
-    "stylelint-config-standard": "^15.0.1",
+    "stylelint": "^7.8.0",
+    "stylelint-config-standard": "^16.0.0",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.1",
-    "webpack-dev-middleware": "^1.9.0",
+    "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.16.1",
     "write-file-webpack-plugin": "^3.4.2"
   },
   "babel": {
     "presets": [
-      "react",
-      "stage-0"
-    ],
-    "plugins": [
-      "syntax-trailing-function-commas",
-      "transform-async-to-generator",
-      "transform-es2015-destructuring",
-      "transform-es2015-parameters",
-      "transform-es2015-duplicate-keys",
-      "transform-es2015-modules-commonjs",
-      "transform-exponentiation-operator",
-      "transform-runtime"
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ],
+      "stage-2",
+      "react"
     ],
     "env": {
+      "production": {
+        "presets": [
+          "react-optimize"
+        ]
+      },
+      "development": {
+        "plugins": [
+          "transform-react-jsx-source",
+          "transform-react-jsx-self"
+        ]
+      },
       "test": {
         "plugins": [
           "rewire"
@@ -156,17 +167,10 @@
       "browser": true
     },
     "rules": {
-      "arrow-parens": "off",
-      "generator-star-spacing": "off",
       "import/extensions": "off",
       "import/no-extraneous-dependencies": "off",
-      "react/forbid-prop-types": "off",
       "react/jsx-filename-extension": "off",
-      "react/no-array-index-key": "off",
-      "react/no-danger": "off",
-      "react/no-unused-prop-types": "off",
-      "react/prefer-stateless-function": "off",
-      "react/require-default-props": "off"
+      "react/prefer-stateless-function": "off"
     }
   },
   "stylelint": {
@@ -193,7 +197,7 @@
   },
   "pre-commit": "lint:staged",
   "lint-staged": {
-    "*.{md,sh,txt,xml,html,json}": [
+    "*.{cmd,html,json,md,sh,txt,xml,yml}": [
       "editorconfig-tools fix",
       "git add"
     ],
@@ -218,7 +222,7 @@
     "copy": "babel-node tools/run copy",
     "bundle": "babel-node tools/run bundle",
     "build": "babel-node tools/run build",
-    "deploy": "babel-node tools/run deployToAzureWebApps",
+    "deploy": "babel-node tools/run deploy",
     "render": "babel-node tools/run render",
     "serve": "babel-node tools/run runServer",
     "start": "babel-node tools/run start"

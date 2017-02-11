@@ -1,7 +1,7 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
@@ -16,12 +16,12 @@ const RUNNING_REGEXP = /The server is running at http:\/\/(.*?)\//;
 
 let server;
 let pending = true;
-const { output } = webpackConfig.find(x => x.target === 'node');
-const serverPath = path.join(output.path, output.filename);
+const [, serverConfig] = webpackConfig;
+const serverPath = path.join(serverConfig.output.path, serverConfig.output.filename);
 
 // Launch or restart the Node.js server
 function runServer() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     function onStdOut(data) {
       const time = new Date().toTimeString();
       const match = data.toString('utf8').match(RUNNING_REGEXP);

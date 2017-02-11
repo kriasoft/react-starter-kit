@@ -8,7 +8,9 @@ than `node-sass`.
 
 ### Step 1
 
-Install [`node-sass`](https://github.com/sass/node-sass) and
+Install [`node-sass`](https://github.com/sass/node-sass)
+(includes [node-gyp](https://github.com/nodejs/node-gyp#readme)
+and [prerequisites](https://github.com/nodejs/node-gyp#installation)) and
 [`sass-loader`](https://github.com/jtangelder/sass-loader) modules as dev dependencies:
 
 ```sh

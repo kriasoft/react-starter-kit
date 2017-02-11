@@ -1,13 +1,12 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
@@ -118,7 +117,7 @@ let currentLocation = history.location;
 let routes = require('./routes').default;
 
 // Re-render the app when window.location changes
-async function onLocationChange(location) {
+async function onLocationChange(location, initial) {
   // Remember the latest scroll position for the previous location
   scrollPositionsHistory[currentLocation.key] = {
     scrollX: window.pageXOffset,
@@ -156,30 +155,37 @@ async function onLocationChange(location) {
       () => onRenderComplete(route, location),
     );
   } catch (error) {
-    console.error(error); // eslint-disable-line no-console
-
-    // Current url has been changed during navigation process, do nothing
-    if (currentLocation.key !== location.key) {
-      return;
-    }
-
     // Display the error in full-screen for development mode
     if (process.env.NODE_ENV !== 'production') {
       appInstance = null;
       document.title = `Error: ${error.message}`;
       ReactDOM.render(<ErrorReporter error={error} />, container);
-      return;
+      throw error;
     }
 
+    console.error(error); // eslint-disable-line no-console
+
     // Avoid broken navigation in production mode by a full page reload on error
-    window.location.reload();
+    if (!initial && currentLocation.key === location.key) {
+      window.location.reload();
+    }
   }
 }
 
 // Handle client-side navigation by using HTML5 History API
 // For more information visit https://github.com/mjackson/history#readme
 history.listen(onLocationChange);
-onLocationChange(currentLocation);
+onLocationChange(currentLocation, true);
+
+// Handle errors that might happen after rendering
+// Display the error in full-screen for development mode
+if (process.env.NODE_ENV !== 'production') {
+  window.addEventListener('error', (event) => {
+    appInstance = null;
+    document.title = `Runtime Error: ${event.error.message}`;
+    ReactDOM.render(<ErrorReporter error={event.error} />, container);
+  });
+}
 
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
