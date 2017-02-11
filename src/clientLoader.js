@@ -20,7 +20,7 @@ if (!global.Intl) {
     'intl',
     'intl/locale-data/jsonp/en.js',
     'intl/locale-data/jsonp/cs.js',
-  ], require => {
+  ], (require) => {
     // and require them here
     require('intl');
     require('intl/locale-data/jsonp/en.js');

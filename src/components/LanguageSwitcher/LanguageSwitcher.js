@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 import { setLocale } from '../../actions/intl';
 
 function LanguageSwitcher({ currentLocale, availableLocales, setLocale }) {
-  const isSelected = (locale) => locale === currentLocale;
+  const isSelected = locale => locale === currentLocale;
   const localeDict = {
     'en-US': 'English',
     'cs-CZ': 'Česky',
   };
-  const localeName = (locale) => localeDict[locale] || locale;
+  const localeName = locale => localeDict[locale] || locale;
   return (
     <div>
       {availableLocales.map(locale => (
@@ -41,7 +41,7 @@ LanguageSwitcher.propTypes = {
   setLocale: PropTypes.func.isRequired,
 };
 
-const mapState = (state) => ({
+const mapState = state => ({
   availableLocales: state.runtime.availableLocales,
   currentLocale: state.intl.locale,
 });

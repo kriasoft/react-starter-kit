@@ -38,7 +38,7 @@ async function mergeToFile(locale, toBuild) {
       throw new Error(`Error parsing messages JSON in file ${fileName}`);
     }
 
-    oldJson.forEach(message => {
+    oldJson.forEach((message) => {
       originalMessages[message.id] = message;
       delete originalMessages[message.id].files;
     });
@@ -48,7 +48,7 @@ async function mergeToFile(locale, toBuild) {
     }
   }
 
-  Object.keys(messages).forEach(id => {
+  Object.keys(messages).forEach((id) => {
     const newMsg = messages[id];
     originalMessages[id] = originalMessages[id] || { id };
     const msg = originalMessages[id];
@@ -80,8 +80,8 @@ async function mergeToFile(locale, toBuild) {
 // call everytime before updating file!
 function mergeMessages() {
   messages = {};
-  Object.keys(fileToMessages).forEach(fileName => {
-    fileToMessages[fileName].forEach(newMsg => {
+  Object.keys(fileToMessages).forEach((fileName) => {
+    fileToMessages[fileName].forEach((newMsg) => {
       const message = messages[newMsg.id] || {};
       messages[newMsg.id] = {
         description: newMsg.description || message.description,

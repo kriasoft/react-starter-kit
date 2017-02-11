@@ -22,9 +22,7 @@ and newcomers to the industry.
 ### Getting Started
 
   * Follow the [getting started guide](./docs/getting-started.md) to download and run the project
-    ([node](https://nodejs.org/) >= 6,
-    **[node-gyp](https://github.com/nodejs/node-gyp#readme)**
-    and **[prerequisites](https://github.com/nodejs/node-gyp#installation)**)
+    ([Node.js](https://nodejs.org/) >= 6.5)
   * Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
 
 
@@ -217,7 +215,7 @@ requests](CONTRIBUTING.md#pull-requests).
 
 ### License
 
-Copyright © 2014-2016 Kriasoft, LLC. This source code is licensed under the MIT
+Copyright © 2014-present Kriasoft, LLC. This source code is licensed under the MIT
 license found in the [LICENSE.txt](https://github.com/kriasoft/react-starter-kit/blob/master/LICENSE.txt)
 file. The documentation to the project is licensed under the
 [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license.

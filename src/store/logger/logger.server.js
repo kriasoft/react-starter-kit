@@ -2,7 +2,8 @@ import { inspect } from 'util';
 
 // Server side redux action logger
 export default function createLogger() {
-  return store => next => action => { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
+  return store => next => (action) => {
     const formattedPayload = inspect(action.payload, {
       colors: true,
     });
