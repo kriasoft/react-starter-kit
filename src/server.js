@@ -94,10 +94,7 @@ app.get('*', async (req, res, next) => {
     const context = {
       // Enables critical path CSS rendering
       // https://github.com/kriasoft/isomorphic-style-loader
-      insertCss: (...styles) => {
-        // eslint-disable-next-line no-underscore-dangle
-        styles.forEach(style => css.add(style._getCss()));
-      },
+      insertCss: style => css.add(style.getCss()),
     };
 
     const route = await UniversalRouter.resolve(routes, {
@@ -112,9 +109,7 @@ app.get('*', async (req, res, next) => {
 
     const data = { ...route };
     data.children = ReactDOM.renderToString(<App context={context}>{route.component}</App>);
-    data.styles = [
-      { id: 'css', cssText: [...css].join('') },
-    ];
+    data.styles = [...css];
     data.scripts = [
       assets.vendor.js,
       assets.client.js,
@@ -144,7 +139,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     <Html
       title="Internal Server Error"
       description={err.message}
-      styles={[{ id: 'css', cssText: errorPageStyle._getCss() }]} // eslint-disable-line no-underscore-dangle
+      styles={[errorPageStyle.getCss()]} // eslint-disable-line css-modules/no-undef-class
     >
       {ReactDOM.renderToString(<ErrorPageWithoutStyle error={err} />)}
     </Html>,

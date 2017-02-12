@@ -8,7 +8,7 @@
  */
 
 import React, { PropTypes } from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from '../../components/withStyles';
 import s from './Admin.css';
 
 class Admin extends React.Component {

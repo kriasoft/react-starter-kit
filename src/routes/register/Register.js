@@ -8,7 +8,7 @@
  */
 
 import React, { PropTypes } from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from '../../components/withStyles';
 import s from './Register.css';
 
 class Register extends React.Component {

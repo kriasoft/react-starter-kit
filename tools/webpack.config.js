@@ -80,11 +80,9 @@ const config = {
         test: /\.css/,
         use: [
           {
-            loader: 'isomorphic-style-loader',
-          },
-          {
-            loader: 'css-loader',
+            loader: path.resolve(__dirname, './lib/inline-css-loader.js'),
             options: {
+              identName: isDebug ? '[path][name].[ext]' : '[hash:8]',
               // CSS Loader https://github.com/webpack/css-loader
               importLoaders: 1,
               sourceMap: isDebug,
