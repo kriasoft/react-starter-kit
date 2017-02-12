@@ -15,8 +15,6 @@ import bundle from './bundle';
 import render from './render';
 import pkg from '../package.json';
 
-process.env.NODE_ENV = process.argv.includes('--release') ? 'production' : 'development';
-
 /**
  * Compiles the project from source files into a distributable
  * format and copies it to the output (build) folder.

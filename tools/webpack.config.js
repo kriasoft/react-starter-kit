@@ -32,6 +32,49 @@ const config = {
   module: {
     rules: [
       {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        include: [
+          path.resolve(__dirname, '../src'),
+        ],
+        query: {
+          // https://github.com/babel/babel-loader#options
+          cacheDirectory: isDebug,
+
+          // https://babeljs.io/docs/usage/options/
+          babelrc: false,
+          presets: [
+            // A Babel preset that can automatically determine the Babel plugins and polyfills
+            // https://github.com/babel/babel-preset-env
+            ['env', {
+              targets: {
+                browsers: pkg.browserslist,
+              },
+              modules: false,
+              useBuiltIns: false,
+              debug: false,
+            }],
+            // Experimental ECMAScript proposals
+            // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
+            'stage-2',
+            // JSX, Flow
+            // https://github.com/babel/babel/tree/master/packages/babel-preset-react
+            'react',
+            // Optimize React code for the production build
+            // https://github.com/thejameskyle/babel-react-optimize
+            ...isDebug ? [] : ['react-optimize'],
+          ],
+          plugins: [
+            // Adds component stack to warning messages
+            // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
+            ...isDebug ? ['transform-react-jsx-source'] : [],
+            // Adds __self attribute to JSX which React will use for some warnings
+            // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
+            ...isDebug ? ['transform-react-jsx-self'] : [],
+          ],
+        },
+      },
+      {
         test: /\.css/,
         use: [
           {
@@ -127,43 +170,6 @@ const clientConfig = {
     chunkFilename: isDebug ? '[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
   },
 
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        include: [
-          path.resolve(__dirname, '../src'),
-        ],
-        query: {
-          // https://github.com/babel/babel-loader#options
-          cacheDirectory: isDebug,
-
-          // https://babeljs.io/docs/usage/options/
-          presets: [ // override package.json/babel.presets
-            // A Babel preset that can automatically determine the Babel plugins and polyfills
-            // https://github.com/babel/babel-preset-env
-            ['env', {
-              targets: {
-                browsers: pkg.browserslist,
-              },
-              modules: false,
-              useBuiltIns: false,
-              debug: false,
-            }],
-            // Experimental ECMAScript proposals
-            // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
-            'stage-2',
-            // JSX, Flow
-            // https://github.com/babel/babel/tree/master/packages/babel-preset-react
-            'react',
-          ],
-        },
-      },
-      ...config.module.rules,
-    ],
-  },
-
   resolve: { ...config.resolve },
 
   plugins: [
@@ -248,31 +254,23 @@ const serverConfig = {
   },
 
   module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        include: [
-          path.resolve(__dirname, '../src'),
-        ],
-        query: {
-          cacheDirectory: isDebug,
-          presets: [ // override package.json/babel.presets
-            ['env', {
-              targets: {
-                node: parseFloat(pkg.engines.node.replace(/^\D+/g, '')),
-              },
-              modules: false,
-              useBuiltIns: false,
-              debug: false,
-            }],
-            'stage-2',
-            'react',
-          ],
-        },
+    ...config.module,
+
+    // Override babel-preset-env configuration for Node.js
+    rules: config.module.rules.map(rule => (rule.loader !== 'babel-loader' ? rule : {
+      ...rule,
+      query: {
+        ...rule.query,
+        presets: rule.query.presets.map(preset => (preset[0] !== 'env' ? preset : ['env', {
+          targets: {
+            node: parseFloat(pkg.engines.node.replace(/^\D+/g, '')),
+          },
+          modules: false,
+          useBuiltIns: false,
+          debug: false,
+        }])),
       },
-      ...config.module.rules,
-    ],
+    })),
   },
 
   resolve: { ...config.resolve },

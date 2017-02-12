@@ -19,7 +19,6 @@ import clean from './clean';
 import copy from './copy';
 
 const isDebug = !process.argv.includes('--release');
-process.env.NODE_ENV = isDebug ? 'development' : 'production';
 process.argv.push('--watch');
 
 const [clientConfig, serverConfig] = webpackConfig;
