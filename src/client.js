@@ -16,6 +16,7 @@ import { createPath } from 'history/PathUtils';
 import history from './core/history';
 import App from './components/App';
 import configureStore from './store/configureStore';
+import { updateMeta } from './core/DOMUtils';
 import { ErrorReporter, deepForceUpdate } from './core/devUtils';
 
 // Global (context) variables that can be easily accessed from any React component
@@ -32,31 +33,6 @@ const context = {
   // http://redux.js.org/docs/basics/UsageWithReact.html
   store: configureStore(window.APP_STATE, { history }),
 };
-
-function updateTag(tagName, keyName, keyValue, attrName, attrValue) {
-  const node = document.head.querySelector(`${tagName}[${keyName}="${keyValue}"]`);
-  if (node && node.getAttribute(attrName) === attrValue) return;
-
-  // Remove and create a new tag in order to make it work with bookmarks in Safari
-  if (node) {
-    node.parentNode.removeChild(node);
-  }
-  if (typeof attrValue === 'string') {
-    const nextNode = document.createElement(tagName);
-    nextNode.setAttribute(keyName, keyValue);
-    nextNode.setAttribute(attrName, attrValue);
-    document.head.appendChild(nextNode);
-  }
-}
-function updateMeta(name, content) {
-  updateTag('meta', 'name', name, 'content', content);
-}
-function updateCustomMeta(property, content) { // eslint-disable-line no-unused-vars
-  updateTag('meta', 'property', property, 'content', content);
-}
-function updateLink(rel, href) { // eslint-disable-line no-unused-vars
-  updateTag('link', 'rel', rel, 'href', href);
-}
 
 // Switch off the native scroll restoration behavior and handle it manually
 // https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
@@ -117,14 +93,14 @@ let currentLocation = history.location;
 let routes = require('./routes').default;
 
 // Re-render the app when window.location changes
-async function onLocationChange(location, initial) {
+async function onLocationChange(location, action) {
   // Remember the latest scroll position for the previous location
   scrollPositionsHistory[currentLocation.key] = {
     scrollX: window.pageXOffset,
     scrollY: window.pageYOffset,
   };
   // Delete stored scroll position for next page if any
-  if (history.action === 'PUSH') {
+  if (action === 'PUSH') {
     delete scrollPositionsHistory[location.key];
   }
   currentLocation = location;
@@ -165,8 +141,8 @@ async function onLocationChange(location, initial) {
 
     console.error(error); // eslint-disable-line no-console
 
-    // Avoid broken navigation in production mode by a full page reload on error
-    if (!initial && currentLocation.key === location.key) {
+    // Do a full page reload if error occurs during client-side navigation
+    if (action && currentLocation.key === location.key) {
       window.location.reload();
     }
   }
@@ -175,7 +151,7 @@ async function onLocationChange(location, initial) {
 // Handle client-side navigation by using HTML5 History API
 // For more information visit https://github.com/mjackson/history#readme
 history.listen(onLocationChange);
-onLocationChange(currentLocation, true);
+onLocationChange(currentLocation);
 
 // Handle errors that might happen after rendering
 // Display the error in full-screen for development mode
