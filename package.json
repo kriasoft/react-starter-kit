@@ -138,20 +138,6 @@
       "react"
     ],
     "env": {
-      "production": {
-        "presets": [
-          "react-optimize"
-        ],
-        "plugins": [
-          "react-intl"
-        ]
-      },
-      "development": {
-        "plugins": [
-          "transform-react-jsx-source",
-          "transform-react-jsx-self"
-        ]
-      },
       "test": {
         "plugins": [
           "rewire"
