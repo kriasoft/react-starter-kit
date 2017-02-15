@@ -24,10 +24,11 @@
 ##### Options
 
 Flag        | Description
------------ | -------------------------------------------------- 
+----------- | --------------------------------------------------
 `--release` | Minimizes and optimizes the compiled output
 `--verbose` | Prints detailed information to the console
 `--static`  | Renders [specified routes](./render.js#L15) as static html files
+`--docker`  | Build an image from a Dockerfile
 
 For example:
 
@@ -44,5 +45,6 @@ $ yarn start -- --release                 # Launch dev server in production mode
 #### Misc
 
 * `webpack.config.js` - Webpack configuration for both client-side and server-side bundles
+* `postcss.config.js` - PostCSS configuration for transforming styles with JS plugins
 * `run.js` - Helps to launch other scripts with `babel-node` (e.g. `babel-node tools/run build`)
 * `.eslintrc` - ESLint overrides for built automation scripts

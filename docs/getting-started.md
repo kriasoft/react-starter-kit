@@ -4,7 +4,6 @@
 
   * Mac OS X, Windows, or Linux
   * [Yarn](https://yarnpkg.com/) package + [Node.js](https://nodejs.org/) v6.5 or newer
-  * `node-gyp` prerequisites mentioned [here](https://github.com/nodejs/node-gyp)
   * Text editor or IDE pre-configured with React/JSX/Flow/ESlint ([learn more](./how-to-configure-text-editors.md))
 
 ### Directory Layout
@@ -33,11 +32,14 @@ Before you start, take a moment to see how the project structure looks like:
 │   ├── /clean.js               # Cleans up the output (build) folder
 │   ├── /copy.js                # Copies static files to output (build) folder
 │   ├── /deploy.js              # Deploys your web application
+│   ├── /postcss.config.js      # Configuration for transforming styles with PostCSS plugins
 │   ├── /run.js                 # Helper function for running build automation tasks
 │   ├── /runServer.js           # Launches (or restarts) Node.js server
 │   ├── /start.js               # Launches the development web server with "live reload"
 │   └── /webpack.config.js      # Configurations for client-side and server-side bundles
-└── package.json                # The list of 3rd party libraries and utilities
+├── Dockerfile                  # Commands for building a Docker image for production
+├── package.json                # The list of 3rd party libraries and utilities
+└── yarn.lock                   # Fixed versions of all the dependencies
 ```
 
 **Note**: The current version of RSK does not contain a Flux implementation.

@@ -20,7 +20,7 @@ class Header extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <Navigation className={s.nav} />
+          <Navigation />
           <Link className={s.brand} to="/">
             <img src={logoUrl} srcSet={`${logoUrl2x} 2x`} width="38" height="38" alt="React" />
             <span className={s.brandTxt}>Your Company</span>
