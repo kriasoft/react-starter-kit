@@ -125,9 +125,9 @@ async function handleRequestHasUserObject(profile, done, accessToken, req) {
 
 async function handleRequestHasNoUserObject(profile, done, accessToken, req) {
   /* eslint no-unused-expressions: ["error", { "allowShortCircuit": true }]*/
-  handleSearchUserByProfileId(profile, done) ||
-  handleSearchUserByEmail(profile, done) ||
-  handleCreateUser(profile, done, accessToken, req);
+  await handleSearchUserByProfileId(profile, done) ||
+  await handleSearchUserByEmail(profile, done) ||
+  await handleCreateUser(profile, done, accessToken, req);
 }
 
 function passportInit(passportLib: passport) {
