@@ -74,33 +74,6 @@ async function handleCreateUser(profile, done, accessToken, req) {
   });
 }
 
-async function handleRequestHasUserObject(profile, done, accessToken, req) {
-  const userLogin = await UserLogin.findOne({
-    attributes: ['name', 'key'],
-    where: { name: loginName, key: profile.id },
-  });
-  if (userLogin) {
-    // There is already a github account that belongs to you.
-    // Sign in with that account or delete it, then link it with your current account.
-    done();
-    return;
-  }
-
-  handleCreateUser(profile, done, accessToken, req);
-}
-
-async function handleSearchUserByEmail(profile, done) {
-  // eslint-disable-next-line no-underscore-dangle
-  const user = await User.findOne({ where: { email: profile._json.email } });
-  if (user) {
-    // There is already an account using this email address. Sign in to
-    // that account and link it with github manually from Account Settings.
-    done(null);
-    return true;
-  }
-  return false;
-}
-
 async function handleSearchUserByProfileId(profile, done) {
   const users = await User.findAll({
     attributes: ['id', 'email'],
@@ -123,6 +96,40 @@ async function handleSearchUserByProfileId(profile, done) {
   return false;
 }
 
+async function handleSearchUserByEmail(profile, done) {
+  // eslint-disable-next-line no-underscore-dangle
+  const user = await User.findOne({ where: { email: profile._json.email } });
+  if (user) {
+    // There is already an account using this email address. Sign in to
+    // that account and link it with github manually from Account Settings.
+    done(null);
+    return true;
+  }
+  return false;
+}
+
+async function handleRequestHasUserObject(profile, done, accessToken, req) {
+  const userLogin = await UserLogin.findOne({
+    attributes: ['name', 'key'],
+    where: { name: loginName, key: profile.id },
+  });
+  if (userLogin) {
+    // There is already a github account that belongs to you.
+    // Sign in with that account or delete it, then link it with your current account.
+    done();
+    return;
+  }
+
+  handleCreateUser(profile, done, accessToken, req);
+}
+
+async function handleRequestHasNoUserObject(profile, done, accessToken, req) {
+  /* eslint no-unused-expressions: ["error", { "allowShortCircuit": true }]*/
+  handleSearchUserByProfileId(profile, done) ||
+  handleSearchUserByEmail(profile, done) ||
+  handleCreateUser(profile, done, accessToken, req);
+}
+
 function passportInit(passportLib: passport) {
   passportLib.use(new GitHubStrategy({
     clientID: config.github.id,
@@ -136,13 +143,9 @@ function passportInit(passportLib: passport) {
 
     if (req.user) {
       handleRequestHasUserObject(profile, done, accessToken, req);
-      return;
+    } else {
+      handleRequestHasNoUserObject(profile, done, accessToken, req);
     }
-
-    /* eslint no-unused-expressions: ["error", { "allowShortCircuit": true }]*/
-    handleSearchUserByProfileId(profile, done) ||
-    handleSearchUserByEmail(profile, done) ||
-    handleCreateUser(profile, done, accessToken, req);
   },
 ));
 }
@@ -155,10 +158,8 @@ function expressInit(app) {
   app.get(routeLoginCallback,
     passport.authenticate('github', { failureRedirect: '/login', session: false }),
     (req, res) => {
-      console.log(req.user);
       const expiresIn = 60 * 60 * 24 * 180; // 180 days
       const token = jwt.sign(req.user, config.jwt.secret, { expiresIn });
-      console.log(token, expiresIn);
       res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
       res.redirect('/');
     },
