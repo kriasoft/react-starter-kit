@@ -10,10 +10,26 @@
 import path from 'path';
 import webpack from 'webpack';
 import AssetsPlugin from 'assets-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import pkg from '../package.json';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
+const isAnalyse = process.argv.includes('--analyse') || process.argv.includes('--analyze');
+const port = parseInt(process.env.PORT || '3000', 10);
+const analyzerPort = port + 3;
+
+// Can be `server`, `static` or `disabled`.
+// In `server` mode analyzer will start HTTP server to show bundle report.
+// In `static` mode single HTML file with bundle report will be generated.
+// In `disabled` mode you can use this plugin to just generate Webpack Stats JSON
+// file by setting `generateStatsFile` to `true`.
+let analyzerMode = 'disabled';
+if (isAnalyse) {
+  analyzerMode = 'server';
+} else if (!isDebug) {
+  analyzerMode = 'static';
+}
 
 //
 // Common configuration chunk to be used for both
@@ -216,6 +232,31 @@ const clientConfig = {
         },
       }),
     ],
+
+    new BundleAnalyzerPlugin({
+      // See above
+      analyzerMode,
+      // Host that will be used in `server` mode to start HTTP server.
+      analyzerHost: '127.0.0.1',
+      // Port that will be used in `server` mode to start HTTP server.
+      analyzerPort,
+      // Path to bundle report file that will be generated in `static` mode.
+      // Relative to bundles output directory.
+      reportFilename: path.resolve(__dirname, '../report.html'),
+      // Automatically open report in default browser
+      openAnalyzer: true,
+      // If `true`, Webpack Stats JSON file will be generated in bundles output directory
+      generateStatsFile: !isDebug,
+      // Name of Webpack Stats JSON file that will be generated if `generateStatsFile` is `true`.
+      // Relative to bundles output directory.
+      statsFilename: path.resolve(__dirname, '../stats.json'),
+      // Options for `stats.toJson()` method.
+      // You can exclude sources of your modules from stats file with `source: false` option.
+      // See more options here: https://github.com/webpack/webpack/blob/webpack-1/lib/Stats.js#L21
+      statsOptions: null,
+      // Log level. Can be 'info', 'warn', 'error' or 'silent'.
+      logLevel: 'info',
+    }),
   ],
 
   // Choose a developer tool to enhance debugging
