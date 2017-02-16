@@ -109,6 +109,7 @@
     "stylelint-config-standard": "^16.0.0",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.1",
+    "webpack-bundle-analyzer": "^2.3.0",
     "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.16.1",
     "write-file-webpack-plugin": "^3.4.2"
@@ -205,10 +206,10 @@
     "copy": "babel-node tools/run copy",
     "bundle": "babel-node tools/run bundle",
     "build": "babel-node tools/run build",
+    "build:stats": "yarn run build -- --release --analyse",
     "deploy": "babel-node tools/run deploy",
     "render": "babel-node tools/run render",
     "serve": "babel-node tools/run runServer",
-    "start": "babel-node tools/run start",
-    "stats": "babel-node tools/run stats"
+    "start": "babel-node tools/run start"
   }
 }
