@@ -12,13 +12,7 @@ import { writeFile } from 'fs';
 import { open } from 'openurl';
 import webpackConfig from './webpack.config';
 
-const isDebug = !process.argv.includes('--release');
 const WEBPACK_ANALYSER_URL = 'http://webpack.github.io/analyse/';
-
-if (isDebug) {
-  console.log('INFO: You should run `yarn stats -- --release` if you want production stats');
-}
-
 /**
  * Creates application stats for client bundle.
  */
