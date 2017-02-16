@@ -132,7 +132,7 @@ async function onLocationChange(location, action) {
     );
   } catch (error) {
     // Display the error in full-screen for development mode
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       appInstance = null;
       document.title = `Error: ${error.message}`;
       ReactDOM.render(<ErrorReporter error={error} />, container);
@@ -155,7 +155,7 @@ onLocationChange(currentLocation);
 
 // Handle errors that might happen after rendering
 // Display the error in full-screen for development mode
-if (process.env.NODE_ENV !== 'production') {
+if (__DEV__) {
   window.addEventListener('error', (event) => {
     appInstance = null;
     document.title = `Runtime Error: ${event.error.message}`;
