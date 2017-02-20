@@ -7,21 +7,25 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import browserSync from 'browser-sync';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import WriteFilePlugin from 'write-file-webpack-plugin';
+import express from 'express';
+import proxy from 'http-proxy-middleware';
 import run from './run';
 import runServer from './runServer';
 import webpackConfig from './webpack.config';
 import clean from './clean';
 import copy from './copy';
+import { port, host } from '../src/config';
 
 const isDebug = !process.argv.includes('--release');
 process.argv.push('--watch');
 
 const [clientConfig, serverConfig] = webpackConfig;
+
+const proxyPort = port + 1;
 
 /**
  * Launches a development web server with "live reload" functionality -
@@ -30,7 +34,7 @@ const [clientConfig, serverConfig] = webpackConfig;
 async function start() {
   await run(clean);
   await run(copy);
-  await new Promise((resolve) => {
+  await new Promise((resolve, reject) => {
     // Save the server-side bundle files to the file system after compilation
     // https://github.com/webpack/webpack-dev-server/issues/62
     serverConfig.plugins.push(new WriteFilePlugin({ log: false }));
@@ -67,24 +71,15 @@ async function start() {
     let handleBundleComplete = async () => {
       handleBundleComplete = stats => !stats.stats[1].compilation.errors.length && runServer();
 
-      const server = await runServer();
-      const bs = browserSync.create();
-
-      bs.init({
-        ...isDebug ? {} : { notify: false, ui: false },
-
-        proxy: {
-          target: server.host,
-          middleware: [wpMiddleware, hotMiddleware],
-          proxyOptions: {
-            xfwd: true,
-          },
-        },
-      }, resolve);
+      await runServer();
+      const app = express();
+      app.all('*', wpMiddleware, hotMiddleware, proxy(`http://${host}`));
+      app.listen(proxyPort, err => (err ? reject(err) : resolve(err)));
     };
 
     bundler.plugin('done', stats => handleBundleComplete(stats));
   });
+  console.log('\x1b[35m', `Open http://localhost:${proxyPort}`, '\x1b[0m');
 }
 
 export default start;
