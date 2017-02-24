@@ -1,19 +1,11 @@
+import gql from 'graphql-tag';
 import fetch from '../core/fetch';
 
-function createGraphqlRequest(fetchKnowingCookie) {
-  return async function graphqlRequest(query, variables) {
-    const fetchConfig = {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ query, variables }),
-      credentials: 'include',
-    };
-    const resp = await fetchKnowingCookie('/graphql', fetchConfig);
-    if (resp.status !== 200) throw new Error(resp.statusText);
-    return resp.json();
+function createGraphqlRequest(apolloClient) {
+  return function graphqlRequest(queryOrString, variables) {
+    const query =
+      typeof queryOrString === 'string' ? gql`${queryOrString}` : queryOrString;
+    return apolloClient.query({ query, variables });
   };
 }
 
@@ -41,11 +33,12 @@ function createFetchKnowingCookie({ cookie }) {
 
 export default function createHelpers(config) {
   const fetchKnowingCookie = createFetchKnowingCookie(config);
-  const graphqlRequest = createGraphqlRequest(fetchKnowingCookie);
+  const graphqlRequest = createGraphqlRequest(config.apolloClient);
 
   return {
+    apolloClient: config.apolloClient,
+    history: config.history,
     fetch: fetchKnowingCookie,
     graphqlRequest,
-    history: config.history,
   };
 }
