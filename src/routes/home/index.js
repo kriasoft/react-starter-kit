@@ -10,17 +10,15 @@
 import React from 'react';
 import Home from './Home';
 import Layout from '../../components/Layout';
-import queryNews from './news.graphql';
 
 export default {
 
   path: '/',
 
-  async action({ client }) {
-    const { data } = await client.query({ query: queryNews });
+  async action() {
     return {
       title: 'React Starter Kit',
-      component: <Layout><Home news={data.news} /></Layout>,
+      component: <Layout><Home /></Layout>,
     };
   },
 
