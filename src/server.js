@@ -16,8 +16,10 @@ import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
+import { renderToStringWithData } from 'react-apollo';
 import UniversalRouter from 'universal-router';
 import PrettyError from 'pretty-error';
+import createApolloClient from './core/createApolloClient';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
@@ -77,22 +79,30 @@ app.get('/login/facebook/return',
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-app.use('/graphql', expressGraphQL(req => ({
+const graphqlMiddleware = expressGraphQL(req => ({
   schema,
   graphiql: __DEV__,
   rootValue: { request: req },
   pretty: __DEV__,
-})));
+}));
+
+app.use('/graphql', graphqlMiddleware);
 
 //
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
+    const apolloClient = createApolloClient({
+      schema,
+      rootValue: { request: req },
+    });
+
     const store = configureStore({
       user: req.user || null,
     }, {
       cookie: req.headers.cookie,
+      apolloClient,
     });
 
     store.dispatch(setRuntimeVariable({
@@ -114,6 +124,8 @@ app.get('*', async (req, res, next) => {
       // Initialize a new Redux store
       // http://redux.js.org/docs/basics/UsageWithReact.html
       store,
+      // Apollo Client for use with react-apollo
+      client: apolloClient,
     };
 
     const route = await UniversalRouter.resolve(routes, {
@@ -128,7 +140,8 @@ app.get('*', async (req, res, next) => {
     }
 
     const data = { ...route };
-    data.children = ReactDOM.renderToString(<App context={context}>{route.component}</App>);
+
+    data.children = await renderToStringWithData(<App context={context}>{route.component}</App>);
     data.styles = [
       { id: 'css', cssText: [...css].join('') },
     ];
@@ -136,7 +149,14 @@ app.get('*', async (req, res, next) => {
       assets.vendor.js,
       assets.client.js,
     ];
+
+    // Furthermore invoked actions will be ignored, client will not receive them!
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.log('Serializing store...');
+    }
     data.state = context.store.getState();
+
     if (assets[route.chunk]) {
       data.scripts.push(assets[route.chunk].js);
     }
