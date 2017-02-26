@@ -9,11 +9,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { PropTypes } from 'react';
+import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import fetch from '../../core/fetch';
+import LoginThirdPartyButton from './LoginThirdPartyButton';
 import s from '../LoginThirdParty/LoginThirdParty.css';
-
 
 async function getAuthData() {
   const resp = await fetch('/graphql', {
@@ -34,67 +34,38 @@ async function getAuthData() {
   return data;
 }
 
-async function createThirdPartyContent(stateSetter) {
-  const data = await getAuthData();
-
-  stateSetter({
-    loginThirdParty: data.auth,
-    loginThirdPartyOr: data.auth.lenght >= 1 ? <strong className={s.lineThrough}>OR</strong> : '',
-  });
-}
-
-
-function LoginThirdPartyButton({ thirdPartyAuth, ...props }) {
-  console.log(props);
-  return (
-    <div {...props}>
-      <a className={s[thirdPartyAuth.buttonClass]} href={thirdPartyAuth.routeTo}>
-        <svg
-          className={s.icon}
-          width="30"
-          height="30"
-          viewBox="0 0 30 30"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d={thirdPartyAuth.icon} />
-        </svg>
-        <span>{thirdPartyAuth.buttonText}</span>
-      </a>
-    </div>
-  );
-}
-
-LoginThirdPartyButton.propTypes = {
-  thirdPartyAuth: PropTypes.shape({
-    loginName: PropTypes.string,
-    routeTo: PropTypes.string,
-    buttonClass: PropTypes.string,
-    icon: PropTypes.string,
-    buttonText: PropTypes.string,
-  }).isRequired,
-};
-
-
 class LoginThirdParty extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       loginThirdParty: [],
-      loginThirdPartyOr: '',
     };
   }
+
   componentDidMount() {
-    createThirdPartyContent(this.setState.bind(this));
+    const stateSetter = this.setState.bind(this);
+    getAuthData().then((data) => {
+      stateSetter({
+        loginThirdParty: data.auth,
+      });
+    });
   }
 
   render() {
     return (
       <div>
-        {this.state.loginThirdParty.map((auth, index) => (
-          <LoginThirdPartyButton className={s.formGroup} thirdPartyAuth={auth} key={index} />
+        {this.state.loginThirdParty.map(thirdPartyAuth => (
+          <LoginThirdPartyButton
+            className={s.formGroup}
+            linkClassName={s[thirdPartyAuth.buttonClass]}
+            iconClassName={s.icon}
+            thirdPartyAuth={thirdPartyAuth}
+            key={thirdPartyAuth.loginName}
+          />
         ))}
-        {this.state.loginThirdPartyOr}
+
+        { this.state.loginThirdParty.lenght >= 1 ? <strong className={s.lineThrough}>OR</strong> : '' }
       </div>
     );
   }
