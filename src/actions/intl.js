@@ -18,7 +18,7 @@ export function setLocale({ locale }) {
     });
 
     try {
-      const { data } = await graphqlRequest(queryIntl, { locale });
+      const { data } = await graphqlRequest(queryIntl, { locale }, { skipCache: true });
       const messages = data.intl.reduce((msgs, msg) => {
         msgs[msg.id] = msg.message; // eslint-disable-line no-param-reassign
         return msgs;
