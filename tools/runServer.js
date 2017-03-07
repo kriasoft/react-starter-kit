@@ -9,15 +9,15 @@
 
 import path from 'path';
 import cp from 'child_process';
-import webpackConfig from './webpack.config';
+import serverConfig from './webpack.server';
 
 // Should match the text string used in `src/server.js/server.listen(...)`
 const RUNNING_REGEXP = /The server is running at http:\/\/(.*?)\//;
 
 let server;
 let pending = true;
-const [, serverConfig] = webpackConfig;
-const serverPath = path.join(serverConfig.output.path, serverConfig.output.filename);
+const serverFilename = serverConfig.output.filename.replace('[name]', 'server');
+const serverPath = path.join(serverConfig.output.path, serverFilename);
 
 // Launch or restart the Node.js server
 function runServer() {

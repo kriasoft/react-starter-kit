@@ -29,7 +29,7 @@ export default {
 
   output: {
     ...config.output,
-    filename: '../../server.js',
+    filename: '../../[name].js',
     libraryTarget: 'commonjs2',
   },
 
