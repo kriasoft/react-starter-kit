@@ -19,4 +19,15 @@ export const spawn = (command, args, options) => new Promise((resolve, reject) =
   });
 });
 
-export default { spawn };
+export const exec = (command, options) => new Promise((resolve, reject) => {
+  cp.exec(command, options, (err, stdout, stderr) => {
+    if (err) {
+      reject(err);
+      return;
+    }
+
+    resolve({ stdout, stderr });
+  });
+});
+
+export default { spawn, exec };
