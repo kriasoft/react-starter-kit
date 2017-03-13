@@ -1,6 +1,5 @@
 
 // polyfills
-import 'babel-polyfill';
 import main from './client';
 
 function run() {
