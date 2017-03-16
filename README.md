@@ -45,6 +45,8 @@ branches that you can use either as a reference or merge into your project:
     Simplest possible integration of [react-bootstrap](https://react-bootstrap.github.io/)
     by [Pavel Lang](https://github.com/langpavel) (based on `master`)
 
+You can see status of most reasonable merge combination as [PRs labeled as `TRACKING`](https://github.com/kriasoft/react-starter-kit/labels/TRACKING)
+
 If you think that any of these features should be on `master`, or vice versa, some features should
 removed from the `master` branch, please [let us know](https://gitter.im/kriasoft/react-starter-kit).
 We love your feedback!
