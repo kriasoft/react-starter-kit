@@ -4,6 +4,7 @@ const client = new ApolloClient({
   networkInterface: createNetworkInterface({
     uri: '/graphql',
     opts: {
+      // Additional fetch options like `credentials` or `headers`
       credentials: 'include',
     },
   }),
