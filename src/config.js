@@ -25,7 +25,10 @@ export const analytics = {
 
 export const auth = {
 
-  jwt: { secret: process.env.JWT_SECRET || 'React Starter Kit' },
+  jwt: {
+    secret: process.env.JWT_SECRET || 'React Starter Kit',
+    expires: 60 * 60 * 24 * 180, // 180 days
+  },
 
   // https://developers.facebook.com/
   facebook: {

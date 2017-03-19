@@ -8,7 +8,11 @@
  */
 
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+
+import login from '../../actions/login';
+
 import s from './Login.css';
 
 class Login extends React.Component {
@@ -16,7 +20,19 @@ class Login extends React.Component {
     title: PropTypes.string.isRequired,
   };
 
+  state = {
+    usernameOrEmail: 'jamalx31',
+    password: 'hello',
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { usernameOrEmail, password } = this.state;
+    this.props.login({ usernameOrEmail, password });
+  }
+
   render() {
+    const { usernameOrEmail, password } = this.state;
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -84,13 +100,15 @@ class Login extends React.Component {
             </a>
           </div>
           <strong className={s.lineThrough}>OR</strong>
-          <form method="post">
+          <form onSubmit={this.handleSubmit}>
             <div className={s.formGroup}>
               <label className={s.label} htmlFor="usernameOrEmail">
                 Username or email address:
               </label>
               <input
                 className={s.input}
+                value={usernameOrEmail}
+                onChange={e => this.setState({ usernameOrEmail: e.target.value })}
                 id="usernameOrEmail"
                 type="text"
                 name="usernameOrEmail"
@@ -103,13 +121,15 @@ class Login extends React.Component {
               </label>
               <input
                 className={s.input}
+                value={password}
+                onChange={e => this.setState({ password: e.target.value })}
                 id="password"
                 type="password"
                 name="password"
               />
             </div>
             <div className={s.formGroup}>
-              <button className={s.button} type="submit">
+              <button className={s.button} type="submit" disabled={this.props.loading}>
                 Log in
               </button>
             </div>
@@ -120,4 +140,17 @@ class Login extends React.Component {
   }
 }
 
-export default withStyles(s)(Login);
+Login.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  login: PropTypes.func.isRequired,
+};
+
+const mapState = state => ({
+  loading: state.user.loading,
+});
+
+const mapDispatch = {
+  login,
+};
+
+export default connect(mapState, mapDispatch)(withStyles(s)(Login));

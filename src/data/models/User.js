@@ -18,14 +18,26 @@ const User = Model.define('User', {
     primaryKey: true,
   },
 
+  username: {
+    type: DataType.STRING(100),
+    unique: true,
+    allowNull: false,
+  },
+
   email: {
     type: DataType.STRING(255),
+    unique: true,
     validate: { isEmail: true },
   },
 
   emailConfirmed: {
     type: DataType.BOOLEAN,
     defaultValue: false,
+  },
+
+  password: {
+    type: DataType.STRING,
+    allowNull: false,
   },
 
 }, {

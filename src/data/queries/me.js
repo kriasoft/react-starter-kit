@@ -15,6 +15,8 @@ const me = {
     return request.user && {
       id: request.user.id,
       email: request.user.email,
+      username: request.user.username,
+      token: request.user.token,
     };
   },
 };
