@@ -35,7 +35,7 @@ Install atom packages
 * [react](https://atom.io/packages/react)
 
 ```shell
-npm install linter linter-eslint react linter-stylelint
+apm install linter linter-eslint react linter-stylelint
 ```
 
 Install local npm packages
