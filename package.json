@@ -144,6 +144,10 @@
         "Not supporting nested package.json yet",
         "https://github.com/benmosher/eslint-plugin-import/issues/458"
       ],
+      "no-console": [
+        "Not recommend to leave any console.log in your code",
+        "Use console.error, console.warn and console.info instead"
+      ],
       "react/jsx-filename-extension": [
         "Allow js files to use jsx syntax, too"
       ],
@@ -179,6 +183,16 @@
         }
       ],
       "import/no-extraneous-dependencies": "off",
+      "no-console": [
+        "error",
+        {
+          "allow": [
+            "warn",
+            "error",
+            "info"
+          ]
+        }
+      ],
       "react/jsx-filename-extension": "off",
       "react/prefer-stateless-function": "off"
     }
