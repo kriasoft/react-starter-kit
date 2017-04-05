@@ -11,6 +11,7 @@ import React, { PropTypes } from 'react';
 import { FormattedRelative } from 'react-intl';
 import { graphql, compose } from 'react-apollo';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import moment from 'moment';
 import newsQuery from './news.graphql';
 import s from './Home.css';
 
@@ -37,7 +38,7 @@ class Home extends React.Component {
               <h1 className={s.newsTitle}><a href={item.link}>{item.title}</a></h1>
               {' '}
               <span className={s.publishedDate}>
-                <FormattedRelative value={item.pubDate} />
+                <FormattedRelative value={moment(item.pubDate)} />
               </span>
               <div
                 className={s.newsDesc}
