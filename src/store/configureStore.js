@@ -42,8 +42,9 @@ export default function configureStore(initialState, config) {
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
   if (__DEV__ && module.hot) {
     module.hot.accept('../reducers', () =>
+      // Don't forget to remove `()` if you change reducers back to normal rootReducer.
       // eslint-disable-next-line global-require
-      store.replaceReducer(require('../reducers').default),
+      store.replaceReducer(require('../reducers').default({ apolloClient })),
     );
   }
 
