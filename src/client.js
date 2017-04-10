@@ -161,13 +161,20 @@ async function onLocationChange(location, action) {
   }
 }
 
+let isHistoryObserved = false;
 export default function main() {
   // Handle client-side navigation by using HTML5 History API
   // For more information visit https://github.com/mjackson/history#readme
   currentLocation = history.location;
-  history.listen(onLocationChange);
+  if (!isHistoryObserved) {
+    isHistoryObserved = true;
+    history.listen(onLocationChange);
+  }
   onLocationChange(currentLocation);
 }
+
+// globally accesible entry point
+window.RSK_ENTRY = main;
 
 // Handle errors that might happen after rendering
 // Display the error in full-screen for development mode
