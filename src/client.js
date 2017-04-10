@@ -10,7 +10,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
-import UniversalRouter from 'universal-router';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
 import history from './core/history';
@@ -18,6 +17,8 @@ import App from './components/App';
 import configureStore from './store/configureStore';
 import { updateMeta } from './core/DOMUtils';
 import { ErrorReporter, deepForceUpdate } from './core/devUtils';
+
+/* eslint-disable global-require */
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
@@ -90,7 +91,7 @@ FastClick.attach(document.body);
 const container = document.getElementById('app');
 let appInstance;
 let currentLocation = history.location;
-let routes = require('./routes').default;
+let router = require('./core/router').default;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location, action) {
@@ -109,7 +110,7 @@ async function onLocationChange(location, action) {
     // Traverses the list of routes in the order they are defined until
     // it finds the first route that matches provided URL path string
     // and whose action method returns anything other than `undefined`.
-    const route = await UniversalRouter.resolve(routes, {
+    const route = await router.resolve({
       ...context,
       path: location.pathname,
       query: queryString.parse(location.search),
@@ -165,8 +166,8 @@ if (__DEV__) {
 
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
-  module.hot.accept('./routes', () => {
-    routes = require('./routes').default; // eslint-disable-line global-require
+  module.hot.accept('./core/router', () => {
+    router = require('./core/router').default;
 
     if (appInstance) {
       try {

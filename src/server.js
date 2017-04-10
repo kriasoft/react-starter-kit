@@ -16,16 +16,15 @@ import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import UniversalRouter from 'universal-router';
 import PrettyError from 'pretty-error';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
 import passport from './core/passport';
+import router from './core/router';
 import models from './data/models';
 import schema from './data/schema';
-import routes from './routes';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
@@ -116,7 +115,7 @@ app.get('*', async (req, res, next) => {
       store,
     };
 
-    const route = await UniversalRouter.resolve(routes, {
+    const route = await router.resolve({
       ...context,
       path: req.path,
       query: req.query,
