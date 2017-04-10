@@ -8,6 +8,7 @@
  */
 
 import path from 'path';
+import Promise from 'bluebird';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
@@ -16,8 +17,7 @@ import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import { renderToStringWithData } from 'react-apollo';
-import UniversalRouter from 'universal-router';
+import { getDataFromTree } from 'react-apollo';
 import PrettyError from 'pretty-error';
 import createApolloClient from './core/createApolloClient';
 import App from './components/App';
@@ -25,9 +25,9 @@ import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
 import passport from './core/passport';
+import router from './core/router';
 import models from './data/models';
 import schema from './data/schema';
-import routes from './routes';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
@@ -128,7 +128,7 @@ app.get('*', async (req, res, next) => {
       client: apolloClient,
     };
 
-    const route = await UniversalRouter.resolve(routes, {
+    const route = await router.resolve({
       ...context,
       path: req.path,
       query: req.query,
@@ -141,7 +141,11 @@ app.get('*', async (req, res, next) => {
 
     const data = { ...route };
 
-    data.children = await renderToStringWithData(<App context={context}>{route.component}</App>);
+    const rootComponent = <App context={context}>{route.component}</App>;
+    await getDataFromTree(rootComponent);
+    // this is here because of Apollo redux APOLLO_QUERY_STOP action
+    await Promise.delay(0);
+    data.children = await ReactDOM.renderToStaticMarkup(rootComponent);
     data.styles = [
       { id: 'css', cssText: [...css].join('') },
     ];
