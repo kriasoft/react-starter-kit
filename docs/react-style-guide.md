@@ -1,7 +1,7 @@
 ## React Style Guide
 
 > This style guide comes as an addition to [Airbnb React/JSX Guide](https://github.com/airbnb/javascript/tree/master/react).
-> Feel free to modify it to suit your project's needs. 
+> Feel free to modify it to suit your project's needs.
 
 ### Table of Contents
 
@@ -33,7 +33,7 @@
 ```
 
 ```
-// components/Navigation/package.json 
+// components/Navigation/package.json
 {
   "name:": "Navigation",
   "main": "./Navigation.js"
@@ -119,7 +119,8 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 
 ```jsx
 // Navigation.js
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.scss';
 
