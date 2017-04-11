@@ -173,7 +173,7 @@ app.get('*', async (req, res, next) => {
     await getDataFromTree(rootComponent);
     // this is here because of Apollo redux APOLLO_QUERY_STOP action
     await Promise.delay(0);
-    data.children = await ReactDOM.renderToStaticMarkup(rootComponent);
+    data.children = await ReactDOM.renderToString(rootComponent);
     data.styles = [
       { id: 'css', cssText: [...css].join('') },
     ];
