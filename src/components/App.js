@@ -7,7 +7,8 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Children, PropTypes } from 'react';
+import React, { Children } from 'react';
+import PropTypes from 'prop-types';
 import { IntlProvider } from 'react-intl';
 import deepForceUpdate from 'react-deep-force-update';
 
