@@ -181,23 +181,19 @@
   },
   "lint-staged": {
     "*.{cmd,html,json,md,sh,txt,xml,yml}": [
-      "editorconfig-tools fix",
-      "git add"
+      "editorconfig-tools fix"
     ],
     "*.{js,jsx}": [
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ],
     "*.{css,less,scss,sss}": [
       "stylefmt",
-      "stylelint",
-      "git add"
+      "stylelint"
     ]
   },
   "scripts": {
     "lint:js": "eslint src tools",
     "lint:css": "stylelint \"src/**/*.{css,less,scss,sss}\"",
-    "lint:staged": "lint-staged",
     "lint": "yarn run lint:js && yarn run lint:css",
     "test": "mocha \"src/**/*.test.js\" --require babel-register --require test/setup.js",
     "test:watch": "yarn run test -- --reporter min --watch",
@@ -209,6 +205,38 @@
     "deploy": "babel-node tools/run deploy",
     "render": "babel-node tools/run render",
     "serve": "babel-node tools/run runServer",
-    "start": "babel-node tools/run start"
-  }
+    "start": "babel-node tools/run start",
+    "stash-unstaged": "git stash save -k --include-untracked 'unstaged-stash' >> /dev/null",
+    "pop-if-gst-clean": "./tools/pop-if-gst-clean.sh",
+    "lint-staged": "lint-staged || (npm run pop-stash >> /dev/null && exit 1)",
+    "pop-if-gd-clean": "./tools/pop-if-gd-clean.sh",
+    "stash-linted": "git stash save 'linted-stash' >> /dev/null",
+    "stash-pop-unstaged": "git stash pop stash@{1}",
+    "stash-pop-linted": "git read-tree stash && git stash drop",
+    "clean-lint-staged": "lint-staged >> /dev/null"
+  },
+  "//pre-commit": {
+    "//reference-links": {
+      "github": "https://github.com/okonet/lint-staged/issues/62#issuecomment-286830310",
+      "stackoverflow": "http://stackoverflow.com/questions/13889242/26685296#26685296"
+    },
+    "//stash-pop-linted": "use `git read-tree` to resolve conflicts",
+    "//clean-lint-staged": [
+      "Re-run `lint-staged` for fixable style errors mistakenly recovered to be unstaged by `read-tree`",
+      "NOTICE: Although they are fixed, you will see them when input a commit-message",
+      "Side effect is it will auto-fix unstaged part in these staged files",
+      "Feel free to remove this cmd if you don't want the side effect or just feel adventurous",
+      "If so, don't be surprised when you see unstaged&fixable style errors after commit"
+    ]
+  },
+  "pre-commit": [
+    "stash-unstaged",
+    "pop-if-gst-clean",
+    "lint-staged",
+    "pop-if-gd-clean",
+    "stash-linted",
+    "stash-pop-unstaged",
+    "stash-pop-linted",
+    "clean-lint-staged"
+  ]
 }
