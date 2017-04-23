@@ -1,11 +1,12 @@
-FROM node:6.9.5-alpine
+FROM node:7.9.0-alpine
+
+# Set a working directory
+WORKDIR /usr/src/app
 
 # Copy application files
 COPY ./build /usr/src/app
-WORKDIR /usr/src/app
 
-# Install Yarn and Node.js dependencies
-RUN npm install yarn --global --no-progress --silent --depth 0 && \
-    yarn install --production --no-progress
+# Install Node.js dependencies
+RUN yarn install --production --no-progress
 
 CMD [ "node", "server.js" ]
