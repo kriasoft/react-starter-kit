@@ -134,69 +134,6 @@
       }
     }
   },
-  "//eslintConfig": {
-    "//rules": {
-      "//import/extensions": [
-        "`js` and `jsx` are common extensions",
-        "`mjs` is for `universal-router` only, for now"
-      ],
-      "//import/no-extraneous-dependencies": [
-        "Not supporting nested package.json yet",
-        "https://github.com/benmosher/eslint-plugin-import/issues/458"
-      ],
-      "//no-console": [
-        "Recommend not to leave any console.log in your code",
-        "Use console.error, console.warn and console.info instead"
-      ],
-      "//react/jsx-filename-extension": [
-        "Allow js files to use jsx syntax, too"
-      ],
-      "//react/prefer-stateless-function": [
-        "https://github.com/kriasoft/react-starter-kit/pull/961",
-        "You can reopen this if you still want this rule"
-      ]
-    }
-  },
-  "eslintConfig": {
-    "parser": "babel-eslint",
-    "extends": [
-      "airbnb",
-      "plugin:css-modules/recommended"
-    ],
-    "plugins": [
-      "css-modules"
-    ],
-    "globals": {
-      "__DEV__": true
-    },
-    "env": {
-      "browser": true
-    },
-    "rules": {
-      "import/extensions": [
-        "error",
-        "always",
-        {
-          "js": "never",
-          "jsx": "never",
-          "mjs": "never"
-        }
-      ],
-      "import/no-extraneous-dependencies": "off",
-      "no-console": [
-        "error",
-        {
-          "allow": [
-            "warn",
-            "error",
-            "info"
-          ]
-        }
-      ],
-      "react/jsx-filename-extension": "off",
-      "react/prefer-stateless-function": "off"
-    }
-  },
   "stylelint": {
     "extends": "stylelint-config-standard",
     "rules": {
