@@ -135,7 +135,7 @@ async function onLocationChange(location, action) {
       throw error;
     }
 
-    console.error(error); // eslint-disable-line no-console
+    console.error(error);
 
     // Do a full page reload if error occurs during client-side navigation
     if (action && currentLocation.key === location.key) {
