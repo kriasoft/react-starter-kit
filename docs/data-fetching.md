@@ -4,10 +4,8 @@ There is isomorphic `core/fetch` module that can be used the same way in both
 client-side and server-side code as follows:
 
 ```jsx
-import fetch from '../core/fetch';
-
 export const path = '/products';
-export const action = async () => {
+export const action = async ({ fetch }) => {
   const response = await fetch('/graphql?query={products{id,name}}');
   const data = await response.json();
   return <Layout><Products {...data} /></Layout>;
