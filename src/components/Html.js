@@ -23,7 +23,7 @@ class Html extends React.Component {
       cssText: PropTypes.string.isRequired,
     }).isRequired),
     scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
-    app: PropTypes.object,
+    app: PropTypes.object, // eslint-disable-line
     children: PropTypes.string.isRequired,
   };
 
