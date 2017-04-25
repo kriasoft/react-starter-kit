@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@types/geojson@^1.0.0":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-1.0.2.tgz#b02d10ab028e2928ac592a051aaa4981a1941d03"
+
 JSONStream@^0.8.4:
   version "0.8.4"
   resolved "https://registry.yarnpkg.com/JSONStream/-/JSONStream-0.8.4.tgz#91657dfe6ff857483066132b4618b62e8f4887bd"
@@ -1313,8 +1317,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000187, caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000659"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000659.tgz#6775220394d464c8efa4a25cafd2ed9b0c60b11c"
+  version "1.0.30000660"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000660.tgz#d2d57b309dc5a11bb5b46018f51855f7a41efee5"
 
 caseless@~0.11.0:
   version "0.11.0"
@@ -3685,8 +3689,8 @@ jsonpointer@^4.0.0:
   resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-4.0.1.tgz#4fd92cb34e0e9db3c89c8622ecf51f9b978c6cb9"
 
 jsonwebtoken@^7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-7.3.0.tgz#85118d6a70e3fccdf14389f4e7a1c3f9c8a9fbba"
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-7.4.0.tgz#515bf2bba070ec615bad97fd2e945027eb476946"
   dependencies:
     joi "^6.10.1"
     jws "^3.1.4"
@@ -6495,8 +6499,10 @@ terraformer-wkt-parser@^1.1.0:
     terraformer "~1.0.5"
 
 terraformer@~1.0.5:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/terraformer/-/terraformer-1.0.7.tgz#d8a19a56fbf25966ea062d21f515b93589702d69"
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/terraformer/-/terraformer-1.0.8.tgz#51e0ad89746fcf2161dc6f65aa70e42377c8b593"
+  dependencies:
+    "@types/geojson" "^1.0.0"
 
 text-encoding@0.6.4:
   version "0.6.4"
