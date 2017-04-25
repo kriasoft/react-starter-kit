@@ -133,7 +133,8 @@ app.get('*', async (req, res, next) => {
     };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-    res.status(route.status || 200).send(`<!doctype html>${html}`);
+    res.status(route.status || 200);
+    res.send(`<!doctype html>${html}`);
   } catch (err) {
     next(err);
   }
@@ -157,7 +158,8 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
       {ReactDOM.renderToString(<ErrorPageWithoutStyle error={err} />)}
     </Html>,
   );
-  res.status(err.status || 500).send(`<!doctype html>${html}`);
+  res.status(err.status || 500);
+  res.send(`<!doctype html>${html}`);
 });
 
 //
