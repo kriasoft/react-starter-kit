@@ -20,10 +20,9 @@ module.exports = {
   // API Gateway
   api: {
     // API URL to be used in the client-side code
-    clientUrl: typeof process.env.API_CLIENT_URL || '',
+    clientUrl: process.env.API_CLIENT_URL || '',
     // API URL to be used in the server-side code
-    serverUrl: typeof process.env.API_SERVER_URL === 'undefined' ?
-      `http://localhost:${process.env.PORT || 3000}` : process.env.API_SERVER_URL,
+    serverUrl: process.env.API_SERVER_URL || `http://localhost:${process.env.PORT || 3000}`,
   },
 
   // Database
