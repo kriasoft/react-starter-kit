@@ -21,12 +21,13 @@ import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
-import passport from './core/passport';
-import router from './core/router';
+import createFetch from './createFetch';
+import passport from './passport';
+import router from './router';
 import models from './data/models';
 import schema from './data/schema';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
-import { port, auth } from './config';
+import config from './config';
 
 const app = express();
 
@@ -49,7 +50,7 @@ app.use(bodyParser.json());
 // Authentication
 // -----------------------------------------------------------------------------
 app.use(expressJwt({
-  secret: auth.jwt.secret,
+  secret: config.auth.jwt.secret,
   credentialsRequired: false,
   getToken: req => req.cookies.id_token,
 }));
@@ -65,7 +66,7 @@ app.get('/login/facebook/return',
   passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
   (req, res) => {
     const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
+    const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
     res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
     res.redirect('/');
   },
@@ -97,11 +98,17 @@ app.get('*', async (req, res, next) => {
         // eslint-disable-next-line no-underscore-dangle
         styles.forEach(style => css.add(style._getCss()));
       },
+      // Universal HTTP client
+      fetch: createFetch({
+        baseUrl: config.api.serverUrl,
+        cookie: req.cookie,
+      }),
     };
 
     const route = await router.resolve({
       path: req.path,
       query: req.query,
+      fetch: context.fetch,
     });
 
     if (route.redirect) {
@@ -121,6 +128,9 @@ app.get('*', async (req, res, next) => {
     if (assets[route.chunk]) {
       data.scripts.push(assets[route.chunk].js);
     }
+    data.app = {
+      apiUrl: config.api.clientUrl,
+    };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
     res.status(route.status || 200);
@@ -156,7 +166,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 // Launch the server
 // -----------------------------------------------------------------------------
 models.sync().catch(err => console.error(err.stack)).then(() => {
-  app.listen(port, () => {
-    console.info(`The server is running at http://localhost:${port}/`);
+  app.listen(config.port, () => {
+    console.info(`The server is running at http://localhost:${config.port}/`);
   });
 });
