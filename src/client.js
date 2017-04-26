@@ -9,6 +9,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ErrorReporter from 'redbox-react';
+import deepForceUpdate from 'react-deep-force-update';
 import FastClick from 'fastclick';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
@@ -16,7 +18,6 @@ import App from './components/App';
 import createFetch from './createFetch';
 import history from './history';
 import { updateMeta } from './DOMUtils';
-import { ErrorReporter, deepForceUpdate } from './devUtils';
 
 /* eslint-disable global-require */
 
