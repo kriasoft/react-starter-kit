@@ -54,6 +54,16 @@ app.use(expressJwt({
   credentialsRequired: false,
   getToken: req => req.cookies.id_token,
 }));
+// Error handler for express-jwt
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+  if (err instanceof Jwt401Error) {
+    console.error('[express-jwt-error]', req.cookies.id_token);
+    // `clearCookie`, otherwise user can't use web-app until cookie expires
+    res.clearCookie('id_token');
+  }
+  next(err);
+});
+
 app.use(passport.initialize());
 
 if (__DEV__) {
@@ -146,17 +156,6 @@ app.get('*', async (req, res, next) => {
 const pe = new PrettyError();
 pe.skipNodeFiles();
 pe.skipPackage('express');
-
-// express-jwt error handler
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-  if (err instanceof Jwt401Error) {
-    console.error('[express-jwt]', req.cookies.id_token, pe.render(err));
-    res.clearCookie('id_token');
-    res.redirect('/');
-  } else {
-    next(err);
-  }
-});
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.error(pe.render(err));
