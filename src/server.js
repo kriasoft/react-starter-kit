@@ -101,7 +101,7 @@ app.get('*', async (req, res, next) => {
       // Universal HTTP client
       fetch: createFetch({
         baseUrl: config.api.serverUrl,
-        cookie: req.cookie,
+        cookie: req.headers.cookie,
       }),
     };
 
