@@ -11,7 +11,7 @@ import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import expressJwt from 'express-jwt';
+import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
@@ -146,6 +146,17 @@ app.get('*', async (req, res, next) => {
 const pe = new PrettyError();
 pe.skipNodeFiles();
 pe.skipPackage('express');
+
+// express-jwt error handler
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+  if (err instanceof Jwt401Error) {
+    console.error('[express-jwt]', req.cookies.id_token, pe.render(err));
+    res.clearCookie('id_token');
+    res.redirect('/');
+  } else {
+    next(err);
+  }
+});
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.error(pe.render(err));
