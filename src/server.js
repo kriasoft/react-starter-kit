@@ -132,6 +132,14 @@ app.get('*', async (req, res, next) => {
       apiUrl: config.api.clientUrl,
     };
 
+    if (__DEV__) {
+      res.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      res.set('Expires', '-1');
+      res.set('Pragma', 'no-cache');
+    } else {
+      res.set('Cache-Control', 'private, max-age=86400');
+    }
+
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
     res.status(route.status || 200);
     res.send(`<!doctype html>${html}`);
