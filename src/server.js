@@ -60,11 +60,6 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     console.error('[express-jwt-error]', req.cookies.id_token);
     // `clearCookie`, otherwise user can't use web-app until cookie expires
     res.clearCookie('id_token');
-    const jwtError = new Error(err.message);
-    jwtError.status = err.status;
-    jwtError.name = err.name;
-    jwtError.stack = err.stack;
-    next(jwtError);
   } else {
     next(err);
   }
