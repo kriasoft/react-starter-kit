@@ -11,7 +11,7 @@ import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import expressJwt from 'express-jwt';
+import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
@@ -54,6 +54,17 @@ app.use(expressJwt({
   credentialsRequired: false,
   getToken: req => req.cookies.id_token,
 }));
+// Error handler for express-jwt
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+  if (err instanceof Jwt401Error) {
+    console.error('[express-jwt-error]', req.cookies.id_token);
+    // `clearCookie`, otherwise user can't use web-app until cookie expires
+    res.clearCookie('id_token');
+  } else {
+    next(err);
+  }
+});
+
 app.use(passport.initialize());
 
 if (__DEV__) {
