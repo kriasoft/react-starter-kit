@@ -38,7 +38,7 @@ routing level or from inside your React components as follows:
 
 ```js
 class Post extends React.Component {
-  static context = { fetch: PropTypes.func.isRequired };
+  static contextTypes = { fetch: PropTypes.func.isRequired };
   handleDelete = (event) => {
     event.preventDefault();
     const id = event.target.dataset['id'];
