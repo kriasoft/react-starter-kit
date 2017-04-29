@@ -127,6 +127,18 @@ const config = {
           limit: 10000,
         },
       },
+
+      // Exclude dev modules from production build
+      ...isDebug ? [] : [
+        {
+          test: path.resolve(__dirname, '../node_modules/redbox-react/lib/index.js'),
+          use: 'null-loader',
+        },
+        {
+          test: path.resolve(__dirname, '../node_modules/react-deep-force-update/lib/index.js'),
+          use: 'null-loader',
+        },
+      ],
     ],
   },
 
