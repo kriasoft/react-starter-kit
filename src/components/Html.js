@@ -10,7 +10,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import serialize from 'serialize-javascript';
-import { analytics } from '../config';
+import config from '../config';
+
+/* eslint-disable react/no-danger */
 
 class Html extends React.Component {
   static propTypes = {
@@ -21,19 +23,17 @@ class Html extends React.Component {
       cssText: PropTypes.string.isRequired,
     }).isRequired),
     scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
-    // eslint-disable-next-line react/forbid-prop-types
-    state: PropTypes.object,
+    app: PropTypes.object, // eslint-disable-line
     children: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
     styles: [],
     scripts: [],
-    state: null,
   };
 
   render() {
-    const { title, description, styles, scripts, state, children } = this.props;
+    const { title, description, styles, scripts, app, children } = this.props;
     return (
       <html className="no-js" lang="en">
         <head>
@@ -47,34 +47,22 @@ class Html extends React.Component {
             <style
               key={style.id}
               id={style.id}
-              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: style.cssText }}
             />,
           )}
         </head>
         <body>
-          <div
-            id="app"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: children }}
-          />
-          {state && (
-            <script
-              // eslint-disable-next-line react/no-danger
-              dangerouslySetInnerHTML={{ __html:
-              `window.APP_STATE=${serialize(state, { isJSON: true })}` }}
-            />
-          )}
+          <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
+          <script dangerouslySetInnerHTML={{ __html: `window.App=${serialize(app)}` }} />
           {scripts.map(script => <script key={script} src={script} />)}
-          {analytics.google.trackingId &&
+          {config.analytics.googleTrackingId &&
             <script
-              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html:
               'window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;' +
-              `ga('create','${analytics.google.trackingId}','auto');ga('send','pageview')` }}
+              `ga('create','${config.analytics.googleTrackingId}','auto');ga('send','pageview')` }}
             />
           }
-          {analytics.google.trackingId &&
+          {config.analytics.googleTrackingId &&
             <script src="https://www.google-analytics.com/analytics.js" async defer />
           }
         </body>

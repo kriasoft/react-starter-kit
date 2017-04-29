@@ -12,11 +12,12 @@ import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
-import history from './core/history';
 import App from './components/App';
+import createFetch from './createFetch';
 import configureStore from './store/configureStore';
-import { updateMeta } from './core/DOMUtils';
-import { ErrorReporter, deepForceUpdate } from './core/devUtils';
+import history from './history';
+import { updateMeta } from './DOMUtils';
+import { ErrorReporter, deepForceUpdate } from './devUtils';
 
 /* eslint-disable global-require */
 
@@ -30,9 +31,14 @@ const context = {
     const removeCss = styles.map(x => x._insertCss());
     return () => { removeCss.forEach(f => f()); };
   },
+  // Universal HTTP client
+  fetch: createFetch({
+    baseUrl: window.App.apiUrl,
+  }),
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
-  store: configureStore(window.APP_STATE, { history }),
+  store: configureStore(window.App.state, { history }),
+  storeSubscription: null,
 };
 
 // Switch off the native scroll restoration behavior and handle it manually
@@ -91,7 +97,7 @@ FastClick.attach(document.body);
 const container = document.getElementById('app');
 let appInstance;
 let currentLocation = history.location;
-let router = require('./core/router').default;
+let router = require('./router').default;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location, action) {
@@ -140,7 +146,7 @@ async function onLocationChange(location, action) {
       throw error;
     }
 
-    console.error(error); // eslint-disable-line no-console
+    console.error(error);
 
     // Do a full page reload if error occurs during client-side navigation
     if (action && currentLocation.key === location.key) {
@@ -166,8 +172,8 @@ if (__DEV__) {
 
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
-  module.hot.accept('./core/router', () => {
-    router = require('./core/router').default;
+  module.hot.accept('./router', () => {
+    router = require('./router').default;
 
     if (appInstance) {
       try {

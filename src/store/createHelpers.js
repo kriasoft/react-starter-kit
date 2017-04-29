@@ -1,6 +1,4 @@
-import fetch from '../core/fetch';
-
-function createGraphqlRequest(fetchKnowingCookie) {
+function createGraphqlRequest(fetch) {
   return async function graphqlRequest(query, variables) {
     const fetchConfig = {
       method: 'post',
@@ -11,41 +9,16 @@ function createGraphqlRequest(fetchKnowingCookie) {
       body: JSON.stringify({ query, variables }),
       credentials: 'include',
     };
-    const resp = await fetchKnowingCookie('/graphql', fetchConfig);
+    const resp = await fetch('/graphql', fetchConfig);
     if (resp.status !== 200) throw new Error(resp.statusText);
     return resp.json();
   };
 }
 
-function createFetchKnowingCookie({ cookie }) {
-  if (!process.env.BROWSER) {
-    return (url, options = {}) => {
-      const isLocalUrl = /^\/($|[^/])/.test(url);
-
-      // pass cookie only for itself.
-      // We can't know cookies for other sites BTW
-      if (isLocalUrl && options.credentials === 'include') {
-        const headers = {
-          ...options.headers,
-          cookie,
-        };
-        return fetch(url, { ...options, headers });
-      }
-
-      return fetch(url, options);
-    };
-  }
-
-  return fetch;
-}
-
-export default function createHelpers(config) {
-  const fetchKnowingCookie = createFetchKnowingCookie(config);
-  const graphqlRequest = createGraphqlRequest(fetchKnowingCookie);
-
+export default function createHelpers({ fetch, history }) {
   return {
-    fetch: fetchKnowingCookie,
-    graphqlRequest,
-    history: config.history,
+    fetch,
+    history,
+    graphqlRequest: createGraphqlRequest(fetch),
   };
 }

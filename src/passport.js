@@ -15,15 +15,15 @@
 
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
-import { auth as config } from '../config';
+import { User, UserLogin, UserClaim, UserProfile } from './data/models';
+import config from './config';
 
 /**
  * Sign in with Facebook.
  */
 passport.use(new FacebookStrategy({
-  clientID: config.facebook.id,
-  clientSecret: config.facebook.secret,
+  clientID: config.auth.facebook.id,
+  clientSecret: config.auth.facebook.secret,
   callbackURL: '/login/facebook/return',
   profileFields: ['name', 'email', 'link', 'locale', 'timezone'],
   passReqToCallback: true,
