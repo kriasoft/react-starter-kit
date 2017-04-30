@@ -15,7 +15,7 @@ import FastClick from 'fastclick';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
 import App from './components/App';
-import createFetch from './createFetch';
+import Api from './Api';
 import history from './history';
 import { updateMeta } from './DOMUtils';
 
@@ -31,10 +31,16 @@ const context = {
     const removeCss = styles.map(x => x._insertCss());
     return () => { removeCss.forEach(f => f()); };
   },
-  // Universal HTTP client
-  fetch: createFetch({
+  // Universal API client
+  api: Api.create({
     baseUrl: window.App.apiUrl,
   }),
+};
+
+// Relay context
+context.relay = {
+  environment: context.api.environment,
+  variables: {},
 };
 
 // Switch off the native scroll restoration behavior and handle it manually
@@ -115,7 +121,7 @@ async function onLocationChange(location, action) {
     const route = await router.resolve({
       path: location.pathname,
       query: queryString.parse(location.search),
-      fetch: context.fetch,
+      api: context.api,
     });
 
     // Prevent multiple page renders during the routing process

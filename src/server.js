@@ -17,11 +17,12 @@ import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
+import { printSchema } from 'graphql';
 import App from './components/App';
 import Html from './components/Html';
+import Api from './Api';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
-import createFetch from './createFetch';
 import passport from './passport';
 import router from './router';
 import models from './data/models';
@@ -86,6 +87,9 @@ app.get('/login/facebook/return',
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
+app.get('/graphql/schema', (req, res) => {
+  res.type('text/plain').send(printSchema(schema));
+});
 app.use('/graphql', expressGraphQL(req => ({
   schema,
   graphiql: __DEV__,
@@ -109,17 +113,23 @@ app.get('*', async (req, res, next) => {
         // eslint-disable-next-line no-underscore-dangle
         styles.forEach(style => css.add(style._getCss()));
       },
-      // Universal HTTP client
-      fetch: createFetch({
+      // Universal API client
+      api: Api.create({
         baseUrl: config.api.serverUrl,
-        cookie: req.headers.cookie,
+        headers: req.headers,
       }),
+    };
+
+    // Relay context
+    context.relay = {
+      environment: context.api.environment,
+      variables: {},
     };
 
     const route = await router.resolve({
       path: req.path,
       query: req.query,
-      fetch: context.fetch,
+      api: context.api,
     });
 
     if (route.redirect) {

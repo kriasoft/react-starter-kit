@@ -9,13 +9,24 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Environment } from 'relay-runtime';
 
 const ContextType = {
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: PropTypes.func.isRequired,
-  // Universal HTTP client
-  fetch: PropTypes.func.isRequired,
+  // Universal API client
+  api: PropTypes.shape({
+    fetch: PropTypes.func.isRequired,
+    fetchQuery: PropTypes.func.isRequired,
+    commitMutation: PropTypes.func.isRequired,
+    commitLocalUpdate: PropTypes.func.isRequired,
+  }).isRequired,
+  // Relay context
+  relay: PropTypes.shape({
+    environment: PropTypes.instanceOf(Environment).isRequired,
+    variables: PropTypes.object.isRequired,
+  }),
 };
 
 /**

@@ -10,6 +10,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { graphql, createFragmentContainer } from 'react-relay';
 import s from './Home.css';
 
 class Home extends React.Component {
@@ -42,4 +43,12 @@ class Home extends React.Component {
   }
 }
 
-export default withStyles(s)(Home);
+export default createFragmentContainer(withStyles(s)(Home), graphql`
+  fragment Home_news on NewsItem @relay(plural: true) {
+    title
+    link
+    author
+    pubDate
+    content
+  }
+`);

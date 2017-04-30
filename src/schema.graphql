@@ -1,0 +1,17 @@
+type NewsItem {
+  title: String!
+  link: String!
+  author: String
+  pubDate: String!
+  content: String
+}
+
+type Query {
+  me: User
+  news: [NewsItem]
+}
+
+type User {
+  id: ID!
+  email: String
+}

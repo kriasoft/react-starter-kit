@@ -67,6 +67,7 @@ const config = {
             ...isDebug ? [] : ['react-optimize'],
           ],
           plugins: [
+            'relay',
             // Adds component stack to warning messages
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
             ...isDebug ? ['transform-react-jsx-source'] : [],
