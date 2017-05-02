@@ -16,6 +16,11 @@
 * Copies static files to the output folder (`copy.js`)
 * Creates application bundles with Webpack (`bundle.js`, `webpack.config.js`)
 
+### `yarn run relay`
+
+Compiles GraphQL queries used in the code into JavaScript to be used by Relay. You can also run it
+in watch mode `yarn run relay -- --watch` (see [`docs/data-fetching`](../docs/data-fetching.md)).
+
 ### `yarn run deploy` (`deploy.js`)
 
 * Builds the project from source files (`build.js`)

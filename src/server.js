@@ -20,7 +20,7 @@ import PrettyError from 'pretty-error';
 import { printSchema } from 'graphql';
 import App from './components/App';
 import Html from './components/Html';
-import Api from './Api';
+import ApiClient from './ApiClient';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
 import passport from './passport';
@@ -114,7 +114,7 @@ app.get('*', async (req, res, next) => {
         styles.forEach(style => css.add(style._getCss()));
       },
       // Universal API client
-      api: Api.create({
+      api: ApiClient.create({
         baseUrl: config.api.serverUrl,
         headers: req.headers,
       }),

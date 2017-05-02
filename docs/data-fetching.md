@@ -18,16 +18,17 @@ rendering, it fetches data from the `http://api:8080/graphql` endpoint (`node-fe
 support relative URLs for obvious reasons).
 
 Because of these subtle differences of how the `fetch` method works internally, it makes total
-sense to pass it as a `context` variable to your React application, so it can be used from either
-routing level or from inside your React components as follows:
+sense to initialize a couple of helper methods for working with data API server (see
+[`src/ApiClient.js`][api]) and pass them via `context` to your React application, so it can be used
+from either routing level or from inside your React components as follows:
 
 #### Route Example
 
 ```js
 {
   path: '/posts/:id',
-  async action({ params, fetch }) {
-    const resp = await fetch(`/api/posts/${params.id}`, { method: 'GET' });
+  async action({ params, api }) {
+    const resp = await api.fetch(`/api/posts/${params.id}`);
     const data = await resp.json();
     return { title: data.title, component: <Post {...data} /> };
   }
@@ -38,23 +39,54 @@ routing level or from inside your React components as follows:
 
 ```js
 class Post extends React.Component {
-  static contextTypes = { fetch: PropTypes.func.isRequired };
+  static contextTypes = {
+    api: PropTypes.shape({ fetch: PropTypes.func.isRequired }).isRequired,
+  };
   handleDelete = (event) => {
     event.preventDefault();
     const id = event.target.dataset['id'];
-    this.context.fetch(`/api/posts/${id}`, { method: 'DELETE' }).then(...);
+    this.context.api.fetch(`/api/posts/${id}`, { method: 'DELETE' }).then(...);
   };
   render() { ... }
+}
+```
+
+Similarly, you an have a helper for working with GraphQL backend:
+
+#### Route Example /w GraphQL/Relay
+
+```js
+import { graphql } from 'relay-runtime';
+
+export default {
+  path: '/posts/:id',
+  async action({ api }) {
+    const data = away api.fetchQuery(graphql`
+      query PostQuery($id: ID!) {
+        post(id: $id) {
+          title
+          ...Post_post
+        }
+      }
+    `);
+
+    return {
+      title: data.title,
+      component: <Post post={data.post} />,
+    };
+  }
 }
 ```
 
 #### Related articles
 
 * [That's so fetch!](https://jakearchibald.com/2015/thats-so-fetch/) by [Jake Archibald](https://twitter.com/jaffathecake)
+* [Getting started with Relay Modern for building isomorphic web apps](https://hackernoon.com/ae049e4e23c1) by [Konstantin Tarkus](https://twitter.com/koistya)
 
 
 [fetch]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 [wfetch]: https://github.com/github/fetchno
 [nfetch]: https://github.com/bitinn/node-fetch
 [nodeapi]: https://github.com/kriasoft/nodejs-api-starter
+[api]: ../src/ApiClient.js
 

@@ -20,8 +20,12 @@ Before you start, take a moment to see how the project structure looks like:
 │   ├── /components/            # React components
 │   ├── /data/                  # GraphQL server schema and data models
 │   ├── /routes/                # Page/screen components along with the routing information
+│   ├── /ApiClient.js           # Universal HTTP client for working with REST and/or GraphQL API
 │   ├── /client.js              # Client-side startup script
 │   ├── /config.js              # Global application settings
+│   ├── /history.js             # A wrapper around HTML5 history API used for client-side navigation
+│   ├── /router.js              # Universal application router
+│   ├── /schema.graphql         # GraphQL schema to be used by Relay Compiler
 │   ├── /server.js              # Server-side startup script
 │   └── ...                     # Other core framework modules
 ├── /test/                      # Unit and end-to-end tests

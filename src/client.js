@@ -15,7 +15,7 @@ import FastClick from 'fastclick';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
 import App from './components/App';
-import Api from './Api';
+import ApiClient from './ApiClient';
 import history from './history';
 import { updateMeta } from './DOMUtils';
 
@@ -32,7 +32,7 @@ const context = {
     return () => { removeCss.forEach(f => f()); };
   },
   // Universal API client
-  api: Api.create({
+  api: ApiClient.create({
     baseUrl: window.App.apiUrl,
   }),
 };
