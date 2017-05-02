@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { graphql } from 'relay-runtime';
 import Layout from '../../components/Layout';
 import Page from '../../components/Page';
 
@@ -15,13 +16,18 @@ export default {
 
   path: '/about',
 
-  async action() {
-    const data = await require.ensure([], require => require('./about.md'), 'about');
+  async action({ api }) {
+    const [data, page] = await Promise.all([
+      api.fetchQuery(graphql`query indexAboutQuery {
+        me { ...Layout_me }
+      }`),
+      require.ensure([], require => require('./about.md'), 'about'),
+    ]);
 
     return {
-      title: data.title,
+      title: page.title,
       chunk: 'about',
-      component: <Layout><Page {...data} /></Layout>,
+      component: <Layout me={data.me}><Page {...page} /></Layout>,
     };
   },
 

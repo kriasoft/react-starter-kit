@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { graphql } from 'relay-runtime';
 import Layout from '../../components/Layout';
 
 const title = 'Admin Page';
@@ -17,17 +18,22 @@ export default {
 
   path: '/admin',
 
-  async action() {
+  async action({ api }) {
     if (!isAdmin) {
       return { redirect: '/login' };
     }
 
-    const Admin = await require.ensure([], require => require('./Admin').default, 'admin');
+    const [data, Admin] = await Promise.all([
+      api.fetchQuery(graphql`query indexAdminQuery {
+        me { ...Layout_me }
+      }`),
+      require.ensure([], require => require('./Admin').default, 'admin'),
+    ]);
 
     return {
       title,
       chunk: 'admin',
-      component: <Layout><Admin title={title} /></Layout>,
+      component: <Layout me={data.me}><Admin title={title} /></Layout>,
     };
   },
 

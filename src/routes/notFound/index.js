@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { graphql } from 'relay-runtime';
 import Layout from '../../components/Layout';
 import NotFound from './NotFound';
 
@@ -17,10 +18,14 @@ export default {
 
   path: '*',
 
-  action() {
+  async action({ api }) {
+    const data = await api.fetchQuery(graphql`query indexNotFoundQuery {
+      me { ...Layout_me }
+    }`);
+
     return {
       title,
-      component: <Layout><NotFound title={title} /></Layout>,
+      component: <Layout me={data.me}><NotFound title={title} /></Layout>,
       status: 404,
     };
   },

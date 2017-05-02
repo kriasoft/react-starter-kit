@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { graphql } from 'relay-runtime';
 import Layout from '../../components/Layout';
 import Contact from './Contact';
 
@@ -17,10 +18,13 @@ export default {
 
   path: '/contact',
 
-  action() {
+  async action({ api }) {
+    const data = await api.fetchQuery(graphql`query indexContactQuery {
+      me { ...Layout_me }
+    }`);
     return {
       title,
-      component: <Layout><Contact title={title} /></Layout>,
+      component: <Layout me={data.me}><Contact title={title} /></Layout>,
     };
   },
 

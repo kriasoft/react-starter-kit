@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { graphql } from 'relay-runtime';
 import Layout from '../../components/Layout';
 import Register from './Register';
 
@@ -17,10 +18,14 @@ export default {
 
   path: '/register',
 
-  action() {
+  async action({ api }) {
+    const data = await api.fetchQuery(graphql`query indexRegisterQuery {
+      me { ...Layout_me }
+    }`);
+
     return {
       title,
-      component: <Layout><Register title={title} /></Layout>,
+      component: <Layout me={data.me}><Register title={title} /></Layout>,
     };
   },
 
