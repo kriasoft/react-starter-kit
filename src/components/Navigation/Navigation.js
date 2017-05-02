@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { graphql, createFragmentContainer } from 'react-relay';
+import history from '../../history';
 import s from './Navigation.css';
 import Link from '../Link';
 
@@ -32,7 +33,8 @@ class Navigation extends React.Component {
   logout = (event) => {
     event.preventDefault();
     this.context.api.fetch('/logout', { method: 'POST' }).then(() => {
-      window.location.href = '/';
+      this.context.api.environment.getStore().getSource().clear();
+      history.push(history.location);
     });
   };
 
@@ -43,13 +45,13 @@ class Navigation extends React.Component {
         <Link className={s.link} to="/contact">Contact</Link>
         <span className={s.spacer}> | </span>
         {this.props.me ? [
-          <span key={'i1'} className={s.link}>Welcome, {this.props.me.email}!</span>,
-          <span key={'i2'} className={s.spacer}>|</span>,
-          <Link key={'i3'} className={s.link} to="/login" onClick={this.logout}>Logout</Link>,
+          <span key="i1" className={s.link}>Welcome, {this.props.me.email}!</span>,
+          <span key="i2" className={s.spacer}>|</span>,
+          <Link key="i3" className={s.link} to="/login" onClick={this.logout}>Logout</Link>,
         ] : [
-          <Link key={'i1'} className={s.link} to="/login">Log in</Link>,
-          <span key={'i2'} className={s.spacer}>or</span>,
-          <Link key={'i3'} className={cx(s.link, s.highlight)} to="/register">Sign up</Link>,
+          <Link key="i4" className={s.link} to="/login">Log in</Link>,
+          <span key="i5" className={s.spacer}>or</span>,
+          <Link key="i6" className={cx(s.link, s.highlight)} to="/register">Sign up</Link>,
         ]}
       </div>
     );
