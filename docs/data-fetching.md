@@ -51,7 +51,7 @@ class Post extends React.Component {
 }
 ```
 
-Similarly, you an have a helper for working with GraphQL backend:
+Similarly, you can have a couple of helper functions for working with a GraphQL backend:
 
 #### Route Example /w GraphQL/Relay
 
@@ -60,15 +60,15 @@ import { graphql } from 'relay-runtime';
 
 export default {
   path: '/posts/:id',
-  async action({ api }) {
-    const data = away api.fetchQuery(graphql`
+  async action({ params, api }) {
+    const data = await api.fetchQuery(graphql`
       query PostQuery($id: ID!) {
         post(id: $id) {
           title
           ...Post_post
         }
       }
-    `);
+    `, { id: params.id });
 
     return {
       title: data.title,
