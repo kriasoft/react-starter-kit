@@ -167,3 +167,18 @@ $ git fetch react-starter-kit
 $ git merge react-starter-kit/master
 $ yarn install
 ```
+
+### How to Add Facebook Login Work
+###### Note: App itself won't have a working Facebook login. Here is how you implement it:
+Visit https://developers.facebook.com and create account if you don't already have one.  
+Now add a new app and copy App ID and App Secret.  
+In your application folder add .env file and copy values gotten from developers.facebook. Here is how such file should look alike:  
+```
+FACEBOOK_APP_ID=99999999999999999
+FACEBOOK_APP_SECRET=999999999999999999999999999999999
+```
+Now come back to your app in https://developers.facebook.com cause we still have some changes to make.  
+You need to add it's category in Settings tab and pase ```http://localhost:3000/``` in Site URL.  
+In App Review tab click Make App Public.  
+Now click + Add Product Tab and add Facebook login.  
+You should now be ready to go!  
