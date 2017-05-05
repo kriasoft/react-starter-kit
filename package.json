@@ -49,6 +49,7 @@
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.0.0",
+    "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-rewire": "^1.1.0",
     "babel-preset-env": "^1.4.0",
     "babel-preset-react": "^6.24.1",
@@ -60,6 +61,7 @@
     "browser-sync": "^2.18.8",
     "chai": "^3.5.0",
     "chokidar": "^1.6.1",
+    "cross-env": "^4.0.0",
     "css-loader": "^0.28.0",
     "editorconfig-tools": "^0.1.1",
     "enzyme": "^2.8.2",
@@ -78,7 +80,9 @@
     "markdown-it": "^8.3.1",
     "mkdirp": "^0.5.1",
     "mocha": "^3.3.0",
+    "nyc": "^10.2.0",
     "null-loader": "^0.1.1",
+    "opn-cli": "^3.1.0",
     "pixrem": "^3.0.2",
     "pleeease-filters": "^3.0.1",
     "postcss": "^5.2.17",
@@ -131,6 +135,7 @@
     "env": {
       "test": {
         "plugins": [
+          "istanbul",
           "rewire"
         ]
       }
@@ -156,8 +161,10 @@
     "lint:css": "stylelint \"src/**/*.{css,less,scss,sss}\"",
     "lint:staged": "lint-staged",
     "lint": "yarn run lint:js && yarn run lint:css",
-    "test": "mocha \"src/**/*.test.js\" --require babel-register --require test/setup.js",
+    "test": "mocha",
     "test:watch": "yarn run test -- --reporter min --watch",
+    "test:cover": "cross-env NODE_ENV=test nyc npm run test",
+    "coverage": "yarn run test:cover && nyc report --reporter=html && opn coverage/index.html",
     "clean": "babel-node tools/run clean",
     "copy": "babel-node tools/run copy",
     "bundle": "babel-node tools/run bundle",
