@@ -1,9 +1,17 @@
 # Include your project-specific ignores in this file
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
 
-.idea
+__generated__
 build
-database.sqlite
+coverage
+
+# Node.js
 node_modules
 npm-debug.log
 yarn-error.log
+
+# Editors and IDEs
+.idea
+
+# Misc
+database.sqlite

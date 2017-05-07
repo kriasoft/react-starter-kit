@@ -73,7 +73,9 @@ or by using [Yeoman generator](https://www.npmjs.com/package/generator-react-ful
 This will install both run-time project dependencies and developer tools listed
 in [package.json](../package.json) file.
 
-#### 3. Run `yarn start`
+#### 3. Run `yarn run relay -- --watch`
+
+#### 4. Run `yarn start`
 
 This command will build the app from the source files (`/src`) into the output
 `/build` folder. As soon as the initial build completes, it will start the
