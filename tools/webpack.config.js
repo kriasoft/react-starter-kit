@@ -77,7 +77,34 @@ const config = {
         },
       },
       {
-        test: /\.css/,
+        test: /\.global\.css$/,
+        use: [
+          {
+            loader: 'isomorphic-style-loader',
+          },
+          {
+            // Fix use css-modules with other global css.
+            // https://github.com/css-modules/css-modules/pull/65#issue-109767111
+            loader: 'css-loader',
+            options: {
+              // CSS Loader https://github.com/webpack/css-loader
+              importLoaders: 1,
+              sourceMap: isDebug,
+              // CSS Nano http://cssnano.co/options/
+              minimize: !isDebug,
+              discardComments: { removeAll: true },
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              config: './tools/postcss.config.js',
+            },
+          },
+        ],
+      },
+      {
+        test: /^((?!\.global).)*\.css$/,
         use: [
           {
             loader: 'isomorphic-style-loader',
