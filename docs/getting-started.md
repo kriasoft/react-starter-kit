@@ -169,16 +169,13 @@ $ yarn install
 ```
 
 ### How to Add Facebook Login Work
-###### Note: App itself won't have a working Facebook login. Here is how you implement it:
-Visit https://developers.facebook.com and create account if you don't already have one.  
-Now add a new app and copy App ID and App Secret.  
-In your application folder add .env file and copy values gotten from developers.facebook. Here is how such file should look alike:  
+###### 1. Visit https://developers.facebook.com and create account if you don't already have one.  
+###### 2. Add a new app and copy App ID and App Secret.  
+###### 3. In your application's folder create an .env file and copy App ID and App secret values from developers.facebook. Your .env file should look similar to this:  
 ```
 FACEBOOK_APP_ID=99999999999999999
 FACEBOOK_APP_SECRET=999999999999999999999999999999999
 ```
-Now come back to your app in https://developers.facebook.com cause we still have some changes to make.  
-You need to add it's category in Settings tab and pase ```http://localhost:3000/``` in Site URL.  
-In App Review tab click Make App Public.  
-Now click + Add Product Tab and add Facebook login.  
-You should now be ready to go!  
+###### 4. Now come back to your app in https://developers.facebook.com. You need to add it's category in Settings tab and pase ```http://localhost:3000/``` in Site URL.  
+###### 5. In App Review tab click Make App Public.  
+###### 6. Click + Add Product Tab and add Facebook login.
