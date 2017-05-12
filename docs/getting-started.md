@@ -176,6 +176,6 @@ $ yarn install
 FACEBOOK_APP_ID=99999999999999999
 FACEBOOK_APP_SECRET=999999999999999999999999999999999
 ```
-###### 4. Now come back to your app in https://developers.facebook.com. You need to add it's category in Settings tab and pase ```http://localhost:3000/``` in Site URL.  
+###### 4. Now come back to your app in https://developers.facebook.com. Add it's category in Settings tab and pase ```http://localhost:3000/``` in Site URL.  
 ###### 5. In App Review tab click Make App Public.  
 ###### 6. Click + Add Product Tab and add Facebook login.
