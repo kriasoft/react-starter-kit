@@ -10,7 +10,7 @@
     "bluebird": "3.1.5",
     "classnames": "2.2.3",
     "eventemitter3": "1.1.1",
-    "express": "4.13.4",
+    "express": "4.15.3",
     "fastclick": "1.0.6",
     "fbjs": "0.7.0",
     "front-matter": "2.0.5",
@@ -78,7 +78,7 @@
     ]
   },
   "scripts": {
-    "new" : "src/components/new.sh src/components/",
+    "new": "src/components/new.sh src/components/",
     "lint": "eslint src tools && jscs src tools",
     "csslint": "csscomb src/components --lint --verbose",
     "csscomb": "csscomb src/components --verbose",
