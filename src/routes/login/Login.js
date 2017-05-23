@@ -95,7 +95,7 @@ class Login extends React.Component {
                 id="usernameOrEmail"
                 type="text"
                 name="usernameOrEmail"
-                autoFocus
+                autoFocus // eslint-disable-line jsx-a11y/no-autofocus
               />
             </div>
             <div className={s.formGroup}>

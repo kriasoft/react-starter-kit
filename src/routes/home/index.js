@@ -15,7 +15,7 @@ export default {
 
   path: '/',
 
-  async action() {
+  action() {
     return {
       title: 'React Starter Kit',
       component: <Layout><Home /></Layout>,

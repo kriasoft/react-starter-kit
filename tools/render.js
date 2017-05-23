@@ -53,7 +53,7 @@ async function render() {
     await makeDir(dirName);
     await writeFile(dist, text);
     const time = timeEnd.getTime() - timeStart.getTime();
-    console.log(`#${index + 1} ${dist} => ${response.status} ${response.statusText} (${time} ms)`);
+    console.info(`#${index + 1} ${dist} => ${response.status} ${response.statusText} (${time} ms)`);
   }));
 
   server.kill('SIGTERM');

@@ -1,5 +1,3 @@
-import fetch from '../core/fetch';
-
 const graphqlRequestDeprecatedMessage = `\`graphqlRequest\` has been deprecated.
 You should use Apollo: \`client.query({ query, variables...})\` or \`client.mutate()\`
 Don't forget to enclose your query to gql\`…\` tag or import *.graphql file.
@@ -34,39 +32,14 @@ function createGraphqlRequest(apolloClient) {
   };
 }
 
-function createFetchKnowingCookie({ cookie }) {
-  if (!process.env.BROWSER) {
-    return (url, options = {}) => {
-      const isLocalUrl = /^\/($|[^/])/.test(url);
-
-      // pass cookie only for itself.
-      // We can't know cookies for other sites BTW
-      if (isLocalUrl && options.credentials === 'include') {
-        const headers = {
-          ...options.headers,
-          cookie,
-        };
-        return fetch(url, { ...options, headers });
-      }
-
-      return fetch(url, options);
-    };
-  }
-
-  return fetch;
-}
-
-export default function createHelpers(config) {
-  const fetchKnowingCookie = createFetchKnowingCookie(config);
-  const graphqlRequest = createGraphqlRequest(config.apolloClient);
-
+export default function createHelpers({ apolloClient, fetch, history }) {
   return {
-    client: config.apolloClient,
-    history: config.history,
-    fetch: fetchKnowingCookie,
+    client: apolloClient,
+    history,
+    fetch,
     // @deprecated('Use `client` instead')
-    apolloClient: config.apolloClient,
+    apolloClient,
     // @deprecated('Use `client.query()` or `client.mutate()` instead')
-    graphqlRequest,
+    graphqlRequest: createGraphqlRequest(fetch),
   };
 }

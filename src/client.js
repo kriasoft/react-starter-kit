@@ -9,19 +9,25 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ErrorReporter from 'redbox-react';
+import deepForceUpdate from 'react-deep-force-update';
 import FastClick from 'fastclick';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
-import history from './core/history';
 import App from './components/App';
+import createFetch from './createFetch';
 import configureStore from './store/configureStore';
-import { updateMeta } from './core/DOMUtils';
-import { ErrorReporter, deepForceUpdate } from './core/devUtils';
+import { updateMeta } from './DOMUtils';
+import history from './history';
 import createApolloClient from './core/createApolloClient';
 
 const apolloClient = createApolloClient();
 
 /* eslint-disable global-require */
+
+const fetch = createFetch({
+  baseUrl: window.App.apiUrl,
+});
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
@@ -37,7 +43,10 @@ const context = {
   client: apolloClient,
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
-  store: configureStore(window.APP_STATE, { history, apolloClient }),
+  store: configureStore(window.App.state, { apolloClient, fetch, history }),
+  // Universal HTTP client
+  fetch,
+  storeSubscription: null,
 };
 
 // Switch off the native scroll restoration behavior and handle it manually
@@ -96,7 +105,7 @@ FastClick.attach(document.body);
 const container = document.getElementById('app');
 let appInstance;
 let currentLocation = history.location;
-let router = require('./core/router').default;
+let router = require('./router').default;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location, action) {
@@ -145,7 +154,7 @@ async function onLocationChange(location, action) {
       throw error;
     }
 
-    console.error(error); // eslint-disable-line no-console
+    console.error(error);
 
     // Do a full page reload if error occurs during client-side navigation
     if (action && currentLocation.key === location.key) {
@@ -171,8 +180,8 @@ if (__DEV__) {
 
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
-  module.hot.accept('./core/router', () => {
-    router = require('./core/router').default;
+  module.hot.accept('./router', () => {
+    router = require('./router').default;
 
     if (appInstance) {
       try {
