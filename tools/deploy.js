@@ -79,7 +79,7 @@ async function deploy() {
   // generates optimized and minimized bundles
   process.argv.push('--release');
   if (remote.static) process.argv.push('--static');
-  await run(require('./build').default);
+  await run(require('./build').default); // eslint-disable-line global-require
   if (process.argv.includes('--static')) {
     await cleanDir('build/*', {
       nosort: true,
@@ -100,7 +100,7 @@ async function deploy() {
 
   // Check if the site was successfully deployed
   const response = await fetch(remote.website);
-  console.log(`${remote.website} => ${response.status} ${response.statusText}`);
+  console.info(`${remote.website} => ${response.status} ${response.statusText}`);
 }
 
 export default deploy;
