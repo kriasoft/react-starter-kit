@@ -77,7 +77,11 @@ const config = {
         },
       },
       {
-        test: /\.css/,
+        // Internal Styles
+        test: /\.css$/,
+        include: [
+          path.resolve(__dirname, '../src'),
+        ],
         use: [
           {
             loader: 'isomorphic-style-loader',
@@ -102,6 +106,28 @@ const config = {
               config: {
                 path: './tools/postcss.config.js',
               },
+            },
+          },
+        ],
+      },
+      {
+        // External Styles
+        test: /\.css$/,
+        exclude: [
+          path.resolve(__dirname, '../src'),
+        ],
+        use: [
+          {
+            loader: 'isomorphic-style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: isDebug,
+              // CSS Modules Disabled
+              modules: false,
+              minimize: !isDebug,
+              discardComments: { removeAll: true },
             },
           },
         ],
