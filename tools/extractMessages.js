@@ -64,13 +64,13 @@ async function mergeToFile(locale, toBuild) {
 
   await writeMessages(fileName, result);
 
-  console.log(`Messages updated: ${fileName}`);
+  console.info(`Messages updated: ${fileName}`);
 
   if (toBuild && locale !== '_default') {
     const buildFileName = `build/messages/${locale}.json`;
     try {
       await writeMessages(buildFileName, result);
-      console.log(`Build messages updated: ${buildFileName}`);
+      console.info(`Build messages updated: ${buildFileName}`);
     } catch (err) {
       console.error(`Failed to update ${buildFileName}`);
     }

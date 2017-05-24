@@ -9,7 +9,7 @@ import {
 import queryIntl from './intl.graphql';
 
 export function setLocale({ locale }) {
-  return async (dispatch, getState, { client }) => {
+  return async (dispatch, getState, { client, history }) => {
     dispatch({
       type: SET_LOCALE_START,
       payload: {
@@ -41,9 +41,7 @@ export function setLocale({ locale }) {
       if (process.env.BROWSER) {
         const maxAge = 3650 * 24 * 3600; // 10 years in seconds
         document.cookie = `lang=${locale};path=/;max-age=${maxAge}`;
-
-        // re-run router on client
-        window.RSK_ENTRY();
+        history.push(`?lang=${locale}`);
       }
     } catch (error) {
       dispatch({

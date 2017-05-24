@@ -7,22 +7,20 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Children } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { IntlProvider } from 'react-intl';
-import deepForceUpdate from 'react-deep-force-update';
+import { Provider as ReduxProvider } from 'react-redux';
 
 const ContextType = {
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: PropTypes.func.isRequired,
+  // Universal HTTP client
+  fetch: PropTypes.func.isRequired,
   // Integrate Redux
   // http://redux.js.org/docs/basics/UsageWithReact.html
-  store: PropTypes.shape({
-    subscribe: PropTypes.func.isRequired,
-    dispatch: PropTypes.func.isRequired,
-    getState: PropTypes.func.isRequired,
-  }).isRequired,
+  ...ReduxProvider.childContextTypes,
   // Apollo Client
   client: PropTypes.object.isRequired,
 };
@@ -65,16 +63,13 @@ class App extends React.PureComponent {
   componentDidMount() {
     const store = this.props.context && this.props.context.store;
     if (store) {
+      this.lastLocale = store.getState().intl.locale;
       this.unsubscribe = store.subscribe(() => {
         const state = store.getState();
-        const newIntl = state.intl;
-        if (this.intl !== newIntl) {
-          this.intl = newIntl;
-          if (__DEV__) {
-            // eslint-disable-next-line no-console
-            console.log('Intl changed — Force rendering');
-          }
-          deepForceUpdate(this);
+        const { newLocale, locale } = state.intl;
+        if (!newLocale && this.lastLocale !== locale) {
+          this.lastLocale = locale;
+          this.forceUpdate();
         }
       });
     }
@@ -102,7 +97,7 @@ class App extends React.PureComponent {
         messages={localeMessages}
         defaultLocale="en-US"
       >
-        {Children.only(this.props.children)}
+        {React.Children.only(this.props.children)}
       </IntlProvider>
     );
   }

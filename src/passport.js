@@ -15,17 +15,17 @@
 
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
-import { auth as config } from '../config';
+import { User, UserLogin, UserClaim, UserProfile } from './data/models';
+import config from './config';
 
 /**
  * Sign in with Facebook.
  */
 passport.use(new FacebookStrategy({
-  clientID: config.facebook.id,
-  clientSecret: config.facebook.secret,
+  clientID: config.auth.facebook.id,
+  clientSecret: config.auth.facebook.secret,
   callbackURL: '/login/facebook/return',
-  profileFields: ['name', 'email', 'link', 'locale', 'timezone'],
+  profileFields: ['displayName', 'name', 'email', 'link', 'locale', 'timezone'],
   passReqToCallback: true,
 }, (req, accessToken, refreshToken, profile, done) => {
   /* eslint-disable no-underscore-dangle */
@@ -82,7 +82,8 @@ passport.use(new FacebookStrategy({
         ],
       });
       if (users.length) {
-        done(null, users[0]);
+        const user = users[0].get({ plain: true });
+        done(null, user);
       } else {
         let user = await User.findOne({ where: { email: profile._json.email } });
         if (user) {
