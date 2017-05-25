@@ -179,11 +179,10 @@ app.get('*', async (req, res, next) => {
     };
 
     const route = await router.resolve({
+      ...context,
       path: req.path,
       query: req.query,
       locale,
-      fetch,
-      store,
     });
 
     if (route.redirect) {
