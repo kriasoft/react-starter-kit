@@ -113,9 +113,9 @@ async function onLocationChange(location, action) {
     // it finds the first route that matches provided URL path string
     // and whose action method returns anything other than `undefined`.
     const route = await router.resolve({
+      ...context,
       path: location.pathname,
       query: queryString.parse(location.search),
-      fetch: context.fetch,
     });
 
     // Prevent multiple page renders during the routing process
