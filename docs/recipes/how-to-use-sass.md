@@ -44,7 +44,9 @@ const config = {
           {
             loader: 'postcss-loader',
             options: {
-              config: './tools/postcss.sass.js',
+              config: {
+                path: './tools/postcss.sass.js',
+              },
             },
           },
           {
