@@ -9,7 +9,7 @@ environment and [`node-fetch`][nfetch] module for the server-side environment (s
 [`src/createFetch.js`](../src/createFetch.js)), allowing you to use the `fetch(url, options)`
 method universally in both the client-side and server-side code bases.
 
-In order to avoid the the amount of boilerplate code needed when using the raw `fetch(..)`
+In order to avoid the amount of boilerplate code needed when using the raw `fetch(..)`
 function, a simple wrapper was created that provides a base URL of the data API server, credentials
 (cookies), CORS etc. For example, in a browser environment the base URL of the data API server
 might be an empty string, so when you make an Ajax request to the `/graphql` endpoint it's being
