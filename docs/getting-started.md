@@ -1,4 +1,7 @@
 ## Getting Started
+Run `yarn install`. Install it if you don't have it already.
+Then run `yarn start`
+It should load on http://localhost:3000/
 
 ### Requirements
 
