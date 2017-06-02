@@ -53,8 +53,8 @@ yarn add --dev eslint babel-eslint eslint-plugin-react stylelint
 
 ### SublimeText
 
-Install SublimeText packages  
-Easiest with [Package Control](https://packagecontrol.io/) and then "Package Control: Install Package" (Ctrl+Shift+P)  
+Install SublimeText packages
+Easiest with [Package Control](https://packagecontrol.io/) and then "Package Control: Install Package" (Ctrl+Shift+P)
 
 * [Babel](https://packagecontrol.io/packages/Babel)
 * [Sublime-linter](http://www.sublimelinter.com/en/latest/)
