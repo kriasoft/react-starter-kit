@@ -1,21 +1,21 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const ContextType = {
-  // Navigation manager, e.g. history.push('/home')
-  // https://github.com/mjackson/history
-  history: PropTypes.object.isRequired,
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: PropTypes.func.isRequired,
+  // Universal HTTP client
+  fetch: PropTypes.func.isRequired,
 };
 
 /**
@@ -31,9 +31,16 @@ const ContextType = {
  *     store: createStore(),
  *   };
  *
- *   ReactDOM.render(<App context={context}><HomePage /></App>, container);
+ *   ReactDOM.render(
+ *     <App context={context}>
+ *       <Layout>
+ *         <LandingPage />
+ *       </Layout>
+ *     </App>,
+ *     container,
+ *   );
  */
-class App extends React.Component {
+class App extends React.PureComponent {
 
   static propTypes = {
     context: PropTypes.shape(ContextType).isRequired,

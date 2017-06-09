@@ -1,13 +1,15 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import history from '../../history';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -17,16 +19,15 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-class Link extends Component {
-
+class Link extends React.Component {
   static propTypes = {
     to: PropTypes.string.isRequired,
-    children: PropTypes.node,
+    children: PropTypes.node.isRequired,
     onClick: PropTypes.func,
   };
 
-  static contextTypes = {
-    history: PropTypes.object.isRequired,
+  static defaultProps = {
+    onClick: null,
   };
 
   handleClick = (event) => {
@@ -43,14 +44,13 @@ class Link extends Component {
     }
 
     event.preventDefault();
-    this.context.history.push(this.props.to);
+    history.push(this.props.to);
   };
 
   render() {
     const { to, children, ...props } = this.props;
     return <a href={to} {...props} onClick={this.handleClick}>{children}</a>;
   }
-
 }
 
 export default Link;

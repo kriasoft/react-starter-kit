@@ -1,7 +1,7 @@
 language: node_js
 node_js:
+  - '7'
   - '6'
-  - '5'
 env:
   - CXX=g++-4.8
 addons:
@@ -11,5 +11,5 @@ addons:
     packages:
       - g++-4.8
 script:
-  - npm run lint
-  - npm run test
+  - yarn lint
+  - yarn test

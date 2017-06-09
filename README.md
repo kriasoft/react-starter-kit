@@ -1,30 +1,31 @@
-## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate
+## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate &nbsp; <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a> <a href="https://twitter.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
-> [React Starter Kit](https://www.reactstarterkit.com) is an opinionated
-> boilerplate for web development built on top of [Node.js](https://nodejs.org/),
-> [Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
-> [React](https://facebook.github.io/react/), containing modern web development
-> tools such as [Webpack](http://webpack.github.io/), [Babel](http://babeljs.io/)
-> and [Browsersync](http://www.browsersync.io/). Helping you to stay productive
-> following the best practices. A solid starting point for both professionals
-> and newcomers to the industry.
+[React Starter Kit](https://www.reactstarterkit.com) is an opinionated boilerplate for web
+development built on top of [Node.js](https://nodejs.org/),
+[Express](http://expressjs.com/), [GraphQL](http://graphql.org/) and
+[React](https://facebook.github.io/react/), containing modern web development
+tools such as [Webpack](http://webpack.github.io/), [Babel](http://babeljs.io/)
+and [Browsersync](http://www.browsersync.io/). Helping you to stay productive
+following the best practices. A solid starting point for both professionals
+and newcomers to the industry.
 
-**See** [getting started](./docs/getting-started.md) guide,
-[demo](http://demo.reactstarterkit.com), [docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs),
-[to-do list](https://waffle.io/kriasoft/react-starter-kit) &nbsp;|&nbsp;
-**Join** [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) chat room to stay up to date &nbsp;|&nbsp;
+**See** [getting started guide](./docs/getting-started.md), [demo][demo],
+[docs](https://github.com/kriasoft/react-starter-kit/tree/master/docs),
+[roadmap](https://github.com/kriasoft/react-starter-kit/projects/1) &nbsp;|&nbsp;
+**Join** [#react-starter-kit][chat] chat room on Gitter &nbsp;|&nbsp;
 **Visit our sponsors**:<br><br>
 
-[![Rollbar - Full-stack error tracking for all apps in any language](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
-[![Localize - Translate your web app in minutes](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/localize.png)](https://localizejs.com/?cid=802&utm_source=rsk)
+<p align="center" align="top">
+  <a href="https://rollbar.com/?utm_source=reactstartkit(github)&amp;utm_medium=link&amp;utm_campaign=reactstartkit(github)"><img src="https://koistya.github.io/files/rollbar-362x72.png" height="36" align="top" /></a>
+  <a href="https://x-team.com/?utm_source=reactstarterkit&amp;utm_medium=github-link&amp;utm_campaign=reactstarterkit-june"><img src="https://koistya.github.io/files/xteam-255x72.png" height="36" align="top" /></a>
+  <sup><a href="https://x-team.com/join/?utm_source=reactstarterkit&utm_medium=github-link&utm_campaign=reactstarterkit-june">Hiring</a></sup>
+</p>
 
 
 ### Getting Started
 
   * Follow the [getting started guide](./docs/getting-started.md) to download and run the project
-    ([node](https://nodejs.org/) >= 5,
-    **[node-gyp](https://github.com/nodejs/node-gyp#readme)**
-    and **[prerequisites](https://github.com/nodejs/node-gyp#installation)**)
+    ([Node.js](https://nodejs.org/) >= 6.5)
   * Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
 
 
@@ -34,15 +35,17 @@ The `master` branch of React Starter Kit doesn't include a Flux implementation o
 advanced integrations. Nevertheless, we have some integrations available to you in *feature*
 branches that you can use either as a reference or merge into your project:
 
-  * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) — isomorphic
-    Redux by [Pavel Lang](https://github.com/langpavel)
+  * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1084))
+    — isomorphic Redux by [Pavel Lang](https://github.com/langpavel)
     (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
-  * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) —
-    isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
-    (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/redux`)
-  * [feature/bootstrap3](https://github.com/kriasoft/react-starter-kit/tree/feature/bootstrap3) —
-    Simplest possible integration of [react-bootstrap](https://react-bootstrap.github.io/)
-    by [Pavel Lang](https://github.com/langpavel) (based on `master`)
+  * [feature/apollo](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1147))
+    — isomorphic Apollo Client by [Pavel Lang](https://github.com/langpavel)
+    (see [Tracking PR #1147](https://github.com/kriasoft/react-starter-kit/pull/1147)) (based on `feature/redux`)
+  * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1135))
+    — isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
+    (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/apollo`)
+
+You can see status of most reasonable merge combination as [PRs labeled as `TRACKING`](https://github.com/kriasoft/react-starter-kit/labels/TRACKING)
 
 If you think that any of these features should be on `master`, or vice versa, some features should
 removed from the `master` branch, please [let us know](https://gitter.im/kriasoft/react-starter-kit).
@@ -201,6 +204,7 @@ requests](CONTRIBUTING.md#pull-requests).
 
 ### Related Projects
 
+  * [GraphQL Starter Kit](https://github.com/kriasoft/graphql-starter-kit) — Boilerplate for building data APIs with Node.js, JavaScript (via Babel) and GraphQL
   * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
   * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
 
@@ -213,12 +217,18 @@ requests](CONTRIBUTING.md#pull-requests).
   * [appear.in/react](https://appear.in/react) — Open hours! Exchange ideas and experiences (React, GraphQL, startups and pet projects)
   * [@koistya](https://twitter.com/koistya) on [Codementor](https://www.codementor.io/koistya), or [Skype](http://hatscripts.com/addskype?koistya) — Private consulting
 
+
 ### License
 
-Copyright © 2014-2016 Kriasoft, LLC. This source code is licensed under the MIT
+Copyright © 2014-present Kriasoft, LLC. This source code is licensed under the MIT
 license found in the [LICENSE.txt](https://github.com/kriasoft/react-starter-kit/blob/master/LICENSE.txt)
 file. The documentation to the project is licensed under the
 [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license.
 
 ---
 Made with ♥ by Konstantin Tarkus ([@koistya](https://twitter.com/koistya)) and [contributors](https://github.com/kriasoft/react-starter-kit/graphs/contributors)
+
+[rsk]: https://www.reactstarterkit.com
+[demo]: http://demo.reactstarterkit.com
+[node]: https://nodejs.org
+[chat]: https://gitter.im/kriasoft/react-starter-kit

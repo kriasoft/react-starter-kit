@@ -1,35 +1,33 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import 'babel-polyfill';
 import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import expressJwt from 'express-jwt';
+import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import UniversalRouter from 'universal-router';
-import createMemoryHistory from 'history/createMemoryHistory';
 import PrettyError from 'pretty-error';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
-import passport from './core/passport';
+import createFetch from './createFetch';
+import passport from './passport';
+import router from './router';
 import models from './data/models';
 import schema from './data/schema';
-import routes from './routes';
-import assets from './assets'; // eslint-disable-line import/no-unresolved
-import { port, auth } from './config';
+import assets from './assets.json'; // eslint-disable-line import/no-unresolved
+import config from './config';
 
 const app = express();
 
@@ -52,23 +50,36 @@ app.use(bodyParser.json());
 // Authentication
 // -----------------------------------------------------------------------------
 app.use(expressJwt({
-  secret: auth.jwt.secret,
+  secret: config.auth.jwt.secret,
   credentialsRequired: false,
   getToken: req => req.cookies.id_token,
 }));
+// Error handler for express-jwt
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+  if (err instanceof Jwt401Error) {
+    console.error('[express-jwt-error]', req.cookies.id_token);
+    // `clearCookie`, otherwise user can't use web-app until cookie expires
+    res.clearCookie('id_token');
+  }
+  next(err);
+});
+
 app.use(passport.initialize());
 
+if (__DEV__) {
+  app.enable('trust proxy');
+}
 app.get('/login/facebook',
-  passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false })
+  passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false }),
 );
 app.get('/login/facebook/return',
   passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
   (req, res) => {
     const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
+    const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
     res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
     res.redirect('/');
-  }
+  },
 );
 
 //
@@ -76,9 +87,9 @@ app.get('/login/facebook/return',
 // -----------------------------------------------------------------------------
 app.use('/graphql', expressGraphQL(req => ({
   schema,
-  graphiql: true,
+  graphiql: __DEV__,
   rootValue: { request: req },
-  pretty: process.env.NODE_ENV !== 'production',
+  pretty: __DEV__,
 })));
 
 //
@@ -91,30 +102,47 @@ app.get('*', async (req, res, next) => {
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
-      // Navigation manager, e.g. history.push('/home')
-      // https://github.com/mjackson/history
-      history: createMemoryHistory({
-        initialEntries: [req.url],
-      }),
       // Enables critical path CSS rendering
       // https://github.com/kriasoft/isomorphic-style-loader
       insertCss: (...styles) => {
         // eslint-disable-next-line no-underscore-dangle
         styles.forEach(style => css.add(style._getCss()));
       },
+      // Universal HTTP client
+      fetch: createFetch({
+        baseUrl: config.api.serverUrl,
+        cookie: req.headers.cookie,
+      }),
     };
 
-    const route = await UniversalRouter.resolve(routes, {
+    const route = await router.resolve({
+      ...context,
       path: req.path,
       query: req.query,
     });
 
+    if (route.redirect) {
+      res.redirect(route.status || 302, route.redirect);
+      return;
+    }
+
     const data = { ...route };
     data.children = ReactDOM.renderToString(<App context={context}>{route.component}</App>);
-    data.style = [...css].join('');
-    data.script = assets.main.js;
-    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+    data.styles = [
+      { id: 'css', cssText: [...css].join('') },
+    ];
+    data.scripts = [
+      assets.vendor.js,
+      assets.client.js,
+    ];
+    if (assets[route.chunk]) {
+      data.scripts.push(assets[route.chunk].js);
+    }
+    data.app = {
+      apiUrl: config.api.clientUrl,
+    };
 
+    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
     res.status(route.status || 200);
     res.send(`<!doctype html>${html}`);
   } catch (err) {
@@ -130,15 +158,15 @@ pe.skipNodeFiles();
 pe.skipPackage('express');
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-  console.log(pe.render(err)); // eslint-disable-line no-console
+  console.error(pe.render(err));
   const html = ReactDOM.renderToStaticMarkup(
     <Html
       title="Internal Server Error"
       description={err.message}
-      style={errorPageStyle._getCss()} // eslint-disable-line no-underscore-dangle
+      styles={[{ id: 'css', cssText: errorPageStyle._getCss() }]} // eslint-disable-line no-underscore-dangle
     >
       {ReactDOM.renderToString(<ErrorPageWithoutStyle error={err} />)}
-    </Html>
+    </Html>,
   );
   res.status(err.status || 500);
   res.send(`<!doctype html>${html}`);
@@ -147,10 +175,8 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 //
 // Launch the server
 // -----------------------------------------------------------------------------
-/* eslint-disable no-console */
 models.sync().catch(err => console.error(err.stack)).then(() => {
-  app.listen(port, () => {
-    console.log(`The server is running at http://localhost:${port}/`);
+  app.listen(config.port, () => {
+    console.info(`The server is running at http://localhost:${config.port}/`);
   });
 });
-/* eslint-enable no-console */

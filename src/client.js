@@ -1,28 +1,29 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ErrorReporter from 'redbox-react';
+import deepForceUpdate from 'react-deep-force-update';
 import FastClick from 'fastclick';
-import UniversalRouter from 'universal-router';
 import queryString from 'query-string';
-import createBrowserHistory from 'history/createBrowserHistory';
 import { createPath } from 'history/PathUtils';
 import App from './components/App';
+import createFetch from './createFetch';
+import history from './history';
+import { updateMeta } from './DOMUtils';
+
+/* eslint-disable global-require */
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
 const context = {
-  // Navigation manager, e.g. history.push('/home')
-  // https://github.com/mjackson/history
-  history: createBrowserHistory(),
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: (...styles) => {
@@ -30,32 +31,11 @@ const context = {
     const removeCss = styles.map(x => x._insertCss());
     return () => { removeCss.forEach(f => f()); };
   },
+  // Universal HTTP client
+  fetch: createFetch({
+    baseUrl: window.App.apiUrl,
+  }),
 };
-
-function updateTag(tagName, keyName, keyValue, attrName, attrValue) {
-  const node = document.head.querySelector(`${tagName}[${keyName}="${keyValue}"]`);
-  if (node && node.getAttribute(attrName) === attrValue) return;
-
-  // Remove and create a new tag in order to make it work with bookmarks in Safari
-  if (node) {
-    node.parentNode.removeChild(node);
-  }
-  if (typeof attrValue === 'string') {
-    const nextNode = document.createElement(tagName);
-    nextNode.setAttribute(keyName, keyValue);
-    nextNode.setAttribute(attrName, attrValue);
-    document.head.appendChild(nextNode);
-  }
-}
-function updateMeta(name, content) {
-  updateTag('meta', 'name', name, 'content', content);
-}
-function updateCustomMeta(property, content) { // eslint-disable-line no-unused-vars
-  updateTag('meta', 'property', property, 'content', content);
-}
-function updateLink(rel, href) { // eslint-disable-line no-unused-vars
-  updateTag('link', 'rel', rel, 'href', href);
-}
 
 // Switch off the native scroll restoration behavior and handle it manually
 // https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
@@ -111,18 +91,19 @@ let onRenderComplete = function initialRenderComplete() {
 FastClick.attach(document.body);
 
 const container = document.getElementById('app');
-let currentLocation = context.history.location;
-let routes = require('./routes').default;
+let appInstance;
+let currentLocation = history.location;
+let router = require('./router').default;
 
 // Re-render the app when window.location changes
-async function onLocationChange(location) {
+async function onLocationChange(location, action) {
   // Remember the latest scroll position for the previous location
   scrollPositionsHistory[currentLocation.key] = {
     scrollX: window.pageXOffset,
     scrollY: window.pageYOffset,
   };
   // Delete stored scroll position for next page if any
-  if (context.history.action === 'PUSH') {
+  if (action === 'PUSH') {
     delete scrollPositionsHistory[location.key];
   }
   currentLocation = location;
@@ -131,40 +112,76 @@ async function onLocationChange(location) {
     // Traverses the list of routes in the order they are defined until
     // it finds the first route that matches provided URL path string
     // and whose action method returns anything other than `undefined`.
-    const route = await UniversalRouter.resolve(routes, {
+    const route = await router.resolve({
+      ...context,
       path: location.pathname,
       query: queryString.parse(location.search),
     });
 
-    // Render the result of the resolved route into the DOM
-    // if the location was not changed during the routing process
-    if (currentLocation.key === location.key) {
-      ReactDOM.render(
-        <App context={context}>{route.component}</App>,
-        container,
-        () => onRenderComplete(route, location)
-      );
-    }
-  } catch (err) {
-    if (process.env.NODE_ENV !== 'production') {
-      throw err;
+    // Prevent multiple page renders during the routing process
+    if (currentLocation.key !== location.key) {
+      return;
     }
 
-    // Avoid broken navigation in production mode by a full page reload on error
-    console.error(err); // eslint-disable-line no-console
-    window.location.href = createPath(location);
+    if (route.redirect) {
+      history.replace(route.redirect);
+      return;
+    }
+
+    appInstance = ReactDOM.render(
+      <App context={context}>{route.component}</App>,
+      container,
+      () => onRenderComplete(route, location),
+    );
+  } catch (error) {
+    // Display the error in full-screen for development mode
+    if (__DEV__) {
+      appInstance = null;
+      document.title = `Error: ${error.message}`;
+      ReactDOM.render(<ErrorReporter error={error} />, container);
+      throw error;
+    }
+
+    console.error(error);
+
+    // Do a full page reload if error occurs during client-side navigation
+    if (action && currentLocation.key === location.key) {
+      window.location.reload();
+    }
   }
 }
 
 // Handle client-side navigation by using HTML5 History API
 // For more information visit https://github.com/mjackson/history#readme
-context.history.listen(onLocationChange);
+history.listen(onLocationChange);
 onLocationChange(currentLocation);
+
+// Handle errors that might happen after rendering
+// Display the error in full-screen for development mode
+if (__DEV__) {
+  window.addEventListener('error', (event) => {
+    appInstance = null;
+    document.title = `Runtime Error: ${event.error.message}`;
+    ReactDOM.render(<ErrorReporter error={event.error} />, container);
+  });
+}
 
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
-  module.hot.accept('./routes', () => {
-    routes = require('./routes').default; // eslint-disable-line global-require
+  module.hot.accept('./router', () => {
+    router = require('./router').default;
+
+    if (appInstance) {
+      try {
+        // Force-update the whole tree, including components that refuse to update
+        deepForceUpdate(appInstance);
+      } catch (error) {
+        appInstance = null;
+        document.title = `Hot Update Error: ${error.message}`;
+        ReactDOM.render(<ErrorReporter error={error} />, container);
+        return;
+      }
+    }
 
     onLocationChange(currentLocation);
   });
