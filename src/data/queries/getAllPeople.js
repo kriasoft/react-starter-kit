@@ -11,16 +11,13 @@ import { GraphQLList as List } from 'graphql';
 import PersonType from '../types/PersonType';
 import allPeople from '../seed/people';
 
-// export function getAllPeople() {
-//   return people;
-// };
-
+/* eslint-disable no-underscore-dangle */
 const getAllPeople = {
   type: new List(PersonType),
-  resolve: async( req, args, { loaders }) => {
-    let people = allPeople.map((person => person._id));
-    return await loaders.personLoader.loadMany( people );
-  }
+  resolve: async (req, args, { loaders }) => {
+    const people = allPeople.map((person => person._id));
+    return loaders.personLoader.loadMany(people);
+  },
 };
 
 export default getAllPeople;

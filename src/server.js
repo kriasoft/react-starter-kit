@@ -92,7 +92,7 @@ app.use('/graphql', expressGraphQL(req => ({
   rootValue: { request: req },
   pretty: __DEV__,
   context: {
-    loaders: loaders()
+    loaders: loaders(),
   },
 })));
 

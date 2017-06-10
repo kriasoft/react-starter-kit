@@ -7,18 +7,16 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import PersonType from '../types/PersonType';
 import allPeople from '../seed/people';
 
-const people = allPeople;
-
+/* eslint-disable no-underscore-dangle */
 export default function getPerson(_id) {
   let response = null;
   try {
-    response = people.find(people => people._id === _id);
+    response = allPeople.find(people => people._id === _id);
   } catch (err) {
+    /* eslint-disable no-console */
     console.log('getPerson err', err);
   }
-  console.log('RESPONSE: ', response);
   return response;
-};
+}

@@ -18,12 +18,10 @@ const PersonType = new ObjectType({
   fields: () => ({
     name: { type: StringType },
     friends: {
-      type: new List( PersonType ),
-      resolve: async( person, args, { loaders }) => {
-        return await loaders.personLoader.loadMany( person.friends );
-      }
-    }
-  })
+      type: new List(PersonType),
+      resolve: (person, args, { loaders }) => loaders.personLoader.loadMany(person.friends),
+    },
+  }),
 });
 
 export default PersonType;
