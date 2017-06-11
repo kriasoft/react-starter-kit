@@ -10,19 +10,14 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Page from '../../components/Page';
+import privacy from './privacy.md';
 
-export default {
+function action() {
+  return {
+    chunks: ['privacy'],
+    title: privacy.title,
+    component: <Layout><Page {...privacy} /></Layout>,
+  };
+}
 
-  path: '/privacy',
-
-  async action() {
-    const data = await require.ensure([], require => require('./privacy.md'), 'privacy');
-
-    return {
-      title: data.title,
-      chunk: 'privacy',
-      component: <Layout><Page {...data} /></Layout>,
-    };
-  },
-
-};
+export default action;
