@@ -29,6 +29,7 @@ const config = {
     path: path.resolve(__dirname, '../build/public/assets'),
     publicPath: '/assets/',
     pathinfo: isVerbose,
+    devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath),
   },
 
   module: {
@@ -158,10 +159,6 @@ const config = {
 
       // Exclude dev modules from production build
       ...isDebug ? [] : [
-        {
-          test: path.resolve(__dirname, '../node_modules/redbox-react/lib/index.js'),
-          use: 'null-loader',
-        },
         {
           test: path.resolve(__dirname, '../node_modules/react-deep-force-update/lib/index.js'),
           use: 'null-loader',

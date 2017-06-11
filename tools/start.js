@@ -12,6 +12,9 @@ import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import WriteFilePlugin from 'write-file-webpack-plugin';
+import url from 'url';
+import querystring from 'querystring';
+import launchEditor from 'react-dev-utils/launchEditor';
 import run from './run';
 import runServer from './runServer';
 import webpackConfig from './webpack.config';
@@ -39,6 +42,7 @@ async function start() {
     if (isDebug) {
       clientConfig.entry.client = [...new Set([
         'babel-polyfill',
+        'react-error-overlay',
         'react-hot-loader/patch',
         'webpack-hot-middleware/client',
       ].concat(clientConfig.entry.client))];
@@ -75,7 +79,19 @@ async function start() {
 
         proxy: {
           target: server.host,
-          middleware: [wpMiddleware, hotMiddleware],
+          middleware: [
+            {
+              // Keep this in sync with react-error-overlay
+              route: '/__open-stack-frame-in-editor',
+              handle(req, res) {
+                const query = querystring.parse(url.parse(req.url).query);
+                launchEditor(query.fileName, query.lineNumber);
+                res.end();
+              },
+            },
+            wpMiddleware,
+            hotMiddleware,
+          ],
           proxyOptions: {
             xfwd: true,
           },
