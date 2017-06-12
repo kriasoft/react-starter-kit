@@ -26,7 +26,6 @@
     "express": "^4.15.3",
     "express-graphql": "^0.6.6",
     "express-jwt": "^5.3.0",
-    "fastclick": "^1.0.6",
     "graphql": "^0.10.1",
     "history": "^4.6.1",
     "isomorphic-fetch": "^2.2.1",
@@ -106,15 +105,16 @@
     "postcss-selector-not": "^3.0.1",
     "pre-commit": "^1.2.2",
     "raw-loader": "^0.5.1",
-    "react-addons-test-utils": "^15.5.1",
     "react-deep-force-update": "^2.0.1",
+    "react-dev-utils": "^3.0.0",
+    "react-error-overlay": "^1.0.7",
     "react-hot-loader": "^3.0.0-beta.7",
-    "redbox-react": "^1.4.1",
+    "react-test-renderer": "^15.5.4",
     "rimraf": "^2.6.1",
     "sinon": "^2.3.4",
-    "stylefmt": "^6.0.0",
     "stylelint": "^7.11.0",
     "stylelint-config-standard": "^16.0.0",
+    "stylelint-order": "^0.5.0",
     "url-loader": "^0.5.8",
     "webpack": "^2.6.1",
     "webpack-bundle-analyzer": "^2.8.2",
@@ -154,13 +154,12 @@
       "git add"
     ],
     "*.{css,less,scss,sss}": [
-      "stylefmt",
-      "stylelint",
+      "stylelint --fix",
       "git add"
     ]
   },
   "scripts": {
-    "lint:js": "eslint src tools",
+    "lint:js": "eslint --ignore-path .gitignore --ignore-pattern \"!**/.*\" .",
     "lint:css": "stylelint \"src/**/*.{css,less,scss,sss}\"",
     "lint:staged": "lint-staged",
     "lint": "yarn run lint:js && yarn run lint:css",

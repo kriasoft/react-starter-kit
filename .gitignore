@@ -1,11 +1,30 @@
-# Include your project-specific ignores in this file
-# Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
+# See https://help.github.com/ignore-files/ for more about ignoring files.
 
-.idea
+# Dependencies
+node_modules/
+
+# Compiled output
 build
+
+# Runtime data
 database.sqlite
-node_modules
-npm-debug.log
-yarn-error.log
+
+# Test coverage
 coverage
 .nyc_output
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editors and IDEs
+.idea
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Misc
+.DS_Store

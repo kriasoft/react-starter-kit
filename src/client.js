@@ -9,9 +9,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ErrorReporter from 'redbox-react';
 import deepForceUpdate from 'react-deep-force-update';
-import FastClick from 'fastclick';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
 import App from './components/App';
@@ -87,9 +85,6 @@ let onRenderComplete = function initialRenderComplete() {
   };
 };
 
-// Make taps on links and buttons work fast on mobiles
-FastClick.attach(document.body);
-
 const container = document.getElementById('app');
 let appInstance;
 let currentLocation = history.location;
@@ -134,11 +129,7 @@ async function onLocationChange(location, action) {
       () => onRenderComplete(route, location),
     );
   } catch (error) {
-    // Display the error in full-screen for development mode
     if (__DEV__) {
-      appInstance = null;
-      document.title = `Error: ${error.message}`;
-      ReactDOM.render(<ErrorReporter error={error} />, container);
       throw error;
     }
 
@@ -156,31 +147,14 @@ async function onLocationChange(location, action) {
 history.listen(onLocationChange);
 onLocationChange(currentLocation);
 
-// Handle errors that might happen after rendering
-// Display the error in full-screen for development mode
-if (__DEV__) {
-  window.addEventListener('error', (event) => {
-    appInstance = null;
-    document.title = `Runtime Error: ${event.error.message}`;
-    ReactDOM.render(<ErrorReporter error={event.error} />, container);
-  });
-}
-
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
   module.hot.accept('./router', () => {
     router = require('./router').default;
 
     if (appInstance) {
-      try {
-        // Force-update the whole tree, including components that refuse to update
-        deepForceUpdate(appInstance);
-      } catch (error) {
-        appInstance = null;
-        document.title = `Hot Update Error: ${error.message}`;
-        ReactDOM.render(<ErrorReporter error={error} />, container);
-        return;
-      }
+      // Force-update the whole tree, including components that refuse to update
+      deepForceUpdate(appInstance);
     }
 
     onLocationChange(currentLocation);
