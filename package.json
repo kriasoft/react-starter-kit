@@ -108,9 +108,9 @@
     "react-test-renderer": "^15.5.4",
     "rimraf": "^2.6.1",
     "sinon": "^2.3.4",
-    "stylefmt": "^6.0.0",
     "stylelint": "^7.11.0",
     "stylelint-config-standard": "^16.0.0",
+    "stylelint-order": "^0.5.0",
     "url-loader": "^0.5.8",
     "webpack": "^2.6.1",
     "webpack-bundle-analyzer": "^2.8.2",
@@ -150,13 +150,12 @@
       "git add"
     ],
     "*.{css,less,scss,sss}": [
-      "stylefmt",
-      "stylelint",
+      "stylelint --fix",
       "git add"
     ]
   },
   "scripts": {
-    "lint:js": "eslint src tools",
+    "lint:js": "eslint --ignore-path .gitignore --ignore-pattern \"!**/.*\" .",
     "lint:css": "stylelint \"src/**/*.{css,less,scss,sss}\"",
     "lint:staged": "lint-staged",
     "lint": "yarn run lint:js && yarn run lint:css",

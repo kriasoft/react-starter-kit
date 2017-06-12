@@ -1126,7 +1126,7 @@ bluebird@^2.3.6:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-2.11.0.tgz#534b9033c022c9579c56ba3b3e5a5caafbb650e1"
 
-bluebird@^3.0.5, bluebird@^3.3.4, bluebird@^3.4.6, bluebird@^3.5.0:
+bluebird@^3.3.4, bluebird@^3.4.6, bluebird@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
 
@@ -1867,16 +1867,6 @@ css-color-function@^1.3.0:
     debug "~0.7.4"
     rgb "~0.1.0"
 
-css-color-list@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/css-color-list/-/css-color-list-0.0.1.tgz#8718e8695ae7a2cc8787be8715f1c008a7f28b15"
-  dependencies:
-    css-color-names "0.0.1"
-
-css-color-names@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/css-color-names/-/css-color-names-0.0.1.tgz#5d0548fa256456ede4a9a0c2ac7ab19d3eb1ad81"
-
 css-color-names@0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/css-color-names/-/css-color-names-0.0.3.tgz#de0cef16f4d8aa8222a320d5b6d7e9bbada7b9f6"
@@ -2151,7 +2141,7 @@ dev-ip@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/dev-ip/-/dev-ip-1.0.1.tgz#a76a3ed1855be7a012bb8ac16cb80f3c00dc28f0"
 
-diff@3.2.0, diff@^3.1.0, diff@^3.2.0:
+diff@3.2.0, diff@^3.1.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.2.0.tgz#c9ce393a4b7cbd0b058a725c93df299027868ff9"
 
@@ -2308,15 +2298,6 @@ editorconfig@^0.12.1:
     commander "~1.1.1"
     lru-cache "~2.0.0"
     sigmund "~1.0.0"
-
-editorconfig@^0.13.2:
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/editorconfig/-/editorconfig-0.13.2.tgz#8e57926d9ee69ab6cb999f027c2171467acceb35"
-  dependencies:
-    bluebird "^3.0.5"
-    commander "^2.9.0"
-    lru-cache "^3.2.0"
-    sigmund "^1.0.1"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -3237,7 +3218,7 @@ globby@^5.0.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-globby@^6.0.0, globby@^6.1.0:
+globby@^6.0.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/globby/-/globby-6.1.0.tgz#f5a6d70e8395e21c858fb0489d64df02424d506c"
   dependencies:
@@ -4471,12 +4452,6 @@ loud-rejection@^1.0.0:
   dependencies:
     currently-unhandled "^0.4.1"
     signal-exit "^3.0.0"
-
-lru-cache@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-3.2.0.tgz#71789b3b7f5399bec8565dda38aa30d2a097efee"
-  dependencies:
-    pseudomap "^1.0.1"
 
 lru-cache@^4.0.1:
   version "4.1.1"
@@ -5722,12 +5697,6 @@ postcss-scss@^0.4.0:
   dependencies:
     postcss "^5.2.13"
 
-postcss-scss@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/postcss-scss/-/postcss-scss-1.0.1.tgz#71e6baa2bc5688ffc5bca6abc4a8199badea8fb6"
-  dependencies:
-    postcss "^6.0.1"
-
 postcss-selector-matches@^3.0.0, postcss-selector-matches@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/postcss-selector-matches/-/postcss-selector-matches-3.0.1.tgz#e5634011e13950881861bbdd58c2d0111ffc96ab"
@@ -5750,12 +5719,12 @@ postcss-selector-parser@^2.0.0, postcss-selector-parser@^2.1.1, postcss-selector
     indexes-of "^1.0.1"
     uniq "^1.0.1"
 
-postcss-sorting@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/postcss-sorting/-/postcss-sorting-2.1.0.tgz#32b1e9afa913bb225a6ad076d503d8f983bb4a82"
+postcss-sorting@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/postcss-sorting/-/postcss-sorting-3.0.0.tgz#fbac20921fe09eb04d37d38d9477b9621b544ea1"
   dependencies:
     lodash "^4.17.4"
-    postcss "^5.2.17"
+    postcss "^6.0.1"
 
 postcss-svgo@^2.1.1:
   version "2.1.6"
@@ -5786,7 +5755,7 @@ postcss-zindex@^2.0.1:
     postcss "^5.0.4"
     uniqs "^2.0.0"
 
-postcss@^5.0.0, postcss@^5.0.10, postcss@^5.0.11, postcss@^5.0.12, postcss@^5.0.13, postcss@^5.0.14, postcss@^5.0.16, postcss@^5.0.18, postcss@^5.0.2, postcss@^5.0.20, postcss@^5.0.21, postcss@^5.0.4, postcss@^5.0.5, postcss@^5.0.6, postcss@^5.0.8, postcss@^5.2.13, postcss@^5.2.16, postcss@^5.2.17, postcss@^5.2.4:
+postcss@^5.0.0, postcss@^5.0.10, postcss@^5.0.11, postcss@^5.0.12, postcss@^5.0.13, postcss@^5.0.14, postcss@^5.0.16, postcss@^5.0.18, postcss@^5.0.2, postcss@^5.0.20, postcss@^5.0.21, postcss@^5.0.4, postcss@^5.0.5, postcss@^5.0.6, postcss@^5.0.8, postcss@^5.2.13, postcss@^5.2.16, postcss@^5.2.4:
   version "5.2.17"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-5.2.17.tgz#cf4f597b864d65c8a492b2eabe9d706c879c388b"
   dependencies:
@@ -5878,7 +5847,7 @@ prr@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/prr/-/prr-0.0.0.tgz#1a84b85908325501411853d0081ee3fa86e2926a"
 
-pseudomap@^1.0.1, pseudomap@^1.0.2:
+pseudomap@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
 
@@ -6640,7 +6609,7 @@ shimmer@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/shimmer/-/shimmer-1.1.0.tgz#97d7377137ffbbab425522e429fe0aa89a488b35"
 
-sigmund@^1.0.1, sigmund@~1.0.0:
+sigmund@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/sigmund/-/sigmund-1.0.1.tgz#3ff21f198cad2175f9f3b781853fd94d0d19b590"
 
@@ -6849,10 +6818,6 @@ staged-git-files@0.0.4:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.3.1.tgz#faf51b9eb74aaef3b3acf4ad5f61abf24cb7b93e"
 
-stdin@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/stdin/-/stdin-0.0.1.tgz#d3041981aaec3dfdbc77a1b38d6372e38f5fb71e"
-
 stream-browserify@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/stream-browserify/-/stream-browserify-2.0.1.tgz#66266ee5f9bdb9940a4e4514cafb43bb71e5c9db"
@@ -6955,24 +6920,6 @@ style-search@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/style-search/-/style-search-0.1.0.tgz#7958c793e47e32e07d2b5cafe5c0bf8e12e77902"
 
-stylefmt@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/stylefmt/-/stylefmt-6.0.0.tgz#c851e9c2d78b8a99502f74ba3d863b30163eec93"
-  dependencies:
-    chalk "^1.1.3"
-    css-color-list "^0.0.1"
-    diff "^3.2.0"
-    editorconfig "^0.13.2"
-    globby "^6.1.0"
-    minimist "^1.2.0"
-    postcss "^6.0.1"
-    postcss-scss "^1.0.0"
-    postcss-sorting "^2.1.0"
-    postcss-value-parser "^3.3.0"
-    stdin "^0.0.1"
-    stylelint "^7.10.1"
-    stylelint-order "^0.4.4"
-
 stylehacks@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/stylehacks/-/stylehacks-2.3.2.tgz#64c83e0438a68c9edf449e8c552a7d9ab6009b0b"
@@ -6993,15 +6940,16 @@ stylelint-config-standard@^16.0.0:
   version "16.0.0"
   resolved "https://registry.yarnpkg.com/stylelint-config-standard/-/stylelint-config-standard-16.0.0.tgz#bb7387bff1d7dd7186a52b3ebf885b2405d691bf"
 
-stylelint-order@^0.4.4:
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/stylelint-order/-/stylelint-order-0.4.4.tgz#db7dfca0541b5062010c7e2e21e745791fc088ac"
+stylelint-order@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/stylelint-order/-/stylelint-order-0.5.0.tgz#6e34bbd755341216488d3af4b43237eb5ac40b6e"
   dependencies:
     lodash "^4.17.4"
-    postcss "^5.2.16"
-    stylelint "^7.9.0"
+    postcss "^6.0.1"
+    postcss-sorting "^3.0.0"
+    stylelint "^7.11.0"
 
-stylelint@^7.10.1, stylelint@^7.11.0, stylelint@^7.9.0:
+stylelint@^7.11.0:
   version "7.11.0"
   resolved "https://registry.yarnpkg.com/stylelint/-/stylelint-7.11.0.tgz#4816372ecd0afd2c30fe53f4f6a00eb04960dbfc"
   dependencies:

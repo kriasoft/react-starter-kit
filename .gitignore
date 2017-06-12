@@ -1,11 +1,22 @@
 # Include your project-specific ignores in this file
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
+# Use global .gitignore for OS-specific and editor specific preferences:
+# https://github.com/github/gitignore/tree/master/Global
 
-.idea
+# dependencies
+node_modules/
+
+# compiled output
 build
+
+# runtime data
 database.sqlite
-node_modules
-npm-debug.log
-yarn-error.log
+
+# coverage
 coverage
 .nyc_output
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
