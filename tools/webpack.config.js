@@ -10,6 +10,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import AssetsPlugin from 'assets-webpack-plugin';
+import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import pkg from '../package.json';
 
@@ -30,6 +31,12 @@ const config = {
     publicPath: '/assets/',
     pathinfo: isVerbose,
     devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath),
+  },
+
+  resolve: {
+    // Allow absolute paths in imports, e.g. import Button from 'components/Button'
+    // Keep in sync with .flowconfig and .eslintrc
+    modules: ['node_modules', 'src'],
   },
 
   module: {
@@ -312,12 +319,7 @@ const serverConfig = {
 
   externals: [
     /^\.\/assets\.json$/,
-    (context, request, callback) => {
-      const isExternal =
-        request.match(/^[@a-z][a-z/.\-0-9]*$/i) &&
-        !request.match(/\.(css|less|scss|sss)$/i);
-      callback(null, Boolean(isExternal));
-    },
+    nodeExternals({ whitelist: /\.(css|less|scss|sss)$/i }),
   ],
 
   plugins: [
