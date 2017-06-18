@@ -16,6 +16,7 @@ import App from './components/App';
 import createFetch from './createFetch';
 import history from './history';
 import { updateMeta } from './DOMUtils';
+import router from './router';
 
 /* eslint-disable global-require */
 
@@ -88,7 +89,6 @@ let onRenderComplete = function initialRenderComplete() {
 const container = document.getElementById('app');
 let appInstance;
 let currentLocation = history.location;
-let router = require('./router').default;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location, action) {
@@ -150,8 +150,6 @@ onLocationChange(currentLocation);
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
   module.hot.accept('./router', () => {
-    router = require('./router').default;
-
     if (appInstance) {
       // Force-update the whole tree, including components that refuse to update
       deepForceUpdate(appInstance);
