@@ -85,7 +85,7 @@ describe('A test suite for <Header />', () => {
 });
 ```
 
-Please note that  NOT using IntlProvider will produce the following error: 
+Please note that  NOT using IntlProvider will produce the following error:
 
 > Invariant Violation: [React Intl] Could not find required `intl` object. <IntlProvider>
 > needs to exist in the component ancestry.
