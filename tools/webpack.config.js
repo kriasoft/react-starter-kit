@@ -61,6 +61,7 @@ const config = {
             ['env', {
               targets: {
                 browsers: pkg.browserslist,
+                uglify: true,
               },
               modules: false,
               useBuiltIns: false,
@@ -170,7 +171,7 @@ const config = {
       ...isDebug ? [] : [
         {
           test: path.resolve(__dirname, '../node_modules/react-deep-force-update/lib/index.js'),
-          use: 'null-loader',
+          loader: 'null-loader',
         },
       ],
     ],
