@@ -7,50 +7,27 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-* {
-  line-height: 1.2;
-  margin: 0;
-}
-
 html {
-  color: #888;
-  display: table;
-  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
   height: 100%;
+  font-family: sans-serif;
   text-align: center;
-  width: 100%;
+  color: #888;
 }
 
 body {
-  display: table-cell;
-  vertical-align: middle;
-  padding: 2em;
+  margin: 0;
 }
 
 h1 {
-  color: #555;
-  font-size: 2em;
   font-weight: 400;
-}
-
-p {
-  margin: 0 auto;
-  width: 280px;
+  color: #555;
 }
 
 pre {
+  white-space: pre-wrap;
   text-align: left;
-  margin-top: 2rem;
-}
-
-@media only screen and (max-width: 280px) {
-  body,
-  p {
-    width: 95%;
-  }
-
-  h1 {
-    font-size: 1.5em;
-    margin: 0 0 0.3em;
-  }
 }

@@ -30,6 +30,7 @@ Flag        | Description
 `--analyze` | Launches [Webpack Bundle Analyzer](https://github.com/th0r/webpack-bundle-analyzer)
 `--static`  | Renders [specified routes](./render.js#L15) as static html files
 `--docker`  | Build an image from a Dockerfile
+`--silent`  | Do not open the default browser
 
 For example:
 
