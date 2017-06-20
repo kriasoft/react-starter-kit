@@ -60,9 +60,7 @@ $ git clone -o react-starter-kit -b master --single-branch \
 $ cd MyApp
 ```
 
-Alternatively, you can start a new project based on RSK right from
-[WebStorm IDE](https://www.jetbrains.com/webstorm/help/create-new-project-react-starter-kit.html),
-or by using [Yeoman generator](https://www.npmjs.com/package/generator-react-fullstack).
+Alternatively, you can start a new project based on RSK by using [Yeoman generator](https://www.npmjs.com/package/generator-react-fullstack).
 
 #### 2. Run `yarn install`
 
