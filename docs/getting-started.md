@@ -61,7 +61,7 @@ $ cd MyApp
 ```
 
 Alternatively, you can start a new project based on RSK right from
-[WebStorm IDE](https://www.jetbrains.com/webstorm/help/create-new-project-react-starter-kit.html),
+[WebStorm IDE](https://www.jetbrains.com/help/webstorm/generating-a-project-from-a-framework-template.html#d88767e51),
 or by using [Yeoman generator](https://www.npmjs.com/package/generator-react-fullstack).
 
 #### 2. Run `yarn install`
