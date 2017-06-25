@@ -11,7 +11,6 @@ import path from 'path';
 import express from 'express';
 import browserSync from 'browser-sync';
 import webpack from 'webpack';
-import logApplyResult from 'webpack/hot/log-apply-result';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import createLaunchEditorMiddleware from 'react-error-overlay/middleware';
@@ -24,7 +23,7 @@ const isDebug = !process.argv.includes('--release');
 // https://webpack.js.org/configuration/watch/#watchoptions
 const watchOptions = {
   // Watching may not work with NFS and machines in VirtualBox
-  // Uncomment next line if it's your case (use true or interval in milliseconds)
+  // Uncomment next line if it is your case (use true or interval in milliseconds)
   // poll: true,
 
   // Decrease CPU or memory usage in some file systems
@@ -75,11 +74,12 @@ async function start() {
   clientConfig.output.filename = clientConfig.output.filename.replace('chunkhash', 'hash');
   clientConfig.output.chunkFilename = clientConfig.output.chunkFilename.replace('chunkhash', 'hash');
   clientConfig.module.rules = clientConfig.module.rules.filter(x => x.loader !== 'null-loader');
-  const { query } = clientConfig.module.rules.find(x => x.loader === 'babel-loader');
-  query.plugins = ['react-hot-loader/babel'].concat(query.plugins || []);
+  const { options } = clientConfig.module.rules.find(x => x.loader === 'babel-loader');
+  options.plugins = ['react-hot-loader/babel'].concat(options.plugins || []);
   clientConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.NamedModulesPlugin(),
   );
 
   // Configure server-side hot module replacement
@@ -126,26 +126,36 @@ async function start() {
   });
 
   function checkForUpdate(fromUpdate) {
-    return app.hot.check().then((updatedModules) => {
-      if (updatedModules) {
-        return app.hot.apply().then((renewedModules) => {
-          logApplyResult(updatedModules, renewedModules);
-          checkForUpdate(true);
-        });
+    const hmrPrefix = '[\x1b[35mHMR\x1b[0m] ';
+    if (!app.hot) {
+      throw new Error(`${hmrPrefix}Hot Module Replacement is disabled.`);
+    }
+    if (app.hot.status() !== 'idle') {
+      return Promise.resolve();
+    }
+    return app.hot.check(true).then((updatedModules) => {
+      if (!updatedModules) {
+        if (fromUpdate) {
+          console.info(`${hmrPrefix}Update applied.`);
+        }
+        return;
       }
-      if (fromUpdate) {
-        return console.info('[HMR] Update applied.');
+      if (updatedModules.length === 0) {
+        console.info(`${hmrPrefix}Nothing hot updated.`);
+      } else {
+        console.info(`${hmrPrefix}Updated modules:`);
+        updatedModules.forEach(moduleId => console.info(`${hmrPrefix} - ${moduleId}`));
+        checkForUpdate(true);
       }
-      return console.warn('[HMR] Cannot find update.');
     }).catch((error) => {
       if (['abort', 'fail'].includes(app.hot.status())) {
-        console.warn('[HMR] Cannot apply update.');
+        console.warn(`${hmrPrefix}Cannot apply update.`);
         delete require.cache[require.resolve('../build/server')];
         // eslint-disable-next-line global-require, import/no-unresolved
         app = require('../build/server').default;
-        console.warn('[HMR] App has been reloaded.');
+        console.warn(`${hmrPrefix}App has been reloaded.`);
       } else {
-        console.warn(`[HMR] Update failed: ${error.stack || error.message}`);
+        console.warn(`${hmrPrefix}Update failed: ${error.stack || error.message}`);
       }
     });
   }
