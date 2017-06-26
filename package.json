@@ -47,7 +47,7 @@
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
-    "babel-loader": "^7.0.0",
+    "babel-loader": "^7.1.0",
     "babel-plugin-istanbul": "^4.1.4",
     "babel-plugin-rewire": "^1.1.0",
     "babel-preset-env": "^1.5.2",
@@ -63,20 +63,19 @@
     "cross-env": "^5.0.1",
     "css-loader": "^0.28.4",
     "editorconfig-tools": "^0.1.1",
-    "enzyme": "^2.8.2",
+    "enzyme": "^2.9.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^15.0.1",
-    "eslint-import-resolver-node": "^0.3.0",
-    "eslint-loader": "^1.7.1",
+    "eslint-import-resolver-node": "^0.3.1",
+    "eslint-loader": "^1.8.0",
     "eslint-plugin-css-modules": "^2.7.1",
-    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-import": "^2.6.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1",
     "file-loader": "^0.11.2",
     "front-matter": "^2.1.2",
     "glob": "^7.1.2",
-    "json-loader": "^0.5.4",
-    "lint-staged": "^3.6.1",
+    "lint-staged": "^4.0.0",
     "markdown-it": "^8.3.1",
     "mkdirp": "^0.5.1",
     "mocha": "^3.4.2",
@@ -85,7 +84,7 @@
     "opn-cli": "^3.1.0",
     "pixrem": "^3.0.2",
     "pleeease-filters": "^4.0.0",
-    "postcss": "^6.0.1",
+    "postcss": "^6.0.3",
     "postcss-calc": "^6.0.0",
     "postcss-color-function": "^4.0.0",
     "postcss-custom-media": "^6.0.0",
@@ -93,7 +92,7 @@
     "postcss-custom-selectors": "^4.0.1",
     "postcss-flexbugs-fixes": "^3.0.0",
     "postcss-import": "^10.0.0",
-    "postcss-loader": "^2.0.5",
+    "postcss-loader": "^2.0.6",
     "postcss-media-minmax": "^3.0.0",
     "postcss-nested": "^2.0.2",
     "postcss-nesting": "^4.0.1",
@@ -111,10 +110,11 @@
     "stylelint": "^7.11.0",
     "stylelint-config-standard": "^16.0.0",
     "stylelint-order": "^0.5.0",
-    "url-loader": "^0.5.8",
-    "webpack": "^2.6.1",
+    "svg-url-loader": "^2.0.2",
+    "url-loader": "^0.5.9",
+    "webpack": "^3.0.0",
     "webpack-bundle-analyzer": "^2.8.2",
-    "webpack-dev-middleware": "^1.10.2",
+    "webpack-dev-middleware": "^1.11.0",
     "webpack-hot-middleware": "^2.18.0",
     "webpack-node-externals": "^1.6.0"
   },
@@ -138,7 +138,14 @@
           "rewire"
         ]
       }
-    }
+    },
+    "ignore": [
+      "/node_modules/",
+      "/build/chunks/",
+      "/build/public/",
+      "/build/updates/",
+      "/build/server.js"
+    ]
   },
   "lint-staged": {
     "*.{cmd,html,json,md,sh,txt,xml,yml}": [
