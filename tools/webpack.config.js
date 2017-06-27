@@ -12,13 +12,16 @@ import webpack from 'webpack';
 import AssetsPlugin from 'assets-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
 const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
-const stylesRegExp = /\.(css|less|scss|sss)$/;
+const reScript = /\.jsx?$/;
+const reStyle = /\.(css|less|scss|sss)$/;
+const reImage = /\.(bmp|gif|jpe?g|png|svg)$/;
 const staticAssetName = isDebug ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]';
 
 //
@@ -49,8 +52,9 @@ const config = {
     strictExportPresence: true,
 
     rules: [
+      // Rules for JS / JSX
       {
-        test: /\.jsx?$/,
+        test: reScript,
         include: path.resolve(__dirname, '../src'),
         loader: 'babel-loader',
         options: {
@@ -92,15 +96,30 @@ const config = {
         },
       },
 
-      // Handle internal/project styles (from src folder)
+      // Rules for Style Sheets
       {
-        test: stylesRegExp,
-        include: path.resolve(__dirname, '../src'),
-        use: [
+        test: reStyle,
+        rules: [
+          // Convert CSS into JS module
           {
-            loader: 'isomorphic-style-loader',
+            issuer: { not: [reStyle] },
+            use: 'isomorphic-style-loader',
           },
+
+          // Process external/third-party styles
           {
+            exclude: path.resolve(__dirname, '../src'),
+            loader: 'css-loader',
+            options: {
+              sourceMap: isDebug,
+              minimize: !isDebug,
+              discardComments: { removeAll: true },
+            },
+          },
+
+          // Process internal/project styles (from src folder)
+          {
+            include: path.resolve(__dirname, '../src'),
             loader: 'css-loader',
             options: {
               // CSS Loader https://github.com/webpack/css-loader
@@ -114,6 +133,8 @@ const config = {
               discardComments: { removeAll: true },
             },
           },
+
+          // Apply PostCSS plugins including autoprefixer
           {
             loader: 'postcss-loader',
             options: {
@@ -122,83 +143,71 @@ const config = {
               },
             },
           },
+
+          // Compile Less to CSS
+          // https://github.com/webpack-contrib/less-loader
+          // Install dependencies before uncommenting: yarn add --dev less-loader less
+          // {
+          //   test: /\.less$/,
+          //   loader: 'less-loader',
+          // },
+
+          // Compile Sass to CSS
+          // https://github.com/webpack-contrib/sass-loader
+          // Install dependencies before uncommenting: yarn add --dev sass-loader node-sass
+          // {
+          //   test: /\.scss$/,
+          //   loader: 'sass-loader',
+          // },
         ],
       },
 
-      // Handle external/third-party styles (from node_modules)
+      // Rules for images
       {
-        test: stylesRegExp,
-        exclude: path.resolve(__dirname, '../src'),
-        use: [
+        test: reImage,
+        oneOf: [
+          // Inline lightweight images into CSS
           {
-            loader: 'isomorphic-style-loader',
+            issuer: reStyle,
+            oneOf: [
+              // Inline lightweight SVGs as UTF-8 encoded DataUrl string
+              {
+                test: /\.svg$/,
+                loader: 'svg-url-loader',
+                options: {
+                  name: staticAssetName,
+                  limit: 4096, // 4kb
+                },
+              },
+
+              // Inline lightweight images as Base64 encoded DataUrl string
+              {
+                loader: 'url-loader',
+                options: {
+                  name: staticAssetName,
+                  limit: 4096, // 4kb
+                },
+              },
+            ],
           },
+
+          // Or return public URL to image resource
           {
-            loader: 'css-loader',
+            loader: 'file-loader',
             options: {
-              sourceMap: isDebug,
-              minimize: !isDebug,
-              discardComments: { removeAll: true },
+              name: staticAssetName,
             },
           },
         ],
       },
 
-      // Compile Less to CSS
-      // https://github.com/webpack-contrib/less-loader
-      // Install dependencies before uncommenting: yarn add --dev less-loader less
-      // {
-      //   test: /\.less$/,
-      //   loader: 'less-loader',
-      // },
-
-      // Compile Sass to CSS
-      // https://github.com/webpack-contrib/sass-loader
-      // Install dependencies before uncommenting: yarn add --dev sass-loader node-sass
-      // {
-      //   test: /\.scss$/,
-      //   loader: 'sass-loader',
-      // },
-
-      // Inline small images into CSS as Base64 encoded DataUrl string
-      {
-        test: /\.(bmp|gif|jpe?g|png)$/,
-        issuer: stylesRegExp,
-        loader: 'url-loader',
-        options: {
-          name: staticAssetName,
-          limit: 4096, // 4kb
-        },
-      },
-
-      // Inline small SVGs into CSS as UTF-8 encoded DataUrl string
-      {
-        test: /\.svg$/,
-        issuer: stylesRegExp,
-        loader: 'svg-url-loader',
-        options: {
-          name: staticAssetName,
-          limit: 4096, // 4kb
-        },
-      },
-
-      // Return public URL to large images otherwise
-      {
-        test: /\.(bmp|gif|jpe?g|png|svg)$/,
-        issuer: { not: [stylesRegExp] },
-        loader: 'file-loader',
-        options: {
-          name: staticAssetName,
-        },
-      },
-
-      // Convert plain text into module
+      // Convert plain text into JS module
       {
         test: /\.txt$/,
         loader: 'raw-loader',
       },
 
-      // Convert markdown into html
+      // Convert Markdown into HTML
       {
         test: /\.md$/,
         loader: path.resolve(__dirname, './lib/markdown-loader.js'),
@@ -208,10 +217,10 @@ const config = {
       // DO NOT FORGET to update `exclude` list when you adding a new loader
       {
         exclude: [
-          /\.jsx?$/,
+          reScript,
+          reStyle,
+          reImage,
           /\.json$/,
-          stylesRegExp,
-          /\.(bmp|gif|jpe?g|png|svg)$/,
           /\.txt$/,
           /\.md$/,
         ],
@@ -366,8 +375,8 @@ const serverConfig = {
   module: {
     ...config.module,
 
-    // Override babel-preset-env configuration for Node.js
-    rules: config.module.rules.map((rule) => {
+    rules: overrideRules(config.module.rules, (rule) => {
+      // Override babel-preset-env configuration for Node.js
       if (rule.loader === 'babel-loader') {
         return {
           ...rule,
@@ -385,6 +394,7 @@ const serverConfig = {
         };
       }
 
+      // Override paths to static assets
       if (rule.loader === 'file-loader' || rule.loader === 'url-loader' || rule.loader === 'svg-url-loader') {
         return {
           ...rule,
@@ -404,7 +414,8 @@ const serverConfig = {
     './assets.json',
     nodeExternals({
       whitelist: [
-        stylesRegExp,
+        reStyle,
+        reImage,
       ],
     }),
   ],
