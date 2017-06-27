@@ -28,20 +28,23 @@ const news = {
 
     if ((new Date() - lastFetchTime) > 1000 * 60 * 10 /* 10 mins */) {
       lastFetchTime = new Date();
-      lastFetchTask = fetch(url)
-        .then(response => response.json())
-        .then((data) => {
-          if (data.status === 'ok') {
-            items = data.items;
-          }
+      // lastFetchTask = fetch(url)
+      //   .then(response => response.json())
+      //   .then((data) => {
+      //     if (data.status === 'ok') {
+      //       items = data.items;
+      //     }
 
-          lastFetchTask = null;
-          return items;
-        })
-        .catch((err) => {
-          lastFetchTask = null;
-          throw err;
-        });
+      //     lastFetchTask = null;
+      //     return items;
+      //   })
+      //   .catch((err) => {
+      //     lastFetchTask = null;
+      //     throw err;
+      //   });
+
+      lastFetchTask = Promise.resolve([]);
+      items = [];
 
       if (items.length) {
         return items;
