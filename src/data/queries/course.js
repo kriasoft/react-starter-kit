@@ -31,7 +31,7 @@ const createCourse = {
 };
 
 
-//При выполнении этого метода в Graphql вылетает ошибка
+//  При выполнении этого метода в Graphql вылетает ошибка
 const removeCourse = {
   type: CourseType,
   args: {
@@ -42,9 +42,9 @@ const removeCourse = {
   },
   resolve({ request }, args) {
     return Course.destroy({
-      where:{
+      where: {
         id: args.id,
-      }
+      },
     });
   },
 };

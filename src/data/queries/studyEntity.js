@@ -22,10 +22,10 @@ const createStudyEntity = {
       description: 'The title of the new StudyEntity',
       type: StringType,
     },
-    courseId:{
+    courseId: {
       description: 'Id of the course',
       type: StringType,
-    } 
+    },
   },
   resolve({ request }, args) {
     return StudyEntity.create({
@@ -36,7 +36,7 @@ const createStudyEntity = {
 };
 
 
-//При выполнении этого метода в Graphql вылетает ошибка
+//  При выполнении этого метода в Graphql вылетает ошибка
 const removeStudyEntity = {
   type: StudyEntityType,
   args: {
@@ -47,9 +47,9 @@ const removeStudyEntity = {
   },
   resolve({ request }, args) {
     return StudyEntity.destroy({
-      where:{
+      where: {
         id: args.id,
-      }
+      },
     });
   },
 };

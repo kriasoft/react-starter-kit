@@ -13,11 +13,11 @@ const StudyEntity = Model.define('StudyEntity', {
     type: DataType.STRING(255),
   },
 
-  courseId:{
+  courseId: {
     type: DataType.STRING(255),
-  }
+  },
 
 });
-//StudentEntity.hasMany(Course, {foreignKey: 'courseId', targerKey: 'id'});
+//  StudentEntity.hasMany(Course, {foreignKey: 'courseId', targerKey: 'id'});
 
 export default StudyEntity;
