@@ -30,6 +30,25 @@ const createCourse = {
   },
 };
 
+
+//При выполнении этого метода в Graphql вылетает ошибка
+const removeCourse = {
+  type: CourseType,
+  args: {
+    id: {
+      description: 'id of the courses',
+      type: StringType,
+    },
+  },
+  resolve({ request }, args) {
+    return Course.destroy({
+      where:{
+        id: args.id,
+      }
+    });
+  },
+};
+
 const courses = {
   type: new List(CourseType),
   resolve() {
@@ -37,4 +56,4 @@ const courses = {
   },
 };
 
-export { course, createCourse, courses };
+export { course, createCourse, courses, removeCourse };

@@ -14,7 +14,8 @@ import {
 
 import me from './queries/me';
 import news from './queries/news';
-import { course, createCourse, courses } from './queries/course';
+import { course, createCourse, removeCourse, courses } from './queries/course';
+import { studyEntity, createStudyEntity, removeStudyEntity, studyEntities } from './queries/studyEntity';
 
 const schema = new Schema({
   query: new ObjectType({
@@ -24,12 +25,17 @@ const schema = new Schema({
       news,
       course,
       courses,
+      studyEntity,
+      studyEntities,
     },
   }),
   mutation: new ObjectType({
     name: 'Mutation',
     fields: {
       createCourse,
+      removeCourse,
+      createStudyEntity,
+      removeStudyEntity,
     },
   }),
 });

@@ -1,0 +1,23 @@
+import DataType from 'sequelize';
+import Model from '../sequelize';
+
+const StudyEntity = Model.define('StudyEntity', {
+
+  id: {
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV1,
+    primaryKey: true,
+  },
+
+  title: {
+    type: DataType.STRING(255),
+  },
+
+  courseId:{
+    type: DataType.STRING(255),
+  }
+
+});
+//StudentEntity.hasMany(Course, {foreignKey: 'courseId', targerKey: 'id'});
+
+export default StudyEntity;
