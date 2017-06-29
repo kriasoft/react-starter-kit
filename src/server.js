@@ -110,8 +110,7 @@ app.get('*', async (req, res, next) => {
         styles.forEach(style => css.add(style._getCss()));
       },
       // Universal HTTP client
-      fetch: createFetch({
-        fetch,
+      fetch: createFetch(fetch, {
         baseUrl: config.api.serverUrl,
         cookie: req.headers.cookie,
       }),

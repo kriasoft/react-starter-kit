@@ -32,8 +32,7 @@ const context = {
     return () => { removeCss.forEach(f => f()); };
   },
   // Universal HTTP client
-  fetch: createFetch({
-    fetch: self.fetch.bind(self),
+  fetch: createFetch(self.fetch, {
     baseUrl: window.App.apiUrl,
   }),
 };
