@@ -13,6 +13,8 @@ import UserLogin from './UserLogin';
 import UserClaim from './UserClaim';
 import UserProfile from './UserProfile';
 import Course from './Course';
+import StudyEntity from './StudyEntity';
+import CourseStudyEntity from './CourseStudyEntity';
 
 User.hasMany(UserLogin, {
   foreignKey: 'userId',
@@ -35,9 +37,23 @@ User.hasOne(UserProfile, {
   onDelete: 'cascade',
 });
 
+Course.belongsToMany(StudyEntity, {
+  through: {
+    model: CourseStudyEntity,
+  },
+  foreignKey: 'courseId',
+});
+
+StudyEntity.belongsToMany(Course, {
+  through: {
+    model: CourseStudyEntity,
+  },
+  foreignKey: 'seId',
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, UserLogin, UserClaim, UserProfile, Course };
+export { User, UserLogin, UserClaim, UserProfile, Course, StudyEntity };
