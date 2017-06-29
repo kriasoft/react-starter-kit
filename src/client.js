@@ -7,6 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import 'whatwg-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import deepForceUpdate from 'react-deep-force-update';
@@ -32,6 +33,7 @@ const context = {
   },
   // Universal HTTP client
   fetch: createFetch({
+    fetch: self.fetch.bind(self),
     baseUrl: window.App.apiUrl,
   }),
 };

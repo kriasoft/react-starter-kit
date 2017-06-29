@@ -9,9 +9,8 @@
 
 /* @flow */
 
-import fetch from 'isomorphic-fetch';
-
 type Options = {
+  fetch: (url: string, options: any) => Promise<any>,
   baseUrl: string,
   cookie?: string,
 };
@@ -22,7 +21,7 @@ type Options = {
  * of boilerplate code in the application.
  * https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch
  */
-function createFetch({ baseUrl, cookie }: Options) {
+function createFetch({ fetch, baseUrl, cookie }: Options) {
   // NOTE: Tweak the default options to suite your application needs
   const defaults = {
     method: 'POST', // handy with GraphQL backends
@@ -35,7 +34,7 @@ function createFetch({ baseUrl, cookie }: Options) {
     },
   };
 
-  return (url, options) => ((url.startsWith('/graphql') || url.startsWith('/api')) ?
+  return (url: string, options: any) => ((url.startsWith('/graphql') || url.startsWith('/api')) ?
     fetch(`${baseUrl}${url}`, {
       ...defaults,
       ...options,
