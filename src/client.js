@@ -7,6 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import 'whatwg-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import deepForceUpdate from 'react-deep-force-update';
@@ -32,7 +33,7 @@ const context = {
     return () => { removeCss.forEach(f => f()); };
   },
   // Universal HTTP client
-  fetch: createFetch({
+  fetch: createFetch(self.fetch, {
     baseUrl: window.App.apiUrl,
   }),
   // Initialize a new Redux store
