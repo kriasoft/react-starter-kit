@@ -17,12 +17,15 @@ import pkg from '../package.json';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
-const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
+const isAnalyze =
+  process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
 const reScript = /\.jsx?$/;
 const reStyle = /\.(css|less|scss|sss)$/;
 const reImage = /\.(bmp|gif|jpe?g|png|svg)$/;
-const staticAssetName = isDebug ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]';
+const staticAssetName = isDebug
+  ? '[path][name].[ext]?[hash:8]'
+  : '[hash:8].[ext]';
 
 //
 // Common configuration chunk to be used for both
@@ -37,8 +40,11 @@ const config = {
     publicPath: '/assets/',
     pathinfo: isVerbose,
     filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
-    chunkFilename: isDebug ? '[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
-    devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath),
+    chunkFilename: isDebug
+      ? '[name].chunk.js'
+      : '[name].[chunkhash:8].chunk.js',
+    devtoolModuleFilenameTemplate: info =>
+      path.resolve(info.absoluteResourcePath),
   },
 
   resolve: {
@@ -66,15 +72,18 @@ const config = {
           presets: [
             // A Babel preset that can automatically determine the Babel plugins and polyfills
             // https://github.com/babel/babel-preset-env
-            ['env', {
-              targets: {
-                browsers: pkg.browserslist,
-                uglify: true,
+            [
+              'env',
+              {
+                targets: {
+                  browsers: pkg.browserslist,
+                  uglify: true,
+                },
+                modules: false,
+                useBuiltIns: false,
+                debug: false,
               },
-              modules: false,
-              useBuiltIns: false,
-              debug: false,
-            }],
+            ],
             // Experimental ECMAScript proposals
             // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
             'stage-2',
@@ -83,15 +92,15 @@ const config = {
             'react',
             // Optimize React code for the production build
             // https://github.com/thejameskyle/babel-react-optimize
-            ...isDebug ? [] : ['react-optimize'],
+            ...(isDebug ? [] : ['react-optimize']),
           ],
           plugins: [
             // Adds component stack to warning messages
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
-            ...isDebug ? ['transform-react-jsx-source'] : [],
+            ...(isDebug ? ['transform-react-jsx-source'] : []),
             // Adds __self attribute to JSX which React will use for some warnings
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
-            ...isDebug ? ['transform-react-jsx-self'] : [],
+            ...(isDebug ? ['transform-react-jsx-self'] : []),
           ],
         },
       },
@@ -127,7 +136,9 @@ const config = {
               sourceMap: isDebug,
               // CSS Modules https://github.com/css-modules/css-modules
               modules: true,
-              localIdentName: isDebug ? '[name]-[local]-[hash:base64:5]' : '[hash:base64:5]',
+              localIdentName: isDebug
+                ? '[name]-[local]-[hash:base64:5]'
+                : '[hash:base64:5]',
               // CSS Nano http://cssnano.co/options/
               minimize: !isDebug,
               discardComments: { removeAll: true },
@@ -216,14 +227,7 @@ const config = {
       // Return public URL for all assets unless explicitly excluded
       // DO NOT FORGET to update `exclude` list when you adding a new loader
       {
-        exclude: [
-          reScript,
-          reStyle,
-          reImage,
-          /\.json$/,
-          /\.txt$/,
-          /\.md$/,
-        ],
+        exclude: [reScript, reStyle, reImage, /\.json$/, /\.txt$/, /\.md$/],
         loader: 'file-loader',
         options: {
           name: staticAssetName,
@@ -231,12 +235,17 @@ const config = {
       },
 
       // Exclude dev modules from production build
-      ...isDebug ? [] : [
-        {
-          test: path.resolve(__dirname, '../node_modules/react-deep-force-update/lib/index.js'),
-          loader: 'null-loader',
-        },
-      ],
+      ...(isDebug
+        ? []
+        : [
+            {
+              test: path.resolve(
+                __dirname,
+                '../node_modules/react-deep-force-update/lib/index.js',
+              ),
+              loader: 'null-loader',
+            },
+          ]),
     ],
   },
 
@@ -303,34 +312,36 @@ const clientConfig = {
       minChunks: module => /node_modules/.test(module.resource),
     }),
 
-    ...isDebug ? [] : [
-      // Decrease script evaluation time
-      // https://github.com/webpack/webpack/blob/master/examples/scope-hoisting/README.md
-      new webpack.optimize.ModuleConcatenationPlugin(),
+    ...(isDebug
+      ? []
+      : [
+          // Decrease script evaluation time
+          // https://github.com/webpack/webpack/blob/master/examples/scope-hoisting/README.md
+          new webpack.optimize.ModuleConcatenationPlugin(),
 
-      // Minimize all JavaScript output of chunks
-      // https://github.com/mishoo/UglifyJS2#compressor-options
-      new webpack.optimize.UglifyJsPlugin({
-        sourceMap: true,
-        compress: {
-          screw_ie8: true, // React doesn't support IE8
-          warnings: isVerbose,
-          unused: true,
-          dead_code: true,
-        },
-        mangle: {
-          screw_ie8: true,
-        },
-        output: {
-          comments: false,
-          screw_ie8: true,
-        },
-      }),
-    ],
+          // Minimize all JavaScript output of chunks
+          // https://github.com/mishoo/UglifyJS2#compressor-options
+          new webpack.optimize.UglifyJsPlugin({
+            sourceMap: true,
+            compress: {
+              screw_ie8: true, // React doesn't support IE8
+              warnings: isVerbose,
+              unused: true,
+              dead_code: true,
+            },
+            mangle: {
+              screw_ie8: true,
+            },
+            output: {
+              comments: false,
+              screw_ie8: true,
+            },
+          }),
+        ]),
 
     // Webpack Bundle Analyzer
     // https://github.com/th0r/webpack-bundle-analyzer
-    ...isAnalyze ? [new BundleAnalyzerPlugin()] : [],
+    ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
   ],
 
   // Some libraries import Node modules but don't use them in the browser.
@@ -375,27 +386,39 @@ const serverConfig = {
   module: {
     ...config.module,
 
-    rules: overrideRules(config.module.rules, (rule) => {
+    rules: overrideRules(config.module.rules, rule => {
       // Override babel-preset-env configuration for Node.js
       if (rule.loader === 'babel-loader') {
         return {
           ...rule,
           options: {
             ...rule.options,
-            presets: rule.options.presets.map(preset => (preset[0] !== 'env' ? preset : ['env', {
-              targets: {
-                node: pkg.engines.node.match(/(\d+\.?)+/)[0],
-              },
-              modules: false,
-              useBuiltIns: false,
-              debug: false,
-            }])),
+            presets: rule.options.presets.map(
+              preset =>
+                preset[0] !== 'env'
+                  ? preset
+                  : [
+                      'env',
+                      {
+                        targets: {
+                          node: pkg.engines.node.match(/(\d+\.?)+/)[0],
+                        },
+                        modules: false,
+                        useBuiltIns: false,
+                        debug: false,
+                      },
+                    ],
+            ),
           },
         };
       }
 
       // Override paths to static assets
-      if (rule.loader === 'file-loader' || rule.loader === 'url-loader' || rule.loader === 'svg-url-loader') {
+      if (
+        rule.loader === 'file-loader' ||
+        rule.loader === 'url-loader' ||
+        rule.loader === 'svg-url-loader'
+      ) {
         return {
           ...rule,
           options: {
@@ -413,10 +436,7 @@ const serverConfig = {
   externals: [
     './assets.json',
     nodeExternals({
-      whitelist: [
-        reStyle,
-        reImage,
-      ],
+      whitelist: [reStyle, reImage],
     }),
   ],
 

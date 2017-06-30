@@ -16,7 +16,11 @@ function action() {
   return {
     chunks: ['privacy'],
     title: privacy.title,
-    component: <Layout><Page {...privacy} /></Layout>,
+    component: (
+      <Layout>
+        <Page {...privacy} />
+      </Layout>
+    ),
   };
 }
 
