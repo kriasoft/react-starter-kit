@@ -14,10 +14,12 @@ module.exports = {
 
   extends: [
     'airbnb',
+    'plugin:flowtype/recommended',
     'plugin:css-modules/recommended',
   ],
 
   plugins: [
+    'flowtype',
     'css-modules',
   ],
 
@@ -56,10 +58,11 @@ module.exports = {
     ],
 
     // Allow js files to use jsx syntax, too
-    'react/jsx-filename-extension': 'off',
+    'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
 
+    // Automatically convert pure class to function by
+    // babel-plugin-transform-react-pure-class-to-function
     // https://github.com/kriasoft/react-starter-kit/pull/961
-    // You can reopen this if you still want this rule
     'react/prefer-stateless-function': 'off',
   },
 
