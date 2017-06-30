@@ -7,6 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import 'whatwg-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import deepForceUpdate from 'react-deep-force-update';
@@ -24,7 +25,8 @@ const apolloClient = createApolloClient();
 
 /* eslint-disable global-require */
 
-const fetch = createFetch({
+// Universal HTTP client
+const fetch = createFetch(self.fetch, {
   baseUrl: window.App.apiUrl,
 });
 
@@ -43,7 +45,6 @@ const context = {
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
   store: configureStore(window.App.state, { apolloClient, fetch, history }),
-  // Universal HTTP client
   fetch,
   storeSubscription: null,
 };
