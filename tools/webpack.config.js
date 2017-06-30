@@ -10,12 +10,20 @@
 import path from 'path';
 import webpack from 'webpack';
 import AssetsPlugin from 'assets-webpack-plugin';
+import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
 const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
+
+const reScript = /\.jsx?$/;
+const reGraphql = /\.(graphql|gql)$/;
+const reStyle = /\.(css|less|scss|sss)$/;
+const reImage = /\.(bmp|gif|jpe?g|png|svg)$/;
+const staticAssetName = isDebug ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]';
 
 //
 // Common configuration chunk to be used for both
@@ -29,17 +37,28 @@ const config = {
     path: path.resolve(__dirname, '../build/public/assets'),
     publicPath: '/assets/',
     pathinfo: isVerbose,
+    filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
+    chunkFilename: isDebug ? '[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
+    devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath),
+  },
+
+  resolve: {
+    // Allow absolute paths in imports, e.g. import Button from 'components/Button'
+    // Keep in sync with .flowconfig and .eslintrc
+    modules: ['node_modules', 'src'],
   },
 
   module: {
+    // Make missing exports an error instead of warning
+    strictExportPresence: true,
+
     rules: [
+      // Rules for JS / JSX
       {
-        test: /\.jsx?$/,
+        test: reScript,
+        include: path.resolve(__dirname, '../src'),
         loader: 'babel-loader',
-        include: [
-          path.resolve(__dirname, '../src'),
-        ],
-        query: {
+        options: {
           // https://github.com/babel/babel-loader#options
           cacheDirectory: isDebug,
 
@@ -51,6 +70,7 @@ const config = {
             ['env', {
               targets: {
                 browsers: pkg.browserslist,
+                uglify: true,
               },
               modules: false,
               useBuiltIns: false,
@@ -76,17 +96,38 @@ const config = {
           ],
         },
       },
+
+      // Rules for GraphQL
       {
-        // Internal Styles
-        test: /\.css$/,
-        include: [
-          path.resolve(__dirname, '../src'),
-        ],
-        use: [
+        test: reGraphql,
+        exclude: /node_modules/,
+        loader: 'graphql-tag/loader',
+      },
+
+      // Rules for Style Sheets
+      {
+        test: reStyle,
+        rules: [
+          // Convert CSS into JS module
           {
-            loader: 'isomorphic-style-loader',
+            issuer: { not: [reStyle] },
+            use: 'isomorphic-style-loader',
           },
+
+          // Process external/third-party styles
           {
+            exclude: path.resolve(__dirname, '../src'),
+            loader: 'css-loader',
+            options: {
+              sourceMap: isDebug,
+              minimize: !isDebug,
+              discardComments: { removeAll: true },
+            },
+          },
+
+          // Process internal/project styles (from src folder)
+          {
+            include: path.resolve(__dirname, '../src'),
             loader: 'css-loader',
             options: {
               // CSS Loader https://github.com/webpack/css-loader
@@ -100,6 +141,8 @@ const config = {
               discardComments: { removeAll: true },
             },
           },
+
+          // Apply PostCSS plugins including autoprefixer
           {
             loader: 'postcss-loader',
             options: {
@@ -108,68 +151,99 @@ const config = {
               },
             },
           },
+
+          // Compile Less to CSS
+          // https://github.com/webpack-contrib/less-loader
+          // Install dependencies before uncommenting: yarn add --dev less-loader less
+          // {
+          //   test: /\.less$/,
+          //   loader: 'less-loader',
+          // },
+
+          // Compile Sass to CSS
+          // https://github.com/webpack-contrib/sass-loader
+          // Install dependencies before uncommenting: yarn add --dev sass-loader node-sass
+          // {
+          //   test: /\.scss$/,
+          //   loader: 'sass-loader',
+          // },
         ],
       },
+
+      // Rules for images
       {
-        // External Styles
-        test: /\.css$/,
-        exclude: [
-          path.resolve(__dirname, '../src'),
-        ],
-        use: [
+        test: reImage,
+        oneOf: [
+          // Inline lightweight images into CSS
           {
-            loader: 'isomorphic-style-loader',
+            issuer: reStyle,
+            oneOf: [
+              // Inline lightweight SVGs as UTF-8 encoded DataUrl string
+              {
+                test: /\.svg$/,
+                loader: 'svg-url-loader',
+                options: {
+                  name: staticAssetName,
+                  limit: 4096, // 4kb
+                },
+              },
+
+              // Inline lightweight images as Base64 encoded DataUrl string
+              {
+                loader: 'url-loader',
+                options: {
+                  name: staticAssetName,
+                  limit: 4096, // 4kb
+                },
+              },
+            ],
           },
+
+          // Or return public URL to image resource
           {
-            loader: 'css-loader',
+            loader: 'file-loader',
             options: {
-              sourceMap: isDebug,
-              // CSS Modules Disabled
-              modules: false,
-              minimize: !isDebug,
-              discardComments: { removeAll: true },
+              name: staticAssetName,
             },
           },
         ],
       },
-      {
-        test: /\.md$/,
-        loader: path.resolve(__dirname, './lib/markdown-loader.js'),
-      },
+
+      // Convert plain text into JS module
       {
         test: /\.txt$/,
         loader: 'raw-loader',
       },
+
+      // Convert Markdown into HTML
       {
-        test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        test: /\.md$/,
+        loader: path.resolve(__dirname, './lib/markdown-loader.js'),
+      },
+
+      // Return public URL for all assets unless explicitly excluded
+      // DO NOT FORGET to update `exclude` list when you adding a new loader
+      {
+        exclude: [
+          reScript,
+          reStyle,
+          reImage,
+          reGraphql,
+          /\.json$/,
+          /\.txt$/,
+          /\.md$/,
+        ],
         loader: 'file-loader',
-        query: {
-          name: isDebug ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]',
+        options: {
+          name: staticAssetName,
         },
-      },
-      {
-        test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)(\?.*)?$/,
-        loader: 'url-loader',
-        query: {
-          name: isDebug ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]',
-          limit: 10000,
-        },
-      },
-      {
-        test: /\.(graphql|gql)$/,
-        exclude: /node_modules/,
-        loader: 'graphql-tag/loader',
       },
 
       // Exclude dev modules from production build
       ...isDebug ? [] : [
         {
-          test: path.resolve(__dirname, '../node_modules/redbox-react/lib/index.js'),
-          use: 'null-loader',
-        },
-        {
           test: path.resolve(__dirname, '../node_modules/react-deep-force-update/lib/index.js'),
-          use: 'null-loader',
+          loader: 'null-loader',
         },
       ],
     ],
@@ -180,17 +254,24 @@ const config = {
 
   cache: isDebug,
 
+  // Specify what bundle information gets displayed
+  // https://webpack.js.org/configuration/stats/
   stats: {
-    colors: true,
-    reasons: isDebug,
-    hash: isVerbose,
-    version: isVerbose,
-    timings: true,
-    chunks: isVerbose,
-    chunkModules: isVerbose,
     cached: isVerbose,
     cachedAssets: isVerbose,
+    chunks: isVerbose,
+    chunkModules: isVerbose,
+    colors: true,
+    hash: isVerbose,
+    modules: isVerbose,
+    reasons: isDebug,
+    timings: true,
+    version: isVerbose,
   },
+
+  // Choose a developer tool to enhance debugging
+  // https://webpack.js.org/configuration/devtool/#devtool
+  devtool: isDebug ? 'cheap-module-inline-source-map' : 'source-map',
 };
 
 //
@@ -207,15 +288,9 @@ const clientConfig = {
     client: ['babel-polyfill', './src/client.js'],
   },
 
-  output: {
-    ...config.output,
-    filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
-    chunkFilename: isDebug ? '[name].chunk.js' : '[name].[chunkhash:8].chunk.js',
-  },
-
   plugins: [
     // Define free variables
-    // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
+    // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
       'process.env.BROWSER': true,
@@ -231,13 +306,17 @@ const clientConfig = {
     }),
 
     // Move modules that occur in multiple entry chunks to a new entry chunk (the commons chunk).
-    // http://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin
+    // https://webpack.js.org/plugins/commons-chunk-plugin/
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: module => /node_modules/.test(module.resource),
     }),
 
     ...isDebug ? [] : [
+      // Decrease script evaluation time
+      // https://github.com/webpack/webpack/blob/master/examples/scope-hoisting/README.md
+      new webpack.optimize.ModuleConcatenationPlugin(),
+
       // Minimize all JavaScript output of chunks
       // https://github.com/mishoo/UglifyJS2#compressor-options
       new webpack.optimize.UglifyJsPlugin({
@@ -263,13 +342,9 @@ const clientConfig = {
     ...isAnalyze ? [new BundleAnalyzerPlugin()] : [],
   ],
 
-  // Choose a developer tool to enhance debugging
-  // http://webpack.github.io/docs/configuration.html#devtool
-  devtool: isDebug ? 'cheap-module-source-map' : false,
-
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
-  // https://webpack.github.io/docs/configuration.html#node
+  // https://webpack.js.org/configuration/node/
   // https://github.com/webpack/node-libs-browser/tree/master/mock
   node: {
     fs: 'empty',
@@ -294,55 +369,77 @@ const serverConfig = {
 
   output: {
     ...config.output,
-    filename: '../../server.js',
+    path: path.resolve(__dirname, '../build'),
+    filename: '[name].js',
+    chunkFilename: 'chunks/[name].js',
     libraryTarget: 'commonjs2',
+  },
+
+  // Webpack mutates resolve object, so clone it to avoid issues
+  // https://github.com/webpack/webpack/issues/4817
+  resolve: {
+    ...config.resolve,
   },
 
   module: {
     ...config.module,
 
-    // Override babel-preset-env configuration for Node.js
-    rules: config.module.rules.map(rule => (rule.loader !== 'babel-loader' ? rule : {
-      ...rule,
-      query: {
-        ...rule.query,
-        presets: rule.query.presets.map(preset => (preset[0] !== 'env' ? preset : ['env', {
-          targets: {
-            node: pkg.engines.node.match(/(\d+\.?)+/)[0],
+    rules: overrideRules(config.module.rules, (rule) => {
+      // Override babel-preset-env configuration for Node.js
+      if (rule.loader === 'babel-loader') {
+        return {
+          ...rule,
+          options: {
+            ...rule.options,
+            presets: rule.options.presets.map(preset => (preset[0] !== 'env' ? preset : ['env', {
+              targets: {
+                node: pkg.engines.node.match(/(\d+\.?)+/)[0],
+              },
+              modules: false,
+              useBuiltIns: false,
+              debug: false,
+            }])),
           },
-          modules: false,
-          useBuiltIns: false,
-          debug: false,
-        }])),
-      },
-    })),
+        };
+      }
+
+      // Override paths to static assets
+      if (rule.loader === 'file-loader' || rule.loader === 'url-loader' || rule.loader === 'svg-url-loader') {
+        return {
+          ...rule,
+          options: {
+            ...rule.options,
+            name: `public/assets/${rule.options.name}`,
+            publicPath: url => url.replace(/^public/, ''),
+          },
+        };
+      }
+
+      return rule;
+    }),
   },
 
   externals: [
-    /^\.\/assets\.json$/,
-    (context, request, callback) => {
-      const isExternal =
-        request.match(/^[@a-z][a-z/.\-0-9]*$/i) &&
-        !request.match(/\.(css|less|scss|sss)$/i);
-      callback(null, Boolean(isExternal));
-    },
+    './assets.json',
+    nodeExternals({
+      whitelist: [
+        reStyle,
+        reImage,
+      ],
+    }),
   ],
 
   plugins: [
     // Define free variables
-    // https://webpack.github.io/docs/list-of-plugins.html#defineplugin
+    // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
       'process.env.BROWSER': false,
       __DEV__: isDebug,
     }),
 
-    // Do not create separate chunks of the server bundle
-    // https://webpack.github.io/docs/list-of-plugins.html#limitchunkcountplugin
-    new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
-
     // Adds a banner to the top of each generated chunk
-    // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
+    // https://webpack.js.org/plugins/banner-plugin/
     new webpack.BannerPlugin({
       banner: 'require("source-map-support").install();',
       raw: true,
@@ -350,6 +447,8 @@ const serverConfig = {
     }),
   ],
 
+  // Do not replace node globals with polyfills
+  // https://webpack.js.org/configuration/node/
   node: {
     console: false,
     global: false,
@@ -358,8 +457,6 @@ const serverConfig = {
     __filename: false,
     __dirname: false,
   },
-
-  devtool: isDebug ? 'cheap-module-source-map' : 'source-map',
 };
 
 export default [clientConfig, serverConfig];
