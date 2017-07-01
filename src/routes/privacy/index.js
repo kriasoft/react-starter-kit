@@ -10,10 +10,17 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Page from '../../components/Page';
+import privacy from './privacy.md';
 
-export default {
+function action() {
+  return {
+    chunks: ['privacy'],
+    title: privacy.title,
+    component: <Layout><Page {...privacy} /></Layout>,
+  };
+}
 
-  path: '/privacy',
+export default action;
 
   async action({ locale }) {
     const data = await new Promise((resolve) => {
