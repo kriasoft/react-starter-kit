@@ -7,11 +7,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import 'whatwg-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ErrorReporter from 'redbox-react';
 import deepForceUpdate from 'react-deep-force-update';
-import FastClick from 'fastclick';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
 import { addLocaleData } from 'react-intl';
@@ -22,6 +21,8 @@ import createFetch from './createFetch';
 import configureStore from './store/configureStore';
 import { updateMeta } from './DOMUtils';
 import history from './history';
+import router from './router';
+import { updateMeta } from './DOMUtils';
 import createApolloClient from './core/createApolloClient';
 
 const apolloClient = createApolloClient();
@@ -53,7 +54,9 @@ const context = {
   store,
   storeSubscription: null,
   // Universal HTTP client
-  fetch,
+  fetch: createFetch(self.fetch, {
+    baseUrl: window.App.apiUrl,
+  }),
 };
 
 // Switch off the native scroll restoration behavior and handle it manually
@@ -106,13 +109,9 @@ let onRenderComplete = function initialRenderComplete() {
   };
 };
 
-// Make taps on links and buttons work fast on mobiles
-FastClick.attach(document.body);
-
 const container = document.getElementById('app');
 let appInstance;
 let currentLocation = history.location;
-let router = require('./router').default;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location, action) {
@@ -154,11 +153,7 @@ async function onLocationChange(location, action) {
       () => onRenderComplete(route, location),
     );
   } catch (error) {
-    // Display the error in full-screen for development mode
     if (__DEV__) {
-      appInstance = null;
-      document.title = `Error: ${error.message}`;
-      ReactDOM.render(<ErrorReporter error={error} />, container);
       throw error;
     }
 
@@ -183,35 +178,12 @@ export default function main() {
   onLocationChange(currentLocation);
 }
 
-// globally accesible entry point
-window.RSK_ENTRY = main;
-
-// Handle errors that might happen after rendering
-// Display the error in full-screen for development mode
-if (__DEV__) {
-  window.addEventListener('error', (event) => {
-    appInstance = null;
-    document.title = `Runtime Error: ${event.error.message}`;
-    ReactDOM.render(<ErrorReporter error={event.error} />, container);
-  });
-}
-
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
-  module.hot.accept('./router', async () => {
-    router = require('./router').default;
-
-    currentLocation = history.location;
-    await onLocationChange(currentLocation);
+  module.hot.accept('./router', () => {
     if (appInstance) {
-      try {
-        // Force-update the whole tree, including components that refuse to update
-        deepForceUpdate(appInstance);
-      } catch (error) {
-        appInstance = null;
-        document.title = `Hot Update Error: ${error.message}`;
-        ReactDOM.render(<ErrorReporter error={error} />, container);
-      }
+      // Force-update the whole tree, including components that refuse to update
+      deepForceUpdate(appInstance);
     }
   });
 }
