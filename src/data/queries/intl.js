@@ -19,7 +19,8 @@ import IntlMessageType from '../types/IntlMessageType';
 import { locales } from '../../config';
 
 // A folder with messages
-const CONTENT_DIR = join(__dirname, './messages');
+// In development, source dir will be used
+const MESSAGES_DIR = process.env.MESSAGES_DIR || join(__dirname, './messages');
 
 const readFile = Promise.promisify(fs.readFile);
 
@@ -35,7 +36,7 @@ const intl = {
 
     let localeData;
     try {
-      localeData = await readFile(join(CONTENT_DIR, `${locale}.json`));
+      localeData = await readFile(join(MESSAGES_DIR, `${locale}.json`));
     } catch (err) {
       if (err.code === 'ENOENT') {
         throw new Error(`Locale '${locale}' not found`);

@@ -16,6 +16,7 @@ import bodyParser from 'body-parser';
 import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
+import nodeFetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import { getDataFromTree } from 'react-apollo';
@@ -51,7 +52,7 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 //
 // Register Node.js middleware
 // -----------------------------------------------------------------------------
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, 'public')));
 app.use(cookieParser());
 app.use(requestLanguage({
   languages: config.locales,
@@ -126,7 +127,8 @@ app.get('*', async (req, res, next) => {
       rootValue: { request: req },
     });
 
-    const fetch = createFetch({
+    // Universal HTTP client
+    const fetch = createFetch(nodeFetch, {
       baseUrl: config.api.serverUrl,
       cookie: req.headers.cookie,
       apolloClient,
@@ -204,14 +206,12 @@ app.get('*', async (req, res, next) => {
     data.styles = [
       { id: 'css', cssText: [...css].join('') },
     ];
-    data.scripts = [
-      assets.vendor.js,
-      assets.client.js,
-    ];
 
-    if (assets[route.chunk]) {
-      data.scripts.push(assets[route.chunk].js);
+    data.scripts = [assets.vendor.js];
+    if (route.chunks) {
+      data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
     }
+    data.scripts.push(assets.client.js);
 
     // Furthermore invoked actions will be ignored, client will not receive them!
     if (__DEV__) {
@@ -263,8 +263,21 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 //
 // Launch the server
 // -----------------------------------------------------------------------------
-models.sync().catch(err => console.error(err.stack)).then(() => {
-  app.listen(config.port, () => {
-    console.info(`The server is running at http://localhost:${config.port}/`);
+const promise = models.sync().catch(err => console.error(err.stack));
+if (!module.hot) {
+  promise.then(() => {
+    app.listen(config.port, () => {
+      console.info(`The server is running at http://localhost:${config.port}/`);
+    });
   });
-});
+}
+
+//
+// Hot Module Replacement
+// -----------------------------------------------------------------------------
+if (module.hot) {
+  app.hot = module.hot;
+  module.hot.accept('./router');
+}
+
+export default app;
