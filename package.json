@@ -50,7 +50,6 @@
     "babel-eslint": "^7.2.3",
     "babel-jest": "^20.0.3",
     "babel-loader": "^7.1.1",
-    "babel-plugin-istanbul": "^4.1.4",
     "babel-plugin-rewire": "^1.1.0",
     "babel-preset-env": "^1.5.2",
     "babel-preset-react": "^6.24.1",
@@ -60,7 +59,6 @@
     "babel-template": "^6.25.0",
     "babel-types": "^6.25.0",
     "browser-sync": "^2.18.12",
-    "chai": "^4.0.2",
     "chokidar": "^1.7.0",
     "cross-env": "^5.0.1",
     "css-loader": "^0.28.4",
@@ -85,9 +83,7 @@
     "lint-staged": "^4.0.0",
     "markdown-it": "^8.3.1",
     "mkdirp": "^0.5.1",
-    "mocha": "^3.4.2",
     "null-loader": "^0.1.1",
-    "nyc": "^11.0.3",
     "opn-cli": "^3.1.0",
     "pixrem": "^3.0.2",
     "pleeease-filters": "^4.0.0",
@@ -140,7 +136,6 @@
     "env": {
       "test": {
         "plugins": [
-          "istanbul",
           "rewire"
         ]
       }
