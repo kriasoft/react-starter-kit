@@ -17,14 +17,18 @@ if (!global.Intl) {
   require.ensure([
     // Add all large polyfills here
     'intl',
+    /* @intl-code-template 'intl/locale-data/jsonp/${lang}.js', */
     'intl/locale-data/jsonp/en.js',
     'intl/locale-data/jsonp/cs.js',
+    /* @intl-code-template-end */
   ], (require) => {
     // and require them here
     require('intl');
+    // TODO: This is bad. You should only require one language dynamically
+    /* @intl-code-template require('intl/locale-data/jsonp/${lang}.js'); */
     require('intl/locale-data/jsonp/en.js');
     require('intl/locale-data/jsonp/cs.js');
-
+    /* @intl-code-template-end */
     run();
   }, 'polyfills');
 } else {

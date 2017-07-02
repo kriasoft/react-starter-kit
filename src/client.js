@@ -14,8 +14,11 @@ import deepForceUpdate from 'react-deep-force-update';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
 import { addLocaleData } from 'react-intl';
+// This is so bad: requiring all locale if they are not needed?
+/* @intl-code-template import ${lang} from 'react-intl/locale-data/${lang}'; */
 import en from 'react-intl/locale-data/en';
 import cs from 'react-intl/locale-data/cs';
+/* @intl-code-template-end */
 import App from './components/App';
 import createFetch from './createFetch';
 import configureStore from './store/configureStore';
@@ -26,7 +29,10 @@ import router from './router';
 
 const apolloClient = createApolloClient();
 
-[en, cs].forEach(addLocaleData);
+/* @intl-code-template addLocaleData(${lang}); */
+addLocaleData(en);
+addLocaleData(cs);
+/* @intl-code-template-end */
 
 /* eslint-disable global-require */
 

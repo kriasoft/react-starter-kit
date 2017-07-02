@@ -8,8 +8,10 @@ import { setLocale } from '../../actions/intl';
 function LanguageSwitcher({ currentLocale, availableLocales, setLocale }) {
   const isSelected = locale => locale === currentLocale;
   const localeDict = {
+    /* @intl-code-template '${lang}-${COUNTRY}': '${Name}', */
     'en-US': 'English',
     'cs-CZ': 'Česky',
+    /* @intl-code-template-end */
   };
   const localeName = locale => localeDict[locale] || locale;
   return (
