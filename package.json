@@ -185,7 +185,7 @@
     "coverage": "yarn run test-cover && nyc report --reporter=html && opn coverage/index.html",
     "clean": "babel-node tools/run clean",
     "copy": "babel-node tools/run copy",
-    "extractMessages": "babel-node tools/run extractMessages",
+    "messages": "babel-node tools/run messages",
     "bundle": "babel-node tools/run bundle",
     "build": "babel-node tools/run build",
     "build-stats": "yarn run build -- --release --analyse",
