@@ -157,7 +157,7 @@ app.get('*', async (req, res, next) => {
     }));
 
     const locale = req.language;
-    await store.dispatch(setLocale({
+    const intl = await store.dispatch(setLocale({
       locale,
     }));
 
@@ -178,6 +178,8 @@ app.get('*', async (req, res, next) => {
       storeSubscription: null,
       // Apollo Client for use with react-apollo
       client: apolloClient,
+      // intl instance as it can be get with injectIntl
+      intl,
     };
 
     const route = await router.resolve({

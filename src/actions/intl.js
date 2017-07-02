@@ -1,5 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
+import { IntlProvider } from 'react-intl';
+
 import {
   SET_LOCALE_START,
   SET_LOCALE_SUCCESS,
@@ -7,6 +9,23 @@ import {
 } from '../constants';
 
 import queryIntl from './intl.graphql';
+
+function getIntlFromState(state) {
+  const intl = (state && state.intl) || {};
+  const { initialNow, locale, messages } = intl;
+  const localeMessages = (messages && messages[locale]) || {};
+  const provider = new IntlProvider({
+    initialNow,
+    locale,
+    messages: localeMessages,
+    defaultLocale: 'en-US',
+  });
+  return provider.getChildContext().intl;
+}
+
+export function getIntl() {
+  return (dispatch, getState) => getIntlFromState(getState());
+}
 
 export function setLocale({ locale }) {
   return async (dispatch, getState, { client, history }) => {
@@ -43,6 +62,9 @@ export function setLocale({ locale }) {
         document.cookie = `lang=${locale};path=/;max-age=${maxAge}`;
         history.push(`?lang=${locale}`);
       }
+
+      // return bound intl instance at the end
+      return getIntlFromState(getState());
     } catch (error) {
       dispatch({
         type: SET_LOCALE_ERROR,
@@ -51,9 +73,7 @@ export function setLocale({ locale }) {
           error,
         },
       });
-      return false;
+      return null;
     }
-
-    return true;
   };
 }

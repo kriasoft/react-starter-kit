@@ -26,6 +26,7 @@ import { updateMeta } from './DOMUtils';
 import history from './history';
 import createApolloClient from './core/createApolloClient';
 import router from './router';
+import { getIntl } from './actions/intl';
 
 const apolloClient = createApolloClient();
 
@@ -61,6 +62,8 @@ const context = {
   storeSubscription: null,
   // Universal HTTP client
   fetch,
+  // intl instance as it can be get with injectIntl
+  intl: store.dispatch(getIntl()),
 };
 
 // Switch off the native scroll restoration behavior and handle it manually
@@ -129,6 +132,8 @@ async function onLocationChange(location, action) {
     delete scrollPositionsHistory[location.key];
   }
   currentLocation = location;
+
+  context.intl = store.dispatch(getIntl());
 
   try {
     // Traverses the list of routes in the order they are defined until

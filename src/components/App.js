@@ -23,6 +23,8 @@ const ContextType = {
   ...ReduxProvider.childContextTypes,
   // Apollo Client
   client: PropTypes.object.isRequired,
+  // ReactIntl
+  intl: IntlProvider.childContextTypes.intl,
 };
 
 /**
@@ -60,46 +62,32 @@ class App extends React.PureComponent {
     return this.props.context;
   }
 
-  componentDidMount() {
-    const store = this.props.context && this.props.context.store;
-    if (store) {
-      this.lastLocale = store.getState().intl.locale;
-      this.unsubscribe = store.subscribe(() => {
-        const state = store.getState();
-        const { newLocale, locale } = state.intl;
-        if (!newLocale && this.lastLocale !== locale) {
-          this.lastLocale = locale;
-          this.forceUpdate();
-        }
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-      this.unsubscribe = null;
-    }
-  }
+  // NOTE: This methods are not needed if you update URL by setLocale action.
+  //
+  //  componentDidMount() {
+  //    const store = this.props.context && this.props.context.store;
+  //    if (store) {
+  //      this.lastLocale = store.getState().intl.locale;
+  //      this.unsubscribe = store.subscribe(() => {
+  //        const state = store.getState();
+  //        const { newLocale, locale } = state.intl;
+  //        if (!newLocale && this.lastLocale !== locale) {
+  //          this.lastLocale = locale;
+  //          this.forceUpdate();
+  //        }
+  //      });
+  //    }
+  //  }
+  //
+  //  componentWillUnmount() {
+  //    if (this.unsubscribe) {
+  //      this.unsubscribe();
+  //      this.unsubscribe = null;
+  //    }
+  //  }
 
   render() {
-    // NOTE: If you need to add or modify header, footer etc. of the app,
-    // please do that inside the Layout component.
-    const store = this.props.context && this.props.context.store;
-    const state = store && store.getState();
-    this.intl = (state && state.intl) || {};
-    const { initialNow, locale, messages } = this.intl;
-    const localeMessages = (messages && messages[locale]) || {};
-    return (
-      <IntlProvider
-        initialNow={initialNow}
-        locale={locale}
-        messages={localeMessages}
-        defaultLocale="en-US"
-      >
-        {React.Children.only(this.props.children)}
-      </IntlProvider>
-    );
+    return React.Children.only(this.props.children);
   }
 
 }

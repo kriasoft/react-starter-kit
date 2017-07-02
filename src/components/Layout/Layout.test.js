@@ -15,6 +15,7 @@ import { expect } from 'chai';
 import { render } from 'enzyme';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { IntlProvider } from 'react-intl';
 import App from '../App';
 import Layout from './Layout';
 
@@ -34,11 +35,13 @@ describe('Layout', () => {
     const store = mockStore(initialState);
 
     const wrapper = render(
-      <App context={{ insertCss: () => {}, store }}>
-        <Layout>
-          <div className="child" />
-        </Layout>
-      </App>,
+      <IntlProvider>
+        <App context={{ insertCss: () => {}, store }}>
+          <Layout>
+            <div className="child" />
+          </Layout>
+        </App>
+      </IntlProvider>,
     );
     expect(wrapper.find('div.child').length).to.eq(1);
   });
