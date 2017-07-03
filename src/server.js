@@ -98,6 +98,7 @@ app.use('/graphql', expressGraphQL(req => ({
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
+    global.navigator.userAgent = req.headers['user-agent'] || global.navigator.userAgent;
     const css = new Set();
 
     // Global (context) variables that can be easily accessed from any React component
