@@ -4,6 +4,7 @@ FROM node:7.9.0-alpine
 WORKDIR /usr/src/app
 
 COPY ./build/package.json .
+COPY ./build/yarn.lock .
 
 # Install Node.js dependencies
 RUN yarn install --production --no-progress
