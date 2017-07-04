@@ -12,6 +12,14 @@ const course = {
   },
   resolve({ request }, args) {
     return Course.findById(args.id);
+    // ,{
+    //   include: [{
+    //     model: CourseStudyEntity,
+    //      through: {
+    //       attributes: ['title'],
+    //       where: {courseId: args.id}
+    //     }
+    //   }]}
   },
 };
 

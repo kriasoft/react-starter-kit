@@ -21,7 +21,15 @@ const Course = Model.define('Course', {
   title: {
     type: DataType.STRING(255),
   },
+
+  studyEntities: {
+    type: DataType.STRING(255),
+    // references: {
+    //   model: 'CourseStudyEntity',
+    //   key: 'seId',
+    // },
+  },
+
 });
-//  Course.hasMany(StudentEntity, {foreignKey: 'courseId', sourceKey: 'id'});
 
 export default Course;

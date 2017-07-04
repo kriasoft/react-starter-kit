@@ -38,6 +38,7 @@ User.hasOne(UserProfile, {
 });
 
 Course.belongsToMany(StudyEntity, {
+  as: 'StudyEntities',
   through: {
     model: CourseStudyEntity,
   },
