@@ -17,14 +17,18 @@ exports[`Layout renders children correctly 1`] = `
           href="/about"
           onClick={[Function]}
         >
-          About
+          <span>
+            About
+          </span>
         </a>
         <a
           className="link"
           href="/contact"
           onClick={[Function]}
         >
-          Contact
+          <span>
+            Contact
+          </span>
         </a>
         <span
           className="spacer"
@@ -36,19 +40,25 @@ exports[`Layout renders children correctly 1`] = `
           href="/login"
           onClick={[Function]}
         >
-          Log in
+          <span>
+            Log in
+          </span>
         </a>
         <span
           className="spacer"
         >
-          or
+          <span>
+            or
+          </span>
         </span>
         <a
           className="link highlight"
           href="/register"
           onClick={[Function]}
         >
-          Sign up
+          <span>
+            Sign up
+          </span>
         </a>
       </div>
       <a
@@ -66,20 +76,30 @@ exports[`Layout renders children correctly 1`] = `
         <span
           className="brandTxt"
         >
-          Your Company
+          <span>
+            Your Company Brand
+          </span>
         </span>
       </a>
+      <div>
+        <span>
+          <span>
+            English
+          </span>
+           
+        </span>
+      </div>
       <div
         className="banner"
       >
         <h1
           className="bannerTitle"
         >
-          React
+          <span>
+            React
+          </span>
         </h1>
-        <p
-          className="bannerDesc"
-        >
+        <p>
           Complex web apps made easy
         </p>
       </div>
