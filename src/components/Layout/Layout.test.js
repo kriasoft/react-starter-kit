@@ -7,12 +7,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-/* eslint-env mocha */
+/* eslint-env jest */
 /* eslint-disable padded-blocks, no-unused-expressions */
 
 import React from 'react';
-import { expect } from 'chai';
-import { render } from 'enzyme';
+import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { IntlProvider } from 'react-intl';
@@ -34,7 +33,7 @@ describe('Layout', () => {
   it('renders children correctly', () => {
     const store = mockStore(initialState);
 
-    const wrapper = render(
+    const wrapper = renderer.create(
       <IntlProvider>
         <App context={{ insertCss: () => {}, store }}>
           <Layout>
@@ -42,8 +41,9 @@ describe('Layout', () => {
           </Layout>
         </App>
       </IntlProvider>,
-    );
-    expect(wrapper.find('div.child').length).to.eq(1);
+    ).toJSON();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
 });
