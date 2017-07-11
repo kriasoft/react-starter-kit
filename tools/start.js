@@ -173,6 +173,8 @@ async function start() {
   await clientPromise;
   await serverPromise;
 
+  process.env.MESSAGES_DIR = path.join(__dirname, '../src/messages/');
+
   const timeStart = new Date();
   console.info(`[${format(timeStart)}] Launching server...`);
 

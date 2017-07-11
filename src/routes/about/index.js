@@ -10,13 +10,22 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Page from '../../components/Page';
-import about from './about.md';
 
-function action() {
+async function action({ locale }) {
+  const data = await new Promise((resolve) => {
+    require.ensure([], (require) => {
+      try {
+        resolve(require(`./about.${locale}.md`)); // eslint-disable-line import/no-dynamic-require
+      } catch (e) {
+        resolve(require('./about.md'));
+      }
+    }, 'about');
+  });
+
   return {
     chunks: ['about'],
-    title: about.title,
-    component: <Layout><Page {...about} /></Layout>,
+    title: data.title,
+    component: <Layout><Page {...data} /></Layout>,
   };
 }
 

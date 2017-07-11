@@ -19,7 +19,12 @@ const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
 const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
+// Hard choice here...
+// You can enforce this for test environments :-)
+const REACT_INTL_ENFORCE_DESCRIPTIONS = false;
+
 const reScript = /\.jsx?$/;
+const reGraphql = /\.(graphql|gql)$/;
 const reStyle = /\.(css|less|scss|sss)$/;
 const reImage = /\.(bmp|gif|jpe?g|png|svg)$/;
 const staticAssetName = isDebug ? '[path][name].[ext]?[hash:8]' : '[hash:8].[ext]';
@@ -92,8 +97,20 @@ const config = {
             // Adds __self attribute to JSX which React will use for some warnings
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
             ...isDebug ? ['transform-react-jsx-self'] : [],
+            ['react-intl', {
+              messagesDir: path.resolve(__dirname, '../build/messages/extracted'),
+              extractSourceLocation: true,
+              enforceDescriptions: REACT_INTL_ENFORCE_DESCRIPTIONS,
+            }],
           ],
         },
+      },
+
+      // Rules for GraphQL
+      {
+        test: reGraphql,
+        exclude: /node_modules/,
+        loader: 'graphql-tag/loader',
       },
 
       // Rules for Style Sheets
@@ -147,18 +164,18 @@ const config = {
           // Compile Less to CSS
           // https://github.com/webpack-contrib/less-loader
           // Install dependencies before uncommenting: yarn add --dev less-loader less
-          // {
-          //   test: /\.less$/,
-          //   loader: 'less-loader',
-          // },
+          {
+            test: /\.less$/,
+            loader: 'less-loader',
+          },
 
           // Compile Sass to CSS
           // https://github.com/webpack-contrib/sass-loader
           // Install dependencies before uncommenting: yarn add --dev sass-loader node-sass
-          // {
-          //   test: /\.scss$/,
-          //   loader: 'sass-loader',
-          // },
+          {
+            test: /\.scss$/,
+            loader: 'sass-loader',
+          },
         ],
       },
 
@@ -220,6 +237,7 @@ const config = {
           reScript,
           reStyle,
           reImage,
+          reGraphql,
           /\.json$/,
           /\.txt$/,
           /\.md$/,
@@ -276,7 +294,7 @@ const clientConfig = {
   target: 'web',
 
   entry: {
-    client: ['babel-polyfill', './src/client.js'],
+    client: ['babel-polyfill', './src/clientLoader.js'],
   },
 
   plugins: [

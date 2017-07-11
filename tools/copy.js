@@ -28,13 +28,14 @@ async function copy() {
         start: 'node server.js',
       },
     }, null, 2)),
-    copyFile('LICENSE.txt', 'build/LICENSE.txt'),
     copyFile('yarn.lock', 'build/yarn.lock'),
     copyDir('public', 'build/public'),
+    copyDir('src/messages', 'build/messages'),
   ]);
 
   if (process.argv.includes('--watch')) {
     const watcher = chokidar.watch([
+      'src/messages/**/*',
       'public/**/*',
     ], { ignoreInitial: true });
 

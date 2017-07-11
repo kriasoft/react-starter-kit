@@ -9,7 +9,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import glob from 'glob';
+import globPkg from 'glob';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
 
@@ -47,11 +47,15 @@ export const copyFile = (source, target) => new Promise((resolve, reject) => {
 });
 
 export const readDir = (pattern, options) => new Promise((resolve, reject) =>
-  glob(pattern, options, (err, result) => (err ? reject(err) : resolve(result))),
+  globPkg(pattern, options, (err, result) => (err ? reject(err) : resolve(result))),
 );
 
 export const makeDir = name => new Promise((resolve, reject) => {
   mkdirp(name, err => (err ? reject(err) : resolve()));
+});
+
+export const glob = pattern => new Promise((resolve, reject) => {
+  globPkg(pattern, (err, val) => (err ? reject(err) : resolve(val)));
 });
 
 export const moveDir = async (source, target) => {
