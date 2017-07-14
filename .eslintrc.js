@@ -16,12 +16,12 @@ module.exports = {
     'airbnb',
     'plugin:flowtype/recommended',
     'plugin:css-modules/recommended',
+    'prettier',
+    'prettier/flowtype',
+    'prettier/react',
   ],
 
-  plugins: [
-    'flowtype',
-    'css-modules',
-  ],
+  plugins: ['flowtype', 'css-modules', 'prettier'],
 
   globals: {
     __DEV__: true,
@@ -64,6 +64,17 @@ module.exports = {
     // babel-plugin-transform-react-pure-class-to-function
     // https://github.com/kriasoft/react-starter-kit/pull/961
     'react/prefer-stateless-function': 'off',
+
+    // ESLint plugin for prettier formatting
+    // https://github.com/prettier/eslint-plugin-prettier
+    'prettier/prettier': [
+      'error',
+      {
+        // https://github.com/prettier/prettier#options
+        singleQuote: true,
+        trailingComma: 'all',
+      },
+    ],
   },
 
   settings: {

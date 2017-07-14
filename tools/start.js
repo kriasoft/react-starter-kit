@@ -25,7 +25,6 @@ const watchOptions = {
   // Watching may not work with NFS and machines in VirtualBox
   // Uncomment next line if it is your case (use true or interval in milliseconds)
   // poll: true,
-
   // Decrease CPU or memory usage in some file systems
   // ignored: /node_modules/,
 };
@@ -37,15 +36,21 @@ function createCompilationPromise(name, compiler, config) {
       timeStart = new Date();
       console.info(`[${format(timeStart)}] Compiling '${name}'...`);
     });
-    compiler.plugin('done', (stats) => {
+    compiler.plugin('done', stats => {
       console.info(stats.toString(config.stats));
       const timeEnd = new Date();
       const time = timeEnd.getTime() - timeStart.getTime();
       if (stats.hasErrors()) {
-        console.info(`[${format(timeEnd)}] Failed to compile '${name}' after ${time} ms`);
+        console.info(
+          `[${format(timeEnd)}] Failed to compile '${name}' after ${time} ms`,
+        );
         reject(new Error('Compilation failed!'));
       } else {
-        console.info(`[${format(timeEnd)}] Finished '${name}' compilation after ${time} ms`);
+        console.info(
+          `[${format(
+            timeEnd,
+          )}] Finished '${name}' compilation after ${time} ms`,
+        );
         resolve(stats);
       }
     });
@@ -70,11 +75,23 @@ async function start() {
     'react-error-overlay',
     'react-hot-loader/patch',
     'webpack-hot-middleware/client?name=client&reload=true',
-  ].concat(clientConfig.entry.client).sort((a, b) => b.includes('polyfill') - a.includes('polyfill'));
-  clientConfig.output.filename = clientConfig.output.filename.replace('chunkhash', 'hash');
-  clientConfig.output.chunkFilename = clientConfig.output.chunkFilename.replace('chunkhash', 'hash');
-  clientConfig.module.rules = clientConfig.module.rules.filter(x => x.loader !== 'null-loader');
-  const { options } = clientConfig.module.rules.find(x => x.loader === 'babel-loader');
+  ]
+    .concat(clientConfig.entry.client)
+    .sort((a, b) => b.includes('polyfill') - a.includes('polyfill'));
+  clientConfig.output.filename = clientConfig.output.filename.replace(
+    'chunkhash',
+    'hash',
+  );
+  clientConfig.output.chunkFilename = clientConfig.output.chunkFilename.replace(
+    'chunkhash',
+    'hash',
+  );
+  clientConfig.module.rules = clientConfig.module.rules.filter(
+    x => x.loader !== 'null-loader',
+  );
+  const { options } = clientConfig.module.rules.find(
+    x => x.loader === 'babel-loader',
+  );
   options.plugins = ['react-hot-loader/babel'].concat(options.plugins || []);
   clientConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(),
@@ -85,8 +102,11 @@ async function start() {
   // Configure server-side hot module replacement
   const serverConfig = webpackConfig.find(config => config.name === 'server');
   serverConfig.output.hotUpdateMainFilename = 'updates/[hash].hot-update.json';
-  serverConfig.output.hotUpdateChunkFilename = 'updates/[id].[hash].hot-update.js';
-  serverConfig.module.rules = serverConfig.module.rules.filter(x => x.loader !== 'null-loader');
+  serverConfig.output.hotUpdateChunkFilename =
+    'updates/[id].[hash].hot-update.js';
+  serverConfig.module.rules = serverConfig.module.rules.filter(
+    x => x.loader !== 'null-loader',
+  );
   serverConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
@@ -96,17 +116,31 @@ async function start() {
   // Configure compilation
   await run(clean);
   const multiCompiler = webpack(webpackConfig);
-  const clientCompiler = multiCompiler.compilers.find(compiler => compiler.name === 'client');
-  const serverCompiler = multiCompiler.compilers.find(compiler => compiler.name === 'server');
-  const clientPromise = createCompilationPromise('client', clientCompiler, clientConfig);
-  const serverPromise = createCompilationPromise('server', serverCompiler, serverConfig);
+  const clientCompiler = multiCompiler.compilers.find(
+    compiler => compiler.name === 'client',
+  );
+  const serverCompiler = multiCompiler.compilers.find(
+    compiler => compiler.name === 'server',
+  );
+  const clientPromise = createCompilationPromise(
+    'client',
+    clientCompiler,
+    clientConfig,
+  );
+  const serverPromise = createCompilationPromise(
+    'server',
+    serverCompiler,
+    serverConfig,
+  );
 
   // https://github.com/webpack/webpack-dev-middleware
-  server.use(webpackDevMiddleware(clientCompiler, {
-    publicPath: clientConfig.output.publicPath,
-    quiet: true,
-    watchOptions,
-  }));
+  server.use(
+    webpackDevMiddleware(clientCompiler, {
+      publicPath: clientConfig.output.publicPath,
+      quiet: true,
+      watchOptions,
+    }),
+  );
 
   // https://github.com/glenjamin/webpack-hot-middleware
   server.use(webpackHotMiddleware(clientCompiler, { log: false }));
@@ -122,7 +156,9 @@ async function start() {
 
   let app;
   server.use((req, res) => {
-    appPromise.then(() => app.handle(req, res)).catch(error => console.error(error));
+    appPromise
+      .then(() => app.handle(req, res))
+      .catch(error => console.error(error));
   });
 
   function checkForUpdate(fromUpdate) {
@@ -133,31 +169,38 @@ async function start() {
     if (app.hot.status() !== 'idle') {
       return Promise.resolve();
     }
-    return app.hot.check(true).then((updatedModules) => {
-      if (!updatedModules) {
-        if (fromUpdate) {
-          console.info(`${hmrPrefix}Update applied.`);
+    return app.hot
+      .check(true)
+      .then(updatedModules => {
+        if (!updatedModules) {
+          if (fromUpdate) {
+            console.info(`${hmrPrefix}Update applied.`);
+          }
+          return;
         }
-        return;
-      }
-      if (updatedModules.length === 0) {
-        console.info(`${hmrPrefix}Nothing hot updated.`);
-      } else {
-        console.info(`${hmrPrefix}Updated modules:`);
-        updatedModules.forEach(moduleId => console.info(`${hmrPrefix} - ${moduleId}`));
-        checkForUpdate(true);
-      }
-    }).catch((error) => {
-      if (['abort', 'fail'].includes(app.hot.status())) {
-        console.warn(`${hmrPrefix}Cannot apply update.`);
-        delete require.cache[require.resolve('../build/server')];
-        // eslint-disable-next-line global-require, import/no-unresolved
-        app = require('../build/server').default;
-        console.warn(`${hmrPrefix}App has been reloaded.`);
-      } else {
-        console.warn(`${hmrPrefix}Update failed: ${error.stack || error.message}`);
-      }
-    });
+        if (updatedModules.length === 0) {
+          console.info(`${hmrPrefix}Nothing hot updated.`);
+        } else {
+          console.info(`${hmrPrefix}Updated modules:`);
+          updatedModules.forEach(moduleId =>
+            console.info(`${hmrPrefix} - ${moduleId}`),
+          );
+          checkForUpdate(true);
+        }
+      })
+      .catch(error => {
+        if (['abort', 'fail'].includes(app.hot.status())) {
+          console.warn(`${hmrPrefix}Cannot apply update.`);
+          delete require.cache[require.resolve('../build/server')];
+          // eslint-disable-next-line global-require, import/no-unresolved
+          app = require('../build/server').default;
+          console.warn(`${hmrPrefix}App has been reloaded.`);
+        } else {
+          console.warn(
+            `${hmrPrefix}Update failed: ${error.stack || error.message}`,
+          );
+        }
+      });
   }
 
   serverCompiler.watch(watchOptions, (error, stats) => {
@@ -183,13 +226,18 @@ async function start() {
   appPromiseResolve();
 
   // Launch the development server with Browsersync and HMR
-  await new Promise((resolve, reject) => browserSync.create().init({
-    // https://www.browsersync.io/docs/options
-    server: 'src/server.js',
-    middleware: [server],
-    open: !process.argv.includes('--silent'),
-    ...isDebug ? {} : { notify: false, ui: false },
-  }, (error, bs) => (error ? reject(error) : resolve(bs))));
+  await new Promise((resolve, reject) =>
+    browserSync.create().init(
+      {
+        // https://www.browsersync.io/docs/options
+        server: 'src/server.js',
+        middleware: [server],
+        open: !process.argv.includes('--silent'),
+        ...(isDebug ? {} : { notify: false, ui: false }),
+      },
+      (error, bs) => (error ? reject(error) : resolve(bs)),
+    ),
+  );
 
   const timeEnd = new Date();
   const time = timeEnd.getTime() - timeStart.getTime();

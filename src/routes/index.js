@@ -11,7 +11,6 @@
 
 // The top-level (parent) route
 const routes = {
-
   path: '/',
 
   // Keep in mind, routes are evaluated in order
@@ -62,7 +61,6 @@ const routes = {
 
     return route;
   },
-
 };
 
 // The error page is available by permanent url for development mode
