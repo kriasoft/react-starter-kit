@@ -16,7 +16,11 @@ function action() {
   return {
     chunks: ['about'],
     title: about.title,
-    component: <Layout><Page {...about} /></Layout>,
+    component: (
+      <Layout>
+        <Page {...about} />
+      </Layout>
+    ),
   };
 }
 

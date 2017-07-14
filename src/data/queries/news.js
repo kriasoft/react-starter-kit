@@ -12,8 +12,9 @@ import fetch from 'isomorphic-fetch';
 import NewsItemType from '../types/NewsItemType';
 
 // React.js News Feed (RSS)
-const url = 'https://api.rss2json.com/v1/api.json' +
-            '?rss_url=https%3A%2F%2Freactjsnews.com%2Ffeed.xml';
+const url =
+  'https://api.rss2json.com/v1/api.json' +
+  '?rss_url=https%3A%2F%2Freactjsnews.com%2Ffeed.xml';
 
 let items = [];
 let lastFetchTask;
@@ -26,11 +27,11 @@ const news = {
       return lastFetchTask;
     }
 
-    if ((new Date() - lastFetchTime) > 1000 * 60 * 10 /* 10 mins */) {
+    if (new Date() - lastFetchTime > 1000 * 60 * 10 /* 10 mins */) {
       lastFetchTime = new Date();
       lastFetchTask = fetch(url)
         .then(response => response.json())
-        .then((data) => {
+        .then(data => {
           if (data.status === 'ok') {
             items = data.items;
           }
@@ -38,7 +39,7 @@ const news = {
           lastFetchTask = null;
           return items;
         })
-        .catch((err) => {
+        .catch(err => {
           lastFetchTask = null;
           throw err;
         });

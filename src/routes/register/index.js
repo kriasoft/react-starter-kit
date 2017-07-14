@@ -17,7 +17,11 @@ function action() {
   return {
     chunks: ['register'],
     title,
-    component: <Layout><Register title={title} /></Layout>,
+    component: (
+      <Layout>
+        <Register title={title} />
+      </Layout>
+    ),
   };
 }
 

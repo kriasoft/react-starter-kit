@@ -22,7 +22,11 @@ module.exports = {
   // collectCoverage: false, // [boolean]
 
   // https://facebook.github.io/jest/docs/en/configuration.html#collectcoveragefrom-array
-  collectCoverageFrom: ['src/**/*.{js,jsx}', '!**/node_modules/**', '!**/vendor/**'],
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx}',
+    '!**/node_modules/**',
+    '!**/vendor/**',
+  ],
 
   // https://facebook.github.io/jest/docs/en/configuration.html#coveragedirectory-string
   coverageDirectory: '<rootDir>/coverage', // [string]
@@ -48,7 +52,8 @@ module.exports = {
   // like images or styles with a single module.
   moduleNameMapper: {
     '\\.(css|less|scss|sss)$': 'identity-obj-proxy',
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': 'GlobalImageStub',
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      'GlobalImageStub',
   },
 
   // modulePathIgnorePatterns: // [array<string>]
@@ -77,7 +82,8 @@ module.exports = {
 
   transform: {
     '\\.jsx?$': 'babel-jest',
-    '\\.(jpe?g|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/jest/fileTransformer.js',
+    '\\.(jpe?g|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      '<rootDir>/jest/fileTransformer.js',
   },
 
   // transformIgnorePatterns: // [array<string>]
