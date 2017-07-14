@@ -35,15 +35,17 @@ function createFetch(fetch: Fetch, { baseUrl, cookie }: Options) {
     },
   };
 
-  return (url: string, options: any) => ((url.startsWith('/graphql') || url.startsWith('/api')) ?
-    fetch(`${baseUrl}${url}`, {
-      ...defaults,
-      ...options,
-      headers: {
-        ...defaults.headers,
-        ...(options && options.headers),
-      },
-    }) : fetch(url, options));
+  return (url: string, options: any) =>
+    url.startsWith('/graphql') || url.startsWith('/api')
+      ? fetch(`${baseUrl}${url}`, {
+          ...defaults,
+          ...options,
+          headers: {
+            ...defaults.headers,
+            ...(options && options.headers),
+          },
+        })
+      : fetch(url, options);
 }
 
 export default createFetch;

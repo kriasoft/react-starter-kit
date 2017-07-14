@@ -1,8 +1,4 @@
-import {
-  validate,
-  execute,
-  specifiedRules,
-} from 'graphql';
+import { validate, execute, specifiedRules } from 'graphql';
 
 import ApolloClient from 'apollo-client';
 

@@ -30,7 +30,7 @@ class Link extends React.Component {
     onClick: null,
   };
 
-  handleClick = (event) => {
+  handleClick = event => {
     if (this.props.onClick) {
       this.props.onClick(event);
     }
@@ -49,7 +49,11 @@ class Link extends React.Component {
 
   render() {
     const { to, children, ...props } = this.props;
-    return <a href={to} {...props} onClick={this.handleClick}>{children}</a>;
+    return (
+      <a href={to} {...props} onClick={this.handleClick}>
+        {children}
+      </a>
+    );
   }
 }
 

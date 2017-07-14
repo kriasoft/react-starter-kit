@@ -31,7 +31,9 @@ async function build() {
   }
 
   if (process.argv.includes('--docker')) {
-    cp.spawnSync('docker', ['build', '-t', pkg.name, '.'], { stdio: 'inherit' });
+    cp.spawnSync('docker', ['build', '-t', pkg.name, '.'], {
+      stdio: 'inherit',
+    });
   }
 }
 

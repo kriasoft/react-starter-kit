@@ -33,17 +33,18 @@ describe('Layout', () => {
   it('renders children correctly', () => {
     const store = mockStore(initialState);
 
-    const wrapper = renderer.create(
-      <IntlProvider>
-        <App context={{ insertCss: () => {}, store }}>
-          <Layout>
-            <div className="child" />
-          </Layout>
-        </App>
-      </IntlProvider>,
-    ).toJSON();
+    const wrapper = renderer
+      .create(
+        <IntlProvider>
+          <App context={{ insertCss: () => {}, store }}>
+            <Layout>
+              <div className="child" />
+            </Layout>
+          </App>
+        </IntlProvider>,
+      )
+      .toJSON();
 
     expect(wrapper).toMatchSnapshot();
   });
-
 });

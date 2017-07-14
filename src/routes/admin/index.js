@@ -22,7 +22,11 @@ function action() {
   return {
     chunks: ['admin'],
     title,
-    component: <Layout><Admin title={title} /></Layout>,
+    component: (
+      <Layout>
+        <Admin title={title} />
+      </Layout>
+    ),
   };
 }
 

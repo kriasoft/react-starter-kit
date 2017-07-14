@@ -13,7 +13,9 @@ export default function intl(state = null, action) {
 
   switch (action.type) {
     case SET_LOCALE_START: {
-      const locale = state[action.payload.locale] ? action.payload.locale : state.locale;
+      const locale = state[action.payload.locale]
+        ? action.payload.locale
+        : state.locale;
       return {
         ...state,
         locale,

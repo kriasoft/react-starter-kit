@@ -44,7 +44,11 @@ const fetch = createFetch(self.fetch, {
 
 // Initialize a new Redux store
 // http://redux.js.org/docs/basics/UsageWithReact.html
-const store = configureStore(window.App.state, { apolloClient, fetch, history });
+const store = configureStore(window.App.state, {
+  apolloClient,
+  fetch,
+  history,
+});
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
@@ -54,7 +58,9 @@ const context = {
   insertCss: (...styles) => {
     // eslint-disable-next-line no-underscore-dangle
     const removeCss = styles.map(x => x._insertCss());
-    return () => { removeCss.forEach(f => f()); };
+    return () => {
+      removeCss.forEach(f => f());
+    };
   },
   // For react-apollo
   client: apolloClient,
@@ -157,7 +163,9 @@ async function onLocationChange(location, action) {
     }
 
     appInstance = ReactDOM.render(
-      <App context={context}>{route.component}</App>,
+      <App context={context}>
+        {route.component}
+      </App>,
       container,
       () => onRenderComplete(route, location),
     );

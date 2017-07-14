@@ -54,31 +54,36 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 // -----------------------------------------------------------------------------
 app.use(express.static(path.resolve(__dirname, 'public')));
 app.use(cookieParser());
-app.use(requestLanguage({
-  languages: config.locales,
-  queryName: 'lang',
-  cookie: {
-    name: 'lang',
-    options: {
-      path: '/',
-      maxAge: 3650 * 24 * 3600 * 1000, // 10 years in miliseconds
+app.use(
+  requestLanguage({
+    languages: config.locales,
+    queryName: 'lang',
+    cookie: {
+      name: 'lang',
+      options: {
+        path: '/',
+        maxAge: 3650 * 24 * 3600 * 1000, // 10 years in miliseconds
+      },
+      url: '/lang/{language}',
     },
-    url: '/lang/{language}',
-  },
-}));
+  }),
+);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //
 // Authentication
 // -----------------------------------------------------------------------------
-app.use(expressJwt({
-  secret: config.auth.jwt.secret,
-  credentialsRequired: false,
-  getToken: req => req.cookies.id_token,
-}));
+app.use(
+  expressJwt({
+    secret: config.auth.jwt.secret,
+    credentialsRequired: false,
+    getToken: req => req.cookies.id_token,
+  }),
+);
 // Error handler for express-jwt
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+app.use((err, req, res, next) => {
+  // eslint-disable-line no-unused-vars
   if (err instanceof Jwt401Error) {
     console.error('[express-jwt-error]', req.cookies.id_token);
     // `clearCookie`, otherwise user can't use web-app until cookie expires
@@ -92,11 +97,19 @@ app.use(passport.initialize());
 if (__DEV__) {
   app.enable('trust proxy');
 }
-app.get('/login/facebook',
-  passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false }),
+app.get(
+  '/login/facebook',
+  passport.authenticate('facebook', {
+    scope: ['email', 'user_location'],
+    session: false,
+  }),
 );
-app.get('/login/facebook/return',
-  passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
+app.get(
+  '/login/facebook/return',
+  passport.authenticate('facebook', {
+    failureRedirect: '/login',
+    session: false,
+  }),
   (req, res) => {
     const expiresIn = 60 * 60 * 24 * 180; // 180 days
     const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
@@ -146,20 +159,26 @@ app.get('*', async (req, res, next) => {
       history: null,
     });
 
-    store.dispatch(setRuntimeVariable({
-      name: 'initialNow',
-      value: Date.now(),
-    }));
+    store.dispatch(
+      setRuntimeVariable({
+        name: 'initialNow',
+        value: Date.now(),
+      }),
+    );
 
-    store.dispatch(setRuntimeVariable({
-      name: 'availableLocales',
-      value: config.locales,
-    }));
+    store.dispatch(
+      setRuntimeVariable({
+        name: 'availableLocales',
+        value: config.locales,
+      }),
+    );
 
     const locale = req.language;
-    const intl = await store.dispatch(setLocale({
-      locale,
-    }));
+    const intl = await store.dispatch(
+      setLocale({
+        locale,
+      }),
+    );
 
     const css = new Set();
 
@@ -205,9 +224,7 @@ app.get('*', async (req, res, next) => {
     // this is here because of Apollo redux APOLLO_QUERY_STOP action
     await Promise.delay(0);
     data.children = await ReactDOM.renderToString(rootComponent);
-    data.styles = [
-      { id: 'css', cssText: [...css].join('') },
-    ];
+    data.styles = [{ id: 'css', cssText: [...css].join('') }];
 
     data.scripts = [assets.vendor.js];
     if (route.chunks) {
@@ -241,7 +258,8 @@ const pe = new PrettyError();
 pe.skipNodeFiles();
 pe.skipPackage('express');
 
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
   const locale = req.language;
   console.error(pe.render(err));
   const html = ReactDOM.renderToStaticMarkup(

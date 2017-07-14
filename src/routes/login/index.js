@@ -25,7 +25,11 @@ function action({ intl }) {
   return {
     chunks: ['login'],
     title,
-    component: <Layout><Login title={title} /></Layout>,
+    component: (
+      <Layout>
+        <Login title={title} />
+      </Layout>
+    ),
   };
 }
 
