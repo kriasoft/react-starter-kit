@@ -21,6 +21,12 @@ import router from './router';
 
 /* eslint-disable global-require */
 
+if (__DEV__) {
+  // https://github.com/garbles/why-did-you-update#install
+  const { whyDidYouUpdate } = require('why-did-you-update');
+  whyDidYouUpdate(React /* , { exclude: /^Connect/ } */);
+}
+
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
 const context = {
