@@ -20,3 +20,4 @@
 * [How to Integrate React Intl](./recipes/how-to-integrate-react-intl.md)
 * [How to Integrate Disqus](./recipes/how-to-integrate-disqus.md)
 * [How to Use Sass/SCSS](./recipes/how-to-use-sass.md)
+* [How to Configure Facebook Login](./recipes/how-to-configure-facebook-login.md)

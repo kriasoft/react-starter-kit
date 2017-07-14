@@ -38,7 +38,9 @@ const context = {
   insertCss: (...styles) => {
     // eslint-disable-next-line no-underscore-dangle
     const removeCss = styles.map(x => x._insertCss());
-    return () => { removeCss.forEach(f => f()); };
+    return () => {
+      removeCss.forEach(f => f());
+    };
   },
   // For react-apollo
   client: apolloClient,
@@ -137,7 +139,9 @@ async function onLocationChange(location, action) {
     }
 
     appInstance = ReactDOM.render(
-      <App context={context}>{route.component}</App>,
+      <App context={context}>
+        {route.component}
+      </App>,
       container,
       () => onRenderComplete(route, location),
     );

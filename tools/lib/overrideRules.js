@@ -8,7 +8,7 @@
  */
 
 function overrideRules(rules, patch) {
-  return rules.map((ruleToPatch) => {
+  return rules.map(ruleToPatch => {
     let rule = patch(ruleToPatch);
     if (rule.rules) {
       rule = { ...rule, rules: overrideRules(rule.rules, patch) };

@@ -13,7 +13,11 @@ function createGraphqlRequest(apolloClient) {
     const { skipCache } = options;
     let query = queryOrString;
     if (typeof queryOrString === 'string') {
-      const gql = await require.ensure(['graphql-tag'], require => require('graphql-tag'), 'graphql-tag');
+      const gql = await require.ensure(
+        ['graphql-tag'],
+        require => require('graphql-tag'),
+        'graphql-tag',
+      );
       query = gql([queryOrString]);
     }
 
@@ -23,7 +27,9 @@ function createGraphqlRequest(apolloClient) {
 
     let isMutation = false;
     if (query.definitions) {
-      isMutation = query.definitions.some(definition => definition && (definition.operation === 'mutation'));
+      isMutation = query.definitions.some(
+        definition => definition && definition.operation === 'mutation',
+      );
     }
     if (isMutation) {
       return apolloClient.mutate({ mutation: query, variables });
