@@ -15,6 +15,7 @@ import UserProfile from './UserProfile';
 import Course from './Course';
 import StudyEntity from './StudyEntity';
 import CourseStudyEntity from './CourseStudyEntity';
+import UserCourse from './UserCourse';
 
 User.hasMany(UserLogin, {
   foreignKey: 'userId',
@@ -50,6 +51,22 @@ StudyEntity.belongsToMany(Course, {
     model: CourseStudyEntity,
   },
   foreignKey: 'seId',
+});
+
+User.belongsToMany(Course, {
+  as: 'Courses',
+  through: {
+    model: UserCourse,
+  },
+  foreignKey: 'uId',
+});
+
+Course.belongsToMany(User, {
+  as: 'Users',
+  through: {
+    model: UserCourse,
+  },
+  foreignKey: 'courseId',
 });
 
 function sync(...args) {

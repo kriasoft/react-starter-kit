@@ -2,19 +2,6 @@ import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
 import StudyEntityType from '../types/StudyEntityType';
 import StudyEntity from '../models/StudyEntity';
 
-const studyEntity = {
-  type: StudyEntityType,
-  args: {
-    id: {
-      description: 'id of the StudyEntity',
-      type: StringType,
-    },
-  },
-  resolve({ request }, args) {
-    return StudyEntity.findById(args.id);
-  },
-};
-
 const createStudyEntity = {
   type: StudyEntityType,
   args: {
@@ -56,9 +43,54 @@ const removeStudyEntity = {
 
 const studyEntities = {
   type: new List(StudyEntityType),
-  resolve() {
+  args: {
+    ids: {
+      description: 'ids of the StudyEntity',
+      type: new List(StringType),
+    },
+  },
+  resolve(obj, args) {
+    if (args.ids) {
+      return StudyEntity.findAll({
+        where: {
+          id: args.ids,
+        },
+      });
+    }
     return StudyEntity.findAll();
   },
 };
 
-export { studyEntity, createStudyEntity, removeStudyEntity, studyEntities };
+
+const updateStudyEntities = {
+  type: StudyEntityType,
+  args: {
+    id: {
+      description: 'id of the studyEntity',
+      type: StringType,
+    },
+    title: {
+      description: 'The title of the studyEntity',
+      type: StringType,
+    },
+    body: {
+      description: 'The body of the studyEntity',
+      type: StringType,
+    },
+  },
+  resolve({ request }, args) {
+    StudyEntity.findById(args.id)
+    .then((_se) => {
+      const se = _se;
+      if (args.title) {
+        se.title = args.title;
+      }
+      if (args.body) {
+        se.body = args.body;
+      }
+      return se.save();
+    });
+  },
+};
+
+export { createStudyEntity, removeStudyEntity, studyEntities, updateStudyEntities };

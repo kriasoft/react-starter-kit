@@ -12,13 +12,19 @@ import {
   GraphQLID as ID,
   GraphQLString as StringType,
   GraphQLNonNull as NonNull,
+  GraphQLList,
 } from 'graphql';
+import CourseType from './CourseType';
 
 const UserType = new ObjectType({
-  name: 'User',
+  name: 'UserType',
   fields: {
     id: { type: new NonNull(ID) },
     email: { type: StringType },
+    courses: {
+      type: new GraphQLList(CourseType),
+      resolve: user => user.getCourses(),
+    },
   },
 });
 

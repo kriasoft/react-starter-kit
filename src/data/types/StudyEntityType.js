@@ -9,7 +9,7 @@ const StudyEntityType = new ObjectType({
   fields: {
     id: { type: new NonNull(StringType) },
     title: { type: new NonNull(StringType) },
-    courseId: { type: new NonNull(StringType) },
+    body: { type: new NonNull(StringType) },
   },
 });
 

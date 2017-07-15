@@ -3,6 +3,7 @@ import {
   GraphQLString as StringType,
   GraphQLNonNull as NonNull,
   GraphQLList,
+  GraphQLID as ID,
 } from 'graphql';
 import StudyEntityType from './StudyEntityType';
 
@@ -14,6 +15,16 @@ const CourseType = new ObjectType({
     studyEntities: {
       type: new GraphQLList(StudyEntityType),
       resolve: course => course.getStudyEntities(),
+    },
+    users: {
+      type: new GraphQLList(new ObjectType({
+        name: 'CourseUserType',
+        fields: {
+          id: { type: new NonNull(ID) },
+          email: { type: StringType },
+        },
+      })),
+      resolve: course => course.getUsers(),
     },
   },
 });

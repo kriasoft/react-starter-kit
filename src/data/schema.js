@@ -14,8 +14,9 @@ import {
 
 import me from './queries/me';
 import news from './queries/news';
-import { course, createCourse, removeCourse, courses } from './queries/course';
-import { studyEntity, createStudyEntity, removeStudyEntity, studyEntities } from './queries/studyEntity';
+import { createUser, users, removeUser, updateUser } from './queries/user';
+import { createCourse, removeCourse, courses, updateCourses } from './queries/course';
+import { createStudyEntity, removeStudyEntity, studyEntities, updateStudyEntities } from './queries/studyEntity';
 
 const schema = new Schema({
   query: new ObjectType({
@@ -23,9 +24,8 @@ const schema = new Schema({
     fields: {
       me,
       news,
-      course,
+      users,
       courses,
-      studyEntity,
       studyEntities,
     },
   }),
@@ -36,6 +36,11 @@ const schema = new Schema({
       removeCourse,
       createStudyEntity,
       removeStudyEntity,
+      updateCourses,
+      updateStudyEntities,
+      createUser,
+      removeUser,
+      updateUser,
     },
   }),
 });
