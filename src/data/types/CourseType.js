@@ -5,8 +5,6 @@ import {
   GraphQLList,
 } from 'graphql';
 import StudyEntityType from './StudyEntityType';
-import StudyEntity from '../models/StudyEntity';
-
 
 const CourseType = new ObjectType({
   name: 'CourseType',
@@ -15,9 +13,7 @@ const CourseType = new ObjectType({
     title: { type: new NonNull(StringType) },
     studyEntities: {
       type: new GraphQLList(StudyEntityType),
-      resolve: () => {
-        return StudyEntity.findAll();
-      },
+      resolve: course => course.getStudyEntities(),
     },
   },
 });
