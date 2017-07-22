@@ -15,6 +15,9 @@ import {
   GraphQLList,
 } from 'graphql';
 import CourseType from './CourseType';
+import UserLoginType from './UserLoginType';
+import UserProfileType from './UserProfileType';
+import UserClaimType from './UserClaimType';
 
 const UserType = new ObjectType({
   name: 'UserType',
@@ -24,6 +27,18 @@ const UserType = new ObjectType({
     courses: {
       type: new GraphQLList(CourseType),
       resolve: user => user.getCourses(),
+    },
+    logins: {
+      type: new NonNull(new GraphQLList(UserLoginType)),
+      resolve: user => user.getLogins(),
+    },
+    claims: {
+      type: new NonNull(new GraphQLList(UserClaimType)),
+      resolve: user => user.getClaims(),
+    },
+    profile: {
+      type: new NonNull(UserProfileType),
+      resolve: user => user.getProfile(),
     },
   },
 });

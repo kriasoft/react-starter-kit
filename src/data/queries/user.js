@@ -1,6 +1,10 @@
 import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
 import UserType from '../types/UserType';
 import User from '../models/User';
+import UserLogin from '../models/UserLogin';
+import UserProfile from '../models/UserProfile';
+import UserClaim from '../models/UserClaim';
+import sequelize from '../sequelize';
 
 const createUser = {
   type: UserType,
@@ -9,11 +13,48 @@ const createUser = {
       description: 'The email of the new user',
       type: StringType,
     },
+    key: {
+      description: 'The key of the new user',
+      type: StringType,
+    },
+    name: {
+      description: 'The name of the new user',
+      type: StringType,
+    },
+    gender: {
+      description: 'The gender of the new user',
+      type: StringType,
+    },
   },
   resolve({ request }, args) {
-    return User.create({
-      email: args.email,
-    });
+    // return User.create({
+    //   email: args.email,
+    // })
+    return sequelize.transaction(t =>
+      User.create({
+        type: UserType,
+        email: args.email,
+        emailConfirmed: false,
+        logins: [
+          { name: 'local', key: args.email },
+        ],
+        claims: [
+          { type: 'local', value: args.key },
+        ],
+        profile: {
+          displayName: args.name,
+          gender: args.gender,
+          picture: 'https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png',
+        },
+      }, {
+        include: [
+          { model: UserLogin, as: 'logins' },
+          { model: UserClaim, as: 'claims' },
+          { model: UserProfile, as: 'profile' },
+        ],
+        transaction: t,
+      }),
+    );
   },
 };
 
