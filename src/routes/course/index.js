@@ -13,22 +13,22 @@ import Course from './Course';
 
 const title = 'Course';
 
-export default {
+async function action({ fetch, params }) {
+  const resp = await fetch('/graphql', {
+    body: JSON.stringify({
+      query: `{ courses(ids:"${params.id}") { id, title, studyEntities{ id,title } } }`,
+    }),
+  });
+  const { data } = await resp.json();
+  if (!data && !data.courses) throw new Error('Failed to load course.');
+  return {
+    title,
+    component: (
+      <Layout>
+        <Course title={data.courses[0].title} course={data.courses[0]} />
+      </Layout>
+    ),
+  };
+}
 
-  path: '/courses/:id',
-
-  async action({ fetch, params }) {
-    const resp = await fetch('/graphql', {
-      body: JSON.stringify({
-        query: `{ courses(ids:"${params.id}") { id, title, studyEntities{ id,title } } }`,
-      }),
-    });
-    const { data } = await resp.json();
-    if (!data && !data.courses) throw new Error('Failed to load course.');
-    return {
-      title,
-      component: <Layout><Course title={data.courses[0].title} course={data.courses[0]} /></Layout>,
-    };
-  },
-
-};
+export default action;

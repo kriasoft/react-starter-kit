@@ -78,28 +78,30 @@ const updateCourses = {
   resolve({ request }, args) {
     let course;
     Course.findById(args.id)
-    .then((_course) => {
-      course = _course;
-      if (args.title) {
-        course.title = args.title;
-      }
-      return course.getStudyEntities();
-    }).then((_studyEntities) => {
-      let studyEntities = _studyEntities;
-      // studyEntities = studyEntities.filter(se => !args.removeStudyEntities.includes(se.id));
-      const removeStudyEntities = args.removeStudyEntities || [];
-      const addStudyEntities = args.addStudyEntities || [];
-      const idsEqual = (i, rse) => String(rse) === String(studyEntities[i].id);
-      for (let i = 0; i < studyEntities.length; i += 1) {
-        if (removeStudyEntities.find(idsEqual.bind(this, i))) {
-          studyEntities.splice(i, 1);
-          i -= 1;
+      .then(_course => {
+        course = _course;
+        if (args.title) {
+          course.title = args.title;
         }
-      }
-      studyEntities = studyEntities.concat(addStudyEntities);
-      course.setStudyEntities(studyEntities);
-      return course.save();
-    });
+        return course.getStudyEntities();
+      })
+      .then(_studyEntities => {
+        let studyEntities = _studyEntities;
+        // studyEntities = studyEntities.filter(se => !args.removeStudyEntities.includes(se.id));
+        const removeStudyEntities = args.removeStudyEntities || [];
+        const addStudyEntities = args.addStudyEntities || [];
+        const idsEqual = (i, rse) =>
+          String(rse) === String(studyEntities[i].id);
+        for (let i = 0; i < studyEntities.length; i += 1) {
+          if (removeStudyEntities.find(idsEqual.bind(this, i))) {
+            studyEntities.splice(i, 1);
+            i -= 1;
+          }
+        }
+        studyEntities = studyEntities.concat(addStudyEntities);
+        course.setStudyEntities(studyEntities);
+        return course.save();
+      });
   },
 };
 

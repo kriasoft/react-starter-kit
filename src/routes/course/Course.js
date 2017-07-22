@@ -18,27 +18,38 @@ class Course extends React.Component {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      studyEntities: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string,
-        title: PropTypes.string,
-      })),
+      studyEntities: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+          title: PropTypes.string,
+        }),
+      ),
     }).isRequired,
   };
 
   render() {
     const studyEntitiesList = [];
     for (let i = 0; i < this.props.course.studyEntities.length; i += 1) {
-      studyEntitiesList.push(<li className={s.item}>
-        <a href={`/courses/${this.props.course.id}/${this.props.course.studyEntities[i].id}`}>
-          {this.props.course.studyEntities[i].title}
-        </a>
-      </li>);
+      studyEntitiesList.push(
+        <li>
+          <a
+            href={`/courses/${this.props.course.id}/${this.props.course
+              .studyEntities[i].id}`}
+          >
+            {this.props.course.studyEntities[i].title}
+          </a>
+        </li>,
+      );
     }
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.title}</h1>
-          <ol>{studyEntitiesList}</ol>
+          <h1>
+            {this.props.title}
+          </h1>
+          <ol>
+            {studyEntitiesList}
+          </ol>
         </div>
       </div>
     );

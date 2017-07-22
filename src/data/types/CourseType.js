@@ -17,13 +17,15 @@ const CourseType = new ObjectType({
       resolve: course => course.getStudyEntities(),
     },
     users: {
-      type: new GraphQLList(new ObjectType({
-        name: 'CourseUserType',
-        fields: {
-          id: { type: new NonNull(ID) },
-          email: { type: StringType },
-        },
-      })),
+      type: new GraphQLList(
+        new ObjectType({
+          name: 'CourseUserType',
+          fields: {
+            id: { type: new NonNull(ID) },
+            email: { type: StringType },
+          },
+        }),
+      ),
       resolve: course => course.getUsers(),
     },
   },

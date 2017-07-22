@@ -31,29 +31,29 @@ const createUser = {
     //   email: args.email,
     // })
     return sequelize.transaction(t =>
-      User.create({
-        type: UserType,
-        email: args.email,
-        emailConfirmed: false,
-        logins: [
-          { name: 'local', key: args.email },
-        ],
-        claims: [
-          { type: 'local', value: args.key },
-        ],
-        profile: {
-          displayName: args.name,
-          gender: args.gender,
-          picture: 'https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png',
+      User.create(
+        {
+          type: UserType,
+          email: args.email,
+          emailConfirmed: false,
+          logins: [{ name: 'local', key: args.email }],
+          claims: [{ type: 'local', value: args.key }],
+          profile: {
+            displayName: args.name,
+            gender: args.gender,
+            picture:
+              'https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png',
+          },
         },
-      }, {
-        include: [
-          { model: UserLogin, as: 'logins' },
-          { model: UserClaim, as: 'claims' },
-          { model: UserProfile, as: 'profile' },
-        ],
-        transaction: t,
-      }),
+        {
+          include: [
+            { model: UserLogin, as: 'logins' },
+            { model: UserClaim, as: 'claims' },
+            { model: UserProfile, as: 'profile' },
+          ],
+          transaction: t,
+        },
+      ),
     );
   },
 };
@@ -110,8 +110,7 @@ const updateUser = {
   },
   resolve({ request }, args) {
     let user;
-    User.findById(args.id)
-    .then((_user) => {
+    User.findById(args.id).then(_user => {
       user = _user;
       if (args.email) {
         user.email = args.email;

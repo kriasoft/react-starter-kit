@@ -10,27 +10,61 @@
 /* eslint-disable global-require */
 
 // The top-level (parent) route
-export default {
-
+const routes = {
   path: '/',
 
   // Keep in mind, routes are evaluated in order
   children: [
-
-    require('./home').default,
-    require('./contact').default,
-    require('./course').default,
-    require('./courses').default,
-    require('./studyEntity').default,
-    require('./users').default,
-    require('./login').default,
-    require('./register').default,
-    require('./about').default,
-    require('./privacy').default,
-    require('./admin').default,
+    {
+      path: '/courses',
+      load: () => import(/* webpackChunkName: 'courses' */ './courses'),
+    },
+    {
+      path: '/courses/:id',
+      load: () => import(/* webpackChunkName: 'course' */ './course'),
+    },
+    {
+      path: '/courses/:idCourse/:idStudyEntity',
+      load: () => import(/* webpackChunkName: 'studyEntity' */ './studyEntity'),
+    },
+    {
+      path: '/users',
+      load: () => import(/* webpackChunkName: 'users' */ './users'),
+    },
+    {
+      path: '/',
+      load: () => import(/* webpackChunkName: 'home' */ './home'),
+    },
+    {
+      path: '/contact',
+      load: () => import(/* webpackChunkName: 'contact' */ './contact'),
+    },
+    {
+      path: '/login',
+      load: () => import(/* webpackChunkName: 'login' */ './login'),
+    },
+    {
+      path: '/register',
+      load: () => import(/* webpackChunkName: 'register' */ './register'),
+    },
+    {
+      path: '/about',
+      load: () => import(/* webpackChunkName: 'about' */ './about'),
+    },
+    {
+      path: '/privacy',
+      load: () => import(/* webpackChunkName: 'privacy' */ './privacy'),
+    },
+    {
+      path: '/admin',
+      load: () => import(/* webpackChunkName: 'admin' */ './admin'),
+    },
 
     // Wildcard routes, e.g. { path: '*', ... } (must go last)
-    require('./notFound').default,
+    {
+      path: '*',
+      load: () => import(/* webpackChunkName: 'not-found' */ './not-found'),
+    },
   ],
 
   async action({ next }) {
@@ -43,5 +77,14 @@ export default {
 
     return route;
   },
-
 };
+
+// The error page is available by permanent url for development mode
+if (__DEV__) {
+  routes.children.unshift({
+    path: '/error',
+    action: require('./error').default,
+  });
+}
+
+export default routes;

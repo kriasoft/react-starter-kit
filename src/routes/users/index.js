@@ -13,22 +13,22 @@ import Users from './Users';
 
 const title = 'Users';
 
-export default {
+async function action({ fetch }) {
+  const resp = await fetch('/graphql', {
+    body: JSON.stringify({
+      query: '{ users{ id,email } }',
+    }),
+  });
+  const { data } = await resp.json();
+  if (!data && !data.users) throw new Error('Failed to load users.');
+  return {
+    title,
+    component: (
+      <Layout>
+        <Users title={title} users={data.users} />
+      </Layout>
+    ),
+  };
+}
 
-  path: '/users',
-
-  async action({ fetch }) {
-    const resp = await fetch('/graphql', {
-      body: JSON.stringify({
-        query: '{ users{ id,email } }',
-      }),
-    });
-    const { data } = await resp.json();
-    if (!data && !data.users) throw new Error('Failed to load users.');
-    return {
-      title,
-      component: <Layout><Users title={title} users={data.users} /></Layout>,
-    };
-  },
-
-};
+export default action;

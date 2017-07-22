@@ -14,9 +14,19 @@ import {
 
 import me from './queries/me';
 import news from './queries/news';
-import { createUser, users, removeUser, updateUser } from './queries/user';
-import { createCourse, removeCourse, courses, updateCourses } from './queries/course';
-import { createStudyEntity, removeStudyEntity, studyEntities, updateStudyEntities } from './queries/studyEntity';
+import { createUser, removeUser, updateUser, users } from './queries/user';
+import {
+  createCourse,
+  removeCourse,
+  courses,
+  updateCourses,
+} from './queries/course';
+import {
+  createStudyEntity,
+  removeStudyEntity,
+  studyEntities,
+  updateStudyEntities,
+} from './queries/studyEntity';
 
 const schema = new Schema({
   query: new ObjectType({

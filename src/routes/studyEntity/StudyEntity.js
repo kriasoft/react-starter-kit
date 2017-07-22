@@ -29,8 +29,13 @@ class StudyEntity extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.course.title}/{this.props.studyEntity.title}</h1>
-          <div dangerouslySetInnerHTML={{ __html: this.props.studyEntity.body }} />
+          <h1>
+            {this.props.course.title}/{this.props.studyEntity.title}
+          </h1>
+          <div
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: this.props.studyEntity.body }}
+          />
         </div>
       </div>
     );

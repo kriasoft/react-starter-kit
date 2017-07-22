@@ -19,10 +19,7 @@ export default function configureStore(initialState, helpersConfig) {
       devToolsExtension = window.devToolsExtension();
     }
 
-    enhancer = compose(
-      applyMiddleware(...middleware),
-      devToolsExtension,
-    );
+    enhancer = compose(applyMiddleware(...middleware), devToolsExtension);
   } else {
     enhancer = applyMiddleware(...middleware);
   }

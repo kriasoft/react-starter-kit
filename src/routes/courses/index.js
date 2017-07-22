@@ -13,22 +13,22 @@ import Courses from './Courses';
 
 const title = 'Courses';
 
-export default {
+async function action({ fetch }) {
+  const resp = await fetch('/graphql', {
+    body: JSON.stringify({
+      query: '{ courses{ id,title } }',
+    }),
+  });
+  const { data } = await resp.json();
+  if (!data && !data.courses) throw new Error('Failed to load courses.');
+  return {
+    title,
+    component: (
+      <Layout>
+        <Courses title={title} courses={data.courses} />
+      </Layout>
+    ),
+  };
+}
 
-  path: '/courses',
-
-  async action({ fetch }) {
-    const resp = await fetch('/graphql', {
-      body: JSON.stringify({
-        query: '{ courses{ id,title } }',
-      }),
-    });
-    const { data } = await resp.json();
-    if (!data && !data.courses) throw new Error('Failed to load courses.');
-    return {
-      title,
-      component: <Layout><Courses title={title} courses={data.courses} /></Layout>,
-    };
-  },
-
-};
+export default action;

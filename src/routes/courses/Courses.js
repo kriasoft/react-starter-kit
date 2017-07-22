@@ -21,15 +21,25 @@ class Courses extends React.Component {
   render() {
     const coursesList = [];
     for (let i = 0; i < this.props.courses.length; i += 1) {
-      coursesList.push(<li className={s.item}>
-        <a href={`/courses/${this.props.courses[i].id}`}>{this.props.courses[i].title}</a>
-      </li>);
+      coursesList.push(
+        <li>
+          <a href={`/courses/${this.props.courses[i].id}`}>
+            {this.props.courses[i].title}
+          </a>
+        </li>,
+      );
     }
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.title}</h1>
-          <p><ol>{coursesList}</ol></p>
+          <h1>
+            {this.props.title}
+          </h1>
+          <p>
+            <ol>
+              {coursesList}
+            </ol>
+          </p>
         </div>
       </div>
     );

@@ -22,7 +22,6 @@ const createStudyEntity = {
   },
 };
 
-
 //  При выполнении этого метода в Graphql вылетает ошибка
 const removeStudyEntity = {
   type: StudyEntityType,
@@ -61,7 +60,6 @@ const studyEntities = {
   },
 };
 
-
 const updateStudyEntities = {
   type: StudyEntityType,
   args: {
@@ -79,8 +77,7 @@ const updateStudyEntities = {
     },
   },
   resolve({ request }, args) {
-    StudyEntity.findById(args.id)
-    .then((_se) => {
+    StudyEntity.findById(args.id).then(_se => {
       const se = _se;
       if (args.title) {
         se.title = args.title;
@@ -93,4 +90,9 @@ const updateStudyEntities = {
   },
 };
 
-export { createStudyEntity, removeStudyEntity, studyEntities, updateStudyEntities };
+export {
+  createStudyEntity,
+  removeStudyEntity,
+  studyEntities,
+  updateStudyEntities,
+};

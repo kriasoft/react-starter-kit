@@ -22,15 +22,25 @@ class Users extends React.Component {
   render() {
     const usersList = [];
     for (let i = 0; i < this.props.users.length; i += 1) {
-      usersList.push(<li className={s.item}>
-        <a href={`/users/${this.props.users[i].id}`}>{this.props.users[i].email}</a>
-      </li>);
+      usersList.push(
+        <li>
+          <a href={`/users/${this.props.users[i].id}`}>
+            {this.props.users[i].email}
+          </a>
+        </li>,
+      );
     }
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.title}</h1>
-          <p><ol>{usersList}</ol></p>
+          <h1>
+            {this.props.title}
+          </h1>
+          <p>
+            <ol>
+              {usersList}
+            </ol>
+          </p>
         </div>
       </div>
     );

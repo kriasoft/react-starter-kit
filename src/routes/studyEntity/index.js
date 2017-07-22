@@ -13,24 +13,26 @@ import StudyEntity from './StudyEntity';
 
 const title = 'Study Entity';
 
-export default {
+async function action({ fetch, params }) {
+  const resp = await fetch('/graphql', {
+    body: JSON.stringify({
+      query: `{ courses(ids:"${params.idCourse}") { id, title }, studyEntities(ids: "${params.idStudyEntity}") { id, title, body } }`,
+    }),
+  });
+  const { data } = await resp.json();
+  if (!data && !data.courses.length && !data.studyEntities.length)
+    throw new Error('Failed to load course.');
+  return {
+    title,
+    component: (
+      <Layout>
+        <StudyEntity
+          course={data.courses[0]}
+          studyEntity={data.studyEntities[0]}
+        />
+      </Layout>
+    ),
+  };
+}
 
-  path: '/courses/:idCourse/:idStudyEntity',
-
-  async action({ fetch, params }) {
-    const resp = await fetch('/graphql', {
-      body: JSON.stringify({
-        query: `{ courses(ids:"${params.idCourse}") { id, title }, studyEntities(ids: "${params.idStudyEntity}") { id, title, body } }`,
-      }),
-    });
-    const { data } = await resp.json();
-    if (!data && !data.courses.length && !data.studyEntities.length) throw new Error('Failed to load course.');
-    return {
-      title,
-      component: <Layout>
-        <StudyEntity course={data.courses[0]} studyEntity={data.studyEntities[0]} />
-      </Layout>,
-    };
-  },
-
-};
+export default action;
