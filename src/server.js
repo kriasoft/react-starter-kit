@@ -71,6 +71,8 @@ app.use(passport.initialize());
 if (__DEV__) {
   app.enable('trust proxy');
 }
+app.post('/login',
+  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }));
 app.get('/login/facebook',
   passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false }),
 );

@@ -15,8 +15,10 @@
 
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as LocalStrategy } from 'passport-local';
 import { User, UserLogin, UserClaim, UserProfile } from './data/models';
 import config from './config';
+
 
 /**
  * Sign in with Facebook.
@@ -122,6 +124,33 @@ passport.use(new FacebookStrategy({
   };
 
   fooBar().catch(done);
+}));
+
+passport.use(new LocalStrategy({
+  usernameField: 'usernameOrEmail',
+  passwordField: 'password',
+}, async (email, password, done) => {
+  const users = await User.findAll({
+    attributes: ['id', 'email'],
+    where: { '$logins.name$': 'local', '$logins.key$': email, '$claims.type$': 'local', '$claims.value$': password },
+    include: [
+      {
+        attributes: ['name', 'key'],
+        model: UserLogin,
+        as: 'logins',
+        required: true,
+      }, {
+        attributes: ['type', 'value'],
+        model: UserClaim,
+        as: 'claims',
+        required: true,
+      },
+    ],
+  });
+  if (!users[0]) {
+    return done(null, false);
+  }
+  return done(null, users[0]);
 }));
 
 export default passport;
