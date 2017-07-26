@@ -1,4 +1,5 @@
 import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
+import bcrypt from 'bcrypt-nodejs';
 import UserType from '../types/UserType';
 import User from '../models/User';
 import UserLogin from '../models/UserLogin';
@@ -37,7 +38,12 @@ const createUser = {
           email: args.email,
           emailConfirmed: false,
           logins: [{ name: 'local', key: args.email }],
-          claims: [{ type: 'local', value: args.key }],
+          claims: [
+            {
+              type: 'local',
+              value: bcrypt.hashSync(args.key, bcrypt.genSaltSync()),
+            },
+          ],
           profile: {
             displayName: args.name,
             gender: args.gender,

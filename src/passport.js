@@ -14,6 +14,7 @@
  */
 
 import passport from 'passport';
+import bcrypt from 'bcrypt-nodejs';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { User, UserLogin, UserClaim, UserProfile } from './data/models';
@@ -150,7 +151,6 @@ passport.use(
           '$logins.name$': 'local',
           '$logins.key$': email,
           '$claims.type$': 'local',
-          '$claims.value$': password,
         },
         include: [
           {
@@ -167,12 +167,21 @@ passport.use(
           },
         ],
       });
-      if (!users[0]) {
-        return done(null, false);
-      }
-      return done(null, users[0]);
+      if (bcrypt.compareSync(password, users[0].claims[0].value))
+        return done(null, users[0]);
+      return done(null, false);
     },
   ),
 );
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id).then(user => {
+    done(user);
+  });
+});
 
 export default passport;
