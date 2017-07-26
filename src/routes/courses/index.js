@@ -10,10 +10,11 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Courses from './Courses';
+import { setCourses } from '../../actions/courses';
 
 const title = 'Courses';
 
-async function action({ fetch }) {
+async function action({ fetch, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: '{ courses{ id,title } }',
@@ -21,11 +22,12 @@ async function action({ fetch }) {
   });
   const { data } = await resp.json();
   if (!data && !data.courses) throw new Error('Failed to load courses.');
+  store.dispatch(setCourses(data.courses));
   return {
     title,
     component: (
       <Layout>
-        <Courses title={title} courses={data.courses} />
+        <Courses title={title} store={store} fetch={fetch} />
       </Layout>
     ),
   };
