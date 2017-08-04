@@ -1,10 +1,17 @@
 import React from 'react';
-import brace from 'brace'; // eslint-disable-line no-unused-vars
-import AceEditor from 'react-ace';
-import 'brace/mode/html';
-import 'brace/theme/chrome';
 
-class Footer extends React.Component {
+let brace; // eslint-disable-line no-unused-vars
+let AceEditor;
+
+if (navigator.platform) {
+  /* eslint-disable global-require */
+  brace = require('brace');
+  AceEditor = require('react-ace').default;
+  require('brace/mode/html');
+  require('brace/theme/chrome');
+}
+
+class TextEditor extends React.Component {
   constructor() {
     super();
     this.onLoad = this.onLoad.bind(this);
@@ -17,6 +24,7 @@ class Footer extends React.Component {
   }
 
   render() {
+    if (!AceEditor) return null;
     return (
       <AceEditor
         mode="html"
@@ -36,4 +44,4 @@ class Footer extends React.Component {
   }
 }
 
-export default Footer;
+export default TextEditor;
