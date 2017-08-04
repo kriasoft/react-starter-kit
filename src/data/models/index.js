@@ -39,7 +39,7 @@ User.hasOne(UserProfile, {
 });
 
 Course.belongsToMany(StudyEntity, {
-  as: 'StudyEntities',
+  as: 'studyEntities',
   through: {
     model: CourseStudyEntity,
   },
@@ -47,6 +47,7 @@ Course.belongsToMany(StudyEntity, {
 });
 
 StudyEntity.belongsToMany(Course, {
+  as: 'courses',
   through: {
     model: CourseStudyEntity,
   },
