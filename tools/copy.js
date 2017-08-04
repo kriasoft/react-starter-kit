@@ -9,6 +9,7 @@
 
 import path from 'path';
 import chokidar from 'chokidar';
+import ncp from 'ncp';
 import { writeFile, copyFile, makeDir, copyDir, cleanDir } from './lib/fs';
 import pkg from '../package.json';
 import { format } from './run';
@@ -38,6 +39,11 @@ async function copy() {
     copyFile('LICENSE.txt', 'build/LICENSE.txt'),
     copyFile('yarn.lock', 'build/yarn.lock'),
     copyDir('public', 'build/public'),
+  ]);
+
+  await Promise.all([
+    ncp('node_modules/bootstrap/dist/css', 'build/public/css'),
+    ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'),
   ]);
 
   if (process.argv.includes('--watch')) {

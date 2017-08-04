@@ -10,6 +10,7 @@
 import path from 'path';
 import express from 'express';
 import browserSync from 'browser-sync';
+import ncp from 'ncp';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
@@ -238,6 +239,11 @@ async function start() {
       (error, bs) => (error ? reject(error) : resolve(bs)),
     ),
   );
+
+  await Promise.all([
+    ncp('node_modules/bootstrap/dist/css', 'build/public/css'),
+    ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'),
+  ]);
 
   const timeEnd = new Date();
   const time = timeEnd.getTime() - timeStart.getTime();

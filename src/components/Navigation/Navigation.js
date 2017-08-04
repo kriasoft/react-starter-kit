@@ -8,7 +8,6 @@
  */
 
 import React from 'react';
-import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.css';
 import Link from '../Link';
@@ -16,28 +15,60 @@ import Link from '../Link';
 class Navigation extends React.Component {
   render() {
     return (
-      <div className={s.root} role="navigation">
-        <Link className={s.link} to="/courses">
-          Courses
-        </Link>
-        <Link className={s.link} to="/users">
-          Users
-        </Link>
-        <Link className={s.link} to="/about">
-          About
-        </Link>
-        <Link className={s.link} to="/contact">
-          Contact
-        </Link>
-        <span className={s.spacer}> | </span>
-        <Link className={s.link} to="/login">
-          Log in
-        </Link>
-        <span className={s.spacer}>or</span>
-        <Link className={cx(s.link, s.highlight)} to="/register">
-          Sign up
-        </Link>
-      </div>
+      <nav className="navbar navbar-inverse navbar-fixed-top">
+        <div className="container-fluid">
+          <div className="navbar-header">
+            <button
+              type="button"
+              className="navbar-toggle collapsed"
+              data-toggle="collapse"
+              data-target="#navbar"
+              aria-expanded="false"
+              aria-controls="navbar"
+            >
+              <span className="sr-only">Toggle navigation</span>
+              <span className="icon-bar" />
+              <span className="icon-bar" />
+              <span className="icon-bar" />
+            </button>
+            <a className="navbar-brand" href="/">
+              NDO
+            </a>
+          </div>
+          <div id="navbar" className="navbar-collapse collapse">
+            <ul className="nav navbar-nav navbar-right">
+              <li>
+                <Link to="/courses">Курсы</Link>
+              </li>
+              <li>
+                <Link to="/users">Пользователи</Link>
+              </li>
+              <li>
+                <Link to="/about">About</Link>
+              </li>
+              <li>
+                <Link to="/contact">Contact</Link>
+              </li>
+              <li>
+                <Link to="/login">Log in</Link>
+              </li>
+              <li>
+                <span className="navbar-text">or</span>
+              </li>
+              <li>
+                <Link to="/register">Sign up</Link>
+              </li>
+            </ul>
+            <form className="navbar-form navbar-right">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search..."
+              />
+            </form>
+          </div>
+        </div>
+      </nav>
     );
   }
 }
