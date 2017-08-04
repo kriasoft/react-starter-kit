@@ -27,7 +27,7 @@ const news = {
       return lastFetchTask;
     }
 
-    if (true) return [];
+    if (true) return []; // eslint-disable-line no-constant-condition
 
     if (new Date() - lastFetchTime > 1000 * 60 * 10 /* 10 mins */) {
       lastFetchTime = new Date();

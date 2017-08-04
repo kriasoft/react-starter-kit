@@ -9,6 +9,7 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
+import TextEditor from '../../components/TextEditor';
 import StudyEntity from './StudyEntity';
 
 const title = 'Study Entity';
@@ -30,6 +31,7 @@ async function action({ fetch, params }) {
           course={data.courses[0]}
           studyEntity={data.studyEntities[0]}
         />
+        <TextEditor />
       </Layout>
     ),
   };
