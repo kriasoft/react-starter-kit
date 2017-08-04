@@ -1,6 +1,7 @@
 import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
 import StudyEntityType from '../types/StudyEntityType';
 import StudyEntity from '../models/StudyEntity';
+import Course from '../models/Course';
 
 const createStudyEntity = {
   type: StudyEntityType,
@@ -15,10 +16,16 @@ const createStudyEntity = {
     },
   },
   resolve({ request }, args) {
-    return StudyEntity.create({
-      title: args.title,
-      courseId: args.courseId,
-    });
+    let c;
+    return Course.findById(args.courseId)
+      .then(course => {
+        c = course;
+        return StudyEntity.create({ title: args.title });
+      })
+      .then(studyEntity => {
+        studyEntity.setCourses([c]);
+        return studyEntity.save();
+      });
   },
 };
 

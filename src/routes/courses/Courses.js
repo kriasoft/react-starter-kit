@@ -19,10 +19,8 @@ let fetch;
 class Courses extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    store: PropTypes.objectOf(React.Store).isRequired,
-    dispatch: PropTypes.func.isRequired,
+    store: PropTypes.objectOf(React.store).isRequired,
     fetch: PropTypes.func.isRequired,
-    getState: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -30,8 +28,10 @@ class Courses extends React.Component {
     dispatch = props.store.dispatch;
     fetch = props.fetch;
     this.state = {
+      courseName: '',
       courses: this.props.store.getState().courses.courses,
     };
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -42,11 +42,17 @@ class Courses extends React.Component {
     });
   }
 
+  handleChange(event) {
+    this.setState({ courseName: event.target.value });
+  }
+
   render() {
+    const self = this;
     async function add() {
       const resp = await fetch('/graphql', {
         body: JSON.stringify({
-          query: 'mutation { createCourse(title: "hello") { id, title } }	',
+          query: `mutation { createCourse(title: "${self.state
+            .courseName}") { id, title } }`,
         }),
       });
       const { data } = await resp.json();
@@ -71,6 +77,11 @@ class Courses extends React.Component {
           <ol>
             {coursesList}
           </ol>
+          <input
+            type="text"
+            value={this.state.courseName}
+            onChange={this.handleChange}
+          />
           <button onClick={add}>Add Course</button>
         </div>
       </div>
