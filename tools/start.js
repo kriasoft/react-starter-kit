@@ -16,6 +16,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import createLaunchEditorMiddleware from 'react-error-overlay/middleware';
 import webpackConfig from './webpack.config';
+import { copyDir } from './lib/fs';
 import run, { format } from './run';
 import clean from './clean';
 
@@ -241,6 +242,7 @@ async function start() {
   );
 
   await Promise.all([
+    copyDir('public', 'build/public'),
     ncp('node_modules/bootstrap/dist/css', 'build/public/css'),
     ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'),
   ]);
