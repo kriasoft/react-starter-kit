@@ -8,7 +8,6 @@ class Footer extends React.Component {
   constructor() {
     super();
     this.onLoad = this.onLoad.bind(this);
-    this.brace = brace;
   }
 
   onLoad(editor) {

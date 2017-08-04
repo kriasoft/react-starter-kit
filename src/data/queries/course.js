@@ -74,10 +74,13 @@ const subscribeUser = {
     },
   },
   resolve(obj, args) {
-    return User.findById(args.id).then(user => {
-      user.addCourse(args.courseId, { role: args.role });
-      return user;
-    });
+    return User.findById(args.id).then(user =>
+      user
+        .addCourse(args.courseId, {
+          through: { role: args.role || 'student' },
+        })
+        .then(() => user),
+    );
   },
 };
 
