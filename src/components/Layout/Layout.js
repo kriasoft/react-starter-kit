@@ -60,7 +60,6 @@ class Layout extends React.Component {
             <div
               className={`col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 ${s.main}`}
             >
-              <h1 className={s['page-header']}>Dashboard</h1>
               {this.props.children}
               <Footer />
             </div>
