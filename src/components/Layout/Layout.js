@@ -26,8 +26,46 @@ class Layout extends React.Component {
     return (
       <div>
         <Header />
-        {this.props.children}
-        <Footer />
+        <div className="container-fluid">
+          <div className="row">
+            <div className={`col-sm-3 col-md-2 ${s.sidebar}`}>
+              <ul className={`nav ${s['nav-sidebar']}`}>
+                <li className={s.active}>
+                  <a>
+                    Overview <span className="sr-only">(current)</span>
+                  </a>
+                </li>
+                <li>
+                  <a>Reports</a>
+                </li>
+                <li>
+                  <a>Analytics</a>
+                </li>
+                <li>
+                  <a>Export</a>
+                </li>
+              </ul>
+              <ul className={`nav ${s['nav-sidebar']}`}>
+                <li>
+                  <a>Nav item again</a>
+                </li>
+                <li>
+                  <a>One more nav</a>
+                </li>
+                <li>
+                  <a>Another nav item</a>
+                </li>
+              </ul>
+            </div>
+            <div
+              className={`col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 ${s.main}`}
+            >
+              <h1 className={s['page-header']}>Dashboard</h1>
+              {this.props.children}
+              <Footer />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -12,11 +12,9 @@ import React from 'react';
 class Footer extends React.Component {
   render() {
     return (
-      <div className="footer-bottom">
-        <div className="container">
-          <p>© 2017, Yet Another Domic.</p>
-        </div>
-      </div>
+      <footer>
+        <p>© 2017, Yet Another Domic.</p>
+      </footer>
     );
   }
 }

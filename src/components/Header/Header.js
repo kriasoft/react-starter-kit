@@ -17,13 +17,6 @@ class Header extends React.Component {
     return (
       <div>
         <Navigation />
-        <div className="container">
-          <div className="page-header">
-            <h1>
-              Yet Another Domic<small>Distance education made easy</small>
-            </h1>
-          </div>
-        </div>
       </div>
     );
   }
