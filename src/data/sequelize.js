@@ -14,6 +14,13 @@ const sequelize = new Sequelize(config.databaseUrl, {
   define: {
     freezeTableName: true,
   },
+  // this is used for testing Heroku PG base locally
+  // ssl: true,
+  // dialectOptions: {
+  //   ssl: {
+  //     require: true
+  //   }
+  // },
 });
 
 export default sequelize;
