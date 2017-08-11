@@ -28,6 +28,13 @@ import {
   studyEntities,
   updateStudyEntities,
 } from './queries/studyEntity';
+import {
+  addAnswer,
+  answers,
+  removeAnswer,
+  updateAnswer,
+} from './queries/answer';
+import { addMark, marks, removeMark, updateMark } from './queries/mark';
 
 const schema = new Schema({
   query: new ObjectType({
@@ -38,6 +45,8 @@ const schema = new Schema({
       users,
       courses,
       studyEntities,
+      answers,
+      marks,
     },
   }),
   mutation: new ObjectType({
@@ -53,6 +62,12 @@ const schema = new Schema({
       removeUser,
       updateUser,
       subscribeUser,
+      addAnswer,
+      removeAnswer,
+      updateAnswer,
+      addMark,
+      removeMark,
+      updateMark,
     },
   }),
 });
