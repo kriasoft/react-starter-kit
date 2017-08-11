@@ -16,6 +16,8 @@ import Course from './Course';
 import StudyEntity from './StudyEntity';
 import CourseStudyEntity from './CourseStudyEntity';
 import UserCourse from './UserCourse';
+import Answer from './Answer';
+import Mark from './Mark';
 
 User.hasMany(UserLogin, {
   foreignKey: 'userId',
@@ -69,6 +71,17 @@ Course.belongsToMany(User, {
   },
   foreignKey: 'courseId',
 });
+
+User.hasMany(Answer);
+StudyEntity.hasMany(Answer);
+Course.hasMany(Answer);
+
+Answer.belongsTo(User);
+Answer.belongsTo(StudyEntity);
+Answer.belongsTo(Course);
+
+Answer.hasMany(Mark);
+Mark.belongsTo(Answer);
 
 function sync(...args) {
   return sequelize.sync(...args);

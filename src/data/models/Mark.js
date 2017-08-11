@@ -1,20 +1,20 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const StudyEntity = Model.define('StudyEntity', {
+const Mark = Model.define('Mark', {
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
     primaryKey: true,
   },
 
-  title: {
-    type: DataType.STRING(255),
+  mark: {
+    type: DataType.FLOAT,
   },
 
-  body: {
+  comment: {
     type: DataType.STRING,
   },
 });
 
-export default StudyEntity;
+export default Mark;
