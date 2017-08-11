@@ -14,13 +14,17 @@ const createStudyEntity = {
       description: 'Id of the course',
       type: StringType,
     },
+    body: {
+      description: 'body of the course',
+      type: StringType,
+    },
   },
   resolve({ request }, args) {
     let c;
     return Course.findById(args.courseId)
       .then(course => {
         c = course;
-        return StudyEntity.create({ title: args.title });
+        return StudyEntity.create({ title: args.title, body: args.body });
       })
       .then(studyEntity => {
         studyEntity.setCourses([c]);
