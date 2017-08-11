@@ -19,7 +19,7 @@ let pending = true;
 const [, serverConfig] = webpackConfig;
 const serverPath = path.join(
   serverConfig.output.path,
-  serverConfig.output.filename,
+  serverConfig.output.filename.replace('[name]', 'server'),
 );
 
 // Launch or restart the Node.js server
