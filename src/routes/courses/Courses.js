@@ -10,8 +10,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { Modal, Button, FormControl } from 'react-bootstrap';
 import s from './Courses.css';
 import { addCourse } from '../../actions/courses';
+import TextEditor from '../../components/TextEditor';
 
 let dispatch;
 let fetch;
@@ -32,6 +34,12 @@ class Courses extends React.Component {
       courses: this.props.store.getState().courses.courses,
     };
     this.handleChange = this.handleChange.bind(this);
+    this.open = this.open.bind(this);
+    this.close = this.close.bind(this);
+  }
+
+  getInitialState() {
+    return { showModal: false };
   }
 
   componentDidMount() {
@@ -46,6 +54,14 @@ class Courses extends React.Component {
     this.setState({ courseName: event.target.value });
   }
 
+  close() {
+    this.setState({ showModal: false });
+  }
+
+  open() {
+    this.setState({ showModal: true });
+  }
+
   render() {
     const self = this;
     async function add() {
@@ -57,6 +73,7 @@ class Courses extends React.Component {
       });
       const { data } = await resp.json();
       dispatch(addCourse(data.createCourse));
+      self.close();
     }
     const coursesList = [];
     for (let i = 0; i < this.state.courses.length; i += 1) {
@@ -77,13 +94,31 @@ class Courses extends React.Component {
           <ol>
             {coursesList}
           </ol>
-          <input
-            type="text"
-            value={this.state.courseName}
-            onChange={this.handleChange}
-          />
-          <button onClick={add}>Add Course</button>
         </div>
+        <Button bsStyle="primary" onClick={this.open}>
+          Add Course
+        </Button>
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <h4>Course name</h4>
+            <FormControl
+              type="text"
+              value={this.state.courseName}
+              onChange={this.handleChange}
+            />
+            <div>
+              <br />
+              <TextEditor />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={add}>Add Course</Button>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }
