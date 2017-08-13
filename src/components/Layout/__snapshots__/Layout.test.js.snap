@@ -2,176 +2,211 @@
 
 exports[`Layout renders children correctly 1`] = `
 <div>
-  <div
-    className="root"
-  >
-    <div
-      className="container"
+  <div>
+    <nav
+      className="navbar navbar-inverse navbar-fixed-top"
     >
       <div
-        className="root"
-        role="navigation"
+        className="container-fluid"
       >
-        <a
-          className="link"
-          href="/about"
-          onClick={[Function]}
+        <div
+          className="navbar-header"
         >
-          About
-        </a>
-        <a
-          className="link"
-          href="/contact"
-          onClick={[Function]}
+          <a
+            className="navbar-brand"
+            href="/"
+          >
+            NDO
+          </a>
+          <button
+            className="navbar-toggle"
+            onClick={[Function]}
+            type="button"
+          >
+            <span
+              className="sr-only"
+            >
+              Toggle navigation
+            </span>
+            <span
+              className="icon-bar"
+            />
+            <span
+              className="icon-bar"
+            />
+            <span
+              className="icon-bar"
+            />
+          </button>
+        </div>
+        <div
+          aria-expanded={null}
+          className="navbar-collapse collapse in"
         >
-          Contact
-        </a>
-        <span
-          className="spacer"
-        >
-           | 
-        </span>
-        <a
-          className="link"
-          href="/login"
-          onClick={[Function]}
-        >
-          Log in
-        </a>
-        <span
-          className="spacer"
-        >
-          or
-        </span>
-        <a
-          className="link highlight"
-          href="/register"
-          onClick={[Function]}
-        >
-          Sign up
-        </a>
+          <ul
+            className="nav navbar-nav"
+            role={null}
+          >
+            <li
+              active={undefined}
+              activeHref={undefined}
+              activeKey={undefined}
+              onSelect={[Function]}
+            >
+              <a
+                href="/courses"
+                onClick={[Function]}
+              >
+                Курсы
+              </a>
+            </li>
+            <li
+              active={undefined}
+              activeHref={undefined}
+              activeKey={undefined}
+              onSelect={[Function]}
+            >
+              <a
+                href="/users"
+                onClick={[Function]}
+              >
+                Пользователи
+              </a>
+            </li>
+            <li
+              active={undefined}
+              activeHref={undefined}
+              activeKey={undefined}
+              onSelect={[Function]}
+            >
+              <a
+                href="/about"
+                onClick={[Function]}
+              >
+                About
+              </a>
+            </li>
+            <li
+              active={undefined}
+              activeHref={undefined}
+              activeKey={undefined}
+              onSelect={[Function]}
+            >
+              <a
+                href="/contact"
+                onClick={[Function]}
+              >
+                Contact
+              </a>
+            </li>
+          </ul>
+          <ul
+            className="nav navbar-nav navbar-right"
+            role={null}
+          >
+            <li
+              active={undefined}
+              activeHref={undefined}
+              activeKey={undefined}
+              onSelect={[Function]}
+            >
+              <a
+                href="/login"
+                onClick={[Function]}
+              >
+                Log in
+              </a>
+            </li>
+            <li
+              active={undefined}
+              activeHref={undefined}
+              activeKey={undefined}
+              onSelect={[Function]}
+            >
+              <a
+                href="/register"
+                onClick={[Function]}
+              >
+                Sign up
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <a
-        className="brand"
-        href="/"
-        onClick={[Function]}
+    </nav>
+  </div>
+  <div
+    className="container-fluid"
+  >
+    <div
+      className="row"
+    >
+      <div
+        className="col-sm-3 col-md-2 sidebar"
       >
-        <img
-          alt="React"
-          height="38"
-          src="logo-small.png"
-          srcSet="logo-small@2x.png 2x"
-          width="38"
+        <ul
+          className="nav nav-sidebar"
+        >
+          <li
+            className="active"
+          >
+            <a>
+              Overview 
+              <span
+                className="sr-only"
+              >
+                (current)
+              </span>
+            </a>
+          </li>
+          <li>
+            <a>
+              Reports
+            </a>
+          </li>
+          <li>
+            <a>
+              Analytics
+            </a>
+          </li>
+          <li>
+            <a>
+              Export
+            </a>
+          </li>
+        </ul>
+        <ul
+          className="nav nav-sidebar"
+        >
+          <li>
+            <a>
+              Nav item again
+            </a>
+          </li>
+          <li>
+            <a>
+              One more nav
+            </a>
+          </li>
+          <li>
+            <a>
+              Another nav item
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div
+        className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"
+      >
+        <div
+          className="child"
         />
-        <span
-          className="brandTxt"
-        >
-          Your Company
-        </span>
-      </a>
-      <div
-        className="banner"
-      >
-        <h1
-          className="bannerTitle"
-        >
-          React
-        </h1>
-        <p
-          className="bannerDesc"
-        >
-          Complex web apps made easy
-        </p>
+        <footer>
+          <p>
+            © 2017, Yet Another Domic.
+          </p>
+        </footer>
       </div>
-    </div>
-  </div>
-  <div
-    className="child"
-  />
-  <div
-    className="root"
-  >
-    <div
-      className="container"
-    >
-      <a
-        className="link"
-        href="https://gitter.im/kriasoft/react-starter-kit"
-      >
-        Ask a question
-      </a>
-      <span
-        className="spacer"
-      >
-        |
-      </span>
-      <a
-        className="link"
-        href="https://github.com/kriasoft/react-starter-kit/issues/new"
-      >
-        Report an issue
-      </a>
-    </div>
-  </div>
-  <div
-    className="root"
-  >
-    <div
-      className="container"
-    >
-      <span
-        className="text"
-      >
-        © Your Company
-      </span>
-      <span
-        className="spacer"
-      >
-        ·
-      </span>
-      <a
-        className="link"
-        href="/"
-        onClick={[Function]}
-      >
-        Home
-      </a>
-      <span
-        className="spacer"
-      >
-        ·
-      </span>
-      <a
-        className="link"
-        href="/admin"
-        onClick={[Function]}
-      >
-        Admin
-      </a>
-      <span
-        className="spacer"
-      >
-        ·
-      </span>
-      <a
-        className="link"
-        href="/privacy"
-        onClick={[Function]}
-      >
-        Privacy
-      </a>
-      <span
-        className="spacer"
-      >
-        ·
-      </span>
-      <a
-        className="link"
-        href="/not-found"
-        onClick={[Function]}
-      >
-        Not Found
-      </a>
     </div>
   </div>
 </div>
