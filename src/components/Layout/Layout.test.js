@@ -30,9 +30,8 @@ const initialState = {
 };
 
 describe('Layout', () => {
-  it('renders children correctly', () => {
+  test('renders children correctly', () => {
     const store = mockStore(initialState);
-
     const wrapper = renderer
       .create(
         <IntlProvider>
