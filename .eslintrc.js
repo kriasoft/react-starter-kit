@@ -57,6 +57,12 @@ module.exports = {
       },
     ],
 
+    // a11y removed rule, ignore them
+    'jsx-a11y/href-no-hash': 'off',
+
+    // https://github.com/evcohen/eslint-plugin-jsx-a11y/issues/308#issuecomment-322954274
+    'jsx-a11y/label-has-for': 'warn',
+
     // Allow js files to use jsx syntax, too
     'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
 
