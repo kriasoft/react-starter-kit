@@ -245,6 +245,7 @@ async function start() {
     copyDir('public', 'build/public'),
     ncp('node_modules/bootstrap/dist/css', 'build/public/css'),
     ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'),
+    ncp('node_modules/highlight.js/styles', 'build/public/css/hljs'),
   ]);
 
   const timeEnd = new Date();

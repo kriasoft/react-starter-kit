@@ -44,6 +44,7 @@ async function copy() {
   await Promise.all([
     ncp('node_modules/bootstrap/dist/css', 'build/public/css'),
     ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'),
+    ncp('node_modules/highlight.js/styles', 'build/public/css/hljs'),
   ]);
 
   if (process.argv.includes('--watch')) {

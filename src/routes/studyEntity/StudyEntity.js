@@ -12,6 +12,7 @@ import { Button, Glyphicon } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import TextEditor from '../../components/TextEditor';
+import StudyEntityView from '../../components/StudyEntityView';
 import s from './StudyEntity.css';
 
 let fetch;
@@ -111,12 +112,7 @@ class StudyEntity extends React.Component {
         </span>
       );
     } else {
-      bodyComponent = (
-        <div
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: this.state.body }}
-        />
-      );
+      bodyComponent = <StudyEntityView body={this.state.body} />;
       headerComponent = (
         <span>
           {this.state.title}
