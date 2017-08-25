@@ -20,7 +20,11 @@ let fetch;
 
 class Course extends React.Component {
   static propTypes = {
-    store: PropTypes.objectOf(React.store).isRequired,
+    store: PropTypes.shape({
+      subscribe: PropTypes.func.isRequired,
+      getState: PropTypes.func.isRequired,
+      dispatch: PropTypes.func.isRequired,
+    }).isRequired,
     fetch: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     course: PropTypes.shape({

@@ -15,15 +15,14 @@ import s from './Users.css';
 class Users extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    users: PropTypes.arrayOf(PropTypes.string).isRequired,
+    users: PropTypes.arrayOf(PropTypes.object).isRequired,
   };
 
   render() {
     const usersList = [];
     for (let i = 0; i < this.props.users.length; i += 1) {
       usersList.push(
-        <li>
+        <li key={this.props.users[i].id}>
           <a href={`/users/${this.props.users[i].id}`}>
             {this.props.users[i].email}
           </a>
@@ -36,11 +35,9 @@ class Users extends React.Component {
           <h1>
             {this.props.title}
           </h1>
-          <p>
-            <ol>
-              {usersList}
-            </ol>
-          </p>
+          <ol>
+            {usersList}
+          </ol>
         </div>
       </div>
     );

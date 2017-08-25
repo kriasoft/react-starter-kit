@@ -8,15 +8,37 @@
  */
 
 import React from 'react';
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.css';
-import Link from '../Link';
+import history from '../../history';
+
+function isLeftClickEvent(event) {
+  return event.button === 0;
+}
+
+function isModifiedEvent(event) {
+  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
+}
 
 class Navigation extends React.Component {
   render() {
+    function processClick(a, event) {
+      if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
+        return;
+      }
+      event.preventDefault();
+      history.push(event.target.getAttribute('href'));
+    }
     return (
-      <Navbar inverse collapseOnSelect fixedTop defaultExpanded fluid>
+      <Navbar
+        inverse
+        collapseOnSelect
+        fixedTop
+        defaultExpanded
+        fluid
+        onSelect={processClick}
+      >
         <Navbar.Header>
           <Navbar.Brand>
             <a href="/">NDO</a>
@@ -25,26 +47,14 @@ class Navigation extends React.Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>
-            <li>
-              <Link to="/courses">Курсы</Link>
-            </li>
-            <li>
-              <Link to="/users">Пользователи</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to="/contact">Contact</Link>
-            </li>
+            <NavItem href="/courses">Курсы</NavItem>
+            <NavItem href="/users">Пользователи</NavItem>
+            <NavItem href="/about">About</NavItem>
+            <NavItem href="/contact">Contact</NavItem>
           </Nav>
           <Nav pullRight>
-            <li>
-              <Link to="/login">Log in</Link>
-            </li>
-            <li>
-              <Link to="/register">Sign up</Link>
-            </li>
+            <NavItem href="/login">Log in</NavItem>
+            <NavItem href="/register">Sign up</NavItem>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
