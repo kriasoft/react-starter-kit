@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 let brace; // eslint-disable-line no-unused-vars
 let AceEditor;
@@ -12,6 +13,10 @@ if (navigator.platform) {
 }
 
 class TextEditor extends React.Component {
+  static propTypes = {
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+  };
   constructor() {
     super();
     this.onLoad = this.onLoad.bind(this);
@@ -36,9 +41,10 @@ class TextEditor extends React.Component {
           this.ace = ace;
         }}
         fontSize={18}
-        value="#type your code here"
+        value={this.props.value}
         editorProps={{ $blockScrolling: Infinity }}
         onLoad={this.onLoad}
+        onChange={this.props.onChange}
       />
     );
   }

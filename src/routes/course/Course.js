@@ -10,6 +10,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { Modal, Button, FormControl } from 'react-bootstrap';
+import TextEditor from '../../components/TextEditor';
 import s from './Course.css';
 import { addStudyEntity } from '../../actions/study_entities';
 
@@ -38,10 +40,15 @@ class Course extends React.Component {
     dispatch = props.store.dispatch;
     fetch = props.fetch;
     this.state = {
+      studyEntityBody: '',
+      showModal: false,
       studyEntityName: '',
       studyEntities: this.props.store.getState().course.studyEntities,
     };
+    this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.open = this.open.bind(this);
+    this.close = this.close.bind(this);
   }
 
   componentDidMount() {
@@ -56,6 +63,18 @@ class Course extends React.Component {
     this.setState({ studyEntityName: event.target.value });
   }
 
+  handleChangeBody(val) {
+    this.setState({ studyEntityBody: val });
+  }
+
+  close() {
+    this.setState({ showModal: false });
+  }
+
+  open() {
+    this.setState({ showModal: true });
+  }
+
   render() {
     const self = this;
     async function add() {
@@ -64,13 +83,15 @@ class Course extends React.Component {
           query: `mutation { 
             createStudyEntity(
               title: "${self.state.studyEntityName}",
-              courseId: "${self.props.course.id}")
+              courseId: "${self.props.course.id}",
+              body:"${self.state.studyEntityBody}")
             { id, title }
           }`,
         }),
       });
       const { data } = await resp.json();
       dispatch(addStudyEntity(data.createStudyEntity));
+      self.close();
     }
     const studyEntitiesList = [];
     for (let i = 0; i < this.state.studyEntities.length; i += 1) {
@@ -95,12 +116,33 @@ class Course extends React.Component {
             {studyEntitiesList}
           </ol>
         </div>
-        <input
-          type="text"
-          value={this.state.studyEntityName}
-          onChange={this.handleChange}
-        />
-        <button onClick={add}>Add Study Entity</button>
+        <Button bsStyle="primary" onClick={this.open}>
+          Add study entity
+        </Button>
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <h4>Course name</h4>
+            <FormControl
+              type="text"
+              value={this.state.studyEntityName}
+              onChange={this.handleChange}
+            />
+            <div>
+              <br />
+              <TextEditor
+                value={this.state.studyEntityBody}
+                onChange={this.handleChangeBody}
+              />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={add}>Add study entity</Button>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }

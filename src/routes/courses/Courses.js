@@ -13,7 +13,6 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Modal, Button, FormControl } from 'react-bootstrap';
 import s from './Courses.css';
 import { addCourse } from '../../actions/courses';
-import TextEditor from '../../components/TextEditor';
 
 let dispatch;
 let fetch;
@@ -32,14 +31,11 @@ class Courses extends React.Component {
     this.state = {
       courseName: '',
       courses: this.props.store.getState().courses.courses,
+      showModal: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.open = this.open.bind(this);
     this.close = this.close.bind(this);
-  }
-
-  getInitialState() {
-    return { showModal: false };
   }
 
   componentDidMount() {
@@ -111,7 +107,6 @@ class Courses extends React.Component {
             />
             <div>
               <br />
-              <TextEditor />
             </div>
           </Modal.Body>
           <Modal.Footer>
