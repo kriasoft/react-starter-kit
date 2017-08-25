@@ -71,7 +71,7 @@ const studyEntities = {
   },
 };
 
-const updateStudyEntities = {
+const updateStudyEntity = {
   type: StudyEntityType,
   args: {
     id: {
@@ -105,5 +105,5 @@ export {
   createStudyEntity,
   removeStudyEntity,
   studyEntities,
-  updateStudyEntities,
+  updateStudyEntity,
 };

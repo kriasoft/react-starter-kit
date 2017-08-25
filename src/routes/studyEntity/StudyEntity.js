@@ -8,12 +8,17 @@
  */
 
 import React from 'react';
+import { Button, Glyphicon } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import TextEditor from '../../components/TextEditor';
 import s from './StudyEntity.css';
+
+let fetch;
 
 class StudyEntity extends React.Component {
   static propTypes = {
+    fetch: PropTypes.func.isRequired,
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
@@ -25,17 +30,105 @@ class StudyEntity extends React.Component {
     }).isRequired,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      editMode: false,
+      title: this.props.studyEntity.title,
+      body: this.props.studyEntity.body,
+    };
+    this.switchMode = this.switchMode.bind(this);
+    this.changeTitle = this.changeTitle.bind(this);
+    this.changeBody = this.changeBody.bind(this);
+    this.save = this.save.bind(this);
+    this.cancel = this.cancel.bind(this);
+    fetch = this.props.fetch;
+  }
+
+  changeTitle(event) {
+    this.setState({ title: event.target.value });
+  }
+
+  changeBody(val) {
+    this.setState({ body: val });
+  }
+
+  switchMode() {
+    this.setState({ editMode: !this.state.editMode });
+  }
+
+  async save() {
+    await fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation {
+          updateStudyEntity(
+            title: "${this.state.title}",
+            id: "${this.props.studyEntity.id}",
+            body: "${this.state.body}",
+          ){
+            id,title  
+          }            
+        }`,
+      }),
+    });
+    this.switchMode();
+  }
+
+  cancel() {
+    // TODO: change cancel bahaviour when user save values once
+    this.setState({
+      editMode: false,
+      title: this.props.studyEntity.title,
+      body: this.props.studyEntity.body,
+    });
+  }
+
   render() {
+    let bodyComponent;
+    let headerComponent;
+    if (this.state.editMode) {
+      bodyComponent = (
+        <TextEditor value={this.state.body} onChange={this.changeBody} />
+      );
+      headerComponent = (
+        <span>
+          <input
+            value={this.state.title}
+            type="text"
+            onChange={this.changeTitle}
+          />
+          <Button onClick={this.save}>
+            <Glyphicon glyph="ok" />
+          </Button>
+          <Button onClick={this.cancel}>
+            <Glyphicon glyph="remove" />
+          </Button>
+        </span>
+      );
+    } else {
+      bodyComponent = (
+        <div
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: this.state.body }}
+        />
+      );
+      headerComponent = (
+        <span>
+          {this.state.title}
+          <Button onClick={this.switchMode}>
+            <Glyphicon glyph="pencil" />
+          </Button>
+        </span>
+      );
+    }
+
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            {this.props.course.title}/{this.props.studyEntity.title}
+            {this.props.course.title}/{headerComponent}
           </h1>
-          <div
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: this.props.studyEntity.body }}
-          />
+          {bodyComponent}
         </div>
       </div>
     );

@@ -26,7 +26,7 @@ import {
   createStudyEntity,
   removeStudyEntity,
   studyEntities,
-  updateStudyEntities,
+  updateStudyEntity,
 } from './queries/studyEntity';
 import {
   addAnswer,
@@ -57,7 +57,7 @@ const schema = new Schema({
       createStudyEntity,
       removeStudyEntity,
       updateCourses,
-      updateStudyEntities,
+      updateStudyEntity,
       createUser,
       removeUser,
       updateUser,
