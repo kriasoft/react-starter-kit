@@ -60,15 +60,20 @@ class StudyEntity extends React.Component {
   async save() {
     await fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation {
+        query: `mutation create($title: String,$id: String,$body: String) {
           updateStudyEntity(
-            title: "${this.state.title}",
-            id: "${this.props.studyEntity.id}",
-            body: "${this.state.body}",
+            title: $title,
+            id: $id,
+            body: $body,
           ){
             id,title  
           }            
         }`,
+        variables: {
+          title: this.state.title,
+          id: this.props.studyEntity.id,
+          body: this.state.body,
+        },
       }),
     });
     this.switchMode();

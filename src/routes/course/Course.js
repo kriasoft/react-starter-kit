@@ -80,13 +80,18 @@ class Course extends React.Component {
     async function add() {
       const resp = await fetch('/graphql', {
         body: JSON.stringify({
-          query: `mutation { 
+          query: `mutation create($courseId: String, $title: String, $body: String){ 
             createStudyEntity(
-              title: "${self.state.studyEntityName}",
-              courseId: "${self.props.course.id}",
-              body:"${self.state.studyEntityBody}")
+              title: $title,
+              courseId: $courseId,
+              body: $body)
             { id, title }
           }`,
+          variables: {
+            title: self.state.studyEntityName,
+            courseId: self.props.course.id,
+            body: self.state.studyEntityBody,
+          },
         }),
       });
       const { data } = await resp.json();
