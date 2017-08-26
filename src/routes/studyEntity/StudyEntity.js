@@ -41,6 +41,7 @@ class StudyEntity extends React.Component {
     this.switchMode = this.switchMode.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
     this.changeBody = this.changeBody.bind(this);
+    this.changeAnswer = this.changeAnswer.bind(this);
     this.save = this.save.bind(this);
     this.cancel = this.cancel.bind(this);
     fetch = this.props.fetch;
@@ -52,6 +53,10 @@ class StudyEntity extends React.Component {
 
   changeBody(val) {
     this.setState({ body: val });
+  }
+
+  changeAnswer(val) {
+    this.setState({ answer: val });
   }
 
   switchMode() {
@@ -112,7 +117,9 @@ class StudyEntity extends React.Component {
         </span>
       );
     } else {
-      bodyComponent = <StudyEntityView body={this.state.body} />;
+      bodyComponent = (
+        <StudyEntityView body={this.state.body} onChange={this.changeAnswer} />
+      );
       headerComponent = (
         <span>
           {this.state.title}

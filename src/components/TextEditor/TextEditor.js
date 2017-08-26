@@ -13,9 +13,13 @@ if (navigator.platform) {
 }
 
 class TextEditor extends React.Component {
+  static defaultProps = {
+    mode: 'html',
+  };
   static propTypes = {
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    mode: PropTypes.string,
   };
   constructor() {
     super();
@@ -32,7 +36,7 @@ class TextEditor extends React.Component {
     if (!AceEditor) return null;
     return (
       <AceEditor
-        mode="html"
+        mode={this.props.mode}
         theme="chrome"
         name="code"
         width="100%"
@@ -40,7 +44,6 @@ class TextEditor extends React.Component {
         ref={ace => {
           this.ace = ace;
         }}
-        fontSize={18}
         value={this.props.value}
         editorProps={{ $blockScrolling: Infinity }}
         onLoad={this.onLoad}

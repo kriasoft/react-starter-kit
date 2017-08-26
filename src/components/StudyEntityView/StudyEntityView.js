@@ -12,19 +12,42 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as HtmlToReact from 'html-to-react';
+import github from 'react-syntax-highlighter/dist/styles/github';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import docco from 'react-syntax-highlighter/dist/styles/docco';
+import TextEditor from '../TextEditor';
 import s from './StudyEntityView.css';
 
 const htmlToReactParser = new HtmlToReact.Parser();
 
 class StudyEntityView extends React.Component {
+  static defaultProps = {
+    onChange: null,
+    value: null,
+  };
   static propTypes = {
     body: PropTypes.string.isRequired,
+    value: PropTypes.instanceOf(Object),
+    onChange: PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      answers: props.value || {},
+    };
+  }
 
   componentWillMount() {
     this.initProcessingInstructions();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !_.isEqual(this.state, nextState);
+  }
+
+  updateAnswer(name, value) {
+    this.state.answers[name] = value;
+    if (this.props.onChange) this.props.onChange(this.state.answers);
   }
 
   initProcessingInstructions() {
@@ -48,9 +71,35 @@ class StudyEntityView extends React.Component {
           ).trim();
           const lang = _.get(node, 'children[0].attribs.class');
           return (
-            <SyntaxHighlighter key={index} language={lang} style={docco}>
+            <SyntaxHighlighter key={index} language={lang} style={github}>
               {content}
             </SyntaxHighlighter>
+          );
+        },
+      },
+      /**
+       * <textarea name="" language="javascript">
+       * ...
+       * </textarea>
+       */
+      {
+        shouldProcessNode: node =>
+          node.name === 'textarea' &&
+          _.get(node, 'attribs.language') &&
+          _.get(node, 'attribs.name'),
+        processNode: (node, children, index) => {
+          const name = _.get(node, 'attribs.name');
+          const content =
+            this.state[name] || _.get(node, 'children[0].data') || '';
+          const mode = _.get(node, 'attribs.language');
+          const changeHandler = this.updateAnswer.bind(this, name);
+          return (
+            <TextEditor
+              key={index}
+              value={content}
+              mode={mode}
+              onChange={changeHandler}
+            />
           );
         },
       },
