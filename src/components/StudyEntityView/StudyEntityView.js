@@ -7,39 +7,78 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import hljs from 'highlight.js';
+import * as HtmlToReact from 'html-to-react';
+import SyntaxHighlighter, {
+  registerLanguage,
+} from 'react-syntax-highlighter/dist/light';
+import docco from 'react-syntax-highlighter/dist/styles/docco';
+import javascriptHljs from 'react-syntax-highlighter/dist/languages/javascript';
 import s from './StudyEntityView.css';
+
+registerLanguage('javascript', javascriptHljs);
+
+const htmlToReactParser = new HtmlToReact.Parser();
 
 class StudyEntityView extends React.Component {
   static propTypes = {
     body: PropTypes.string.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    this.mountBlock = this.mountBlock.bind(this);
+  componentWillMount() {
+    this.initProcessingInstructions();
   }
 
-  mountBlock(content) {
-    this.content = content;
-    if (!content) return;
-    const codes = content.querySelectorAll('pre code');
-    for (let i = 0; i < codes.length; i += 1) {
-      hljs.highlightBlock(codes[i]);
-    }
+  initProcessingInstructions() {
+    const processNodeDefinitions = new HtmlToReact.ProcessNodeDefinitions(
+      React,
+    );
+    this.processingInstructions = [
+      /**
+       * <pre></code class="javascript">
+       * ...
+       * </code></pre>
+       */
+      {
+        shouldProcessNode: node =>
+          node.name === 'pre' && _.get(node, 'children[0].name') === 'code',
+        processNode: (node, children, index) => {
+          const content = _.get(
+            node,
+            'children[0].children[0].data',
+            '',
+          ).trim();
+          const lang = _.get(node, 'children[0].attribs.class');
+          return (
+            <SyntaxHighlighter key={index} language={lang} style={docco}>
+              {content}
+            </SyntaxHighlighter>
+          );
+        },
+      },
+      {
+        shouldProcessNode: () => true,
+        processNode: processNodeDefinitions.processDefaultNode,
+      },
+    ];
   }
 
   render() {
+    function isValidNode(node) {
+      return !!node;
+    }
+    const studyEntityElement = htmlToReactParser.parseWithInstructions(
+      this.props.body,
+      isValidNode,
+      this.processingInstructions,
+    );
     return (
-      <div
-        className={s.root}
-        ref={this.mountBlock}
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: this.props.body }}
-      />
+      <div className={s.root}>
+        {studyEntityElement}
+      </div>
     );
   }
 }
