@@ -12,14 +12,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as HtmlToReact from 'html-to-react';
-import SyntaxHighlighter, {
-  registerLanguage,
-} from 'react-syntax-highlighter/dist/light';
+import SyntaxHighlighter from 'react-syntax-highlighter';
 import docco from 'react-syntax-highlighter/dist/styles/docco';
-import javascriptHljs from 'react-syntax-highlighter/dist/languages/javascript';
 import s from './StudyEntityView.css';
-
-registerLanguage('javascript', javascriptHljs);
 
 const htmlToReactParser = new HtmlToReact.Parser();
 
