@@ -42,6 +42,7 @@
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.5",
     "react-syntax-highlighter": "^5.7.0",
+    "readline-sync": "^1.4.7",
     "redux": "^3.7.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
@@ -185,6 +186,7 @@
     "deploy": "babel-node tools/run deploy",
     "render": "babel-node tools/run render",
     "serve": "babel-node tools/run runServer",
-    "start": "babel-node tools/run start"
+    "start": "babel-node tools/run start",
+    "users-add": "babel-node tools/users add"
   }
 }

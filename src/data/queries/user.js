@@ -1,11 +1,6 @@
 import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
-import bcrypt from 'bcrypt-nodejs';
 import UserType from '../types/UserType';
 import User from '../models/User';
-import UserLogin from '../models/UserLogin';
-import UserProfile from '../models/UserProfile';
-import UserClaim from '../models/UserClaim';
-import sequelize from '../sequelize';
 
 const createUser = {
   type: UserType,
@@ -28,39 +23,7 @@ const createUser = {
     },
   },
   resolve({ request }, args) {
-    // return User.create({
-    //   email: args.email,
-    // })
-    return sequelize.transaction(t =>
-      User.create(
-        {
-          type: UserType,
-          email: args.email,
-          emailConfirmed: false,
-          logins: [{ name: 'local', key: args.email }],
-          claims: [
-            {
-              type: 'local',
-              value: bcrypt.hashSync(args.key, bcrypt.genSaltSync()),
-            },
-          ],
-          profile: {
-            displayName: args.name,
-            gender: args.gender,
-            picture:
-              'https://upload.wikimedia.org/wikipedia/commons/d/d3/User_Circle.png',
-          },
-        },
-        {
-          include: [
-            { model: UserLogin, as: 'logins' },
-            { model: UserClaim, as: 'claims' },
-            { model: UserProfile, as: 'profile' },
-          ],
-          transaction: t,
-        },
-      ),
-    );
+    return User.createUser(args);
   },
 };
 
