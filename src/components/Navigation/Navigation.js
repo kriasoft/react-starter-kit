@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.css';
@@ -22,6 +23,8 @@ function isModifiedEvent(event) {
 }
 
 class Navigation extends React.Component {
+  static contextTypes = { store: PropTypes.any.isRequired };
+
   render() {
     function processClick(a, event) {
       if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
@@ -30,6 +33,7 @@ class Navigation extends React.Component {
       event.preventDefault();
       history.push(event.target.getAttribute('href'));
     }
+
     return (
       <Navbar
         inverse
@@ -52,10 +56,14 @@ class Navigation extends React.Component {
             <NavItem href="/about">About</NavItem>
             <NavItem href="/contact">Contact</NavItem>
           </Nav>
-          <Nav pullRight>
-            <NavItem href="/login">Log in</NavItem>
-            <NavItem href="/register">Sign up</NavItem>
-          </Nav>
+          {this.context.store.getState().user
+            ? <Nav pullRight>
+                <NavItem href="/logout">Log out</NavItem>
+              </Nav>
+            : <Nav pullRight>
+                <NavItem href="/login">Log in</NavItem>
+                <NavItem href="/register">Sign up</NavItem>
+              </Nav>}
         </Navbar.Collapse>
       </Navbar>
     );

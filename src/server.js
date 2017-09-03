@@ -91,6 +91,10 @@ app.post(
     failureRedirect: '/login',
   }),
 );
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
 app.get(
   '/login/facebook',
   passport.authenticate('facebook', {
