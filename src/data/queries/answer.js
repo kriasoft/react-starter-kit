@@ -1,5 +1,8 @@
 import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
 import Answer from '../models/Answer';
+import User from '../models/User';
+import StudyEntity from '../models/StudyEntity';
+import Course from '../models/Course';
 import AnswerType from '../types/AnswerType';
 
 const addAnswer = {
@@ -57,16 +60,41 @@ const answers = {
       description: 'ids of the answers',
       type: new List(StringType),
     },
+    userIds: {
+      description: 'ids of the user',
+      type: new List(StringType),
+    },
+    studyEntityIds: {
+      description: 'ids of the study entities',
+      type: new List(StringType),
+    },
+    courseIds: {
+      description: 'ids of the courses',
+      type: new List(StringType),
+    },
   },
   resolve(obj, args) {
+    const whereStatement = {};
+    const includeStatement = [];
     if (args.ids) {
-      return Answer.findAll({
-        where: {
-          id: args.ids,
-        },
+      whereStatement.id = args.ids;
+    }
+    if (args.userIds) {
+      includeStatement.push({ model: User, where: { id: args.userIds } });
+    }
+    if (args.studyEntityIds) {
+      includeStatement.push({
+        model: StudyEntity,
+        where: { id: args.studyEntityIds },
       });
     }
-    return Answer.findAll();
+    if (args.courseIds) {
+      includeStatement.push({ model: Course, where: { id: args.courseIds } });
+    }
+    return Answer.findAll({
+      where: whereStatement,
+      include: includeStatement,
+    });
   },
 };
 
