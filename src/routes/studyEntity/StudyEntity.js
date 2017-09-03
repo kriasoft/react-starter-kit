@@ -38,6 +38,8 @@ class StudyEntity extends React.Component {
       editMode: false,
       title: this.props.studyEntity.title,
       body: this.props.studyEntity.body,
+      answerId: null,
+      answers: {},
     };
     this.switchMode = this.switchMode.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
@@ -46,6 +48,12 @@ class StudyEntity extends React.Component {
     this.saveAnswer = this.saveAnswer.bind(this);
     this.save = this.save.bind(this);
     this.cancel = this.cancel.bind(this);
+  }
+
+  componentWillMount() {
+    if (this.context.store.getState().user) {
+      this.retrieveAnswer();
+    }
   }
 
   changeTitle(event) {
@@ -59,32 +67,55 @@ class StudyEntity extends React.Component {
   changeAnswer(val) {
     this.setState({ answer: val });
   }
+
   async saveAnswer() {
-    await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: `mutation add(
-          $body: String,
-          $courseId: String,
-          $userId: String,
-          $studyEntityId: String
-        ){
-          addAnswer(
-            body: $body,
-            courseId: $courseId,
-            userId: $userId,
-            studyEntityId: $studyEntityId
+    if (this.state.answerId) {
+      await this.context.fetch('/graphql', {
+        body: JSON.stringify({
+          query: `mutation update(
+            $body: String,
+            $id: String
           ){
-            id
-          }            
-        }`,
-        variables: {
-          body: JSON.stringify(this.state.answer),
-          courseId: this.props.course.id,
-          userId: this.context.store.getState().user.id,
-          studyEntityId: this.props.studyEntity.id,
-        },
-      }),
-    });
+            updateAnswer(
+              body: $body,
+              id: $id
+            ){
+              id
+            }            
+          }`,
+          variables: {
+            body: JSON.stringify(this.state.answer),
+            id: this.state.answerId,
+          },
+        }),
+      });
+    } else {
+      await this.context.fetch('/graphql', {
+        body: JSON.stringify({
+          query: `mutation add(
+            $body: String,
+            $courseId: String,
+            $userId: String,
+            $studyEntityId: String
+          ){
+            addAnswer(
+              body: $body,
+              courseId: $courseId,
+              userId: $userId,
+              studyEntityId: $studyEntityId
+            ){
+              id
+            }            
+          }`,
+          variables: {
+            body: JSON.stringify(this.state.answer),
+            courseId: this.props.course.id,
+            userId: this.context.store.getState().user.id,
+            studyEntityId: this.props.studyEntity.id,
+          },
+        }),
+      });
+    }
   }
 
   switchMode() {
@@ -122,6 +153,38 @@ class StudyEntity extends React.Component {
     });
   }
 
+  async retrieveAnswer() {
+    const resp = await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `query retrieveAnswers (
+          $userIds: [String]
+          $studyEntityIds: [String]
+          $courseIds: [String]
+        ){
+          answers(
+            userIds: $userIds,
+            studyEntityIds: $studyEntityIds,
+            courseIds: $courseIds
+          ){
+            id, body
+          }            
+        }`,
+        variables: {
+          userIds: [this.context.store.getState().user.id],
+          studyEntityIds: [this.props.studyEntity.id],
+          courseIds: [this.props.course.id],
+        },
+      }),
+    });
+    const { data } = await resp.json();
+    if (data && data.answers && data.answers.length) {
+      this.setState({
+        answerId: data.answers[0].id,
+        answers: JSON.parse(data.answers[0].body),
+      });
+    }
+  }
+
   render() {
     let bodyComponent;
     let headerComponent;
@@ -148,10 +211,14 @@ class StudyEntity extends React.Component {
       bodyComponent = (
         <span>
           <StudyEntityView
+            answerId={this.state.answerId}
+            value={this.state.answers}
             body={this.state.body}
             onChange={this.changeAnswer}
           />
-          <Button onClick={this.saveAnswer}>Save</Button>
+          {this.context.store.getState().user
+            ? <Button onClick={this.saveAnswer}>Save</Button>
+            : undefined}
         </span>
       );
       headerComponent = (

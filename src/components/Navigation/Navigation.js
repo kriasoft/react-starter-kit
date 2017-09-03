@@ -34,6 +34,11 @@ class Navigation extends React.Component {
       history.push(event.target.getAttribute('href'));
     }
 
+    function logout(event) {
+      window.location.href = '/logout';
+      event.preventDefault();
+    }
+
     return (
       <Navbar
         inverse
@@ -58,7 +63,9 @@ class Navigation extends React.Component {
           </Nav>
           {this.context.store.getState().user
             ? <Nav pullRight>
-                <NavItem href="/logout">Log out</NavItem>
+                <NavItem href="/logout" onSelect={logout}>
+                  Log out
+                </NavItem>
               </Nav>
             : <Nav pullRight>
                 <NavItem href="/login">Log in</NavItem>

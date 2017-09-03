@@ -21,11 +21,13 @@ const htmlToReactParser = new HtmlToReact.Parser();
 
 class StudyEntityView extends React.Component {
   static defaultProps = {
-    onChange: null,
+    answerId: null,
     value: null,
+    onChange: null,
   };
   static propTypes = {
     body: PropTypes.string.isRequired,
+    answerId: PropTypes.string,
     value: PropTypes.instanceOf(Object),
     onChange: PropTypes.func,
   };
@@ -34,6 +36,7 @@ class StudyEntityView extends React.Component {
     super(props);
     this.state = {
       answers: props.value || {},
+      answerId: props.answerId,
     };
   }
 
@@ -41,8 +44,11 @@ class StudyEntityView extends React.Component {
     this.initProcessingInstructions();
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !_.isEqual(this.state, nextState);
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      answers: nextProps.value || {},
+      answerId: nextProps.answerId,
+    });
   }
 
   updateAnswer(name, value) {
@@ -90,7 +96,7 @@ class StudyEntityView extends React.Component {
         processNode: (node, children, index) => {
           const name = _.get(node, 'attribs.name');
           const content =
-            this.state[name] || _.get(node, 'children[0].data') || '';
+            this.state.answers[name] || _.get(node, 'children[0].data') || '';
           const mode = _.get(node, 'attribs.language');
           const changeHandler = this.updateAnswer.bind(this, name);
           return (
