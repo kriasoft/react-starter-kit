@@ -15,11 +15,12 @@ import TextEditor from '../../components/TextEditor';
 import StudyEntityView from '../../components/StudyEntityView';
 import s from './StudyEntity.css';
 
-let fetch;
-
 class StudyEntity extends React.Component {
-  static propTypes = {
+  static contextTypes = {
     fetch: PropTypes.func.isRequired,
+    store: PropTypes.any.isRequired,
+  };
+  static propTypes = {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
@@ -42,9 +43,9 @@ class StudyEntity extends React.Component {
     this.changeTitle = this.changeTitle.bind(this);
     this.changeBody = this.changeBody.bind(this);
     this.changeAnswer = this.changeAnswer.bind(this);
+    this.saveAnswer = this.saveAnswer.bind(this);
     this.save = this.save.bind(this);
     this.cancel = this.cancel.bind(this);
-    fetch = this.props.fetch;
   }
 
   changeTitle(event) {
@@ -58,15 +59,42 @@ class StudyEntity extends React.Component {
   changeAnswer(val) {
     this.setState({ answer: val });
   }
+  async saveAnswer() {
+    await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation add(
+          $body: String,
+          $courseId: String,
+          $userId: String,
+          $studyEntityId: String
+        ){
+          addAnswer(
+            body: $body,
+            courseId: $courseId,
+            userId: $userId,
+            studyEntityId: $studyEntityId
+          ){
+            id
+          }            
+        }`,
+        variables: {
+          body: JSON.stringify(this.state.answer),
+          courseId: this.props.course.id,
+          userId: this.context.store.getState().user.id,
+          studyEntityId: this.props.studyEntity.id,
+        },
+      }),
+    });
+  }
 
   switchMode() {
     this.setState({ editMode: !this.state.editMode });
   }
 
   async save() {
-    await fetch('/graphql', {
+    await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation create($title: String,$id: String,$body: String) {
+        query: `mutation create($title: String, $id: String, $body: String) {
           updateStudyEntity(
             title: $title,
             id: $id,
@@ -118,7 +146,13 @@ class StudyEntity extends React.Component {
       );
     } else {
       bodyComponent = (
-        <StudyEntityView body={this.state.body} onChange={this.changeAnswer} />
+        <span>
+          <StudyEntityView
+            body={this.state.body}
+            onChange={this.changeAnswer}
+          />
+          <Button onClick={this.saveAnswer}>Save</Button>
+        </span>
       );
       headerComponent = (
         <span>

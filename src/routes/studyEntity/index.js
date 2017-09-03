@@ -29,7 +29,6 @@ async function action({ fetch, params }) {
         <StudyEntity
           course={data.courses[0]}
           studyEntity={data.studyEntities[0]}
-          fetch={fetch}
         />
       </Layout>
     ),
