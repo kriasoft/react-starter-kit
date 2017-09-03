@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Button, Glyphicon, DropdownButton, MenuItem } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import TextEditor from '../../components/TextEditor';
@@ -39,7 +39,7 @@ class StudyEntity extends React.Component {
       title: this.props.studyEntity.title,
       body: this.props.studyEntity.body,
       answerId: null,
-      answers: {},
+      answer: {},
     };
     this.switchMode = this.switchMode.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
@@ -48,6 +48,7 @@ class StudyEntity extends React.Component {
     this.saveAnswer = this.saveAnswer.bind(this);
     this.save = this.save.bind(this);
     this.cancel = this.cancel.bind(this);
+    this.selectAnswer = this.selectAnswer.bind(this);
   }
 
   componentWillMount() {
@@ -170,7 +171,9 @@ class StudyEntity extends React.Component {
           }            
         }`,
         variables: {
-          userIds: [this.context.store.getState().user.id],
+          userIds: !this.context.store.getState().user.isAdmin
+            ? [this.context.store.getState().user.id]
+            : null,
           studyEntityIds: [this.props.studyEntity.id],
           courseIds: [this.props.course.id],
         },
@@ -178,11 +181,27 @@ class StudyEntity extends React.Component {
     });
     const { data } = await resp.json();
     if (data && data.answers && data.answers.length) {
+      const answerCur = 0;
       this.setState({
-        answerId: data.answers[0].id,
-        answers: JSON.parse(data.answers[0].body),
+        answers: data.answers.map(answer => {
+          const ans = answer;
+          ans.body = JSON.parse(answer.body);
+          return ans;
+        }),
+        answerId: data.answers[answerCur].id,
+        answer: data.answers[answerCur].body,
+        answerCur,
       });
     }
+  }
+
+  selectAnswer(eventKey) {
+    const answerCur = parseInt(eventKey, 10);
+    this.setState({
+      answerCur,
+      answer: this.state.answers[answerCur].body,
+      answerId: this.state.answers[answerCur].id,
+    });
   }
 
   render() {
@@ -212,7 +231,7 @@ class StudyEntity extends React.Component {
         <span>
           <StudyEntityView
             answerId={this.state.answerId}
-            value={this.state.answers}
+            value={this.state.answer}
             body={this.state.body}
             onChange={this.changeAnswer}
           />
@@ -230,12 +249,35 @@ class StudyEntity extends React.Component {
         </span>
       );
     }
+    const user = this.context.store.getState().user;
+    let answerChooser;
+    if (user && user.isAdmin && this.state.answers) {
+      const answers = this.state.answers.map((answer, i) =>
+        <MenuItem
+          key={answer.id}
+          eventKey={i}
+          active={i === this.state.answerCur}
+        >
+          {answer.id}
+        </MenuItem>,
+      );
+      answerChooser = (
+        <DropdownButton
+          id="answer_chooser"
+          title={this.state.answers[this.state.answerCur].id}
+          onSelect={this.selectAnswer}
+        >
+          {answers}
+        </DropdownButton>
+      );
+    }
 
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
             {this.props.course.title}/{headerComponent}
+            {answerChooser}
           </h1>
           {bodyComponent}
         </div>
