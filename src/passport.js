@@ -180,7 +180,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   User.findById(id).then(user => {
-    done(user);
+    done(null, user);
   });
 });
 

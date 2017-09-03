@@ -54,7 +54,6 @@ app.use(
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true },
   }),
 );
 
@@ -80,6 +79,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use(passport.initialize());
+app.use(passport.session());
 
 if (__DEV__) {
   app.enable('trust proxy');
