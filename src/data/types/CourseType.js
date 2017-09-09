@@ -26,7 +26,7 @@ const CourseType = new ObjectType({
           },
         }),
       ),
-      resolve: course => course.getUsers(),
+      resolve: course => course.getUser(),
     },
   },
 });
