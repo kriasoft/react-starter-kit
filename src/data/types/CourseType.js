@@ -6,6 +6,9 @@ import {
   GraphQLID as ID,
 } from 'graphql';
 import StudyEntityType from './StudyEntityType';
+import Course from '../models/Course';
+import UserCourse from '../models/UserCourse';
+import User from '../models/User';
 
 const CourseType = new ObjectType({
   name: 'CourseType',
@@ -23,10 +26,21 @@ const CourseType = new ObjectType({
           fields: {
             id: { type: new NonNull(ID) },
             email: { type: StringType },
+            role: { type: StringType },
           },
         }),
       ),
-      resolve: course => course.getUser(),
+      resolve: course =>
+        Course.find({
+          where: { id: course.id },
+          include: [{ model: User, as: 'user', through: UserCourse }],
+        }).then(c =>
+          c.user.map(user => ({
+            id: user.id,
+            email: user.email,
+            role: user.UserCourse.role,
+          })),
+        ),
     },
   },
 });
