@@ -8,7 +8,16 @@
  */
 
 import React from 'react';
-import { Button, Glyphicon, DropdownButton, MenuItem } from 'react-bootstrap';
+import {
+  Button,
+  Glyphicon,
+  DropdownButton,
+  MenuItem,
+  Form,
+  FormControl,
+  FormGroup,
+  Col,
+} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import TextEditor from '../../components/TextEditor';
@@ -47,6 +56,9 @@ class StudyEntity extends React.Component {
     this.changeAnswer = this.changeAnswer.bind(this);
     this.saveAnswer = this.saveAnswer.bind(this);
     this.save = this.save.bind(this);
+    this.addMark = this.addMark.bind(this);
+    this.changeMark = this.changeMark.bind(this);
+    this.changeComment = this.changeComment.bind(this);
     this.cancel = this.cancel.bind(this);
     this.selectAnswer = this.selectAnswer.bind(this);
   }
@@ -63,6 +75,14 @@ class StudyEntity extends React.Component {
 
   changeBody(val) {
     this.setState({ body: val });
+  }
+
+  changeMark(event) {
+    this.setState({ mark: event.target.value });
+  }
+
+  changeComment(event) {
+    this.setState({ comment: event.target.value });
   }
 
   changeAnswer(val) {
@@ -154,6 +174,31 @@ class StudyEntity extends React.Component {
     });
   }
 
+  async addMark() {
+    await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation addMark($mark: Float, $comment: String, $answerId: String) {
+          addMark(
+            mark: $mark,
+            comment: $comment,
+            answerId: $answerId,
+          ) {
+            id
+          }     
+        }`,
+        variables: {
+          mark: this.state.mark,
+          comment: this.state.comment,
+          answerId: this.state.answerId,
+        },
+      }),
+    });
+    this.setState({
+      mark: '',
+      comment: '',
+    });
+  }
+
   async retrieveAnswer() {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
@@ -238,6 +283,34 @@ class StudyEntity extends React.Component {
           {this.context.store.getState().user
             ? <Button onClick={this.saveAnswer}>Save</Button>
             : undefined}
+          {/* Form for setting marks and making a comment*/}
+          <Form horizontal>
+            <FormGroup controlId="Comment">
+              <Col sm={10}>
+                <FormControl
+                  type="text"
+                  placeholder="Comment"
+                  value={this.state.comment}
+                  onChange={this.changeComment}
+                />
+              </Col>
+            </FormGroup>
+            <FormGroup controlId="Mark">
+              <Col sm={2}>
+                <FormControl
+                  type="number"
+                  placeholder="Mark"
+                  value={this.state.mark}
+                  onChange={this.changeMark}
+                />
+              </Col>
+              <Col sm={2}>
+                <Button onClick={this.addMark}>
+                  <Glyphicon glyph="ok" />
+                </Button>
+              </Col>
+            </FormGroup>
+          </Form>
         </span>
       );
       headerComponent = (
