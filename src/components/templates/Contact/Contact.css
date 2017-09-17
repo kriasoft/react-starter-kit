@@ -7,14 +7,15 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React from 'react';
-import ErrorPage from '../../components/templates/ErrorPage';
+@import '../../variables.css';
 
-function action() {
-  return {
-    title: 'Demo Error',
-    component: <ErrorPage />,
-  };
+.root {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
-export default action;
+.container {
+  margin: 0 auto;
+  max-width: var(--max-content-width);
+  padding: 0 0 40px;
+}

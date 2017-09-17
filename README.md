@@ -38,6 +38,8 @@ branches that you can use either as a reference or merge into your project:
   * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1084))
     — isomorphic Redux by [Pavel Lang](https://github.com/langpavel)
     (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
+  * [feature/redux-atomic](https://github.com/rodeyseijkens/react-starter-kit/tree/feature/redux-atomic)
+    — isomorphic Redux by [Pavel Lang](https://github.com/langpavel) & Modified for atomic by [Rodey Seijkens](https://github.com/rodeyseijkens)
   * [feature/apollo](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1147))
     — isomorphic Apollo Client by [Pavel Lang](https://github.com/langpavel)
     (see [Tracking PR #1147](https://github.com/kriasoft/react-starter-kit/pull/1147)) (based on `feature/redux`)
