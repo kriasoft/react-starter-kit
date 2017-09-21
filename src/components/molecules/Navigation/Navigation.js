@@ -14,6 +14,7 @@ import s from './Navigation.css';
 
 import Link from '../../atoms/Link';
 
+@withStyles(s)
 class Navigation extends React.Component {
   render() {
     return (
@@ -29,4 +30,4 @@ class Navigation extends React.Component {
   }
 }
 
-export default withStyles(s)(Navigation);
+export default Navigation;

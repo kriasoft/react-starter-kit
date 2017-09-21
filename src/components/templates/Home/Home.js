@@ -12,6 +12,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import s from './Home.css';
 
+@withStyles(s)
 class Home extends React.Component {
   render() {
     return (
@@ -24,4 +25,4 @@ class Home extends React.Component {
   }
 }
 
-export default withStyles(s)(Home);
+export default Home;

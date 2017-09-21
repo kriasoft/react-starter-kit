@@ -13,6 +13,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import s from './DefaultPage.css';
 
+@withStyles(s)
 class Page extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
@@ -37,4 +38,4 @@ class Page extends React.Component {
   }
 }
 
-export default withStyles(s)(Page);
+export default Page;

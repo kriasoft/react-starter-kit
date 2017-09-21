@@ -13,6 +13,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import s from './NotFound.css';
 
+@withStyles(s)
 class NotFound extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
@@ -32,4 +33,4 @@ class NotFound extends React.Component {
   }
 }
 
-export default withStyles(s)(NotFound);
+export default NotFound;

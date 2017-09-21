@@ -13,6 +13,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import s from './Contact.css';
 
+@withStyles(s)
 class Contact extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
@@ -32,4 +33,4 @@ class Contact extends React.Component {
   }
 }
 
-export default withStyles(s)(Contact);
+export default Contact;

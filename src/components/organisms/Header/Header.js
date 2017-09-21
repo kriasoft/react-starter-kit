@@ -18,6 +18,7 @@ import Navigation from '../../molecules/Navigation';
 import logoUrl from './logo-small.png';
 import logoUrl2x from './logo-small@2x.png';
 
+@withStyles(s)
 class Header extends React.Component {
   render() {
     return (
@@ -44,4 +45,4 @@ class Header extends React.Component {
   }
 }
 
-export default withStyles(s)(Header);
+export default Header;

@@ -14,6 +14,7 @@ import s from './Footer.css';
 
 import Link from '../../atoms/Link';
 
+@withStyles(s)
 class Footer extends React.Component {
   render() {
     return (
@@ -38,4 +39,4 @@ class Footer extends React.Component {
   }
 }
 
-export default withStyles(s)(Footer);
+export default Footer;

@@ -12,6 +12,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import s from './Feedback.css';
 
+@withStyles(s)
 class Feedback extends React.Component {
   render() {
     return (
@@ -36,4 +37,4 @@ class Feedback extends React.Component {
   }
 }
 
-export default withStyles(s)(Feedback);
+export default Feedback;

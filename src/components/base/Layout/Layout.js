@@ -19,6 +19,7 @@ import Header from '../../organisms/Header';
 import Footer from '../../organisms/Footer';
 import Feedback from '../../molecules/Feedback';
 
+@withStyles(normalizeCss, s)
 class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
@@ -36,4 +37,4 @@ class Layout extends React.Component {
   }
 }
 
-export default withStyles(normalizeCss, s)(Layout);
+export default Layout;
