@@ -32,18 +32,6 @@ module.exports = {
   },
 
   rules: {
-    // `js` and `jsx` are common extensions
-    // `mjs` is for `universal-router` only, for now
-    'import/extensions': [
-      'error',
-      'always',
-      {
-        js: 'never',
-        jsx: 'never',
-        mjs: 'never',
-      },
-    ],
-
     // Not supporting nested package.json yet
     // https://github.com/benmosher/eslint-plugin-import/issues/458
     'import/no-extraneous-dependencies': 'off',
