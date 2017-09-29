@@ -155,7 +155,7 @@ app.get('*', async (req, res, next) => {
 
     const route = await router.resolve({
       ...context,
-      path: req.path,
+      pathname: req.path,
       query: req.query,
     });
 
