@@ -11,7 +11,7 @@ import React from 'react';
 import Layout from '../../components/base/Layout';
 import NotFound from '../../components/templates/NotFound/NotFound';
 
-const title = 'DefaultPage Not Found';
+const title = 'Page Not Found';
 
 function action() {
   return {

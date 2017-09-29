@@ -20,6 +20,7 @@ import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './components/templates/ErrorPage/ErrorPage';
 import errorPageStyle from './components/templates/ErrorPage/ErrorPage.css';
 import createFetch from './createFetch';
+import localContentAPI from './localContentAPI';
 import router from './router';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
@@ -46,6 +47,11 @@ app.use(bodyParser.json());
 if (__DEV__) {
   app.enable('trust proxy');
 }
+
+//
+// Register content API
+// -----------------------------------------------------------------------------
+app.use(`/api`, localContentAPI);
 
 //
 // Register server-side rendering middleware
