@@ -16,9 +16,9 @@ Before you start, take a moment to see how the project structure looks like:
 ├── /docs/                      # Documentation files for the project
 ├── /node_modules/              # 3rd-party libraries and utilities
 ├── /public/                    # Static files which are copied into the /build/public folder
+├── /content/                   # Static local api content files which are copied into the /build/content folder
 ├── /src/                       # The source code of the application
-│   ├── /components/            # React components
-│   ├── /data/                  # GraphQL server schema and data models
+│   ├── /components/            # React components (in atomic design)
 │   ├── /routes/                # Page/screen components along with the routing information
 │   ├── /client.js              # Client-side startup script
 │   ├── /config.js              # Global application settings
@@ -39,6 +39,7 @@ Before you start, take a moment to see how the project structure looks like:
 │   └── /webpack.config.js      # Configurations for client-side and server-side bundles
 ├── Dockerfile                  # Commands for building a Docker image for production
 ├── package.json                # The list of 3rd party libraries and utilities
+├── web.config                  # The Azure web.config file for proper routing and MIME types
 └── yarn.lock                   # Fixed versions of all the dependencies
 ```
 
@@ -78,7 +79,6 @@ with [HMR](https://webpack.github.io/docs/hot-module-replacement) on top of it.
 
 > [http://localhost:3000/](http://localhost:3000/) — Node.js server (`build/server.js`)
   with Browsersync and HMR enabled<br>
-> [http://localhost:3000/graphql](http://localhost:3000/graphql) — GraphQL server and IDE<br>
 > [http://localhost:3001/](http://localhost:3001/) — Browsersync control panel (UI)
 
 Now you can open your web app in a browser, on mobile devices and start
