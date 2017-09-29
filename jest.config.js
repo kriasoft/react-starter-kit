@@ -1,3 +1,14 @@
+/**
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
+// Jest configuration
+// https://facebook.github.io/jest/docs/en/configuration.html
 module.exports = {
   // Modules can be explicitly auto-mocked using jest.mock(moduleName).
   // https://facebook.github.io/jest/docs/en/configuration.html#automock-boolean
@@ -51,9 +62,7 @@ module.exports = {
   // A map from regular expressions to module names that allow to stub out resources,
   // like images or styles with a single module.
   moduleNameMapper: {
-    '\\.(css|less|scss|sss)$': 'identity-obj-proxy',
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
-      'GlobalImageStub',
+    '\\.(css|less|styl|scss|sass|sss)$': 'identity-obj-proxy',
   },
 
   // modulePathIgnorePatterns: // [array<string>]
@@ -81,9 +90,9 @@ module.exports = {
   // timers: // [string]
 
   transform: {
-    '\\.jsx?$': 'babel-jest',
-    '\\.(jpe?g|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
-      '<rootDir>/jest/fileTransformer.js',
+    '\\.(js|jsx)$': '<rootDir>/node_modules/babel-jest',
+    '^(?!.*\\.(js|jsx|json|css|less|styl|scss|sass|sss)$)':
+      '<rootDir>/tools/lib/fileTransformer.js',
   },
 
   // transformIgnorePatterns: // [array<string>]
