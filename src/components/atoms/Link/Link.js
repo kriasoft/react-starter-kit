@@ -19,10 +19,16 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
+/**
+ * Link component for interal linking with the router.
+ */
 class Link extends React.Component {
   static propTypes = {
+    /** The internal link of the page where you linking to. */
     to: PropTypes.string.isRequired,
+    /** The inner childs. */
     children: PropTypes.node.isRequired,
+    /** Function that will be fired on click. */
     onClick: PropTypes.func,
   };
 

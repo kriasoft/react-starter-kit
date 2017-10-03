@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "starter-kit",
   "version": "0.0.0",
   "private": true,
   "engines": {
@@ -91,10 +91,12 @@
     "react-deep-force-update": "^2.0.1",
     "react-error-overlay": "^1.0.9",
     "react-hot-loader": "^3.0.0-beta.7",
+    "react-styleguidist": "^6.0.26",
     "react-test-renderer": "^15.6.1",
     "redux-mock-store": "^1.2.3",
     "rimraf": "^2.6.1",
     "sinon": "^3.2.0",
+    "style-loader": "^0.18.2",
     "stylelint": "^8.1.1",
     "stylelint-config-standard": "^17.0.0",
     "stylelint-order": "^0.7.0",
@@ -157,6 +159,9 @@
     "deploy": "babel-node tools/run deploy",
     "render": "babel-node tools/run render",
     "serve": "babel-node tools/run runServer",
-    "start": "babel-node tools/run start"
+    "start": "babel-node tools/run start",
+    "styleguide": "styleguidist server --config ./tools/styleguide.config.js",
+    "styleguide-build":
+      "styleguidist build --config ./tools/styleguide.config.js"
   }
 }

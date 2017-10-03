@@ -155,6 +155,17 @@ or [Heroku](https://www.heroku.com/) this way. Both will execute `yarn install -
 upon receiving new files from you. Note, you should only deploy the contents
 of the `/build` folder to a remote server.
 
+
+### Styleguide
+To work and launch the styleguide, run:
+
+```shell
+$ yarn run styleguide
+```
+This will run a local server of the styleguide, for more information on how to
+document components etc. see [React Styleguidist](https://react-styleguidist.js.org/).
+
+
 ### How to Update
 
 If you need to keep your project up to date with the recent changes made to RSK,
