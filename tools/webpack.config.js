@@ -20,12 +20,17 @@ const isVerbose = process.argv.includes('--verbose');
 const isAnalyze =
   process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
-const reScript = /\.m?jsx?$/;
-const reStyle = /\.(css|less|scss|sss)$/;
-const reImage = /\.(bmp|gif|jpe?g|png|svg)$/;
+const reScript = /\.(js|jsx|mjs)$/;
+const reStyle = /\.(css|less|styl|scss|sass|sss)$/;
+const reImage = /\.(bmp|gif|jpg|jpeg|png|svg)$/;
 const staticAssetName = isDebug
   ? '[path][name].[ext]?[hash:8]'
   : '[hash:8].[ext]';
+
+// CSS Nano options http://cssnano.co/
+const minimizeCssOptions = {
+  discardComments: { removeAll: true },
+};
 
 //
 // Common configuration chunk to be used for both
@@ -77,7 +82,7 @@ const config = {
               {
                 targets: {
                   browsers: pkg.browserslist,
-                  uglify: true,
+                  forceAllTransforms: true,
                 },
                 modules: false,
                 useBuiltIns: false,
@@ -87,20 +92,23 @@ const config = {
             // Experimental ECMAScript proposals
             // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
             'stage-2',
-            // JSX, Flow
+            // Flow
+            // https://github.com/babel/babel/tree/master/packages/babel-preset-flow
+            'flow',
+            // JSX
             // https://github.com/babel/babel/tree/master/packages/babel-preset-react
-            'react',
-            // Optimize React code for the production build
-            // https://github.com/thejameskyle/babel-react-optimize
-            ...(isDebug ? [] : ['react-optimize']),
+            ['react', { development: isDebug }],
           ],
           plugins: [
-            // Adds component stack to warning messages
-            // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
-            ...(isDebug ? ['transform-react-jsx-source'] : []),
-            // Adds __self attribute to JSX which React will use for some warnings
-            // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
-            ...(isDebug ? ['transform-react-jsx-self'] : []),
+            // Treat React JSX elements as value types and hoist them to the highest scope
+            // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-constant-elements
+            ...(isDebug ? ['transform-react-constant-elements'] : []),
+            // Replaces the React.createElement function with one that is more optimized for production
+            // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-inline-elements
+            ...(isDebug ? ['transform-react-inline-elements'] : []),
+            // Remove unnecessary React propTypes from the production build
+            // https://github.com/oliviertassinari/babel-plugin-transform-react-remove-prop-types
+            ...(isDebug ? ['transform-react-remove-prop-types'] : []),
           ],
         },
       },
@@ -121,8 +129,7 @@ const config = {
             loader: 'css-loader',
             options: {
               sourceMap: isDebug,
-              minimize: !isDebug,
-              discardComments: { removeAll: true },
+              minimize: isDebug ? false : minimizeCssOptions,
             },
           },
 
@@ -139,9 +146,8 @@ const config = {
               localIdentName: isDebug
                 ? '[name]-[local]-[hash:base64:5]'
                 : '[hash:base64:5]',
-              // CSS Nano http://cssnano.co/options/
-              minimize: !isDebug,
-              discardComments: { removeAll: true },
+              // CSS Nano http://cssnano.co/
+              minimize: isDebug ? false : minimizeCssOptions,
             },
           },
 
@@ -167,7 +173,7 @@ const config = {
           // https://github.com/webpack-contrib/sass-loader
           // Install dependencies before uncommenting: yarn add --dev sass-loader node-sass
           // {
-          //   test: /\.scss$/,
+          //   test: /\.(scss|sass)$/,
           //   loader: 'sass-loader',
           // },
         ],
