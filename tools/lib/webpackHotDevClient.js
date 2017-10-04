@@ -7,8 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
-import hotClient from 'webpack-hot-middleware/client?name=client&reload=true';
+import hotClient from 'webpack-hot-middleware/client';
 import launchEditorEndpoint from 'react-dev-utils/launchEditorEndpoint';
 import formatWebpackMessages from 'react-dev-utils/formatWebpackMessages';
 import {
@@ -30,6 +29,11 @@ hotClient.useCustomOverlay({
   clear() {
     dismissBuildError();
   },
+});
+
+hotClient.setOptionsAndConnect({
+  name: 'client',
+  reload: true,
 });
 
 startReportingRuntimeErrors({
