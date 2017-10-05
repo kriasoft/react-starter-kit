@@ -44,59 +44,16 @@ const context = {
   storeSubscription: null,
 };
 
+const container = document.getElementById('app');
+let appInstance;
+let currentLocation = history.location;
+
 // Switch off the native scroll restoration behavior and handle it manually
 // https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
 const scrollPositionsHistory = {};
 if (window.history && 'scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
 }
-
-let onRenderComplete = function initialRenderComplete() {
-  const elem = document.getElementById('css');
-  if (elem) elem.parentNode.removeChild(elem);
-  onRenderComplete = function renderComplete(route, location) {
-    document.title = route.title;
-
-    updateMeta('description', route.description);
-    // Update necessary tags in <head> at runtime here, ie:
-    // updateMeta('keywords', route.keywords);
-    // updateCustomMeta('og:url', route.canonicalUrl);
-    // updateCustomMeta('og:image', route.imageUrl);
-    // updateLink('canonical', route.canonicalUrl);
-    // etc.
-
-    let scrollX = 0;
-    let scrollY = 0;
-    const pos = scrollPositionsHistory[location.key];
-    if (pos) {
-      scrollX = pos.scrollX;
-      scrollY = pos.scrollY;
-    } else {
-      const targetHash = location.hash.substr(1);
-      if (targetHash) {
-        const target = document.getElementById(targetHash);
-        if (target) {
-          scrollY = window.pageYOffset + target.getBoundingClientRect().top;
-        }
-      }
-    }
-
-    // Restore the scroll position if it was saved into the state
-    // or scroll to the given #hash anchor
-    // or scroll to top of the page
-    window.scrollTo(scrollX, scrollY);
-
-    // Google Analytics tracking. Don't send 'pageview' event after
-    // the initial rendering, as it was already sent
-    if (window.ga) {
-      window.ga('send', 'pageview', createPath(location));
-    }
-  };
-};
-
-const container = document.getElementById('app');
-let appInstance;
-let currentLocation = history.location;
 
 // Re-render the app when window.location changes
 async function onLocationChange(location, action) {
@@ -131,10 +88,53 @@ async function onLocationChange(location, action) {
       return;
     }
 
-    appInstance = ReactDOM.render(
+    appInstance = ReactDOM[action ? 'render' : 'hydrate'](
       <App context={context}>{route.component}</App>,
       container,
-      () => onRenderComplete(route, location),
+      () => {
+        if (!action) {
+          const elem = document.getElementById('css');
+          if (elem) elem.parentNode.removeChild(elem);
+          return; // Initial render complete
+        }
+
+        document.title = route.title;
+
+        updateMeta('description', route.description);
+        // Update necessary tags in <head> at runtime here, ie:
+        // updateMeta('keywords', route.keywords);
+        // updateCustomMeta('og:url', route.canonicalUrl);
+        // updateCustomMeta('og:image', route.imageUrl);
+        // updateLink('canonical', route.canonicalUrl);
+        // etc.
+
+        let scrollX = 0;
+        let scrollY = 0;
+        const pos = scrollPositionsHistory[location.key];
+        if (pos) {
+          scrollX = pos.scrollX;
+          scrollY = pos.scrollY;
+        } else {
+          const targetHash = location.hash.substr(1);
+          if (targetHash) {
+            const target = document.getElementById(targetHash);
+            if (target) {
+              scrollY = window.pageYOffset + target.getBoundingClientRect().top;
+            }
+          }
+        }
+
+        // Restore the scroll position if it was saved into the state
+        // or scroll to the given #hash anchor
+        // or scroll to top of the page
+        window.scrollTo(scrollX, scrollY);
+
+        // Google Analytics tracking. Don't send 'pageview' event after
+        // the initial rendering, as it was already sent
+        if (window.ga) {
+          window.ga('send', 'pageview', createPath(location));
+        }
+      },
     );
   } catch (error) {
     if (__DEV__) {

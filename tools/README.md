@@ -35,13 +35,13 @@ Flag        | Description
 For example:
 
 ```sh
-$ yarn run build -- --release --verbose   # Build the app in production mode
+$ yarn run build --release --verbose      # Build the app in production mode
 ```
 
 or
 
 ```sh
-$ yarn start -- --release                 # Launch dev server in production mode
+$ yarn start --release                    # Launch dev server in production mode
 ```
 
 ## Misc
