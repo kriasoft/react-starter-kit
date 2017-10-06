@@ -23,5 +23,5 @@ module.exports = {
     'flow',
     'react',
   ],
-  ignore: ['/node_modules', '/build'],
+  ignore: ['node_modules', 'build'],
 };

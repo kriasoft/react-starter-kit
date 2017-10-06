@@ -48,8 +48,9 @@ const config = {
     chunkFilename: isDebug
       ? '[name].chunk.js'
       : '[name].[chunkhash:8].chunk.js',
+    // Point sourcemap entries to original disk location (format as URL on Windows)
     devtoolModuleFilenameTemplate: info =>
-      path.resolve(info.absoluteResourcePath),
+      path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
 
   resolve: {
@@ -82,7 +83,7 @@ const config = {
               {
                 targets: {
                   browsers: pkg.browserslist,
-                  forceAllTransforms: true,
+                  forceAllTransforms: !isDebug, // for UglifyJS
                 },
                 modules: false,
                 useBuiltIns: false,
@@ -329,12 +330,11 @@ const clientConfig = {
           // Minimize all JavaScript output of chunks
           // https://github.com/mishoo/UglifyJS2#compressor-options
           new webpack.optimize.UglifyJsPlugin({
-            sourceMap: true,
             compress: {
-              screw_ie8: true, // React doesn't support IE8
               warnings: isVerbose,
               unused: true,
               dead_code: true,
+              screw_ie8: true,
             },
             mangle: {
               screw_ie8: true,
@@ -343,6 +343,7 @@ const clientConfig = {
               comments: false,
               screw_ie8: true,
             },
+            sourceMap: true,
           }),
         ]),
 
