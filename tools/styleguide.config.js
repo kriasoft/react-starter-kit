@@ -34,7 +34,7 @@ module.exports = {
                 {
                   targets: {
                     browsers: pkg.browserslist,
-                    uglify: true,
+                    forceAllTransforms: false,
                   },
                   modules: false,
                   useBuiltIns: false,
