@@ -9,6 +9,8 @@
 
 /* eslint-disable global-require */
 
+const pkg = require('../package.json');
+
 module.exports = () => ({
   // The list of plugins for PostCSS
   // https://github.com/postcss/postcss
@@ -27,6 +29,8 @@ module.exports = () => ({
     require('postcss-object-fit-images'),
     // Postcss cssnext
     // http://cssnext.io/
-    require('postcss-cssnext')(),
+    require('postcss-cssnext')({
+      browsers: pkg.browserslist,
+    }),
   ],
 });
