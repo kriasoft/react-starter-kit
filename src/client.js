@@ -19,8 +19,6 @@ import history from './history';
 import { updateMeta } from './DOMUtils';
 import router from './router';
 
-/* eslint-disable global-require */
-
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
 const context = {
@@ -40,8 +38,8 @@ const context = {
 };
 
 const container = document.getElementById('app');
-let appInstance;
 let currentLocation = history.location;
+let appInstance;
 
 // Switch off the native scroll restoration behavior and handle it manually
 // https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
@@ -63,6 +61,7 @@ async function onLocationChange(location, action) {
   }
   currentLocation = location;
 
+  const isInitialRender = !action;
   try {
     // Traverses the list of routes in the order they are defined until
     // it finds the first route that matches provided URL path string
@@ -83,14 +82,15 @@ async function onLocationChange(location, action) {
       return;
     }
 
-    appInstance = ReactDOM[action ? 'render' : 'hydrate'](
+    const renderReactApp = isInitialRender ? ReactDOM.hydrate : ReactDOM.render;
+    appInstance = renderReactApp(
       <App context={context}>{route.component}</App>,
       container,
       () => {
-        if (!action) {
+        if (isInitialRender) {
           const elem = document.getElementById('css');
           if (elem) elem.parentNode.removeChild(elem);
-          return; // Initial render complete
+          return;
         }
 
         document.title = route.title;
@@ -139,7 +139,7 @@ async function onLocationChange(location, action) {
     console.error(error);
 
     // Do a full page reload if error occurs during client-side navigation
-    if (action && currentLocation.key === location.key) {
+    if (!isInitialRender && currentLocation.key === location.key) {
       window.location.reload();
     }
   }
@@ -153,7 +153,7 @@ onLocationChange(currentLocation);
 // Enable Hot Module Replacement (HMR)
 if (module.hot) {
   module.hot.accept('./router', () => {
-    if (appInstance) {
+    if (appInstance && appInstance.updater.isMounted(appInstance)) {
       // Force-update the whole tree, including components that refuse to update
       deepForceUpdate(appInstance);
     }
