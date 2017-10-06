@@ -67,7 +67,10 @@ const config = {
       // Rules for JS / JSX
       {
         test: reScript,
-        include: path.resolve(__dirname, '../src'),
+        include: [
+          path.resolve(__dirname, '../src'),
+          path.resolve(__dirname, '../tools'),
+        ],
         loader: 'babel-loader',
         options: {
           // https://github.com/babel/babel-loader#options
