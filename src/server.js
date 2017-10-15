@@ -8,6 +8,7 @@
  */
 
 import path from 'path';
+import Promise from 'bluebird';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
@@ -17,7 +18,9 @@ import jwt from 'jsonwebtoken';
 import nodeFetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
+import { getDataFromTree } from 'react-apollo';
 import PrettyError from 'pretty-error';
+import createApolloClient from './core/createApolloClient';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
@@ -99,15 +102,14 @@ app.get(
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-app.use(
-  '/graphql',
-  expressGraphQL(req => ({
-    schema,
-    graphiql: __DEV__,
-    rootValue: { request: req },
-    pretty: __DEV__,
-  })),
-);
+const graphqlMiddleware = expressGraphQL(req => ({
+  schema,
+  graphiql: __DEV__,
+  rootValue: { request: req },
+  pretty: __DEV__,
+}));
+
+app.use('/graphql', graphqlMiddleware);
 
 //
 // Register server-side rendering middleware
@@ -116,10 +118,16 @@ app.get('*', async (req, res, next) => {
   try {
     const css = new Set();
 
+    const apolloClient = createApolloClient({
+      schema,
+      rootValue: { request: req },
+    });
+
     // Universal HTTP client
     const fetch = createFetch(nodeFetch, {
       baseUrl: config.api.serverUrl,
       cookie: req.headers.cookie,
+      apolloClient,
     });
 
     const initialState = {
@@ -127,8 +135,11 @@ app.get('*', async (req, res, next) => {
     };
 
     const store = configureStore(initialState, {
+      cookie: req.headers.cookie,
+      apolloClient,
       fetch,
       // I should not use `history` on server.. but how I do redirection? follow universal-router
+      history: null,
     });
 
     store.dispatch(
@@ -151,6 +162,8 @@ app.get('*', async (req, res, next) => {
       // You can access redux through react-redux connect
       store,
       storeSubscription: null,
+      // Apollo Client for use with react-apollo
+      client: apolloClient,
     };
 
     const route = await router.resolve({
@@ -165,17 +178,29 @@ app.get('*', async (req, res, next) => {
     }
 
     const data = { ...route };
-    data.children = ReactDOM.renderToString(
+
+    const rootComponent = (
       <App context={context} store={store}>
         {route.component}
-      </App>,
+      </App>
     );
+    await getDataFromTree(rootComponent);
+    // this is here because of Apollo redux APOLLO_QUERY_STOP action
+    await Promise.delay(0);
+    data.children = await ReactDOM.renderToString(rootComponent);
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
+
     data.scripts = [assets.vendor.js];
     if (route.chunks) {
       data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
     }
     data.scripts.push(assets.client.js);
+
+    // Furthermore invoked actions will be ignored, client will not receive them!
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.log('Serializing store...');
+    }
     data.app = {
       apiUrl: config.api.clientUrl,
       state: context.store.getState(),

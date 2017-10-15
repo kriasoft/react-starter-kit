@@ -16,11 +16,19 @@ import { createPath } from 'history/PathUtils';
 import App from './components/App';
 import createFetch from './createFetch';
 import configureStore from './store/configureStore';
-import history from './history';
 import { updateMeta } from './DOMUtils';
+import history from './history';
+import createApolloClient from './core/createApolloClient';
 import router from './router';
 
+const apolloClient = createApolloClient();
+
 /* eslint-disable global-require */
+
+// Universal HTTP client
+const fetch = createFetch(self.fetch, {
+  baseUrl: window.App.apiUrl,
+});
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
@@ -34,13 +42,12 @@ const context = {
       removeCss.forEach(f => f());
     };
   },
-  // Universal HTTP client
-  fetch: createFetch(self.fetch, {
-    baseUrl: window.App.apiUrl,
-  }),
+  // For react-apollo
+  client: apolloClient,
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
-  store: configureStore(window.App.state, { history }),
+  store: configureStore(window.App.state, { apolloClient, fetch, history }),
+  fetch,
   storeSubscription: null,
 };
 
