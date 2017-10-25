@@ -106,13 +106,13 @@ const config = {
           plugins: [
             // Treat React JSX elements as value types and hoist them to the highest scope
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-constant-elements
-            ...(isDebug ? ['transform-react-constant-elements'] : []),
+            ...(isDebug ? [] : ['transform-react-constant-elements']),
             // Replaces the React.createElement function with one that is more optimized for production
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-inline-elements
-            ...(isDebug ? ['transform-react-inline-elements'] : []),
+            ...(isDebug ? [] : ['transform-react-inline-elements']),
             // Remove unnecessary React propTypes from the production build
             // https://github.com/oliviertassinari/babel-plugin-transform-react-remove-prop-types
-            ...(isDebug ? ['transform-react-remove-prop-types'] : []),
+            ...(isDebug ? [] : ['transform-react-remove-prop-types']),
           ],
         },
       },
