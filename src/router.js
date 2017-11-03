@@ -20,6 +20,6 @@ export default new UniversalRouter(routes, {
     if (typeof context.route.action === 'function') {
       return context.route.action(context, params);
     }
-    return null;
+    return undefined;
   },
 });

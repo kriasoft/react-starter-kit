@@ -93,25 +93,25 @@ class Login extends React.Component {
             <div className={s.formGroup}>
               <label className={s.label} htmlFor="usernameOrEmail">
                 Username or email address:
+                <input
+                  className={s.input}
+                  id="usernameOrEmail"
+                  type="text"
+                  name="usernameOrEmail"
+                  autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+                />
               </label>
-              <input
-                className={s.input}
-                id="usernameOrEmail"
-                type="text"
-                name="usernameOrEmail"
-                autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-              />
             </div>
             <div className={s.formGroup}>
               <label className={s.label} htmlFor="password">
                 Password:
+                <input
+                  className={s.input}
+                  id="password"
+                  type="password"
+                  name="password"
+                />
               </label>
-              <input
-                className={s.input}
-                id="password"
-                type="password"
-                name="password"
-              />
             </div>
             <div className={s.formGroup}>
               <button className={s.button} type="submit">
