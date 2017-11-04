@@ -1,4 +1,4 @@
-/**
+  /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
  * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
@@ -14,22 +14,18 @@ import s from './Feedback.css';
 class Feedback extends React.Component {
   render() {
     return (
-      <div className={s.root}>
-        <div className={s.container}>
-          <a
-            className={s.link}
-            href="https://gitter.im/kriasoft/react-starter-kit"
-          >
+      <div className="ui segment center aligned">
+        <div className="ui green message">
+          <a href="https://gitter.im/kriasoft/react-starter-kit">
             Ask a question
           </a>
-          <span className={s.spacer}>|</span>
-          <a
-            className={s.link}
-            href="https://github.com/kriasoft/react-starter-kit/issues/new"
-          >
+        </div>
+        <div className="ui orange message">
+          <a href="https://github.com/kriasoft/react-starter-kit/issues/new">
             Report an issue
           </a>
         </div>
+        
       </div>
     );
   }

@@ -18,24 +18,28 @@ import logoUrl2x from './logo-small@2x.png';
 class Header extends React.Component {
   render() {
     return (
-      <div className={s.root}>
-        <div className={s.container}>
-          <Navigation />
-          <Link className={s.brand} to="/">
-            <img
-              src={logoUrl}
-              srcSet={`${logoUrl2x} 2x`}
-              width="38"
-              height="38"
-              alt="React"
-            />
-            <span className={s.brandTxt}>Your Company</span>
-          </Link>
-          <div className={s.banner}>
-            <h1 className={s.bannerTitle}>React</h1>
-            <p className={s.bannerDesc}>Complex web apps made easy</p>
+      <div className="ui black inverted segment">
+        <div className="ui grid">
+          <div className="row">
+            
+            <div className="eight wide column">
+              <Link className="image" to="/">
+              <img
+                src={logoUrl}
+                srcSet={`${logoUrl2x} 2x`}
+                width="38"
+                height="38"
+                alt="React"
+              />
+              </Link>
+              <i className="margin"></i>
+              <span className="ui blue inverted header">Your Company</span>
+            </div>
+            <Navigation />
           </div>
         </div>
+        <h2 className="ui center aligned blue inverted header">React</h2>
+        <h5 className="ui center aligned white inverted header">Complex web apps made easy</h5>
       </div>
     );
   }

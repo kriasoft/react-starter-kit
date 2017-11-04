@@ -12,8 +12,11 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 // external-global styles must be imported in your JS.
-import normalizeCss from 'normalize.css';
-import s from './Layout.css';
+import layoutCss from './Layout.css';
+// Add semantic-ui minified styles
+// import semanticCss from '../../semantic/public/semantic.min.css';
+// import semanticRTLCss from '../../semantic/public/semantic.rtl.min.css';/* replace it with above file if you are using an rtl language. */
+//
 import Header from '../Header';
 import Feedback from '../Feedback';
 import Footer from '../Footer';
@@ -25,7 +28,7 @@ class Layout extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="ui fluid container">
         <Header />
         {this.props.children}
         <Feedback />
@@ -35,4 +38,4 @@ class Layout extends React.Component {
   }
 }
 
-export default withStyles(normalizeCss, s)(Layout);
+export default withStyles(layoutCss/*, semanticRTLCss*/)(Layout);
