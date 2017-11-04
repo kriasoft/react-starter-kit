@@ -12,7 +12,7 @@ import Layout from '../../components/Layout';
 import Admin from './Admin';
 
 const title = 'Admin Page';
-const isAdmin = false;
+const isAdmin = true;
 
 function action() {
   if (!isAdmin) {

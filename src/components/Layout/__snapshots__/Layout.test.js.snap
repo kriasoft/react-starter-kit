@@ -1,112 +1,135 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Layout renders children correctly 1`] = `
-<div>
+<div
+  className="ui fluid container"
+>
   <div
-    className="root"
+    className="ui black inverted segment"
   >
     <div
-      className="container"
+      className="ui grid"
     >
       <div
-        className="root"
-        role="navigation"
+        className="row"
       >
-        <a
-          className="link"
-          href="/about"
-          onClick={[Function]}
+        <div
+          className="eight wide column"
         >
-          About
-        </a>
-        <a
-          className="link"
-          href="/contact"
-          onClick={[Function]}
+          <a
+            className="image"
+            href="/"
+            onClick={[Function]}
+          >
+            <img
+              alt="React"
+              height="35"
+              src="#"
+              width="35"
+            />
+          </a>
+          <i
+            className="margin"
+          />
+          <span
+            className="ui blue inverted header"
+          >
+            Your Company
+          </span>
+        </div>
+        <div
+          className="eight wide column right aligned text menu"
+          role="navigation"
         >
-          Contact
-        </a>
-        <span
-          className="spacer"
-        >
-           | 
-        </span>
-        <a
-          className="link"
-          href="/login"
-          onClick={[Function]}
-        >
-          Log in
-        </a>
-        <span
-          className="spacer"
-        >
-          or
-        </span>
-        <a
-          className="link highlight"
-          href="/register"
-          onClick={[Function]}
-        >
-          Sign up
-        </a>
-      </div>
-      <a
-        className="brand"
-        href="/"
-        onClick={[Function]}
-      >
-        <img
-          alt="React"
-          height="38"
-          src="logo-small.png"
-          srcSet="logo-small@2x.png 2x"
-          width="38"
-        />
-        <span
-          className="brandTxt"
-        >
-          Your Company
-        </span>
-      </a>
-      <div
-        className="banner"
-      >
-        <h1
-          className="bannerTitle"
-        >
-          React
-        </h1>
-        <p
-          className="bannerDesc"
-        >
-          Complex web apps made easy
-        </p>
+          <div
+            className="ui secondary inverted horizontal compact pointing menu"
+          >
+            <a
+              className="active item"
+              href="/about"
+              onClick={[Function]}
+            >
+              About
+            </a>
+            <a
+              className="item"
+              href="/contact"
+              onClick={[Function]}
+            >
+              Contact
+            </a>
+          </div>
+          <div
+            className="ui buttons"
+          >
+            <a
+              href="/login"
+              onClick={[Function]}
+            >
+              <div
+                className="ui vertical inverted basic button"
+              >
+                Login
+              </div>
+            </a>
+            <a
+              href="/register"
+              onClick={[Function]}
+              style={
+                Object {
+                  "marginLeft": "4px",
+                }
+              }
+            >
+              <div
+                className="ui vertical inverted green animated button"
+              >
+                <div
+                  className="visible content"
+                >
+                  Sign up
+                </div>
+                <div
+                  className="hidden content"
+                >
+                  For Free!
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
+    <h2
+      className="ui center aligned blue inverted header"
+    >
+      React
+    </h2>
+    <h5
+      className="ui center aligned white inverted header"
+    >
+      Complex web apps made easy
+    </h5>
   </div>
   <div
     className="child"
   />
   <div
-    className="root"
+    className="ui segment center aligned"
   >
     <div
-      className="container"
+      className="ui green message"
     >
       <a
-        className="link"
         href="https://gitter.im/kriasoft/react-starter-kit"
       >
         Ask a question
       </a>
-      <span
-        className="spacer"
-      >
-        |
-      </span>
+    </div>
+    <div
+      className="ui orange message"
+    >
       <a
-        className="link"
         href="https://github.com/kriasoft/react-starter-kit/issues/new"
       >
         Report an issue

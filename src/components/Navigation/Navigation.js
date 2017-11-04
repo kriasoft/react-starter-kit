@@ -16,21 +16,36 @@ import Link from '../Link';
 class Navigation extends React.Component {
   render() {
     return (
-      <div className={s.root} role="navigation">
-        <Link className={s.link} to="/about">
-          About
-        </Link>
-        <Link className={s.link} to="/contact">
-          Contact
-        </Link>
-        <span className={s.spacer}> | </span>
-        <Link className={s.link} to="/login">
-          Log in
-        </Link>
-        <span className={s.spacer}>or</span>
-        <Link className={cx(s.link, s.highlight)} to="/register">
-          Sign up
-        </Link>
+      <div className="eight wide column right aligned text menu" role="navigation">
+        <div className="ui secondary inverted horizontal compact pointing menu">
+          <Link className="active item" to="/about">
+            About
+          </Link>
+          <Link className="item" to="/contact">
+            Contact
+          </Link>
+        </div>
+        
+        
+        <div className="ui buttons">
+          <Link to="/login">
+              <div className="ui vertical inverted basic button">
+                  Login
+              </div>
+          </Link>
+
+          <Link to="/register" style={{marginLeft: "4px"}}>
+              <div className="ui vertical inverted green animated button">
+                <div className="visible content">
+                    Sign up
+                </div>
+                <div className="hidden content">
+                  For Free!
+                </div>
+              </div>
+          </Link> 
+        </div>
+
       </div>
     );
   }
