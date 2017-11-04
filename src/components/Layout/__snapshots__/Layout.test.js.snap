@@ -1,30 +1,201 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Layout renders children correctly 1`] = `
-<div id="app">
-   <div class="ui fluid container">
-      <div class="Header-root">
-         <div class="Header-container">
-            <div class="Navigation-root"><a href="/about" class="Navigation-link-Ntl35">About</a><a href="/contact" class="Navigation-link-Ntl35">Contact</a><span class="Navigation-spacer-3vZVG"> | </span><a href="/login" class="Navigation-link-Ntl35">Log in</a><span class="Navigation-spacer-3vZVG">or</span><a href="/register" class="Navigation-link-Ntl35 Navigation-highlight-2UNlq">Sign up</a></div>
-            <a href="/" class="Header-brand-2oS_y"><img src="/assets/src/components/Header/logo-small.png?2f751285" srcset="/assets/src/components/Header/logo-small@2x.png?8844262b 2x" width="38" height="38" alt="React"/><span class="Header-brandTxt-230aH">Your Company</span></a>
-            <div class="Header-banner-2AXOj">
-               <h1 class="Header-bannerTitle-3dmwX">React</h1>
-               <p class="Header-bannerDesc-I2eY9">Complex web apps made easy</p>
-            </div>
-         </div>
+<div
+  className="ui fluid container"
+>
+  <div
+    className="ui black inverted segment"
+  >
+    <div
+      className="ui grid"
+    >
+      <div
+        className="row"
+      >
+        <div
+          className="eight wide column"
+        >
+          <a
+            className="image"
+            href="/"
+            onClick={[Function]}
+          >
+            <img
+              alt="React"
+              height="35"
+              src="#"
+              width="35"
+            />
+          </a>
+          <i
+            className="margin"
+          />
+          <span
+            className="ui blue inverted header"
+          >
+            Your Company
+          </span>
+        </div>
+        <div
+          className="eight wide column right aligned text menu"
+          role="navigation"
+        >
+          <div
+            className="ui secondary inverted horizontal compact pointing menu"
+          >
+            <a
+              className="active item"
+              href="/about"
+              onClick={[Function]}
+            >
+              About
+            </a>
+            <a
+              className="item"
+              href="/contact"
+              onClick={[Function]}
+            >
+              Contact
+            </a>
+          </div>
+          <div
+            className="ui buttons"
+          >
+            <a
+              href="/login"
+              onClick={[Function]}
+            >
+              <div
+                className="ui vertical inverted basic button"
+              >
+                Login
+              </div>
+            </a>
+            <a
+              href="/register"
+              onClick={[Function]}
+              style={
+                Object {
+                  "marginLeft": "4px",
+                }
+              }
+            >
+              <div
+                className="ui vertical inverted green animated button"
+              >
+                <div
+                  className="visible content"
+                >
+                  Sign up
+                </div>
+                <div
+                  className="hidden content"
+                >
+                  For Free!
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="Admin-root-KbbnZ">
-         <div class="Admin-container-YgHbk">
-            <h1>Admin Page</h1>
-            <p>...</p>
-         </div>
-      </div>
-      <div class="Feedback-root-1QFug">
-         <div class="Feedback-container-1aTkE"><a class="Feedback-link-2iH7A" href="https://gitter.im/kriasoft/react-starter-kit">Ask a question</a><span class="Feedback-spacer-3GZrp">|</span><a class="Feedback-link-2iH7A" href="https://github.com/kriasoft/react-starter-kit/issues/new">Report an issue</a></div>
-      </div>
-      <div class="Footer-root-1UUMy">
-         <div class="Footer-container-3dfAC"><span class="Footer-text-3ReUN">© Your Company</span><span class="Footer-spacer-297xE">·</span><a href="/" class="Footer-link-3qHjF">Home</a><span class="Footer-spacer-297xE">·</span><a href="/admin" class="Footer-link-3qHjF">Admin</a><span class="Footer-spacer-297xE">·</span><a href="/privacy" class="Footer-link-3qHjF">Privacy</a><span class="Footer-spacer-297xE">·</span><a href="/not-found" class="Footer-link-3qHjF">Not Found</a></div>
-      </div>
-   </div>
+    </div>
+    <h2
+      className="ui center aligned blue inverted header"
+    >
+      React
+    </h2>
+    <h5
+      className="ui center aligned white inverted header"
+    >
+      Complex web apps made easy
+    </h5>
+  </div>
+  <div
+    className="child"
+  />
+  <div
+    className="ui segment center aligned"
+  >
+    <div
+      className="ui green message"
+    >
+      <a
+        href="https://gitter.im/kriasoft/react-starter-kit"
+      >
+        Ask a question
+      </a>
+    </div>
+    <div
+      className="ui orange message"
+    >
+      <a
+        href="https://github.com/kriasoft/react-starter-kit/issues/new"
+      >
+        Report an issue
+      </a>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <span
+        className="text"
+      >
+        © Your Company
+      </span>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/"
+        onClick={[Function]}
+      >
+        Home
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/admin"
+        onClick={[Function]}
+      >
+        Admin
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/privacy"
+        onClick={[Function]}
+      >
+        Privacy
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/not-found"
+        onClick={[Function]}
+      >
+        Not Found
+      </a>
+    </div>
+  </div>
 </div>
 `;

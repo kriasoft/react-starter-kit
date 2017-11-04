@@ -10,8 +10,8 @@
 import React from 'react';
 import Link from '../Link';
 import Navigation from '../Navigation';
-import logoUrl from './logo-small.png';
-import logoUrl2x from './logo-small@2x.png';
+// import logoUrl from './logo-small.png';
+// import logoUrl2x from './logo-small@2x.png';
 
 class Header extends React.Component {
   render() {
@@ -21,13 +21,7 @@ class Header extends React.Component {
           <div className="row">
             <div className="eight wide column">
               <Link className="image" to="/">
-                <img
-                  src={logoUrl}
-                  srcSet={`${logoUrl2x} 2x`}
-                  width="35"
-                  height="35"
-                  alt="React"
-                />
+                <img src="#" width="35" height="35" alt="React" />
               </Link>
               <i className="margin" />
               <span className="ui blue inverted header">Your Company</span>
