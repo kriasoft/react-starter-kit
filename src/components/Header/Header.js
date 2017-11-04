@@ -8,8 +8,6 @@
  */
 
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Header.css';
 import Link from '../Link';
 import Navigation from '../Navigation';
 import logoUrl from './logo-small.png';
@@ -21,28 +19,29 @@ class Header extends React.Component {
       <div className="ui black inverted segment">
         <div className="ui grid">
           <div className="row">
-            
             <div className="eight wide column">
               <Link className="image" to="/">
-              <img
-                src={logoUrl}
-                srcSet={`${logoUrl2x} 2x`}
-                width="38"
-                height="38"
-                alt="React"
-              />
+                <img
+                  src={logoUrl}
+                  srcSet={`${logoUrl2x} 2x`}
+                  width="35"
+                  height="35"
+                  alt="React"
+                />
               </Link>
-              <i className="margin"></i>
+              <i className="margin" />
               <span className="ui blue inverted header">Your Company</span>
             </div>
             <Navigation />
           </div>
         </div>
         <h2 className="ui center aligned blue inverted header">React</h2>
-        <h5 className="ui center aligned white inverted header">Complex web apps made easy</h5>
+        <h5 className="ui center aligned white inverted header">
+          Complex web apps made easy
+        </h5>
       </div>
     );
   }
 }
 
-export default withStyles(s)(Header);
+export default Header;
