@@ -14,7 +14,6 @@
 *******************************/
 
 @type    : 'module';
-
 @element : 'embed';
 
 @import (multiple) '../../theme.config';
@@ -86,7 +85,6 @@
   height: 100%;
   z-index: 2;
 }
-
 .ui.embed > .icon:after {
   position: absolute;
   top: 0%;
@@ -99,13 +97,13 @@
   opacity: @placeholderBackgroundOpacity;
   transition: @placeholderBackgroundTransition;
 }
-
 .ui.embed > .icon:before {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 4;
   transform: translateX(-50%) translateY(-50%);
+
   color: @iconColor;
   font-size: @iconSize;
   text-shadow: @iconShadow;
@@ -125,7 +123,6 @@
   background: @hoverPlaceholderBackground;
   opacity: @hoverPlaceholderBackgroundOpacity;
 }
-
 .ui.embed .icon:hover:before {
   color: @hoverIconColor;
 }
@@ -138,7 +135,6 @@
 .ui.active.embed > .placeholder {
   display: none;
 }
-
 .ui.active.embed > .embed {
   display: block;
 }

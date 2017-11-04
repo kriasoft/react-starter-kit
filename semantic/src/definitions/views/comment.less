@@ -14,7 +14,6 @@
 *******************************/
 
 @type    : 'view';
-
 @element : 'comment';
 
 @import (multiple) '../../theme.config';
@@ -36,7 +35,6 @@
 .ui.comments:first-child {
   margin-top: 0em;
 }
-
 .ui.comments:last-child {
   margin-bottom: 0em;
 }
@@ -54,7 +52,6 @@
   border-top: @commentDivider;
   line-height: @commentLineHeight;
 }
-
 .ui.comments .comment:first-child {
   margin-top: @firstCommentMargin;
   padding-top: @firstCommentPadding;
@@ -69,13 +66,11 @@
   margin: @nestedCommentsMargin;
   padding: @nestedCommentsPadding;
 }
-
 .ui.comments .comment .comments:before{
   position: absolute;
   top: 0px;
   left: 0px;
 }
-
 .ui.comments .comment .comments .comment {
   border: @nestedCommentBorder;
   border-top: @nestedCommentDivider;
@@ -93,7 +88,6 @@
   float: @avatarFloat;
   margin: @avatarMargin;
 }
-
 .ui.comments .comment img.avatar,
 .ui.comments .comment .avatar img {
   display: block;
@@ -110,7 +104,6 @@
 .ui.comments .comment > .content {
   display: block;
 }
-
 /* If there is an avatar move content over */
 .ui.comments .comment > .avatar ~ .content {
   margin-left: @contentMargin;
@@ -125,11 +118,9 @@
   color: @authorColor;
   font-weight: @authorFontWeight;
 }
-
 .ui.comments .comment a.author {
   cursor: pointer;
 }
-
 .ui.comments .comment a.author:hover {
   color: @authorHoverColor;
 }
@@ -144,12 +135,10 @@
   color: @metadataColor;
   font-size: @metadataFontSize;
 }
-
 .ui.comments .comment .metadata > * {
   display: inline-block;
   margin: 0em @metadataContentSpacing 0em 0em;
 }
-
 .ui.comments .comment .metadata > :last-child {
   margin-right: 0em;
 }
@@ -174,18 +163,15 @@
 .ui.comments .comment .actions {
   font-size: @actionFontSize;
 }
-
 .ui.comments .comment .actions a {
   cursor: pointer;
   display: inline-block;
   margin: 0em @actionContentDistance 0em 0em;
   color: @actionLinkColor;
 }
-
 .ui.comments .comment .actions a:last-child {
   margin-right: 0em;
 }
-
 .ui.comments .comment .actions a.active,
 .ui.comments .comment .actions a:hover {
   color: @actionLinkHoverColor;
@@ -198,12 +184,10 @@
 .ui.comments > .reply.form {
   margin-top: @replyDistance;
 }
-
 .ui.comments .comment .reply.form {
   width: 100%;
   margin-top: @commentReplyDistance;
 }
-
 .ui.comments .reply.form textarea {
   font-size: @replyFontSize;
   height: @replyHeight;
@@ -247,7 +231,6 @@
   transition: @minimalTransition;
   transition-delay: @minimalTransitionDelay;
 }
-
 .ui.minimal.comments .comment > .content:hover > .actions {
   opacity: 1;
 }
@@ -260,31 +243,24 @@
 .ui.mini.comments {
   font-size: @mini;
 }
-
 .ui.tiny.comments {
   font-size: @tiny;
 }
-
 .ui.small.comments {
   font-size: @small;
 }
-
 .ui.comments {
   font-size: @medium;
 }
-
 .ui.large.comments {
   font-size: @large;
 }
-
 .ui.big.comments {
   font-size: @big;
 }
-
 .ui.huge.comments {
   font-size: @huge;
 }
-
 .ui.massive.comments {
   font-size: @massive;
 }

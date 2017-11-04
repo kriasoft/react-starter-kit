@@ -13,7 +13,6 @@
 *******************************/
 
 @type    : 'view';
-
 @element : 'feed';
 
 @import (multiple) '../../theme.config';
@@ -25,11 +24,9 @@
 .ui.feed {
   margin: @margin;
 }
-
 .ui.feed:first-child {
   margin-top: 0em;
 }
-
 .ui.feed:last-child {
   margin-bottom: 0em;
 }
@@ -49,12 +46,10 @@
   background: @eventBackground;
   border-top: @eventDivider;
 }
-
 .ui.feed > .event:first-child {
   border-top: 0px;
   padding-top: 0em;
 }
-
 .ui.feed > .event:last-child {
   padding-bottom: 0em;
 }
@@ -68,7 +63,6 @@
   align-self: @labelAlignSelf;
   text-align: @labelTextAlign;
 }
-
 .ui.feed > .event > .label .icon {
   opacity: @iconLabelOpacity;
   font-size: @iconLabelSize;
@@ -79,13 +73,11 @@
   border-radius: @iconLabelBorderRadius;
   color: @iconLabelColor;
 }
-
 .ui.feed > .event > .label img {
   width: @imageLabelWidth;
   height: @imageLabelHeight;
   border-radius: @imageLabelBorderRadius;
 }
-
 .ui.feed > .event > .label + .content {
   margin: @labeledContentMargin;
 }
@@ -102,7 +94,6 @@
   text-align: @contentTextAlign;
   word-wrap: @contentWordWrap;
 }
-
 .ui.feed > .event:last-child > .content {
   padding-bottom: @lastLabeledContentPadding;
 }
@@ -146,7 +137,6 @@
   border-radius: @summaryImageBorderRadius;
   vertical-align: @summaryImageVerticalAlign;
 }
-
 /*--------------
       User
 ---------------*/
@@ -157,14 +147,12 @@
   margin-right: @userDistance;
   vertical-align: baseline;
 }
-
 .ui.feed > .event > .content .user img {
   margin: @userImageMargin;
   width: @userImageWidth;
   height: @userImageHeight;
   vertical-align: @userImageVerticalAlign;
 }
-
 /*--------------
    Inline Date
 ---------------*/
@@ -228,7 +216,6 @@
   position: relative;
   margin-left: @metadataElementSpacing;
 }
-
 .ui.feed > .event > .content .meta > *:after {
   content: @metadataDivider;
   color: @metadataDividerColor;
@@ -243,11 +230,9 @@
   color: @likeColor;
   transition: @likeTransition;
 }
-
 .ui.feed > .event > .content .meta .like:hover .icon {
   color: @likeHoverColor;
 }
-
 .ui.feed > .event > .content .meta .active.like .icon {
   color: @likeActiveColor;
 }
@@ -256,7 +241,6 @@
 .ui.feed > .event > .content .meta > :first-child {
   margin-left: 0em;
 }
-
 .ui.feed > .event > .content .meta > :first-child::after {
   display: none;
 }
@@ -269,7 +253,6 @@
   color: @metadataActionColor;
   transition: @metadataActionTransition;
 }
-
 .ui.feed > .event > .content .meta a:hover,
 .ui.feed > .event > .content .meta a:hover .icon,
 .ui.feed > .event > .content .meta > .icon:hover {
@@ -285,11 +268,9 @@
 .ui.small.feed {
   font-size: @small;
 }
-
 .ui.feed {
   font-size: @medium;
 }
-
 .ui.large.feed {
   font-size: @large;
 }

@@ -14,7 +14,6 @@
 *******************************/
 
 @type    : 'module';
-
 @element : 'search';
 
 @import (multiple) '../../theme.config';
@@ -32,12 +31,15 @@
   outline: none;
   -webkit-appearance: none;
   -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+
   text-shadow: none;
   font-style: normal;
   font-weight: normal;
+
   line-height: @promptLineHeight;
   padding: @promptPadding;
   font-size: @promptFontSize;
+
   background: @promptBackground;
   border: @promptBorder;
   color: @promptColor;
@@ -64,24 +66,26 @@
 
 .ui.search > .results {
   display: none;
+
   position: absolute;
   top: 100%;
   left: 0%;
   transform-origin: center top;
   white-space: normal;
+
   background: @resultsBackground;
+
   margin-top: @resultsDistance;
   width: @resultsWidth;
+
   border-radius: @resultsBorderRadius;
   box-shadow: @resultsBoxShadow;
   border: @resultsBorder;
   z-index: @resultsZIndex;
 }
-
 .ui.search > .results > :first-child {
   border-radius: @resultsBorderRadius @resultsBorderRadius 0em 0em;
 }
-
 .ui.search > .results > :last-child {
   border-radius: 0em 0em @resultsBorderRadius @resultsBorderRadius;
 }
@@ -100,7 +104,6 @@
   line-height: @resultLineHeight;
   border-bottom: @resultDivider;
 }
-
 .ui.search > .results .result:last-child {
   border-bottom: @resultLastDivider !important;
 }
@@ -114,7 +117,6 @@
   height: @resultImageHeight;
   border-radius: @resultImageBorderRadius;
 }
-
 .ui.search > .results .result .image img {
   display: block;
   width: auto;
@@ -136,13 +138,11 @@
   font-size: @resultTitleFontSize;
   color: @resultTitleColor;
 }
-
 .ui.search > .results .result .description {
   margin-top: @resultDescriptionDistance;
   font-size: @resultDescriptionFontSize;
   color: @resultDescriptionColor;
 }
-
 .ui.search > .results .result .price {
   float: @resultPriceFloat;
   color: @resultPriceColor;
@@ -155,14 +155,12 @@
 .ui.search > .results > .message {
   padding: @messageVerticalPadding @messageHorizontalPadding;
 }
-
 .ui.search > .results > .message .header {
   font-family: @headerFont;
   font-size: @messageHeaderFontSize;
   font-weight: @messageHeaderFontWeight;
   color: @messageHeaderColor;
 }
-
 .ui.search > .results > .message .description {
   margin-top: @messageDescriptionDistance;
   font-size: @messageDescriptionFontSize;
@@ -204,27 +202,33 @@
   content: '';
   top: 50%;
   left: 50%;
+
   margin: @loaderMargin;
   width: @loaderSize;
   height: @loaderSize;
+
   border-radius: @circularRadius;
   border: @loaderLineWidth solid @loaderFillColor;
 }
-
 .ui.loading.search .input > i.icon:after {
   position: absolute;
   content: '';
   top: 50%;
   left: 50%;
+
   margin: @loaderMargin;
   width: @loaderSize;
   height: @loaderSize;
+
   animation: button-spin @loaderSpeed linear;
   animation-iteration-count: infinite;
+
   border-radius: @circularRadius;
+
   border-color: @loaderLineColor transparent transparent;
   border-style: solid;
   border-width: @loaderLineWidth;
+
   box-shadow: 0px 0px 0px 1px transparent;
 }
 
@@ -237,7 +241,6 @@
 .ui.category.search > .results .category .result:hover {
   background: @resultHoverBackground;
 }
-
 .ui.search .action:hover {
   background: @actionHoverBackground;
 }
@@ -249,7 +252,6 @@
 .ui.category.search > .results .category.active {
   background: @categoryActiveBackground;
 }
-
 .ui.category.search > .results .category.active > .name {
   color: @categoryNameActiveColor;
 }
@@ -261,11 +263,9 @@
   background: @resultActiveBackground;
   box-shadow: @resultActiveBoxShadow;
 }
-
 .ui.search > .results .result.active .title {
   color: @resultActiveTitleColor;
 }
-
 .ui.search > .results .result.active .description {
   color: @resultActiveDescriptionColor;
 }
@@ -293,17 +293,14 @@
   right: @selectionCloseRight;
   transition: @selectionCloseTransition;
 }
-
 .ui.search.selection > .icon.input > .active.remove.icon {
   cursor: pointer;
   opacity: @selectionCloseIconOpacity;
   pointer-events: auto;
 }
-
 .ui.search.selection > .icon.input:not([class*="left icon"]) > .icon ~ .remove.icon {
   right: @selectionCloseIconInputRight;
 }
-
 .ui.search.selection > .icon.input > .remove.icon:hover {
   opacity: @selectionCloseIconHoverOpacity;
   color: @selectionCloseIconHoverColor;
@@ -335,7 +332,6 @@
 .ui.category.search > .results .category:first-child .name + .result {
   border-radius: 0em @resultsBorderRadius 0em 0em;
 }
-
 .ui.category.search > .results .category:last-child .result:last-child {
   border-radius: 0em 0em @resultsBorderRadius 0em;
 }
@@ -349,7 +345,6 @@
   transition: @categoryResultTransition;
   padding: @categoryResultPadding;
 }
-
 .ui.category.search > .results .category:last-child .result:last-child {
   border-bottom: @categoryResultLastDivider;
 }
@@ -400,27 +395,21 @@
 .ui.mini.search {
   font-size: @relativeMini;
 }
-
 .ui.small.search {
   font-size: @relativeSmall;
 }
-
 .ui.search {
   font-size: @relativeMedium;
 }
-
 .ui.large.search {
   font-size: @relativeLarge;
 }
-
 .ui.big.search {
   font-size: @relativeBig;
 }
-
 .ui.huge.search {
   font-size: @relativeHuge;
 }
-
 .ui.massive.search {
   font-size: @relativeMassive;
 }

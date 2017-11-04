@@ -14,7 +14,6 @@
 *******************************/
 
 @type    : 'view';
-
 @element : 'ad';
 
 @import (multiple) '../../theme.config';
@@ -65,7 +64,6 @@
   width: 336px;
   height: 280px;
 }
-
 /* Half Page */
 .ui[class*="half page"].ad {
   width: 300px;
@@ -247,7 +245,6 @@
   position: relative;
   background: @testBackground;
 }
-
 .ui.test.ad:after {
   position: absolute;
   top: 50%;
@@ -255,12 +252,12 @@
   width: 100%;
   text-align: center;
   transform: translateX(-50%) translateY(-50%);
+
   content: @testText;
   color: @testColor;
   font-size: @testFontSize;
   font-weight: @testFontWeight;
 }
-
 .ui.mobile.test.ad:after {
   font-size: @testMobileFontSize;
 }

@@ -13,7 +13,6 @@
 *******************************/
 
 @type    : 'view';
-
 @element : 'item';
 
 @import (multiple) '../../theme.config';
@@ -33,13 +32,13 @@
   min-height: @minHeight;
   background: @background;
   padding: @padding;
+
   border: @border;
   border-radius: @borderRadius;
   box-shadow: @boxShadow;
   transition: @transition;
   z-index: @zIndex;
 }
-
 .ui.items > .item a {
   cursor: pointer;
 }
@@ -55,7 +54,6 @@
 .ui.items:first-child {
   margin-top: 0em !important;
 }
-
 .ui.items:last-child {
   margin-bottom: 0em !important;
 }
@@ -72,11 +70,9 @@
   overflow: hidden;
   visibility: hidden;
 }
-
 .ui.items > .item:first-child {
   margin-top: 0em;
 }
-
 .ui.items > .item:last-child {
   margin-bottom: 0em;
 }
@@ -97,7 +93,6 @@
   max-height: @imageMaxHeight;
   align-self: @imageVerticalAlign;
 }
-
 .ui.items > .item > .image > img {
   display: block;
   width: 100%;
@@ -126,7 +121,6 @@
   border: @contentBorder;
   border-radius: @contentBorderRadius;
 }
-
 .ui.items > .item > .content:after {
   display: block;
   content: ' ';
@@ -152,7 +146,6 @@
   font-weight: @headerFontWeight;
   color: @headerColor;
 }
-
 /* Default Header Size */
 .ui.items > .item > .content > .header:not(.ui) {
   font-size: @headerFontSize;
@@ -178,7 +171,6 @@
   align-self: @contentImageVerticalAlign;
   width: @contentImageWidth;
 }
-
 .ui.items > .item img.avatar,
 .ui.items > .item .avatar img {
   width: @avatarSize;
@@ -206,7 +198,6 @@
 .ui.items > .item > .content p {
   margin: 0em 0em @paragraphDistance;
 }
-
 .ui.items > .item > .content p:last-child {
   margin-bottom: 0em;
 }
@@ -221,11 +212,9 @@
   line-height: @metaLineHeight;
   color: @metaColor;
 }
-
 .ui.items > .item .meta * {
   margin-right: @metaSpacing;
 }
-
 .ui.items > .item .meta :last-child {
   margin-right: 0em;
 }
@@ -244,7 +233,6 @@
   color: @contentLinkColor;
   transition: @contentLinkTransition;
 }
-
 .ui.items > .item > .content a:not(.ui):hover {
   color: @contentLinkHoverColor;
 }
@@ -253,7 +241,6 @@
 .ui.items > .item > .content > a.header {
   color: @headerLinkColor;
 }
-
 .ui.items > .item > .content > a.header:hover {
   color: @headerLinkHoverColor;
 }
@@ -262,7 +249,6 @@
 .ui.items > .item .meta > a:not(.ui) {
   color: @metaLinkColor;
 }
-
 .ui.items > .item .meta > a:not(.ui):hover {
   color: @metaLinkHoverColor;
 }
@@ -281,12 +267,10 @@
   opacity: @actionOpacity;
   transition: @actionTransition;
 }
-
 .ui.items > .item > .content .favorite.icon:hover {
   opacity: @actionHoverOpacity;
   color: @favoriteColor;
 }
-
 .ui.items > .item > .content .active.favorite.icon {
   color: @favoriteActiveColor;
 }
@@ -299,12 +283,10 @@
   opacity: @actionOpacity;
   transition: @actionTransition;
 }
-
 .ui.items > .item > .content .like.icon:hover {
   opacity: @actionHoverOpacity;
   color: @likeColor;
 }
-
 .ui.items > .item > .content .active.like.icon {
   color: @likeActiveColor;
 }
@@ -327,7 +309,6 @@
   transition: @extraTransition;
   border-top: @extraDivider;
 }
-
 .ui.items > .item .extra > * {
   margin: (@extraRowSpacing / 2) @extraHorizontalSpacing (@extraRowSpacing / 2) 0em;
 }
@@ -360,11 +341,9 @@
   .ui.items > .item {
     margin: @tabletItemSpacing 0em;
   }
-
   .ui.items > .item > .image:not(.ui) {
     width: @tabletImageWidth;
   }
-
   .ui.items > .item > .image + .content {
     display: block;
     padding: 0em 0em 0em @tabletContentImageDistance;
@@ -378,20 +357,17 @@
     flex-direction: column;
     margin: @mobileItemSpacing 0em;
   }
-
   .ui.items:not(.unstackable) > .item > .image {
     display: block;
     margin-left: auto;
     margin-right: auto;
   }
-
   .ui.items:not(.unstackable) > .item > .image,
   .ui.items:not(.unstackable) > .item > .image > img {
     max-width: 100% !important;
     width: @mobileImageWidth !important;
     max-height: @mobileImageMaxHeight !important;
   }
-
   .ui.items:not(.unstackable) > .item > .image + .content {
     display: block;
     padding: @mobileContentImageDistance 0em 0em;
@@ -440,13 +416,11 @@
   margin: @dividedMargin;
   padding: @dividedPadding;
 }
-
 .ui.divided.items > .item:first-child {
   border-top: none;
   margin-top: @dividedFirstLastMargin !important;
   padding-top: @dividedFirstLastPadding !important;
 }
-
 .ui.divided.items > .item:last-child {
   margin-bottom: @dividedFirstLastMargin !important;
   padding-bottom: @dividedFirstLastPadding !important;

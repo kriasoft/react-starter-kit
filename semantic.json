@@ -4,16 +4,16 @@
     "source": {
       "config": "src/theme.config",
       "definitions": "src/definitions/",
-      "site": "build/",
+      "site": "src/site/",
       "themes": "src/themes/"
     },
     "output": {
-      "packaged": "../public/",
-      "uncompressed": "public/semantic-sourcecomponents/",
-      "compressed": "public/semantic-components/",
-      "themes": "../public/themes/"
+      "packaged": "../public/semantic",
+      "uncompressed": "../public/semantic/components/",
+      "compressed": "../public/semantic/components/",
+      "themes": "../public/semantic/themes/"
     },
-    "clean": "dist/"
+    "clean": "../public/semantic/"
   },
   "permission": false,
   "autoInstall": false,

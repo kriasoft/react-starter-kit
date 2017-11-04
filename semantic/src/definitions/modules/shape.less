@@ -15,7 +15,6 @@
 *******************************/
 
 @type    : 'module';
-
 @element : 'shape';
 
 @import (multiple) '../../theme.config';
@@ -39,6 +38,7 @@
 .ui.shape .side {
   opacity: 1;
   width: 100%;
+
   margin: @sideMargin !important;
   backface-visibility: @backfaceVisibility;
 }
@@ -58,20 +58,21 @@
 .ui.cube.shape .side {
   min-width: @cubeSize;
   height: @cubeSize;
+
   padding: @cubePadding;
+
   background-color: @cubeBackground;
   color: @cubeTextColor;
   box-shadow: @cubeBoxShadow;
 }
-
 .ui.cube.shape .side > .content {
   width: 100%;
   height: 100%;
   display: table;
+
   text-align: @cubeTextAlign;
   user-select: text;
 }
-
 .ui.cube.shape .side > .content > div {
   display: table-cell;
   vertical-align: middle;
@@ -85,11 +86,9 @@
 .ui.text.shape.animating .sides {
   position: static;
 }
-
 .ui.text.shape .side {
   white-space: nowrap;
 }
-
 .ui.text.shape .side > * {
   white-space: normal;
 }
@@ -121,7 +120,6 @@
   display: block;
   z-index: @animatingZIndex;
 }
-
 .ui.shape .hidden.side {
   opacity: @hiddenSideOpacity;
 }
@@ -134,11 +132,9 @@
 .ui.shape.animating .sides {
   position: absolute;
 }
-
 .ui.shape.animating .sides {
   transition: @transition;
 }
-
 .ui.shape.animating .side {
   transition: @sideTransition;
 }

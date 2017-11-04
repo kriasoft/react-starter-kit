@@ -13,7 +13,6 @@
 *******************************/
 
 @type    : 'view';
-
 @element : 'statistic';
 
 @import (multiple) '../../theme.config';
@@ -37,7 +36,6 @@
 .ui.statistic:first-child {
   margin-top: 0em;
 }
-
 .ui.statistic:last-child {
   margin-bottom: 0em;
 }
@@ -54,7 +52,6 @@
   align-items: flex-start;
   flex-wrap: wrap;
 }
-
 .ui.statistics > .statistic {
   display: inline-flex;
   flex: 0 1 auto;
@@ -62,7 +59,6 @@
   margin: @elementMargin;
   max-width: @elementMaxWidth;
 }
-
 .ui.statistics {
   display: flex;
   margin: @groupMargin;
@@ -81,7 +77,6 @@
 .ui.statistics:first-child {
   margin-top: 0em;
 }
-
 .ui.statistics:last-child {
   margin-bottom: 0em;
 }
@@ -161,7 +156,6 @@
   font-weight: @textValueFontWeight;
   text-align: center;
 }
-
 .ui.statistics .statistic > .text.value + .label,
 .ui.statistic > .text.value + .label {
   text-align: center;
@@ -192,7 +186,6 @@
 .ui.ten.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.ten.statistics .statistic {
   min-width: @tenColumn;
   margin: @itemMargin;
@@ -201,7 +194,6 @@
 .ui.nine.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.nine.statistics .statistic {
   min-width: @nineColumn;
   margin: @itemMargin;
@@ -210,7 +202,6 @@
 .ui.eight.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.eight.statistics .statistic {
   min-width: @eightColumn;
   margin: @itemMargin;
@@ -219,7 +210,6 @@
 .ui.seven.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.seven.statistics .statistic {
   min-width: @sevenColumn;
   margin: @itemMargin;
@@ -228,7 +218,6 @@
 .ui.six.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.six.statistics .statistic {
   min-width: @sixColumn;
   margin: @itemMargin;
@@ -237,7 +226,6 @@
 .ui.five.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.five.statistics .statistic {
   min-width: @fiveColumn;
   margin: @itemMargin;
@@ -246,7 +234,6 @@
 .ui.four.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.four.statistics .statistic {
   min-width: @fourColumn;
   margin: @itemMargin;
@@ -255,7 +242,6 @@
 .ui.three.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.three.statistics .statistic {
   min-width: @threeColumn;
   margin: @itemMargin;
@@ -264,7 +250,6 @@
 .ui.two.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.two.statistics .statistic {
   min-width: @twoColumn;
   margin: @itemMargin;
@@ -273,7 +258,6 @@
 .ui.one.statistics {
   margin: @itemGroupMargin;
 }
-
 .ui.one.statistics .statistic {
   min-width: @oneColumn;
   margin: @itemMargin;
@@ -290,13 +274,11 @@
   flex-direction: row;
   align-items: center;
 }
-
 .ui.horizontal.statistics {
   flex-direction: column;
   margin: 0em;
   max-width: none;
 }
-
 .ui.horizontal.statistics .statistic {
   flex-direction: row;
   align-items: center;
@@ -308,7 +290,6 @@
 .ui.horizontal.statistics > .statistic > .text.value {
   min-height: 0em !important;
 }
-
 .ui.horizontal.statistics .statistic > .value .icon,
 .ui.horizontal.statistic > .value .icon {
   width: @iconWidth;
@@ -319,7 +300,6 @@
   display: inline-block;
   vertical-align: middle;
 }
-
 .ui.horizontal.statistics .statistic > .label,
 .ui.horizontal.statistic > .label {
   display: inline-block;
@@ -336,67 +316,56 @@
 .ui.red.statistic > .value {
   color: @red;
 }
-
 .ui.orange.statistics .statistic > .value,
 .ui.statistics .orange.statistic > .value,
 .ui.orange.statistic > .value {
   color: @orange;
 }
-
 .ui.yellow.statistics .statistic > .value,
 .ui.statistics .yellow.statistic > .value,
 .ui.yellow.statistic > .value {
   color: @yellow;
 }
-
 .ui.olive.statistics .statistic > .value,
 .ui.statistics .olive.statistic > .value,
 .ui.olive.statistic > .value {
   color: @olive;
 }
-
 .ui.green.statistics .statistic > .value,
 .ui.statistics .green.statistic > .value,
 .ui.green.statistic > .value {
   color: @green;
 }
-
 .ui.teal.statistics .statistic > .value,
 .ui.statistics .teal.statistic > .value,
 .ui.teal.statistic > .value {
   color: @teal;
 }
-
 .ui.blue.statistics .statistic > .value,
 .ui.statistics .blue.statistic > .value,
 .ui.blue.statistic > .value {
   color: @blue;
 }
-
 .ui.violet.statistics .statistic > .value,
 .ui.statistics .violet.statistic > .value,
 .ui.violet.statistic > .value {
   color: @violet;
 }
-
 .ui.purple.statistics .statistic > .value,
 .ui.statistics .purple.statistic > .value,
 .ui.purple.statistic > .value {
   color: @purple;
 }
-
 .ui.pink.statistics .statistic > .value,
 .ui.statistics .pink.statistic > .value,
 .ui.pink.statistic > .value {
   color: @pink;
 }
-
 .ui.brown.statistics .statistic > .value,
 .ui.statistics .brown.statistic > .value,
 .ui.brown.statistic > .value {
   color: @brown;
 }
-
 .ui.grey.statistics .statistic > .value,
 .ui.statistics .grey.statistic > .value,
 .ui.grey.statistic > .value {
@@ -411,7 +380,6 @@
 .ui.inverted.statistic .value {
   color: @invertedValueColor;
 }
-
 .ui.inverted.statistics .statistic > .label,
 .ui.inverted.statistic .label {
   color: @invertedLabelColor;
@@ -422,67 +390,56 @@
 .ui.inverted.red.statistic > .value {
   color: @lightRed;
 }
-
 .ui.inverted.orange.statistics .statistic > .value,
 .ui.statistics .inverted.orange.statistic > .value,
 .ui.inverted.orange.statistic > .value {
   color: @lightOrange;
 }
-
 .ui.inverted.yellow.statistics .statistic > .value,
 .ui.statistics .inverted.yellow.statistic > .value,
 .ui.inverted.yellow.statistic > .value {
   color: @lightYellow;
 }
-
 .ui.inverted.olive.statistics .statistic > .value,
 .ui.statistics .inverted.olive.statistic > .value,
 .ui.inverted.olive.statistic > .value {
   color: @lightOlive;
 }
-
 .ui.inverted.green.statistics .statistic > .value,
 .ui.statistics .inverted.green.statistic > .value,
 .ui.inverted.green.statistic > .value {
   color: @lightGreen;
 }
-
 .ui.inverted.teal.statistics .statistic > .value,
 .ui.statistics .inverted.teal.statistic > .value,
 .ui.inverted.teal.statistic > .value {
   color: @lightTeal;
 }
-
 .ui.inverted.blue.statistics .statistic > .value,
 .ui.statistics .inverted.blue.statistic > .value,
 .ui.inverted.blue.statistic > .value {
   color: @lightBlue;
 }
-
 .ui.inverted.violet.statistics .statistic > .value,
 .ui.statistics .inverted.violet.statistic > .value,
 .ui.inverted.violet.statistic > .value {
   color: @lightViolet;
 }
-
 .ui.inverted.purple.statistics .statistic > .value,
 .ui.statistics .inverted.purple.statistic > .value,
 .ui.inverted.purple.statistic > .value {
   color: @lightPurple;
 }
-
 .ui.inverted.pink.statistics .statistic > .value,
 .ui.statistics .inverted.pink.statistic > .value,
 .ui.inverted.pink.statistic > .value {
   color: @lightPink;
 }
-
 .ui.inverted.brown.statistics .statistic > .value,
 .ui.statistics .inverted.brown.statistic > .value,
 .ui.inverted.brown.statistic > .value {
   color: @lightBrown;
 }
-
 .ui.inverted.grey.statistics .statistic > .value,
 .ui.statistics .inverted.grey.statistic > .value,
 .ui.inverted.grey.statistic > .value {
@@ -501,7 +458,6 @@
   float: right;
   margin: @rightFloatedMargin;
 }
-
 .ui.floated.statistic:last-child {
   margin-bottom: 0em;
 }
@@ -517,12 +473,10 @@
 .ui.mini.statistic > .value {
   font-size: @miniValueSize !important;
 }
-
 .ui.mini.horizontal.statistics .statistic > .value,
 .ui.mini.horizontal.statistic > .value {
   font-size: @miniHorizontalValueSize !important;
 }
-
 .ui.mini.statistics .statistic > .text.value,
 .ui.mini.statistic > .text.value {
   font-size: @miniTextValueSize !important;
@@ -534,12 +488,10 @@
 .ui.tiny.statistic > .value {
   font-size: @tinyValueSize !important;
 }
-
 .ui.tiny.horizontal.statistics .statistic > .value,
 .ui.tiny.horizontal.statistic > .value {
   font-size: @tinyHorizontalValueSize !important;
 }
-
 .ui.tiny.statistics .statistic > .text.value,
 .ui.tiny.statistic > .text.value {
   font-size: @tinyTextValueSize !important;
@@ -550,12 +502,10 @@
 .ui.small.statistic > .value {
   font-size: @smallValueSize !important;
 }
-
 .ui.small.horizontal.statistics .statistic > .value,
 .ui.small.horizontal.statistic > .value {
   font-size: @smallHorizontalValueSize !important;
 }
-
 .ui.small.statistics .statistic > .text.value,
 .ui.small.statistic > .text.value {
   font-size: @smallTextValueSize !important;
@@ -566,12 +516,10 @@
 .ui.statistic > .value {
   font-size: @valueSize !important;
 }
-
 .ui.horizontal.statistics .statistic > .value,
 .ui.horizontal.statistic > .value {
   font-size: @horizontalValueSize !important;
 }
-
 .ui.statistics .statistic > .text.value,
 .ui.statistic > .text.value {
   font-size: @textValueSize !important;
@@ -582,12 +530,10 @@
 .ui.large.statistic > .value {
   font-size: @largeValueSize !important;
 }
-
 .ui.large.horizontal.statistics .statistic > .value,
 .ui.large.horizontal.statistic > .value {
   font-size: @largeHorizontalValueSize !important;
 }
-
 .ui.large.statistics .statistic > .text.value,
 .ui.large.statistic > .text.value {
   font-size: @largeTextValueSize !important;
@@ -598,12 +544,10 @@
 .ui.huge.statistic > .value {
   font-size: @hugeValueSize !important;
 }
-
 .ui.huge.horizontal.statistics .statistic > .value,
 .ui.huge.horizontal.statistic > .value {
   font-size: @hugeHorizontalValueSize !important;
 }
-
 .ui.huge.statistics .statistic > .text.value,
 .ui.huge.statistic > .text.value {
   font-size: @hugeTextValueSize !important;
