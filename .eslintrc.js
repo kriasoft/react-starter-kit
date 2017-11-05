@@ -32,12 +32,13 @@ module.exports = {
   },
 
   rules: {
-    // Not supporting nested package.json yet
-    // https://github.com/benmosher/eslint-plugin-import/issues/458
-    'import/no-extraneous-dependencies': 'off',
+    // Forbid the use of extraneous packages
+    // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-extraneous-dependencies.md
+    'import/no-extraneous-dependencies': ['error', { packageDir: '.' }],
 
     // Recommend not to leave any console.log in your code
     // Use console.error, console.warn and console.info instead
+    // https://eslint.org/docs/rules/no-console
     'no-console': [
       'error',
       {
@@ -45,16 +46,42 @@ module.exports = {
       },
     ],
 
-    // a11y removed rule, ignore them
-    'jsx-a11y/href-no-hash': 'off',
+    // Prefer destructuring from arrays and objects
+    // http://eslint.org/docs/rules/prefer-destructuring
+    'prefer-destructuring': [
+      'error',
+      {
+        VariableDeclarator: {
+          array: false,
+          object: true,
+        },
+        AssignmentExpression: {
+          array: false,
+          object: false,
+        },
+      },
+      {
+        enforceForRenamedProperties: false,
+      },
+    ],
 
-    // https://github.com/evcohen/eslint-plugin-jsx-a11y/issues/308#issuecomment-322954274
-    'jsx-a11y/label-has-for': 'warn',
+    // Ensure <a> tags are valid
+    // https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/anchor-is-valid.md
+    'jsx-a11y/anchor-is-valid': [
+      'error',
+      {
+        components: ['Link'],
+        specialLink: ['to'],
+        aspects: ['noHref', 'invalidHref', 'preferButton'],
+      },
+    ],
 
-    // Allow js files to use jsx syntax, too
+    // Allow .js files to use JSX syntax
+    // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
     'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
 
-    // Hot module replacement does not work with stateless functional components
+    // Functional and class components are equivalent from React’s point of view
+    // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md
     'react/prefer-stateless-function': 'off',
 
     // ESLint plugin for prettier formatting

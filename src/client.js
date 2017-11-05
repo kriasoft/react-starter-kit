@@ -33,7 +33,7 @@ const context = {
     };
   },
   // Universal HTTP client
-  fetch: createFetch(self.fetch, {
+  fetch: createFetch(fetch, {
     baseUrl: window.App.apiUrl,
   }),
   // Initialize a new Redux store
