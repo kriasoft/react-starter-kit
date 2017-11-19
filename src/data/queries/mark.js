@@ -65,7 +65,13 @@ const marks = {
         },
       });
     }
-    return Mark.findAll();
+    return Mark.findAll().then(mark => {
+      const markn = mark.map(m => m.dataValues);
+      /* eslint-disable */
+      markn.forEach(m => (m.createdAt = m.createdAt.toISOString()));
+      /* eslint-enable */
+      return markn;
+    });
   },
 };
 
