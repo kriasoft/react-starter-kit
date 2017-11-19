@@ -84,6 +84,25 @@ const subscribeUser = {
   },
 };
 
+const unsubscribeUser = {
+  type: UserType,
+  args: {
+    id: {
+      description: 'id of the user',
+      type: StringType,
+    },
+    courseId: {
+      description: 'id of the course',
+      type: StringType,
+    },
+  },
+  resolve(obj, args) {
+    return User.findById(args.id).then(user =>
+      user.removeCourse(args.courseId).then(() => user),
+    );
+  },
+};
+
 const updateCourses = {
   type: CourseType,
   args: {
@@ -134,4 +153,11 @@ const updateCourses = {
   },
 };
 
-export { createCourse, courses, removeCourse, updateCourses, subscribeUser };
+export {
+  createCourse,
+  courses,
+  removeCourse,
+  updateCourses,
+  subscribeUser,
+  unsubscribeUser,
+};

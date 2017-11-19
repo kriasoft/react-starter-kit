@@ -49,6 +49,8 @@ class Course extends React.Component {
       showModalSubscribe: false,
       studyEntityName: '',
       studyEntities: this.props.store.getState().course.studyEntities,
+      subscribedUsersList: [],
+      usersList: [],
     };
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -103,6 +105,22 @@ class Course extends React.Component {
     this.setState({ showModalSubscribe: true });
   }
 
+  subscribeUser(email) {
+    this.state.subscribedUsersList.push(email);
+    this.setState({
+      subscribedUsersList: this.state.subscribedUsersList,
+    });
+  }
+
+  unsubscribeUser(email) {
+    const i = this.state.usersList.indexOf(email);
+    this.state.subscribedUsersList.splice(i, 1);
+
+    this.setState({
+      subscribedUsersList: this.state.subscribedUsersList,
+    });
+  }
+
   render() {
     const self = this;
     async function add() {
@@ -124,7 +142,7 @@ class Course extends React.Component {
       });
       const { data } = await resp.json();
       dispatch(addStudyEntity(data.createStudyEntity));
-      self.close();
+      self.closeStEn();
     }
     const studyEntitiesList = [];
     for (let i = 0; i < this.state.studyEntities.length; i += 1) {
@@ -139,20 +157,39 @@ class Course extends React.Component {
         </li>,
       );
     }
+
     const usersList = [];
     for (let i = 0; this.state.users && i < this.state.users.length; i += 1) {
       const email = this.state.users[i].email;
-      usersList.push(
-        <tr key={this.state.users[i].id}>
-          <td>
-            {i + 1}
-          </td>
-          <td>
-            {email}
-          </td>
-        </tr>,
-      );
+      if (this.state.subscribedUsersList.indexOf(email) < 0) {
+        usersList.push(
+          <tr key={this.state.users[i].id}>
+            <td>
+              <Button
+                bsStyle="primary"
+                role="link"
+                onClick={() => this.subscribeUser(email)}
+              >
+                {email}
+              </Button>
+            </td>
+          </tr>,
+        );
+      }
     }
+    const subscribedUsersList = this.state.subscribedUsersList.map(email =>
+      <tr>
+        <td>
+          <Button
+            bsStyle="primary"
+            role="link"
+            onClick={() => this.unsubscribeUser(email)}
+          >
+            {email}
+          </Button>
+        </td>
+      </tr>,
+    );
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -201,13 +238,22 @@ class Course extends React.Component {
             <div className="row">
               <div className="col-md-6">
                 <h4>Subscribed</h4>
+                <Table striped bordered condensed hover>
+                  <thead>
+                    <tr>
+                      <th>User email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subscribedUsersList}
+                  </tbody>
+                </Table>
               </div>
               <div className="col-md-6">
                 <h4>All courses</h4>
                 <Table striped bordered condensed hover>
                   <thead>
                     <tr>
-                      <th>#</th>
                       <th>User email</th>
                     </tr>
                   </thead>

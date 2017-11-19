@@ -21,6 +21,7 @@ import {
   courses,
   updateCourses,
   subscribeUser,
+  unsubscribeUser,
 } from './queries/course';
 import {
   createStudyEntity,
@@ -62,6 +63,7 @@ const schema = new Schema({
       removeUser,
       updateUser,
       subscribeUser,
+      unsubscribeUser,
       addAnswer,
       removeAnswer,
       updateAnswer,

@@ -19,7 +19,7 @@ const UserProfileType = new ObjectType({
   fields: {
     userId: { type: new NonNull(ID) },
     displayName: { type: new NonNull(StringType) },
-    pcture: { type: new NonNull(StringType) },
+    picture: { type: new NonNull(StringType) },
     gender: { type: new NonNull(StringType) },
     location: { type: new NonNull(StringType) },
     website: { type: new NonNull(StringType) },
