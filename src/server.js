@@ -155,7 +155,7 @@ app.get('*', async (req, res, next) => {
       apiUrl: config.api.clientUrl,
     };
 
-    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+    const html = ReactDOM.renderToString(<Html {...data} />);
     res.status(route.status || 200);
     res.send(`<!doctype html>${html}`);
   } catch (err) {
