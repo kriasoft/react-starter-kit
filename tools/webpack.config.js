@@ -433,8 +433,7 @@ const serverConfig = {
           ...rule,
           options: {
             ...rule.options,
-            name: `public/assets/${rule.options.name}`,
-            publicPath: url => url.replace(/^public/, ''),
+            emitFile: false,
           },
         };
       }
