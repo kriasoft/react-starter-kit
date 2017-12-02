@@ -67,8 +67,12 @@ class Courses extends React.Component {
     async function add() {
       const resp = await fetch('/graphql', {
         body: JSON.stringify({
-          query: `mutation { createCourse(title: "${self.state
-            .courseName}") { id, title } }`,
+          query: `mutation createCourse($title: String) {
+            createCourse(title: $title) { id, title } 
+          }`,
+          variables: {
+            title: self.state.courseName,
+          },
         }),
       });
       const { data } = await resp.json();
@@ -88,12 +92,8 @@ class Courses extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>
-            {this.props.title}
-          </h1>
-          <ol>
-            {coursesList}
-          </ol>
+          <h1>{this.props.title}</h1>
+          <ol>{coursesList}</ol>
         </div>
         <Button bsStyle="primary" onClick={this.open}>
           Add Course

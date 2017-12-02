@@ -19,7 +19,7 @@ const createStudyEntity = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     let c;
     return Course.findById(args.courseId)
       .then(course => {
@@ -42,7 +42,7 @@ const removeStudyEntity = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return StudyEntity.destroy({
       where: {
         id: args.id,
@@ -87,7 +87,7 @@ const updateStudyEntity = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     StudyEntity.findById(args.id).then(_se => {
       const se = _se;
       if (args.title) {

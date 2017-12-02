@@ -25,7 +25,7 @@ const addAnswer = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return Answer.create({
       body: args.body,
       CourseId: args.courseId,
@@ -44,7 +44,7 @@ const removeAnswer = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return Answer.destroy({
       where: {
         id: args.id,
@@ -110,7 +110,7 @@ const updateAnswer = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     Answer.findById(args.id).then(_answer => {
       const answer = _answer;
       if (args.body) {

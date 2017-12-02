@@ -196,7 +196,7 @@ class StudyEntity extends React.Component {
     /* this.setState({
       mark: '',
       comment: '',
-    });*/
+    }); */
   }
 
   async retrieveAnswer() {
@@ -280,10 +280,12 @@ class StudyEntity extends React.Component {
             body={this.state.body}
             onChange={this.changeAnswer}
           />
-          {this.context.store.getState().user
-            ? <Button onClick={this.saveAnswer}>Save</Button>
-            : undefined}
-          {/* Form for setting marks and making a comment*/}
+          {this.context.store.getState().user ? (
+            <Button onClick={this.saveAnswer}>Save</Button>
+          ) : (
+            undefined
+          )}
+          {/* Form for setting marks and making a comment */}
           <Form horizontal>
             <FormGroup controlId="Comment">
               <Col sm={10}>
@@ -322,18 +324,18 @@ class StudyEntity extends React.Component {
         </span>
       );
     }
-    const user = this.context.store.getState().user;
+    const { user } = this.context.store.getState();
     let answerChooser;
     if (user && user.isAdmin && this.state.answers) {
-      const answers = this.state.answers.map((answer, i) =>
+      const answers = this.state.answers.map((answer, i) => (
         <MenuItem
           key={answer.id}
           eventKey={i}
           active={i === this.state.answerCur}
         >
           {answer.id}
-        </MenuItem>,
-      );
+        </MenuItem>
+      ));
       answerChooser = (
         <DropdownButton
           id="answer_chooser"

@@ -21,13 +21,11 @@ const htmlToReactParser = new HtmlToReact.Parser();
 
 class StudyEntityView extends React.Component {
   static defaultProps = {
-    answerId: null,
     value: null,
     onChange: null,
   };
   static propTypes = {
     body: PropTypes.string.isRequired,
-    answerId: PropTypes.string,
     value: PropTypes.instanceOf(Object),
     onChange: PropTypes.func,
   };
@@ -36,7 +34,6 @@ class StudyEntityView extends React.Component {
     super(props);
     this.state = {
       answers: props.value || {},
-      answerId: props.answerId,
     };
   }
 
@@ -47,7 +44,6 @@ class StudyEntityView extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       answers: nextProps.value || {},
-      answerId: nextProps.answerId,
     });
   }
 
@@ -125,11 +121,7 @@ class StudyEntityView extends React.Component {
       isValidNode,
       this.processingInstructions,
     );
-    return (
-      <div className={s.root}>
-        {studyEntityElement}
-      </div>
-    );
+    return <div className={s.root}>{studyEntityElement}</div>;
   }
 }
 

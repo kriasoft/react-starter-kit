@@ -16,7 +16,14 @@ const title = 'Study Entity';
 async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `{ courses(ids:"${params.idCourse}") { id, title }, studyEntities(ids: "${params.idStudyEntity}") { id, title, body } }`,
+      query: `query courses($idCourse: [String], $idStudyEntity: [String]) {
+        courses(ids: $idCourse) { id, title },
+        studyEntities(ids: $idStudyEntity) { id, title, body } 
+      }`,
+      variables: {
+        idCourse: params.idCourse,
+        idStudyEntity: params.idStudyEntity,
+      },
     }),
   });
   const { data } = await resp.json();

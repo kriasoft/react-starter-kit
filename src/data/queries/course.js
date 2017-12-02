@@ -12,7 +12,7 @@ const createCourse = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return Course.create({
       title: args.title,
     });
@@ -28,7 +28,7 @@ const removeCourse = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return Course.destroy({
       where: {
         id: args.id,
@@ -123,7 +123,7 @@ const updateCourses = {
       type: new List(StringType),
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     let course;
     Course.findById(args.id)
       .then(_course => {

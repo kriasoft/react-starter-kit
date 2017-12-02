@@ -182,8 +182,9 @@ class Course extends React.Component {
       studyEntitiesList.push(
         <li key={this.state.studyEntities[i].id}>
           <a
-            href={`/courses/${this.props.course.id}/${this.props.course
-              .studyEntities[i].id}`}
+            href={`/courses/${this.props.course.id}/${
+              this.props.course.studyEntities[i].id
+            }`}
           >
             {this.state.studyEntities[i].title}
           </a>
@@ -194,10 +195,10 @@ class Course extends React.Component {
     const usersList = [];
     for (let i = 0; this.state.users && i < this.state.users.length; i += 1) {
       // const email = this.state.users[i].email;
-      const id = this.state.users[i].id;
+      const { id } = this.state.users[i];
       if (this.state.subscribedUsersList.indexOf(id) < 0) {
         usersList.push(
-          <tr key={this.state.users[i].id}>
+          <tr key={id}>
             <td>
               <Button
                 bsStyle="primary"
@@ -211,7 +212,7 @@ class Course extends React.Component {
         );
       }
     }
-    const subscribedUsersList = this.state.subscribedUsersList.map(id =>
+    const subscribedUsersList = this.state.subscribedUsersList.map(id => (
       <tr key={id}>
         <td>
           <Button
@@ -222,17 +223,13 @@ class Course extends React.Component {
             {id}
           </Button>
         </td>
-      </tr>,
-    );
+      </tr>
+    ));
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>
-            {this.props.title}
-          </h1>
-          <ol>
-            {studyEntitiesList}
-          </ol>
+          <h1>{this.props.title}</h1>
+          <ol>{studyEntitiesList}</ol>
         </div>
         <Button bsStyle="primary" onClick={this.openStEn}>
           Add study entity
@@ -278,9 +275,7 @@ class Course extends React.Component {
                       <th>User email</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {subscribedUsersList}
-                  </tbody>
+                  <tbody>{subscribedUsersList}</tbody>
                 </Table>
               </div>
               <div className="col-md-6">
@@ -291,9 +286,7 @@ class Course extends React.Component {
                       <th>User email</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {usersList}
-                  </tbody>
+                  <tbody>{usersList}</tbody>
                 </Table>
               </div>
             </div>

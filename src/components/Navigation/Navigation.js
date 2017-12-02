@@ -61,16 +61,18 @@ class Navigation extends React.Component {
             <NavItem href="/about">About</NavItem>
             <NavItem href="/contact">Contact</NavItem>
           </Nav>
-          {this.context.store.getState().user
-            ? <Nav pullRight>
-                <NavItem href="/logout" onSelect={logout}>
-                  Log out
-                </NavItem>
-              </Nav>
-            : <Nav pullRight>
-                <NavItem href="/login">Log in</NavItem>
-                <NavItem href="/register">Sign up</NavItem>
-              </Nav>}
+          {this.context.store.getState().user ? (
+            <Nav pullRight>
+              <NavItem href="/logout" onSelect={logout}>
+                Log out
+              </NavItem>
+            </Nav>
+          ) : (
+            <Nav pullRight>
+              <NavItem href="/login">Log in</NavItem>
+              <NavItem href="/register">Sign up</NavItem>
+            </Nav>
+          )}
         </Navbar.Collapse>
       </Navbar>
     );

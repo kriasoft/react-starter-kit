@@ -22,7 +22,7 @@ const addMark = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return Mark.create({
       mark: args.mark,
       comment: args.comment,
@@ -40,7 +40,7 @@ const removeMark = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return Mark.destroy({
       where: {
         id: args.id,
@@ -91,7 +91,7 @@ const updateMark = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     Mark.findById(args.id).then(_mark => {
       const mark = _mark;
       if (args.mark) {

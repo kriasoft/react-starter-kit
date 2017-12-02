@@ -31,34 +31,36 @@ class Layout extends React.Component {
             <div className={`col-sm-3 col-md-2 ${s.sidebar}`}>
               <ul className={`nav ${s['nav-sidebar']}`}>
                 <li className={s.active}>
-                  <a>
+                  <a href="/">
                     Overview <span className="sr-only">(current)</span>
                   </a>
                 </li>
                 <li>
-                  <a>Reports</a>
+                  <a href="/">Reports</a>
                 </li>
                 <li>
-                  <a>Analytics</a>
+                  <a href="/">Analytics</a>
                 </li>
                 <li>
-                  <a>Export</a>
+                  <a href="/">Export</a>
                 </li>
               </ul>
               <ul className={`nav ${s['nav-sidebar']}`}>
                 <li>
-                  <a>Nav item again</a>
+                  <a href="/">Nav item again</a>
                 </li>
                 <li>
-                  <a>One more nav</a>
+                  <a href="/">One more nav</a>
                 </li>
                 <li>
-                  <a>Another nav item</a>
+                  <a href="/">Another nav item</a>
                 </li>
               </ul>
             </div>
             <div
-              className={`col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 ${s.main}`}
+              className={`col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 ${
+                s.main
+              }`}
             >
               {this.props.children}
               <Footer />

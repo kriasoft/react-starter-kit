@@ -22,7 +22,7 @@ const createUser = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return User.createUser(args);
   },
 };
@@ -36,7 +36,7 @@ const removeUser = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     return User.destroy({
       where: {
         id: args.id,
@@ -77,7 +77,7 @@ const updateUser = {
       type: StringType,
     },
   },
-  resolve({ request }, args) {
+  resolve(parent, args) {
     let user;
     User.findById(args.id).then(_user => {
       user = _user;
