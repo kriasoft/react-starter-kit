@@ -33,9 +33,9 @@ const CourseType = new ObjectType({
       resolve: course =>
         Course.find({
           where: { id: course.id },
-          include: [{ model: User, as: 'user', through: UserCourse }],
+          include: [{ model: User, as: 'users', through: UserCourse }],
         }).then(c =>
-          c.user.map(user => ({
+          c.users.map(user => ({
             id: user.id,
             email: user.email,
             role: user.UserCourse.role,
