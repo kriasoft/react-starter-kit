@@ -26,7 +26,6 @@ import s from './StudyEntity.css';
 
 class StudyEntity extends React.Component {
   static contextTypes = {
-    fetch: PropTypes.func.isRequired,
     store: PropTypes.any.isRequired,
   };
   static propTypes = {

@@ -17,7 +17,12 @@ const title = 'Course';
 async function action({ fetch, params, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `{ courses(ids:"${params.id}") { id, title, studyEntities{ id,title } } }`,
+      query: `query courses($ids: [String]) {
+        courses(ids: $ids) { id, title, studyEntities{ id,title } }
+      }`,
+      variables: {
+        ids: params.id,
+      },
     }),
   });
   const { data } = await resp.json();
@@ -27,12 +32,7 @@ async function action({ fetch, params, store }) {
     title,
     component: (
       <Layout>
-        <Course
-          title={data.courses[0].title}
-          course={data.courses[0]}
-          store={store}
-          fetch={fetch}
-        />
+        <Course title={data.courses[0].title} course={data.courses[0]} />
       </Layout>
     ),
   };

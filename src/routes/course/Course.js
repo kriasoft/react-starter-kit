@@ -16,17 +16,13 @@ import s from './Course.css';
 import { addStudyEntity } from '../../actions/study_entities';
 import { subscribeUser, unsubscribeUser } from '../../actions/courses';
 
-let fetch;
-let dispatch;
-
 class Course extends React.Component {
-  static propTypes = {
-    store: PropTypes.shape({
-      subscribe: PropTypes.func.isRequired,
-      getState: PropTypes.func.isRequired,
-      dispatch: PropTypes.func.isRequired,
-    }).isRequired,
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
     fetch: PropTypes.func.isRequired,
+  };
+
+  static propTypes = {
     title: PropTypes.string.isRequired,
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -42,44 +38,49 @@ class Course extends React.Component {
 
   constructor(props) {
     super(props);
-    dispatch = props.store.dispatch;
-    fetch = props.fetch;
     this.state = {
       studyEntityBody: '',
       showModal: false,
       showModalSubscribe: false,
       studyEntityName: '',
-      studyEntities: this.props.store.getState().course.studyEntities,
+      studyEntities: [],
       subscribedUsersList: [],
       usersList: [],
     };
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.addStEn = this.addStEn.bind(this);
     this.openStEn = this.openStEn.bind(this);
     this.closeStEn = this.closeStEn.bind(this);
     this.openSubs = this.openSubs.bind(this);
     this.closeSubs = this.closeSubs.bind(this);
   }
 
+  componentWillMount() {
+    this.setState({
+      studyEntities: this.context.store.getState().course.studyEntities,
+    });
+  }
+
   componentDidMount() {
-    const self = this;
-    this.props.store.subscribe(() => {
+    this.context.store.subscribe(() => {
       this.setState({
-        studyEntities: this.props.store.getState().course.studyEntities,
+        studyEntities: this.context.store.getState().course.studyEntities,
       });
     });
-    async function getUsers() {
-      const resp = await fetch('/graphql', {
-        body: JSON.stringify({
-          query: `{users
-            { id, email }
-          }`,
-        }),
-      });
-      const { data } = await resp.json();
-      self.setState({ users: data.users });
-    }
-    getUsers();
+    this.updateUsers();
+  }
+
+  async updateUsers() {
+    const resp = await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `{users
+          { id, email }
+        }`,
+      }),
+    });
+    const { data } = await resp.json();
+    this.setState({ users: data.users });
   }
 
   handleChange(event) {
@@ -108,7 +109,7 @@ class Course extends React.Component {
 
   async subscribeUser(id, i) {
     this.state.subscribedUsersList.push(id);
-    const resp = await fetch('/graphql', {
+    const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  subscribe($id: String, $courseId: String){
           subscribeUser(
@@ -123,7 +124,7 @@ class Course extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    dispatch(subscribeUser(data.subscribeUser));
+    this.context.store.dispatch(subscribeUser(data.subscribeUser));
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
     });
@@ -132,7 +133,7 @@ class Course extends React.Component {
   async unsubscribeUser(id) {
     const i = this.state.usersList.indexOf(id);
     this.state.subscribedUsersList.splice(i, 1);
-    const resp = await fetch('/graphql', {
+    const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  unsubscribe($id: String, $courseId: String){
           unsubscribeUser(
@@ -147,36 +148,36 @@ class Course extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    dispatch(unsubscribeUser(data.unsubscribeUser));
+    this.context.store.dispatch(unsubscribeUser(data.unsubscribeUser));
 
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
     });
   }
 
+  async addStEn() {
+    const resp = await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation create($courseId: String, $title: String, $body: String){ 
+          createStudyEntity(
+            title: $title,
+            courseId: $courseId,
+            body: $body)
+          { id, title }
+        }`,
+        variables: {
+          title: this.state.studyEntityName,
+          courseId: this.props.course.id,
+          body: this.state.studyEntityBody,
+        },
+      }),
+    });
+    const { data } = await resp.json();
+    this.context.store.dispatch(addStudyEntity(data.createStudyEntity));
+    this.closeStEn();
+  }
+
   render() {
-    const self = this;
-    async function add() {
-      const resp = await fetch('/graphql', {
-        body: JSON.stringify({
-          query: `mutation create($courseId: String, $title: String, $body: String){ 
-            createStudyEntity(
-              title: $title,
-              courseId: $courseId,
-              body: $body)
-            { id, title }
-          }`,
-          variables: {
-            title: self.state.studyEntityName,
-            courseId: self.props.course.id,
-            body: self.state.studyEntityBody,
-          },
-        }),
-      });
-      const { data } = await resp.json();
-      dispatch(addStudyEntity(data.createStudyEntity));
-      self.closeStEn();
-    }
     const studyEntitiesList = [];
     for (let i = 0; i < this.state.studyEntities.length; i += 1) {
       studyEntitiesList.push(
@@ -254,7 +255,7 @@ class Course extends React.Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={add}>Add study entity</Button>
+            <Button onClick={this.addStEn}>Add study entity</Button>
             <Button onClick={this.closeStEn}>Close</Button>
           </Modal.Footer>
         </Modal>

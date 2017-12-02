@@ -14,38 +14,39 @@ import { Modal, Button, FormControl } from 'react-bootstrap';
 import s from './Courses.css';
 import { addCourse } from '../../actions/courses';
 
-let dispatch;
-let fetch;
-
 class Courses extends React.Component {
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
+  };
+
   static propTypes = {
     title: PropTypes.string.isRequired,
-    store: PropTypes.shape({
-      subscribe: PropTypes.func.isRequired,
-      getState: PropTypes.func.isRequired,
-      dispatch: PropTypes.func.isRequired,
-    }).isRequired,
-    fetch: PropTypes.func.isRequired,
   };
 
   constructor(props) {
     super(props);
-    dispatch = props.store.dispatch;
-    fetch = props.fetch;
     this.state = {
       courseName: '',
-      courses: this.props.store.getState().courses.courses,
+      courses: [],
       showModal: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.open = this.open.bind(this);
     this.close = this.close.bind(this);
+    this.add = this.add.bind(this);
+  }
+
+  componentWillMount() {
+    this.setState({
+      courses: this.context.store.getState().courses.courses,
+    });
   }
 
   componentDidMount() {
-    this.props.store.subscribe(() => {
+    this.context.store.subscribe(() => {
       this.setState({
-        courses: this.props.store.getState().courses.courses,
+        courses: this.context.store.getState().courses.courses,
       });
     });
   }
@@ -62,23 +63,23 @@ class Courses extends React.Component {
     this.setState({ showModal: true });
   }
 
+  async add() {
+    const resp = await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation createCourse($title: String) {
+          createCourse(title: $title) { id, title } 
+        }`,
+        variables: {
+          title: this.state.courseName,
+        },
+      }),
+    });
+    const { data } = await resp.json();
+    this.context.store.dispatch(addCourse(data.createCourse));
+    this.close();
+  }
+
   render() {
-    const self = this;
-    async function add() {
-      const resp = await fetch('/graphql', {
-        body: JSON.stringify({
-          query: `mutation createCourse($title: String) {
-            createCourse(title: $title) { id, title } 
-          }`,
-          variables: {
-            title: self.state.courseName,
-          },
-        }),
-      });
-      const { data } = await resp.json();
-      dispatch(addCourse(data.createCourse));
-      self.close();
-    }
     const coursesList = [];
     for (let i = 0; i < this.state.courses.length; i += 1) {
       coursesList.push(
@@ -114,7 +115,7 @@ class Courses extends React.Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={add}>Add Course</Button>
+            <Button onClick={this.add}>Add Course</Button>
             <Button onClick={this.close}>Close</Button>
           </Modal.Footer>
         </Modal>

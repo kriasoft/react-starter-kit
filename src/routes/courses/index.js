@@ -27,7 +27,7 @@ async function action({ fetch, store }) {
     title,
     component: (
       <Layout>
-        <Courses title={title} store={store} fetch={fetch} />
+        <Courses title={title} />
       </Layout>
     ),
   };
