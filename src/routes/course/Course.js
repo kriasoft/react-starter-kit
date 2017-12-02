@@ -14,9 +14,10 @@ import { Modal, Button, FormControl, Table } from 'react-bootstrap';
 import TextEditor from '../../components/TextEditor';
 import s from './Course.css';
 import { addStudyEntity } from '../../actions/study_entities';
+import { subscribeUser, unsubscribeUser } from '../../actions/courses';
 
-let dispatch;
 let fetch;
+let dispatch;
 
 class Course extends React.Component {
   static propTypes = {
@@ -105,16 +106,48 @@ class Course extends React.Component {
     this.setState({ showModalSubscribe: true });
   }
 
-  subscribeUser(email) {
-    this.state.subscribedUsersList.push(email);
+  async subscribeUser(id, i) {
+    this.state.subscribedUsersList.push(id);
+    const resp = await fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation  subscribe($id: String, $courseId: String){
+          subscribeUser(
+            id: $id,
+            courseId: $courseId)
+            { id }
+        }`,
+        variables: {
+          id: this.state.users[i].id,
+          courseId: this.props.course.id,
+        },
+      }),
+    });
+    const { data } = await resp.json();
+    dispatch(subscribeUser(data.subscribeUser));
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
     });
   }
 
-  unsubscribeUser(email) {
-    const i = this.state.usersList.indexOf(email);
+  async unsubscribeUser(id) {
+    const i = this.state.usersList.indexOf(id);
     this.state.subscribedUsersList.splice(i, 1);
+    const resp = await fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation  unsubscribe($id: String, $courseId: String){
+          unsubscribeUser(
+            id: $id,
+            courseId: $courseId)
+            { id }
+        }`,
+        variables: {
+          id,
+          courseId: this.props.course.id,
+        },
+      }),
+    });
+    const { data } = await resp.json();
+    dispatch(unsubscribeUser(data.unsubscribeUser));
 
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
@@ -160,32 +193,33 @@ class Course extends React.Component {
 
     const usersList = [];
     for (let i = 0; this.state.users && i < this.state.users.length; i += 1) {
-      const email = this.state.users[i].email;
-      if (this.state.subscribedUsersList.indexOf(email) < 0) {
+      // const email = this.state.users[i].email;
+      const id = this.state.users[i].id;
+      if (this.state.subscribedUsersList.indexOf(id) < 0) {
         usersList.push(
           <tr key={this.state.users[i].id}>
             <td>
               <Button
                 bsStyle="primary"
                 role="link"
-                onClick={() => this.subscribeUser(email)}
+                onClick={() => this.subscribeUser(id, i)}
               >
-                {email}
+                {id}
               </Button>
             </td>
           </tr>,
         );
       }
     }
-    const subscribedUsersList = this.state.subscribedUsersList.map(email =>
-      <tr>
+    const subscribedUsersList = this.state.subscribedUsersList.map(id =>
+      <tr key={id}>
         <td>
           <Button
             bsStyle="primary"
             role="link"
-            onClick={() => this.unsubscribeUser(email)}
+            onClick={() => this.unsubscribeUser(id)}
           >
-            {email}
+            {id}
           </Button>
         </td>
       </tr>,
@@ -250,7 +284,7 @@ class Course extends React.Component {
                 </Table>
               </div>
               <div className="col-md-6">
-                <h4>All courses</h4>
+                <h4>Unsubscribed</h4>
                 <Table striped bordered condensed hover>
                   <thead>
                     <tr>
@@ -265,7 +299,6 @@ class Course extends React.Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={add}>Save</Button>
             <Button onClick={this.closeSubs}>Close</Button>
           </Modal.Footer>
         </Modal>
