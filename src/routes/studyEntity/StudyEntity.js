@@ -183,7 +183,7 @@ class StudyEntity extends React.Component {
             comment: $comment,
             answerId: $answerId,
           ) {
-            id
+            answerId,mark
           }     
         }`,
         variables: {
@@ -193,10 +193,10 @@ class StudyEntity extends React.Component {
         },
       }),
     });
-    this.setState({
+    /* this.setState({
       mark: '',
       comment: '',
-    });
+    });*/
   }
 
   async retrieveAnswer() {
