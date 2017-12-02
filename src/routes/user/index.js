@@ -23,6 +23,9 @@ async function action({ fetch, params }) {
           displayName,
           gender,
           picture
+        },
+        courses {
+          id, title
         }
       } }`,
     }),

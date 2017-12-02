@@ -24,6 +24,10 @@ class User extends React.Component {
         gender: PropTypes.string.isRequired,
         picture: PropTypes.string.isRequired,
       }).isRequired,
+      courses: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+      }).isRequired,
     }).isRequired,
   };
 
@@ -51,6 +55,15 @@ class User extends React.Component {
   }
 
   render() {
+    const coursesList = [];
+    const { courses } = this.props.user;
+    for (let i = 0; i < courses.length; i += 1) {
+      coursesList.push(
+        <li key={courses[i].id}>
+          <a href={`/courses/${courses[i].id}`}>{courses[i].title}</a>
+        </li>,
+      );
+    }
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -66,18 +79,18 @@ class User extends React.Component {
               <h1>
                 {this.props.title} {this.props.user.profile.displayName}
               </h1>
-              <div>
-                Id: {this.props.user.id}
-              </div>
-              <div>
-                Gender: {this.props.user.profile.gender}
-              </div>
-              <div>
-                E-mail: {this.props.user.email}
-              </div>
+              <div>Id: {this.props.user.id}</div>
+              <div>Gender: {this.props.user.profile.gender}</div>
+              <div>E-mail: {this.props.user.email}</div>
               <Button bsStyle="primary" onClick={this.open}>
                 Change password
               </Button>
+            </Col>
+          </Row>
+          <Row>
+            <h2>Курсы</h2>
+            <Col xs={12} md={10}>
+              {coursesList}
             </Col>
           </Row>
           <Modal show={this.state.showModal} onHide={this.close}>
@@ -88,7 +101,7 @@ class User extends React.Component {
               <span>New password: </span>
               <FormControl
                 type="text"
-                value={this.state.newPassword}
+                value={this.state.newPass}
                 onChange={this.handleChange}
               />
               <div>
