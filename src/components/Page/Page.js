@@ -23,9 +23,7 @@ class Page extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>
-            {title}
-          </h1>
+          <h1>{title}</h1>
           <div
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: html }}
