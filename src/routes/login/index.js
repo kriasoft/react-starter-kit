@@ -13,15 +13,16 @@ import Login from './Login';
 
 const title = 'Log In';
 
-export default {
+function action() {
+  return {
+    chunks: ['login'],
+    title,
+    component: (
+      <Layout>
+        <Login title={title} />
+      </Layout>
+    ),
+  };
+}
 
-  path: '/login',
-
-  action() {
-    return {
-      title,
-      component: <Layout><Login title={title} /></Layout>,
-    };
-  },
-
-};
+export default action;

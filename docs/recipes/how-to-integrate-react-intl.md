@@ -49,7 +49,7 @@ the [`defineMessages()`](https://github.com/yahoo/react-intl/wiki/API#definemess
 [`<FormattedDate>`](https://github.com/yahoo/react-intl/wiki/Components#formatteddate)
 [`<FormattedTime>`](https://github.com/yahoo/react-intl/wiki/Components#formattedtime)
 [`<FormattedRelative>`](https://github.com/yahoo/react-intl/wiki/Components#formattedrelative)
- 
+
 - For numbers and currencies:
 [`<FormattedNumber>`](https://github.com/yahoo/react-intl/wiki/Components#formattednumber)
 [`<FormattedPlural>`](https://github.com/yahoo/react-intl/wiki/Components#formattedplural)

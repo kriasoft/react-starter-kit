@@ -13,15 +13,16 @@ import Contact from './Contact';
 
 const title = 'Contact Us';
 
-export default {
+function action() {
+  return {
+    chunks: ['contact'],
+    title,
+    component: (
+      <Layout>
+        <Contact title={title} />
+      </Layout>
+    ),
+  };
+}
 
-  path: '/contact',
-
-  action() {
-    return {
-      title,
-      component: <Layout><Contact title={title} /></Layout>,
-    };
-  },
-
-};
+export default action;

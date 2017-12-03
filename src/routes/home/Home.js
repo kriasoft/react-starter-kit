@@ -14,11 +14,13 @@ import s from './Home.css';
 
 class Home extends React.Component {
   static propTypes = {
-    news: PropTypes.arrayOf(PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      link: PropTypes.string.isRequired,
-      content: PropTypes.string,
-    })).isRequired,
+    news: PropTypes.arrayOf(
+      PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        link: PropTypes.string.isRequired,
+        content: PropTypes.string,
+      }),
+    ).isRequired,
   };
 
   render() {
@@ -28,7 +30,9 @@ class Home extends React.Component {
           <h1>React.js News</h1>
           {this.props.news.map(item => (
             <article key={item.link} className={s.newsItem}>
-              <h1 className={s.newsTitle}><a href={item.link}>{item.title}</a></h1>
+              <h1 className={s.newsTitle}>
+                <a href={item.link}>{item.title}</a>
+              </h1>
               <div
                 className={s.newsDesc}
                 // eslint-disable-next-line react/no-danger

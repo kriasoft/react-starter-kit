@@ -15,8 +15,11 @@ and newcomers to the industry.
 **Join** [#react-starter-kit][chat] chat room on Gitter &nbsp;|&nbsp;
 **Visit our sponsors**:<br><br>
 
-[![Rollbar - Full-stack error tracking for all apps in any language](https://koistya.github.io/files/rsk/rollbar.png)](https://rollbar.com/?utm_source=reactstartkit(github)&utm_medium=link&utm_campaign=reactstartkit(github)) &nbsp;&nbsp;
-[![Localize - Translate your web app in minutes](https://koistya.github.io/files/rsk/localize.png)](https://localizejs.com/?cid=802&utm_source=rsk)
+<p align="center" align="top">
+  <a href="https://rollbar.com/?utm_source=reactstartkit(github)&amp;utm_medium=link&amp;utm_campaign=reactstartkit(github)"><img src="https://koistya.github.io/files/rollbar-362x72.png" height="36" align="top" /></a>
+  <a href="https://x-team.com/hire-react-developers/?utm_source=reactstarterkit&amp;utm_medium=github-link&amp;utm_campaign=reactstarterkit-june"><img src="https://koistya.github.io/files/xteam-255x72.png" height="36" align="top" /></a>
+  <sup><a href="https://x-team.com/join/?utm_source=reactstarterkit&utm_medium=github-link&utm_campaign=reactstarterkit-june">Hiring</a></sup>
+</p>
 
 
 ### Getting Started
@@ -32,18 +35,15 @@ The `master` branch of React Starter Kit doesn't include a Flux implementation o
 advanced integrations. Nevertheless, we have some integrations available to you in *feature*
 branches that you can use either as a reference or merge into your project:
 
-  * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) — isomorphic
-    Redux by [Pavel Lang](https://github.com/langpavel)
+  * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1084))
+    — isomorphic Redux by [Pavel Lang](https://github.com/langpavel)
     (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
-  * [feature/apollo](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo) — isomorphic
-    Apollo Client by [Pavel Lang](https://github.com/langpavel)
+  * [feature/apollo](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1147))
+    — isomorphic Apollo Client by [Pavel Lang](https://github.com/langpavel)
     (see [Tracking PR #1147](https://github.com/kriasoft/react-starter-kit/pull/1147)) (based on `feature/redux`)
-  * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) —
-    isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
-    (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/redux`)
-  * [feature/bootstrap3](https://github.com/kriasoft/react-starter-kit/tree/feature/bootstrap3) ***unmaintained*** —
-    Simplest possible integration of [react-bootstrap](https://react-bootstrap.github.io/)
-    by [Pavel Lang](https://github.com/langpavel) (based on `master`)
+  * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1135))
+    — isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
+    (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/apollo`)
 
 You can see status of most reasonable merge combination as [PRs labeled as `TRACKING`](https://github.com/kriasoft/react-starter-kit/labels/TRACKING)
 

@@ -13,15 +13,16 @@ import Register from './Register';
 
 const title = 'New User Registration';
 
-export default {
+function action() {
+  return {
+    chunks: ['register'],
+    title,
+    component: (
+      <Layout>
+        <Register title={title} />
+      </Layout>
+    ),
+  };
+}
 
-  path: '/register',
-
-  action() {
-    return {
-      title,
-      component: <Layout><Register title={title} /></Layout>,
-    };
-  },
-
-};
+export default action;
