@@ -267,6 +267,7 @@ class Course extends React.Component {
         <Button bsStyle="primary" onClick={this.openSubs}>
           Subscribe user
         </Button>
+        <a href={`/courses/${this.props.course.id}/users`}>Users list</a>
         <Modal show={this.state.showModalSubscribe} onHide={this.closeSubs}>
           <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
