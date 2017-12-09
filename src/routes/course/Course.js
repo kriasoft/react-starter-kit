@@ -33,6 +33,11 @@ class Course extends React.Component {
           title: PropTypes.string,
         }),
       ),
+      users: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+        }),
+      ),
     }).isRequired,
   };
 
@@ -58,6 +63,7 @@ class Course extends React.Component {
   componentWillMount() {
     this.setState({
       studyEntities: this.context.store.getState().course.studyEntities,
+      subscribedUsersList: this.props.course.users.map(u => u.id),
     });
   }
 
