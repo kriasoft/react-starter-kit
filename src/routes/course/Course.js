@@ -45,7 +45,6 @@ class Course extends React.Component {
       studyEntityName: '',
       studyEntities: [],
       subscribedUsersList: [],
-      usersList: [],
     };
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -131,7 +130,7 @@ class Course extends React.Component {
   }
 
   async unsubscribeUser(id) {
-    const i = this.state.usersList.indexOf(id);
+    const i = this.state.subscribedUsersList.indexOf(id);
     this.state.subscribedUsersList.splice(i, 1);
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
