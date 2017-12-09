@@ -61,12 +61,23 @@ const marks = {
       description: 'ids of the marks',
       type: new List(StringType),
     },
+    answerId: {
+      description: 'Id of an answer',
+      type: StringType,
+    },
   },
   resolve(obj, args) {
     if (args.ids) {
       return Mark.findAll({
         where: {
           id: args.ids,
+        },
+      });
+    }
+    if (args.answerId) {
+      return Mark.findAll({
+        where: {
+          AnswerId: args.answerId,
         },
       });
     }
