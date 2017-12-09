@@ -21,12 +21,17 @@ const addMark = {
       description: 'The answerId of the mark',
       type: StringType,
     },
+    authorId: {
+      description: 'The userId for user adding a mark',
+      type: StringType,
+    },
   },
   resolve(parent, args) {
     return Mark.create({
       mark: args.mark,
       comment: args.comment,
       AnswerId: args.answerId,
+      authorId: args.authorId,
     });
   },
 };

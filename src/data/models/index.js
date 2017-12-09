@@ -82,6 +82,7 @@ Answer.belongsTo(Course);
 
 Answer.hasMany(Mark);
 Mark.belongsTo(Answer);
+Mark.belongsTo(User, { as: 'author' });
 
 function sync(...args) {
   return sequelize.sync(...args);
