@@ -27,6 +27,7 @@ import s from './StudyEntity.css';
 class StudyEntity extends React.Component {
   static contextTypes = {
     store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
   };
   static propTypes = {
     course: PropTypes.shape({
@@ -47,6 +48,8 @@ class StudyEntity extends React.Component {
       title: this.props.studyEntity.title,
       body: this.props.studyEntity.body,
       answerId: null,
+      mark: 0,
+      comment: '',
       answer: {},
     };
     this.switchMode = this.switchMode.bind(this);
@@ -176,19 +179,21 @@ class StudyEntity extends React.Component {
   async addMark() {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation addMark($mark: Float, $comment: String, $answerId: String) {
+        query: `mutation addMark($mark: Float, $comment: String, $answerId: String, $authorId: String) {
           addMark(
             mark: $mark,
             comment: $comment,
             answerId: $answerId,
+            authorId: $authorId,            
           ) {
-            answerId,mark
+            id
           }     
         }`,
         variables: {
           mark: this.state.mark,
           comment: this.state.comment,
           answerId: this.state.answerId,
+          authorId: this.context.store.getState().user.id,
         },
       }),
     });

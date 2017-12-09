@@ -15,10 +15,6 @@ const Mark = Model.define('Mark', {
   comment: {
     type: DataType.STRING,
   },
-
-  createdAt: {
-    type: DataType.STRING,
-  },
 });
 
 export default Mark;
