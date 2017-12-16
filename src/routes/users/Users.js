@@ -10,6 +10,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import User from '../../components/User';
 import s from './Users.css';
 
 class Users extends React.Component {
@@ -23,9 +24,7 @@ class Users extends React.Component {
     for (let i = 0; i < this.props.users.length; i += 1) {
       usersList.push(
         <li key={this.props.users[i].id}>
-          <a href={`/users/${this.props.users[i].id}`}>
-            {this.props.users[i].email}
-          </a>
+          <User user={this.props.users[i]} />
         </li>,
       );
     }

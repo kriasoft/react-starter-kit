@@ -13,7 +13,7 @@ const AnswerType = new ObjectType({
     body: { type: new NonNull(StringType) },
     marks: {
       type: new GraphQLList(MarkType),
-      resolve: answer => answer.getMark(),
+      resolve: answer => answer.getMarks(),
     },
   },
 });

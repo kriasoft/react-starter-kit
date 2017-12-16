@@ -17,6 +17,7 @@ import {
   FormControl,
   FormGroup,
   Col,
+  Table,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -216,7 +217,9 @@ class StudyEntity extends React.Component {
             studyEntityIds: $studyEntityIds,
             courseIds: $courseIds
           ){
-            id, body
+            id, body, marks {
+              id, mark, comment, createdAt
+            }
           }            
         }`,
         variables: {
@@ -330,6 +333,7 @@ class StudyEntity extends React.Component {
     }
     const { user } = this.context.store.getState();
     let answerChooser;
+    let markView;
     if (user && user.isAdmin && this.state.answers) {
       const answers = this.state.answers.map((answer, i) => (
         <MenuItem
@@ -349,6 +353,32 @@ class StudyEntity extends React.Component {
           {answers}
         </DropdownButton>
       );
+      const marks = this.state.answers[this.state.answerCur].marks.map(
+        (mark, i) => (
+          <tr>
+            <td>{i + 1}</td>
+            <td>{mark.mark}</td>
+            <td>{mark.comment}</td>
+            <td>{mark.createdAt}</td>
+          </tr>
+        ),
+      );
+      markView = (
+        <div>
+          <h3>Список оценок</h3>
+          <Table striped bordered condensed hover>
+            <thead>
+              <tr>
+                <th>N</th>
+                <th>Оценка</th>
+                <th>Комментарий</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody>{marks}</tbody>
+          </Table>
+        </div>
+      );
     }
 
     return (
@@ -359,6 +389,7 @@ class StudyEntity extends React.Component {
             {answerChooser}
           </h1>
           {bodyComponent}
+          {markView}
         </div>
       </div>
     );
