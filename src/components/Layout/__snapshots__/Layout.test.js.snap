@@ -48,53 +48,53 @@ exports[`Layout renders children correctly 1`] = `
             role={null}
           >
             <li
-              active={undefined}
-              activeHref={undefined}
-              activeKey={undefined}
-              onSelect={[Function]}
+              className=""
+              role="presentation"
+              style={undefined}
             >
               <a
                 href="/courses"
                 onClick={[Function]}
+                onKeyDown={[Function]}
               >
                 Курсы
               </a>
             </li>
             <li
-              active={undefined}
-              activeHref={undefined}
-              activeKey={undefined}
-              onSelect={[Function]}
+              className=""
+              role="presentation"
+              style={undefined}
             >
               <a
                 href="/users"
                 onClick={[Function]}
+                onKeyDown={[Function]}
               >
                 Пользователи
               </a>
             </li>
             <li
-              active={undefined}
-              activeHref={undefined}
-              activeKey={undefined}
-              onSelect={[Function]}
+              className=""
+              role="presentation"
+              style={undefined}
             >
               <a
                 href="/about"
                 onClick={[Function]}
+                onKeyDown={[Function]}
               >
                 About
               </a>
             </li>
             <li
-              active={undefined}
-              activeHref={undefined}
-              activeKey={undefined}
-              onSelect={[Function]}
+              className=""
+              role="presentation"
+              style={undefined}
             >
               <a
                 href="/contact"
                 onClick={[Function]}
+                onKeyDown={[Function]}
               >
                 Contact
               </a>
@@ -105,27 +105,27 @@ exports[`Layout renders children correctly 1`] = `
             role={null}
           >
             <li
-              active={undefined}
-              activeHref={undefined}
-              activeKey={undefined}
-              onSelect={[Function]}
+              className=""
+              role="presentation"
+              style={undefined}
             >
               <a
                 href="/login"
                 onClick={[Function]}
+                onKeyDown={[Function]}
               >
                 Log in
               </a>
             </li>
             <li
-              active={undefined}
-              activeHref={undefined}
-              activeKey={undefined}
-              onSelect={[Function]}
+              className=""
+              role="presentation"
+              style={undefined}
             >
               <a
                 href="/register"
                 onClick={[Function]}
+                onKeyDown={[Function]}
               >
                 Sign up
               </a>
@@ -150,7 +150,9 @@ exports[`Layout renders children correctly 1`] = `
           <li
             className="active"
           >
-            <a>
+            <a
+              href="/"
+            >
               Overview 
               <span
                 className="sr-only"
@@ -160,17 +162,23 @@ exports[`Layout renders children correctly 1`] = `
             </a>
           </li>
           <li>
-            <a>
+            <a
+              href="/"
+            >
               Reports
             </a>
           </li>
           <li>
-            <a>
+            <a
+              href="/"
+            >
               Analytics
             </a>
           </li>
           <li>
-            <a>
+            <a
+              href="/"
+            >
               Export
             </a>
           </li>
@@ -179,17 +187,23 @@ exports[`Layout renders children correctly 1`] = `
           className="nav nav-sidebar"
         >
           <li>
-            <a>
+            <a
+              href="/"
+            >
               Nav item again
             </a>
           </li>
           <li>
-            <a>
+            <a
+              href="/"
+            >
               One more nav
             </a>
           </li>
           <li>
-            <a>
+            <a
+              href="/"
+            >
               Another nav item
             </a>
           </li>
