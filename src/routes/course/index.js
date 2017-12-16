@@ -28,10 +28,24 @@ async function action({ fetch, params, store }) {
   const { data } = await resp.json();
   if (!data && !data.courses) throw new Error('Failed to load course.');
   store.dispatch(setStudyEntities(data.courses[0].studyEntities));
+  const mas = [
+    [
+      {
+        title: 'Users list',
+        action: `/courses/${data.courses[0].id}/users`,
+      },
+    ],
+    [
+      {
+        title: 'Test second level',
+        action: `/`,
+      },
+    ],
+  ];
   return {
     title,
     component: (
-      <Layout>
+      <Layout menuSecond={mas}>
         <Course title={data.courses[0].title} course={data.courses[0]} />
       </Layout>
     ),

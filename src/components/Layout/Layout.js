@@ -20,42 +20,56 @@ import Footer from '../Footer';
 class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
+    menuSecond: PropTypes.arrayOf(
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          title: PropTypes.string,
+          action: PropTypes.string,
+          isActive: PropTypes.bool,
+        }),
+      ),
+    ),
+  };
+
+  static defaultProps = {
+    menuSecond: [],
   };
 
   render() {
+    const menuSecondList = [];
+    const items = this.props.menuSecond;
+    for (let i = 0; i < items.length; i += 1) {
+      const secondLevel = [];
+      for (let j = 0; j < items[i].length; j += 1) {
+        secondLevel.push(
+          <li
+            key={`${i} ${j}`}
+            className={items[i][j].isActive ? s.active : null}
+          >
+            <a href={items[i][j].action}>
+              {items[i][j].title}
+              {s.active ? (
+                <span className="sr-only">(current)</span>
+              ) : (
+                undefined
+              )}
+            </a>
+          </li>,
+        );
+      }
+      menuSecondList.push(
+        <ul key={i} className={`nav ${s['nav-sidebar']}`}>
+          {secondLevel}
+        </ul>,
+      );
+    }
     return (
       <div>
         <Header />
         <div className="container-fluid">
           <div className="row">
             <div className={`col-sm-3 col-md-2 ${s.sidebar}`}>
-              <ul className={`nav ${s['nav-sidebar']}`}>
-                <li className={s.active}>
-                  <a href="/">
-                    Overview <span className="sr-only">(current)</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/">Reports</a>
-                </li>
-                <li>
-                  <a href="/">Analytics</a>
-                </li>
-                <li>
-                  <a href="/">Export</a>
-                </li>
-              </ul>
-              <ul className={`nav ${s['nav-sidebar']}`}>
-                <li>
-                  <a href="/">Nav item again</a>
-                </li>
-                <li>
-                  <a href="/">One more nav</a>
-                </li>
-                <li>
-                  <a href="/">Another nav item</a>
-                </li>
-              </ul>
+              {menuSecondList}
             </div>
             <div
               className={`col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 ${
