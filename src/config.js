@@ -15,6 +15,11 @@ if (process.env.BROWSER) {
   );
 }
 
+function checkDatabaseUrl() {
+  if (process.env.NODE_ENV === 'test') return 'sqlite:database_test.sqlite';
+  return process.env.DATABASE_URL || 'sqlite:database.sqlite';
+}
+
 module.exports = {
   // Node.js app
   port: process.env.PORT || 3000,
@@ -30,7 +35,7 @@ module.exports = {
   },
 
   // Database
-  databaseUrl: process.env.DATABASE_URL || 'sqlite:database.sqlite',
+  databaseUrl: checkDatabaseUrl(),
 
   // Web analytics
   analytics: {

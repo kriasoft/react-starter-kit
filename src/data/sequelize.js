@@ -11,6 +11,7 @@ import Sequelize from 'sequelize';
 import config from '../config';
 
 const sequelize = new Sequelize(config.databaseUrl, {
+  logging: process.env.NODE_ENV !== 'test',
   define: {
     freezeTableName: true,
   },
