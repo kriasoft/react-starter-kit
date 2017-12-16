@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Modal, Button, FormControl, Table } from 'react-bootstrap';
 import TextEditor from '../../components/TextEditor';
+import User from '../../components/User';
 import s from './Course.css';
 import { addStudyEntity } from '../../actions/study_entities';
 import { subscribeUser, unsubscribeUser } from '../../actions/courses';
@@ -36,6 +37,7 @@ class Course extends React.Component {
       users: PropTypes.arrayOf(
         PropTypes.shape({
           id: PropTypes.string,
+          email: PropTypes.string,
         }),
       ),
     }).isRequired,
@@ -63,7 +65,7 @@ class Course extends React.Component {
   componentWillMount() {
     this.setState({
       studyEntities: this.context.store.getState().course.studyEntities,
-      subscribedUsersList: this.props.course.users.map(u => u.id),
+      subscribedUsersList: this.props.course.users,
     });
   }
 
@@ -112,8 +114,8 @@ class Course extends React.Component {
     this.setState({ showModalSubscribe: true });
   }
 
-  async subscribeUser(id, i) {
-    this.state.subscribedUsersList.push(id);
+  async subscribeUser(user) {
+    this.state.subscribedUsersList.push(user);
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  subscribe($id: String, $courseId: String){
@@ -123,7 +125,7 @@ class Course extends React.Component {
             { id }
         }`,
         variables: {
-          id: this.state.users[i].id,
+          id: user.id,
           courseId: this.props.course.id,
         },
       }),
@@ -135,8 +137,8 @@ class Course extends React.Component {
     });
   }
 
-  async unsubscribeUser(id) {
-    const i = this.state.subscribedUsersList.indexOf(id);
+  async unsubscribeUser(user) {
+    const i = this.state.subscribedUsersList.indexOf(user);
     this.state.subscribedUsersList.splice(i, 1);
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
@@ -147,7 +149,7 @@ class Course extends React.Component {
             { id }
         }`,
         variables: {
-          id,
+          id: user.id,
           courseId: this.props.course.id,
         },
       }),
@@ -202,31 +204,31 @@ class Course extends React.Component {
     for (let i = 0; this.state.users && i < this.state.users.length; i += 1) {
       // const email = this.state.users[i].email;
       const { id } = this.state.users[i];
-      if (this.state.subscribedUsersList.indexOf(id) < 0) {
+      if (!this.state.subscribedUsersList.find(user => user.id === id)) {
         usersList.push(
           <tr key={id}>
             <td>
               <Button
                 bsStyle="primary"
                 role="link"
-                onClick={() => this.subscribeUser(id, i)}
+                onClick={() => this.subscribeUser(this.state.users[i])}
               >
-                {id}
+                <User user={this.state.users[i]} link={false} />
               </Button>
             </td>
           </tr>,
         );
       }
     }
-    const subscribedUsersList = this.state.subscribedUsersList.map(id => (
-      <tr key={id}>
+    const subscribedUsersList = this.state.subscribedUsersList.map(user => (
+      <tr key={user.id}>
         <td>
           <Button
             bsStyle="primary"
             role="link"
-            onClick={() => this.unsubscribeUser(id)}
+            onClick={() => this.unsubscribeUser(user)}
           >
-            {id}
+            <User user={user} link={false} />
           </Button>
         </td>
       </tr>

@@ -19,7 +19,7 @@ class User extends React.Component {
     if (this.props.link) {
       return <a href={`/users/${this.props.user.id}`}>{userLine}</a>;
     }
-    return <span>{userLine})</span>;
+    return <span>{userLine}</span>;
   }
 }
 
