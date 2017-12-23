@@ -32,6 +32,7 @@ import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
 import config from './config';
+import User from '../src/data/models/User';
 
 const app = express();
 
@@ -84,6 +85,19 @@ app.use(passport.session());
 if (__DEV__) {
   app.enable('trust proxy');
 }
+app.post('/register', (req, res) => {
+  User.createUser({
+    email: req.body.email,
+    key: req.body.password,
+    name: req.body.name,
+    gender: req.body.gender,
+  }).then(user => {
+    req.login(user, err => {
+      if (!err) res.redirect('/');
+    });
+  });
+});
+
 app.post(
   '/login',
   passport.authenticate('local', {
