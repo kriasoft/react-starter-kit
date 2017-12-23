@@ -228,7 +228,6 @@ class Course extends React.Component {
         <Button bsStyle="primary" onClick={this.openModalSubscribe}>
           Subscribe user
         </Button>
-        <a href={`/courses/${this.props.course.id}/users`}>Users list</a>
         <ModalSubscribe
           isShowed={this.state.showModalSubscribe}
           subscribedUsers={subscribedUsersList}
