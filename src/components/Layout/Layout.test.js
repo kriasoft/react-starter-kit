@@ -10,6 +10,7 @@
 /* eslint-env jest */
 /* eslint-disable padded-blocks, no-unused-expressions */
 
+import 'raf/polyfill';
 import React from 'react';
 import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
