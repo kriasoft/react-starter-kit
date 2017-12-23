@@ -36,7 +36,7 @@ const addMark = {
   },
 };
 
-//  При выполнении этого метода в Graphql вылетает ошибка
+// when this method is called there is crash in GraphQL
 const removeMark = {
   type: MarkType,
   args: {

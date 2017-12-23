@@ -35,7 +35,7 @@ const addAnswer = {
   },
 };
 
-//  При выполнении этого метода в Graphql вылетает ошибка
+// when this method is called there is crash in GraphQL
 const removeAnswer = {
   type: AnswerType,
   args: {

@@ -56,8 +56,8 @@ class Navigation extends React.Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>
-            <NavItem href="/courses">Курсы</NavItem>
-            <NavItem href="/users">Пользователи</NavItem>
+            <NavItem href="/courses">Courses</NavItem>
+            <NavItem href="/users">Users</NavItem>
             <NavItem href="/about">About</NavItem>
             <NavItem href="/contact">Contact</NavItem>
           </Nav>

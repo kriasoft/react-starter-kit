@@ -19,7 +19,7 @@ const createCourse = {
   },
 };
 
-//  При выполнении этого метода в Graphql вылетает ошибка
+// when this method is called there is crash in GraphQL
 const removeCourse = {
   type: CourseType,
   args: {

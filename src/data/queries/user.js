@@ -27,7 +27,7 @@ const createUser = {
   },
 };
 
-//  При выполнении этого метода в Graphql вылетает ошибка
+// when this method is called there is crash in GraphQL
 const removeUser = {
   type: UserType,
   args: {
