@@ -17,6 +17,136 @@ import s from './Course.css';
 import { addStudyEntity } from '../../actions/study_entities';
 import { subscribeUser, unsubscribeUser } from '../../actions/courses';
 
+const StudyEntitiesList = ({ studyEntities, course }) => (
+  <ol>
+    {studyEntities.map(se => (
+      <li key={se.id}>
+        <a href={`/courses/${course.id}/${se.id}`}>{se.title}</a>
+      </li>
+    ))}
+  </ol>
+);
+
+StudyEntitiesList.propTypes = {
+  studyEntities: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      title: PropTypes.string,
+    }),
+  ).isRequired,
+  course: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    studyEntities: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        title: PropTypes.string,
+      }),
+    ),
+  }).isRequired,
+};
+
+const UsersList = ({ usersList, onClick }) =>
+  usersList.map(user => (
+    <tr key={user.id}>
+      <td>
+        <Button bsStyle="primary" role="link" onClick={() => onClick(user)}>
+          <User user={user} link={false} />
+        </Button>
+      </td>
+    </tr>
+  ));
+
+const ModalSubscribe = ({
+  isShowed,
+  onCloseClick,
+  subscribedUsers,
+  unsubscribedUsers,
+}) => (
+  <Modal show={isShowed} onHide={onCloseClick}>
+    <Modal.Header closeButton>
+      <Modal.Title>Modal heading</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <div className="row">
+        <div className="col-md-6">
+          <h4>Subscribed</h4>
+          <Table striped bordered condensed hover>
+            <thead>
+              <tr>
+                <th>User email</th>
+              </tr>
+            </thead>
+            <tbody>{subscribedUsers}</tbody>
+          </Table>
+        </div>
+        <div className="col-md-6">
+          <h4>Unsubscribed</h4>
+          <Table striped bordered condensed hover>
+            <thead>
+              <tr>
+                <th>User email</th>
+              </tr>
+            </thead>
+            <tbody>{unsubscribedUsers}</tbody>
+          </Table>
+        </div>
+      </div>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button onClick={onCloseClick}>Close</Button>
+    </Modal.Footer>
+  </Modal>
+);
+
+ModalSubscribe.propTypes = {
+  isShowed: PropTypes.bool.isRequired,
+  onCloseClick: PropTypes.func.isRequired,
+  subscribedUsers: PropTypes.element.isRequired,
+  unsubscribedUsers: PropTypes.element.isRequired,
+};
+
+const ModalStudyEntity = ({
+  isShowed,
+  state,
+  onInputChange,
+  onEditorChange,
+  onSubmitClick,
+  onCloseClick,
+}) => (
+  <Modal show={isShowed} onHide={onCloseClick}>
+    <Modal.Header closeButton>
+      <Modal.Title>Modal heading</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <h4>Course name</h4>
+      <FormControl
+        type="text"
+        value={state.studyEntityName}
+        onChange={onInputChange}
+      />
+      <div>
+        <br />
+        <TextEditor value={state.studyEntityBody} onChange={onEditorChange} />
+      </div>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button onClick={onSubmitClick}>Add study entity</Button>
+      <Button onClick={onCloseClick}>Close</Button>
+    </Modal.Footer>
+  </Modal>
+);
+
+ModalStudyEntity.propTypes = {
+  isShowed: PropTypes.bool.isRequired,
+  state: PropTypes.shape({ studyEntityName: PropTypes.string.isRequired })
+    .isRequired,
+  onInputChange: PropTypes.func.isRequired,
+  onEditorChange: PropTypes.func.isRequired,
+  onSubmitClick: PropTypes.func.isRequired,
+  onCloseClick: PropTypes.func.isRequired,
+};
+
 class Course extends React.Component {
   static contextTypes = {
     store: PropTypes.any.isRequired,
@@ -185,124 +315,54 @@ class Course extends React.Component {
   }
 
   render() {
-    const studyEntitiesList = [];
-    for (let i = 0; i < this.state.studyEntities.length; i += 1) {
-      studyEntitiesList.push(
-        <li key={this.state.studyEntities[i].id}>
-          <a
-            href={`/courses/${this.props.course.id}/${
-              this.props.course.studyEntities[i].id
-            }`}
-          >
-            {this.state.studyEntities[i].title}
-          </a>
-        </li>,
-      );
-    }
+    const usersListArray = (this.state.users || []).filter(
+      u => !this.state.subscribedUsersList.find(user => user.id === u.id),
+    );
 
-    const usersList = [];
-    for (let i = 0; this.state.users && i < this.state.users.length; i += 1) {
-      // const email = this.state.users[i].email;
-      const { id } = this.state.users[i];
-      if (!this.state.subscribedUsersList.find(user => user.id === id)) {
-        usersList.push(
-          <tr key={id}>
-            <td>
-              <Button
-                bsStyle="primary"
-                role="link"
-                onClick={() => this.subscribeUser(this.state.users[i])}
-              >
-                <User user={this.state.users[i]} link={false} />
-              </Button>
-            </td>
-          </tr>,
-        );
-      }
-    }
-    const subscribedUsersList = this.state.subscribedUsersList.map(user => (
-      <tr key={user.id}>
-        <td>
-          <Button
-            bsStyle="primary"
-            role="link"
-            onClick={() => this.unsubscribeUser(user)}
-          >
-            <User user={user} link={false} />
-          </Button>
-        </td>
-      </tr>
-    ));
+    const usersList = (
+      <UsersList
+        usersList={usersListArray}
+        onClick={user => this.subscribeUser(user)}
+      />
+    );
+
+    const subscribedUsersList = (
+      <UsersList
+        usersList={this.state.subscribedUsersList}
+        onClick={user => this.unsubscribeUser(user)}
+      />
+    );
+
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
-          <ol>{studyEntitiesList}</ol>
+          <StudyEntitiesList
+            studyEntities={this.state.studyEntities}
+            course={this.props.course}
+          />
         </div>
         <Button bsStyle="primary" onClick={this.openStEn}>
           Add study entity
         </Button>
-        <Modal show={this.state.showModal} onHide={this.closeStEn}>
-          <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <h4>Course name</h4>
-            <FormControl
-              type="text"
-              value={this.state.studyEntityName}
-              onChange={this.handleChange}
-            />
-            <div>
-              <br />
-              <TextEditor
-                value={this.state.studyEntityBody}
-                onChange={this.handleChangeBody}
-              />
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.addStEn}>Add study entity</Button>
-            <Button onClick={this.closeStEn}>Close</Button>
-          </Modal.Footer>
-        </Modal>
+        <ModalStudyEntity
+          isShowed={this.state.showModal}
+          state={this.state}
+          onInputChange={this.handleChange}
+          onEditorChange={this.handleChangeBody}
+          onSubmitClick={this.addStEn}
+          onCloseClick={this.closeStEn}
+        />
         <Button bsStyle="primary" onClick={this.openSubs}>
           Subscribe user
         </Button>
-        <Modal show={this.state.showModalSubscribe} onHide={this.closeSubs}>
-          <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              <div className="col-md-6">
-                <h4>Subscribed</h4>
-                <Table striped bordered condensed hover>
-                  <thead>
-                    <tr>
-                      <th>User email</th>
-                    </tr>
-                  </thead>
-                  <tbody>{subscribedUsersList}</tbody>
-                </Table>
-              </div>
-              <div className="col-md-6">
-                <h4>Unsubscribed</h4>
-                <Table striped bordered condensed hover>
-                  <thead>
-                    <tr>
-                      <th>User email</th>
-                    </tr>
-                  </thead>
-                  <tbody>{usersList}</tbody>
-                </Table>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.closeSubs}>Close</Button>
-          </Modal.Footer>
-        </Modal>
+        <a href={`/courses/${this.props.course.id}/users`}>Users list</a>
+        <ModalSubscribe
+          isShowed={this.state.showModalSubscribe}
+          subscribedUsers={subscribedUsersList}
+          unsubscribedUsers={usersList}
+          onCloseClick={this.closeSubs}
+        />
       </div>
     );
   }
