@@ -365,14 +365,14 @@ class StudyEntity extends React.Component {
       );
       markView = (
         <div>
-          <h3>Список оценок</h3>
+          <h3>Marks list</h3>
           <Table striped bordered condensed hover>
             <thead>
               <tr>
                 <th>N</th>
-                <th>Оценка</th>
-                <th>Комментарий</th>
-                <th>Дата</th>
+                <th>Mark</th>
+                <th>Comment</th>
+                <th>Date</th>
               </tr>
             </thead>
             <tbody>{marks}</tbody>

@@ -56,7 +56,7 @@ User.createUser = function createUser(args) {
         claims: [
           {
             type: 'local',
-            value: User.getPasswordHash(args.key),
+            value: User.hashPassword(args.key),
           },
         ],
         profile: {

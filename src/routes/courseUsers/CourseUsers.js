@@ -45,7 +45,7 @@ class CourseUsers extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <Row>
-            <h2>На {this.props.course.title} подписаны:</h2>
+            <h2>Subscribed to {this.props.course.title}:</h2>
             <Col xs={12} md={10}>
               <ol>{usersList}</ol>
             </Col>

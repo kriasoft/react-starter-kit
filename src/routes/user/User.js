@@ -88,7 +88,7 @@ class User extends React.Component {
             </Col>
           </Row>
           <Row>
-            <h2>Курсы</h2>
+            <h2>Courses</h2>
             <Col xs={12} md={10}>
               {coursesList}
             </Col>
