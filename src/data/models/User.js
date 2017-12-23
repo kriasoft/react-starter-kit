@@ -43,6 +43,8 @@ const User = Model.define(
   },
 );
 
+User.hashPassword = key => bcrypt.hashSync(key, bcrypt.genSaltSync());
+
 User.createUser = function createUser(args) {
   return Model.transaction(t =>
     User.create(
@@ -54,7 +56,7 @@ User.createUser = function createUser(args) {
         claims: [
           {
             type: 'local',
-            value: bcrypt.hashSync(args.key, bcrypt.genSaltSync()),
+            value: User.getPasswordHash(args.key),
           },
         ],
         profile: {
