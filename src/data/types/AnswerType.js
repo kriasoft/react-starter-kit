@@ -5,6 +5,7 @@ import {
   GraphQLList,
 } from 'graphql';
 import MarkType from './MarkType';
+import UserType from './UserType';
 
 const AnswerType = new ObjectType({
   name: 'AnswerType',
@@ -15,6 +16,11 @@ const AnswerType = new ObjectType({
       type: new GraphQLList(MarkType),
       resolve: answer => answer.getMarks(),
     },
+    user: {
+      type: UserType,
+      resolve: answer => answer.getUser(),
+    },
+    createdAt: { type: StringType },
   },
 });
 

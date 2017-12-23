@@ -226,7 +226,13 @@ class StudyEntity extends React.Component {
           ){
             id, body, marks {
               id, mark, comment, createdAt
-            }
+            },
+            user { 
+              id, profile {
+                displayName
+              }
+            },
+            createdAt
           }            
         }`,
         variables: {
@@ -314,19 +320,21 @@ class StudyEntity extends React.Component {
     let answerChooser;
     let markView;
     if (user && user.isAdmin && this.state.answers) {
+      const answerTitle = answer =>
+        `${answer.user.profile.displayName} ${answer.createdAt}`;
       const answers = this.state.answers.map((answer, i) => (
         <MenuItem
           key={answer.id}
           eventKey={i}
           active={i === this.state.answerCur}
         >
-          {answer.id}
+          {answerTitle(answer)}
         </MenuItem>
       ));
       answerChooser = (
         <DropdownButton
           id="answer_chooser"
-          title={this.state.answers[this.state.answerCur].id}
+          title={answerTitle(this.state.answers[this.state.answerCur])}
           onSelect={this.selectAnswer}
         >
           {answers}

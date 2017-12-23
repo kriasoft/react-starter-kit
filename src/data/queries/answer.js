@@ -87,6 +87,7 @@ const answers = {
         model: StudyEntity,
         where: { id: args.studyEntityIds },
       });
+      includeStatement.push({ model: User });
     }
     if (args.courseIds) {
       includeStatement.push({ model: Course, where: { id: args.courseIds } });
