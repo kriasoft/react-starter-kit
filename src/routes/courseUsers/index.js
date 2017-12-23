@@ -30,6 +30,10 @@ async function action({ fetch, params }) {
   const mas = [
     [
       {
+        title: 'Study entities',
+        action: `/courses/${data.courses[0].id}`,
+      },
+      {
         title: 'Users list',
         action: `/courses/${data.courses[0].id}/users`,
         isActive: true,
