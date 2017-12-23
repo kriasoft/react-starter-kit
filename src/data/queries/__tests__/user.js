@@ -3,12 +3,10 @@
 
 import 'babel-regenerator-runtime';
 import { graphql } from 'graphql';
-import config from '../../../config';
 import schema from '../../schema';
 import models from '../../models';
 
 async function setupTest() {
-  config.databaseUrl = 'sqlite:database_test.sqlite';
   await models.sync({ force: true });
 }
 
