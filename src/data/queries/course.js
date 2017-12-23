@@ -1,8 +1,7 @@
 import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
 import CourseType from '../types/CourseType';
 import UserType from '../types/UserType';
-import Course from '../models/Course';
-import User from '../models/User';
+import { Course, User } from '../models';
 
 const createCourse = {
   type: CourseType,
@@ -44,6 +43,10 @@ const courses = {
       description: 'ids of the courses',
       type: new List(StringType),
     },
+    userId: {
+      description: 'id of the logged in user',
+      type: new List(StringType),
+    },
   },
   resolve(obj, args) {
     if (args.ids) {
@@ -51,6 +54,20 @@ const courses = {
         where: {
           id: args.ids,
         },
+      });
+    }
+    if (args.userId) {
+      return Course.findAll({
+        where: {
+          '$users.Id$': args.userId,
+        },
+        include: [
+          {
+            model: User,
+            as: 'users',
+            required: true,
+          },
+        ],
       });
     }
     return Course.findAll();

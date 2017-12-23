@@ -89,4 +89,12 @@ function sync(...args) {
 }
 
 export default { sync };
-export { User, UserLogin, UserClaim, UserProfile, Course, StudyEntity };
+export {
+  User,
+  UserLogin,
+  UserClaim,
+  UserProfile,
+  Course,
+  StudyEntity,
+  UserCourse,
+};

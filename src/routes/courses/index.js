@@ -15,9 +15,14 @@ import { setCourses } from '../../actions/courses';
 const title = 'Courses';
 
 async function action({ fetch, store }) {
+  const { user } = store.getState();
+  // TODO: restruct code for two different queries
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: '{ courses{ id,title } }',
+      query:
+        user && !user.isAdmin
+          ? `query courses{ courses( userId: "${user.id}"){ id, title } }`
+          : '{ courses{ id, title }}',
     }),
   });
   const { data } = await resp.json();
