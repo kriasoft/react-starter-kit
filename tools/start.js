@@ -129,7 +129,7 @@ async function start() {
   server.use(
     webpackDevMiddleware(clientCompiler, {
       publicPath: clientConfig.output.publicPath,
-      quiet: true,
+      logLevel: 'silent',
       watchOptions,
     }),
   );
