@@ -1,17 +1,9 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
 import createRootReducer from '../reducers';
-import createHelpers from './createHelpers';
 import createLogger from './logger';
 
-export default function configureStore(initialState, config) {
-  const helpers = createHelpers(config);
-  const { apolloClient } = config;
-
-  const middleware = [
-    thunk.withExtraArgument(helpers),
-    apolloClient.middleware(),
-  ];
+export default function configureStore(initialState) {
+  const middleware = [];
 
   let enhancer;
 
@@ -29,9 +21,7 @@ export default function configureStore(initialState, config) {
     enhancer = applyMiddleware(...middleware);
   }
 
-  const rootReducer = createRootReducer({
-    apolloClient,
-  });
+  const rootReducer = createRootReducer();
 
   // See https://github.com/rackt/redux/releases/tag/v3.1.0
   const store = createStore(rootReducer, initialState, enhancer);
