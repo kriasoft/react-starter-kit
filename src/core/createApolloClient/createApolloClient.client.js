@@ -16,7 +16,7 @@ const link = from([
   }),
   new HttpLink({
     uri: '/graphql',
-    credentials: 'same-origin',
+    credentials: 'include',
   }),
 ]);
 
