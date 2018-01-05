@@ -3,6 +3,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { from } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { HttpLink } from 'apollo-link-http';
+import apolloLogger from 'apollo-link-logger';
 
 const link = from([
   onError(({ graphQLErrors, networkError }) => {
@@ -14,6 +15,7 @@ const link = from([
       );
     if (networkError) console.warn(`[Network error]: ${networkError}`);
   }),
+  ...(__DEV__ ? [apolloLogger] : []),
   new HttpLink({
     uri: '/graphql',
     credentials: 'include',
