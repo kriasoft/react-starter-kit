@@ -167,7 +167,7 @@ app.get('*', async (req, res, next) => {
 
     const route = await router.resolve({
       ...context,
-      path: req.path,
+      pathname: req.path,
       query: req.query,
     });
 
@@ -177,12 +177,7 @@ app.get('*', async (req, res, next) => {
     }
 
     const data = { ...route };
-
-    const rootComponent = (
-      <App context={context} store={store}>
-        {route.component}
-      </App>
-    );
+    const rootComponent = <App context={context}>{route.component}</App>;
     await getDataFromTree(rootComponent);
     // this is here because of Apollo redux APOLLO_QUERY_STOP action
     await Promise.delay(0);

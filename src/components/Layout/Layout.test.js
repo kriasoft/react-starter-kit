@@ -15,7 +15,6 @@ import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import createApolloClient from '../../core/createApolloClient';
-import createFetch from '../../createFetch';
 import App from '../App';
 import Layout from './Layout';
 
@@ -27,13 +26,10 @@ describe('Layout', () => {
   test('renders children correctly', () => {
     const store = mockStore(initialState);
     const client = createApolloClient();
-    const fetch = createFetch(self.fetch, {
-      baseUrl: 'test',
-    });
 
     const wrapper = renderer
       .create(
-        <App context={{ insertCss: () => {}, store, client, fetch }}>
+        <App context={{ insertCss: () => {}, fetch: () => {}, store, client }}>
           <Layout>
             <div className="child" />
           </Layout>
