@@ -155,7 +155,7 @@ app.get('*', async (req, res, next) => {
 
     const route = await router.resolve({
       ...context,
-      path: req.path,
+      pathname: req.path,
       query: req.query,
     });
 
@@ -166,9 +166,7 @@ app.get('*', async (req, res, next) => {
 
     const data = { ...route };
     data.children = ReactDOM.renderToString(
-      <App context={context} store={store}>
-        {route.component}
-      </App>,
+      <App context={context}>{route.component}</App>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js];
