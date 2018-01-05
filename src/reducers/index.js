@@ -2,9 +2,8 @@ import { combineReducers } from 'redux';
 import user from './user';
 import runtime from './runtime';
 
-export default function createRootReducer({ apolloClient }) {
+export default function createRootReducer() {
   return combineReducers({
-    apollo: apolloClient.reducer(),
     user,
     runtime,
   });

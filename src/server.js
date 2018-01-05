@@ -136,7 +136,6 @@ app.get('*', async (req, res, next) => {
 
     const store = configureStore(initialState, {
       cookie: req.headers.cookie,
-      apolloClient,
       fetch,
       // I should not use `history` on server.. but how I do redirection? follow universal-router
       history: null,
@@ -204,6 +203,7 @@ app.get('*', async (req, res, next) => {
     data.app = {
       apiUrl: config.api.clientUrl,
       state: context.store.getState(),
+      __APOLLO_STATE__: context.client.extract(),
     };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);

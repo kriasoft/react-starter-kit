@@ -46,7 +46,7 @@ const context = {
   client: apolloClient,
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
-  store: configureStore(window.App.state, { apolloClient, fetch, history }),
+  store: configureStore(window.App.state, { fetch, history }),
   fetch,
   storeSubscription: null,
 };
