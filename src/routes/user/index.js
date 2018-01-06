@@ -16,18 +16,17 @@ const title = 'User';
 async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `{ users(ids:"${params.id}") { 
-        id, 
-        email,
-        profile {
-          displayName,
-          gender,
-          picture
-        },
-        courses {
-          id, title
+      query: `query users($users: [String]) {
+        users(ids: $users) { 
+          id, 
+          email,
+          profile { displayName,  gender, picture },
+          courses { id, title }
         }
-      } }`,
+      }`,
+      variables: {
+        users: [params.id],
+      },
     }),
   });
   const { data } = await resp.json();

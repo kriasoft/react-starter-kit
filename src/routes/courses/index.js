@@ -21,8 +21,11 @@ async function action({ fetch, store }) {
     body: JSON.stringify({
       query:
         user && !user.isAdmin
-          ? `query courses{ courses( userId: "${user.id}"){ id, title } }`
-          : '{ courses{ id, title }}',
+          ? `query courses($users: [String]){ courses( userId: $users){ id, title } }`
+          : 'query courses{ courses{ id, title }}',
+      variables: {
+        users: user ? [user.id] : [],
+      },
     }),
   });
   const { data } = await resp.json();
