@@ -342,7 +342,7 @@ class StudyEntity extends React.Component {
       );
       const marks = this.state.answers[this.state.answerCur].marks.map(
         (mark, i) => (
-          <tr>
+          <tr key={mark.id}>
             <td>{i + 1}</td>
             <td>{mark.mark}</td>
             <td>{mark.comment}</td>
