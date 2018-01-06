@@ -1,8 +1,10 @@
+// @flow
+
 import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { from } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { HttpLink } from 'apollo-link-http';
+import createCache from './createCache';
 
 const link = from([
   onError(({ graphQLErrors, networkError }) => {
@@ -20,13 +22,13 @@ const link = from([
   }),
 ]);
 
-const cache = new InMemoryCache();
+const cache = createCache();
 
 export default function createApolloClient() {
   return new ApolloClient({
     link,
-    cache: cache.restore(window.__APOLLO_CLIENT__), // eslint-disable-line no-underscore-dangle
-    ssrMode: true,
+    // eslint-disable-next-line no-underscore-dangle
+    cache: cache.restore(window.App.apolloState),
     queryDeduplication: true,
     connectToDevTools: true,
   });

@@ -236,7 +236,7 @@ app.get('*', async (req, res, next) => {
       apiUrl: config.api.clientUrl,
       state: context.store.getState(),
       lang: locale,
-      __APOLLO_STATE__: context.client.extract(),
+      apolloState: context.client.extract(),
     };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
