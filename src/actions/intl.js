@@ -43,7 +43,6 @@ export function setLocale({ locale }) {
       const { data } = await client.query({
         query: queryIntl,
         variables: { locale },
-        fetchPolicy: 'network-only',
       });
       const messages = data.intl.reduce((msgs, msg) => {
         msgs[msg.id] = msg.message; // eslint-disable-line no-param-reassign

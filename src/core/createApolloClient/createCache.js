@@ -4,6 +4,10 @@ import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
 
 function dataIdFromObject(obj) {
   switch (obj.__typename) {
+    case 'IntlMessage':
+      // Do not use id as unique identifier for message because it's not between languages
+      // instead instruct cache to build path and index identifier for cache key
+      return null;
     case 'NewsItem':
       return obj.link ? `NewsItem.${obj.link}` : defaultDataIdFromObject(obj);
     default:
