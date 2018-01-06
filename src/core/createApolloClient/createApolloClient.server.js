@@ -1,8 +1,10 @@
+// @flow
+
 import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { from } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { SchemaLink } from 'apollo-link-schema';
+import createCache from './createCache';
 
 export default function createApolloClient(schema) {
   const link = from([
@@ -20,7 +22,7 @@ export default function createApolloClient(schema) {
 
   return new ApolloClient({
     link,
-    cache: new InMemoryCache(),
+    cache: createCache(),
     ssrMode: true,
     queryDeduplication: true,
   });
