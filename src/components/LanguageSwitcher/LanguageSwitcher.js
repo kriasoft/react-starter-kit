@@ -16,25 +16,25 @@ function LanguageSwitcher({ currentLocale, availableLocales, setLocale }) {
   const localeName = locale => localeDict[locale] || locale;
   return (
     <div>
-      {availableLocales.map(locale =>
+      {availableLocales.map(locale => (
         <span key={locale}>
-          {isSelected(locale)
-            ? <span>
-                {localeName(locale)}
-              </span>
-            : // github.com/yannickcr/eslint-plugin-react/issues/945
-              // eslint-disable-next-line react/jsx-indent
-              <a
-                href={`?lang=${locale}`}
-                onClick={e => {
-                  setLocale({ locale });
-                  e.preventDefault();
-                }}
-              >
-                {localeName(locale)}
-              </a>}{' '}
-        </span>,
-      )}
+          {isSelected(locale) ? (
+            <span>{localeName(locale)}</span>
+          ) : (
+            // github.com/yannickcr/eslint-plugin-react/issues/945
+            // eslint-disable-next-line react/jsx-indent
+            <a
+              href={`?lang=${locale}`}
+              onClick={e => {
+                setLocale({ locale });
+                e.preventDefault();
+              }}
+            >
+              {localeName(locale)}
+            </a>
+          )}{' '}
+        </span>
+      ))}
     </div>
   );
 }

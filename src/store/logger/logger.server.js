@@ -23,8 +23,9 @@ const actionFormatters = {
   APOLLO_QUERY_STOP: a => `queryId:${a.queryId}`,
 
   SET_LOCALE_SUCCESS: a =>
-    `locale ${a.payload.locale}: ${Object.keys(a.payload.messages)
-      .length} messages`,
+    `locale ${a.payload.locale}: ${
+      Object.keys(a.payload.messages).length
+    } messages`,
 };
 
 // Server side redux action logger

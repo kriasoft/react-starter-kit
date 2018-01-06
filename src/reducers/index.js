@@ -3,9 +3,8 @@ import user from './user';
 import runtime from './runtime';
 import intl from './intl';
 
-export default function createRootReducer({ apolloClient }) {
+export default function createRootReducer() {
   return combineReducers({
-    apollo: apolloClient.reducer(),
     user,
     runtime,
     intl,

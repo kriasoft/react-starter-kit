@@ -4,13 +4,13 @@ Don't forget to enclose your query to gql\`…\` tag or import *.graphql file.
 See docs at http://dev.apollodata.com/core/apollo-client-api.html#ApolloClient\\.query`;
 
 function createGraphqlRequest(apolloClient) {
-  return async function graphqlRequest(queryOrString, variables, options = {}) {
+  return async function graphqlRequest(queryOrString, variables) {
     if (__DEV__) {
       // eslint-disable-next-line no-console
       console.error(graphqlRequestDeprecatedMessage);
     }
 
-    const { skipCache } = options;
+    // const { skipCache } = options;
     let query = queryOrString;
     if (typeof queryOrString === 'string') {
       const gql = await require.ensure(
@@ -19,10 +19,6 @@ function createGraphqlRequest(apolloClient) {
         'graphql-tag',
       );
       query = gql([queryOrString]);
-    }
-
-    if (skipCache) {
-      return apolloClient.networkInterface.query({ query, variables });
     }
 
     let isMutation = false;

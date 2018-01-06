@@ -203,7 +203,7 @@ app.get('*', async (req, res, next) => {
 
     const route = await router.resolve({
       ...context,
-      path: req.path,
+      pathname: req.path,
       query: req.query,
       locale,
     });
@@ -214,12 +214,7 @@ app.get('*', async (req, res, next) => {
     }
 
     const data = { ...route };
-
-    const rootComponent = (
-      <App context={context} store={store}>
-        {route.component}
-      </App>
-    );
+    const rootComponent = <App context={context}>{route.component}</App>;
     await getDataFromTree(rootComponent);
     // this is here because of Apollo redux APOLLO_QUERY_STOP action
     await Promise.delay(0);
@@ -241,6 +236,7 @@ app.get('*', async (req, res, next) => {
       apiUrl: config.api.clientUrl,
       state: context.store.getState(),
       lang: locale,
+      __APOLLO_STATE__: context.client.extract(),
     };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);

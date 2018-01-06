@@ -13,7 +13,7 @@ import browserSync from 'browser-sync';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import createLaunchEditorMiddleware from 'react-error-overlay/middleware';
+import errorOverlayMiddleware from 'react-dev-utils/errorOverlayMiddleware';
 import webpackConfig from './webpack.config';
 import run, { format } from './run';
 import clean from './clean';
@@ -66,16 +66,12 @@ let server;
 async function start() {
   if (server) return server;
   server = express();
-  server.use(createLaunchEditorMiddleware());
+  server.use(errorOverlayMiddleware());
   server.use(express.static(path.resolve(__dirname, '../public')));
 
   // Configure client-side hot module replacement
   const clientConfig = webpackConfig.find(config => config.name === 'client');
-  clientConfig.entry.client = [
-    'react-error-overlay',
-    'react-hot-loader/patch',
-    'webpack-hot-middleware/client?name=client&reload=true',
-  ]
+  clientConfig.entry.client = ['./tools/lib/webpackHotDevClient']
     .concat(clientConfig.entry.client)
     .sort((a, b) => b.includes('polyfill') - a.includes('polyfill'));
   clientConfig.output.filename = clientConfig.output.filename.replace(
@@ -89,10 +85,6 @@ async function start() {
   clientConfig.module.rules = clientConfig.module.rules.filter(
     x => x.loader !== 'null-loader',
   );
-  const { options } = clientConfig.module.rules.find(
-    x => x.loader === 'babel-loader',
-  );
-  options.plugins = ['react-hot-loader/babel'].concat(options.plugins || []);
   clientConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
@@ -137,7 +129,7 @@ async function start() {
   server.use(
     webpackDevMiddleware(clientCompiler, {
       publicPath: clientConfig.output.publicPath,
-      quiet: true,
+      logLevel: 'silent',
       watchOptions,
     }),
   );

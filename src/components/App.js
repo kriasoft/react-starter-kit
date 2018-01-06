@@ -92,9 +92,7 @@ class App extends React.PureComponent {
     // NOTE: If you need to add or modify header, footer etc. of the app,
     // please do that inside the Layout component.
     return (
-      <ApolloProvider client={client}>
-        {this.props.children}
-      </ApolloProvider>
+      <ApolloProvider client={client}>{this.props.children}</ApolloProvider>
     );
   }
 }

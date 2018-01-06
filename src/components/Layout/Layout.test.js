@@ -15,6 +15,7 @@ import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { IntlProvider } from 'react-intl';
+import createApolloClient from '../../core/createApolloClient';
 import App from '../App';
 import Layout from './Layout';
 
@@ -32,15 +33,29 @@ const initialState = {
 describe('Layout', () => {
   test('renders children correctly', () => {
     const store = mockStore(initialState);
+    const client = createApolloClient();
+    const { intl } = new IntlProvider({
+      initialNow: new Date(15e11),
+      defaultLocale: 'en-US',
+      locale: 'en-US',
+      messages: {},
+    }).getChildContext();
+
     const wrapper = renderer
       .create(
-        <IntlProvider>
-          <App context={{ insertCss: () => {}, store }}>
-            <Layout>
-              <div className="child" />
-            </Layout>
-          </App>
-        </IntlProvider>,
+        <App
+          context={{
+            insertCss: () => {},
+            fetch: () => {},
+            intl,
+            store,
+            client,
+          }}
+        >
+          <Layout>
+            <div className="child" />
+          </Layout>
+        </App>,
       )
       .toJSON();
 
