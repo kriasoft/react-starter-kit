@@ -58,7 +58,7 @@ local machine by running:
 
 ```shell
 $ git clone -o react-starter-kit -b master --single-branch \
-      https://github.com/kriasoft/react-starter-kit.git MyApp
+https://github.com/kriasoft/react-starter-kit.git MyApp
 $ cd MyApp
 ```
 
