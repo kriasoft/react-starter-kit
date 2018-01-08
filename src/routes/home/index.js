@@ -9,12 +9,13 @@
 
 import React from 'react';
 import Home from './Home';
+import newsQuery from './news.graphql';
 import Layout from '../../components/Layout';
 
 async function action({ fetch }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: '{news{title,link,content}}',
+      query: newsQuery.loc.source.body,
     }),
   });
   const { data } = await resp.json();
