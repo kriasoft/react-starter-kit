@@ -57,8 +57,7 @@ You can start by cloning the latest version of React Starter Kit (RSK) on your
 local machine by running:
 
 ```shell
-$ git clone -o react-starter-kit -b master --single-branch \
-      https://github.com/kriasoft/react-starter-kit.git MyApp
+$ git clone -o react-starter-kit -b master --single-branch https://github.com/kriasoft/react-starter-kit.git MyApp
 $ cd MyApp
 ```
 
