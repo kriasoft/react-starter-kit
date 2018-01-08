@@ -5,7 +5,7 @@ import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
 function dataIdFromObject(obj) {
   switch (obj.__typename) {
     case 'NewsItem':
-      return obj.link ? `NewsItem.${obj.link}` : defaultDataIdFromObject(obj);
+      return obj.link ? `NewsItem:${obj.link}` : defaultDataIdFromObject(obj);
     default:
       return defaultDataIdFromObject(obj);
   }
