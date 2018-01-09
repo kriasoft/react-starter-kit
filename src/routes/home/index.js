@@ -21,7 +21,7 @@ async function action({ client }) {
     title: 'React Starter Kit',
     component: (
       <Layout>
-        <Home news={data.news} />
+        <Home news={data.reactjsGetAllNews} />
       </Layout>
     ),
   };
