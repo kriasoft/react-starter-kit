@@ -86,14 +86,7 @@ module.exports = {
 
     // ESLint plugin for prettier formatting
     // https://github.com/prettier/eslint-plugin-prettier
-    'prettier/prettier': [
-      'error',
-      {
-        // https://github.com/prettier/prettier#options
-        singleQuote: true,
-        trailingComma: 'all',
-      },
-    ],
+    'prettier/prettier': 'error',
   },
 
   settings: {
