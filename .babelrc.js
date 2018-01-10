@@ -12,16 +12,16 @@
 module.exports = {
   presets: [
     [
-      'env',
+      '@babel/preset-env',
       {
         targets: {
           node: 'current',
         },
       },
     ],
-    'stage-2',
-    'flow',
-    'react',
+    '@babel/preset-stage-2',
+    '@babel/preset-flow',
+    '@babel/preset-react',
   ],
   ignore: ['node_modules', 'build'],
 };
