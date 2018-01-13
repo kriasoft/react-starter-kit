@@ -1,7 +1,9 @@
 query HomeNews {
-  news {
+  reactjsGetAllNews {
     title
     link
+    author
+    pubDate
     content
   }
 }

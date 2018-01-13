@@ -29,7 +29,6 @@ const cache = createCache();
 export default function createApolloClient() {
   return new ApolloClient({
     link,
-    // eslint-disable-next-line no-underscore-dangle
     cache: cache.restore(window.App.apolloState),
     queryDeduplication: true,
     connectToDevTools: true,
