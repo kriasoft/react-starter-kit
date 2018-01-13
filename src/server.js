@@ -127,6 +127,7 @@ app.get('*', async (req, res, next) => {
       fetch: createFetch(fetch, {
         baseUrl: config.api.serverUrl,
         cookie: req.headers.cookie,
+        schema,
       }),
     };
 
