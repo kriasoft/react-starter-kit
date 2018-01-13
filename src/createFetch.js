@@ -49,7 +49,7 @@ function createFetch(fetch: Fetch, { baseUrl, cookie, schema }: Options) {
         query.variables,
       );
       return new Promise(resolve => resolve({
-        status: result.errors ? 500 : 200,
+        status: result.errors ? 400 : 200,
         json: () =>
           new Promise((resolveJson) => resolveJson(result)),
       }));
