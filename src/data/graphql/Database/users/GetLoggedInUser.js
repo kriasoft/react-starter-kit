@@ -9,32 +9,23 @@ export const queries = [
 
 export const resolvers = {
   RootQuery: {
-    databaseGetLoggedInUser: context => {
-      async function getLoggedInUser() {
-        // Throw error if user is not authenticated
-        if (!context.user) {
-          // eslint-disable-next-line no-throw-literal
-          throw 'Unauthorized: Access is denied.';
-        }
-
-        // Create new user with profile in database
-        const newUser = await User.findOne({
-          where: { email: context.user.email },
-          include: [
-            { model: UserLogin, as: 'logins' },
-            { model: UserClaim, as: 'claims' },
-            { model: UserProfile, as: 'profile' },
-          ],
-        });
-
-        return newUser;
+    async databaseGetLoggedInUser(parent, args, context) {
+      // Throw error if user is not authenticated
+      if (!context.user) {
+        return null;
       }
 
-      return getLoggedInUser()
-        .then(user => user)
-        .catch(err => {
-          throw err;
-        });
+      // Find logged in user from database
+      const dbUser = await User.findOne({
+        where: { email: context.user.email },
+        include: [
+          { model: UserLogin, as: 'logins' },
+          { model: UserClaim, as: 'claims' },
+          { model: UserProfile, as: 'profile' },
+        ],
+      });
+
+      return dbUser;
     },
   },
 };

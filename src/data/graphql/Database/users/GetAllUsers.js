@@ -59,30 +59,26 @@ export const queries = [
 
 export const resolvers = {
   RootQuery: {
-    databaseGetAllUsers: () =>
-      User.findAll({
+    async databaseGetAllUsers() {
+      const users = await User.findAll({
         include: [
           { model: UserLogin, as: 'logins' },
           { model: UserClaim, as: 'claims' },
           { model: UserProfile, as: 'profile' },
         ],
-      })
-        .then(users => users.map(user => user))
-        .catch(err => {
-          throw err;
-        }),
-    databaseGetUser: args =>
-      User.findOne({
-        where: { email: args.email },
+      });
+      return users;
+    },
+    async databaseGetUser(parent, { email }) {
+      const user = await User.findOne({
+        where: { email },
         include: [
           { model: UserLogin, as: 'logins' },
           { model: UserClaim, as: 'claims' },
           { model: UserProfile, as: 'profile' },
         ],
-      })
-        .then(user => user)
-        .catch(err => {
-          throw err;
-        }),
+      });
+      return user;
+    },
   },
 };

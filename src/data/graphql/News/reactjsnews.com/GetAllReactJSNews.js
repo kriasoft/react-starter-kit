@@ -29,18 +29,18 @@ export const queries = [
 `,
 ];
 
+// React.js News Feed (RSS)
+const url =
+  'https://api.rss2json.com/v1/api.json' +
+  '?rss_url=https%3A%2F%2Freactjsnews.com%2Ffeed.xml';
+
+let items = [];
+let lastFetchTask;
+let lastFetchTime = new Date(1970, 0, 1);
+
 export const resolvers = {
   RootQuery: {
-    reactjsGetAllNews: () => {
-      // React.js News Feed (RSS)
-      const url =
-        'https://api.rss2json.com/v1/api.json' +
-        '?rss_url=https%3A%2F%2Freactjsnews.com%2Ffeed.xml';
-
-      let items = [];
-      let lastFetchTask;
-      let lastFetchTime = new Date(1970, 0, 1);
-
+    reactjsGetAllNews() {
       if (lastFetchTask) {
         return lastFetchTask;
       }
