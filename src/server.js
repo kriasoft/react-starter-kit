@@ -102,6 +102,7 @@ app.get(
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
+// https://github.com/graphql/express-graphql#options
 const graphqlMiddleware = expressGraphQL(req => ({
   schema,
   graphiql: __DEV__,
