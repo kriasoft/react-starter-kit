@@ -36,7 +36,7 @@ function createFetch(fetch: Fetch, { baseUrl, cookie, schema }: Options) {
     },
   };
 
-  return (url: string, options: any) => {
+  return async (url: string, options: any) => {
     const isGraphQL = url.startsWith('/graphql');
     if (schema && isGraphQL) {
       // We're SSR, so route the graphql internall to avoid latency
@@ -48,23 +48,24 @@ function createFetch(fetch: Fetch, { baseUrl, cookie, schema }: Options) {
         null,
         query.variables,
       );
-      return new Promise(resolve => resolve({
-        status: result.errors ? 400 : 200,
-        json: () =>
-          new Promise((resolveJson) => resolveJson(result)),
-      }));
+      return new Promise(resolve =>
+        resolve({
+          status: result.errors ? 400 : 200,
+          json: () => new Promise(resolveJson => resolveJson(result)),
+        }),
+      );
     }
     return isGraphQL || url.startsWith('/api')
       ? fetch(`${baseUrl}${url}`, {
-        ...defaults,
-        ...options,
-        headers: {
-          ...defaults.headers,
-          ...(options && options.headers),
-        },
-      })
+          ...defaults,
+          ...options,
+          headers: {
+            ...defaults.headers,
+            ...(options && options.headers),
+          },
+        })
       : fetch(url, options);
-  }
+  };
 }
 
 export default createFetch;
