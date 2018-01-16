@@ -24,7 +24,7 @@ import localContentAPI from './localContentAPI';
 import router from './router';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
-import { setRuntimeVariable } from './actions/runtime';
+import { setRuntimeVariable } from './actions/runtime.actions';
 import config from './config';
 
 const app = express();
