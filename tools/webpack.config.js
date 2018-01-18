@@ -461,7 +461,12 @@ const serverConfig = {
     // Adds a banner to the top of each generated chunk
     // https://webpack.js.org/plugins/banner-plugin/
     new webpack.BannerPlugin({
-      banner: 'require("source-map-support").install();',
+      banner: [
+        'require("source-map-support").install();',
+        !isDebug
+          ? 'if(process.env.NODE_ENV !== "production") { console.warn("You\'re running a release build without the NODE_ENV environment variable set to \'production\'.\\nThis will lead to suboptimal performance."); }'
+          : '',
+      ].join('\n'),
       raw: true,
       entryOnly: false,
     }),
