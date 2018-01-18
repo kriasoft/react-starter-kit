@@ -30,7 +30,8 @@ module.exports = {
               // A Babel preset that can automatically determine the Babel plugins and polyfills
               // https://github.com/babel/babel-preset-env
               [
-                'env',
+                '@babel/preset-env',
+
                 {
                   targets: {
                     browsers: pkg.browserslist,
@@ -43,19 +44,25 @@ module.exports = {
               ],
               // Experimental ECMAScript proposals
               // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
-              'stage-2',
-              // JSX, Flow
+              '@babel/preset-stage-2',
+              // Flow
+              // https://github.com/babel/babel/tree/master/packages/babel-preset-flow
+              '@babel/preset-flow',
+              // JSX
               // https://github.com/babel/babel/tree/master/packages/babel-preset-react
-              'react',
+              '@babel/preset-react',
             ],
             plugins: [
-              'transform-decorators-legacy',
-              // Adds component stack to warning messages
-              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-source
-              ['transform-react-jsx-source'],
-              // Adds __self attribute to JSX which React will use for some warnings
-              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
-              ['transform-react-jsx-self'],
+              '@babel/plugin-proposal-decorators',
+              // Treat React JSX elements as value types and hoist them to the highest scope
+              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-constant-elements
+              '@babel/transform-react-constant-elements',
+              // Replaces the React.createElement function with one that is more optimized for production
+              // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-inline-elements
+              '@babel/transform-react-inline-elements',
+              // Remove unnecessary React propTypes from the production build
+              // https://github.com/oliviertassinari/babel-plugin-transform-react-remove-prop-types
+              'transform-react-remove-prop-types',
             ],
           },
         },
