@@ -120,6 +120,7 @@ app.get('*', async (req, res, next) => {
     const fetch = createFetch(nodeFetch, {
       baseUrl: config.api.serverUrl,
       cookie: req.headers.cookie,
+      schema,
     });
 
     const initialState = {
