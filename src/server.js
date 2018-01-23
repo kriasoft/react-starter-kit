@@ -146,6 +146,7 @@ app.get('*', async (req, res, next) => {
       baseUrl: config.api.serverUrl,
       cookie: req.headers.cookie,
       apolloClient,
+      schema,
     });
 
     const initialState = {
