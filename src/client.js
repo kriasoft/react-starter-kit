@@ -41,12 +41,7 @@ const container = document.getElementById('app');
 let currentLocation = history.location;
 let appInstance;
 
-// Switch off the native scroll restoration behavior and handle it manually
-// https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
 const scrollPositionsHistory = {};
-if (window.history && 'scrollRestoration' in window.history) {
-  window.history.scrollRestoration = 'manual';
-}
 
 // Re-render the app when window.location changes
 async function onLocationChange(location, action) {
@@ -88,6 +83,12 @@ async function onLocationChange(location, action) {
       container,
       () => {
         if (isInitialRender) {
+          // Switch off the native scroll restoration behavior and handle it manually
+          // https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
+          if (window.history && 'scrollRestoration' in window.history) {
+            window.history.scrollRestoration = 'manual';
+          }
+
           const elem = document.getElementById('css');
           if (elem) elem.parentNode.removeChild(elem);
           return;
