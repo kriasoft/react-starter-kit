@@ -9,13 +9,15 @@
 
 /* @flow */
 
+import type { graphql as graphqType, GraphQLSchema } from 'graphql';
+
 type Fetch = (url: string, options: ?any) => Promise<any>;
 
 type Options = {
   baseUrl: string,
   cookie?: string,
-  schema?: any,
-  graphql?: any,
+  schema?: GraphQLSchema,
+  graphql?: graphqType,
 };
 
 /**
