@@ -12,6 +12,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
+import { graphql } from 'graphql';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
@@ -128,6 +129,7 @@ app.get('*', async (req, res, next) => {
         baseUrl: config.api.serverUrl,
         cookie: req.headers.cookie,
         schema,
+        graphql,
       }),
     };
 
