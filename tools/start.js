@@ -49,9 +49,9 @@ function createCompilationPromise(name, compiler, config) {
         reject(new Error('Compilation failed!'));
       } else {
         console.info(
-          `[${format(timeEnd)}] Finished '${name}' compilation after ${
-            time
-          } ms`,
+          `[${format(
+            timeEnd,
+          )}] Finished '${name}' compilation after ${time} ms`,
         );
         resolve(stats);
       }
@@ -131,7 +131,7 @@ async function start() {
   server.use(
     webpackDevMiddleware(clientCompiler, {
       publicPath: clientConfig.output.publicPath,
-      quiet: true,
+      logLevel: 'silent',
       watchOptions,
     }),
   );

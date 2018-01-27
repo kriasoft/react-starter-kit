@@ -54,9 +54,7 @@ function runServer() {
       server.once('exit', (code, signal) => {
         if (pending) {
           throw new Error(
-            `Server terminated unexpectedly with code: ${code} signal: ${
-              signal
-            }`,
+            `Server terminated unexpectedly with code: ${code} signal: ${signal}`,
           );
         }
       });

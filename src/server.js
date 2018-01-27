@@ -13,6 +13,7 @@ import expressSession from 'express-session';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
+import { graphql } from 'graphql';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import nodeFetch from 'node-fetch';
@@ -181,7 +182,13 @@ app.get('*', async (req, res, next) => {
         // eslint-disable-next-line no-underscore-dangle
         styles.forEach(style => css.add(style._getCss()));
       },
-      fetch,
+      // Universal HTTP client
+      fetch: createFetch(fetch, {
+        baseUrl: config.api.serverUrl,
+        cookie: req.headers.cookie,
+        schema,
+        graphql,
+      }),
       // You can access redux through react-redux connect
       store,
       storeSubscription: null,

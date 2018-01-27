@@ -57,8 +57,7 @@ You can start by cloning the latest version of React Starter Kit (RSK) on your
 local machine by running:
 
 ```shell
-$ git clone -o react-starter-kit -b master --single-branch \
-      https://github.com/kriasoft/react-starter-kit.git MyApp
+$ git clone -o react-starter-kit -b master --single-branch https://github.com/kriasoft/react-starter-kit.git MyApp
 $ cd MyApp
 ```
 
@@ -158,8 +157,7 @@ The deployment script `tools/deploy.js` is configured to push the contents of
 the `/build` folder to a remote server via Git. You can easily deploy your app
 to
 [Azure Web Apps](https://azure.microsoft.com/en-us/services/app-service/web/),
-or [Heroku](https://www.heroku.com/) this way. Both will execute `yarn install
---production` upon receiving new files from you. Note, you should only deploy
+or [Heroku](https://www.heroku.com/) this way. Both will execute `yarn install --production` upon receiving new files from you. Note, you should only deploy
 the contents of the `/build` folder to a remote server.
 
 ### How to Update
