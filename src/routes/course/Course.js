@@ -17,7 +17,7 @@ import StudyEntitiesList from '../../components/StudyEntitiesList';
 import UsersList from '../../components/UsersList';
 import s from './Course.css';
 import { addStudyEntity } from '../../actions/study_entities';
-import { subscribeUser, unsubscribeUser } from '../../actions/courses';
+import { addUserToCourse, deleteUserFromCourse } from '../../actions/courses';
 
 class Course extends React.Component {
   static contextTypes = {
@@ -116,12 +116,12 @@ class Course extends React.Component {
     this.setState({ showModalSubscribe: true });
   }
 
-  async subscribeUser(user) {
+  async addUserToCourse(user) {
     this.state.subscribedUsersList.push(user);
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  subscribe($id: String, $courseId: String){
-          subscribeUser(
+          addUserToCourse(
             id: $id,
             courseId: $courseId)
             { id }
@@ -133,19 +133,19 @@ class Course extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    this.context.store.dispatch(subscribeUser(data.subscribeUser));
+    this.context.store.dispatch(addUserToCourse(data.addUserToCourse));
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
     });
   }
 
-  async unsubscribeUser(user) {
+  async deleteUserFromCourse(user) {
     const i = this.state.subscribedUsersList.indexOf(user);
     this.state.subscribedUsersList.splice(i, 1);
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  unsubscribe($id: String, $courseId: String){
-          unsubscribeUser(
+          deleteUserFromCourse (
             id: $id,
             courseId: $courseId)
             { id }
@@ -157,7 +157,9 @@ class Course extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    this.context.store.dispatch(unsubscribeUser(data.unsubscribeUser));
+    this.context.store.dispatch(
+      deleteUserFromCourse(data.deleteUserFromCourse),
+    );
 
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
@@ -194,14 +196,14 @@ class Course extends React.Component {
     const usersList = (
       <UsersList
         usersList={usersListArray}
-        onClick={user => this.subscribeUser(user)}
+        onClick={user => this.addUserToCourse(user)}
       />
     );
 
     const subscribedUsersList = (
       <UsersList
         usersList={this.state.subscribedUsersList}
-        onClick={user => this.unsubscribeUser(user)}
+        onClick={user => this.deleteUserFromCourse(user)}
       />
     );
 
