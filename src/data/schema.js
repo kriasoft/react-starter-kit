@@ -16,12 +16,19 @@ import me from './queries/me';
 import news from './queries/news';
 import { createUser, removeUser, updateUser, users } from './queries/user';
 import {
+  createGroup,
+  removeGroup,
+  addUserToGroup,
+  deleteUserFromGroup,
+  groups,
+} from './queries/group';
+import {
   createCourse,
   removeCourse,
   courses,
   updateCourses,
-  subscribeUser,
-  unsubscribeUser,
+  addUserToCourse,
+  deleteUserFromCourse,
 } from './queries/course';
 import {
   createStudyEntity,
@@ -48,6 +55,7 @@ const schema = new Schema({
       studyEntities,
       answers,
       marks,
+      groups,
     },
   }),
   mutation: new ObjectType({
@@ -62,8 +70,12 @@ const schema = new Schema({
       createUser,
       removeUser,
       updateUser,
-      subscribeUser,
-      unsubscribeUser,
+      addUserToCourse,
+      deleteUserFromCourse,
+      createGroup,
+      removeGroup,
+      addUserToGroup,
+      deleteUserFromGroup,
       addAnswer,
       removeAnswer,
       updateAnswer,

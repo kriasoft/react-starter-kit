@@ -24,7 +24,7 @@ export function setCourses(courses) {
   };
 }
 
-export function subscribeUser(id, courseId) {
+export function addUserToCourse(id, courseId) {
   return {
     type: SUBSCRIBE_USER,
     data: {
@@ -34,7 +34,7 @@ export function subscribeUser(id, courseId) {
   };
 }
 
-export function unsubscribeUser(id, courseId) {
+export function deleteUserFromCourse(id, courseId) {
   return {
     type: UNSUBSCRIBE_USER,
     data: {

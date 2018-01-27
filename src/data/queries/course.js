@@ -74,7 +74,7 @@ const courses = {
   },
 };
 
-const subscribeUser = {
+const addUserToCourse = {
   type: UserType,
   args: {
     id: {
@@ -101,7 +101,7 @@ const subscribeUser = {
   },
 };
 
-const unsubscribeUser = {
+const deleteUserFromCourse = {
   type: UserType,
   args: {
     id: {
@@ -175,6 +175,6 @@ export {
   courses,
   removeCourse,
   updateCourses,
-  subscribeUser,
-  unsubscribeUser,
+  addUserToCourse,
+  deleteUserFromCourse,
 };
