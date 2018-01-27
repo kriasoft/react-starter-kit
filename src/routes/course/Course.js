@@ -10,7 +10,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Modal, Button, FormControl, Table } from 'react-bootstrap';
+import {
+  Modal,
+  Button,
+  FormControl,
+  Table,
+  ButtonToolbar,
+} from 'react-bootstrap';
 import TextEditor from '../../components/TextEditor';
 import User from '../../components/User';
 import s from './Course.css';
@@ -185,11 +191,11 @@ class Course extends React.Component {
     };
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.addStEn = this.addStEn.bind(this);
-    this.openStEn = this.openStEn.bind(this);
-    this.closeStEn = this.closeStEn.bind(this);
-    this.openSubs = this.openSubs.bind(this);
-    this.closeSubs = this.closeSubs.bind(this);
+    this.addStudyEntity = this.addStudyEntity.bind(this);
+    this.openModalStudyEntity = this.openModalStudyEntity.bind(this);
+    this.closeModalStudyEntity = this.closeModalStudyEntity.bind(this);
+    this.openModalSubscribe = this.openModalSubscribe.bind(this);
+    this.closeModalSubscribe = this.closeModalSubscribe.bind(this);
   }
 
   componentWillMount() {
@@ -228,19 +234,19 @@ class Course extends React.Component {
     this.setState({ studyEntityBody: val });
   }
 
-  closeStEn() {
+  closeModalStudyEntity() {
     this.setState({ showModal: false });
   }
 
-  openStEn() {
+  openModalStudyEntity() {
     this.setState({ showModal: true });
   }
 
-  closeSubs() {
+  closeModalSubscribe() {
     this.setState({ showModalSubscribe: false });
   }
 
-  openSubs() {
+  openModalSubscribe() {
     this.setState({ showModalSubscribe: true });
   }
 
@@ -292,7 +298,7 @@ class Course extends React.Component {
     });
   }
 
-  async addStEn() {
+  async addStudyEntity() {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation create($courseId: String, $title: String, $body: String){ 
@@ -311,7 +317,7 @@ class Course extends React.Component {
     });
     const { data } = await resp.json();
     this.context.store.dispatch(addStudyEntity(data.createStudyEntity));
-    this.closeStEn();
+    this.closeModalStudyEntity();
   }
 
   render() {
@@ -342,26 +348,27 @@ class Course extends React.Component {
             course={this.props.course}
           />
         </div>
-        <Button bsStyle="primary" onClick={this.openStEn}>
-          Add study entity
-        </Button>
+        <ButtonToolbar>
+          <Button bsStyle="primary" onClick={this.openModalStudyEntity}>
+            Add study entity
+          </Button>
+          <Button bsStyle="primary" onClick={this.openModalSubscribe}>
+            Subscribe user
+          </Button>
+        </ButtonToolbar>
         <ModalStudyEntity
           isShowed={this.state.showModal}
           state={this.state}
           onInputChange={this.handleChange}
           onEditorChange={this.handleChangeBody}
-          onSubmitClick={this.addStEn}
-          onCloseClick={this.closeStEn}
+          onSubmitClick={this.addStudyEntity}
+          onCloseClick={this.closeModalStudyEntity}
         />
-        <Button bsStyle="primary" onClick={this.openSubs}>
-          Subscribe user
-        </Button>
-        <a href={`/courses/${this.props.course.id}/users`}>Users list</a>
         <ModalSubscribe
           isShowed={this.state.showModalSubscribe}
           subscribedUsers={subscribedUsersList}
           unsubscribedUsers={usersList}
-          onCloseClick={this.closeSubs}
+          onCloseClick={this.closeModalSubscribe}
         />
       </div>
     );

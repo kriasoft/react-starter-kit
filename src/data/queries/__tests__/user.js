@@ -12,7 +12,7 @@ async function setupTest() {
 
 beforeEach(async () => setupTest());
 
-describe('graphql user', () => {
+describe('graphql users', () => {
   test('create', async () => {
     const Q = `mutation create($email:String, $key:String, $name:String, $gender:String) {
       createUser(email: $email, key: $key, name: $name, gender: $gender) {

@@ -18,6 +18,8 @@ import CourseStudyEntity from './CourseStudyEntity';
 import UserCourse from './UserCourse';
 import Answer from './Answer';
 import Mark from './Mark';
+import Group from './Group';
+import UserGroup from './UserGroup';
 
 User.hasMany(UserLogin, {
   foreignKey: 'userId',
@@ -72,6 +74,22 @@ Course.belongsToMany(User, {
   foreignKey: 'courseId',
 });
 
+User.belongsToMany(Group, {
+  as: 'groups',
+  through: {
+    model: UserGroup,
+  },
+  foreignKey: 'uId',
+});
+
+Group.belongsToMany(User, {
+  as: 'users',
+  through: {
+    model: UserGroup,
+  },
+  foreignKey: 'groupId',
+});
+
 User.hasMany(Answer);
 StudyEntity.hasMany(Answer);
 Course.hasMany(Answer);
@@ -89,4 +107,4 @@ function sync(...args) {
 }
 
 export default { sync };
-export { User, UserLogin, UserClaim, UserProfile, Course, StudyEntity };
+export { User, UserLogin, UserClaim, UserProfile, Course, StudyEntity, Group };
