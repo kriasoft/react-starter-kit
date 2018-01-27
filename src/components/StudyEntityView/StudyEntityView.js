@@ -19,6 +19,14 @@ import s from './StudyEntityView.css';
 
 const htmlToReactParser = new HtmlToReact.Parser();
 
+function inputRenderAttrs(node, children, index) {
+  const name = _.get(node, 'attribs.name');
+  return {
+    name,
+    key: index,
+    type: _.get(node, 'attribs.type'),
+  };
+}
 class StudyEntityView extends React.Component {
   static defaultProps = {
     value: null,
@@ -66,15 +74,11 @@ class StudyEntityView extends React.Component {
         shouldProcessNode: node =>
           node.name === 'pre' && _.get(node, 'children[0].name') === 'code',
         processNode: (node, children, index) => {
-          const content = _.get(
-            node,
-            'children[0].children[0].data',
-            '',
-          ).trim();
+          const value = _.get(node, 'children[0].children[0].data', '').trim();
           const lang = _.get(node, 'children[0].attribs.class');
           return (
             <SyntaxHighlighter key={index} language={lang} style={github}>
-              {content}
+              {value}
             </SyntaxHighlighter>
           );
         },
@@ -91,18 +95,75 @@ class StudyEntityView extends React.Component {
           _.get(node, 'attribs.name'),
         processNode: (node, children, index) => {
           const name = _.get(node, 'attribs.name');
-          const content =
-            this.state.answers[name] || _.get(node, 'children[0].data') || '';
-          const mode = _.get(node, 'attribs.language');
-          const changeHandler = this.updateAnswer.bind(this, name);
-          return (
-            <TextEditor
-              key={index}
-              value={content}
-              mode={mode}
-              onChange={changeHandler}
-            />
-          );
+          const renderAttrs = {
+            name,
+            key: index,
+            mode: _.get(node, 'attribs.language'),
+          };
+          const valueAttrs = {
+            value:
+              this.state.answers[name] || _.get(node, 'children[0].data', ''),
+            onChange: this.updateAnswer.bind(this, name),
+          };
+          return <TextEditor {...renderAttrs} {...valueAttrs} />;
+        },
+      },
+      /**
+       * <input name="" type="text|color">
+       */
+      {
+        shouldProcessNode: node =>
+          node.name === 'input' &&
+          _.get(node, 'attribs.name') &&
+          ['text', 'color'].includes(_.get(node, 'attribs.type', 'text')),
+        processNode: (node, children, index) => {
+          const name = _.get(node, 'attribs.name');
+          const renderAttrs = inputRenderAttrs(node, children, index);
+          const valueAttrs = {
+            value: this.state.answers[name] || _.get(node, 'attribs.value', ''),
+            onChange: event => this.updateAnswer(name, event.target.value),
+          };
+          return <input {...renderAttrs} {...valueAttrs} />;
+        },
+      },
+      /**
+       * <input name="" type="checkbox">
+       */
+      {
+        shouldProcessNode: node =>
+          node.name === 'input' &&
+          _.get(node, 'attribs.name') &&
+          _.get(node, 'attribs.type') === 'checkbox',
+        processNode: (node, children, index) => {
+          const name = _.get(node, 'attribs.name');
+          const renderAttrs = inputRenderAttrs(node, children, index);
+          const valueAttrs = {
+            checked:
+              this.state.answers[name] || _.get(node, 'attribs.value', ''),
+            onChange: event => this.updateAnswer(name, event.target.checked),
+          };
+          return <input {...renderAttrs} {...valueAttrs} />;
+        },
+      },
+      /**
+       * <input name="" type="radio" value="">
+       */
+      {
+        shouldProcessNode: node =>
+          node.name === 'input' &&
+          _.get(node, 'attribs.name') &&
+          _.get(node, 'attribs.value') &&
+          _.get(node, 'attribs.type') === 'radio',
+        processNode: (node, children, index) => {
+          const name = _.get(node, 'attribs.name');
+          const renderAttrs = inputRenderAttrs(node, children, index);
+          const value = _.get(node, 'attribs.value');
+          const valueAttrs = {
+            value,
+            checked: this.state.answers[name] === value,
+            onChange: event => this.updateAnswer(name, event.target.value),
+          };
+          return <input {...renderAttrs} {...valueAttrs} />;
         },
       },
       {

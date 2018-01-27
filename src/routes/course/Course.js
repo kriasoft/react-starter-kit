@@ -10,148 +10,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import {
-  Modal,
-  Button,
-  FormControl,
-  Table,
-  ButtonToolbar,
-} from 'react-bootstrap';
-import TextEditor from '../../components/TextEditor';
-import User from '../../components/User';
+import { Button } from 'react-bootstrap';
+import ModalSubscribe from '../../components/ModalSubscribe';
+import ModalStudyEntity from '../../components/ModalStudyEntity';
+import StudyEntitiesList from '../../components/StudyEntitiesList';
+import UsersList from '../../components/UsersList';
 import s from './Course.css';
 import { addStudyEntity } from '../../actions/study_entities';
 import { subscribeUser, unsubscribeUser } from '../../actions/courses';
-
-const StudyEntitiesList = ({ studyEntities, course }) => (
-  <ol>
-    {studyEntities.map(se => (
-      <li key={se.id}>
-        <a href={`/courses/${course.id}/${se.id}`}>{se.title}</a>
-      </li>
-    ))}
-  </ol>
-);
-
-StudyEntitiesList.propTypes = {
-  studyEntities: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-    }),
-  ).isRequired,
-  course: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    studyEntities: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        title: PropTypes.string,
-      }),
-    ),
-  }).isRequired,
-};
-
-const UsersList = ({ usersList, onClick }) =>
-  usersList.map(user => (
-    <tr key={user.id}>
-      <td>
-        <Button bsStyle="primary" role="link" onClick={() => onClick(user)}>
-          <User user={user} link={false} />
-        </Button>
-      </td>
-    </tr>
-  ));
-
-const ModalSubscribe = ({
-  isShowed,
-  onCloseClick,
-  subscribedUsers,
-  unsubscribedUsers,
-}) => (
-  <Modal show={isShowed} onHide={onCloseClick}>
-    <Modal.Header closeButton>
-      <Modal.Title>Modal heading</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-      <div className="row">
-        <div className="col-md-6">
-          <h4>Subscribed</h4>
-          <Table striped bordered condensed hover>
-            <thead>
-              <tr>
-                <th>User email</th>
-              </tr>
-            </thead>
-            <tbody>{subscribedUsers}</tbody>
-          </Table>
-        </div>
-        <div className="col-md-6">
-          <h4>Unsubscribed</h4>
-          <Table striped bordered condensed hover>
-            <thead>
-              <tr>
-                <th>User email</th>
-              </tr>
-            </thead>
-            <tbody>{unsubscribedUsers}</tbody>
-          </Table>
-        </div>
-      </div>
-    </Modal.Body>
-    <Modal.Footer>
-      <Button onClick={onCloseClick}>Close</Button>
-    </Modal.Footer>
-  </Modal>
-);
-
-ModalSubscribe.propTypes = {
-  isShowed: PropTypes.bool.isRequired,
-  onCloseClick: PropTypes.func.isRequired,
-  subscribedUsers: PropTypes.element.isRequired,
-  unsubscribedUsers: PropTypes.element.isRequired,
-};
-
-const ModalStudyEntity = ({
-  isShowed,
-  state,
-  onInputChange,
-  onEditorChange,
-  onSubmitClick,
-  onCloseClick,
-}) => (
-  <Modal show={isShowed} onHide={onCloseClick}>
-    <Modal.Header closeButton>
-      <Modal.Title>Modal heading</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-      <h4>Course name</h4>
-      <FormControl
-        type="text"
-        value={state.studyEntityName}
-        onChange={onInputChange}
-      />
-      <div>
-        <br />
-        <TextEditor value={state.studyEntityBody} onChange={onEditorChange} />
-      </div>
-    </Modal.Body>
-    <Modal.Footer>
-      <Button onClick={onSubmitClick}>Add study entity</Button>
-      <Button onClick={onCloseClick}>Close</Button>
-    </Modal.Footer>
-  </Modal>
-);
-
-ModalStudyEntity.propTypes = {
-  isShowed: PropTypes.bool.isRequired,
-  state: PropTypes.shape({ studyEntityName: PropTypes.string.isRequired })
-    .isRequired,
-  onInputChange: PropTypes.func.isRequired,
-  onEditorChange: PropTypes.func.isRequired,
-  onSubmitClick: PropTypes.func.isRequired,
-  onCloseClick: PropTypes.func.isRequired,
-};
 
 class Course extends React.Component {
   static contextTypes = {
@@ -348,14 +214,9 @@ class Course extends React.Component {
             course={this.props.course}
           />
         </div>
-        <ButtonToolbar>
-          <Button bsStyle="primary" onClick={this.openModalStudyEntity}>
-            Add study entity
-          </Button>
-          <Button bsStyle="primary" onClick={this.openModalSubscribe}>
-            Subscribe user
-          </Button>
-        </ButtonToolbar>
+        <Button bsStyle="primary" onClick={this.openModalStudyEntity}>
+          Add study entity
+        </Button>
         <ModalStudyEntity
           isShowed={this.state.showModal}
           state={this.state}
@@ -364,6 +225,9 @@ class Course extends React.Component {
           onSubmitClick={this.addStudyEntity}
           onCloseClick={this.closeModalStudyEntity}
         />
+        <Button bsStyle="primary" onClick={this.openModalSubscribe}>
+          Subscribe user
+        </Button>
         <ModalSubscribe
           isShowed={this.state.showModalSubscribe}
           subscribedUsers={subscribedUsersList}

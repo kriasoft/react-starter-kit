@@ -15,6 +15,7 @@ import {
   MenuItem,
   Form,
   FormControl,
+  ControlLabel,
   FormGroup,
   Col,
   Table,
@@ -70,6 +71,12 @@ class StudyEntity extends React.Component {
     if (this.context.store.getState().user) {
       this.retrieveAnswer();
     }
+  }
+
+  getValidationState() {
+    const { mark } = this.state;
+    if (mark <= 100 && mark >= 0) return 'success';
+    return 'error';
   }
 
   changeTitle(event) {
@@ -219,7 +226,13 @@ class StudyEntity extends React.Component {
           ){
             id, body, marks {
               id, mark, comment, createdAt
-            }
+            },
+            user { 
+              id, profile {
+                displayName
+              }
+            },
+            createdAt
           }            
         }`,
         variables: {
@@ -292,34 +305,6 @@ class StudyEntity extends React.Component {
           ) : (
             undefined
           )}
-          {/* Form for setting marks and making a comment */}
-          <Form horizontal>
-            <FormGroup controlId="Comment">
-              <Col sm={10}>
-                <FormControl
-                  type="text"
-                  placeholder="Comment"
-                  value={this.state.comment}
-                  onChange={this.changeComment}
-                />
-              </Col>
-            </FormGroup>
-            <FormGroup controlId="Mark">
-              <Col sm={2}>
-                <FormControl
-                  type="number"
-                  placeholder="Mark"
-                  value={this.state.mark}
-                  onChange={this.changeMark}
-                />
-              </Col>
-              <Col sm={2}>
-                <Button onClick={this.addMark}>
-                  <Glyphicon glyph="ok" />
-                </Button>
-              </Col>
-            </FormGroup>
-          </Form>
         </span>
       );
       headerComponent = (
@@ -335,19 +320,21 @@ class StudyEntity extends React.Component {
     let answerChooser;
     let markView;
     if (user && user.isAdmin && this.state.answers) {
+      const answerTitle = answer =>
+        `${answer.user.profile.displayName} ${answer.createdAt}`;
       const answers = this.state.answers.map((answer, i) => (
         <MenuItem
           key={answer.id}
           eventKey={i}
           active={i === this.state.answerCur}
         >
-          {answer.id}
+          {answerTitle(answer)}
         </MenuItem>
       ));
       answerChooser = (
         <DropdownButton
           id="answer_chooser"
-          title={this.state.answers[this.state.answerCur].id}
+          title={answerTitle(this.state.answers[this.state.answerCur])}
           onSelect={this.selectAnswer}
         >
           {answers}
@@ -355,7 +342,7 @@ class StudyEntity extends React.Component {
       );
       const marks = this.state.answers[this.state.answerCur].marks.map(
         (mark, i) => (
-          <tr>
+          <tr key={mark.id}>
             <td>{i + 1}</td>
             <td>{mark.mark}</td>
             <td>{mark.comment}</td>
@@ -377,6 +364,40 @@ class StudyEntity extends React.Component {
             </thead>
             <tbody>{marks}</tbody>
           </Table>
+          {/* Form for setting marks and making a comment */}
+          <Form horizontal>
+            <FormGroup controlId="Comment">
+              <Col sm={10}>
+                <FormControl
+                  type="text"
+                  placeholder="Comment"
+                  value={this.state.comment}
+                  onChange={this.changeComment}
+                />
+              </Col>
+            </FormGroup>
+            <ControlLabel>Set mark</ControlLabel>
+            <FormGroup
+              controlId="Mark"
+              validationState={this.getValidationState()}
+            >
+              <Col sm={2}>
+                <FormControl
+                  type="number"
+                  placeholder="Mark"
+                  value={this.state.mark}
+                  onChange={this.changeMark}
+                />
+              </Col>
+              <Col sm={2}>
+                {this.getValidationState() === 'success' ? (
+                  <Button onClick={this.addMark}>
+                    <Glyphicon glyph="ok" />
+                  </Button>
+                ) : null}
+              </Col>
+            </FormGroup>
+          </Form>
         </div>
       );
     }
