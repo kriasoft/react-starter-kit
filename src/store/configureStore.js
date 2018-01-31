@@ -24,7 +24,7 @@ export default function configureStore(initialState, helpersConfig) {
     enhancer = applyMiddleware(...middleware);
   }
 
-  // See https://github.com/rackt/redux/releases/tag/v3.1.0
+  // See https://github.com/reactjs/redux/releases/tag/v3.1.0
   const store = createStore(rootReducer, initialState, enhancer);
 
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
