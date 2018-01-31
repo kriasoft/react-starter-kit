@@ -17,7 +17,6 @@ async function action({ client }) {
     query: newsQuery,
   });
   return {
-    chunks: ['home'],
     title: 'React Starter Kit',
     component: (
       <Layout>
