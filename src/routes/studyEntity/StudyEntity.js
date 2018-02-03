@@ -22,6 +22,7 @@ import {
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import * as moment from 'moment';
 import TextEditor from '../../components/TextEditor';
 import StudyEntityView from '../../components/StudyEntityView';
 import s from './StudyEntity.css';
@@ -346,7 +347,11 @@ class StudyEntity extends React.Component {
             <td>{i + 1}</td>
             <td>{mark.mark}</td>
             <td>{mark.comment}</td>
-            <td>{mark.createdAt}</td>
+            <td>
+              {moment(mark.createdAt).fromNow()} ({moment(
+                mark.createdAt,
+              ).format('llll')})
+            </td>
           </tr>
         ),
       );

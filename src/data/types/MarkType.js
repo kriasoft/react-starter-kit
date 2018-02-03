@@ -11,7 +11,10 @@ const MarkType = new ObjectType({
     id: { type: new NonNull(StringType) },
     mark: { type: new NonNull(FloatType) },
     comment: { type: new NonNull(StringType) },
-    createdAt: { type: StringType },
+    createdAt: {
+      type: StringType,
+      resolve: mark => mark.createdAt.toISOString(),
+    },
   },
 });
 
