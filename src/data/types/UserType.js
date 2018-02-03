@@ -11,6 +11,7 @@ import {
   GraphQLObjectType as ObjectType,
   GraphQLID as ID,
   GraphQLString as StringType,
+  GraphQLBoolean as Boolean,
   GraphQLNonNull as NonNull,
   GraphQLList,
 } from 'graphql';
@@ -24,6 +25,7 @@ const UserType = new ObjectType({
   fields: {
     id: { type: new NonNull(ID) },
     email: { type: StringType },
+    isAdmin: { type: Boolean },
     courses: {
       type: new GraphQLList(CourseType),
       resolve: user => user.getCourses(),

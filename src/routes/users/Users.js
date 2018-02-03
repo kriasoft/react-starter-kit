@@ -25,6 +25,7 @@ class Users extends React.Component {
       usersList.push(
         <li key={this.props.users[i].id}>
           <User user={this.props.users[i]} />
+          {this.props.users[i].isAdmin}
         </li>,
       );
     }
