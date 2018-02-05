@@ -27,7 +27,7 @@
     [en, cs].forEach(addLocaleData);
     ```
 
- 5. Execute `yarn run extractMessages` or `yarn start` to strip out messages.
+ 5. Execute `yarn run messages` or `yarn start` to strip out messages.
     Message files are created in `src/messages` directory.
 
  6. Edit `src/messages/*.json` files, change only `message` property.
