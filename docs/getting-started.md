@@ -2,9 +2,9 @@
 
 ### Requirements
 
-  * Mac OS X, Windows, or Linux
-  * [Yarn](https://yarnpkg.com/) package + [Node.js](https://nodejs.org/) v6.5 or newer
-  * Text editor or IDE pre-configured with React/JSX/Flow/ESlint ([learn more](./how-to-configure-text-editors.md))
+* Mac OS X, Windows, or Linux
+* [Yarn](https://yarnpkg.com/) package + [Node.js](https://nodejs.org/) v6.5 or newer
+* Text editor or IDE pre-configured with React/JSX/Flow/ESlint ([learn more](./how-to-configure-text-editors.md))
 
 ### Directory Layout
 
@@ -78,8 +78,7 @@ Node.js server (`node build/server.js`) and [Browsersync](https://browsersync.io
 with [HMR](https://webpack.github.io/docs/hot-module-replacement) on top of it.
 
 > [http://localhost:3000/](http://localhost:3000/) — Node.js server (`build/server.js`)
-  with Browsersync and HMR enabled<br>
-> [http://localhost:3001/](http://localhost:3001/) — Browsersync control panel (UI)
+> with Browsersync and HMR enabled<br> > [http://localhost:3001/](http://localhost:3001/) — Browsersync control panel (UI)
 
 Now you can open your web app in a browser, on mobile devices and start
 hacking. Whenever you modify any of the source files inside the `/src` folder,
@@ -96,8 +95,8 @@ in release (production) mode:
 ```shell
 $ yarn start -- --release
 ```
-*NOTE: double dashes are required*
 
+_NOTE: double dashes are required_
 
 ### How to Build, Test, Deploy
 
@@ -119,7 +118,7 @@ or, for a production docker build:
 $ yarn run build -- --release --docker
 ```
 
-*NOTE: double dashes are required*
+_NOTE: double dashes are required_
 
 After running this command, the `/build` folder will contain the compiled
 version of the app. For example, you can launch Node.js server normally by
@@ -149,22 +148,18 @@ $ yarn run deploy
 ```
 
 The deployment script `tools/deploy.js` is configured to push the contents of
-the `/build` folder to a remote server via Git. You can easily deploy your app
-to [Azure Web Apps](https://azure.microsoft.com/en-us/services/app-service/web/),
-or [Heroku](https://www.heroku.com/) this way. Both will execute `yarn install --production`
-upon receiving new files from you. Note, you should only deploy the contents
-of the `/build` folder to a remote server.
-
+the `/build` folder to a remote server via Git. You can easily deploy your app [Manual & Bamboo Setup](./).
 
 ### Styleguide
+
 To work and launch the styleguide, run:
 
 ```shell
 $ yarn run styleguide
 ```
+
 This will run a local server of the styleguide, for more information on how to
 document components etc. see [React Styleguidist](https://react-styleguidist.js.org/).
-
 
 ### How to Update
 

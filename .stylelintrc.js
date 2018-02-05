@@ -39,6 +39,7 @@ module.exports = {
           // CSS Modules :global scope
           // https://github.com/css-modules/css-modules#exceptions
           'global',
+          'local',
         ],
       },
     ],

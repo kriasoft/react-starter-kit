@@ -13,7 +13,6 @@ import Layout from '../../components/base/Layout';
 
 async function action() {
   return {
-    chunks: ['home'],
     title: 'React Starter Kit',
     component: (
       <Layout>

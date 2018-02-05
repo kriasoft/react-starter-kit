@@ -14,7 +14,7 @@ import config from '../config';
 
 /* eslint-disable react/no-danger */
 
-class Html extends React.Component {
+class Html extends React.PureComponent {
   static propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
@@ -47,7 +47,8 @@ class Html extends React.Component {
           {scripts.map(script => (
             <link key={script} rel="preload" href={script} as="script" />
           ))}
-          <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+          <link rel="manifest" href="/site.webmanifest" />
+          <link rel="apple-touch-icon" href="/icon.png" />
           {styles.map(style => (
             <style
               key={style.id}
@@ -67,8 +68,9 @@ class Html extends React.Component {
               dangerouslySetInnerHTML={{
                 __html:
                   'window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;' +
-                  `ga('create','${config.analytics
-                    .googleTrackingId}','auto');ga('send','pageview')`,
+                  `ga('create','${
+                    config.analytics.googleTrackingId
+                  }','auto');ga('send','pageview')`,
               }}
             />
           )}
