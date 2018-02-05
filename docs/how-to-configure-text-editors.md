@@ -7,23 +7,26 @@
 
 Create a new project based on **React Starter Kit template**
 
-![react-project-template-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-new-project.png)
+[react-project-template-in-webstorm](https://plugins.jetbrains.com/plugin/7648-react-templates)
 
-Make sure that **JSX** support is enabled in your project. This is set by default, if you create a new project based on React.js template.
+Make sure that **JSX** support is enabled in your project. This is set by
+default, if you create a new project based on React.js template.
 
-![jsx-support-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-jsx.png)
+[jsx-support-in-webstorm](https://blog.jetbrains.com/webstorm/2015/10/working-with-reactjs-in-webstorm-coding-assistance/)
 
 Configure JavaScript libraries for **auto-complete**
 
-![javascript-libraries-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-libraries.png)
+[javascript-libraries-in-webstorm](https://blog.jetbrains.com/webstorm/2017/08/how-to-configure-code-completion-in-full-stack-javascript-projects/)
 
 Enable **ESLint** support
 
-![eslint-support-in-webstorm](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/webstorm-eslint.png)
+[eslint-support-in-webstorm](https://www.jetbrains.com/help/webstorm/eslint.html)
 
-Enable **CSSComb** by following the instructions [here](https://github.com/csscomb/jetbrains-csscomb).
+Enable **CSSComb** by following the instructions
+[here](https://github.com/csscomb/jetbrains-csscomb).
 
-**If you have trouble with autoreloading** try to disable "safe write" in `File > Settings > System Settings > Use "safe write" (save changes to a temporary file first)`
+**If you have trouble with autoreloading** try to disable "safe write" in
+`File > Settings > System Settings > Use "safe write" (save changes to a temporary file first)`
 
 ### Atom
 
@@ -49,25 +52,29 @@ Install local npm packages
 yarn add --dev eslint babel-eslint eslint-plugin-react stylelint
 ```
 
-*You may need to restart atom for changes to take effect*
+_You may need to restart atom for changes to take effect_
 
 ### SublimeText
 
-Install SublimeText packages
-Easiest with [Package Control](https://packagecontrol.io/) and then "Package Control: Install Package" (Ctrl+Shift+P)
+Install SublimeText packages\
+Easiest with [Package Control](https://packagecontrol.io/) and then "Package Control:
+Install Package" (Ctrl+Shift+P)
 
 * [Babel](https://packagecontrol.io/packages/Babel)
 * [Sublime-linter](http://www.sublimelinter.com/en/latest/)
 * [SublimeLinter-contrib-eslint](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint)
 * [SublimeLinter-contrib-stylelint](https://packagecontrol.io/packages/SublimeLinter-contrib-stylelint)
 
-You can also use [SublimeLinter-contrib-eslint_d](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint_d) for faster linting.
+You can also use
+[SublimeLinter-contrib-eslint_d](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint_d)
+for faster linting.
 
 Set Babel as default syntax for a particular extension:
 
 * Open a file with that extension,
 * Select `View` from the menu,
-* Then `Syntax` `->` `Open all with current extension as...` `->` `Babel` `->` `JavaScript (Babel)`.
+* Then `Syntax` `->` `Open all with current extension as...` `->` `Babel` `->`
+  `JavaScript (Babel)`.
 * Repeat this for each extension (e.g.: .js and .jsx).
 
 Install local npm packages

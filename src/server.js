@@ -17,7 +17,7 @@ import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
 import App from './components/App';
 import Html from './components/Html';
-import { ErrorPageWithoutStyle } from './components/templates/ErrorPage/ErrorPage';
+import { ErrorPageWithoutStyle } from './components/templates/ErrorPage';
 import errorPageStyle from './components/templates/ErrorPage/ErrorPage.css';
 import createFetch from './createFetch';
 import router from './router';
@@ -54,6 +54,13 @@ app.get('*', async (req, res, next) => {
   try {
     const css = new Set();
 
+    // Enables critical path CSS rendering
+    // https://github.com/kriasoft/isomorphic-style-loader
+    const insertCss = (...styles) => {
+      // eslint-disable-next-line no-underscore-dangle
+      styles.forEach(style => css.add(style._getCss()));
+    };
+
     // Universal HTTP client
     const fetch = createFetch(nodeFetch, {
       baseUrl: config.api.serverUrl,
@@ -79,23 +86,17 @@ app.get('*', async (req, res, next) => {
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
-      // Enables critical path CSS rendering
-      // https://github.com/kriasoft/isomorphic-style-loader
-      insertCss: (...styles) => {
-        // eslint-disable-next-line no-underscore-dangle
-        styles.forEach(style => css.add(style._getCss()));
-      },
+      insertCss,
       fetch,
+      // The twins below are wild, be careful!
+      pathname: req.path,
+      query: req.query,
       // You can access redux through react-redux connect
       store,
       storeSubscription: null,
     };
 
-    const route = await router.resolve({
-      ...context,
-      pathname: req.path,
-      query: req.query,
-    });
+    const route = await router.resolve(context);
 
     if (route.redirect) {
       res.redirect(route.status || 302, route.redirect);
@@ -104,9 +105,7 @@ app.get('*', async (req, res, next) => {
 
     const data = { ...route };
     data.children = ReactDOM.renderToString(
-      <App context={context} store={store}>
-        {route.component}
-      </App>,
+      <App context={context}>{route.component}</App>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js];

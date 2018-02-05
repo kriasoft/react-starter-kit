@@ -1,6 +1,7 @@
 ## React Style Guide
 
-> This style guide comes as an addition to [Airbnb React/JSX Guide](https://github.com/airbnb/javascript/tree/master/react).
+> This style guide comes as an addition to
+> [Airbnb React/JSX Guide](https://github.com/airbnb/javascript/tree/master/react).
 > Feel free to modify it to suit your project's needs.
 
 ### Table of Contents
@@ -12,15 +13,15 @@
 
 ### Separate folder per UI component
 
-* Place each major UI component along with its resources in a separate folder<br>
-  This will make it easier to find related resources for any particular UI
-  element (CSS, images, unit tests, localization files etc.). Removing such
-  components during refactorings should also be easy.
-* Avoid having CSS, images and other resource files shared between multiple components.<br>
+* Place each major UI component along with its resources in a separate folder\
+  This will make it easier to find related resources for any particular UI element
+  (CSS, images, unit tests, localization files etc.). Removing such components during
+  refactorings should also be easy.
+* Avoid having CSS, images and other resource files shared between multiple
+  components.\
   This will make your code more maintainable, easy to refactor.
-* Add `package.json` file into each component's folder.<br>
-  This will allow to easily reference such components from other places in
-  your code.<br>
+* Add `package.json` file into each component's folder.\
+  This will allow to easily reference such components from other places in your code.\
   Use `import Nav from '../Navigation'` instead of `import Nav from '../Navigation/Navigation.js'`
 
 ```
@@ -40,11 +41,12 @@
 }
 ```
 
-For more information google for [component-based UI development](https://google.com/search?q=component-based+ui+development).
+For more information google for
+[component-based UI development](https://google.com/search?q=component-based+ui+development).
 
 ### Prefer using functional components
 
-* Prefer using stateless functional components whenever possible.<br>
+* Prefer using stateless functional components whenever possible.\
   Components that don't use state are better to be written as simple pure functions.
 
 ```jsx
@@ -67,13 +69,17 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 
 ### Use CSS Modules
 
-* Use CSS Modules<br>
+* Use CSS Modules\
   This will allow using short CSS class names and at the same time avoid conflicts.
 * Keep CSS simple and declarative. Avoid loops, mixins etc.
-* Feel free to use variables in CSS via [precss](https://github.com/jonathantneal/precss) plugin for [PostCSS](https://github.com/postcss/postcss)
-* Prefer CSS class selectors instead of element and `id` selectors (see [BEM](https://bem.info/))
+* Feel free to use variables in CSS via
+  [precss](https://github.com/jonathantneal/precss) plugin for
+  [PostCSS](https://github.com/postcss/postcss)
+* Prefer CSS class selectors instead of element and `id` selectors (see
+  [BEM](https://bem.info/))
 * Avoid nested CSS selectors (see [BEM](https://bem.info/))
-* When in doubt, use `.root { }` class name for the root elements of your components
+* When in doubt, use `.root { }` class name for the root elements of your
+  components
 
 ```scss
 // Navigation.scss
@@ -103,7 +109,7 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
   color: $default-color;
   text-decoration: none;
   line-height: 25px;
-  transition: background-color .3s ease;
+  transition: background-color 0.3s ease;
 
   &,
   .items:hover & {
@@ -129,10 +135,14 @@ function Navigation() {
     <nav className={`${s.root} ${this.props.className}`}>
       <ul className={s.items}>
         <li className={`${s.item} ${s.selected}`}>
-          <a className={s.link} href="/products">Products</a>
+          <a className={s.link} href="/products">
+            Products
+          </a>
         </li>
         <li className={s.item}>
-          <a className={s.link} href="/services">Services</a>
+          <a className={s.link} href="/services">
+            Services
+          </a>
         </li>
       </ul>
     </nav>
@@ -146,7 +156,7 @@ export default withStyles(Navigation, s);
 
 ### Use higher-order components
 
-* Use higher-order components (HOC) to extend existing React components.<br>
+* Use higher-order components (HOC) to extend existing React components.\
   Here is an example:
 
 ```js
@@ -156,11 +166,10 @@ import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
 function withViewport(ComposedComponent) {
   return class WithViewport extends Component {
-
     state = {
-      viewport: canUseDOM ?
-        {width: window.innerWidth, height: window.innerHeight} :
-        {width: 1366, height: 768} // Default size for server-side rendering
+      viewport: canUseDOM
+        ? { width: window.innerWidth, height: window.innerHeight }
+        : { width: 1366, height: 768 }, // Default size for server-side rendering
     };
 
     componentDidMount() {
@@ -174,19 +183,22 @@ function withViewport(ComposedComponent) {
     }
 
     handleResize = () => {
-      let viewport = {width: window.innerWidth, height: window.innerHeight};
-      if (this.state.viewport.width !== viewport.width ||
-        this.state.viewport.height !== viewport.height) {
+      let viewport = { width: window.innerWidth, height: window.innerHeight };
+      if (
+        this.state.viewport.width !== viewport.width ||
+        this.state.viewport.height !== viewport.height
+      ) {
         this.setState({ viewport });
       }
     };
 
     render() {
-      return <ComposedComponent {...this.props} viewport={this.state.viewport}/>;
+      return (
+        <ComposedComponent {...this.props} viewport={this.state.viewport} />
+      );
     }
-
   };
-};
+}
 
 export default withViewport;
 ```
