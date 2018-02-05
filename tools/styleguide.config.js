@@ -50,7 +50,7 @@ module.exports = {
               '@babel/preset-flow',
               // JSX
               // https://github.com/babel/babel/tree/master/packages/babel-preset-react
-              '@babel/preset-react',
+              ['@babel/preset-react', { development: false }],
             ],
             plugins: [
               '@babel/plugin-proposal-decorators',
@@ -204,6 +204,9 @@ module.exports = {
     Wrapper: path.join(__dirname, 'lib/styleguide/Wrapper'),
   },
   highlightTheme: 'dracula',
+  // editorConfig: {
+  //   theme: 'dracula', // future config
+  // },
   styleguideDir: path.join(__dirname, '../styleguide'),
   sections: [
     {

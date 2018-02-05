@@ -20,7 +20,7 @@ import Footer from '../../organisms/Footer';
 import Feedback from '../../molecules/Feedback';
 
 @withStyles(normalizeCss, s)
-class Layout extends React.Component {
+class Layout extends React.PureComponent {
   static propTypes = {
     children: PropTypes.node.isRequired,
   };
