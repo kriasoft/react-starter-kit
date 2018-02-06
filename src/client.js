@@ -204,5 +204,7 @@ if (module.hot) {
       // Force-update the whole tree, including components that refuse to update
       deepForceUpdate(appInstance);
     }
+
+    onLocationChange(currentLocation);
   });
 }
