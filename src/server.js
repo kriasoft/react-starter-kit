@@ -34,6 +34,12 @@ import config from './config';
 const app = express();
 
 //
+// If you are using proxy from external machine, you can set TRUST_PROXY env
+// Default is to trust proxy headers only from loopback interface.
+// -----------------------------------------------------------------------------
+app.set('trust proxy', config.trustProxy);
+
+//
 // Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
 // user agent is not known.
 // -----------------------------------------------------------------------------
@@ -71,9 +77,6 @@ app.use((err, req, res, next) => {
 
 app.use(passport.initialize());
 
-if (__DEV__) {
-  app.enable('trust proxy');
-}
 app.get(
   '/login/facebook',
   passport.authenticate('facebook', {
