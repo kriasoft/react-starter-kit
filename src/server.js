@@ -31,13 +31,11 @@ import schema from './data/schema';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import config from './config';
 
-const app = express();
-
-//
-// If you are using proxy from external machine, you can set TRUST_PROXY env
-// Default is to trust proxy headers only from loopback interface.
-// -----------------------------------------------------------------------------
-app.set('trust proxy', config.trustProxy);
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection at:', p, 'reason:', reason);
+  // send entire app down. Process manager will restart it
+  process.exit(1);
+});
 
 //
 // Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
@@ -45,6 +43,14 @@ app.set('trust proxy', config.trustProxy);
 // -----------------------------------------------------------------------------
 global.navigator = global.navigator || {};
 global.navigator.userAgent = global.navigator.userAgent || 'all';
+
+const app = express();
+
+//
+// If you are using proxy from external machine, you can set TRUST_PROXY env
+// Default is to trust proxy headers only from loopback interface.
+// -----------------------------------------------------------------------------
+app.set('trust proxy', config.trustProxy);
 
 //
 // Register Node.js middleware
