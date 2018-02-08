@@ -1,5 +1,7 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
+import { name, version } from '../../package.json';
 import rootReducer from '../reducers';
 import createHelpers from './createHelpers';
 import createLogger from './logger';
@@ -13,18 +15,19 @@ export default function configureStore(initialState, helpersConfig) {
   if (__DEV__) {
     middleware.push(createLogger());
 
-    // https://github.com/zalmoxisus/redux-devtools-extension#redux-devtools-extension
-    let devToolsExtension = f => f;
-    if (process.env.BROWSER && window.devToolsExtension) {
-      devToolsExtension = window.devToolsExtension();
-    }
+    // https://github.com/zalmoxisus/redux-devtools-extension#14-using-in-production
+    const composeEnhancers = composeWithDevTools({
+      // Options: https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md#options
+      name: `${name}@${version}`,
+    });
 
-    enhancer = compose(applyMiddleware(...middleware), devToolsExtension);
+    // https://redux.js.org/docs/api/applyMiddleware.html
+    enhancer = composeEnhancers(applyMiddleware(...middleware));
   } else {
     enhancer = applyMiddleware(...middleware);
   }
 
-  // See https://github.com/reactjs/redux/releases/tag/v3.1.0
+  // https://redux.js.org/docs/api/createStore.html
   const store = createStore(rootReducer, initialState, enhancer);
 
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
