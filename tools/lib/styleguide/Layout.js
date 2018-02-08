@@ -16,8 +16,6 @@ const style = {
   position: 'relative',
   margin: 0,
   width: '100%',
-  float: 'left',
-  clear: 'both',
 };
 /* Add the default Layout Styling to the Styleguide */
 @withStyles(normalizeCss, layoutStyle, overwrite)
