@@ -27,7 +27,11 @@ import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime.action';
 import config from './config';
 
-const app = express();
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection at:', p, 'reason:', reason);
+  // send entire app down. Process manager will restart it
+  process.exit(1);
+});
 
 //
 // Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
@@ -36,6 +40,14 @@ const app = express();
 global.navigator = global.navigator || {};
 global.navigator.userAgent = global.navigator.userAgent || 'all';
 
+const app = express();
+
+//
+// If you are using proxy from external machine, you can set TRUST_PROXY env
+// Default is to trust proxy headers only from loopback interface.
+// -----------------------------------------------------------------------------
+app.set('trust proxy', config.trustProxy);
+
 //
 // Register Node.js middleware
 // -----------------------------------------------------------------------------
@@ -43,10 +55,6 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-if (__DEV__) {
-  app.enable('trust proxy');
-}
 
 //
 // Register content API
