@@ -1,42 +1,43 @@
 /**
  * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
+ * Copyright Â© 2014-present Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
 import path from 'path';
-import fetch from 'node-fetch';
+import pkg from '../package.json';
 import { spawn } from './lib/cp';
 import { makeDir, moveDir, cleanDir } from './lib/fs';
 import run from './run';
 
 // GitHub Pages
-const remote = {
-  name: 'github',
-  url: 'https://github.com/<user>/<repo>.git',
-  branch: 'gh-pages',
-  website: 'https://<user>.github.io/<repo>/',
-  static: true,
-};
+// const remote = {
+//   name: 'github',
+//   url: 'https://github.com/<user>/<repo>.git',
+//   branch: 'gh-pages',
+//   static: true,
+// };
 
 // Heroku
 // const remote = {
 //   name: 'heroku',
 //   url: 'https://git.heroku.com/<app>.git',
 //   branch: 'master',
-//   website: 'https://<app>.herokuapp.com',
 // };
 
+/**
+ * branch_name is for example test
+ * DEPLOY_BRANCH=branch_name yarn deploy
+ */
 // Azure Web Apps
-// const remote = {
-//   name: 'azure',
-//   url: 'https://<user>@<app>.scm.azurewebsites.net:443/<app>.git',
-//   branch: 'master',
-//   website: `http://<app>.azurewebsites.net`,
-// };
+const remote = {
+  name: `azure-${pkg.name}`,
+  url: pkg.deploymentRepository,
+  branch: process.env.DEPLOY_BRANCH,
+};
 
 const options = {
   cwd: path.resolve(__dirname, '../build'),
@@ -120,12 +121,6 @@ async function deploy() {
     'git',
     ['push', remote.name, `master:${remote.branch}`, '--set-upstream'],
     options,
-  );
-
-  // Check if the site was successfully deployed
-  const response = await fetch(remote.website);
-  console.info(
-    `${remote.website} => ${response.status} ${response.statusText}`,
   );
 }
 

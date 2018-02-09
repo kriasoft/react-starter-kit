@@ -76,6 +76,18 @@ module.exports = {
       },
     ],
 
+    // Make inputs work with id and nested with label
+    'jsx-a11y/label-has-for': [
+      2,
+      {
+        components: ['label'],
+        required: {
+          every: ['nesting', 'id'],
+        },
+        allowChildren: true,
+      },
+    ],
+
     // Allow .js files to use JSX syntax
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
     'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
