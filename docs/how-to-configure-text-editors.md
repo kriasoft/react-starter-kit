@@ -1,3 +1,5 @@
+# TODO
+
 ## How to Configure Text Editors and IDEs for React.js [![img](https://img.shields.io/badge/discussion-join-green.svg?style=flat-square)](https://github.com/kriasoft/react-starter-kit/issues/117)
 
 > Tips and tricks on how to configure your favorite text editor or IDE to work
@@ -49,7 +51,7 @@ Install local npm packages
 yarn add --dev eslint babel-eslint eslint-plugin-react stylelint
 ```
 
-*You may need to restart atom for changes to take effect*
+_You may need to restart atom for changes to take effect_
 
 ### SublimeText
 
