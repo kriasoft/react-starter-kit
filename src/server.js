@@ -77,7 +77,7 @@ app.get('*', async (req, res, next) => {
 
     // Universal HTTP client
     const fetch = createFetch(nodeFetch, {
-      baseUrl: config.api.serverUrl,
+      baseUrl: config.api.url,
       cookie: req.headers.cookie,
     });
 
@@ -128,7 +128,7 @@ app.get('*', async (req, res, next) => {
     }
     data.scripts.push(assets.client.js);
     data.app = {
-      apiUrl: config.api.clientUrl,
+      apiUrl: config.api.url,
       state: context.store.getState(),
     };
 
