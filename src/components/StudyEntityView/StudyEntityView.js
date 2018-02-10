@@ -32,7 +32,12 @@ const EXPR_CACHE = {};
 
 function getCachedExpr(expr, template) {
   if (!EXPR_CACHE[expr])
-    EXPR_CACHE[expr] = new Function('answers', template(expr)); // eslint-disable-line no-new-func
+    try {
+      EXPR_CACHE[expr] = new Function('answers', template(expr)); // eslint-disable-line no-new-func
+    } catch (e) {
+      console.log(e); // eslint-disable-line no-console
+      EXPR_CACHE[expr] = _.noop;
+    }
   return EXPR_CACHE[expr];
 }
 
@@ -139,8 +144,13 @@ class StudyEntityView extends React.Component {
               _.get(node, 'attribs.hide'),
               expr => `return !(${expr});`,
             );
-          const show = fn(_.cloneDeep(this.state.answers));
-          if (show) return <span key={index}>{children}</span>;
+          try {
+            const show = fn(_.cloneDeep(this.state.answers));
+            if (show) return <span key={index}>{children}</span>;
+          } catch (e) {
+            console.log(e); // eslint-disable-line no-console
+            return false;
+          }
           return false;
         },
       },
