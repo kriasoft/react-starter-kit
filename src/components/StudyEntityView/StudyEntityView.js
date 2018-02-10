@@ -140,8 +140,7 @@ class StudyEntityView extends React.Component {
               expr => `return !(${expr});`,
             );
           const show = fn(_.cloneDeep(this.state.answers));
-          if (show || typeof show === 'undefined')
-            return <span key={index}>{children}</span>;
+          if (show) return <span key={index}>{children}</span>;
           return false;
         },
       },
