@@ -80,6 +80,35 @@ class StudyEntityView extends React.Component {
     );
     this.processingInstructions = [
       /**
+       * hide or show a tag
+       * JS_EXPR - usual logical expression in JS which can access variable
+       * answers which refers to this.state.answers
+       * @if-show="JS_EXPR"
+       */
+      {
+        shouldProcessNode: node => _.get(node, ['attribs', 'show']),
+        processNode: (node, children, index) => {
+          const fn = getCachedExpr(
+            _.get(node, ['attribs', 'show']),
+            expr => `return ${expr};`,
+          );
+          try {
+            const show = fn(_.cloneDeep(this.state.answers));
+            const CustomTag = node.name;
+            if (show)
+              return (
+                <CustomTag key={index} {...node.attribs}>
+                  {children}
+                </CustomTag>
+              );
+          } catch (e) {
+            console.log(e); // eslint-disable-line no-console
+            return false;
+          }
+          return false;
+        },
+      },
+      /**
        * <pre></code class="javascript">
        * ...
        * </code></pre>
@@ -120,38 +149,6 @@ class StudyEntityView extends React.Component {
             onChange: this.updateAnswer.bind(this, name),
           };
           return <TextEditor {...renderAttrs} {...valueAttrs} />;
-        },
-      },
-      /**
-       * hides or show a piece of HTML
-       * JS_EXPR - usual logical expression in JS which can access variable
-       * answers which refers to this.state.answers
-       * <if show="JS_EXPR"|hide="JS_EXPR">
-       * ...
-       * </if>
-       */
-      {
-        shouldProcessNode: node => node.name === 'if',
-        processNode: (node, children, index) => {
-          let fn = _.noop;
-          if (_.get(node, 'attribs.show'))
-            fn = getCachedExpr(
-              _.get(node, 'attribs.show'),
-              expr => `return ${expr};`,
-            );
-          else if (_.get(node, 'attribs.hide'))
-            fn = getCachedExpr(
-              _.get(node, 'attribs.hide'),
-              expr => `return !(${expr});`,
-            );
-          try {
-            const show = fn(_.cloneDeep(this.state.answers));
-            if (show) return <span key={index}>{children}</span>;
-          } catch (e) {
-            console.log(e); // eslint-disable-line no-console
-            return false;
-          }
-          return false;
         },
       },
       /**
