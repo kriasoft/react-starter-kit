@@ -4,24 +4,21 @@ import { Modal, Button, Table } from 'react-bootstrap';
 
 class ModalSubscribe extends React.Component {
   static propTypes = {
-    isShowed: PropTypes.bool.isRequired,
-    onCloseClick: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
     subscribedUsers: PropTypes.element.isRequired,
     unsubscribedUsers: PropTypes.element.isRequired,
   };
   render() {
     const {
-      isShowed,
-      onCloseClick,
+      show,
+      handleClose,
       subscribedUsers,
       unsubscribedUsers,
     } = this.props;
 
     return (
-      <Modal show={isShowed} onHide={onCloseClick}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header>
+      <Modal show={show} onHide={handleClose}>
         <Modal.Body>
           <div className="row">
             <div className="col-md-6">
@@ -49,7 +46,7 @@ class ModalSubscribe extends React.Component {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={onCloseClick}>Close</Button>
+          <Button onClick={handleClose}>Close</Button>
         </Modal.Footer>
       </Modal>
     );
