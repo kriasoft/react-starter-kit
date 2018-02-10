@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Button } from 'react-bootstrap';
 import ModalSubscribe from '../../components/ModalSubscribe';
-import ModalStudyEntity from '../../components/ModalStudyEntity';
+import ModalEditor from '../../components/ModalEditor';
 import StudyEntitiesList from '../../components/StudyEntitiesList';
 import UsersList from '../../components/UsersList';
 import s from './Course.css';
@@ -49,7 +49,7 @@ class Course extends React.Component {
     super(props);
     this.state = {
       studyEntityBody: '',
-      showModal: false,
+      showModalEditor: false,
       showModalSubscribe: false,
       studyEntityName: '',
       studyEntities: [],
@@ -58,9 +58,7 @@ class Course extends React.Component {
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.addStudyEntity = this.addStudyEntity.bind(this);
-    this.openModalStudyEntity = this.openModalStudyEntity.bind(this);
     this.closeModalStudyEntity = this.closeModalStudyEntity.bind(this);
-    this.openModalSubscribe = this.openModalSubscribe.bind(this);
     this.closeModalSubscribe = this.closeModalSubscribe.bind(this);
   }
 
@@ -101,19 +99,11 @@ class Course extends React.Component {
   }
 
   closeModalStudyEntity() {
-    this.setState({ showModal: false });
-  }
-
-  openModalStudyEntity() {
-    this.setState({ showModal: true });
+    this.setState({ showModalEditor: false });
   }
 
   closeModalSubscribe() {
     this.setState({ showModalSubscribe: false });
-  }
-
-  openModalSubscribe() {
-    this.setState({ showModalSubscribe: true });
   }
 
   async addUserToCourse(user) {
@@ -216,25 +206,37 @@ class Course extends React.Component {
             course={this.props.course}
           />
         </div>
-        <Button bsStyle="primary" onClick={this.openModalStudyEntity}>
+        <Button
+          bsStyle="primary"
+          onClick={() => {
+            this.setState({ showModalEditor: true });
+          }}
+        >
           Add study entity
         </Button>
-        <ModalStudyEntity
-          isShowed={this.state.showModal}
-          state={this.state}
+        <ModalEditor
+          title="Study entity"
+          show={this.state.showModalEditor}
+          studyEntityName={this.state.studyEntityName}
+          studyEntityBody={this.state.studyEntityBody}
           onInputChange={this.handleChange}
           onEditorChange={this.handleChangeBody}
           onSubmitClick={this.addStudyEntity}
-          onCloseClick={this.closeModalStudyEntity}
+          handleClose={this.closeModalStudyEntity}
         />
-        <Button bsStyle="primary" onClick={this.openModalSubscribe}>
+        <Button
+          bsStyle="primary"
+          onClick={() => {
+            this.setState({ showModalSubscribe: true });
+          }}
+        >
           Subscribe user
         </Button>
         <ModalSubscribe
-          isShowed={this.state.showModalSubscribe}
+          show={this.state.showModalSubscribe}
           subscribedUsers={subscribedUsersList}
           unsubscribedUsers={usersList}
-          onCloseClick={this.closeModalSubscribe}
+          handleClose={this.closeModalSubscribe}
         />
       </div>
     );
