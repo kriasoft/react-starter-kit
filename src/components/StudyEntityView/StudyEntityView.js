@@ -27,6 +27,15 @@ function inputRenderAttrs(node, children, index) {
     type: _.get(node, 'attribs.type'),
   };
 }
+
+const EXPR_CACHE = {};
+
+function getCachedExpr(expr, template) {
+  if (!EXPR_CACHE[expr])
+    EXPR_CACHE[expr] = new Function('answers', template(expr)); // eslint-disable-line no-new-func
+  return EXPR_CACHE[expr];
+}
+
 class StudyEntityView extends React.Component {
   static defaultProps = {
     value: null,
@@ -106,6 +115,34 @@ class StudyEntityView extends React.Component {
             onChange: this.updateAnswer.bind(this, name),
           };
           return <TextEditor {...renderAttrs} {...valueAttrs} />;
+        },
+      },
+      /**
+       * hides or show a piece of HTML
+       * JS_EXPR - usual logical expression in JS which can access variable
+       * answers which refers to this.state.answers
+       * <if show="JS_EXPR"|hide="JS_EXPR">
+       * ...
+       * </if>
+       */
+      {
+        shouldProcessNode: node => node.name === 'if',
+        processNode: (node, children, index) => {
+          let fn = _.noop;
+          if (_.get(node, 'attribs.show'))
+            fn = getCachedExpr(
+              _.get(node, 'attribs.show'),
+              expr => `return ${expr};`,
+            );
+          else if (_.get(node, 'attribs.hide'))
+            fn = getCachedExpr(
+              _.get(node, 'attribs.hide'),
+              expr => `return !(${expr});`,
+            );
+          const show = fn(_.cloneDeep(this.state.answers));
+          if (show || typeof show === 'undefined')
+            return <span key={index}>{children}</span>;
+          return false;
         },
       },
       /**
