@@ -37,7 +37,6 @@ async function copy() {
     ),
     copyFile('LICENSE.txt', 'build/LICENSE.txt'),
     copyFile('yarn.lock', 'build/yarn.lock'),
-    copyFile('web.config', 'build/web.config'), // Azure web.config file
     copyDir('public', 'build/public'),
     copyDir('content/assets', 'build/public/assets'),
     copyDir('content/pages', 'build/content/pages'),
