@@ -38,7 +38,7 @@ const context = {
   }),
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
-  store: configureStore(window.App.state, { history, fetch }),
+  store: configureStore(window.App.state, { history, fetch }), // TODO: fix fetch
   storeSubscription: null,
 };
 
@@ -152,7 +152,7 @@ async function onLocationChange(location, action) {
 }
 
 // Handle client-side navigation by using HTML5 History API
-// For more information visit https://github.com/mjackson/history#readme
+// For more information visit https://github.com/ReactTraining/history#readme
 history.listen(onLocationChange);
 onLocationChange(currentLocation);
 

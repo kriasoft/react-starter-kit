@@ -7,6 +7,8 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+// TODO: write documentation
+
 import path from 'path';
 import fetch from 'node-fetch';
 import { writeFile, makeDir } from './lib/fs';
