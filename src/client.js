@@ -23,6 +23,7 @@ import router from './router';
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
 const context = {
+  baseUrl: window.App.baseUrl,
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: (...styles) => {
@@ -34,7 +35,8 @@ const context = {
   },
   // Universal HTTP client
   fetch: createFetch(fetch, {
-    baseUrl: window.App.apiUrl,
+    apiUrl: window.App.apiUrl,
+    baseUrl: window.App.baseUrl,
   }),
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html

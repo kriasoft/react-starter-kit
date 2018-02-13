@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import { Provider as ReduxProvider } from 'react-redux';
 
 const ContextType = {
+  baseUrl: PropTypes.string,
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: PropTypes.func.isRequired,

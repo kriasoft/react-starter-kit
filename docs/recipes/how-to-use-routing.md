@@ -1,5 +1,3 @@
-TODO: add basepath
-
 ## How to Use Routing and Navigation
 
 Let's see how routing is implemented using [Universal Router](https://github.com/kriasoft/universal-router)
@@ -87,6 +85,11 @@ Third, use the (`Link`) component to implement any router links. It can be used 
 ```html
 <Link to="/tasks/123">View Task #123</Link>
 ```
+
+## Specifing a baseUrl
+
+If your app runs in a subdirectory e.g. `https://example.com/subdirectory` specify the subdiretory
+name prefixed with a `/` in the `process.env.BASE_URL` runtime variable
 
 ### More about the Universal Router.
 

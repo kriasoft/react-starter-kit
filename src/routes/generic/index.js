@@ -7,7 +7,7 @@ import DefaultPage from '../../components/templates/DefaultPage';
 
 async function action({ path, fetch }) {
   // Generic page fetch from contents
-  const resp = await fetch(`/api/content`, {
+  const resp = await fetch(`/localapi/content`, {
     method: `post`,
     headers: {
       Accept: `application/json`,
