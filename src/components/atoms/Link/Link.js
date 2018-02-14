@@ -27,10 +27,8 @@ function isModifiedEvent(event) {
 class Link extends React.Component {
   static propTypes = {
     /** The internal link of the page where you linking to. */
-    to: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      params: PropTypes.shape(),
-    }).isRequired,
+    name: PropTypes.string.isRequired,
+    params: PropTypes.shape(),
     /** The inner childs. */
     children: PropTypes.node.isRequired,
     /** Function that will be fired on click. */
@@ -39,14 +37,14 @@ class Link extends React.Component {
 
   static defaultProps = {
     onClick: null,
+    params: null,
   };
 
   constructor(props) {
     super(props);
-    const { to } = props;
     const getUrl = generateUrls(router);
-
-    this.url = to.params ? getUrl(to.name, to.params) : getUrl(to.name);
+    const { name, params } = props;
+    this.url = params ? getUrl(name, params) : getUrl(name);
   }
 
   handleClick = event => {
@@ -67,7 +65,7 @@ class Link extends React.Component {
   };
 
   render() {
-    const { to, children, ...props } = this.props;
+    const { children, ...props } = this.props;
     const { url } = this;
 
     return (

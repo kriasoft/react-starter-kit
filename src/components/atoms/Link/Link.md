@@ -1,3 +1,5 @@
 ```js
-<Link to="/internal-page">Internal website link</Link>
+<Link name="content" params={{ page: 'about' }}>
+  About
+</Link>
 ```

@@ -22,18 +22,15 @@ class Footer extends React.Component {
         <div className={s.container}>
           <span className={s.text}>© Your Company</span>
           <span className={s.spacer}>·</span>
-          <Link className={s.link} to={{ name: 'home' }}>
+          <Link className={s.link} name="home">
             Home
           </Link>
           <span className={s.spacer}>·</span>
-          <Link
-            className={s.link}
-            to={{ name: 'content', params: { page: 'about' } }}
-          >
+          <Link className={s.link} name="content" params={{ page: 'about' }}>
             About
           </Link>
           <span className={s.spacer}>·</span>
-          <Link className={s.link} to={{ name: 'contact' }}>
+          <Link className={s.link} name="contact">
             Contact
           </Link>
         </div>

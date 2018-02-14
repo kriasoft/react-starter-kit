@@ -71,7 +71,7 @@ module.exports = {
       'error',
       {
         components: ['Link'],
-        specialLink: ['to'],
+        specialLink: ['name'],
         aspects: ['noHref', 'invalidHref', 'preferButton'],
       },
     ],
