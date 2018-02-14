@@ -46,6 +46,8 @@ const context = {
   storeSubscription: null,
 };
 
+router.baseUrl = context.baseUrl;
+
 const container = document.getElementById('app');
 let currentLocation = history.location;
 let appInstance;

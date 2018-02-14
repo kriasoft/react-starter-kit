@@ -40,6 +40,13 @@ process.on('unhandledRejection', (reason, p) => {
 global.navigator = global.navigator || {};
 global.navigator.userAgent = global.navigator.userAgent || 'all';
 
+// Set server-side routes
+const routes = {
+  static: config.baseUrl ? `${config.baseUrl}` : `/`,
+  localapi: config.baseUrl ? `${config.baseUrl}/localapi` : '/localapi',
+  server: config.baseUrl ? `${config.baseUrl}?*` : '*',
+};
+
 const app = express();
 
 //
@@ -51,10 +58,7 @@ app.set('trust proxy', config.trustProxy);
 //
 // Register Node.js middleware
 // -----------------------------------------------------------------------------
-app.use(
-  config.baseUrl ? `${config.baseUrl}` : `/`,
-  express.static(path.resolve(__dirname, 'public')),
-);
+app.use(routes.static, express.static(path.resolve(__dirname, 'public')));
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,100 +67,93 @@ app.use(bodyParser.json());
 //
 // Register content API
 // -----------------------------------------------------------------------------
-app.use(
-  config.baseUrl ? `${config.baseUrl}/localapi` : '/localapi',
-  localContentAPI,
-);
+app.use(routes.localapi, localContentAPI);
 
 //
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
-app.get(
-  config.baseUrl ? `${config.baseUrl}?*` : '*',
-  async (req, res, next) => {
-    try {
-      const css = new Set();
+app.get(routes.server, async (req, res, next) => {
+  try {
+    const css = new Set();
 
-      // Enables critical path CSS rendering
-      // https://github.com/kriasoft/isomorphic-style-loader
-      const insertCss = (...styles) => {
-        // eslint-disable-next-line no-underscore-dangle
-        styles.forEach(style => css.add(style._getCss()));
-      };
+    // Enables critical path CSS rendering
+    // https://github.com/kriasoft/isomorphic-style-loader
+    const insertCss = (...styles) => {
+      // eslint-disable-next-line no-underscore-dangle
+      styles.forEach(style => css.add(style._getCss()));
+    };
 
-      // Universal HTTP client
-      const fetch = createFetch(nodeFetch, {
-        apiUrl: config.api.url,
-        baseUrl: config.baseUrl,
-        cookie: req.headers.cookie,
-      });
+    // Universal HTTP client
+    const fetch = createFetch(nodeFetch, {
+      apiUrl: config.api.url,
+      baseUrl: config.baseUrl,
+      cookie: req.headers.cookie,
+    });
 
-      const initialState = {
-        // Initial state is empty, do some cookie checks or set some default values here
-      };
+    const initialState = {
+      // Initial state is empty, do some cookie checks or set some default values here
+    };
 
-      const store = configureStore(initialState, {
-        fetch,
-        // I should not use `history` on server.. but how I do redirection? follow universal-router
-      });
+    const store = configureStore(initialState, {
+      fetch,
+      // I should not use `history` on server.. but how I do redirection? follow universal-router
+    });
 
-      store.dispatch(
-        setRuntimeVariable({
-          name: 'initialNow',
-          value: Date.now(),
-        }),
-      );
+    store.dispatch(
+      setRuntimeVariable({
+        name: 'initialNow',
+        value: Date.now(),
+      }),
+    );
 
-      // Global (context) variables that can be easily accessed from any React component
-      // https://facebook.github.io/react/docs/context.html
-      const context = {
-        insertCss,
-        fetch,
-        // The twins below are wild, be careful!
-        pathname: req.path,
-        query: req.query,
-        // You can access redux through react-redux connect
-        store,
-        storeSubscription: null,
-        baseUrl: config.baseUrl,
-      };
+    // Global (context) variables that can be easily accessed from any React component
+    // https://facebook.github.io/react/docs/context.html
+    const context = {
+      insertCss,
+      fetch,
+      // The twins below are wild, be careful!
+      pathname: req.path,
+      query: req.query,
+      // You can access redux through react-redux connect
+      store,
+      storeSubscription: null,
+      baseUrl: config.baseUrl,
+    };
 
-      // Set baseUrl, only for server. HTML5 history basename is used in client
-      if (context.baseUrl) {
-        router.baseUrl = context.baseUrl;
-      }
-
-      const route = await router.resolve(context);
-
-      if (route.redirect) {
-        res.redirect(route.status || 302, route.redirect);
-        return;
-      }
-
-      const data = { ...route };
-      data.children = ReactDOM.renderToString(
-        <App context={context}>{route.component}</App>,
-      );
-      data.styles = [{ id: 'css', cssText: [...css].join('') }];
-      data.scripts = [assets.vendor.js];
-      if (route.chunks) {
-        data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
-      }
-      data.scripts.push(assets.client.js);
-      data.app = {
-        baseUrl: config.baseUrl,
-        apiUrl: config.api.url,
-        state: context.store.getState(),
-      };
-
-      const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-      res.status(route.status || 200);
-      res.send(`<!doctype html>${html}`);
-    } catch (err) {
-      next(err);
+    if (context.baseUrl) {
+      router.baseUrl = context.baseUrl;
     }
-  },
-);
+
+    const route = await router.resolve(context);
+
+    if (route.redirect) {
+      res.redirect(route.status || 302, route.redirect);
+      return;
+    }
+
+    const data = { ...route };
+    data.children = ReactDOM.renderToString(
+      <App context={context}>{route.component}</App>,
+    );
+    data.styles = [{ id: 'css', cssText: [...css].join('') }];
+    data.scripts = [assets.vendor.js];
+    if (route.chunks) {
+      data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
+    }
+    data.scripts.push(assets.client.js);
+    data.app = {
+      baseUrl: config.baseUrl,
+      apiUrl: config.api.url,
+      state: context.store.getState(),
+    };
+
+    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+    res.status(route.status || 200);
+    res.send(`<!doctype html>${html}`);
+  } catch (err) {
+    next(err);
+  }
+});
 
 //
 // Error handling

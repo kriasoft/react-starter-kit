@@ -9,7 +9,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import generateUrls from 'universal-router/generateUrls';
 import history from '../../../history';
+import router from '../../../router';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -25,7 +27,10 @@ function isModifiedEvent(event) {
 class Link extends React.Component {
   static propTypes = {
     /** The internal link of the page where you linking to. */
-    to: PropTypes.string.isRequired,
+    to: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      params: PropTypes.shape(),
+    }).isRequired,
     /** The inner childs. */
     children: PropTypes.node.isRequired,
     /** Function that will be fired on click. */
@@ -35,6 +40,14 @@ class Link extends React.Component {
   static defaultProps = {
     onClick: null,
   };
+
+  constructor(props) {
+    super(props);
+    const { to } = props;
+    const getUrl = generateUrls(router);
+
+    this.url = to.params ? getUrl(to.name, to.params) : getUrl(to.name);
+  }
 
   handleClick = event => {
     if (this.props.onClick) {
@@ -50,13 +63,15 @@ class Link extends React.Component {
     }
 
     event.preventDefault();
-    history.push(this.props.to);
+    history.push(this.url);
   };
 
   render() {
     const { to, children, ...props } = this.props;
+    const { url } = this;
+
     return (
-      <a href={to} {...props} onClick={this.handleClick}>
+      <a href={url} {...props} onClick={this.handleClick}>
         {children}
       </a>
     );
