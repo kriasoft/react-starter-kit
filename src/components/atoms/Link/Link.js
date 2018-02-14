@@ -9,9 +9,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import generateUrls from 'universal-router/generateUrls';
 import history from '../../../history';
-import router from '../../../router';
+import url from '../../../urls';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -42,9 +41,8 @@ class Link extends React.Component {
 
   constructor(props) {
     super(props);
-    const getUrl = generateUrls(router);
     const { name, params } = props;
-    this.url = params ? getUrl(name, params) : getUrl(name);
+    this.to = params ? url(name, params) : url(name);
   }
 
   handleClick = event => {
@@ -61,15 +59,14 @@ class Link extends React.Component {
     }
 
     event.preventDefault();
-    history.push(this.url);
+    history.push(this.to);
   };
 
   render() {
-    const { children, ...props } = this.props;
-    const { url } = this;
-
+    const { children, name, params, ...props } = this.props;
+    const { to } = this;
     return (
-      <a href={url} {...props} onClick={this.handleClick}>
+      <a href={to} {...props} onClick={this.handleClick}>
         {children}
       </a>
     );
