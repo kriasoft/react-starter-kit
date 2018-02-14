@@ -18,7 +18,7 @@ if (process.env.BROWSER) {
 module.exports = {
   // Node.js app
   port: process.env.PORT || 3000,
-  baseUrl: process.env.BASE_URL || '/test',
+  baseUrl: process.env.BASE_URL || '',
   // https://expressjs.com/en/guide/behind-proxies.html
   trustProxy: process.env.TRUST_PROXY || 'loopback',
 
