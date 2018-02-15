@@ -26,30 +26,6 @@ exports[`Layout renders children correctly 1`] = `
         >
           Contact
         </a>
-        <span
-          className="spacer"
-        >
-           | 
-        </span>
-        <a
-          className="link"
-          href="/login"
-          onClick={[Function]}
-        >
-          Log in
-        </a>
-        <span
-          className="spacer"
-        >
-          or
-        </span>
-        <a
-          className="link highlight"
-          href="/register"
-          onClick={[Function]}
-        >
-          Sign up
-        </a>
       </div>
       <a
         className="brand"
@@ -135,18 +111,6 @@ exports[`Layout renders children correctly 1`] = `
         onClick={[Function]}
       >
         Home
-      </a>
-      <span
-        className="spacer"
-      >
-        ·
-      </span>
-      <a
-        className="link"
-        href="/admin"
-        onClick={[Function]}
-      >
-        Admin
       </a>
       <span
         className="spacer"

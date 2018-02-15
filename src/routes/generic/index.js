@@ -5,7 +5,7 @@ import fm from 'front-matter';
 import Layout from '../../components/base/Layout';
 import DefaultPage from '../../components/templates/DefaultPage';
 
-async function action({ path, fetch }) {
+async function action({ pathname, fetch }) {
   // Generic page fetch from contents
   const resp = await fetch(`/api/content`, {
     method: `post`,
@@ -14,7 +14,7 @@ async function action({ path, fetch }) {
       'Content-Type': `application/json`,
     },
     body: JSON.stringify({
-      path: `${path}`,
+      path: `${pathname}`,
     }),
   });
 
