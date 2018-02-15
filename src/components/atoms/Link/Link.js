@@ -21,6 +21,7 @@ function isModifiedEvent(event) {
 
 /**
  * Link component for interal linking with the router.
+ * If baseUrl is set (in config.js) all links are prefixed with the baseUrl
  */
 class Link extends React.Component {
   static propTypes = {

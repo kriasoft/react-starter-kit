@@ -16,7 +16,7 @@ const routes = {
       load: () => import(/* webpackChunkName: 'contact' */ './contact'),
     },
     {
-      path: '/:page', // Example dynamic content load API
+      path: '(.*)', // Example dynamic content load API
       load: () => import(/* webpackChunkName: 'generic' */ './generic'),
     },
 
