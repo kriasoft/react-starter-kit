@@ -24,7 +24,6 @@ import router from './router';
 // https://facebook.github.io/react/docs/context.html
 const fetchClient = createFetch(fetch, {
   apiUrl: window.App.apiUrl,
-  baseUrl: window.App.baseUrl,
 });
 
 const context = {

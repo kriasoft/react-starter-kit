@@ -86,7 +86,6 @@ app.get(routes.server, async (req, res, next) => {
     // Universal HTTP client
     const fetch = createFetch(nodeFetch, {
       apiUrl: config.api.url,
-      baseUrl: config.baseUrl,
       cookie: req.headers.cookie,
     });
 
