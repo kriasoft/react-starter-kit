@@ -13,6 +13,7 @@ type Fetch = (url: string, options: ?any) => Promise<any>;
 
 type Options = {
   apiUrl: string,
+  baseUrl: string,
   cookie?: string,
 };
 
