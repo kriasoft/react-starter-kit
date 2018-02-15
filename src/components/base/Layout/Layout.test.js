@@ -21,7 +21,7 @@ const middlewares = [thunk];
 const mockStore = configureStore(middlewares);
 const initialState = {};
 
-describe('Layout', () => {
+describe('<Layout />', () => {
   test('renders children correctly', () => {
     const store = mockStore(initialState);
     const wrapper = renderer
