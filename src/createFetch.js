@@ -9,7 +9,7 @@
 
 /* @flow */
 
-type Fetch = (url: string, options: ?any) => Promise<any>;
+type Fetch = (apiUrl: string, url: string, options: ?any) => Promise<any>;
 
 type Options = {
   apiUrl: string,
@@ -23,7 +23,7 @@ type Options = {
  * of boilerplate code in the application.
  * https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch
  */
-function createFetch(fetch: Fetch, { apiUrl, baseUrl, cookie }: Options) {
+function createFetch(fetch: Fetch, { apiUrl, cookie }: Options) {
   // NOTE: Tweak the default options to suite your application needs
   const defaults = {
     method: 'POST', // handy with backends
@@ -37,19 +37,16 @@ function createFetch(fetch: Fetch, { apiUrl, baseUrl, cookie }: Options) {
   };
 
   return async (url: string, options: any) =>
-    url.startsWith('/localapi')
-      ? fetch(
-          baseUrl ? `${apiUrl}${baseUrl}${url}` : `${apiUrl}${url}`,
-          options,
-        )
-      : fetch(`${apiUrl}${url}`, {
+    url.startsWith('/api')
+      ? fetch(`${apiUrl}${url.replace('/api', '')}`, {
           ...defaults,
           ...options,
           headers: {
             ...defaults.headers,
             ...(options && options.headers),
           },
-        });
+        })
+      : fetch(url, options);
 }
 
 export default createFetch;

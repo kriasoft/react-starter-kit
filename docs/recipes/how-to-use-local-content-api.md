@@ -16,7 +16,7 @@ In the generic route there is a example on how to load a markdown file using the
 and then putting it in the DefaultPage component
 
 ```js
-const resp = await fetch(`/localapi/content`, {
+const resp = await fetch(`/api/content`, {
   method: `post`,
   headers: {
     Accept: `application/json`,

@@ -28,7 +28,7 @@ module.exports = {
     // API URL to be used in the fetch code
     url:
       process.env.API_SERVER_URL ||
-      `http://localhost:${process.env.PORT || 3000}`,
+      `http://localhost:${process.env.PORT || 3000}/localapi`,
   },
 
   // Web analytics
