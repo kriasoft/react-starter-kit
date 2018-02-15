@@ -85,10 +85,10 @@ routename that is specified in `../../src/routes/index.js`. It can be used as fo
 
 ```jsx
 // Route by name
-<Link name="contact">Contact</Link>
+<Link to="/contact">Contact</Link>
 
 // Route by name with params
-<Link name="content" params={{ page: 'about' }}>About</Link>
+<Link to="/about" >About</Link>
 ```
 
 ## Specifing a baseUrl

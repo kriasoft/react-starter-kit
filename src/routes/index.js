@@ -8,17 +8,14 @@ const routes = {
     // The home route is added to client.js to make sure shared components are
     // added to client.js as well and not repeated in individual each route chunk.
     {
-      name: 'home',
       path: '',
       load: () => import(/* webpackMode: 'eager' */ './home'),
     },
     {
-      name: 'contact',
       path: '/contact',
       load: () => import(/* webpackChunkName: 'contact' */ './contact'),
     },
     {
-      name: 'content',
       path: '/:page', // Example dynamic content load API
       load: () => import(/* webpackChunkName: 'generic' */ './generic'),
     },

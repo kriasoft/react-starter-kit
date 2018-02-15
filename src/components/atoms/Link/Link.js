@@ -10,7 +10,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import history from '../../../history';
-import url from '../../../urls';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -26,28 +25,27 @@ function isModifiedEvent(event) {
 class Link extends React.Component {
   static propTypes = {
     /** The internal link of the page where you linking to. */
-    name: PropTypes.string.isRequired,
-    params: PropTypes.shape(),
+    to: PropTypes.string.isRequired,
     /** The inner childs. */
     children: PropTypes.node.isRequired,
     /** Function that will be fired on click. */
     onClick: PropTypes.func,
   };
 
-  static defaultProps = {
-    onClick: null,
-    params: null,
+  static contextTypes = {
+    baseUrl: PropTypes.string.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    const { name, params } = props;
-    this.to = params ? url(name, params) : url(name);
-  }
+  static defaultProps = {
+    onClick: null,
+  };
 
   handleClick = event => {
-    if (this.props.onClick) {
-      this.props.onClick(event);
+    const { baseUrl } = this.context;
+    const { to, onClick } = this.props;
+
+    if (onClick) {
+      onClick(event);
     }
 
     if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
@@ -59,14 +57,15 @@ class Link extends React.Component {
     }
 
     event.preventDefault();
-    history.push(this.to);
+    history.push(`${baseUrl}${to}`);
   };
 
   render() {
-    const { children, name, params, ...props } = this.props;
-    const { to } = this;
+    const { baseUrl } = this.context;
+    const { children, to, ...props } = this.props;
+
     return (
-      <a href={to} {...props} onClick={this.handleClick}>
+      <a href={`${baseUrl}${to}`} {...props} onClick={this.handleClick}>
         {children}
       </a>
     );
