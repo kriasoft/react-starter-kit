@@ -185,9 +185,10 @@ module.exports = {
   styleguideComponents: {
     Wrapper: path.join(__dirname, 'lib/styleguide/Wrapper'),
   },
-  editorConfig: {
-    theme: 'dracula',
-  },
+  highlightTheme: 'dracula',
+  // editorConfig: {
+  //   theme: 'dracula', // future config
+  // },
   styleguideDir: path.join(__dirname, '../styleguide'),
   sections: [
     {
