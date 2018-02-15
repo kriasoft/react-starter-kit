@@ -12,9 +12,9 @@ method universally in both the client-side and server-side code bases.
 In order to avoid the amount of boilerplate code needed when using the raw `fetch(..)`
 function, a simple wrapper was created that provides a base URL of the data API server, credentials
 (cookies), CORS etc. For example, in a browser environment the base URL of the data API server
-might be an empty string, so when you make an Ajax request to the `/graphql` endpoint it's being
+might be an empty string, so when you make an Ajax request to the `/api` endpoint it's being
 sent to the same origin, and when the same code is executed on the server, during server-side
-rendering, it fetches data from the `http://api:8080/graphql` endpoint (`node-fetch` doesn't
+rendering, it fetches data from the `http://example:8080/api` endpoint (`node-fetch` doesn't
 support relative URLs for obvious reasons).
 
 Because of these subtle differences of how the `fetch` method works internally, it makes total
@@ -52,9 +52,7 @@ class Post extends React.Component {
 
 * [That's so fetch!](https://jakearchibald.com/2015/thats-so-fetch/) by [Jake Archibald](https://twitter.com/jaffathecake)
 
-
 [fetch]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 [wfetch]: https://github.com/github/fetchno
 [nfetch]: https://github.com/bitinn/node-fetch
 [nodeapi]: https://github.com/kriasoft/nodejs-api-starter
-

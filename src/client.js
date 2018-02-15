@@ -22,7 +22,12 @@ import router from './router';
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
+const fetchClient = createFetch(fetch, {
+  apiUrl: window.App.apiUrl,
+});
+
 const context = {
+  baseUrl: window.App.baseUrl,
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: (...styles) => {
@@ -33,14 +38,16 @@ const context = {
     };
   },
   // Universal HTTP client
-  fetch: createFetch(fetch, {
-    baseUrl: window.App.apiUrl,
-  }),
+  fetch: fetchClient,
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
-  store: configureStore(window.App.state, { history, fetch }),
+  store: configureStore(window.App.state, { history, fetch: fetchClient }),
   storeSubscription: null,
 };
+
+if (context.baseUrl) {
+  router.baseUrl = context.baseUrl;
+}
 
 const container = document.getElementById('app');
 let currentLocation = history.location;
@@ -152,7 +159,7 @@ async function onLocationChange(location, action) {
 }
 
 // Handle client-side navigation by using HTML5 History API
-// For more information visit https://github.com/mjackson/history#readme
+// For more information visit https://github.com/ReactTraining/history#readme
 history.listen(onLocationChange);
 onLocationChange(currentLocation);
 

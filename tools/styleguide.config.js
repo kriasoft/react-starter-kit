@@ -77,8 +77,6 @@ module.exports = {
               use: 'isomorphic-style-loader',
             },
 
-            // { loader: "style-loader" },
-
             // Process external/third-party styles
             {
               exclude: path.resolve(__dirname, '../src'),
@@ -113,22 +111,6 @@ module.exports = {
                 },
               },
             },
-
-            // Compile Less to CSS
-            // https://github.com/webpack-contrib/less-loader
-            // Install dependencies before uncommenting: yarn add --dev less-loader less
-            // {
-            //   test: /\.less$/,
-            //   loader: 'less-loader',
-            // },
-
-            // Compile Sass to CSS
-            // https://github.com/webpack-contrib/sass-loader
-            // Install dependencies before uncommenting: yarn add --dev sass-loader node-sass
-            // {
-            //   test: /\.scss$/,
-            //   loader: 'sass-loader',
-            // },
           ],
         },
 

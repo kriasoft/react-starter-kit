@@ -21,6 +21,7 @@ function isModifiedEvent(event) {
 
 /**
  * Link component for interal linking with the router.
+ * If baseUrl is set (in config.js) all links are prefixed with the baseUrl
  */
 class Link extends React.Component {
   static propTypes = {
@@ -32,13 +33,20 @@ class Link extends React.Component {
     onClick: PropTypes.func,
   };
 
+  static contextTypes = {
+    baseUrl: PropTypes.string.isRequired,
+  };
+
   static defaultProps = {
     onClick: null,
   };
 
   handleClick = event => {
-    if (this.props.onClick) {
-      this.props.onClick(event);
+    const { baseUrl } = this.context;
+    const { to, onClick } = this.props;
+
+    if (onClick) {
+      onClick(event);
     }
 
     if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
@@ -50,13 +58,15 @@ class Link extends React.Component {
     }
 
     event.preventDefault();
-    history.push(this.props.to);
+    history.push(`${baseUrl}${to}`);
   };
 
   render() {
-    const { to, children, ...props } = this.props;
+    const { baseUrl } = this.context;
+    const { children, to, ...props } = this.props;
+
     return (
-      <a href={to} {...props} onClick={this.handleClick}>
+      <a href={`${baseUrl}${to}`} {...props} onClick={this.handleClick}>
         {children}
       </a>
     );

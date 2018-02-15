@@ -9,9 +9,10 @@
 
 /* @flow */
 
-type Fetch = (url: string, options: ?any) => Promise<any>;
+type Fetch = (apiUrl: string, url: string, options: ?any) => Promise<any>;
 
 type Options = {
+  apiUrl: string,
   baseUrl: string,
   cookie?: string,
 };
@@ -22,12 +23,12 @@ type Options = {
  * of boilerplate code in the application.
  * https://developer.mozilla.org/docs/Web/API/Fetch_API/Using_Fetch
  */
-function createFetch(fetch: Fetch, { baseUrl, cookie }: Options) {
+function createFetch(fetch: Fetch, { apiUrl, cookie }: Options) {
   // NOTE: Tweak the default options to suite your application needs
   const defaults = {
     method: 'POST', // handy with backends
-    mode: baseUrl ? 'cors' : 'same-origin',
-    credentials: baseUrl ? 'include' : 'same-origin',
+    mode: apiUrl ? 'cors' : 'same-origin',
+    credentials: apiUrl ? 'include' : 'same-origin',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ function createFetch(fetch: Fetch, { baseUrl, cookie }: Options) {
 
   return async (url: string, options: any) =>
     url.startsWith('/api')
-      ? fetch(`${baseUrl}${url}`, {
+      ? fetch(`${apiUrl}${url.replace('/api', '')}`, {
           ...defaults,
           ...options,
           headers: {

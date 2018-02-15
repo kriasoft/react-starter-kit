@@ -3,7 +3,6 @@
 // The top-level (parent) route
 const routes = {
   path: '',
-
   // Keep in mind, routes are evaluated in order
   children: [
     // The home route is added to client.js to make sure shared components are

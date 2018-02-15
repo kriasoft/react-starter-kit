@@ -1,3 +1,3 @@
 ```js
-<Link to="/internal-page">Internal website link</Link>
+<Link to="/internal-page">Internal page</Link>
 ```
