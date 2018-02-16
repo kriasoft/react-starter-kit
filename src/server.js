@@ -108,7 +108,7 @@ app.get(
 // Register API middleware
 // -----------------------------------------------------------------------------
 app.use(
-  '/graphql',
+  `${pkg.prefixUrl}/graphql`
   expressGraphQL(req => ({
     schema,
     graphiql: __DEV__,

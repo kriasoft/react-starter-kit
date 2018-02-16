@@ -10,9 +10,10 @@
 import React from 'react';
 import Home from './Home';
 import Layout from '../../components/Layout';
+import pkg from '../../../package.json';
 
 async function action({ fetch }) {
-  const resp = await fetch('/graphql', {
+  const resp = await fetch(`${pkg.prefixUrl}/graphql`, {
     body: JSON.stringify({
       query: '{news{title,link,content}}',
     }),
