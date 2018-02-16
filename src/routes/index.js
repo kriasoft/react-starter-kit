@@ -8,10 +8,11 @@
  */
 
 /* eslint-disable global-require */
+import pkg from '../../package.json';
 
 // The top-level (parent) route
 const routes = {
-  path: '',
+  path: pkg.prefixUrl,
 
   // Keep in mind, routes are evaluated in order
   children: [

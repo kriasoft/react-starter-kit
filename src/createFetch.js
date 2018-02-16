@@ -43,7 +43,7 @@ function createFetch(
   };
 
   return async (url: string, options: any) => {
-    const isGraphQL = url.startsWith('/graphql');
+    const isGraphQL = url.startsWith(`${pkg.prefixUrl}/graphql`);
     if (schema && graphql && isGraphQL) {
       // We're SSR, so route the graphql internal to avoid latency
       const query = JSON.parse(options.body);
@@ -60,7 +60,7 @@ function createFetch(
       });
     }
 
-    return isGraphQL || url.startsWith('/api')
+    return isGraphQL || url.startsWith(`${pkg.prefixUrl}/api`)
       ? fetch(`${baseUrl}${url}`, {
           ...defaults,
           ...options,
