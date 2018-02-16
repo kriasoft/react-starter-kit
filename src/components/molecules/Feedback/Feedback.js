@@ -19,6 +19,8 @@ class Feedback extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <a
+            target="_blank"
+            rel="noopener noreferrer"
             className={s.link}
             href="https://gitter.im/kriasoft/react-starter-kit"
           >
@@ -26,6 +28,8 @@ class Feedback extends React.Component {
           </a>
           <span className={s.spacer}>|</span>
           <a
+            target="_blank"
+            rel="noopener noreferrer"
             className={s.link}
             href="https://github.com/kriasoft/react-starter-kit/issues/new"
           >

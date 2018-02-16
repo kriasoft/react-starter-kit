@@ -78,7 +78,7 @@ module.exports = {
   // rootDir: // [string]
   // roots: // [array<string>]
   // setupFiles: // [array]
-  // setupTestFrameworkScriptFile: // [string]
+  setupTestFrameworkScriptFile: '<rootDir>/test/setupTestFramework.js', // [string]
   // snapshotSerializers: // [array<string>]
   // testEnvironment: // [string]
   // testMatch: // [array<string>]
