@@ -1,149 +1,217 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Layout /> renders children correctly 1`] = `
-<div>
-  <div
-    className="root"
-  >
-    <div
-      className="container"
-    >
-      <div
-        className="root"
-        role="navigation"
-      >
-        <a
-          className="link"
-          href="/about"
-          onClick={[Function]}
-        >
-          About
-        </a>
-        <a
-          className="link"
-          href="/contact"
-          onClick={[Function]}
-        >
-          Contact
-        </a>
-        <a
-          className="link"
-          href="/privacy"
-          onClick={[Function]}
-        >
-          Privacy
-        </a>
-      </div>
-      <a
-        className="brand"
-        href="/"
-        onClick={[Function]}
-      >
-        <img
-          alt="React"
-          height="38"
-          src="logo-small.png"
-          srcSet="logo-small@2x.png 2x"
-          width="38"
+<App
+  context={
+    Object {
+      "baseUrl": "",
+      "fetch": [Function],
+      "insertCss": [Function],
+      "pathname": "",
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+    }
+  }
+>
+  <WithStyles(Layout)>
+    <Layout>
+      <div>
+        <WithStyles(Header)>
+          <Header>
+            <div
+              className="root"
+            >
+              <div
+                className="container"
+              >
+                <WithStyles(Navigation)>
+                  <Navigation>
+                    <div
+                      className="root"
+                      role="navigation"
+                    >
+                      <Link
+                        className="link"
+                        onClick={null}
+                        to="/about"
+                      >
+                        <a
+                          className="link"
+                          href="/about"
+                          onClick={[Function]}
+                        >
+                          About
+                        </a>
+                      </Link>
+                      <Link
+                        className="link"
+                        onClick={null}
+                        to="/contact"
+                      >
+                        <a
+                          className="link"
+                          href="/contact"
+                          onClick={[Function]}
+                        >
+                          Contact
+                        </a>
+                      </Link>
+                    </div>
+                  </Navigation>
+                </WithStyles(Navigation)>
+                <Link
+                  className="brand"
+                  onClick={null}
+                  to="/"
+                >
+                  <a
+                    className="brand"
+                    href="/"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="React"
+                      height="38"
+                      src="logo-small.png"
+                      srcSet="logo-small@2x.png 2x"
+                      width="38"
+                    />
+                    <span
+                      className="brandTxt"
+                    >
+                      Your Company
+                    </span>
+                  </a>
+                </Link>
+                <div
+                  className="banner"
+                >
+                  <h1
+                    className="bannerTitle"
+                  >
+                    React
+                  </h1>
+                  <p
+                    className="bannerDesc"
+                  >
+                    Complex web apps made easy
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Header>
+        </WithStyles(Header)>
+        <div
+          className="child"
         />
-        <span
-          className="brandTxt"
-        >
-          Your Company
-        </span>
-      </a>
-      <div
-        className="banner"
-      >
-        <h1
-          className="bannerTitle"
-        >
-          React
-        </h1>
-        <p
-          className="bannerDesc"
-        >
-          Complex web apps made easy
-        </p>
+        <WithStyles(Feedback)>
+          <Feedback>
+            <div
+              className="root"
+            >
+              <div
+                className="container"
+              >
+                <a
+                  className="link"
+                  href="https://gitter.im/kriasoft/react-starter-kit"
+                >
+                  Ask a question
+                </a>
+                <span
+                  className="spacer"
+                >
+                  |
+                </span>
+                <a
+                  className="link"
+                  href="https://github.com/kriasoft/react-starter-kit/issues/new"
+                >
+                  Report an issue
+                </a>
+              </div>
+            </div>
+          </Feedback>
+        </WithStyles(Feedback)>
+        <WithStyles(Footer)>
+          <Footer>
+            <div
+              className="root"
+            >
+              <div
+                className="container"
+              >
+                <span
+                  className="text"
+                >
+                  © Your Company
+                </span>
+                <span
+                  className="spacer"
+                >
+                  ·
+                </span>
+                <Link
+                  className="link"
+                  onClick={null}
+                  to="/"
+                >
+                  <a
+                    className="link"
+                    href="/"
+                    onClick={[Function]}
+                  >
+                    Home
+                  </a>
+                </Link>
+                <span
+                  className="spacer"
+                >
+                  ·
+                </span>
+                <Link
+                  className="link"
+                  onClick={null}
+                  to="/privacy"
+                >
+                  <a
+                    className="link"
+                    href="/privacy"
+                    onClick={[Function]}
+                  >
+                    Privacy
+                  </a>
+                </Link>
+                <span
+                  className="spacer"
+                >
+                  ·
+                </span>
+                <Link
+                  className="link"
+                  onClick={null}
+                  to="/not-found"
+                >
+                  <a
+                    className="link"
+                    href="/not-found"
+                    onClick={[Function]}
+                  >
+                    Not Found
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </Footer>
+        </WithStyles(Footer)>
       </div>
-    </div>
-  </div>
-  <div
-    className="child"
-  />
-  <div
-    className="root"
-  >
-    <div
-      className="container"
-    >
-      <a
-        className="link"
-        href="https://gitter.im/kriasoft/react-starter-kit"
-      >
-        Ask a question
-      </a>
-      <span
-        className="spacer"
-      >
-        |
-      </span>
-      <a
-        className="link"
-        href="https://github.com/kriasoft/react-starter-kit/issues/new"
-      >
-        Report an issue
-      </a>
-    </div>
-  </div>
-  <div
-    className="root"
-  >
-    <div
-      className="container"
-    >
-      <span
-        className="text"
-      >
-        © Your Company
-      </span>
-      <span
-        className="spacer"
-      >
-        ·
-      </span>
-      <a
-        className="link"
-        href="/"
-        onClick={[Function]}
-      >
-        Home
-      </a>
-      <span
-        className="spacer"
-      >
-        ·
-      </span>
-      <a
-        className="link"
-        href="/privacy"
-        onClick={[Function]}
-      >
-        Privacy
-      </a>
-      <span
-        className="spacer"
-      >
-        ·
-      </span>
-      <a
-        className="link"
-        href="/not-found"
-        onClick={[Function]}
-      >
-        Not Found
-      </a>
-    </div>
-  </div>
-</div>
+    </Layout>
+  </WithStyles(Layout)>
+</App>
 `;

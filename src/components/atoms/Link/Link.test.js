@@ -11,49 +11,37 @@
 /* eslint-disable padded-blocks, no-unused-expressions */
 
 import React from 'react';
-import renderer from 'react-test-renderer';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-import App from '../../App';
+import { shallow } from 'enzyme';
+import toJson from 'enzyme-to-json';
+
 import Link from './Link';
 
-const middlewares = [thunk];
-const mockStore = configureStore(middlewares);
-const initialState = {};
-
-const store = mockStore(initialState);
-
-const url = '/internalpage';
-const linkContent = 'Internal Page';
-
-const context = {
-  pathname: '',
-  baseUrl: '',
-  insertCss: () => {},
-  fetch: () => {},
-  store,
-};
-
-const component = (
-  <App context={context}>
-    <Link to={url}>{linkContent}</Link>
-  </App>
-);
-
 describe('<Link />', () => {
-  test('renders correctly', () => {
-    const output = renderer.create(component).toJSON();
-    expect(output).toMatchSnapshot();
-  });
+  const props = {
+    to: '/internal-link',
+    children: ['Internal Link'],
+  };
 
-  test('renders linkcontent correctly', () => {
-    const output = renderer.create(component).toJSON();
-    expect(output.children).toContain(linkContent);
+  const wrapper = shallow(<Link {...props} />, {
+    context: {
+      baseUrl: '',
+    },
   });
 
   test('renders href without baseUrl correctly', () => {
-    context.baseUrl = '/test';
-    const output = renderer.create(component).toJSON();
-    expect(output.props.href).toEqual(`${context.baseUrl}${url}`);
+    expect(wrapper.find('a').prop('href')).toBe('/internal-link');
+  });
+
+  test('renders href with baseUrl correctly', () => {
+    wrapper.setContext({ baseUrl: '/base-url' });
+    expect(wrapper.find('a').prop('href')).toBe('/base-url/internal-link');
+  });
+
+  test('renders text correctly', () => {
+    expect(wrapper.text()).toBe('Internal Link');
+  });
+
+  test('renders children correctly', () => {
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

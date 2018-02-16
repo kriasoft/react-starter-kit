@@ -11,9 +11,11 @@
 /* eslint-disable padded-blocks, no-unused-expressions */
 
 import React from 'react';
-import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
+import { mount } from 'enzyme';
+import toJson from 'enzyme-to-json';
 import thunk from 'redux-thunk';
+
 import App from '../../App';
 import Layout from './Layout';
 
@@ -24,24 +26,22 @@ const initialState = {};
 describe('<Layout />', () => {
   test('renders children correctly', () => {
     const store = mockStore(initialState);
-    const wrapper = renderer
-      .create(
-        <App
-          context={{
-            pathname: '',
-            baseUrl: '',
-            insertCss: () => {},
-            fetch: () => {},
-            store,
-          }}
-        >
-          <Layout>
-            <div className="child" />
-          </Layout>
-        </App>,
-      )
-      .toJSON();
+    const wrapper = mount(
+      <App
+        context={{
+          pathname: '',
+          baseUrl: '',
+          insertCss: () => {},
+          fetch: () => {},
+          store,
+        }}
+      >
+        <Layout>
+          <div className="child" />
+        </Layout>
+      </App>,
+    );
 
-    expect(wrapper).toMatchSnapshot();
+    expect(toJson(wrapper)).toMatchSnapshot();
   });
 });
