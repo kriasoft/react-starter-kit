@@ -59,7 +59,7 @@ You can start by cloning the latest version of React Starter Kit (RSK) on your
 local machine by running:
 
 ```shell
-$ git clone https://vcs.lostboys.nl/scm/fron/react-starter-kit.git MyAwesomeApp
+$ git clone https://github.com/rodeyseijkens/react-starter-kit MyAwesomeApp
 $ cd MyAwesomeApp
 ```
 
