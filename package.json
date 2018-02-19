@@ -120,7 +120,7 @@
     "test": "jest",
     "test-watch": "yarn run test --watch --notify",
     "test-cover": "yarn run test --coverage",
-    "coverage": "yarn run test-cover && opn coverage/lcov-report/index.html",
+    "coverage": "yarn run test-cover && open coverage/lcov-report/index.html",
     "clean": "babel-node tools/run clean",
     "copy": "babel-node tools/run copy",
     "bundle": "babel-node tools/run bundle",

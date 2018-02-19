@@ -16,6 +16,13 @@ import toJson from 'enzyme-to-json';
 
 import Link from './Link';
 
+// mock history dependency
+import history from '../../../history';
+
+jest.mock('../../../history', () => ({
+  push: jest.fn(),
+}));
+
 describe('<Link />', () => {
   const props = {
     to: '/internal-link',
@@ -28,20 +35,48 @@ describe('<Link />', () => {
     },
   });
 
-  test('renders href without baseUrl correctly', () => {
+  it('renders href without baseUrl correctly', () => {
     expect(wrapper.find('a').prop('href')).toBe('/internal-link');
   });
 
-  test('renders href with baseUrl correctly', () => {
+  it('renders href with baseUrl correctly', () => {
     wrapper.setContext({ baseUrl: '/base-url' });
     expect(wrapper.find('a').prop('href')).toBe('/base-url/internal-link');
   });
 
-  test('renders text correctly', () => {
+  it('renders text correctly', () => {
     expect(wrapper.text()).toBe('Internal Link');
   });
 
-  test('renders children correctly', () => {
+  it('renders children correctly', () => {
     expect(toJson(wrapper)).toMatchSnapshot();
+  });
+
+  describe('handles click', () => {
+    const event = { button: 0, preventDefault: jest.fn() };
+
+    it('does not trigger history push on non leftClick', () => {
+      wrapper.find('a').simulate('click', { button: 2 });
+      expect(history.push).not.toHaveBeenCalled();
+    });
+
+    it('does not call history.push when default is prevented', () => {
+      wrapper
+        .find('a')
+        .simulate('click', { button: 0, defaultPrevented: true });
+      expect(history.push).not.toHaveBeenCalled();
+    });
+
+    it('calles custom onClick', () => {
+      const onClick = jest.fn();
+      wrapper.setProps({ onClick });
+      wrapper.find('a').simulate('click', event);
+      expect(onClick).toHaveBeenCalled();
+    });
+
+    it('triggers history.push correctly', () => {
+      wrapper.find('a').simulate('click', event);
+      expect(history.push).toHaveBeenCalledWith('/base-url/internal-link');
+    });
   });
 });
