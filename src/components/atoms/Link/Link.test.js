@@ -16,7 +16,7 @@ import toJson from 'enzyme-to-json';
 
 import Link from './Link';
 
-// override history dependency
+// mock history dependency
 import history from '../../../history';
 
 jest.mock('../../../history', () => ({
