@@ -322,6 +322,18 @@ const clientConfig = {
       minChunks: module => /node_modules/.test(module.resource),
     }),
 
+    // This plugin must come after the vendor one (because webpack
+    // includes runtime into the last chunk)
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'runtime',
+
+      // minChunks: Infinity means that no app modules
+      // will be included into this chunk
+      minChunks: Infinity,
+
+      filename: 'runtime.js',
+    }),
+
     ...(isDebug
       ? []
       : [

@@ -30,6 +30,7 @@ import models from './data/models';
 import schema from './data/schema';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import config from './config';
+import { readFile } from '../tools/lib/fs';
 
 process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled Rejection at:', p, 'reason:', reason);
@@ -161,6 +162,13 @@ app.get('*', async (req, res, next) => {
       <App context={context}>{route.component}</App>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
+
+    try {
+      data.runtime = await readFile(`./public/${assets.runtime.js}`);
+    } catch (error) {
+      data.runtime = assets.runtime.js;
+    }
+
     data.scripts = [assets.vendor.js];
     if (route.chunks) {
       data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));

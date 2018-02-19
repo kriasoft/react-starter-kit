@@ -24,6 +24,7 @@ class Html extends React.Component {
         cssText: PropTypes.string.isRequired,
       }).isRequired,
     ),
+    runtime: PropTypes.string.isRequired,
     scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
     app: PropTypes.object, // eslint-disable-line
     children: PropTypes.string.isRequired,
@@ -35,7 +36,15 @@ class Html extends React.Component {
   };
 
   render() {
-    const { title, description, styles, scripts, app, children } = this.props;
+    const {
+      title,
+      description,
+      styles,
+      runtime,
+      scripts,
+      app,
+      children,
+    } = this.props;
     return (
       <html className="no-js" lang="en">
         <head>
@@ -62,6 +71,15 @@ class Html extends React.Component {
           <script
             dangerouslySetInnerHTML={{ __html: `window.App=${serialize(app)}` }}
           />
+          {__DEV__ ? (
+            <script key={runtime} src={runtime} />
+          ) : (
+            <script
+              dangerouslySetInnerHTML={{
+                __html: runtime,
+              }}
+            />
+          )}
           {scripts.map(script => <script key={script} src={script} />)}
           {config.analytics.googleTrackingId && (
             <script
