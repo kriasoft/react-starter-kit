@@ -77,11 +77,11 @@ import createBrowserHistory from 'history/createBrowserHistory';
 export default process.env.BROWSER && createBrowserHistory();
 ```
 
-Second, we use this module in `client.js` to [pass it to our store](../../src/client.js#41) and
-[we hook up an onLocationChange](../../src/client.js#156) listner to handle the history state.
+Second, we use this module in `client.js` to [pass it to our store](../src/client.js#L41) and
+[we hook up an onLocationChange](../src/client.js#L156) listner to handle the history state.
 
 Third, use the (`Link`) component to implement any router links. Routerlinks are resolved by
-routename that is specified in `../../src/routes/index.js`. It can be used as follows:
+routename that is specified in `../src/routes/index.js`. It can be used as follows:
 
 ```jsx
 // Route by name
