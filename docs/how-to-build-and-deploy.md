@@ -1,3 +1,5 @@
+TODO: write docs based on new bamboo config
+
 # Build and deploy, manual to Azure
 
 Make sure the git build repository is hooked up to the Azure environments.
