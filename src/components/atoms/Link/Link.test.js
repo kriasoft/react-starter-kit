@@ -52,30 +52,50 @@ describe('<Link />', () => {
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
-  describe('handles click', () => {
-    const event = { button: 0, preventDefault: jest.fn() };
+  describe('click', () => {
+    const mockEvent = { button: 0, preventDefault: jest.fn() };
 
-    it('does not trigger history push on non leftClick', () => {
-      wrapper.find('a').simulate('click', { button: 2 });
+    it('does not push to history on modified event', () => {
+      wrapper.find('a').simulate('click', {
+        ...mockEvent,
+        metaKey: true,
+      });
+      wrapper.find('a').simulate('click', {
+        ...mockEvent,
+        altKey: true,
+      });
+      wrapper.find('a').simulate('click', {
+        ...mockEvent,
+        ctrlKey: true,
+      });
+      wrapper.find('a').simulate('click', {
+        ...mockEvent,
+        shiftKey: true,
+      });
       expect(history.push).not.toHaveBeenCalled();
     });
 
-    it('does not call history.push when default is prevented', () => {
+    it('does not push to history on non leftClick', () => {
+      wrapper.find('a').simulate('click', { ...mockEvent, button: 1 });
+      expect(history.push).not.toHaveBeenCalled();
+    });
+
+    it('does not push to history when default is prevented', () => {
       wrapper
         .find('a')
-        .simulate('click', { button: 0, defaultPrevented: true });
+        .simulate('click', { ...mockEvent, defaultPrevented: true });
       expect(history.push).not.toHaveBeenCalled();
     });
 
-    it('calles custom onClick', () => {
+    it('does call custom onClick', () => {
       const onClick = jest.fn();
       wrapper.setProps({ onClick });
-      wrapper.find('a').simulate('click', event);
+      wrapper.find('a').simulate('click', mockEvent);
       expect(onClick).toHaveBeenCalled();
     });
 
-    it('triggers history.push correctly', () => {
-      wrapper.find('a').simulate('click', event);
+    it('does push to history', () => {
+      wrapper.find('a').simulate('click', mockEvent);
       expect(history.push).toHaveBeenCalledWith('/base-url/internal-link');
     });
   });
