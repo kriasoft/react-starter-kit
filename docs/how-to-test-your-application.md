@@ -46,10 +46,22 @@ command which will:
 * recursively find all files ending with `.test.js` in your `src/` directory
 * jest executes found files
 * generates a coverage report
-* opens the coverage report in your browser
 
 ```bash
 yarn test-cover
+```
+
+To see your [code coverage](https://en.wikipedia.org/wiki/Code_coverage) run the
+[`yarn coverage`](../package.json#L122)
+command which will:
+
+* recursively find all files ending with `.test.js` in your `src/` directory
+* jest executes found files
+* generates a coverage report
+* opens the coverage report in your browser
+
+```bash
+yarn coverage
 ```
 
 ### Conventions

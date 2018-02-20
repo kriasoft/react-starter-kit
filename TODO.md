@@ -4,9 +4,8 @@
 ├─ Test coverage
 ├─ Documentation
 │ ├─ CI/CD
-│ ├─ Test
 │ ├─ Redux
 │ ├─ yarn render
-│ └─ Way of working
+│ ├─ Way of working
 │ └─ forking and merging
 └─ Whatever comes...
