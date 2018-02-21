@@ -1,37 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Feedback /> renders children correctly 1`] = `
-<WithStyles(Feedback)>
-  <Feedback>
-    <div
-      className="root"
+<div
+  className="root"
+>
+  <div
+    className="container"
+  >
+    <a
+      className="link"
+      href="https://gitter.im/kriasoft/react-starter-kit"
+      rel="noopener noreferrer"
+      target="_blank"
     >
-      <div
-        className="container"
-      >
-        <a
-          className="link"
-          href="https://gitter.im/kriasoft/react-starter-kit"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Ask a question
-        </a>
-        <span
-          className="spacer"
-        >
-          |
-        </span>
-        <a
-          className="link"
-          href="https://github.com/kriasoft/react-starter-kit/issues/new"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Report an issue
-        </a>
-      </div>
-    </div>
-  </Feedback>
-</WithStyles(Feedback)>
+      Ask a question
+    </a>
+    <span
+      className="spacer"
+    >
+      |
+    </span>
+    <a
+      className="link"
+      href="https://github.com/kriasoft/react-starter-kit/issues/new"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Report an issue
+    </a>
+  </div>
+</div>
 `;
