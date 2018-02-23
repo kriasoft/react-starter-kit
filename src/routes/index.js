@@ -22,6 +22,10 @@ const routes = {
       load: () => import(/* webpackMode: 'eager' */ './home'),
     },
     {
+      path: '/today',
+      load: () => import(/* webpackChunkName: 'today' */ './today'),
+    },
+    {
       path: '/contact',
       load: () => import(/* webpackChunkName: 'contact' */ './contact'),
     },
