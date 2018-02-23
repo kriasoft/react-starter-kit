@@ -11,7 +11,7 @@ import React from 'react';
 import Layout from '../../components/Layout';
 import Today from './Today';
 
-const title = "Your Options";
+const title = 'Your Options';
 
 function action() {
   return {
