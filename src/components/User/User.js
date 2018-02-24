@@ -10,14 +10,21 @@ class User extends React.Component {
     user: PropTypes.shape({
       id: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
+      isAdmin: PropTypes.bool,
     }).isRequired,
     link: PropTypes.bool,
   };
 
   render() {
+    const { user } = this.props;
     const userLine = `${this.props.user.email}`;
     if (this.props.link) {
-      return <a href={`/users/${this.props.user.id}`}>{userLine}</a>;
+      return (
+        <span>
+          <a href={`/users/${user.id}`}>{userLine}</a>{' '}
+          {user.isAdmin ? '(admin)' : ''}
+        </span>
+      );
     }
     return <span>{userLine}</span>;
   }

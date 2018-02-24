@@ -20,7 +20,10 @@ const AnswerType = new ObjectType({
       type: UserType,
       resolve: answer => answer.getUser(),
     },
-    createdAt: { type: StringType },
+    createdAt: {
+      type: StringType,
+      resolve: answer => answer.createdAt.toISOString(),
+    },
   },
 });
 

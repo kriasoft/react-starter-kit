@@ -10,8 +10,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Modal, Button, FormControl } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import s from './Courses.css';
+import ModalAdd from '../../components/ModalAdd';
 import { addCourse } from '../../actions/courses';
 
 class Courses extends React.Component {
@@ -32,7 +33,6 @@ class Courses extends React.Component {
       showModal: false,
     };
     this.handleChange = this.handleChange.bind(this);
-    this.open = this.open.bind(this);
     this.close = this.close.bind(this);
     this.add = this.add.bind(this);
   }
@@ -57,10 +57,6 @@ class Courses extends React.Component {
 
   close() {
     this.setState({ showModal: false });
-  }
-
-  open() {
-    this.setState({ showModal: true });
   }
 
   async add() {
@@ -96,29 +92,22 @@ class Courses extends React.Component {
           <h1>{this.props.title}</h1>
           <ol>{coursesList}</ol>
         </div>
-        <Button bsStyle="primary" onClick={this.open}>
+        <Button
+          bsStyle="primary"
+          onClick={() => {
+            this.setState({ showModal: true });
+          }}
+        >
           Add Course
         </Button>
-        <Modal show={this.state.showModal} onHide={this.close}>
-          <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <h4>Course name</h4>
-            <FormControl
-              type="text"
-              value={this.state.courseName}
-              onChange={this.handleChange}
-            />
-            <div>
-              <br />
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.add}>Add Course</Button>
-            <Button onClick={this.close}>Close</Button>
-          </Modal.Footer>
-        </Modal>
+        <ModalAdd
+          value={this.state.courseName}
+          title="Course"
+          show={this.state.showModal}
+          onInputChange={this.handleChange}
+          onSubmitClick={this.add}
+          handleClose={this.close}
+        />
       </div>
     );
   }
