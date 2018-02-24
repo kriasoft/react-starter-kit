@@ -55,6 +55,10 @@ class Courses extends React.Component {
     this.setState({ courseName: event.target.value });
   }
 
+  handleOpen() {
+    this.setState({ showModal: true });
+  }
+
   close() {
     this.setState({ showModal: false });
   }
@@ -92,12 +96,7 @@ class Courses extends React.Component {
           <h1>{this.props.title}</h1>
           <ol>{coursesList}</ol>
         </div>
-        <Button
-          bsStyle="primary"
-          onClick={() => {
-            this.setState({ showModal: true });
-          }}
-        >
+        <Button bsStyle="primary" onClick={this.handleOpen}>
           Add Course
         </Button>
         <ModalAdd

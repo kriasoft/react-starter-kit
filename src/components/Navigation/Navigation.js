@@ -60,6 +60,7 @@ class Navigation extends React.Component {
             <NavItem href="/users">Users</NavItem>
             <NavItem href="/about">About</NavItem>
             <NavItem href="/contact">Contact</NavItem>
+            <NavItem href="/files">Files</NavItem>
           </Nav>
           {this.context.store.getState().user ? (
             <Nav pullRight>

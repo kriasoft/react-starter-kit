@@ -8,6 +8,8 @@
  */
 
 import path from 'path';
+import fs from 'fs';
+import { URL } from 'url';
 import express from 'express';
 import expressSession from 'express-session';
 import cookieParser from 'cookie-parser';
@@ -27,13 +29,12 @@ import errorPageStyle from './routes/error/ErrorPage.css';
 import createFetch from './createFetch';
 import passport from './passport';
 import router from './router';
-import models from './data/models';
 import schema from './data/schema';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
 import config from './config';
-import User from '../src/data/models/User';
+import models, { User, File } from './data/models';
 
 const app = express();
 
@@ -143,6 +144,17 @@ app.use(
     pretty: __DEV__,
   })),
 );
+
+app.get('/api/get_file/:id', async (req, res) => {
+  const file = await File.findById(req.params.id);
+  const url = new URL(file.url);
+  const stat = fs.statSync(url);
+  res.writeHead(200, {
+    'Content-Type': 'text/plain',
+    'Content-Length': stat.size,
+  });
+  fs.createReadStream(url).pipe(res);
+});
 
 //
 // Register server-side rendering middleware

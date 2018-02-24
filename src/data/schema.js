@@ -15,6 +15,7 @@ import {
 import me from './queries/me';
 import news from './queries/news';
 import { createUser, removeUser, updateUser, users } from './queries/user';
+import files from './queries/file';
 import {
   createGroup,
   removeGroup,
@@ -51,6 +52,7 @@ const schema = new Schema({
       me,
       news,
       users,
+      files,
       courses,
       studyEntities,
       answers,
