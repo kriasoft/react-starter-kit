@@ -20,6 +20,11 @@ const CourseType = new ObjectType({
       resolve: course => course.getStudyEntities(),
     },
     users: {
+      args: {
+        ids: {
+          type: new GraphQLList(StringType),
+        },
+      },
       type: new GraphQLList(
         new ObjectType({
           name: 'CourseUserType',
@@ -30,15 +35,18 @@ const CourseType = new ObjectType({
           },
         }),
       ),
-      resolve: course =>
+      resolve: (course, user) =>
         Course.find({
-          where: { id: course.id },
+          where: {
+            id: course.id,
+            ...(user.ids ? { '$users.Id$': user.ids } : {}),
+          },
           include: [{ model: User, as: 'users', through: UserCourse }],
         }).then(c =>
-          c.users.map(user => ({
-            id: user.id,
-            email: user.email,
-            role: user.UserCourse.role,
+          c.users.map(u => ({
+            id: u.id,
+            email: u.email,
+            role: u.UserCourse.role,
           })),
         ),
     },
