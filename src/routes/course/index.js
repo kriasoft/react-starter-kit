@@ -21,7 +21,7 @@ async function action({ fetch, params, store }) {
         courses(ids: $ids) { id, title, studyEntities{ id,title }, users{ id,email } }
       }`,
       variables: {
-        ids: params.id,
+        ids: params.idCourse,
       },
     }),
   });

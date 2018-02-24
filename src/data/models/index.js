@@ -20,6 +20,7 @@ import Answer from './Answer';
 import Mark from './Mark';
 import Group from './Group';
 import UserGroup from './UserGroup';
+import File from './File';
 
 User.hasMany(UserLogin, {
   foreignKey: 'userId',
@@ -64,6 +65,10 @@ User.belongsToMany(Course, {
     model: UserCourse,
   },
   foreignKey: 'uId',
+});
+
+User.hasMany(File, {
+  as: 'files',
 });
 
 Course.belongsToMany(User, {
@@ -116,4 +121,5 @@ export {
   StudyEntity,
   UserCourse,
   Group,
+  File,
 };

@@ -9,33 +9,29 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-import User from './User';
+import Files from './Files';
 
-const title = 'User';
+const title = 'Files';
 
-async function action({ fetch, params }) {
+async function action({ fetch }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `query users($users: [String]) {
-        users(ids: $users) { 
-          id, 
-          email,
-          profile { displayName,  gender, picture },
-          courses { id, title }
+      query: `query {
+        files {
+          internalName,
+          id,
+          url
         }
       }`,
-      variables: {
-        users: [params.idUser],
-      },
     }),
   });
   const { data } = await resp.json();
-  if (!data && !data.users) throw new Error('Failed to load user profile.');
+  if (!data && !data.files) throw new Error('Failed to load course.');
   return {
     title,
     component: (
       <Layout>
-        <User title={title} id={data.users[0].id} user={data.users[0]} />
+        <Files title={title} files={data.files} />
       </Layout>
     ),
   };

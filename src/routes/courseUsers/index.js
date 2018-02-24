@@ -20,7 +20,7 @@ async function action({ fetch, params }) {
         courses(ids: $ids) { id, title, users{ id, email, role } }
       }`,
       variables: {
-        ids: params.id,
+        ids: params.idCourse,
       },
     }),
   });

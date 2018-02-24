@@ -24,10 +24,12 @@ class User extends React.Component {
         gender: PropTypes.string.isRequired,
         picture: PropTypes.string.isRequired,
       }).isRequired,
-      courses: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired,
-      }).isRequired,
+      courses: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          title: PropTypes.string.isRequired,
+        }),
+      ).isRequired,
     }).isRequired,
   };
 
