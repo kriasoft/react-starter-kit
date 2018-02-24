@@ -70,10 +70,11 @@ class StudyEntity extends React.Component {
     this.selectAnswer = this.selectAnswer.bind(this);
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     if (this.context.store.getState().user) {
       this.retrieveAnswer();
-      this.setUserRole();
+      const role = await this.getUserRole();
+      this.setState({ role });
     }
   }
 
@@ -83,34 +84,27 @@ class StudyEntity extends React.Component {
     return 'error';
   }
 
-  getUserRole() {
-    return this.state.role;
-  }
-
-  async setUserRole() {
+  async getUserRole() {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `query getUserRole(
           $courseIds: [String],
           $userId: [String]
         ){
-          courses(ids: $courseIds, userId: $userId){
-            users {
-                role,
-              }
+          courses(ids: $courseIds){
+            users(ids: $userId) {
+              role,
+            }
           }  
         }`,
         variables: {
           courseIds: [this.props.course.id],
+          userId: [this.context.store.getState().user.id],
         },
       }),
     });
     const { data } = await resp.json();
-    if (_.get(data, 'courses[0].users[0]')) {
-      this.setState({
-        role: data.courses[0].users[0].role,
-      });
-    }
+    return _.get(data, 'courses[0].users[0].role');
   }
 
   changeTitle(event) {
@@ -344,7 +338,7 @@ class StudyEntity extends React.Component {
       headerComponent = (
         <span>
           {this.state.title}
-          {this.getUserRole === 'teacher' ? (
+          {this.state.role === 'teacher' ? (
             <Button onClick={this.switchMode}>
               <Glyphicon glyph="pencil" />
             </Button>
