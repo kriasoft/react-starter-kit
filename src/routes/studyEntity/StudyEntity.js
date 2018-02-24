@@ -20,6 +20,7 @@ import {
   Col,
   Table,
 } from 'react-bootstrap';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as moment from 'moment';
@@ -105,7 +106,7 @@ class StudyEntity extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    if (data !== null) {
+    if (_.get(data, 'courses[0].users[0]')) {
       this.setState({
         role: data.courses[0].users[0].role,
       });
