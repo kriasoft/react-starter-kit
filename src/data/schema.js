@@ -15,7 +15,7 @@ import {
 import me from './queries/me';
 import news from './queries/news';
 import { createUser, removeUser, updateUser, users } from './queries/user';
-import files from './queries/file';
+import { files, uploadFile } from './queries/file';
 import {
   createGroup,
   removeGroup,
@@ -84,6 +84,7 @@ const schema = new Schema({
       addMark,
       removeMark,
       updateMark,
+      uploadFile,
     },
   }),
 });

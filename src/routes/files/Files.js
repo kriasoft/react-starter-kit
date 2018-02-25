@@ -14,6 +14,11 @@ import s from './Files.css';
 import FilesList from '../../components/FilesList';
 
 class Files extends React.Component {
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
+  };
+
   static propTypes = {
     title: PropTypes.string.isRequired,
     files: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -24,12 +29,47 @@ class Files extends React.Component {
     this.state = {};
   }
 
+  handleFileUpload(e) {
+    const { files } = e.currentTarget;
+    this.setState({
+      file: files[0],
+      fileName: files[0].name,
+    });
+  }
+
+  async uploadFile() {
+    const data = new FormData();
+    data.append(
+      'query',
+      `mutation uploadFile($internalName: String!, $userId: String!) {
+        uploadFile(internalName: $internalName, userId: $userId) { id }
+      }`,
+    );
+    data.append(
+      'variables',
+      JSON.stringify({
+        userId: this.context.store.getState().user.id,
+        internalName: this.state.fileName,
+      }),
+    );
+    data.append('file', this.state.file);
+    await this.context.fetch('/graphql', {
+      body: data,
+    });
+  }
+
   render() {
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
           <FilesList files={this.props.files} />
+          <input type="file" onChange={e => this.handleFileUpload(e)} />
+          <input
+            type="button"
+            value="upload"
+            onClick={() => this.uploadFile()}
+          />
         </div>
       </div>
     );
