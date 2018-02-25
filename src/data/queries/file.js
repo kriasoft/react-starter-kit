@@ -1,4 +1,8 @@
-import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
+import {
+  GraphQLString as StringType,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+} from 'graphql';
 import FileType from '../types/FileType';
 import File from '../models/File';
 
@@ -22,4 +26,19 @@ const files = {
   },
 };
 
-export default files;
+const uploadFile = {
+  type: FileType,
+  args: {
+    internalName: { type: new NonNull(StringType) },
+    userId: { type: new NonNull(StringType) },
+  },
+  resolve(obj, args) {
+    return File.uploadFile({
+      internalName: args.internalName,
+      buffer: obj.request.file.buffer,
+      userId: args.userId,
+    });
+  },
+};
+
+export { files, uploadFile };

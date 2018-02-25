@@ -14,6 +14,7 @@ import express from 'express';
 import expressSession from 'express-session';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import multer from 'multer';
 import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import { graphql } from 'graphql';
 import expressGraphQL from 'express-graphql';
@@ -135,6 +136,9 @@ app.get(
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
+const storage = multer.memoryStorage();
+app.use('/graphql', multer({ storage }).single('file'));
+
 app.use(
   '/graphql',
   expressGraphQL(req => ({

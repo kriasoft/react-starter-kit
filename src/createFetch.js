@@ -60,14 +60,23 @@ function createFetch(
       });
     }
 
+    const headers = {
+      ...defaults.headers,
+      ...(options && options.headers),
+    };
+
+    if (
+      typeof FormData !== 'undefined' &&
+      options &&
+      options.body instanceof FormData
+    )
+      delete headers['Content-Type'];
+
     return isGraphQL || url.startsWith('/api')
       ? fetch(`${baseUrl}${url}`, {
           ...defaults,
           ...options,
-          headers: {
-            ...defaults.headers,
-            ...(options && options.headers),
-          },
+          headers,
         })
       : fetch(url, options);
   };
