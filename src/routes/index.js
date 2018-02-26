@@ -9,16 +9,16 @@ const routes = {
     // added to client.js as well and not repeated in each individual route chunk.
     {
       path: '',
-      load: () => import(/* webpackMode: 'eager' */ './home'),
+      load: () => import(/* webpackChunkName: 'home' */ './home'),
     },
     {
       path: '/contact',
       load: () => import(/* webpackChunkName: 'contact' */ './contact'),
     },
-    {
-      path: '(.*)', // Example dynamic content load API
-      load: () => import(/* webpackChunkName: 'generic' */ './generic'),
-    },
+    // {
+    //   path: '(.*)', // Example dynamic content load API
+    //   load: () => import(/* webpackChunkName: 'generic' */ './generic'),
+    // },
 
     // Wildcard routes, e.g. { path: '(.*)', ... } (must go last)
     {

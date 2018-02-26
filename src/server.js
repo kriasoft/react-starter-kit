@@ -127,9 +127,15 @@ app.get(routes.server, async (req, res, next) => {
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js];
+
     if (route.chunks) {
-      data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
+      const chunks = Object.keys(assets).filter(asset =>
+        asset.includes(route.chunks),
+      );
+
+      data.scripts.push(...chunks.map(chunk => assets[chunk].js));
     }
+
     data.scripts.push(assets.client.js);
     data.app = {
       baseUrl: config.baseUrl,
