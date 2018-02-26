@@ -1,5 +1,7 @@
 ## React Starter Kit — "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" web app boilerplate
 
+[![Build Status](https://travis-ci.org/rodeyseijkens/react-starter-kit.svg?branch=master)](https://travis-ci.org/rodeyseijkens/react-starter-kit)
+
 Development built on top of [Node.js](https://nodejs.org/),
 [Express](http://expressjs.com/) and [React](https://facebook.github.io/react/),
 containing modern web development tools such as [Webpack](http://webpack.github.io/),
