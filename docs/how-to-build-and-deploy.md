@@ -6,7 +6,7 @@ Make sure the git build repository is hooked up to the Azure environments.
 Check your package.json and look for
 
 ```
-  "deploymentRepository": "https://vcs.lostboys.nl/SOME_REPO.git",
+  "deploymentRepository": "https://REPO_DOMAIN/SOME_REPO.git",
 ```
 
 Run deploy to specific branch (test)
