@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import path from 'path';
 import chokidar from 'chokidar';
 import { writeFile, copyFile, makeDir, copyDir, cleanDir } from './lib/fs';
@@ -38,10 +29,14 @@ async function copy() {
     copyFile('LICENSE.txt', 'build/LICENSE.txt'),
     copyFile('yarn.lock', 'build/yarn.lock'),
     copyDir('public', 'build/public'),
+    copyDir('content/assets', 'build/public/assets'),
+    copyDir('content/pages', 'build/content/pages'),
   ]);
 
   if (process.argv.includes('--watch')) {
-    const watcher = chokidar.watch(['public/**/*'], { ignoreInitial: true });
+    const watcher = chokidar.watch(['public/**/*', 'content/**/*'], {
+      ignoreInitial: true,
+    });
 
     watcher.on('all', async (event, filePath) => {
       const start = new Date();

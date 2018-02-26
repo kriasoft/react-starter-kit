@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 // ESLint configuration
 // http://eslint.org/docs/user-guide/configuring
 module.exports = {
@@ -73,6 +64,18 @@ module.exports = {
         components: ['Link'],
         specialLink: ['to'],
         aspects: ['noHref', 'invalidHref', 'preferButton'],
+      },
+    ],
+
+    // Make inputs work with id and nested with label
+    'jsx-a11y/label-has-for': [
+      2,
+      {
+        components: ['label'],
+        required: {
+          every: ['nesting', 'id'],
+        },
+        allowChildren: true,
       },
     ],
 

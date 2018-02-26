@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import path from 'path';
 import webpack from 'webpack';
 import AssetsPlugin from 'assets-webpack-plugin';
@@ -14,6 +5,7 @@ import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
+import siteConfig from '../src/config';
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
@@ -40,9 +32,13 @@ const minimizeCssOptions = {
 const config = {
   context: path.resolve(__dirname, '..'),
 
+  mode: isDebug ? 'development' : 'production',
+
   output: {
     path: path.resolve(__dirname, '../build/public/assets'),
-    publicPath: '/assets/',
+    publicPath: siteConfig.baseUrl
+      ? `${siteConfig.baseUrl}/assets/`
+      : `/assets/`,
     pathinfo: isVerbose,
     filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
     chunkFilename: isDebug
@@ -104,6 +100,7 @@ const config = {
             ['@babel/preset-react', { development: isDebug }],
           ],
           plugins: [
+            '@babel/plugin-proposal-decorators',
             // Treat React JSX elements as value types and hoist them to the highest scope
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-constant-elements
             ...(isDebug ? [] : ['@babel/transform-react-constant-elements']),
@@ -164,22 +161,6 @@ const config = {
               },
             },
           },
-
-          // Compile Less to CSS
-          // https://github.com/webpack-contrib/less-loader
-          // Install dependencies before uncommenting: yarn add --dev less-loader less
-          // {
-          //   test: /\.less$/,
-          //   loader: 'less-loader',
-          // },
-
-          // Compile Sass to CSS
-          // https://github.com/webpack-contrib/sass-loader
-          // Install dependencies before uncommenting: yarn add --dev sass-loader node-sass
-          // {
-          //   test: /\.(scss|sass)$/,
-          //   loader: 'sass-loader',
-          // },
         ],
       },
 
@@ -302,7 +283,6 @@ const clientConfig = {
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
       'process.env.BROWSER': true,
       __DEV__: isDebug,
     }),
@@ -315,44 +295,21 @@ const clientConfig = {
       prettyPrint: true,
     }),
 
-    // Move modules that occur in multiple entry chunks to a new entry chunk (the commons chunk).
-    // https://webpack.js.org/plugins/commons-chunk-plugin/
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: module => /node_modules/.test(module.resource),
-    }),
-
-    ...(isDebug
-      ? []
-      : [
-          // Decrease script evaluation time
-          // https://github.com/webpack/webpack/blob/master/examples/scope-hoisting/README.md
-          new webpack.optimize.ModuleConcatenationPlugin(),
-
-          // Minimize all JavaScript output of chunks
-          // https://github.com/mishoo/UglifyJS2#compressor-options
-          new webpack.optimize.UglifyJsPlugin({
-            compress: {
-              warnings: isVerbose,
-              unused: true,
-              dead_code: true,
-              screw_ie8: true,
-            },
-            mangle: {
-              screw_ie8: true,
-            },
-            output: {
-              comments: false,
-              screw_ie8: true,
-            },
-            sourceMap: true,
-          }),
-        ]),
-
     // Webpack Bundle Analyzer
     // https://github.com/th0r/webpack-bundle-analyzer
     ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
   ],
+
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+        },
+      },
+    },
+  },
 
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
@@ -453,7 +410,6 @@ const serverConfig = {
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
       'process.env.BROWSER': false,
       __DEV__: isDebug,
     }),

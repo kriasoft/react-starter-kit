@@ -22,8 +22,7 @@
   This will make your code more maintainable, easy to refactor.
 * Add `package.json` file into each component's folder.\
   This will allow to easily reference such components from other places in your code.\
-  Use `import Nav from '../Navigation'` instead of `import Nav from
-  '../Navigation/Navigation.js'`
+  Use `import Nav from '../Navigation'` instead of `import Nav from '../Navigation/Navigation.js'`
 
 ```
 /components/Navigation/icon.svg
@@ -48,24 +47,32 @@ For more information google for
 ### Prefer using functional components
 
 * Prefer using stateless functional components whenever possible.\
-  Components that don't use state are better to be written as simple pure functions.
+  Components that don't use state are better to be written as simple PureComponents.
 
 ```jsx
 // Bad
 class Navigation extends Component {
   static propTypes = { items: PropTypes.array.isRequired };
   render() {
-    return <nav><ul>{this.props.items.map(x => <li>{x.text}</li>)}</ul></nav>;
+    return (
+      <nav>
+        <ul>{this.props.items.map(x => <li>{x.text}</li>)}</ul>
+      </nav>
+    );
   }
 }
 
 // Better
-function Navigation({ items }) {
-  return (
-    <nav><ul>{items.map(x => <li>{x.text}</li>)}</ul></nav>;
-  );
+class Navigation extends PureComponent {
+  static propTypes = { items: PropTypes.array.isRequired };
+  render() {
+    return (
+      <nav>
+        <ul>{this.props.items.map(x => <li>{x.text}</li>)}</ul>
+      </nav>
+    );
+  }
 }
-Navigation.propTypes = { items: PropTypes.array.isRequired };
 ```
 
 ### Use CSS Modules
@@ -82,9 +89,9 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 * When in doubt, use `.root { }` class name for the root elements of your
   components
 
-```scss
-// Navigation.scss
-@import '../variables.scss';
+```css
+// Navigation.css
+@import '../variables.css';
 
 .root {
   width: 300px;
@@ -102,57 +109,63 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
   vertical-align: top;
 }
 
+.selected {
+  background: var(--default-bg-color);
+}
+
 .link {
   display: block;
   padding: 0 25px;
   outline: 0;
   border: 0;
-  color: $default-color;
+  color: var(--default-color);
   text-decoration: none;
   line-height: 25px;
   transition: background-color 0.3s ease;
-
-  &,
-  .items:hover & {
-    background: $default-bg-color;
-  }
-
-  .selected,
-  .items:hover &:hover {
-    background: $active-bg-color;
-  }
+}
+.link:hover {
+  background: var(--default-bg-color);
 }
 ```
 
 ```jsx
 // Navigation.js
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.scss';
 
-function Navigation() {
-  return (
-    <nav className={`${s.root} ${this.props.className}`}>
-      <ul className={s.items}>
-        <li className={`${s.item} ${s.selected}`}>
-          <a className={s.link} href="/products">
-            Products
-          </a>
-        </li>
-        <li className={s.item}>
-          <a className={s.link} href="/services">
-            Services
-          </a>
-        </li>
-      </ul>
-    </nav>
-  );
+@withStyles(s)
+class Navigation extends PureComponent {
+  static propTypes = {
+    className: PropTypes.string,
+  };
+
+  static defaultProps = {
+    className: '',
+  };
+
+  render() {
+    return (
+      <nav className={`${s.root} ${this.props.className}`}>
+        <ul className={s.items}>
+          <li className={`${s.item} ${s.selected}`}>
+            <a className={s.link} href="/products">
+              Products
+            </a>
+          </li>
+          <li className={s.item}>
+            <a className={s.link} href="/services">
+              Services
+            </a>
+          </li>
+        </ul>
+      </nav>
+    );
+  }
 }
 
-Navigation.propTypes = { className: PropTypes.string };
-
-export default withStyles(Navigation, s);
+export default Navigation;
 ```
 
 ### Use higher-order components
@@ -209,6 +222,7 @@ export default withViewport;
 import React from 'react';
 import withViewport from './withViewport';
 
+@withViewport()
 class MyComponent {
   render() {
     let { width, height } = this.props.viewport;
@@ -216,7 +230,7 @@ class MyComponent {
   }
 }
 
-export default withViewport(MyComponent);
+export default MyComponent;
 ```
 
 **[⬆ back to top](#table-of-contents)**

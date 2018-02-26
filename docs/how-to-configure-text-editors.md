@@ -26,8 +26,7 @@ Enable **CSSComb** by following the instructions
 [here](https://github.com/csscomb/jetbrains-csscomb).
 
 **If you have trouble with autoreloading** try to disable "safe write" in
-`File > Settings > System Settings > Use "safe write" (save changes to a
-temporary file first)`
+`File > Settings > System Settings > Use "safe write" (save changes to a temporary file first)`
 
 ### Atom
 
@@ -85,4 +84,38 @@ yarn add --dev eslint@latest
 yarn add --dev babel-eslint@latest
 yarn add --dev eslint-plugin-react
 yarn add --dev stylelint
+```
+
+### VSCode
+
+Install vscode packages
+
+* [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+* [prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+* [editorconfig](https://github.com/editorconfig/editorconfig-vscode)
+
+```shell
+ext install eslint
+ext install prettier-vscode
+ext install EditorConfig
+```
+
+Add the following entries to your User Settings `(cmd + ,)`
+
+```json
+// Allow decorators on classes
+{
+  "javascript.implicitProjectConfig.experimentalDecorators": true
+}
+```
+
+```json
+// PREVENT searching in build dist and public folders
+{
+  "search.exclude": {
+    "**/build": true,
+    "**/dist": true,
+    "**/public": true
+  }
+}
 ```
