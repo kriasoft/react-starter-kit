@@ -22,14 +22,6 @@ class Today extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
-          <table>
-            <tr>
-              <th>Butter Chicken</th>
-            </tr>
-            <tr>
-              <td>SG Score: 50%</td>
-            </tr>
-          </table>
           <p>...</p>
         </div>
       </div>

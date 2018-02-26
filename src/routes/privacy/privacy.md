@@ -14,7 +14,7 @@ While using our Service, we may ask you to provide us with certain personally
 identifiable information that can be used to contact or identify you.
 
 We collect information that your browser sends whenever you visit our Service.
-This **Log Data** may include information such as your computer's
+This **log data** may include information such as your computer's
 Internet Protocol ("IP") address, browser type, browser version, the pages of
 our Service that you visit, the time and date of your visit, the time spent on
 those pages and other statistics.
