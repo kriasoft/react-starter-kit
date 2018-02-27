@@ -26,6 +26,10 @@ const routes = {
       load: () => import(/* webpackChunkName: 'today' */ './today'),
     },
     {
+      path: '/dishes',
+      load: () => import(/* webpackChunkName: 'dishes' */ './dishes'),
+    },
+    {
       path: '/contact',
       load: () => import(/* webpackChunkName: 'contact' */ './contact'),
     },
