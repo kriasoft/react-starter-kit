@@ -22,10 +22,19 @@ class Today extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
-          <table>
+          <table className={s.table}>
             <tr>
+              <td>
+                <img
+                  className={s.pic}
+                  src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg"
+                  alt=""
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Margherita Pizza</th>
               <th>Butter Chicken</th>
-              <th>Margarita Pizza</th>
             </tr>
             <tr>
               <td>Picture Here</td>
@@ -36,22 +45,6 @@ class Today extends React.Component {
               <td>Price</td>
             </tr>
           </table>
-          <br />
-          <table>
-            <tr>
-              <th>Butter Chicken</th>
-              <th>Margarita Pizza</th>
-            </tr>
-            <tr>
-              <td>Picture Here</td>
-              <td>Picture Here</td>
-            </tr>
-            <tr>
-              <td>Price</td>
-              <td>Price</td>
-            </tr>
-          </table>
-          <p>...</p>
         </div>
       </div>
     );

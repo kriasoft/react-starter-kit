@@ -9,3 +9,5 @@ Every day, it reads the flyers of nearby grocery stores and matches the results 
 a personal library of dishes selected by you.
 
 This way, you can easily see the top dishes that can be shopped for cheaply.
+
+If you have suggestions or issues, please post them at GITHUBLINK.
