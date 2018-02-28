@@ -34,14 +34,11 @@ class Today extends React.Component {
             </tr>
             <tr>
               <th>Margherita Pizza</th>
-              <th>Butter Chicken</th>
             </tr>
             <tr>
               <td>Picture Here</td>
-              <td>Picture Here</td>
             </tr>
             <tr>
-              <td>Price</td>
               <td>Price</td>
             </tr>
           </table>
