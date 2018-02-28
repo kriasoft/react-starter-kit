@@ -21,35 +21,6 @@ class Dishes extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
-          <table>
-            <tr>
-              <th>Butter Chicken</th>
-              <th>Margarita Pizza</th>
-            </tr>
-            <tr>
-              <td>Picture Here</td>
-              <td>Picture Here</td>
-            </tr>
-            <tr>
-              <td>Price</td>
-              <td>Price</td>
-            </tr>
-          </table>
-          <br />
-          <table>
-            <tr>
-              <th>Butter Chicken</th>
-              <th>Margarita Pizza</th>
-            </tr>
-            <tr>
-              <td>Picture Here</td>
-              <td>Picture Here</td>
-            </tr>
-            <tr>
-              <td>Price</td>
-              <td>Price</td>
-            </tr>
-          </table>
         </div>
       </div>
     );
