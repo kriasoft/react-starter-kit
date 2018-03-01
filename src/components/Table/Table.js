@@ -19,10 +19,12 @@ class Table extends React.Component {
       {
         name: 'Tanner Linsley',
         age: 26,
-        friend: {
-          name: 'Jason Maurer',
-          age: 23,
-        },
+        job: 'Ironsmith',
+      },
+      {
+        name: 'Jacob Holier',
+        age: 31,
+        job: 'Linter',
       },
     ];
 
@@ -34,17 +36,12 @@ class Table extends React.Component {
       {
         Header: 'Age',
         accessor: 'age',
-        Cell: props => <span className="number">{props.value}</span>, // Custom cell components!
+        // Cell: props => <span className="number">{props.value}</span>, // Custom cell components!
       },
       {
-        id: 'friendName', // Required because our accessor is not a string
-        Header: 'Friend Name',
-        accessor: d => d.friend.name, // Custom value accessors!
+        Header: 'Job',
+        accessor: 'job',
       },
-      // {
-      //   Header: props => <span>Friend Age</span>, // Custom header components!
-      //   accessor: 'friend.age',
-      // },
     ];
 
     return (
