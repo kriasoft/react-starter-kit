@@ -22,30 +22,28 @@ class Today extends React.Component {
   render() {
     const data = [
       {
-        name: 'Tanner Linsley',
-        age: 26,
-        job: 'Ironsmith',
+        dish: 'Pizza',
+        price: 26,
+        location: 99,
       },
       {
-        name: 'Jacob Holier',
-        age: 31,
-        job: 'Linter',
+        dish: 'Salad',
+        price: 31,
+        location: 50,
       },
     ];
-
     const columns = [
       {
-        Header: 'Name',
-        accessor: 'name',
+        Header: 'Dish',
+        accessor: 'dish',
       },
       {
-        Header: 'Age',
-        accessor: 'age',
-        // Cell: props => <span className="number">{props.value}</span>, // Custom cell components!
+        Header: 'Price Score',
+        accessor: 'price',
       },
       {
-        Header: 'Job',
-        accessor: 'job',
+        Header: 'Location Score',
+        accessor: 'location',
       },
     ];
     return (
