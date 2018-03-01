@@ -10,25 +10,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Register.css';
+import s from './Dishes.css';
 
-class Register extends React.Component {
+class Dishes extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
   };
-
   render() {
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
-          <p className={s.lead}>
-            Sign up for your free Serious Groceries account
-          </p>
           <form method="post">
             <div className={s.formGroup}>
               <label className={s.label} htmlFor="usernameOrEmail">
-                Username or email address:
+                Dish Name
                 <input
                   className={s.input}
                   id="usernameOrEmail"
@@ -40,7 +36,7 @@ class Register extends React.Component {
             </div>
             <div className={s.formGroup}>
               <label className={s.label} htmlFor="password">
-                Password:
+                Ingredients
                 <input
                   className={s.input}
                   id="password"
@@ -51,7 +47,7 @@ class Register extends React.Component {
             </div>
             <div className={s.formGroup}>
               <button className={s.button} type="submit">
-                Log in
+                Add
               </button>
             </div>
           </form>
@@ -61,4 +57,4 @@ class Register extends React.Component {
   }
 }
 
-export default withStyles(s)(Register);
+export default withStyles(s)(Dishes);

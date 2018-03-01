@@ -9,17 +9,19 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-import Register from './Register';
+import Today from './Today';
+// import Table from '../../components/Table';
 
-const title = "What's for dinner?";
+const title = "Today's Menu";
 
 function action() {
   return {
-    chunks: ['register'],
+    chunks: ['today'],
     title,
     component: (
       <Layout>
-        <Register title={title} />
+        <Today title={title} />
+        {/* <Table /> */}
       </Layout>
     ),
   };
