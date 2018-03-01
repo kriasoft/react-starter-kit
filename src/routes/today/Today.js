@@ -22,7 +22,7 @@ class Today extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <h1>{this.props.title}</h1>
-          <table className={s.table}>
+          {/* <table className={s.table}>
             <tr>
               <td>
                 <img
@@ -41,7 +41,7 @@ class Today extends React.Component {
             <tr>
               <td>Price</td>
             </tr>
-          </table>
+          </table> */}
         </div>
       </div>
     );

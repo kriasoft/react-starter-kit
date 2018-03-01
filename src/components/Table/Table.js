@@ -9,18 +9,20 @@
 
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { JsonTable } from 'react-json-table';
 import s from './Table.css';
-import Link from '../Link';
 
 class Table extends React.Component {
   render() {
+    const items = [
+      { name: 'Louise', age: 27, color: 'red' },
+      { name: 'Margaret', age: 15, color: 'blue' },
+      { name: 'Lisa', age: 34, color: 'yellow' },
+    ];
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <span className={s.text}>© 2018 All Rights Reserved.</span>
-          <Link className={s.link} to="/privacy">
-            Privacy.
-          </Link>
+          <JsonTable rows={items} />
         </div>
       </div>
     );

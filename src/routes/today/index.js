@@ -10,6 +10,7 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Today from './Today';
+import Table from '../../components/Table';
 
 const title = "Today's Menu";
 
@@ -20,6 +21,7 @@ function action() {
     component: (
       <Layout>
         <Today title={title} />
+        <Table />
       </Layout>
     ),
   };
