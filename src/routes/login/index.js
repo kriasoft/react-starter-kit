@@ -15,7 +15,7 @@ const title = 'Log In';
 
 function action() {
   return {
-    chunks: ['login'],
+    chunk: 'login',
     title,
     component: (
       <Layout>

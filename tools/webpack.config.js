@@ -40,6 +40,8 @@ const minimizeCssOptions = {
 const config = {
   context: path.resolve(__dirname, '..'),
 
+  mode: isDebug ? 'development' : 'production',
+
   output: {
     path: path.resolve(__dirname, '../build/public/assets'),
     publicPath: '/assets/',
@@ -302,7 +304,6 @@ const clientConfig = {
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
       'process.env.BROWSER': true,
       __DEV__: isDebug,
     }),
@@ -315,44 +316,27 @@ const clientConfig = {
       prettyPrint: true,
     }),
 
-    // Move modules that occur in multiple entry chunks to a new entry chunk (the commons chunk).
-    // https://webpack.js.org/plugins/commons-chunk-plugin/
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: module => /node_modules/.test(module.resource),
-    }),
-
     ...(isDebug
       ? []
       : [
-          // Decrease script evaluation time
-          // https://github.com/webpack/webpack/blob/master/examples/scope-hoisting/README.md
-          new webpack.optimize.ModuleConcatenationPlugin(),
-
-          // Minimize all JavaScript output of chunks
-          // https://github.com/mishoo/UglifyJS2#compressor-options
-          new webpack.optimize.UglifyJsPlugin({
-            compress: {
-              warnings: isVerbose,
-              unused: true,
-              dead_code: true,
-              screw_ie8: true,
-            },
-            mangle: {
-              screw_ie8: true,
-            },
-            output: {
-              comments: false,
-              screw_ie8: true,
-            },
-            sourceMap: true,
-          }),
+          // Webpack Bundle Analyzer
+          // https://github.com/th0r/webpack-bundle-analyzer
+          ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
         ]),
-
-    // Webpack Bundle Analyzer
-    // https://github.com/th0r/webpack-bundle-analyzer
-    ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
   ],
+
+  // Move modules that occur in multiple entry chunks to a new entry chunk (the commons chunk).
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          chunks: 'initial',
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+        },
+      },
+    },
+  },
 
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
@@ -453,7 +437,6 @@ const serverConfig = {
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
       'process.env.BROWSER': false,
       __DEV__: isDebug,
     }),

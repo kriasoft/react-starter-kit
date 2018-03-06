@@ -162,8 +162,12 @@ app.get('*', async (req, res, next) => {
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js];
-    if (route.chunks) {
-      data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
+    if (route.chunk) {
+      data.scripts.push(
+        ...Object.keys(assets)
+          .filter(asset => asset.includes(route.chunk))
+          .map(chunk => assets[chunk].js),
+      );
     }
     data.scripts.push(assets.client.js);
     data.app = {

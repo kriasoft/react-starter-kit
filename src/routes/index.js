@@ -19,7 +19,7 @@ const routes = {
     // added to client.js as well and not repeated in each individual route chunk.
     {
       path: '',
-      load: () => import(/* webpackMode: 'eager' */ './home'),
+      load: () => import(/* webpackChunkName: 'home' */ './home'),
     },
     {
       path: '/contact',

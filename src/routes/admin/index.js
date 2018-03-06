@@ -20,7 +20,7 @@ function action() {
   }
 
   return {
-    chunks: ['admin'],
+    chunk: 'admin',
     title,
     component: (
       <Layout>

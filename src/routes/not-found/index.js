@@ -15,7 +15,7 @@ const title = 'Page Not Found';
 
 function action() {
   return {
-    chunks: ['not-found'],
+    chunk: 'not-found',
     title,
     component: (
       <Layout>

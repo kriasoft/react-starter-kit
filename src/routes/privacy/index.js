@@ -14,7 +14,7 @@ import privacy from './privacy.md';
 
 function action() {
   return {
-    chunks: ['privacy'],
+    chunk: 'privacy',
     title: privacy.title,
     component: (
       <Layout>
