@@ -15,8 +15,6 @@ const routes = {
 
   // Keep in mind, routes are evaluated in order
   children: [
-    // The home route is added to client.js to make sure shared components are
-    // added to client.js as well and not repeated in each individual route chunk.
     {
       path: '',
       load: () => import(/* webpackChunkName: 'home' */ './home'),
