@@ -26,6 +26,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as moment from 'moment';
 import TextEditor from '../../components/TextEditor';
 import StudyEntityView from '../../components/StudyEntityView';
+import { setStudyEntityHeaders } from '../../actions/studyEntity';
 import s from './StudyEntity.css';
 
 class StudyEntity extends React.Component {
@@ -68,6 +69,7 @@ class StudyEntity extends React.Component {
     this.changeComment = this.changeComment.bind(this);
     this.cancel = this.cancel.bind(this);
     this.selectAnswer = this.selectAnswer.bind(this);
+    this.updateHeaders = this.updateHeaders.bind(this);
   }
 
   async componentWillMount() {
@@ -337,6 +339,10 @@ class StudyEntity extends React.Component {
     });
   }
 
+  updateHeaders(headers) {
+    this.context.store.dispatch(setStudyEntityHeaders(headers));
+  }
+
   render() {
     let bodyComponent;
     let headerComponent;
@@ -367,6 +373,7 @@ class StudyEntity extends React.Component {
             value={this.state.answer}
             body={this.state.body}
             onChange={this.changeAnswer}
+            onHeadersChange={this.updateHeaders}
           />
           {this.context.store.getState().user ? (
             <Button onClick={this.saveAnswer}>Save</Button>

@@ -32,7 +32,7 @@ async function action({ fetch, params }) {
   return {
     title,
     component: (
-      <Layout>
+      <Layout showStudyEntityHeaders>
         <StudyEntity
           course={data.courses[0]}
           studyEntity={data.studyEntities[0]}

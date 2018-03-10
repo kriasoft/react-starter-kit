@@ -45,11 +45,13 @@ class StudyEntityView extends React.Component {
   static defaultProps = {
     value: null,
     onChange: null,
+    onHeadersChange: null,
   };
   static propTypes = {
     body: PropTypes.string.isRequired,
     value: PropTypes.instanceOf(Object),
     onChange: PropTypes.func,
+    onHeadersChange: PropTypes.func,
   };
 
   constructor(props) {
@@ -61,12 +63,18 @@ class StudyEntityView extends React.Component {
 
   componentWillMount() {
     this.initProcessingInstructions();
+    this.headers = [];
+    this.headersNeedsUpdate = true;
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
       answers: nextProps.value || {},
     });
+    if (this.props.body !== nextProps.body) {
+      this.headersNeedsUpdate = true;
+      this.headers = [];
+    }
   }
 
   updateAnswer(name, value) {
@@ -228,6 +236,32 @@ class StudyEntityView extends React.Component {
           );
         },
       },
+      /**
+       * gathering info about H0..6 tags
+       */
+      {
+        shouldProcessNode: node =>
+          /^[hH]([1-6])$/.exec(node.name) && this.props.onHeadersChange,
+        processNode: (node, children, index) => {
+          const level = +/^[hH]([1-6])$/.exec(node.name)[1];
+          const id =
+            _.get(node, 'attribs.id') ||
+            _.get(node, 'attribs.name') ||
+            `header-${index}`;
+          if (this.headersNeedsUpdate)
+            this.headers.push({
+              level,
+              id,
+              title: node.children
+                .filter(c => c.type === 'text')
+                .map(c => c.data)
+                .join(' '),
+            });
+          const renderAttrs = { id, key: index };
+          const CustomTag = node.name;
+          return <CustomTag {...renderAttrs}>{children}</CustomTag>;
+        },
+      },
       {
         shouldProcessNode: () => true,
         processNode: processNodeDefinitions.processDefaultNode,
@@ -239,11 +273,20 @@ class StudyEntityView extends React.Component {
     function isValidNode(node) {
       return !!node;
     }
+    const oldHeaders = this.headers;
     const studyEntityElement = htmlToReactParser.parseWithInstructions(
       this.props.body,
       isValidNode,
       this.processingInstructions,
     );
+    if (
+      this.props.onHeadersChange &&
+      this.headersNeedsUpdate &&
+      _.isEqual(oldHeaders, this.headers)
+    ) {
+      this.props.onHeadersChange(this.headers);
+    }
+    this.headersNeedsUpdate = false;
     return <div className={s.root}>{studyEntityElement}</div>;
   }
 }
