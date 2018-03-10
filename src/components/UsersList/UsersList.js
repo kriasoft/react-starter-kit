@@ -45,7 +45,7 @@ class UsersList extends React.Component {
               bsStyle="default"
               title={user.email + (user.isAdmin ? ' (a)' : '')}
             >
-              {this.renderActions(user, actions)}
+              {UsersList.renderActions(user, actions)}
             </SplitButton>
           ) : (
             <Button bsStyle="primary" role="link" onClick={() => onClick(user)}>
