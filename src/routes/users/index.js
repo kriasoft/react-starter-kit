@@ -10,10 +10,11 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Users from './Users';
+import { setGroups } from '../../actions/users';
 
 const title = 'Users';
 
-async function action({ fetch }) {
+async function action({ fetch, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: '{ users{ id,email,isAdmin },groups{ id, title,} }',
@@ -22,6 +23,7 @@ async function action({ fetch }) {
   const { data } = await resp.json();
   if (!data && !data.users && !data.groups)
     throw new Error('Failed to load users.');
+  store.dispatch(setGroups(data.groups));
   return {
     title,
     component: (
