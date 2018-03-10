@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { Row, Col, Grid, Checkbox } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import User from '../../components/User';
@@ -17,6 +18,7 @@ class Users extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     users: PropTypes.arrayOf(PropTypes.object).isRequired,
+    groups: PropTypes.arrayOf(PropTypes.object).isRequired,
   };
 
   render() {
@@ -29,11 +31,29 @@ class Users extends React.Component {
         </li>,
       );
     }
+    const groupsList = [];
+    for (let i = 0; i < this.props.groups.length; i += 1) {
+      groupsList.push(
+        <li key={this.props.groups[i].id}>
+          <Checkbox>{this.props.groups[i].title}</Checkbox>
+        </li>,
+      );
+    }
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.title}</h1>
-          <ol>{usersList}</ol>
+          <Grid>
+            <Row>
+              <Col md={4}>
+                <h1>Groups</h1>
+                <ol>{groupsList}</ol>
+              </Col>
+              <Col md={8}>
+                <h1>{this.props.title}</h1>
+                <ol>{usersList}</ol>
+              </Col>
+            </Row>
+          </Grid>
         </div>
       </div>
     );
