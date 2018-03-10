@@ -106,19 +106,22 @@ class Course extends React.Component {
     this.setState({ showModalSubscribe: false });
   }
 
-  async addUserToCourse(user) {
+  async addUserToCourse(user, role) {
     this.state.subscribedUsersList.push(user);
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation  subscribe($id: String, $courseId: String){
+        query: `mutation  subscribe($id: String, $courseId: String, $role: String){
           addUserToCourse(
             id: $id,
-            courseId: $courseId)
+            courseId: $courseId
+            role: $role
+          )
             { id }
         }`,
         variables: {
           id: user.id,
           courseId: this.props.course.id,
+          role: role || 'student',
         },
       }),
     });
@@ -187,6 +190,14 @@ class Course extends React.Component {
       <UsersList
         usersList={usersListArray}
         onClick={user => this.addUserToCourse(user)}
+        actions={[
+          { title: 'Student', action: user => this.addUserToCourse(user) },
+          { divider: true },
+          {
+            title: 'Teacher',
+            action: user => this.addUserToCourse(user, 'teacher'),
+          },
+        ]}
       />
     );
 
