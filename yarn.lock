@@ -16,7 +16,7 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@babel/core@7.0.0-beta.40":
+"@babel/core@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.0-beta.40.tgz#455464dd81d499fd97d32b473f0331f74379a33f"
   dependencies:
@@ -189,7 +189,7 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@babel/node@7.0.0-beta.40":
+"@babel/node@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/node/-/node-7.0.0-beta.40.tgz#2c5246a85d7d614b97e76806f950da6dd60cb2df"
   dependencies:
@@ -426,7 +426,7 @@
     "@babel/helper-call-delegate" "7.0.0-beta.40"
     "@babel/helper-get-function-arity" "7.0.0-beta.40"
 
-"@babel/plugin-transform-react-constant-elements@7.0.0-beta.40":
+"@babel/plugin-transform-react-constant-elements@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-constant-elements/-/plugin-transform-react-constant-elements-7.0.0-beta.40.tgz#a10db69b7962d14991102e8b726464e76f0fdd94"
 
@@ -434,7 +434,7 @@
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.0.0-beta.40.tgz#2e9aba5d74da8ecee00d6d4bf68c833955355e4c"
 
-"@babel/plugin-transform-react-inline-elements@7.0.0-beta.40":
+"@babel/plugin-transform-react-inline-elements@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-inline-elements/-/plugin-transform-react-inline-elements-7.0.0-beta.40.tgz#707850d0febaadbc863513214126fc16008f7e2d"
   dependencies:
@@ -496,14 +496,14 @@
     "@babel/helper-regex" "7.0.0-beta.40"
     regexpu-core "^4.1.3"
 
-"@babel/polyfill@7.0.0-beta.40":
+"@babel/polyfill@7.0.0-beta.40", "@babel/polyfill@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/polyfill/-/polyfill-7.0.0-beta.40.tgz#90f447aa04ab54c317dcf0ccb8cb11ad4228fea0"
   dependencies:
     core-js "^2.5.3"
     regenerator-runtime "^0.11.1"
 
-"@babel/preset-env@7.0.0-beta.40":
+"@babel/preset-env@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.0.0-beta.40.tgz#713292f9e410f76b3f4301330756c89343c4b2e4"
   dependencies:
@@ -545,13 +545,13 @@
     invariant "^2.2.2"
     semver "^5.3.0"
 
-"@babel/preset-flow@7.0.0-beta.40":
+"@babel/preset-flow@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/preset-flow/-/preset-flow-7.0.0-beta.40.tgz#08784f5a847bf1a7fc7ea031977c5e43ef72753a"
   dependencies:
     "@babel/plugin-transform-flow-strip-types" "7.0.0-beta.40"
 
-"@babel/preset-react@7.0.0-beta.40":
+"@babel/preset-react@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-beta.40.tgz#ccc8f916b694c8ea4b4ccbd1584f873caf199557"
   dependencies:
@@ -561,7 +561,7 @@
     "@babel/plugin-transform-react-jsx-self" "7.0.0-beta.40"
     "@babel/plugin-transform-react-jsx-source" "7.0.0-beta.40"
 
-"@babel/preset-stage-2@7.0.0-beta.40":
+"@babel/preset-stage-2@^7.0.0-beta.40":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/preset-stage-2/-/preset-stage-2-7.0.0-beta.40.tgz#c88db5e0e7ebfde8460c9cd3bed9acd841830e72"
   dependencies:
@@ -1101,7 +1101,7 @@ babel-jest@^22.4.1:
     babel-plugin-istanbul "^4.1.5"
     babel-preset-jest "^22.4.1"
 
-babel-loader@8.0.0-beta.2:
+babel-loader@^8.0.0-beta.2:
   version "8.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-8.0.0-beta.2.tgz#4d5b67c964dc8c9cba866fd13d6b90df3acf8723"
   dependencies:
@@ -3111,13 +3111,13 @@ express-graphql@^0.6.12:
     http-errors "^1.3.0"
     raw-body "^2.3.2"
 
-express-jwt@^5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/express-jwt/-/express-jwt-5.3.0.tgz#3d90cd65802e6336252f19e6a3df3e149e0c5ea0"
+express-jwt@^5.3.1:
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/express-jwt/-/express-jwt-5.3.1.tgz#66f05c7dddb5409c037346a98b88965bb10ea4ae"
   dependencies:
     async "^1.5.0"
     express-unless "^0.3.0"
-    jsonwebtoken "^7.3.0"
+    jsonwebtoken "^8.1.0"
     lodash.set "^4.0.0"
 
 express-unless@^0.3.0:
@@ -3392,9 +3392,9 @@ flatten@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
 
-flow-bin@^0.66.0:
-  version "0.66.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.66.0.tgz#a96dde7015dc3343fd552a7b4963c02be705ca26"
+flow-bin@^0.67.1:
+  version "0.67.1"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.67.1.tgz#eabb7197cce870ac9442cfd04251c7ddc30377db"
 
 flush-write-stream@^1.0.0:
   version "1.0.2"
@@ -4454,10 +4454,6 @@ isarray@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-2.0.1.tgz#a37d94ed9cda2d59865c9f76fe596ee1f338741e"
 
-isemail@1.x.x:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/isemail/-/isemail-1.2.0.tgz#be03df8cc3e29de4d2c5df6501263f1fa4595e9a"
-
 isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
@@ -4822,15 +4818,6 @@ jest@^22.4.2:
     import-local "^1.0.0"
     jest-cli "^22.4.2"
 
-joi@^6.10.1:
-  version "6.10.1"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-6.10.1.tgz#4d50c318079122000fe5f16af1ff8e1917b77e06"
-  dependencies:
-    hoek "2.x.x"
-    isemail "1.x.x"
-    moment "2.x.x"
-    topo "1.x.x"
-
 js-base64@^2.1.9:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.4.3.tgz#2e545ec2b0f2957f41356510205214e98fad6582"
@@ -4944,17 +4931,7 @@ jsonify@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
 
-jsonwebtoken@^7.3.0:
-  version "7.4.3"
-  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-7.4.3.tgz#77f5021de058b605a1783fa1283e99812e645638"
-  dependencies:
-    joi "^6.10.1"
-    jws "^3.1.4"
-    lodash.once "^4.0.0"
-    ms "^2.0.0"
-    xtend "^4.0.1"
-
-jsonwebtoken@^8.2.0:
+jsonwebtoken@^8.1.0, jsonwebtoken@^8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.2.0.tgz#690ec3a9e7e95e2884347ce3e9eb9d389aa598b3"
   dependencies:
@@ -5737,7 +5714,7 @@ moment-timezone@^0.5.14:
   dependencies:
     moment ">= 2.9.0"
 
-moment@2.x.x, "moment@>= 2.9.0":
+"moment@>= 2.9.0":
   version "2.20.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.20.1.tgz#d6eb1a46cbcc14a2b2f9434112c1ff8907f313fd"
 
@@ -5772,7 +5749,7 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
-ms@^2.0.0, ms@^2.1.1:
+ms@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
 
@@ -7883,9 +7860,9 @@ send@0.16.1:
     range-parser "~1.2.0"
     statuses "~1.3.1"
 
-sequelize@^4.35.2:
-  version "4.35.2"
-  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-4.35.2.tgz#936db62c0bb63368bdb33ae58e76282aae5ec360"
+sequelize@^4.35.5:
+  version "4.35.5"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-4.35.5.tgz#a7739344edb754c95d2bbbf685bece981923da2f"
   dependencies:
     bluebird "^3.5.0"
     cls-bluebird "^2.1.0"
@@ -8691,12 +8668,6 @@ to-regex@^3.0.1:
     define-property "^0.2.5"
     extend-shallow "^2.0.1"
     regex-not "^1.0.0"
-
-topo@1.x.x:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/topo/-/topo-1.1.0.tgz#e9d751615d1bb87dc865db182fa1ca0a5ef536d5"
-  dependencies:
-    hoek "2.x.x"
 
 toposort-class@^1.0.1:
   version "1.0.1"
