@@ -21,8 +21,8 @@ class User extends React.Component {
     if (this.props.link) {
       return (
         <span>
-          <a href={`/users/${user.id}`}>{userLine}</a>{' '}
-          {user.isAdmin ? '(admin)' : ''}
+          <a href={`/users/${user.id}`}>{userLine}</a>
+          {user.isAdmin ? ' (admin)' : ''}
         </span>
       );
     }
