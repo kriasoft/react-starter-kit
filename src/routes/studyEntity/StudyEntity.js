@@ -127,8 +127,48 @@ class StudyEntity extends React.Component {
     this.setState({ answer: val });
   }
 
+  async uploadFile(key, file) {
+    const formData = new FormData();
+    formData.append(
+      'query',
+      `mutation uploadFile($internalName: String!, $userId: String!) {
+        uploadFile(internalName: $internalName, userId: $userId) { id }
+      }`,
+    );
+    formData.append(
+      'variables',
+      JSON.stringify({
+        userId: this.context.store.getState().user.id,
+        internalName: file.name,
+      }),
+    );
+    formData.append('file', file);
+    const res = await this.context.fetch('/graphql', {
+      body: formData,
+    });
+    const { data } = await res.json();
+    return { key, data: { type: 'file', id: data.uploadFile.id } };
+  }
+
+  async postProcessAnswer(answer) {
+    const res = { ...answer };
+    const files = Object.entries(answer).filter(
+      ans => ans[1] instanceof window.File,
+    );
+    const tasks = [];
+    for (let i = 0; i < files.length; i += 1) {
+      tasks.push(this.uploadFile(files[i][0], files[i][1]));
+    }
+    const filesData = await Promise.all(tasks);
+    filesData.forEach(fd => {
+      res[fd.key] = fd.data;
+    });
+    return res;
+  }
+
   async saveAnswer() {
     if (this.state.answerId) {
+      const answer = await this.postProcessAnswer(this.state.answer);
       await this.context.fetch('/graphql', {
         body: JSON.stringify({
           query: `mutation update(
@@ -143,7 +183,7 @@ class StudyEntity extends React.Component {
             }            
           }`,
           variables: {
-            body: JSON.stringify(this.state.answer),
+            body: JSON.stringify(answer),
             id: this.state.answerId,
           },
         }),

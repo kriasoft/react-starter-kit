@@ -209,6 +209,25 @@ class StudyEntityView extends React.Component {
           return <input {...renderAttrs} {...valueAttrs} />;
         },
       },
+      /**
+       * <input type=file name=...>
+       */
+      {
+        shouldProcessNode: node =>
+          node.name === 'input' &&
+          _.get(node, 'attribs.name') &&
+          _.get(node, 'attribs.type') === 'file',
+        processNode: (node, children, index) => {
+          const name = _.get(node, 'attribs.name');
+          const renderAttrs = inputRenderAttrs(node, children, index);
+          return (
+            <input
+              {...renderAttrs}
+              onChange={event => this.updateAnswer(name, event.target.files[0])}
+            />
+          );
+        },
+      },
       {
         shouldProcessNode: () => true,
         processNode: processNodeDefinitions.processDefaultNode,
