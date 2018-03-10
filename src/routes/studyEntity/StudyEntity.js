@@ -480,7 +480,9 @@ class StudyEntity extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            {this.props.course.title}/{headerComponent}
+            <a href={`/courses/${this.props.course.id}`}>
+              {this.props.course.title}
+            </a>/{headerComponent}
             {answerChooser}
           </h1>
           {bodyComponent}
