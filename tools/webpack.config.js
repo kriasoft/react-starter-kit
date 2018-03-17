@@ -9,7 +9,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import AssetsPlugin from 'assets-webpack-plugin';
+import WebpackAssetsManifest from 'webpack-assets-manifest';
 import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import overrideRules from './lib/overrideRules';
@@ -310,10 +310,10 @@ const clientConfig = {
 
     // Emit a file with assets paths
     // https://github.com/sporto/assets-webpack-plugin#options
-    new AssetsPlugin({
-      path: path.resolve(__dirname, '../build'),
-      filename: 'assets.json',
-      prettyPrint: true,
+    new WebpackAssetsManifest({
+      output: `${path.resolve(__dirname, '../build')}/assets.json`,
+      publicPath: true,
+      writeToDisk: true,
     }),
 
     ...(isDebug

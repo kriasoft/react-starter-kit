@@ -161,15 +161,15 @@ app.get('*', async (req, res, next) => {
       <App context={context}>{route.component}</App>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
-    data.scripts = [assets.vendor.js];
+    data.scripts = [assets['vendor.js']];
     if (route.chunk) {
       data.scripts.push(
         ...Object.keys(assets)
           .filter(asset => asset.includes(route.chunk))
-          .map(chunk => assets[chunk].js),
+          .map(chunk => assets[chunk]),
       );
     }
-    data.scripts.push(assets.client.js);
+    data.scripts.push(assets['client.js']);
     data.app = {
       apiUrl: config.api.clientUrl,
     };
