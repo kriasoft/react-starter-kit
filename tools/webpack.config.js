@@ -309,9 +309,10 @@ const clientConfig = {
     }),
 
     // Emit a file with assets paths
-    // https://github.com/sporto/assets-webpack-plugin#options
+    // https://github.com/webdeveric/webpack-assets-manifest#options
     new WebpackAssetsManifest({
       output: `${path.resolve(__dirname, '../build')}/assets.json`,
+      fileExtRegex: /^((?!map).)*$/gm,
       publicPath: true,
       writeToDisk: true,
     }),
