@@ -331,8 +331,8 @@ const clientConfig = {
       cacheGroups: {
         commons: {
           chunks: 'initial',
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendor',
+          test: /node_modules/,
+          name: 'vendors',
         },
       },
     },
