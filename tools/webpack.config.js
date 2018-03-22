@@ -312,9 +312,13 @@ const clientConfig = {
     // https://github.com/webdeveric/webpack-assets-manifest#options
     new WebpackAssetsManifest({
       output: `${path.resolve(__dirname, '../build')}/assets.json`,
-      fileExtRegex: /^((?!map).)*$/gm,
       publicPath: true,
       writeToDisk: true,
+      customize: (key, value) => {
+        // You can prevent adding items to the manifest by returning false.
+        if (key.toLowerCase().endsWith('.map')) return false;
+        return { key, value };
+      },
     }),
 
     ...(isDebug
