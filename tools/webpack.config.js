@@ -309,11 +309,16 @@ const clientConfig = {
     }),
 
     // Emit a file with assets paths
-    // https://github.com/sporto/assets-webpack-plugin#options
+    // https://github.com/webdeveric/webpack-assets-manifest#options
     new WebpackAssetsManifest({
       output: `${path.resolve(__dirname, '../build')}/assets.json`,
       publicPath: true,
       writeToDisk: true,
+      customize: (key, value) => {
+        // You can prevent adding items to the manifest by returning false.
+        if (key.toLowerCase().endsWith('.map')) return false;
+        return { key, value };
+      },
     }),
 
     ...(isDebug
@@ -331,8 +336,8 @@ const clientConfig = {
       cacheGroups: {
         commons: {
           chunks: 'initial',
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendor',
+          test: /node_modules/,
+          name: 'vendors',
         },
       },
     },
