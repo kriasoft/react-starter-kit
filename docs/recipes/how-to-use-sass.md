@@ -1,10 +1,10 @@
 ## How to Use Sass/SCSS
 
 > **Note**: Using plain CSS via [PostCSS](http://postcss.org/) is recommended approach because it
-reduces the size of the tech stack used in the project, enforces you to learn vanilla CSS syntax
-with modern CSS Level 3+ features that allow you doing everything you would normally do with
-Sass/SCSS. Also compilation of plain `.css` files should work faster with `postcss` pre-processor
-than `node-sass`.
+> reduces the size of the tech stack used in the project, enforces you to learn vanilla CSS syntax
+> with modern CSS Level 3+ features that allow you doing everything you would normally do with
+> Sass/SCSS. Also compilation of plain `.css` files should work faster with `postcss` pre-processor
+> than `node-sass`.
 
 ### Step 1
 
@@ -68,9 +68,7 @@ enable [Autoprefixer](https://github.com/postcss/autoprefixer) for your `.scss` 
 
 ```js
 module.exports = () => ({
-  plugins: [
-    require('autoprefixer')(),
-  ],
+  plugins: [require('autoprefixer')()],
 });
 ```
 
