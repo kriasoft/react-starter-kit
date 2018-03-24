@@ -9,10 +9,12 @@
 
 import DataType from 'sequelize';
 import bcrypt from 'bcrypt-nodejs';
+import _ from 'lodash';
 import Model from '../sequelize';
 import UserLogin from './UserLogin';
 import UserProfile from './UserProfile';
 import UserClaim from './UserClaim';
+import Course from './Course';
 
 const User = Model.define(
   'User',
@@ -76,6 +78,22 @@ User.createUser = function createUser(args) {
       },
     ),
   );
+};
+
+User.prototype.getRole = async courseId => {
+  const course = await Course.findById(courseId, {
+    where: {
+      '$users.Id$': this.id,
+    },
+    include: [
+      {
+        model: User,
+        as: 'users',
+        required: true,
+      },
+    ],
+  });
+  return _.get(course, 'users[0].UserCourse.role');
 };
 
 export default User;
