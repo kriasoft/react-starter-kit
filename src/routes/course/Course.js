@@ -40,6 +40,7 @@ class Course extends React.Component {
         PropTypes.shape({
           id: PropTypes.string,
           email: PropTypes.string,
+          role: PropTypes.string,
         }),
       ),
     }).isRequired,
@@ -107,7 +108,12 @@ class Course extends React.Component {
   }
 
   async addUserToCourse(user, role) {
-    this.state.subscribedUsersList.push(user);
+    const userRole = {
+      id: user.id,
+      email: user.email,
+      role: role || 'student',
+    };
+    this.state.subscribedUsersList.push(userRole);
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  subscribe($id: String, $courseId: String, $role: String){

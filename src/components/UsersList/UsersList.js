@@ -9,6 +9,7 @@ class UsersList extends React.Component {
       PropTypes.shape({
         id: PropTypes.string,
         email: PropTypes.string,
+        role: PropTypes.string,
       }),
     ).isRequired,
     onClick: PropTypes.func.isRequired,
@@ -52,6 +53,7 @@ class UsersList extends React.Component {
               <User user={user} link={false} />
             </Button>
           )}
+          {user.role ? ` [${user.role}]` : ''}
         </td>
       </tr>
     ));

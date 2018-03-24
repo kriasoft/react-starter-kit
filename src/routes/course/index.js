@@ -18,7 +18,7 @@ async function action({ fetch, params, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title, studyEntities{ id,title }, users{ id,email } }
+        courses(ids: $ids) { id, title, studyEntities{ id,title }, users{ id,email,role } }
       }`,
       variables: {
         ids: params.idCourse,
