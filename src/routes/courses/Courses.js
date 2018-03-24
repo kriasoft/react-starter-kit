@@ -10,7 +10,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Button } from 'react-bootstrap';
+import { Button, Glyphicon } from 'react-bootstrap';
 import s from './Courses.css';
 import ModalAdd from '../../components/ModalAdd';
 import { addCourse } from '../../actions/courses';
@@ -94,12 +94,16 @@ class Courses extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.title}</h1>
+          <div>
+            <h1>
+              {this.props.title}
+              <Button onClick={this.handleOpen}>
+                <Glyphicon glyph="glyphicon glyphicon-plus" />
+              </Button>
+            </h1>
+          </div>
           <ol>{coursesList}</ol>
         </div>
-        <Button bsStyle="primary" onClick={this.handleOpen}>
-          Add Course
-        </Button>
         <ModalAdd
           value={this.state.courseName}
           title="Course"

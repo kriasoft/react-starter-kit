@@ -10,7 +10,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Button } from 'react-bootstrap';
+import { Button, Glyphicon } from 'react-bootstrap';
 import ModalSubscribe from '../../components/ModalSubscribe';
 import ModalEditor from '../../components/ModalEditor';
 import StudyEntitiesList from '../../components/StudyEntitiesList';
@@ -217,20 +217,21 @@ class Course extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.title}</h1>
+          <h1>
+            {this.props.title}
+            <Button
+              onClick={() => {
+                this.setState({ showModalEditor: true });
+              }}
+            >
+              <Glyphicon glyph="glyphicon glyphicon-plus" />
+            </Button>
+          </h1>
           <StudyEntitiesList
             studyEntities={this.state.studyEntities}
             course={this.props.course}
           />
         </div>
-        <Button
-          bsStyle="primary"
-          onClick={() => {
-            this.setState({ showModalEditor: true });
-          }}
-        >
-          Add study entity
-        </Button>
         <ModalEditor
           title="Study entity"
           show={this.state.showModalEditor}
