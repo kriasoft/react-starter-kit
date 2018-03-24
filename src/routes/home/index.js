@@ -18,6 +18,7 @@ async function action({ client }) {
   });
   return {
     title: 'React Starter Kit',
+    chunks: ['home'],
     component: (
       <Layout>
         <Home news={data.reactjsGetAllNews} />

@@ -1,44 +1,44 @@
 ## How to Integrate [React Intl](https://github.com/yahoo/react-intl#react-intl)
 
-1. Merge `feature/react-intl` branch with git.
-   Because react-intl integration is built on top of `feature/redux`, you'll also get all the features.
+1.  Merge `feature/react-intl` branch with git.
+    Because react-intl integration is built on top of `feature/redux`, you'll also get all the features.
 
-2. Adjust `INTL_REQUIRE_DESCRIPTIONS` constant in `tools/webpack.config.js` around line 17:
+2.  Adjust `INTL_REQUIRE_DESCRIPTIONS` constant in `tools/webpack.config.js` around line 17:
 
-   ```js
-   const INTL_REQUIRE_DESCRIPTIONS = true;
-   ```
+    ```js
+    const INTL_REQUIRE_DESCRIPTIONS = true;
+    ```
 
-   When this boolean is set to true, the build will only succeed if a `description` is set for every message descriptor.
+    When this boolean is set to true, the build will only succeed if a `description` is set for every message descriptor.
 
-3. Adjust `locales` settings in `src/config.js`:
+3.  Adjust `locales` settings in `src/config.js`:
 
-   ```js
-   // default locale is the first one
-   export const locales = ['en-GB', 'cs-CZ'];
-   ```
+    ```js
+    // default locale is the first one
+    export const locales = ['en-GB', 'cs-CZ'];
+    ```
 
-   Note that you should follow
-   [BCP 47](https://tools.ietf.org/html/bcp47)
-   ([RFC 5646](https://tools.ietf.org/html/rfc5646)).
+    Note that you should follow
+    [BCP 47](https://tools.ietf.org/html/bcp47)
+    ([RFC 5646](https://tools.ietf.org/html/rfc5646)).
 
-4. Add locale support in `src/client.js`:
+4.  Add locale support in `src/client.js`:
 
-   ```js
-   import en from 'react-intl/locale-data/en';
-   import cs from 'react-intl/locale-data/cs';
-   ...
+    ```js
+    import en from 'react-intl/locale-data/en';
+    import cs from 'react-intl/locale-data/cs';
+    ...
 
-   [en, cs].forEach(addLocaleData);
-   ```
+    [en, cs].forEach(addLocaleData);
+    ```
 
-5. Execute `yarn run messages` or `yarn start` to strip out messages.
-   Message files are created in `src/messages` directory.
+5.  Execute `yarn run messages` or `yarn start` to strip out messages.
+    Message files are created in `src/messages` directory.
 
-6. Edit `src/messages/*.json` files, change only `message` property.
+6.  Edit `src/messages/*.json` files, change only `message` property.
 
-7. Execute `yarn run build`,
-   your translations should be copied to `build/messages/` directory.
+7.  Execute `yarn run build`,
+    your translations should be copied to `build/messages/` directory.
 
 ### How to write localizable components
 
