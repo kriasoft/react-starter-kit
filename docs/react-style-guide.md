@@ -22,8 +22,7 @@
   This will make your code more maintainable, easy to refactor.
 * Add `package.json` file into each component's folder.\
   This will allow to easily reference such components from other places in your code.\
-  Use `import Nav from '../Navigation'` instead of `import Nav from
-  '../Navigation/Navigation.js'`
+  Use `import Nav from '../Navigation'` instead of `import Nav from '../Navigation/Navigation.js'`
 
 ```
 /components/Navigation/icon.svg
