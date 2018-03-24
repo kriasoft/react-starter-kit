@@ -13,6 +13,7 @@ import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.css';
 import history from '../../history';
+import User from '../../components/User';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -39,6 +40,8 @@ class Navigation extends React.Component {
       event.preventDefault();
     }
 
+    const { user } = this.context.store.getState();
+
     return (
       <Navbar
         inverse
@@ -62,8 +65,11 @@ class Navigation extends React.Component {
             <NavItem href="/contact">Contact</NavItem>
             <NavItem href="/files">Files</NavItem>
           </Nav>
-          {this.context.store.getState().user ? (
+          {user ? (
             <Nav pullRight>
+              <NavItem href={`/users/${user.id}`}>
+                <User user={user} link={false} />
+              </NavItem>
               <NavItem href="/logout" onSelect={logout}>
                 Log out
               </NavItem>
