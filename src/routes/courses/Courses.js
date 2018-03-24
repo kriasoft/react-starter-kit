@@ -33,6 +33,7 @@ class Courses extends React.Component {
       showModal: false,
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
     this.close = this.close.bind(this);
     this.add = this.add.bind(this);
   }
