@@ -47,6 +47,7 @@ describe('Layout', () => {
           context={{
             insertCss: () => {},
             fetch: () => {},
+            pathname: '',
             intl,
             store,
             client,
