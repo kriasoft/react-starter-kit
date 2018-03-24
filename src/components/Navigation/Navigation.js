@@ -61,8 +61,6 @@ class Navigation extends React.Component {
           <Nav>
             <NavItem href="/courses">Courses</NavItem>
             <NavItem href="/users">Users</NavItem>
-            <NavItem href="/about">About</NavItem>
-            <NavItem href="/contact">Contact</NavItem>
             <NavItem href="/files">Files</NavItem>
           </Nav>
           {user ? (
