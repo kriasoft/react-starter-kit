@@ -7,13 +7,19 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
-import AssetsPlugin from 'assets-webpack-plugin';
+import WebpackAssetsManifest from 'webpack-assets-manifest';
 import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
+
+const ROOT_DIR = path.resolve(__dirname, '..');
+const SRC_DIR = `${ROOT_DIR}/src`;
+const BUILD_DIR = `${ROOT_DIR}/build`;
+const NODE_MODULES_DIR = `${ROOT_DIR}/node_modules`;
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
@@ -38,10 +44,12 @@ const minimizeCssOptions = {
 // -----------------------------------------------------------------------------
 
 const config = {
-  context: path.resolve(__dirname, '..'),
+  context: ROOT_DIR,
+
+  mode: isDebug ? 'development' : 'production',
 
   output: {
-    path: path.resolve(__dirname, '../build/public/assets'),
+    path: `${BUILD_DIR}/public/assets`,
     publicPath: '/assets/',
     pathinfo: isVerbose,
     filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
@@ -67,10 +75,7 @@ const config = {
       // Rules for JS / JSX
       {
         test: reScript,
-        include: [
-          path.resolve(__dirname, '../src'),
-          path.resolve(__dirname, '../tools'),
-        ],
+        include: [SRC_DIR, `${ROOT_DIR}/tools`],
         loader: 'babel-loader',
         options: {
           // https://github.com/babel/babel-loader#options
@@ -129,7 +134,7 @@ const config = {
 
           // Process external/third-party styles
           {
-            exclude: path.resolve(__dirname, '../src'),
+            exclude: SRC_DIR,
             loader: 'css-loader',
             options: {
               sourceMap: isDebug,
@@ -139,7 +144,7 @@ const config = {
 
           // Process internal/project styles (from src folder)
           {
-            include: path.resolve(__dirname, '../src'),
+            include: SRC_DIR,
             loader: 'css-loader',
             options: {
               // CSS Loader https://github.com/webpack/css-loader
@@ -249,10 +254,7 @@ const config = {
         ? []
         : [
             {
-              test: path.resolve(
-                __dirname,
-                '../node_modules/react-deep-force-update/lib/index.js',
-              ),
+              test: `${NODE_MODULES_DIR}/react-deep-force-update/lib/index.js`,
               loader: 'null-loader',
             },
           ]),
@@ -302,57 +304,69 @@ const clientConfig = {
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
       'process.env.BROWSER': true,
       __DEV__: isDebug,
     }),
 
     // Emit a file with assets paths
-    // https://github.com/sporto/assets-webpack-plugin#options
-    new AssetsPlugin({
-      path: path.resolve(__dirname, '../build'),
-      filename: 'assets.json',
-      prettyPrint: true,
-    }),
-
-    // Move modules that occur in multiple entry chunks to a new entry chunk (the commons chunk).
-    // https://webpack.js.org/plugins/commons-chunk-plugin/
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: module => /node_modules/.test(module.resource),
+    // https://github.com/webdeveric/webpack-assets-manifest#options
+    new WebpackAssetsManifest({
+      output: `${BUILD_DIR}/asset-manifest.json`,
+      publicPath: true,
+      writeToDisk: true,
+      customize: (key, value) => {
+        // You can prevent adding items to the manifest by returning false.
+        if (key.toLowerCase().endsWith('.map')) return false;
+        return { key, value };
+      },
+      done: (manifest, stats) => {
+        // Write chunk-manifest.json.json
+        const chunkFileName = `${BUILD_DIR}/chunk-manifest.json`;
+        try {
+          const fileFilter = file => !file.endsWith('.map');
+          const addPath = file => manifest.getPublicPath(file);
+          const chunkFiles = stats.compilation.chunkGroups.reduce((acc, c) => {
+            acc[c.name] = [
+              ...(acc[c.name] || []),
+              ...c.chunks.reduce(
+                (files, cc) => [
+                  ...files,
+                  ...cc.files.filter(fileFilter).map(addPath),
+                ],
+                [],
+              ),
+            ];
+            return acc;
+          }, Object.create(null));
+          fs.writeFileSync(chunkFileName, JSON.stringify(chunkFiles, null, 2));
+        } catch (err) {
+          console.error(`ERROR: Cannot write ${chunkFileName}: `, err);
+          if (!isDebug) process.exit(1);
+        }
+      },
     }),
 
     ...(isDebug
       ? []
       : [
-          // Decrease script evaluation time
-          // https://github.com/webpack/webpack/blob/master/examples/scope-hoisting/README.md
-          new webpack.optimize.ModuleConcatenationPlugin(),
-
-          // Minimize all JavaScript output of chunks
-          // https://github.com/mishoo/UglifyJS2#compressor-options
-          new webpack.optimize.UglifyJsPlugin({
-            compress: {
-              warnings: isVerbose,
-              unused: true,
-              dead_code: true,
-              screw_ie8: true,
-            },
-            mangle: {
-              screw_ie8: true,
-            },
-            output: {
-              comments: false,
-              screw_ie8: true,
-            },
-            sourceMap: true,
-          }),
+          // Webpack Bundle Analyzer
+          // https://github.com/th0r/webpack-bundle-analyzer
+          ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
         ]),
-
-    // Webpack Bundle Analyzer
-    // https://github.com/th0r/webpack-bundle-analyzer
-    ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
   ],
+
+  // Move modules that occur in multiple entry chunks to a new entry chunk (the commons chunk).
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          chunks: 'initial',
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+        },
+      },
+    },
+  },
 
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
@@ -381,7 +395,7 @@ const serverConfig = {
 
   output: {
     ...config.output,
-    path: path.resolve(__dirname, '../build'),
+    path: BUILD_DIR,
     filename: '[name].js',
     chunkFilename: 'chunks/[name].js',
     libraryTarget: 'commonjs2',
@@ -443,7 +457,8 @@ const serverConfig = {
   },
 
   externals: [
-    './assets.json',
+    './chunk-manifest.json',
+    './asset-manifest.json',
     nodeExternals({
       whitelist: [reStyle, reImage],
     }),
@@ -453,7 +468,6 @@ const serverConfig = {
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
       'process.env.BROWSER': false,
       __DEV__: isDebug,
     }),
