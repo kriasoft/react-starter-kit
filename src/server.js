@@ -28,7 +28,8 @@ import passport from './passport';
 import router from './router';
 import models from './data/models';
 import schema from './data/schema';
-import assets from './assets.json'; // eslint-disable-line import/no-unresolved
+// import assets from './asset-manifest.json'; // eslint-disable-line import/no-unresolved
+import chunks from './chunk-manifest.json'; // eslint-disable-line import/no-unresolved
 import config from './config';
 
 process.on('unhandledRejection', (reason, p) => {
@@ -161,15 +162,20 @@ app.get('*', async (req, res, next) => {
       <App context={context}>{route.component}</App>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
-    data.scripts = [assets['vendors.js']];
-    if (route.chunk) {
-      data.scripts.push(
-        ...Object.keys(assets)
-          .filter(asset => asset.includes(route.chunk))
-          .map(chunk => assets[chunk]),
-      );
-    }
-    data.scripts.push(assets['client.js']);
+
+    const scripts = new Set();
+    const addChunk = chunk => {
+      if (chunks[chunk]) {
+        chunks[chunk].forEach(asset => scripts.add(asset));
+      } else if (__DEV__) {
+        throw new Error(`Chunk with name '${chunk}' cannot be found`);
+      }
+    };
+    addChunk('client');
+    if (route.chunk) addChunk(route.chunk);
+    if (route.chunks) route.chunks.forEach(addChunk);
+
+    data.scripts = Array.from(scripts);
     data.app = {
       apiUrl: config.api.clientUrl,
     };

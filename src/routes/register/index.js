@@ -15,7 +15,7 @@ const title = 'New User Registration';
 
 function action() {
   return {
-    chunk: 'register',
+    chunks: ['register'],
     title,
     component: (
       <Layout>
