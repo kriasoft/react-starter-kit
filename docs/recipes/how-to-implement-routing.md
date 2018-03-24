@@ -54,8 +54,7 @@ function matchURI(path, uri) {
   if (!match) return null;
   const params = Object.create(null);
   for (let i = 1; i < match.length; i++) {
-    params[keys[i - 1].name] =
-      match[i] !== undefined ? match[i] : undefined;
+    params[keys[i - 1].name] = match[i] !== undefined ? match[i] : undefined;
   }
   return params;
 }
@@ -138,10 +137,12 @@ function renderRouteOutput({ title, component }) {
 }
 
 function render(location) {
-  router.resolve(routes, location)
+  router
+    .resolve(routes, location)
     .then(renderRouteOutput)
-    .catch(error => router.resolve(routes, { ...location, error })
-    .then(renderRouteOutput));
+    .catch(error =>
+      router.resolve(routes, { ...location, error }).then(renderRouteOutput),
+    );
 }
 
 render(history.getCurrentLocation()); // render the current URL
@@ -164,15 +165,27 @@ class App extends React.Component {
     event.preventDefault();
     history.push({
       pathname: event.currentTarget.pathname,
-      search: event.currentTarget.search
+      search: event.currentTarget.search,
     });
   };
   render() {
     return (
       <ul>
-        <li><a href="/" onClick={this.transition}>Home</a></li>
-        <li><a href="/one" onClick={this.transition}>One</a></li>
-        <li><a href="/two" onClick={this.transition}>Two</a></li>
+        <li>
+          <a href="/" onClick={this.transition}>
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="/one" onClick={this.transition}>
+            One
+          </a>
+        </li>
+        <li>
+          <a href="/two" onClick={this.transition}>
+            Two
+          </a>
+        </li>
       </ul>
     );
   }
@@ -193,25 +206,25 @@ module that is built around the same concepts demonstrated earlier with the majo
 it supports nested routes and provides you with the helper `Link` React component. It can be seen as
 a lightweight more flexible alternative to React Router.
 
-- It has simple code with minimum dependencies (just `path-to-regexp` and `babel-runtime`)
-- It can be used with any JavaScript framework such as React, Vue.js etc
-- It uses the same middleware approach used in Express and Koa, making it easy to learn
-- It uses the exact same API and implementation to be used in both Node.js and browser environments
+* It has simple code with minimum dependencies (just `path-to-regexp` and `babel-runtime`)
+* It can be used with any JavaScript framework such as React, Vue.js etc
+* It uses the same middleware approach used in Express and Koa, making it easy to learn
+* It uses the exact same API and implementation to be used in both Node.js and browser environments
 
 The [Getting Started page](https://github.com/kriasoft/universal-router/blob/master/docs/getting-started.md)
 has a few examples how to use it.
 
 ### Related Articles
 
-- [You might not need React Router](https://medium.freecodecamp.com/you-might-not-need-react-router-38673620f3d) by Konstantin Tarkus
+* [You might not need React Router](https://medium.freecodecamp.com/you-might-not-need-react-router-38673620f3d) by Konstantin Tarkus
 
 ### Related Projects
 
-- [`path-to-regexp`](https://github.com/pillarjs/path-to-regexp)
-- [`history`](https://github.com/ReactTraining/history)
-- [Universal Router](https://github.com/kriasoft/universal-router)
+* [`path-to-regexp`](https://github.com/pillarjs/path-to-regexp)
+* [`history`](https://github.com/ReactTraining/history)
+* [Universal Router](https://github.com/kriasoft/universal-router)
 
 ### Related Discussions
 
-- [How to Implement Routing and Navigation](https://github.com/kriasoft/react-starter-kit/issues/748)
-- [How to Add a Route to RSK?](https://github.com/kriasoft/react-starter-kit/issues/754)
+* [How to Implement Routing and Navigation](https://github.com/kriasoft/react-starter-kit/issues/748)
+* [How to Add a Route to RSK?](https://github.com/kriasoft/react-starter-kit/issues/754)
