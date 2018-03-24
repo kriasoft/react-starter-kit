@@ -32,11 +32,12 @@ const watchOptions = {
 function createCompilationPromise(name, compiler, config) {
   return new Promise((resolve, reject) => {
     let timeStart = new Date();
-    compiler.plugin('compile', () => {
+    compiler.hooks.compile.tap(name, () => {
       timeStart = new Date();
       console.info(`[${format(timeStart)}] Compiling '${name}'...`);
     });
-    compiler.plugin('done', stats => {
+
+    compiler.hooks.done.tap(name, stats => {
       console.info(stats.toString(config.stats));
       const timeEnd = new Date();
       const time = timeEnd.getTime() - timeStart.getTime();
@@ -85,11 +86,7 @@ async function start() {
   clientConfig.module.rules = clientConfig.module.rules.filter(
     x => x.loader !== 'null-loader',
   );
-  clientConfig.plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.NamedModulesPlugin(),
-  );
+  clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   // Configure server-side hot module replacement
   const serverConfig = webpackConfig.find(config => config.name === 'server');
@@ -99,11 +96,7 @@ async function start() {
   serverConfig.module.rules = serverConfig.module.rules.filter(
     x => x.loader !== 'null-loader',
   );
-  serverConfig.plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.NamedModulesPlugin(),
-  );
+  serverConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   // Configure compilation
   await run(clean);
@@ -140,7 +133,7 @@ async function start() {
   let appPromise;
   let appPromiseResolve;
   let appPromiseIsResolved = true;
-  serverCompiler.plugin('compile', () => {
+  serverCompiler.hooks.compile.tap('server', () => {
     if (!appPromiseIsResolved) return;
     appPromiseIsResolved = false;
     // eslint-disable-next-line no-return-assign
