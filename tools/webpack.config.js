@@ -17,9 +17,9 @@ import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const SRC_DIR = path.join(ROOT_DIR, 'src');
-const BUILD_DIR = `${ROOT_DIR}/build`;
-const NODE_MODULES_DIR = `${ROOT_DIR}/node_modules`;
+const resolvePath = (...args) => path.resolve(ROOT_DIR, ...args);
+const SRC_DIR = resolvePath('src');
+const BUILD_DIR = resolvePath('build');
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
@@ -49,7 +49,7 @@ const config = {
   mode: isDebug ? 'development' : 'production',
 
   output: {
-    path: `${BUILD_DIR}/public/assets`,
+    path: resolvePath(BUILD_DIR, 'public/assets'),
     publicPath: '/assets/',
     pathinfo: isVerbose,
     filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
@@ -75,7 +75,7 @@ const config = {
       // Rules for JS / JSX
       {
         test: reScript,
-        include: [SRC_DIR, `${ROOT_DIR}/tools`],
+        include: [SRC_DIR, resolvePath('tools')],
         loader: 'babel-loader',
         options: {
           // https://github.com/babel/babel-loader#options
@@ -254,7 +254,9 @@ const config = {
         ? []
         : [
             {
-              test: `${NODE_MODULES_DIR}/react-deep-force-update/lib/index.js`,
+              test: resolvePath(
+                'node_modules/react-deep-force-update/lib/index.js',
+              ),
               loader: 'null-loader',
             },
           ]),
