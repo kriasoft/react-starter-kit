@@ -9,7 +9,7 @@
 
 import chokidar from 'chokidar';
 import Promise from 'bluebird';
-import { transform } from 'babel-core';
+import { transformFileSync } from 'babel-core';
 import { readFile, writeFile, glob } from './lib/fs';
 import babelrc from '../.babelrc';
 import { locales } from '../src/config';
@@ -115,11 +115,10 @@ async function extractMessages() {
 
   const compareMessages = (a, b) => compare(a.id, b.id);
 
-  const processFile = async fileName => {
+  const processFile = fileName => {
     try {
-      const code = await readFile(fileName);
       const posixName = posixPath(fileName);
-      const result = transform(code, {
+      const result = transformFileSync(fileName, {
         presets: babelrc.presets,
         plugins: ['react-intl'],
       }).metadata['react-intl'];
@@ -135,7 +134,7 @@ async function extractMessages() {
 
   const files = await glob(GLOB_PATTERN);
 
-  await Promise.all(files.map(processFile));
+  files.map(processFile);
   await updateMessages(false);
 
   if (process.argv.includes('--watch')) {
