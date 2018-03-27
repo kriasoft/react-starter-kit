@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import path from 'path';
 import express from 'express';
 import browserSync from 'browser-sync';
@@ -17,6 +8,8 @@ import errorOverlayMiddleware from 'react-dev-utils/errorOverlayMiddleware';
 import webpackConfig from './webpack.config';
 import run, { format } from './run';
 import clean from './clean';
+import copy from './copy';
+import siteConfig from '../src/config';
 
 const isDebug = !process.argv.includes('--release');
 
@@ -100,6 +93,7 @@ async function start() {
 
   // Configure compilation
   await run(clean);
+  await run(copy);
   const multiCompiler = webpack(webpackConfig);
   const clientCompiler = multiCompiler.compilers.find(
     compiler => compiler.name === 'client',
@@ -216,6 +210,7 @@ async function start() {
     browserSync.create().init(
       {
         // https://www.browsersync.io/docs/options
+        startPath: siteConfig.baseUrl,
         server: 'src/server.js',
         middleware: [server],
         open: !process.argv.includes('--silent'),

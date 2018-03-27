@@ -1,0 +1,21 @@
+.root {
+  float: right;
+  margin: 6px 0 0;
+}
+
+.link {
+  display: inline-block;
+  font-size: 1.125em; /* ~18px */
+  padding: 3px 8px;
+  text-decoration: none;
+}
+
+.link,
+.link:active,
+.link:visited {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.link:hover {
+  color: rgba(255, 255, 255, 1);
+}

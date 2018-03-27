@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import 'whatwg-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -15,13 +6,19 @@ import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
 import App from './components/App';
 import createFetch from './createFetch';
+import configureStore from './store/configureStore';
 import history from './history';
 import { updateMeta } from './DOMUtils';
 import router from './router';
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
+const fetchClient = createFetch(fetch, {
+  apiUrl: window.App.apiUrl,
+});
+
 const context = {
+  baseUrl: window.App.baseUrl,
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: (...styles) => {
@@ -32,10 +29,16 @@ const context = {
     };
   },
   // Universal HTTP client
-  fetch: createFetch(fetch, {
-    baseUrl: window.App.apiUrl,
-  }),
+  fetch: fetchClient,
+  // Initialize a new Redux store
+  // http://redux.js.org/docs/basics/UsageWithReact.html
+  store: configureStore(window.App.state, { history, fetch: fetchClient }),
+  storeSubscription: null,
 };
+
+if (context.baseUrl) {
+  router.baseUrl = context.baseUrl;
+}
 
 const container = document.getElementById('app');
 let currentLocation = history.location;
@@ -147,7 +150,7 @@ async function onLocationChange(location, action) {
 }
 
 // Handle client-side navigation by using HTML5 History API
-// For more information visit https://github.com/mjackson/history#readme
+// For more information visit https://github.com/ReactTraining/history#readme
 history.listen(onLocationChange);
 onLocationChange(currentLocation);
 
