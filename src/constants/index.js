@@ -10,5 +10,6 @@ export const UNSUBSCRIBE_USER = 'UNSUBSCRIBE_USER';
 export const SET_STUDY_ENTITY_HEADERS = 'SET_STUDY_ENTITY_HEADERS';
 export const ADD_GROUP = 'ADD_GROUP';
 export const SET_GROUPS = 'SET_GROUPS';
+export const SET_USERS = 'SET_USERS';
 export const SET_FILES = 'SET_FILES';
 export const ADD_FILE = 'ADD_FILE';

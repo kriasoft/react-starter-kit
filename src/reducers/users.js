@@ -1,13 +1,13 @@
+import { SET_GROUPS, ADD_GROUP, SET_USERS } from '../constants';
+
 export default function users(state = {}, action) {
-  const nextState = { ...state };
   switch (action.type) {
-    case 'SET_GROUPS':
-      nextState.groups = action.data;
-      return nextState;
-    case 'ADD_GROUP':
-      nextState.groups = state.groups || [];
-      nextState.groups.push(action.data);
-      return nextState;
+    case SET_GROUPS:
+      return { ...state, groups: action.data };
+    case ADD_GROUP:
+      return { ...state, groups: [...(state.groups || []), action.data] };
+    case SET_USERS:
+      return { ...state, users: action.data };
     default:
       return state;
   }
