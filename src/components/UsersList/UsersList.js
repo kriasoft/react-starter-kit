@@ -31,7 +31,11 @@ class UsersList extends React.Component {
       if (item.action) attrs.onClick = () => item.action(user);
       attrs.eventKey = i;
       if (item.divider) attrs.divider = true;
-      return <MenuItem {...attrs}>{item.title}</MenuItem>;
+      return (
+        <MenuItem key={attrs.eventKey} {...attrs}>
+          {item.title}
+        </MenuItem>
+      );
     });
   }
 
