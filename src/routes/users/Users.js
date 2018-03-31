@@ -99,7 +99,7 @@ class Users extends React.Component {
               <h1>Groups</h1>
               <ol>{groupsList}</ol>
               <Button bsStyle="primary" onClick={() => this.handleOpen()}>
-                Add Course
+                Add Group
               </Button>
               <ModalAdd
                 value={this.state.groupName}

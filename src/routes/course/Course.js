@@ -11,13 +11,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Button, Glyphicon } from 'react-bootstrap';
-import ModalSubscribe from '../../components/ModalSubscribe';
 import ModalEditor from '../../components/ModalEditor';
 import StudyEntitiesList from '../../components/StudyEntitiesList';
 import UsersList from '../../components/UsersList';
 import s from './Course.css';
 import { addStudyEntity } from '../../actions/study_entities';
 import { addUserToCourse, deleteUserFromCourse } from '../../actions/courses';
+import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
 
 class Course extends React.Component {
   static contextTypes = {
@@ -250,10 +250,12 @@ class Course extends React.Component {
         >
           Subscribe user
         </Button>
-        <ModalSubscribe
+        <ModalWithUsers
           show={this.state.showModalSubscribe}
-          subscribedUsers={subscribedUsersList}
-          unsubscribedUsers={usersList}
+          titleLeft="Subscribed"
+          usersLeft={subscribedUsersList}
+          titleRight="Unsubscribed"
+          usersRight={usersList}
           handleClose={this.closeModalSubscribe}
         />
       </div>
