@@ -81,6 +81,7 @@ class Courses extends React.Component {
   }
 
   render() {
+    const { user } = this.context.store.getState();
     const coursesList = [];
     for (let i = 0; i < this.state.courses.length; i += 1) {
       coursesList.push(
@@ -97,9 +98,11 @@ class Courses extends React.Component {
           <div>
             <h1>
               {this.props.title}
-              <Button onClick={this.handleOpen}>
-                <Glyphicon glyph="glyphicon glyphicon-plus" />
-              </Button>
+              {user ? (
+                <Button onClick={this.handleOpen}>
+                  <Glyphicon glyph="glyphicon glyphicon-plus" />
+                </Button>
+              ) : null}
             </h1>
           </div>
           <ol>{coursesList}</ol>

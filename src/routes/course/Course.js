@@ -214,18 +214,21 @@ class Course extends React.Component {
       />
     );
 
+    const { user } = this.context.store.getState();
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
             {this.props.title}
-            <Button
-              onClick={() => {
-                this.setState({ showModalEditor: true });
-              }}
-            >
-              <Glyphicon glyph="glyphicon glyphicon-plus" />
-            </Button>
+            {user ? (
+              <Button
+                onClick={() => {
+                  this.setState({ showModalEditor: true });
+                }}
+              >
+                <Glyphicon glyph="glyphicon glyphicon-plus" />
+              </Button>
+            ) : null}
           </h1>
           <StudyEntitiesList
             studyEntities={this.state.studyEntities}

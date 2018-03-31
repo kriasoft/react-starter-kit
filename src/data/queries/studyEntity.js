@@ -19,7 +19,11 @@ const createStudyEntity = {
       type: StringType,
     },
   },
-  resolve(parent, args) {
+  async resolve({ request }, parent, args) {
+    if (!request.user) throw new Error('User is not logged in');
+    const role = await request.user.getRole(args.courseId);
+    if (!request.user.isAdmin && (!role || role !== 'teacher'))
+      throw new Error("User doesn't have rights to edit this course");
     let c;
     return Course.findById(args.courseId)
       .then(course => {
