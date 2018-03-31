@@ -10,7 +10,7 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Course from './Course';
-import { setStudyEntities } from '../../actions/study_entities';
+import { setStudyEntities } from '../../actions/study-entities';
 
 const title = 'Course';
 

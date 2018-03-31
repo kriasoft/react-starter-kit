@@ -15,7 +15,7 @@ import ModalEditor from '../../components/ModalEditor';
 import StudyEntitiesList from '../../components/StudyEntitiesList';
 import UsersList from '../../components/UsersList';
 import s from './Course.css';
-import { addStudyEntity } from '../../actions/study_entities';
+import { addStudyEntity } from '../../actions/study-entities';
 import { addUserToCourse, deleteUserFromCourse } from '../../actions/courses';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
 
