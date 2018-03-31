@@ -10,10 +10,11 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Files from './Files';
+import { setFiles } from '../../actions/files';
 
 const title = 'Files';
 
-async function action({ fetch }) {
+async function action({ fetch, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query {
@@ -27,11 +28,12 @@ async function action({ fetch }) {
   });
   const { data } = await resp.json();
   if (!data && !data.files) throw new Error('Failed to load course.');
+  store.dispatch(setFiles(data.files));
   return {
     title,
     component: (
       <Layout>
-        <Files title={title} files={data.files} />
+        <Files title={title} />
       </Layout>
     ),
   };

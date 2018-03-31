@@ -9,7 +9,7 @@ const File = ({ file }) => (
 
 File.propTypes = {
   file: PropTypes.shape({
-    url: PropTypes.string.isRequired,
+    url: PropTypes.string,
     internalName: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
   }).isRequired,

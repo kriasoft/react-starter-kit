@@ -12,8 +12,10 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Dropzone from 'react-dropzone';
 import { Button } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import s from './Files.css';
 import FilesList from '../../components/FilesList';
+import { addFile } from '../../actions/files';
 
 class Files extends React.Component {
   static contextTypes = {
@@ -24,6 +26,7 @@ class Files extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     files: PropTypes.arrayOf(PropTypes.object).isRequired,
+    addFile: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -46,19 +49,26 @@ class Files extends React.Component {
     data.append(
       'query',
       `mutation uploadFile($internalName: String!, $userId: String!) {
-        uploadFile(internalName: $internalName, userId: $userId) { id }
+        uploadFile(internalName: $internalName, userId: $userId) { id, url }
       }`,
     );
+    const userId = this.context.store.getState().user.id;
     data.append(
       'variables',
       JSON.stringify({
-        userId: this.context.store.getState().user.id,
+        userId,
         internalName: this.state.fileName,
       }),
     );
     data.append('file', this.state.file);
-    await this.context.fetch('/graphql', {
+    const resp = await this.context.fetch('/graphql', {
       body: data,
+    });
+    const respData = await resp.json();
+    this.props.addFile({
+      id: respData.data.uploadFile.id,
+      internalName: this.state.fileName,
+      owner: userId,
     });
   }
 
@@ -69,12 +79,6 @@ class Files extends React.Component {
         <div className={s.container}>
           <h1>{this.props.title}</h1>
           <FilesList files={this.props.files} />
-          {/* <input type="file" onChange={e => this.handleFileUpload(e)} />
-          <input
-            type="button"
-            value="upload"
-            onClick={() => this.uploadFile()}
-          /> */}
           <Dropzone onDrop={e => this.handleFileUpload(e)}>
             {file ? (
               file.name
@@ -98,4 +102,12 @@ class Files extends React.Component {
   }
 }
 
-export default withStyles(s)(Files);
+const mapState = state => ({
+  files: state.files.items,
+});
+
+const mapDispatch = {
+  addFile,
+};
+
+export default connect(mapState, mapDispatch)(withStyles(s)(Files));

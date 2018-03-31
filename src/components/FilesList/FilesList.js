@@ -15,7 +15,7 @@ const FilesList = ({ files }) => (
 FilesList.propTypes = {
   files: PropTypes.arrayOf(
     PropTypes.shape({
-      url: PropTypes.string.isRequired,
+      url: PropTypes.string,
       internalName: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
     }).isRequired,

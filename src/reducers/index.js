@@ -5,6 +5,7 @@ import courses from './courses';
 import course from './course';
 import studyEntity from './studyEntity';
 import users from './users';
+import files from './files';
 
 export default combineReducers({
   user,
@@ -13,4 +14,5 @@ export default combineReducers({
   course,
   studyEntity,
   users,
+  files,
 });
