@@ -26,7 +26,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as moment from 'moment';
 import TextEditor from '../../components/TextEditor';
 import StudyEntityView from '../../components/StudyEntityView';
-import { setStudyEntityHeaders } from '../../actions/studyEntity';
+import { setStudyEntityHeaders } from '../../actions/study-entity';
 import s from './StudyEntity.css';
 
 class StudyEntity extends React.Component {
