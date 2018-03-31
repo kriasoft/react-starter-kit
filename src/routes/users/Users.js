@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { Row, Col, Grid, Checkbox, Button } from 'react-bootstrap';
+import { Row, Col, Checkbox, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import User from '../../components/User';
@@ -94,29 +94,27 @@ class Users extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <Grid>
-            <Row>
-              <Col md={4}>
-                <h1>Groups</h1>
-                <ol>{groupsList}</ol>
-                <Button bsStyle="primary" onClick={() => this.handleOpen()}>
-                  Add Course
-                </Button>
-                <ModalAdd
-                  value={this.state.groupName}
-                  title="Group"
-                  show={this.state.showModal}
-                  onInputChange={this.handleChange}
-                  onSubmitClick={this.addGroup}
-                  handleClose={this.close}
-                />
-              </Col>
-              <Col md={8}>
-                <h1>{this.props.title}</h1>
-                <ol>{usersList}</ol>
-              </Col>
-            </Row>
-          </Grid>
+          <Row>
+            <Col md={4}>
+              <h1>Groups</h1>
+              <ol>{groupsList}</ol>
+              <Button bsStyle="primary" onClick={() => this.handleOpen()}>
+                Add Course
+              </Button>
+              <ModalAdd
+                value={this.state.groupName}
+                title="Group"
+                show={this.state.showModal}
+                onInputChange={this.handleChange}
+                onSubmitClick={this.addGroup}
+                handleClose={this.close}
+              />
+            </Col>
+            <Col md={8}>
+              <h1>{this.props.title}</h1>
+              <ol>{usersList}</ol>
+            </Col>
+          </Row>
         </div>
       </div>
     );
