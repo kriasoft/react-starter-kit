@@ -36,7 +36,7 @@ import {
   removeStudyEntity,
   studyEntities,
   updateStudyEntity,
-} from './queries/studyEntity';
+} from './queries/study-entity';
 import {
   addAnswer,
   answers,
