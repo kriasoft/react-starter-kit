@@ -19,7 +19,7 @@ const createStudyEntity = {
       type: StringType,
     },
   },
-  async resolve({ request }, parent, args) {
+  async resolve({ request }, args) {
     if (!request.user) throw new Error('User is not logged in');
     const role = await request.user.getRole(args.courseId);
     if (!request.user.isAdmin && (!role || role !== 'teacher'))
