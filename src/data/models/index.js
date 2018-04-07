@@ -56,7 +56,7 @@ StudyEntity.belongsToMany(Course, {
   through: {
     model: CourseStudyEntity,
   },
-  foreignKey: 'seId',
+  foreignKey: 'studyEntityId',
 });
 
 User.belongsToMany(Course, {
@@ -64,7 +64,7 @@ User.belongsToMany(Course, {
   through: {
     model: UserCourse,
   },
-  foreignKey: 'uId',
+  foreignKey: 'userId',
 });
 
 User.hasMany(File, {
@@ -84,7 +84,7 @@ User.belongsToMany(Group, {
   through: {
     model: UserGroup,
   },
-  foreignKey: 'uId',
+  foreignKey: 'userId',
 });
 
 Group.belongsToMany(User, {
