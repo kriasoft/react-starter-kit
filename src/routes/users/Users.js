@@ -8,13 +8,15 @@
  */
 
 import React from 'react';
-import { Row, Col, Checkbox, Button } from 'react-bootstrap';
+import { Row, Col, Button, Glyphicon } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import User from '../../components/User';
 import ModalAdd from '../../components/ModalAdd';
 import s from './Users.css';
 import { addGroup } from '../../actions/users';
+import UsersList from '../../components/UsersList';
+import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
 
 class Users extends React.Component {
   static contextTypes = {
@@ -32,12 +34,20 @@ class Users extends React.Component {
     super(props);
     this.state = {
       groupName: '',
+      groupId: '',
       groups: [],
+      groupUsers: [],
       showModal: false,
+      showModalSubscribe: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.close = this.close.bind(this);
     this.addGroup = this.addGroup.bind(this);
+    this.closeModalSubscribe = this.closeModalSubscribe.bind(this);
+    this.getUsersOfGroup = this.getUsersOfGroup.bind(this);
+    this.openUserGroupEditor = this.openUserGroupEditor.bind(this);
+    this.deleteUserFromGroup = this.deleteUserFromGroup.bind(this);
+    this.addUserToGroup = this.addUserToGroup.bind(this);
   }
 
   componentWillMount() {
@@ -45,6 +55,70 @@ class Users extends React.Component {
       groups: this.context.store.getState().users.groups,
     });
   }
+
+  async getUsersOfGroup(id) {
+    const resp = await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `query groups($id: [String]) {
+          groups(ids: $id) { users {id,email}} 
+        }`,
+        variables: { id },
+      }),
+    });
+    const { data } = await resp.json();
+    // if (!data && !data.users) throw new Error('Failed to load user profile.');
+    return data.groups[0].users;
+    // this.context.store.dispatch(addGroup(data.createGroup));
+  }
+
+  async openUserGroupEditor(groupId) {
+    this.setState({
+      groupId,
+      groupUsers: await this.getUsersOfGroup(groupId),
+      showModalSubscribe: true,
+    });
+  }
+
+  async deleteUserFromGroup(user) {
+    const i = this.state.groupUsers.indexOf(user);
+    console.log(i)
+    this.state.groupUsers.splice(i, 1);
+    console.log(user);
+    const resp = await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation  deleteUserFromGroup($id: String, $groupId: String){
+          deleteUserFromGroup (
+            id: $id,
+            groupId: $groupId)
+            { id }
+        }`,
+        variables: {
+          id: user.id,
+          groupId: this.state.groupId,
+        },
+      }),
+    });
+    const { data } = await resp.json();
+  }
+
+  async addUserToGroup(user, groupId) {
+    const resp = await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation addUserToGroup($id:String, $groupId: String) {
+          addUserToGroup(id: $id, groupId: $groupId) { id} 
+        }`,
+        variables: {
+          id: user.id,
+          groupId,
+        },
+      }),
+    });
+    const { data } = await resp.json();
+    console.log(data);
+    // this.context.store.dispatch(addGroup(data.createGroup));
+    this.close();
+  }
+
   handleChange(event) {
     this.setState({ groupName: event.target.value });
   }
@@ -73,7 +147,26 @@ class Users extends React.Component {
     this.close();
   }
 
+  closeModalSubscribe() {
+    this.setState({ showModalSubscribe: false });
+  }
+
   render() {
+    console.log(this.props.users);
+    console.log(this.state.groupUsers);
+    const subscribedUsersList = (
+      <UsersList
+        usersList={this.state.groupUsers}
+        onClick={user => this.deleteUserFromGroup(user)}
+      />
+    );
+    const mainUsersList = (
+      <UsersList
+        usersList={this.props.users}
+        onClick={user => this.addUserToGroup(user, this.state.groupId)}
+      />
+    );
+
     const usersList = [];
     for (let i = 0; i < this.props.users.length; i += 1) {
       usersList.push(
@@ -86,9 +179,22 @@ class Users extends React.Component {
     const groupsList = [];
     for (let i = 0; i < this.state.groups.length; i += 1) {
       groupsList.push(
-        <li key={this.props.groups[i].id}>
-          <Checkbox>{this.props.groups[i].title}</Checkbox>
-        </li>,
+        <ul key={this.props.groups[i].id}>
+          <Row>
+            <Col md={6}>
+              <p>{this.props.groups[i].title} </p>
+            </Col>
+            <Col md={4}>
+              <Button
+                onClick={() =>
+                  this.openUserGroupEditor(this.props.groups[i].id)
+                }
+              >
+                <Glyphicon glyph="pencil" />
+              </Button>
+            </Col>
+          </Row>
+        </ul>,
       );
     }
     return (
@@ -115,6 +221,14 @@ class Users extends React.Component {
               <ol>{usersList}</ol>
             </Col>
           </Row>
+          <ModalWithUsers
+            show={this.state.showModalSubscribe}
+            titleLeft="Subscribed"
+            usersLeft={subscribedUsersList}
+            titleRight="Unsubscribed"
+            usersRight={mainUsersList}
+            handleClose={this.closeModalSubscribe}
+          />
         </div>
       </div>
     );
