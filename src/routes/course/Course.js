@@ -108,6 +108,7 @@ class Course extends React.Component {
   }
 
   async addUserToCourse(user, role) {
+    const { course } = this.props;
     const userRole = {
       id: user.id,
       email: user.email,
@@ -126,13 +127,13 @@ class Course extends React.Component {
         }`,
         variables: {
           id: user.id,
-          courseId: this.props.course.id,
+          courseId: course.id,
           role: role || 'student',
         },
       }),
     });
     const { data } = await resp.json();
-    this.context.store.dispatch(addUserToCourse(data.addUserToCourse));
+    this.context.store.dispatch(addUserToCourse(course.id, user.id));
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
     });

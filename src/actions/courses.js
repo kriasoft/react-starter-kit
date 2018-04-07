@@ -7,11 +7,10 @@ import {
   UNSUBSCRIBE_USER,
 } from '../constants';
 
-export function addCourse({ id, title }) {
+export function addCourse(title) {
   return {
     type: ADD_COURSE,
     data: {
-      id,
       title,
     },
   };
