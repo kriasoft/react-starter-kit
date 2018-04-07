@@ -20,6 +20,8 @@ const ContextType = {
   // Integrate Redux
   // http://redux.js.org/docs/basics/UsageWithReact.html
   ...ReduxProvider.childContextTypes,
+  pathname: PropTypes.string.isRequired,
+  query: PropTypes.object,
 };
 
 /**

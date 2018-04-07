@@ -1,24 +1,29 @@
 ## How to Integrate [React Intl](https://github.com/yahoo/react-intl#react-intl)
 
- 1. Merge `feature/react-intl` branch with git.
+1.  Merge `feature/react-intl` branch with git.
     Because react-intl integration is built on top of `feature/redux`, you'll also get all the features.
 
- 2. Adjust `INTL_REQUIRE_DESCRIPTIONS` constant in `tools/webpack.config.js` around line 17:
+2.  Adjust `INTL_REQUIRE_DESCRIPTIONS` constant in `tools/webpack.config.js` around line 17:
+
     ```js
     const INTL_REQUIRE_DESCRIPTIONS = true;
     ```
+
     When this boolean is set to true, the build will only succeed if a `description` is set for every message descriptor.
 
- 3. Adjust `locales` settings in `src/config.js`:
+3.  Adjust `locales` settings in `src/config.js`:
+
     ```js
     // default locale is the first one
     export const locales = ['en-GB', 'cs-CZ'];
     ```
+
     Note that you should follow
     [BCP 47](https://tools.ietf.org/html/bcp47)
     ([RFC 5646](https://tools.ietf.org/html/rfc5646)).
 
- 4. Add locale support in `src/client.js`:
+4.  Add locale support in `src/client.js`:
+
     ```js
     import en from 'react-intl/locale-data/en';
     import cs from 'react-intl/locale-data/cs';
@@ -27,42 +32,46 @@
     [en, cs].forEach(addLocaleData);
     ```
 
- 5. Execute `yarn run extractMessages` or `yarn start` to strip out messages.
+5.  Execute `yarn run messages` or `yarn start` to strip out messages.
     Message files are created in `src/messages` directory.
 
- 6. Edit `src/messages/*.json` files, change only `message` property.
+6.  Edit `src/messages/*.json` files, change only `message` property.
 
- 7. Execute `yarn run build`,
+7.  Execute `yarn run build`,
     your translations should be copied to `build/messages/` directory.
-
 
 ### How to write localizable components
 
 Just import the appropriate [component](https://github.com/yahoo/react-intl/wiki#the-react-intl-module) from `react-intl`
 
-- For localizable text use
-[`<FormattedMessage>`](https://github.com/yahoo/react-intl/wiki/Components#formattedmessage).
-- You can also use it with
-the [`defineMessages()`](https://github.com/yahoo/react-intl/wiki/API#definemessages) helper.
+* For localizable text use
+  [`<FormattedMessage>`](https://github.com/yahoo/react-intl/wiki/Components#formattedmessage).
+* You can also use it with
+  the [`defineMessages()`](https://github.com/yahoo/react-intl/wiki/API#definemessages) helper.
 
-- For date and time:
-[`<FormattedDate>`](https://github.com/yahoo/react-intl/wiki/Components#formatteddate)
-[`<FormattedTime>`](https://github.com/yahoo/react-intl/wiki/Components#formattedtime)
-[`<FormattedRelative>`](https://github.com/yahoo/react-intl/wiki/Components#formattedrelative)
+* For date and time:
+  [`<FormattedDate>`](https://github.com/yahoo/react-intl/wiki/Components#formatteddate)
+  [`<FormattedTime>`](https://github.com/yahoo/react-intl/wiki/Components#formattedtime)
+  [`<FormattedRelative>`](https://github.com/yahoo/react-intl/wiki/Components#formattedrelative)
 
-- For numbers and currencies:
-[`<FormattedNumber>`](https://github.com/yahoo/react-intl/wiki/Components#formattednumber)
-[`<FormattedPlural>`](https://github.com/yahoo/react-intl/wiki/Components#formattedplural)
+* For numbers and currencies:
+  [`<FormattedNumber>`](https://github.com/yahoo/react-intl/wiki/Components#formattednumber)
+  [`<FormattedPlural>`](https://github.com/yahoo/react-intl/wiki/Components#formattedplural)
 
-- If possible, do not use `<FormattedHTMLMessage>`, see how to use *Rich Text Formatting* with
-[`<FormattedMessage>`](https://github.com/yahoo/react-intl/wiki/Components#formattedmessage)
+* If possible, do not use `<FormattedHTMLMessage>`, see how to use _Rich Text Formatting_ with
+  [`<FormattedMessage>`](https://github.com/yahoo/react-intl/wiki/Components#formattedmessage)
 
-- When you need an imperative formatting API, use the [`injectIntl`](https://github.com/yahoo/react-intl/wiki/API#injectintl) High-Order Component.
+* When you need an imperative formatting API, use the [`injectIntl`](https://github.com/yahoo/react-intl/wiki/API#injectintl) High-Order Component.
 
 #### Example
 
 ```jsx
-import { defineMessages, FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  injectIntl,
+  intlShape,
+} from 'react-intl';
 
 const messages = defineMessages({
   text: {
@@ -78,7 +87,9 @@ const messages = defineMessages({
 });
 
 function Example(props) {
-  const text = props.intl.formatMessage(messages.textTemplate, { name: 'Pavel'});
+  const text = props.intl.formatMessage(messages.textTemplate, {
+    name: 'Pavel',
+  });
   return (
     <div>
       <FormattedMessage
@@ -90,7 +101,7 @@ function Example(props) {
       <FormattedMessage
         {...messages.textTemplate}
         values={{
-          name: <b>Pavel</b>
+          name: <b>Pavel</b>,
         }}
       />
     </div>
@@ -99,7 +110,7 @@ function Example(props) {
 
 Example.propTypes = {
   intl: intlShape,
-}
+};
 
 export default injectIntl(Example);
 ```
@@ -117,6 +128,6 @@ When editing a translation file, it should be copied to `build/messages/` direct
 
 ### Other References
 
- * [`Intl documentation on MDN`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Intl)
- * [express-request-language](https://github.com/tinganho/express-request-language#readme)
+* [`Intl documentation on MDN`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Intl)
+* [express-request-language](https://github.com/tinganho/express-request-language#readme)
   – for more details how initial language negotiation works.

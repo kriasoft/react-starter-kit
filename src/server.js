@@ -31,13 +31,18 @@ import createFetch from './createFetch';
 import passport from './passport';
 import router from './router';
 import schema from './data/schema';
-import assets from './assets.json'; // eslint-disable-line import/no-unresolved
+// import assets from './asset-manifest.json'; // eslint-disable-line import/no-unresolved
+import chunks from './chunk-manifest.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
 import config from './config';
 import models, { User, File } from './data/models';
 
-const app = express();
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection at:', p, 'reason:', reason);
+  // send entire app down. Process manager will restart it
+  process.exit(1);
+});
 
 //
 // Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
@@ -45,6 +50,14 @@ const app = express();
 // -----------------------------------------------------------------------------
 global.navigator = global.navigator || {};
 global.navigator.userAgent = global.navigator.userAgent || 'all';
+
+const app = express();
+
+//
+// If you are using proxy from external machine, you can set TRUST_PROXY env
+// Default is to trust proxy headers only from loopback interface.
+// -----------------------------------------------------------------------------
+app.set('trust proxy', config.trustProxy);
 
 //
 // Register Node.js middleware
@@ -167,10 +180,19 @@ app.get('*', async (req, res, next) => {
   try {
     const css = new Set();
 
+    // Enables critical path CSS rendering
+    // https://github.com/kriasoft/isomorphic-style-loader
+    const insertCss = (...styles) => {
+      // eslint-disable-next-line no-underscore-dangle
+      styles.forEach(style => css.add(style._getCss()));
+    };
+
     // Universal HTTP client
     const fetch = createFetch(nodeFetch, {
       baseUrl: config.api.serverUrl,
       cookie: req.headers.cookie,
+      schema,
+      graphql,
     });
 
     const initialState = {
@@ -192,29 +214,17 @@ app.get('*', async (req, res, next) => {
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
-      // Enables critical path CSS rendering
-      // https://github.com/kriasoft/isomorphic-style-loader
-      insertCss: (...styles) => {
-        // eslint-disable-next-line no-underscore-dangle
-        styles.forEach(style => css.add(style._getCss()));
-      },
-      // Universal HTTP client
-      fetch: createFetch(fetch, {
-        baseUrl: config.api.serverUrl,
-        cookie: req.headers.cookie,
-        schema,
-        graphql,
-      }),
+      insertCss,
+      fetch,
+      // The twins below are wild, be careful!
+      pathname: req.path,
+      query: req.query,
       // You can access redux through react-redux connect
       store,
       storeSubscription: null,
     };
 
-    const route = await router.resolve({
-      ...context,
-      pathname: req.path,
-      query: req.query,
-    });
+    const route = await router.resolve(context);
 
     if (route.redirect) {
       res.redirect(route.status || 302, route.redirect);
@@ -223,16 +233,23 @@ app.get('*', async (req, res, next) => {
 
     const data = { ...route };
     data.children = ReactDOM.renderToString(
-      <App context={context} store={store}>
-        {route.component}
-      </App>,
+      <App context={context}>{route.component}</App>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
-    data.scripts = [assets.vendor.js];
-    if (route.chunks) {
-      data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
-    }
-    data.scripts.push(assets.client.js);
+
+    const scripts = new Set();
+    const addChunk = chunk => {
+      if (chunks[chunk]) {
+        chunks[chunk].forEach(asset => scripts.add(asset));
+      } else if (__DEV__) {
+        throw new Error(`Chunk with name '${chunk}' cannot be found`);
+      }
+    };
+    addChunk('client');
+    if (route.chunk) addChunk(route.chunk);
+    if (route.chunks) route.chunks.forEach(addChunk);
+
+    data.scripts = Array.from(scripts);
     data.app = {
       apiUrl: config.api.clientUrl,
       state: context.store.getState(),

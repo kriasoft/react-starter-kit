@@ -12,7 +12,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as HtmlToReact from 'html-to-react';
-import github from 'react-syntax-highlighter/dist/styles/github';
+import { github } from 'react-syntax-highlighter/dist/styles/hljs';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import TextEditor from '../TextEditor';
 import s from './StudyEntityView.css';

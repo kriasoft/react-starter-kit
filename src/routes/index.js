@@ -15,8 +15,6 @@ const routes = {
 
   // Keep in mind, routes are evaluated in order
   children: [
-    // The home route is added to client.js to make sure shared components are
-    // added to client.js as well and not repeated in individual each route chunk.
     {
       path: '/courses',
       load: () => import(/* webpackChunkName: 'courses' */ './courses'),
@@ -27,11 +25,13 @@ const routes = {
     },
     {
       path: '/courses/:idCourse/users',
-      load: () => import(/* webpackChunkName: 'courseUsers' */ './course-users'),
+      load: () =>
+        import(/* webpackChunkName: 'courseUsers' */ './course-users'),
     },
     {
       path: '/courses/:idCourse/:idStudyEntity',
-      load: () => import(/* webpackChunkName: 'studyEntity' */ './study-entity'),
+      load: () =>
+        import(/* webpackChunkName: 'studyEntity' */ './study-entity'),
     },
     {
       path: '/users',
@@ -43,7 +43,7 @@ const routes = {
     },
     {
       path: '',
-      load: () => import(/* webpackMode: 'eager' */ './home'),
+      load: () => import(/* webpackChunkName: 'home' */ './home'),
     },
     {
       path: '/login',
