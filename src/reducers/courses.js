@@ -1,15 +1,11 @@
 import { ADD_COURSE, SET_COURSES } from '../constants';
 
-export default function courses(state = {}, action) {
-  const newState = state;
+export default function courses(state = [], action) {
   switch (action.type) {
-    case ADD_COURSE:
-      newState.courses = state.courses || [];
-      newState.courses.push(action.data);
-      return newState;
     case SET_COURSES:
-      newState.courses = action.data;
-      return newState;
+      return action.data;
+    case ADD_COURSE:
+      return [...state, action.data];
     default:
       return state;
   }

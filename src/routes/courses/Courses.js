@@ -11,6 +11,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Button, Glyphicon } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import s from './Courses.css';
 import ModalAdd from '../../components/ModalAdd';
 import { addCourse } from '../../actions/courses';
@@ -23,33 +24,37 @@ class Courses extends React.Component {
 
   static propTypes = {
     title: PropTypes.string.isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      email: PropTypes.string,
+      role: PropTypes.string,
+    }),
+    courses: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        title: PropTypes.string,
+      }),
+    ).isRequired,
+  };
+
+  static defaultProps = {
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      email: PropTypes.string,
+      role: PropTypes.string,
+    }),
   };
 
   constructor(props) {
     super(props);
     this.state = {
       courseName: '',
-      courses: [],
       showModal: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.close = this.close.bind(this);
     this.add = this.add.bind(this);
-  }
-
-  componentWillMount() {
-    this.setState({
-      courses: this.context.store.getState().courses.courses,
-    });
-  }
-
-  componentDidMount() {
-    this.context.store.subscribe(() => {
-      this.setState({
-        courses: this.context.store.getState().courses.courses,
-      });
-    });
   }
 
   handleChange(event) {
@@ -81,17 +86,7 @@ class Courses extends React.Component {
   }
 
   render() {
-    const { user } = this.context.store.getState();
-    const coursesList = [];
-    for (let i = 0; i < this.state.courses.length; i += 1) {
-      coursesList.push(
-        <li key={this.state.courses[i].id}>
-          <a href={`/courses/${this.state.courses[i].id}`}>
-            {this.state.courses[i].title}
-          </a>
-        </li>,
-      );
-    }
+    const { user, courses } = this.props;
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -105,7 +100,14 @@ class Courses extends React.Component {
               ) : null}
             </h1>
           </div>
-          <ol>{coursesList}</ol>
+          <ol>
+            {courses.map(c => (
+              <li key={c.id}>
+                {' '}
+                <a href={`/courses/${c.id}`}>{c.title} </a>{' '}
+              </li>
+            ))}
+          </ol>
         </div>
         <ModalAdd
           value={this.state.courseName}
@@ -120,4 +122,9 @@ class Courses extends React.Component {
   }
 }
 
-export default withStyles(s)(Courses);
+const mapStateToProps = state => ({
+  courses: state.courses,
+  user: state.user,
+});
+
+export default connect(mapStateToProps)(withStyles(s)(Courses));

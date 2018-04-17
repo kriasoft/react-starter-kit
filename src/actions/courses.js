@@ -7,10 +7,11 @@ import {
   UNSUBSCRIBE_USER,
 } from '../constants';
 
-export function addCourse(title) {
+export function addCourse({ id, title }) {
   return {
     type: ADD_COURSE,
     data: {
+      id,
       title,
     },
   };
@@ -23,22 +24,16 @@ export function setCourses(courses) {
   };
 }
 
-export function addUserToCourse(id, courseId) {
+export function addUserToCourse(user) {
   return {
     type: SUBSCRIBE_USER,
-    data: {
-      id,
-      courseId,
-    },
+    data: user,
   };
 }
 
-export function deleteUserFromCourse(id, courseId) {
+export function deleteUserFromCourse(id) {
   return {
     type: UNSUBSCRIBE_USER,
-    data: {
-      id,
-      courseId,
-    },
+    data: id,
   };
 }
