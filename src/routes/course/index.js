@@ -51,7 +51,7 @@ async function action({ fetch, params, store }) {
     title,
     component: (
       <Layout menuSecond={mas}>
-        <Course title={data.courses[0].title} course={data.courses[0]} />
+        <Course course={data.courses[0]} />
       </Layout>
     ),
   };

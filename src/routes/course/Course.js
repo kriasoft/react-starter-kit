@@ -11,6 +11,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Button, Glyphicon } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import ModalEditor from '../../components/ModalEditor';
 import StudyEntitiesList from '../../components/StudyEntitiesList';
 import UsersList from '../../components/UsersList';
@@ -26,7 +27,17 @@ class Course extends React.Component {
   };
 
   static propTypes = {
-    title: PropTypes.string.isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      email: PropTypes.string,
+      role: PropTypes.string,
+    }),
+    studyEntities: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        title: PropTypes.string,
+      }),
+    ).isRequired,
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
@@ -46,6 +57,14 @@ class Course extends React.Component {
     }).isRequired,
   };
 
+  static defaultProps = {
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      email: PropTypes.string,
+      role: PropTypes.string,
+    }),
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -53,7 +72,6 @@ class Course extends React.Component {
       showModalEditor: false,
       showModalSubscribe: false,
       studyEntityName: '',
-      studyEntities: [],
       subscribedUsersList: [],
     };
     this.handleChangeBody = this.handleChangeBody.bind(this);
@@ -65,17 +83,11 @@ class Course extends React.Component {
 
   componentWillMount() {
     this.setState({
-      studyEntities: this.context.store.getState().course.studyEntities,
       subscribedUsersList: this.props.course.users,
     });
   }
 
   componentDidMount() {
-    this.context.store.subscribe(() => {
-      this.setState({
-        studyEntities: this.context.store.getState().course.studyEntities,
-      });
-    });
     this.updateUsers();
   }
 
@@ -115,7 +127,7 @@ class Course extends React.Component {
       role: role || 'student',
     };
     this.state.subscribedUsersList.push(userRole);
-    const resp = await this.context.fetch('/graphql', {
+    this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  subscribe($id: String, $courseId: String, $role: String){
           addUserToCourse(
@@ -132,7 +144,6 @@ class Course extends React.Component {
         },
       }),
     });
-    const { data } = await resp.json();
     this.context.store.dispatch(addUserToCourse(course.id, user.id));
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
@@ -215,12 +226,12 @@ class Course extends React.Component {
       />
     );
 
-    const { user } = this.context.store.getState();
+    const { user, studyEntities, course } = this.props;
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            {this.props.title}
+            {course.title}
             {user ? (
               <Button
                 onClick={() => {
@@ -231,10 +242,7 @@ class Course extends React.Component {
               </Button>
             ) : null}
           </h1>
-          <StudyEntitiesList
-            studyEntities={this.state.studyEntities}
-            course={this.props.course}
-          />
+          <StudyEntitiesList studyEntities={studyEntities} course={course} />
         </div>
         <ModalEditor
           title="Study entity"
@@ -267,4 +275,9 @@ class Course extends React.Component {
   }
 }
 
-export default withStyles(s)(Course);
+const mapStateToProps = state => ({
+  studyEntities: state.course.studyEntities,
+  user: state.user,
+});
+
+export default connect(mapStateToProps)(withStyles(s)(Course));
