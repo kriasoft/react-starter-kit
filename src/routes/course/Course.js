@@ -27,6 +27,7 @@ class Course extends React.Component {
   };
 
   static propTypes = {
+    title: PropTypes.string.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
@@ -127,7 +128,7 @@ class Course extends React.Component {
       role: role || 'student',
     };
     this.state.subscribedUsersList.push(userRole);
-    this.context.fetch('/graphql', {
+    await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  subscribe($id: String, $courseId: String, $role: String){
           addUserToCourse(
@@ -178,7 +179,7 @@ class Course extends React.Component {
   }
 
   async addStudyEntity() {
-    const resp = await this.context.fetch('/graphql', {
+    await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation create($courseId: String, $title: String, $body: String){ 
           createStudyEntity(
@@ -194,11 +195,9 @@ class Course extends React.Component {
         },
       }),
     });
-    const { data } = await resp.json();
-    this.context.store.dispatch(addStudyEntity(data.createStudyEntity));
+    this.context.store.dispatch(addStudyEntity(this.props.title));
     this.closeModalStudyEntity();
   }
-
   render() {
     const usersListArray = (this.state.users || []).filter(
       u => !this.state.subscribedUsersList.find(user => user.id === u.id),
