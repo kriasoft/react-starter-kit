@@ -16,7 +16,8 @@ class UsersCmds {
     const key = readlineSync.questionNewPassword('Password: ', { min: 6 });
     const name = readlineSync.question('Name: ');
     const gender = readlineSync.question('Gender [male]: ') || 'male';
-    const isAdmin = readlineSync.question('Is Admin [N/y]? ') === 'y';
+    const isAdmin =
+      readlineSync.question('Is Admin [N/y]? ').toLowerCase() === 'y';
     User.createUser({
       email,
       key,

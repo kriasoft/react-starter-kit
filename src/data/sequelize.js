@@ -19,7 +19,7 @@ const sequelize = new Sequelize(config.databaseUrl, {
   // ssl: true,
   // dialectOptions: {
   //   ssl: {
-  //     require: true
+  //     require: true,
   //   }
   // },
 });
