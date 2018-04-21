@@ -1,9 +1,14 @@
 import { SET_GROUPS, ADD_GROUP, SET_USERS } from '../constants';
 
-export default function users(state = [], action) {
+const initialState = {
+  users: [],
+  groups: [],
+};
+
+export default function users(state = initialState, action) {
   switch (action.type) {
     case SET_USERS:
-      return action.data;
+      return { ...state, users: action.data };
     case SET_GROUPS:
       return { ...state, groups: action.data };
     case ADD_GROUP:

@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { Row, Col, Button, Glyphicon } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -35,7 +36,6 @@ class Users extends React.Component {
     this.state = {
       groupName: '',
       groupId: '',
-      groups: [],
       groupUsers: [],
       showModal: false,
       showModalSubscribe: false,
@@ -48,12 +48,6 @@ class Users extends React.Component {
     this.openUserGroupEditor = this.openUserGroupEditor.bind(this);
     this.deleteUserFromGroup = this.deleteUserFromGroup.bind(this);
     this.addUserToGroup = this.addUserToGroup.bind(this);
-  }
-
-  componentWillMount() {
-    this.setState({
-      groups: this.context.store.getState().users.groups,
-    });
   }
 
   async getUsersOfGroup(id) {
@@ -81,9 +75,7 @@ class Users extends React.Component {
 
   async deleteUserFromGroup(user) {
     const i = this.state.groupUsers.indexOf(user);
-    console.log(i)
     this.state.groupUsers.splice(i, 1);
-    console.log(user);
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation  deleteUserFromGroup($id: String, $groupId: String){
@@ -114,7 +106,6 @@ class Users extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    console.log(data);
     // this.context.store.dispatch(addGroup(data.createGroup));
     this.close();
   }
@@ -152,8 +143,8 @@ class Users extends React.Component {
   }
 
   render() {
-    console.log(this.props.users);
-    console.log(this.state.groupUsers);
+    const { groups } = this.props;
+
     const subscribedUsersList = (
       <UsersList
         usersList={this.state.groupUsers}
@@ -176,27 +167,21 @@ class Users extends React.Component {
         </li>,
       );
     }
-    const groupsList = [];
-    for (let i = 0; i < this.state.groups.length; i += 1) {
-      groupsList.push(
-        <ul key={this.props.groups[i].id}>
-          <Row>
-            <Col md={6}>
-              <p>{this.props.groups[i].title} </p>
-            </Col>
-            <Col md={4}>
-              <Button
-                onClick={() =>
-                  this.openUserGroupEditor(this.props.groups[i].id)
-                }
-              >
-                <Glyphicon glyph="pencil" />
-              </Button>
-            </Col>
-          </Row>
-        </ul>,
-      );
-    }
+    const groupsList = groups.map(g => (
+      <ul key={g.id}>
+        <Row>
+          <Col md={6}>
+            <p>{g.title} </p>
+          </Col>
+          <Col md={4}>
+            <Button onClick={() => this.openUserGroupEditor(g.id)}>
+              <Glyphicon glyph="pencil" />
+            </Button>
+          </Col>
+        </Row>
+      </ul>
+    ));
+
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -235,4 +220,9 @@ class Users extends React.Component {
   }
 }
 
-export default withStyles(s)(Users);
+const mapStateToProps = state => ({
+  groups: state.users.groups,
+  user: state.user,
+});
+
+export default connect(mapStateToProps)(withStyles(s)(Users));

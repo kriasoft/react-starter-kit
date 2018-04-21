@@ -29,7 +29,7 @@ async function action({ fetch, store }) {
     title,
     component: (
       <Layout>
-        <Users title={title} users={data.users} groups={data.groups} />
+        <Users title={title} users={data.users} />
       </Layout>
     ),
   };
