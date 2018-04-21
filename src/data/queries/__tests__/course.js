@@ -2,6 +2,7 @@
 /* eslint-disable padded-blocks, no-unused-expressions */
 
 import 'babel-regenerator-runtime';
+import _ from 'lodash';
 import { graphql } from 'graphql';
 import schema from '../../schema';
 import models from '../../models';
@@ -19,12 +20,18 @@ describe('graphql courses', () => {
         id, email, profile { gender }
       }
     }`;
-    const user = await graphql(schema, createUserQ, null, null, {
-      email: `${name}@example.com`,
-      key: name,
-      name,
-      gender: 'male',
-    });
+    const user = await graphql(
+      schema,
+      createUserQ,
+      { request: { user: { isAdmin: true } } },
+      null,
+      {
+        email: `${name}@example.com`,
+        key: name,
+        name,
+        gender: 'male',
+      },
+    );
     return user.data.createUser;
   }
 
@@ -34,9 +41,15 @@ describe('graphql courses', () => {
         id, title
       }
     }`;
-    const course = await graphql(schema, createCourseQ, null, null, {
-      title,
-    });
+    const course = await graphql(
+      schema,
+      createCourseQ,
+      { request: { user: {} } },
+      null,
+      {
+        title,
+      },
+    );
     return course.data.createCourse;
   }
 
@@ -46,11 +59,17 @@ describe('graphql courses', () => {
         id
       }
     }`;
-    const res = await graphql(schema, addUserToCourseQ, null, null, {
-      course,
-      user,
-      role,
-    });
+    const res = await graphql(
+      schema,
+      addUserToCourseQ,
+      { request: { user: { isAdmin: true, getRole: _.noop } } },
+      null,
+      {
+        course,
+        user,
+        role,
+      },
+    );
     return res.data.addUserToCourse;
   }
 
