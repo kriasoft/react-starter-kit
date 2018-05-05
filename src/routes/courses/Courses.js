@@ -14,7 +14,7 @@ import { Button, Glyphicon } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import s from './Courses.css';
 import ModalAdd from '../../components/ModalAdd';
-import { createCourse } from '../../actions/courses';
+import { createCourse, fetchCourses } from '../../actions/courses';
 
 class Courses extends React.Component {
   static contextTypes = {
@@ -25,6 +25,7 @@ class Courses extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     onSubmitClick: PropTypes.func.isRequired,
+    getCourses: PropTypes.func.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
@@ -50,28 +51,24 @@ class Courses extends React.Component {
     super(props);
     this.state = {
       courseName: '',
-      showModal: false,
+      show: false,
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleOpen = this.handleOpen.bind(this);
     this.close = this.close.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({ courseName: event.target.value });
-  }
-
-  handleOpen() {
-    this.setState({ showModal: true });
+  componentDidMount() {
+    const user = this.props.user || {};
+    const { getCourses } = this.props;
+    getCourses(!user.isAdmin);
   }
 
   close() {
-    this.setState({ showModal: false });
+    this.setState({ show: false });
   }
 
   render() {
     const { user, courses, onSubmitClick, title } = this.props;
-    const { courseName, showModal } = this.state;
+    const { courseName, show } = this.state;
 
     return (
       <div className={s.root}>
@@ -80,7 +77,7 @@ class Courses extends React.Component {
             <h1>
               {title}
               {user ? (
-                <Button onClick={this.handleOpen}>
+                <Button onClick={() => this.setState({ show: true })}>
                   <Glyphicon glyph="glyphicon glyphicon-plus" />
                 </Button>
               ) : null}
@@ -98,8 +95,8 @@ class Courses extends React.Component {
         <ModalAdd
           value={courseName}
           title="Course"
-          show={showModal}
-          onInputChange={this.handleChange}
+          show={show}
+          onInputChange={e => this.setState({ courseName: e.target.value })}
           onSubmitClick={() => {
             onSubmitClick(courseName);
             this.close();
@@ -119,6 +116,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onSubmitClick: title => {
     dispatch(createCourse(title));
+  },
+  getCourses: role => {
+    dispatch(fetchCourses(role));
   },
 });
 

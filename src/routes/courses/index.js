@@ -10,13 +10,10 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Courses from './Courses';
-import { fetchCourses } from '../../actions/courses';
 
 const title = 'Courses';
 
-async function action({ store }) {
-  const user = store.getState().user || {};
-  store.dispatch(fetchCourses(!user.isAdmin));
+async function action() {
   return {
     title,
     component: (
