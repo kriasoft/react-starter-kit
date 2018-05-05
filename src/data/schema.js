@@ -14,7 +14,13 @@ import {
 
 import me from './queries/me';
 import news from './queries/news';
-import { createUser, removeUser, updateUser, users } from './queries/user';
+import {
+  createUser,
+  removeUser,
+  updateUser,
+  users,
+  setPassword,
+} from './queries/user';
 import { files, uploadFile } from './queries/file';
 import {
   createGroup,
@@ -85,6 +91,7 @@ const schema = new Schema({
       removeMark,
       updateMark,
       uploadFile,
+      setPassword,
     },
   }),
 });

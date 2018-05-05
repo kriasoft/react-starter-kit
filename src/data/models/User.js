@@ -96,4 +96,16 @@ User.prototype.getRole = async courseId => {
   return _.get(course, 'users[0].UserCourse.role');
 };
 
+User.prototype.setPassword = async newPassword => {
+  // TODO: fix this == undefined
+  const claims = await UserClaim.find({
+    where: { userId: this.id, type: 'local' },
+  });
+  const claim = claims[0];
+  if (claim) {
+    claim.value = User.hashPassword(newPassword);
+    await claim.save();
+  }
+};
+
 export default User;
