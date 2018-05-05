@@ -9,6 +9,7 @@ import {
 
 import courses from './courses.gql';
 import userCourses from './userCourses.gql';
+import * as createCourseGql from './createCourse.gql';
 
 export function addCourse({ id, title }) {
   return {
@@ -57,4 +58,12 @@ export function fetchCourses(forUser) {
         // error => console.log(error),
       );
   };
+}
+
+export function createCourse(title) {
+  return (dispatch, getState, { graphqlRequest }) =>
+    graphqlRequest(createCourseGql, { title }).then(
+      ({ data }) => dispatch(addCourse(data.createCourse)),
+      // error => console.log(error),
+    );
 }
