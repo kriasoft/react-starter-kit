@@ -38,6 +38,10 @@ async function action({ fetch, params }) {
         action: `/courses/${data.courses[0].id}/users`,
         isActive: true,
       },
+      {
+        title: 'Marks list',
+        action: `/courses/${data.courses[0].id}/marks`,
+      },
     ],
   ];
   return {
