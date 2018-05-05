@@ -1,4 +1,10 @@
-import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
+import {
+  GraphQLString as StringType,
+  GraphQLList as List,
+  GraphQLID as ID,
+  GraphQLNonNull as NonNull,
+} from 'graphql';
+
 import UserType from '../types/UserType';
 import User from '../models/User';
 
@@ -24,6 +30,20 @@ const createUser = {
   },
   resolve(parent, args) {
     return User.createUser(args);
+  },
+};
+
+const setPassword = {
+  type: UserType,
+  args: {
+    id: { type: new NonNull(ID) },
+    newPassword: { type: StringType },
+  },
+  resolve(parent, args) {
+    return User.findById(args.id).then(user => {
+      user.setPassword.call(user, args.newPassword);
+      return user;
+    });
   },
 };
 
@@ -89,4 +109,4 @@ const updateUser = {
   },
 };
 
-export { createUser, users, removeUser, updateUser };
+export { createUser, users, removeUser, updateUser, setPassword };
