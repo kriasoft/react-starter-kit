@@ -10,14 +10,16 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Users from './Users';
-import { setGroups, setUsers } from '../../actions/users';
+import { setUsers } from '../../actions/users';
+import { setGroups } from '../../actions/groups';
 
 const title = 'Users';
 
 async function action({ fetch, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: '{ users{ id,email,isAdmin },groups{ id, title} }',
+      query:
+        '{ users{ id,email,isAdmin },groups{ id, title, users { id,email,role }} }',
     }),
   });
   const { data } = await resp.json();
@@ -29,7 +31,7 @@ async function action({ fetch, store }) {
     title,
     component: (
       <Layout>
-        <Users title={title} users={data.users} />
+        <Users title={title} />
       </Layout>
     ),
   };
