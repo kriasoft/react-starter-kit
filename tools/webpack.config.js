@@ -29,6 +29,7 @@ const isAnalyze =
 const reScript = /\.(js|jsx|mjs)$/;
 const reStyle = /\.(css|less|styl|scss|sass|sss)$/;
 const reImage = /\.(bmp|gif|jpg|jpeg|png|svg)$/;
+const reGraphql = /\.(graphql|gql)$/;
 const staticAssetName = isDebug
   ? '[path][name].[ext]?[hash:8]'
   : '[hash:8].[ext]';
@@ -120,6 +121,13 @@ const config = {
             ...(isDebug ? [] : ['transform-react-remove-prop-types']),
           ],
         },
+      },
+
+      // Rules for GraphQL
+      {
+        test: reGraphql,
+        exclude: /node_modules/,
+        loader: 'raw-loader',
       },
 
       // Rules for Style Sheets
@@ -242,7 +250,15 @@ const config = {
       // Return public URL for all assets unless explicitly excluded
       // DO NOT FORGET to update `exclude` list when you adding a new loader
       {
-        exclude: [reScript, reStyle, reImage, /\.json$/, /\.txt$/, /\.md$/],
+        exclude: [
+          reScript,
+          reGraphql,
+          reStyle,
+          reImage,
+          /\.json$/,
+          /\.txt$/,
+          /\.md$/,
+        ],
         loader: 'file-loader',
         options: {
           name: staticAssetName,

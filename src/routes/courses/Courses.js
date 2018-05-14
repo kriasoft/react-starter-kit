@@ -14,7 +14,7 @@ import { Button, Glyphicon } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import s from './Courses.css';
 import ModalAdd from '../../components/ModalAdd';
-import { addCourse } from '../../actions/courses';
+import { createCourse, fetchCourses } from '../../actions/courses';
 
 class Courses extends React.Component {
   static contextTypes = {
@@ -24,6 +24,8 @@ class Courses extends React.Component {
 
   static propTypes = {
     title: PropTypes.string.isRequired,
+    onSubmitClick: PropTypes.func.isRequired,
+    getCourses: PropTypes.func.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
@@ -49,52 +51,33 @@ class Courses extends React.Component {
     super(props);
     this.state = {
       courseName: '',
-      showModal: false,
+      show: false,
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleOpen = this.handleOpen.bind(this);
     this.close = this.close.bind(this);
-    this.add = this.add.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({ courseName: event.target.value });
-  }
-
-  handleOpen() {
-    this.setState({ showModal: true });
+  componentDidMount() {
+    const user = this.props.user || {};
+    const { getCourses } = this.props;
+    getCourses(!user.isAdmin);
   }
 
   close() {
-    this.setState({ showModal: false });
-  }
-
-  async add() {
-    const resp = await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: `mutation createCourse($title: String) {
-          createCourse(title: $title) { id, title } 
-        }`,
-        variables: {
-          title: this.state.courseName,
-        },
-      }),
-    });
-    const { data } = await resp.json();
-    this.context.store.dispatch(addCourse(data.createCourse));
-    this.close();
+    this.setState({ show: false });
   }
 
   render() {
-    const { user, courses } = this.props;
+    const { user, courses, onSubmitClick, title } = this.props;
+    const { courseName, show } = this.state;
+
     return (
       <div className={s.root}>
         <div className={s.container}>
           <div>
             <h1>
-              {this.props.title}
+              {title}
               {user ? (
-                <Button onClick={this.handleOpen}>
+                <Button onClick={() => this.setState({ show: true })}>
                   <Glyphicon glyph="glyphicon glyphicon-plus" />
                 </Button>
               ) : null}
@@ -110,11 +93,14 @@ class Courses extends React.Component {
           </ol>
         </div>
         <ModalAdd
-          value={this.state.courseName}
+          value={courseName}
           title="Course"
-          show={this.state.showModal}
-          onInputChange={this.handleChange}
-          onSubmitClick={this.add}
+          show={show}
+          onInputChange={e => this.setState({ courseName: e.target.value })}
+          onSubmitClick={() => {
+            onSubmitClick(courseName);
+            this.close();
+          }}
           handleClose={this.close}
         />
       </div>
@@ -127,4 +113,15 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-export default connect(mapStateToProps)(withStyles(s)(Courses));
+const mapDispatchToProps = dispatch => ({
+  onSubmitClick: title => {
+    dispatch(createCourse(title));
+  },
+  getCourses: role => {
+    dispatch(fetchCourses(role));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withStyles(s)(Courses),
+);

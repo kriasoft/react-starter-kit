@@ -40,12 +40,17 @@ class User extends React.Component {
       showModal: false,
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleChange2 = this.handleChange2.bind(this);
     this.open = this.open.bind(this);
     this.close = this.close.bind(this);
   }
 
   handleChange(event) {
     this.setState({ newPass: event.target.value });
+  }
+
+  handleChange2(event) {
+    this.setState({ newPass2: event.target.value });
   }
 
   close() {
@@ -102,16 +107,28 @@ class User extends React.Component {
             <Modal.Body>
               <span>New password: </span>
               <FormControl
-                type="text"
+                type="password"
                 value={this.state.newPass}
                 onChange={this.handleChange}
+              />
+              <span>Password again: </span>
+              <FormControl
+                type="password"
+                value={this.state.newPass2}
+                onChange={this.handleChange2}
+                disabled={this.state.newPass.length < 6}
               />
               <div>
                 <br />
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button onClick={this.close}>Change</Button>
+              <Button
+                onClick={this.close}
+                disabled={this.state.newPass !== this.state.newPass2}
+              >
+                Change
+              </Button>
               <Button onClick={this.close}>Close</Button>
             </Modal.Footer>
           </Modal>

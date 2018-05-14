@@ -29,6 +29,11 @@ const routes = {
         import(/* webpackChunkName: 'courseUsers' */ './course-users'),
     },
     {
+      path: '/courses/:idCourse/marks',
+      load: () =>
+        import(/* webpackChunkName: 'courseMarks' */ './course-marks'),
+    },
+    {
       path: '/courses/:idCourse/:idStudyEntity',
       load: () =>
         import(/* webpackChunkName: 'studyEntity' */ './study-entity'),
