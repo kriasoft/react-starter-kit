@@ -58,6 +58,7 @@ const routes = {
     // Provide default values for title, description etc.
     route.title = `${route.title || 'Untitled Page'} - www.reactstarterkit.com`;
     route.description = route.description || '';
+    route.keywords = route.keywords || '';
 
     return route;
   },
