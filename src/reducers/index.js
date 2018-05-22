@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import user from './user';
 import runtime from './runtime';
 import courses from './courses';
 import course from './course';
@@ -8,6 +9,7 @@ import files from './files';
 import groups from './groups';
 
 export default combineReducers({
+  user,
   runtime,
   courses,
   course,
