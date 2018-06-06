@@ -1,9 +1,9 @@
-## How to Integrate [Redux](http://redux.js.org/index.html)
+## How to Integrate [Redux](https://redux.js.org/)
 
 Merge `feature/redux` branch with Git. If you are interested in `feature/react-intl`, merge that
 branch instead as it also includes Redux.
 
-**If you don't know Redux well, you should [read about it first](http://redux.js.org/docs/basics/index.html).**
+**If you don't know Redux well, you should [read about it first](https://redux.js.org/basics).**
 
 ### Creating Actions
 
@@ -16,7 +16,7 @@ branch instead as it also includes Redux.
     For inspiration on how to create async actions you can look at
     [`setLocale`](https://github.com/kriasoft/react-starter-kit/blob/feature/react-intl/src/actions/intl.js)
     action from `feature/react-intl`.
-    See [Async Flow](http://redux.js.org/docs/advanced/AsyncFlow.html) for more information on this
+    See [Async Flow](https://redux.js.org/advanced/async-flow) for more information on this
     topic.
 
 ### Creating Reducer (aka Store)
@@ -35,13 +35,13 @@ branch instead as it also includes Redux.
       If you call REST API, do it in action. _Never do this in reducer!_
 
 2.  Edit [`src/reducers/index.js`](https://github.com/kriasoft/react-starter-kit/tree/feature/redux/src/reducers/index.js), import your reducer and add it to root reducer created by
-    [`combineReducers`](http://redux.js.org/docs/api/combineReducers.html)
+    [`combineReducers`](https://redux.js.org/api-reference/combinereducers)
 
 ### Connecting Components
 
 You can use [`connect()`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options) High-Order Component from [`react-redux`](https://github.com/reactjs/react-redux#readme) package.
 
-See [Usage With React](http://redux.js.org/docs/basics/UsageWithReact.html) on redux.js.org.
+See [Usage With React](https://redux.js.org/basics/usage-with-react) on redux.js.org.
 
 For an example you can look at
 [`<LanguageSwitcher>`](https://github.com/kriasoft/react-starter-kit/blob/feature/react-intl/src/components/LanguageSwitcher/LanguageSwitcher.js)

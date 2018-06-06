@@ -1,5 +1,5 @@
 /**
- * React Starter Kit (https://www.reactstarterkit.com/)
+ * React Starter Kit (https://reactstarter.com/)
  *
  * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
@@ -43,7 +43,10 @@ class Html extends React.Component {
           <meta httpEquiv="x-ua-compatible" content="ie=edge" />
           <title>{title}</title>
           <meta name="description" content={description} />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+          />
           {scripts.map(script => (
             <link key={script} rel="preload" href={script} as="script" />
           ))}

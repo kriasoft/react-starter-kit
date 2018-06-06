@@ -1,5 +1,5 @@
 /**
- * React Starter Kit (https://www.reactstarterkit.com/)
+ * React Starter Kit (https://reactstarter.com/)
  *
  * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *

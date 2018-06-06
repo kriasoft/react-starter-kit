@@ -7,7 +7,7 @@ developers in your team don't need to worry about having some set of tools
 installed globally before they can execute build automation scripts in your
 project.
 
-For example, if you need to lint your JavaScript code with [ESLint](http://eslint.org/)
+For example, if you need to lint your JavaScript code with [ESLint](https://eslint.org/)
 and [JSCS](http://jscs.info/), you just install them as project's dependencies:
 
 ```shell

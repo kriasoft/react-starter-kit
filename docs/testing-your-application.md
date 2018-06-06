@@ -5,7 +5,7 @@
 RSK comes with the following libraries for testing purposes:
 
 * [Mocha](https://mochajs.org/) - Node.js and browser test runner
-* [Chai](http://chaijs.com/) - Assertion library
+* [Chai](http://www.chaijs.com/) - Assertion library
 * [Enzyme](https://github.com/airbnb/enzyme) - Testing utilities for React
 
 You may also want to take a look at the following related packages:

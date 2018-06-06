@@ -21,7 +21,7 @@ Feedback is the breakfast for champions! We'd love to hear your opinions, discus
 improvements, architecture, theory, internal implementation, etc. Please, join or start a new
 conversation in our [issue tracker](https://github.com/kriasoft/react-starter-kit/issues),
 [Gitter](https://gitter.im/kriasoft/react-starter-kit) chat room, or let's talk face-to-face on
-[Appear.in](https://appear.in/react) or [Skype](http://hatscripts.com/addskype?koistya).
+[Appear.in](https://appear.in/react) or [Skype](https://hatscripts.com/addskype/?koistya).
 
 ### Documentation
 
@@ -37,7 +37,7 @@ Before opening an issue, please:
 * Search the [issue tracker](https://github.com/kriasoft/react-starter-kit/issues) to make sure
   your issue hasn’t already been reported.
 * If your issue sounds more like a question, please post it on StackOverflow.com instead with the
-  tag [react-starter-kit](http://stackoverflow.com/questions/tagged/react-starter-kit).
+  tag [react-starter-kit](https://stackoverflow.com/questions/tagged/react-starter-kit).
 
 ### Pull Requests
 

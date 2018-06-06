@@ -1,5 +1,5 @@
 /**
- * React Starter Kit (https://www.reactstarterkit.com/)
+ * React Starter Kit (https://reactstarter.com/)
  *
  * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
  *
@@ -8,7 +8,7 @@
  */
 
 // ESLint configuration
-// http://eslint.org/docs/user-guide/configuring
+// https://eslint.org/docs/user-guide/configuring
 module.exports = {
   parser: 'babel-eslint',
 
@@ -47,7 +47,7 @@ module.exports = {
     ],
 
     // Prefer destructuring from arrays and objects
-    // http://eslint.org/docs/rules/prefer-destructuring
+    // https://eslint.org/docs/rules/prefer-destructuring
     'prefer-destructuring': [
       'error',
       {
