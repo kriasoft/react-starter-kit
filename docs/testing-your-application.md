@@ -4,7 +4,7 @@
 
 RSK comes with the following libraries for testing purposes:
 
-* [Jest](https://facebook.github.io/jest/) - JavaScript testing library 
+* [Jest](https://facebook.github.io/jest/) - JavaScript testing library
 * [Enzyme](https://github.com/airbnb/enzyme) - Testing utilities for React
 
 You may also want to take a look at the following related packages:
@@ -81,7 +81,7 @@ describe('A test suite for <Header />', () => {
           <Header />
         </IntlProvider>,
       );
-      expect(wrapper.find(Navigation)).to.have.length(1);
+      expect(wrapper.find(Navigation)).toHaveLength(1);
     });
   });
 });
