@@ -81,7 +81,7 @@ describe('A test suite for <Header />', () => {
           <Header />
         </IntlProvider>,
       );
-      expect(wrapper.find(Navigation)).toHaveLength(1);
+      expect(wrapper.find(Navigation)).to.have.length(1);
     });
   });
 });
