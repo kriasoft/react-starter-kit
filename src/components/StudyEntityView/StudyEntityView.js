@@ -64,22 +64,21 @@ class StudyEntityView extends React.Component {
   componentWillMount() {
     this.initProcessingInstructions();
     this.headers = [];
-    this.headersNeedsUpdate = true;
+    this.domTree = htmlToReactParser.parseHtml(this.props.body);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      answers: nextProps.value || {},
-    });
+    this.setState({ answers: nextProps.value || {} });
     if (this.props.body !== nextProps.body) {
-      this.headersNeedsUpdate = true;
       this.headers = [];
+      this.domTree = htmlToReactParser.parseHtml(nextProps.body);
     }
   }
 
   updateAnswer(name, value) {
-    this.state.answers[name] = value;
-    if (this.props.onChange) this.props.onChange(this.state.answers);
+    const answers = { ...this.state.answers, [name]: value };
+    this.setState({ answers });
+    if (this.props.onChange) this.props.onChange(answers);
   }
 
   initProcessingInstructions() {
@@ -103,17 +102,19 @@ class StudyEntityView extends React.Component {
           try {
             const show = fn(_.cloneDeep(this.state.answers));
             const CustomTag = node.name;
-            if (show)
-              return (
-                <CustomTag key={index} {...node.attribs}>
-                  {children}
-                </CustomTag>
-              );
+            return (
+              <CustomTag
+                style={show ? {} : { display: 'none' }}
+                key={index}
+                {...node.attribs}
+              >
+                {children}
+              </CustomTag>
+            );
           } catch (e) {
             console.log(e); // eslint-disable-line no-console
-            return false;
+            return null;
           }
-          return false;
         },
       },
       /**
@@ -248,15 +249,14 @@ class StudyEntityView extends React.Component {
             _.get(node, 'attribs.id') ||
             _.get(node, 'attribs.name') ||
             `header-${index}`;
-          if (this.headersNeedsUpdate)
-            this.headers.push({
-              level,
-              id,
-              title: node.children
-                .filter(c => c.type === 'text')
-                .map(c => c.data)
-                .join(' '),
-            });
+          this.headers.push({
+            level,
+            id,
+            title: node.children
+              .filter(c => c.type === 'text')
+              .map(c => c.data)
+              .join(' '),
+          });
           const renderAttrs = { id, key: index };
           const CustomTag = node.name;
           return <CustomTag {...renderAttrs}>{children}</CustomTag>;
@@ -269,25 +269,22 @@ class StudyEntityView extends React.Component {
     ];
   }
 
-  render() {
-    function isValidNode(node) {
-      return !!node;
-    }
+  renderStudyEntity() {
+    if (!this.domTree) return null;
     const oldHeaders = this.headers;
-    const studyEntityElement = htmlToReactParser.parseWithInstructions(
-      this.props.body,
-      isValidNode,
+    this.headers = [];
+    const studyEntityElement = htmlToReactParser.traverseDomToTree(
+      this.domTree,
+      node => !!node,
       this.processingInstructions,
     );
-    if (
-      this.props.onHeadersChange &&
-      this.headersNeedsUpdate &&
-      _.isEqual(oldHeaders, this.headers)
-    ) {
-      this.props.onHeadersChange(this.headers);
-    }
-    this.headersNeedsUpdate = false;
-    return <div className={s.root}>{studyEntityElement}</div>;
+    if (this.props.onHeadersChange && !_.isEqual(oldHeaders, this.headers))
+      setTimeout(() => this.props.onHeadersChange(this.headers), 0);
+    return studyEntityElement;
+  }
+
+  render() {
+    return <div className={s.root}>{this.renderStudyEntity()}</div>;
   }
 }
 

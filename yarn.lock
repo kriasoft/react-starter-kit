@@ -2686,6 +2686,12 @@ domhandler@^2.3.0:
   dependencies:
     domelementtype "1"
 
+domhandler@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/domhandler/-/domhandler-2.4.2.tgz#8805097e933d65e85546f726d60f5eb88b44f803"
+  dependencies:
+    domelementtype "1"
+
 domutils@1.1:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.1.6.tgz#bddc3de099b9a2efacc51c623f28f416ecc57485"
@@ -4084,11 +4090,11 @@ html-tags@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-2.0.0.tgz#10b30a386085f43cede353cc8fa7cb0deeea668b"
 
-html-to-react@^1.3.1:
+html-to-react@sreym/html-to-react:
   version "1.3.3"
-  resolved "https://registry.yarnpkg.com/html-to-react/-/html-to-react-1.3.3.tgz#e41666a735f9997ed2372dcd21d8b0e42b334467"
+  resolved "https://codeload.github.com/sreym/html-to-react/tar.gz/698fb0c99518c90c9168020bd25b4d2b4189d143"
   dependencies:
-    domhandler "^2.3.0"
+    domhandler "^2.4.2"
     escape-string-regexp "^1.0.5"
     htmlparser2 "^3.8.3"
     ramda "^0.25.0"
