@@ -9,14 +9,10 @@
 
 import React from 'react';
 
-class Footer extends React.Component {
-  render() {
-    return (
-      <footer>
-        <p>© 2017, Yet Another Domic.</p>
-      </footer>
-    );
-  }
-}
+const Footer = () => (
+  <footer>
+    <p>© 2017, Yet Another Domic.</p>
+  </footer>
+);
 
 export default Footer;

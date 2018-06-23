@@ -10,9 +10,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import ModalEditor from '../../components/ModalEditor';
+import AddNewButton from '../../components/AddNewButton';
 import StudyEntitiesList from '../../components/StudyEntitiesList';
 import UsersList from '../../components/UsersList';
 import s from './Course.css';
@@ -232,43 +233,41 @@ class Course extends React.Component {
           <h1>
             {course.title}
             {user ? (
-              <Button
+              <AddNewButton
                 onClick={() => {
                   this.setState({ showModalEditor: true });
                 }}
-              >
-                <Glyphicon glyph="glyphicon glyphicon-plus" />
-              </Button>
+              />
             ) : null}
           </h1>
           <StudyEntitiesList studyEntities={studyEntities} course={course} />
+          <ModalEditor
+            title="Study entity"
+            show={this.state.showModalEditor}
+            studyEntityName={this.state.studyEntityName}
+            studyEntityBody={this.state.studyEntityBody}
+            onInputChange={this.handleChange}
+            onEditorChange={this.handleChangeBody}
+            onSubmitClick={this.addStudyEntity}
+            handleClose={this.closeModalStudyEntity}
+          />
+          <Button
+            bsStyle="primary"
+            onClick={() => {
+              this.setState({ showModalSubscribe: true });
+            }}
+          >
+            Subscribe user
+          </Button>
+          <ModalWithUsers
+            show={this.state.showModalSubscribe}
+            titleLeft="Subscribed"
+            usersLeft={subscribedUsersList}
+            titleRight="Unsubscribed"
+            usersRight={usersList}
+            handleClose={this.closeModalSubscribe}
+          />
         </div>
-        <ModalEditor
-          title="Study entity"
-          show={this.state.showModalEditor}
-          studyEntityName={this.state.studyEntityName}
-          studyEntityBody={this.state.studyEntityBody}
-          onInputChange={this.handleChange}
-          onEditorChange={this.handleChangeBody}
-          onSubmitClick={this.addStudyEntity}
-          handleClose={this.closeModalStudyEntity}
-        />
-        <Button
-          bsStyle="primary"
-          onClick={() => {
-            this.setState({ showModalSubscribe: true });
-          }}
-        >
-          Subscribe user
-        </Button>
-        <ModalWithUsers
-          show={this.state.showModalSubscribe}
-          titleLeft="Subscribed"
-          usersLeft={subscribedUsersList}
-          titleRight="Unsubscribed"
-          usersRight={usersList}
-          handleClose={this.closeModalSubscribe}
-        />
       </div>
     );
   }
