@@ -18,4 +18,59 @@
   margin: 0 auto;
   padding: 0 0 40px;
   max-width: var(--max-content-width);
+
+  &::after {
+    content: '';
+    clear: both;
+    display: table;
+  }
+}
+
+/* Grid fall-backs for <= IE 10 */
+.sectionMainColumnWide,
+.sectionMainColumnNarrow,
+.sectionLeftColumn,
+.sectionRightColumn {
+  float: left;
+}
+
+.sectionMainColumnWide {
+  width: var(--main-column-wide-width);
+}
+
+.sectionMainColumnNarrow {
+  width: var(--main-column-narrow-width);
+}
+
+.sectionLeftColumn {
+  width: var(--left-column-width);
+}
+
+.sectionRightColumn {
+  width: var(--right-column-width);
+}
+
+@supports (display: grid) {
+  .container {
+    display: grid;
+
+    &.leftColumn {
+      grid-template-columns: 1fr 3fr;
+    }
+
+    &.rightColumn {
+      grid-template-columns: 3fr 1fr;
+    }
+
+    &.multiColumn {
+      grid-template-columns: 1fr 2fr 1fr;
+    }
+  }
+
+  .sectionMainColumnWide,
+  .sectionMainColumnNarrow,
+  .sectionLeftColumn,
+  .sectionRightColumn {
+    width: unset;
+  }
 }

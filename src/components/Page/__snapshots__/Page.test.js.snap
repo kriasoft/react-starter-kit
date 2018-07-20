@@ -1,0 +1,861 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page renders left column page correctly 1`] = `
+<div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <div
+        className="root"
+        role="navigation"
+      >
+        <a
+          className="link"
+          href="/about"
+          onClick={[Function]}
+        >
+          About
+        </a>
+        <a
+          className="link"
+          href="/contact"
+          onClick={[Function]}
+        >
+          Contact
+        </a>
+        <span
+          className="spacer"
+        >
+           | 
+        </span>
+        <a
+          className="link"
+          href="/login"
+          onClick={[Function]}
+        >
+          Log in
+        </a>
+        <span
+          className="spacer"
+        >
+          or
+        </span>
+        <a
+          className="link highlight"
+          href="/register"
+          onClick={[Function]}
+        >
+          Sign up
+        </a>
+      </div>
+      <a
+        className="brand"
+        href="/"
+        onClick={[Function]}
+      >
+        <img
+          alt="React"
+          height="38"
+          src="logo-small.png"
+          srcSet="logo-small@2x.png 2x"
+          width="38"
+        />
+        <span
+          className="brandTxt"
+        >
+          Your Company
+        </span>
+      </a>
+      <div
+        className="banner"
+      >
+        <h1
+          className="bannerTitle"
+        >
+          React
+        </h1>
+        <p
+          className="bannerDesc"
+        >
+          Complex web apps made easy
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container leftColumn"
+    >
+      <section
+        className="sectionLeftColumn"
+      >
+        <h2
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Whoa, a title!",
+            }
+          }
+        />
+        <article
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>You will never escape me!</p>",
+            }
+          }
+        />
+      </section>
+      <section
+        className="sectionMainColumnWide"
+      >
+        <h1>
+          About Us
+        </h1>
+        <div
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Lorem ipsum dolor sit amet, consectetur adipisc…or arcu eget arcu. Vestibulum vel quam enim.</p>",
+            }
+          }
+        />
+      </section>
+      
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <a
+        className="link"
+        href="https://gitter.im/kriasoft/react-starter-kit"
+      >
+        Ask a question
+      </a>
+      <span
+        className="spacer"
+      >
+        |
+      </span>
+      <a
+        className="link"
+        href="https://github.com/kriasoft/react-starter-kit/issues/new"
+      >
+        Report an issue
+      </a>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <span
+        className="text"
+      >
+        © Your Company
+      </span>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/"
+        onClick={[Function]}
+      >
+        Home
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/admin"
+        onClick={[Function]}
+      >
+        Admin
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/privacy"
+        onClick={[Function]}
+      >
+        Privacy
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/not-found"
+        onClick={[Function]}
+      >
+        Not Found
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Page renders multi column page correctly 1`] = `
+<div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <div
+        className="root"
+        role="navigation"
+      >
+        <a
+          className="link"
+          href="/about"
+          onClick={[Function]}
+        >
+          About
+        </a>
+        <a
+          className="link"
+          href="/contact"
+          onClick={[Function]}
+        >
+          Contact
+        </a>
+        <span
+          className="spacer"
+        >
+           | 
+        </span>
+        <a
+          className="link"
+          href="/login"
+          onClick={[Function]}
+        >
+          Log in
+        </a>
+        <span
+          className="spacer"
+        >
+          or
+        </span>
+        <a
+          className="link highlight"
+          href="/register"
+          onClick={[Function]}
+        >
+          Sign up
+        </a>
+      </div>
+      <a
+        className="brand"
+        href="/"
+        onClick={[Function]}
+      >
+        <img
+          alt="React"
+          height="38"
+          src="logo-small.png"
+          srcSet="logo-small@2x.png 2x"
+          width="38"
+        />
+        <span
+          className="brandTxt"
+        >
+          Your Company
+        </span>
+      </a>
+      <div
+        className="banner"
+      >
+        <h1
+          className="bannerTitle"
+        >
+          React
+        </h1>
+        <p
+          className="bannerDesc"
+        >
+          Complex web apps made easy
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container multiColumn"
+    >
+      <section
+        className="sectionLeftColumn"
+      >
+        <h2
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Whoa, a title!",
+            }
+          }
+        />
+        <article
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>You will never escape me!</p>",
+            }
+          }
+        />
+      </section>
+      <section
+        className="sectionMainColumnNarrow"
+      >
+        <h1>
+          About Us
+        </h1>
+        <div
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Lorem ipsum dolor sit amet, consectetur adipisc…or arcu eget arcu. Vestibulum vel quam enim.</p>",
+            }
+          }
+        />
+      </section>
+      <section
+        className="sectionRightColumn"
+      >
+        <h2
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "The correct column title",
+            }
+          }
+        />
+        <article
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<ul><li>A list with one item</li></ul>",
+            }
+          }
+        />
+      </section>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <a
+        className="link"
+        href="https://gitter.im/kriasoft/react-starter-kit"
+      >
+        Ask a question
+      </a>
+      <span
+        className="spacer"
+      >
+        |
+      </span>
+      <a
+        className="link"
+        href="https://github.com/kriasoft/react-starter-kit/issues/new"
+      >
+        Report an issue
+      </a>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <span
+        className="text"
+      >
+        © Your Company
+      </span>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/"
+        onClick={[Function]}
+      >
+        Home
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/admin"
+        onClick={[Function]}
+      >
+        Admin
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/privacy"
+        onClick={[Function]}
+      >
+        Privacy
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/not-found"
+        onClick={[Function]}
+      >
+        Not Found
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Page renders page without columns correctly 1`] = `
+<div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <div
+        className="root"
+        role="navigation"
+      >
+        <a
+          className="link"
+          href="/about"
+          onClick={[Function]}
+        >
+          About
+        </a>
+        <a
+          className="link"
+          href="/contact"
+          onClick={[Function]}
+        >
+          Contact
+        </a>
+        <span
+          className="spacer"
+        >
+           | 
+        </span>
+        <a
+          className="link"
+          href="/login"
+          onClick={[Function]}
+        >
+          Log in
+        </a>
+        <span
+          className="spacer"
+        >
+          or
+        </span>
+        <a
+          className="link highlight"
+          href="/register"
+          onClick={[Function]}
+        >
+          Sign up
+        </a>
+      </div>
+      <a
+        className="brand"
+        href="/"
+        onClick={[Function]}
+      >
+        <img
+          alt="React"
+          height="38"
+          src="logo-small.png"
+          srcSet="logo-small@2x.png 2x"
+          width="38"
+        />
+        <span
+          className="brandTxt"
+        >
+          Your Company
+        </span>
+      </a>
+      <div
+        className="banner"
+      >
+        <h1
+          className="bannerTitle"
+        >
+          React
+        </h1>
+        <p
+          className="bannerDesc"
+        >
+          Complex web apps made easy
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      
+      <section
+        className=""
+      >
+        <h1>
+          About Us
+        </h1>
+        <div
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Lorem ipsum dolor sit amet, consectetur adipisc…or arcu eget arcu. Vestibulum vel quam enim.</p>",
+            }
+          }
+        />
+      </section>
+      
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <a
+        className="link"
+        href="https://gitter.im/kriasoft/react-starter-kit"
+      >
+        Ask a question
+      </a>
+      <span
+        className="spacer"
+      >
+        |
+      </span>
+      <a
+        className="link"
+        href="https://github.com/kriasoft/react-starter-kit/issues/new"
+      >
+        Report an issue
+      </a>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <span
+        className="text"
+      >
+        © Your Company
+      </span>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/"
+        onClick={[Function]}
+      >
+        Home
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/admin"
+        onClick={[Function]}
+      >
+        Admin
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/privacy"
+        onClick={[Function]}
+      >
+        Privacy
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/not-found"
+        onClick={[Function]}
+      >
+        Not Found
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Page renders right column page correctly 1`] = `
+<div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <div
+        className="root"
+        role="navigation"
+      >
+        <a
+          className="link"
+          href="/about"
+          onClick={[Function]}
+        >
+          About
+        </a>
+        <a
+          className="link"
+          href="/contact"
+          onClick={[Function]}
+        >
+          Contact
+        </a>
+        <span
+          className="spacer"
+        >
+           | 
+        </span>
+        <a
+          className="link"
+          href="/login"
+          onClick={[Function]}
+        >
+          Log in
+        </a>
+        <span
+          className="spacer"
+        >
+          or
+        </span>
+        <a
+          className="link highlight"
+          href="/register"
+          onClick={[Function]}
+        >
+          Sign up
+        </a>
+      </div>
+      <a
+        className="brand"
+        href="/"
+        onClick={[Function]}
+      >
+        <img
+          alt="React"
+          height="38"
+          src="logo-small.png"
+          srcSet="logo-small@2x.png 2x"
+          width="38"
+        />
+        <span
+          className="brandTxt"
+        >
+          Your Company
+        </span>
+      </a>
+      <div
+        className="banner"
+      >
+        <h1
+          className="bannerTitle"
+        >
+          React
+        </h1>
+        <p
+          className="bannerDesc"
+        >
+          Complex web apps made easy
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container rightColumn"
+    >
+      
+      <section
+        className="sectionMainColumnWide"
+      >
+        <h1>
+          About Us
+        </h1>
+        <div
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>Lorem ipsum dolor sit amet, consectetur adipisc…or arcu eget arcu. Vestibulum vel quam enim.</p>",
+            }
+          }
+        />
+      </section>
+      <section
+        className="sectionRightColumn"
+      >
+        <h2
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "The correct column title",
+            }
+          }
+        />
+        <article
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<ul><li>A list with one item</li></ul>",
+            }
+          }
+        />
+      </section>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <a
+        className="link"
+        href="https://gitter.im/kriasoft/react-starter-kit"
+      >
+        Ask a question
+      </a>
+      <span
+        className="spacer"
+      >
+        |
+      </span>
+      <a
+        className="link"
+        href="https://github.com/kriasoft/react-starter-kit/issues/new"
+      >
+        Report an issue
+      </a>
+    </div>
+  </div>
+  <div
+    className="root"
+  >
+    <div
+      className="container"
+    >
+      <span
+        className="text"
+      >
+        © Your Company
+      </span>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/"
+        onClick={[Function]}
+      >
+        Home
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/admin"
+        onClick={[Function]}
+      >
+        Admin
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/privacy"
+        onClick={[Function]}
+      >
+        Privacy
+      </a>
+      <span
+        className="spacer"
+      >
+        ·
+      </span>
+      <a
+        className="link"
+        href="/not-found"
+        onClick={[Function]}
+      >
+        Not Found
+      </a>
+    </div>
+  </div>
+</div>
+`;
