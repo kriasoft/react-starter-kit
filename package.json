@@ -154,6 +154,7 @@
     "clean": "babel-node tools/run clean",
     "copy": "babel-node tools/run copy",
     "bundle": "babel-node tools/run bundle",
+    "heroku-postbuild": "yarn run build --release",
     "build": "babel-node tools/run build",
     "build-stats": "yarn run build --release --analyse",
     "deploy": "babel-node tools/run deploy",
