@@ -29,6 +29,8 @@ module.exports = {
     // API URL to be used in the server-side code
     serverUrl:
       process.env.API_SERVER_URL ||
+      (process.env.HEROKU_APP_NAME &&
+        `https://${process.env.HEROKU_APP_NAME}.herokuapp.com`) ||
       `http://localhost:${process.env.PORT || 3000}`,
   },
 
