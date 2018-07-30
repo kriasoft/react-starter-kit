@@ -127,23 +127,18 @@
     "webpack-node-externals": "^1.7.2"
   },
   "lint-staged": {
-    "ignore": [
-      "package.json"
+    "*.{js,jsx}": [
+      "eslint --no-ignore --fix",
+      "git add --force"
     ],
-    "linters": {
-      "*.{js,jsx}": [
-        "eslint --no-ignore --fix",
-        "git add --force"
-      ],
-      "*.{json,md,graphql}": [
-        "prettier --write",
-        "git add --force"
-      ],
-      "*.{css,less,styl,scss,sass,sss}": [
-        "stylelint --fix",
-        "git add --force"
-      ]
-    }
+    "*.{json,md,graphql}": [
+      "prettier --write",
+      "git add --force"
+    ],
+    "*.{css,less,styl,scss,sass,sss}": [
+      "stylelint --fix",
+      "git add --force"
+    ]
   },
   "scripts": {
     "precommit": "lint-staged",
