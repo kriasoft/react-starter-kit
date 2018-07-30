@@ -98,9 +98,6 @@ const config = {
                 debug: false,
               },
             ],
-            // Experimental ECMAScript proposals
-            // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
-            ['@babel/preset-stage-2', { decoratorsLegacy: true }],
             // Flow
             // https://github.com/babel/babel/tree/master/packages/babel-preset-flow
             '@babel/preset-flow',
@@ -109,6 +106,8 @@ const config = {
             ['@babel/preset-react', { development: isDebug }],
           ],
           plugins: [
+            '@babel/plugin-proposal-class-properties',
+            '@babel/plugin-syntax-dynamic-import',
             // Treat React JSX elements as value types and hoist them to the highest scope
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-constant-elements
             ...(isDebug ? [] : ['@babel/transform-react-constant-elements']),
