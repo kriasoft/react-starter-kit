@@ -44,11 +44,6 @@ Before you start, take a moment to see how the project structure looks like:
 └── yarn.lock                   # Fixed versions of all the dependencies
 ```
 
-**Note**: The current version of RSK does not contain a Flux implementation. It
-can be easily integrated with any Flux library of your choice. The most commonly
-used Flux libraries are [Flux](http://facebook.github.io/flux/),
-[Redux](http://redux.js.org/) and [Relay](http://facebook.github.io/relay/).
-
 ### Quick Start
 
 #### 1. Get the latest version

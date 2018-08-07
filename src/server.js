@@ -12,18 +12,17 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
-import { graphql } from 'graphql';
-import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
-import nodeFetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
+import { ApolloServer, makeExecutableSchema } from 'apollo-server-express';
+import { getDataFromTree } from 'react-apollo';
+import createApolloClient from './core/createApolloClient';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
 import errorPageStyle from './routes/error/ErrorPage.css';
-import createFetch from './createFetch';
 import passport from './passport';
 import router from './router';
 import models from './data/models';
@@ -31,6 +30,7 @@ import schema from './data/schema';
 // import assets from './asset-manifest.json'; // eslint-disable-line import/no-unresolved
 import chunks from './chunk-manifest.json'; // eslint-disable-line import/no-unresolved
 import config from './config';
+import createInitialState from './core/createInitialState';
 
 process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled Rejection at:', p, 'reason:', reason);
@@ -108,15 +108,16 @@ app.get(
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-app.use(
-  '/graphql',
-  expressGraphQL(req => ({
-    schema,
-    graphiql: __DEV__,
-    rootValue: { request: req },
-    pretty: __DEV__,
-  })),
-);
+// https://github.com/graphql/express-graphql#options
+
+const server = new ApolloServer({
+  ...schema,
+  uploads: false,
+  introspection: __DEV__,
+  playground: __DEV__,
+  debug: __DEV__,
+});
+server.applyMiddleware({ app });
 
 //
 // Register server-side rendering middleware
@@ -132,22 +133,27 @@ app.get('*', async (req, res, next) => {
       styles.forEach(style => css.add(style._getCss()));
     };
 
-    // Universal HTTP client
-    const fetch = createFetch(nodeFetch, {
-      baseUrl: config.api.serverUrl,
-      cookie: req.headers.cookie,
-      schema,
-      graphql,
+    const initialState = createInitialState({
+      user: req.user || null,
     });
+
+    const apolloClient = createApolloClient(
+      {
+        schema: makeExecutableSchema(schema),
+        rootValue: { request: req },
+      },
+      initialState,
+    );
 
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
       insertCss,
-      fetch,
       // The twins below are wild, be careful!
       pathname: req.path,
       query: req.query,
+      // Apollo Client for use with react-apollo
+      client: apolloClient,
     };
 
     const route = await router.resolve(context);
@@ -158,9 +164,9 @@ app.get('*', async (req, res, next) => {
     }
 
     const data = { ...route };
-    data.children = ReactDOM.renderToString(
-      <App context={context}>{route.component}</App>,
-    );
+    const rootComponent = <App context={context}>{route.component}</App>;
+    await getDataFromTree(rootComponent);
+    data.children = await ReactDOM.renderToString(rootComponent);
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
 
     const scripts = new Set();
@@ -178,6 +184,10 @@ app.get('*', async (req, res, next) => {
     data.scripts = Array.from(scripts);
     data.app = {
       apiUrl: config.api.clientUrl,
+      // Cache for client-side apolloClient
+      cache: context.client.extract(),
+      // Initial state for client-side stateLink
+      initialState,
     };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);

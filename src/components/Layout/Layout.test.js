@@ -12,14 +12,24 @@
 
 import React from 'react';
 import renderer from 'react-test-renderer';
+import createApolloClient from '../../core/createApolloClient';
 import App from '../App';
 import Layout from './Layout';
 
 describe('Layout', () => {
   test('renders children correctly', () => {
+    const client = createApolloClient();
+
     const wrapper = renderer
       .create(
-        <App context={{ insertCss: () => {}, fetch: () => {}, pathname: '' }}>
+        <App
+          context={{
+            insertCss: () => {},
+            // fetch: () => {},
+            pathname: '',
+            client,
+          }}
+        >
           <Layout>
             <div className="child" />
           </Layout>

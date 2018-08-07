@@ -9,15 +9,17 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ApolloProvider } from 'react-apollo';
 
 const ContextType = {
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: PropTypes.func.isRequired,
   // Universal HTTP client
-  fetch: PropTypes.func.isRequired,
   pathname: PropTypes.string.isRequired,
   query: PropTypes.object,
+  // Apollo Client
+  client: PropTypes.object.isRequired,
 };
 
 /**
@@ -55,9 +57,13 @@ class App extends React.PureComponent {
   }
 
   render() {
+    // Here, we are at universe level, sure? ;-)
+    const { client } = this.props.context;
     // NOTE: If you need to add or modify header, footer etc. of the app,
     // please do that inside the Layout component.
-    return React.Children.only(this.props.children);
+    return (
+      <ApolloProvider client={client}>{this.props.children}</ApolloProvider>
+    );
   }
 }
 

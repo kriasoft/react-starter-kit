@@ -12,12 +12,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import deepForceUpdate from 'react-deep-force-update';
 import queryString from 'query-string';
+import gql from 'graphql-tag';
 import { createPath } from 'history/PathUtils';
 import App from './components/App';
-import createFetch from './createFetch';
 import history from './history';
 import { updateMeta } from './DOMUtils';
+import createApolloClient from './core/createApolloClient';
 import router from './router';
+
+const apolloClient = createApolloClient();
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
@@ -31,10 +34,8 @@ const context = {
       removeCss.forEach(f => f());
     };
   },
-  // Universal HTTP client
-  fetch: createFetch(fetch, {
-    baseUrl: window.App.apiUrl,
-  }),
+  // For react-apollo
+  client: apolloClient,
 };
 
 const container = document.getElementById('app');
@@ -162,3 +163,22 @@ if (module.hot) {
     onLocationChange(currentLocation);
   });
 }
+
+// This is a demonstration of how to mutate the client state of apollo-link-state.
+// If you don't need the networkState, please erase below lines.
+function onNetworkStatusChange() {
+  apolloClient.mutate({
+    mutation: gql`
+      mutation updateNetworkStatus($isConnected: Boolean) {
+        updateNetworkStatus(isConnected: $isConnected) @client
+      }
+    `,
+    variables: {
+      isConnected: navigator.onLine,
+    },
+  });
+}
+
+window.addEventListener('online', onNetworkStatusChange);
+window.addEventListener('offline', onNetworkStatusChange);
+onNetworkStatusChange();
