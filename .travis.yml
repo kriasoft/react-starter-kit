@@ -11,6 +11,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+cache: yarn
 script:
   - yarn lint
   - yarn test
