@@ -42,16 +42,16 @@ function getCachedExpr(expr, template) {
 }
 
 class StudyEntityView extends React.Component {
-  static defaultProps = {
-    value: null,
-    onChange: null,
-    onHeadersChange: null,
-  };
   static propTypes = {
     body: PropTypes.string.isRequired,
     value: PropTypes.instanceOf(Object),
     onChange: PropTypes.func,
     onHeadersChange: PropTypes.func,
+  };
+  static defaultProps = {
+    value: null,
+    onChange: null,
+    onHeadersChange: null,
   };
 
   constructor(props) {
@@ -118,7 +118,7 @@ class StudyEntityView extends React.Component {
         },
       },
       /**
-       * <pre></code class="javascript">
+       * <pre><code class="javascript">
        * ...
        * </code></pre>
        */
