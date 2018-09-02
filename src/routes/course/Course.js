@@ -22,11 +22,6 @@ import { addUserToCourse, deleteUserFromCourse } from '../../actions/courses';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
 
 class Course extends React.Component {
-  static contextTypes = {
-    store: PropTypes.any.isRequired,
-    fetch: PropTypes.func.isRequired,
-  };
-
   static propTypes = {
     title: PropTypes.string.isRequired,
     user: PropTypes.shape({
@@ -57,6 +52,11 @@ class Course extends React.Component {
         }),
       ),
     }).isRequired,
+  };
+
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
   };
 
   static defaultProps = {

@@ -25,11 +25,6 @@ import UsersList from '../../components/UsersList';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
 
 class Users extends React.Component {
-  static contextTypes = {
-    store: PropTypes.any.isRequired,
-    fetch: PropTypes.func.isRequired,
-  };
-
   static propTypes = {
     title: PropTypes.string.isRequired,
     users: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -38,6 +33,11 @@ class Users extends React.Component {
       id: PropTypes.string,
       title: PropTypes.string,
     }).isRequired,
+  };
+
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
   };
 
   constructor(props) {

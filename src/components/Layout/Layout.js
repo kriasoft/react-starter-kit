@@ -19,10 +19,6 @@ import Header from '../Header';
 import Footer from '../Footer';
 
 class Layout extends React.Component {
-  static contextTypes = {
-    store: PropTypes.any.isRequired,
-  };
-
   static propTypes = {
     children: PropTypes.node.isRequired,
     showStudyEntityHeaders: PropTypes.bool,
@@ -35,6 +31,10 @@ class Layout extends React.Component {
         }),
       ),
     ),
+  };
+
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
   };
 
   static defaultProps = {

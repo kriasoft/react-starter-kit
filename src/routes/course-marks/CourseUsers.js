@@ -14,11 +14,6 @@ import { Row, Col } from 'react-bootstrap';
 import s from './CourseUsers.css';
 
 class CourseUsers extends React.Component {
-  static contextTypes = {
-    store: PropTypes.any.isRequired,
-    fetch: PropTypes.func.isRequired,
-  };
-
   static propTypes = {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -29,6 +24,11 @@ class CourseUsers extends React.Component {
         }),
       ),
     }).isRequired,
+  };
+
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
   };
 
   render() {

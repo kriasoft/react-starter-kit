@@ -18,11 +18,6 @@ import { createCourse, fetchCourses } from '../../actions/courses';
 import CoursesList from '../../components/CoursesList';
 
 class Courses extends React.Component {
-  static contextTypes = {
-    store: PropTypes.any.isRequired,
-    fetch: PropTypes.func.isRequired,
-  };
-
   static propTypes = {
     title: PropTypes.string.isRequired,
     onSubmitClick: PropTypes.func.isRequired,
@@ -38,6 +33,11 @@ class Courses extends React.Component {
         title: PropTypes.string,
       }),
     ).isRequired,
+  };
+
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -114,6 +114,7 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(s)(Courses),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withStyles(s)(Courses));

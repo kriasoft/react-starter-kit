@@ -30,10 +30,6 @@ import { setStudyEntityHeaders } from '../../actions/study-entity';
 import s from './StudyEntity.css';
 
 class StudyEntity extends React.Component {
-  static contextTypes = {
-    store: PropTypes.any.isRequired,
-    fetch: PropTypes.func.isRequired,
-  };
   static propTypes = {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -44,6 +40,11 @@ class StudyEntity extends React.Component {
       title: PropTypes.string,
       body: PropTypes.string,
     }).isRequired,
+  };
+
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
   };
 
   constructor(props) {
