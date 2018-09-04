@@ -33,15 +33,17 @@ The `master` branch of React Starter Kit doesn't include a Flux implementation o
 advanced integrations. Nevertheless, we have some integrations available to you in _feature_
 branches that you can use either as a reference or merge into your project:
 
-* [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1084))
-  — isomorphic Redux by [Pavel Lang](https://github.com/langpavel)
-  (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
-* [feature/apollo](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1147))
-  — isomorphic Apollo Client by [Pavel Lang](https://github.com/langpavel)
-  (see [Tracking PR #1147](https://github.com/kriasoft/react-starter-kit/pull/1147)) (based on `feature/redux`)
-* [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1135))
-  — isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
-  (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/apollo`)
+  * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1084))
+    — isomorphic Redux by [Pavel Lang](https://github.com/langpavel)
+    (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
+  * [feature/apollo](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1147))
+    — isomorphic Apollo Client by [Pavel Lang](https://github.com/langpavel)
+    (see [Tracking PR #1147](https://github.com/kriasoft/react-starter-kit/pull/1147)) (based on `feature/redux`)
+  * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1135))
+    — isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
+    (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/apollo`)
+  * [feature/apollo-pure](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo-pure) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1664))
+    — bare Apollo codebase by [piglovesyou](https://github.com/piglovesyou) (based on `master`)
 
 You can see status of most reasonable merge combination as [PRs labeled as `TRACKING`](https://github.com/kriasoft/react-starter-kit/labels/TRACKING)
 
