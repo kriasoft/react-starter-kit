@@ -72,6 +72,13 @@ class Users extends React.Component {
     // this.context.store.dispatch(addGroup(data.createGroup));
   }
 
+  getUserGroupIds(user) {
+    return {
+      id: user.id,
+      groupId: this.props.group.id,
+    };
+  }
+
   async openUserGroupEditor(g) {
     this.context.store.dispatch(setGroup(g));
     this.setState({
@@ -82,16 +89,10 @@ class Users extends React.Component {
   async deleteUserFromGroup(user) {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation  deleteUserFromGroup($id: String, $groupId: String){
-          deleteUserFromGroup (
-            id: $id,
-            groupId: $groupId)
-            { id }
+        query: `mutation  deleteUserFromGroup($id: String, $groupId: String) {
+          deleteUserFromGroup(id: $id, groupId: $groupId) { id }
         }`,
-        variables: {
-          id: user.id,
-          groupId: this.props.group.id,
-        },
+        variables: this.getUserGroupIds(user),
       }),
     });
     this.context.store.dispatch(deleteUserFromGroup(this.props.group.id, user));
@@ -103,10 +104,7 @@ class Users extends React.Component {
         query: `mutation addUserToGroup($id:String, $groupId: String) {
           addUserToGroup(id: $id, groupId: $groupId) { id } 
         }`,
-        variables: {
-          id: user.id,
-          groupId: this.props.group.id,
-        },
+        variables: this.getUserGroupIds(user),
       }),
     });
     this.context.store.dispatch(addUserToGroup(this.props.group.id, user));
