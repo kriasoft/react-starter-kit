@@ -23,6 +23,12 @@ and newcomers to the industry.
   <sup><a href="https://x-team.com/join/?utm_source=reactstarterkit&utm_medium=github-link&utm_campaign=reactstarterkit-june">Hiring</a></sup>
 </p>
 
+### Environemnt ###
+  * [NodeJS](https://nodejs.org)
+  * [Yarn](http://yarnpkg.com/)
+  * [Git](https://git-scm.com)
+  * [Visual Studio Code](https://code.visualstudio.com)
+  * [DB Browser for SQLite](https://sqlitebrowser.org)
 
 ### Getting Started
 
