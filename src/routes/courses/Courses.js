@@ -72,7 +72,7 @@ class Courses extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  courses: state.courses,
+  courses: state.courses || [],
   user: state.user,
 });
 export default connect(
