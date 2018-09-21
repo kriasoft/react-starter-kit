@@ -15,9 +15,7 @@ import {
   MenuItem,
   Form,
   FormControl,
-  ControlLabel,
   FormGroup,
-  Col,
   Table,
 } from 'react-bootstrap';
 import _ from 'lodash';
@@ -444,42 +442,48 @@ class StudyEntity extends React.Component {
                 <th>Date</th>
               </tr>
             </thead>
-            <tbody>{marks}</tbody>
+            <tbody>
+              {marks}
+              <tr>
+                <td />
+                <td>
+                  <Form inline>
+                    <FormGroup
+                      controlId="Mark"
+                      validationState={this.getValidationState()}
+                    >
+                      <FormControl
+                        type="number"
+                        placeholder="Mark"
+                        value={this.state.mark}
+                        onChange={this.changeMark}
+                      />
+                    </FormGroup>
+                  </Form>
+                </td>
+                <td>
+                  <Form inline>
+                    <FormGroup controlId="Comment">
+                      <FormControl
+                        type="text"
+                        placeholder="Comment"
+                        value={this.state.comment}
+                        onChange={this.changeComment}
+                      />
+                    </FormGroup>
+                  </Form>
+                </td>
+                <td>
+                  {this.getValidationState() === 'success' ? (
+                    <Button onClick={this.addMark}>
+                      <Glyphicon glyph="ok" />
+                    </Button>
+                  ) : null}
+                </td>
+              </tr>
+            </tbody>
           </Table>
           {/* Form for setting marks and making a comment */}
-          <Form horizontal>
-            <FormGroup controlId="Comment">
-              <Col sm={10}>
-                <FormControl
-                  type="text"
-                  placeholder="Comment"
-                  value={this.state.comment}
-                  onChange={this.changeComment}
-                />
-              </Col>
-            </FormGroup>
-            <ControlLabel>Set mark</ControlLabel>
-            <FormGroup
-              controlId="Mark"
-              validationState={this.getValidationState()}
-            >
-              <Col sm={2}>
-                <FormControl
-                  type="number"
-                  placeholder="Mark"
-                  value={this.state.mark}
-                  onChange={this.changeMark}
-                />
-              </Col>
-              <Col sm={2}>
-                {this.getValidationState() === 'success' ? (
-                  <Button onClick={this.addMark}>
-                    <Glyphicon glyph="ok" />
-                  </Button>
-                ) : null}
-              </Col>
-            </FormGroup>
-          </Form>
         </div>
       );
     }
