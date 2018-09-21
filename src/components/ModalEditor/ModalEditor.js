@@ -27,7 +27,9 @@ const ModalEditor = ({
       </div>
     </Modal.Body>
     <Modal.Footer>
-      <Button onClick={onSubmitClick}>Add {title}</Button>
+      <Button disabled={studyEntityName.length === 0} onClick={onSubmitClick}>
+        Add {title}
+      </Button>
       <Button onClick={handleClose}>Close</Button>
     </Modal.Footer>
   </Modal>

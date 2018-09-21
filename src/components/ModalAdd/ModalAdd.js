@@ -17,7 +17,9 @@ const ModalAdd = ({
       <div />
     </Modal.Body>
     <Modal.Footer>
-      <Button onClick={onSubmitClick}>Add {title}</Button>
+      <Button disabled={value.length === 0} onClick={onSubmitClick}>
+        Add {title}
+      </Button>
       <Button onClick={handleClose}>Close</Button>
     </Modal.Footer>
   </Modal>
