@@ -22,6 +22,11 @@ import {
   queries as DatabaseQueries,
 } from './graphql/Database/schema';
 
+import {
+  schema as TimestampSchema,
+  resolvers as TimestampResolvers,
+} from './graphql/Scalar/Timestamp';
+
 const RootQuery = [
   `
   # # React-Starter-Kit Querying API
@@ -68,10 +73,11 @@ const SchemaDefinition = [
 
 // Merge all of the resolver objects together
 // Put schema together into one array of schema strings
-const resolvers = merge(NewsResolvers, DatabaseResolvers);
+const resolvers = merge(NewsResolvers, DatabaseResolvers, TimestampResolvers);
 
 const schema = [
   ...SchemaDefinition,
+  ...TimestampSchema,
   ...RootQuery,
   ...Mutation,
 
