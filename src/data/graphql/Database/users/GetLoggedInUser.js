@@ -9,15 +9,15 @@ export const queries = [
 
 export const resolvers = {
   RootQuery: {
-    async databaseGetLoggedInUser(parent, args, context) {
+    async databaseGetLoggedInUser(parent, args, { req }) {
       // Throw error if user is not authenticated
-      if (!context.user) {
+      if (!req.user) {
         return null;
       }
 
       // Find logged in user from database
       const dbUser = await User.findOne({
-        where: { email: context.user.email },
+        where: { email: req.user.email },
         include: [
           { model: UserLogin, as: 'logins' },
           { model: UserClaim, as: 'claims' },
