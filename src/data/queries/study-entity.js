@@ -20,20 +20,28 @@ const createStudyEntity = {
     },
   },
   async resolve({ request }, args) {
-    if (!request.user) throw new Error('User is not logged in');
-    const role = await request.user.getRole(args.courseId);
-    if (!request.user.isAdmin && (!role || role !== 'teacher'))
-      throw new Error("User doesn't have rights to edit this course");
-    let c;
-    return Course.findById(args.courseId)
-      .then(course => {
-        c = course;
-        return StudyEntity.create({ title: args.title, body: args.body });
-      })
-      .then(studyEntity => {
-        studyEntity.setCourses([c]);
-        return studyEntity.save();
-      });
+    try {
+      if (!request.user) throw new Error('User is not logged in');
+      const role = await request.user.getRole(args.courseId);
+      if (!request.user.isAdmin && (!role || role !== 'teacher'))
+        throw new Error("User doesn't have rights to edit this course");
+      let c;
+      return Course.findById(args.courseId)
+        .then(course => {
+          c = course;
+          return StudyEntity.create({ title: args.title, body: args.body });
+        })
+        .then(studyEntity => {
+          studyEntity.setCourses([c]);
+          return studyEntity.save();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   },
 };
 

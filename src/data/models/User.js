@@ -80,7 +80,7 @@ User.createUser = function createUser(args) {
   );
 };
 
-User.prototype.getRole = async courseId => {
+User.prototype.getRole = async function userGetRole(courseId) {
   const course = await Course.findById(courseId, {
     where: {
       '$users.Id$': this.id,
@@ -96,14 +96,14 @@ User.prototype.getRole = async courseId => {
   return _.get(course, 'users[0].UserCourse.role');
 };
 
-User.prototype.setPassword = async newPassword => {
+User.prototype.setPassword = async function userNewPassword(pass) {
   // TODO: fix this == undefined
   const claims = await UserClaim.find({
     where: { userId: this.id, type: 'local' },
   });
   const claim = claims[0];
   if (claim) {
-    claim.value = User.hashPassword(newPassword);
+    claim.value = User.hashPassword(pass);
     await claim.save();
   }
 };
