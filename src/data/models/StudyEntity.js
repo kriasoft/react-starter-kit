@@ -15,6 +15,10 @@ const StudyEntity = Model.define('StudyEntity', {
   body: {
     type: DataType.STRING,
   },
+
+  schema: {
+    type: DataType.STRING,
+  },
 });
 
 export default StudyEntity;
