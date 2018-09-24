@@ -58,7 +58,9 @@ git add FILE_NAME
 
 (keep in mind that usually we don't commit file `database.sqlite`)
 
-To commit your changes into local repo type (replace `COMMIT MESSAGE` with short description of what you've changed):
+To commit your changes into local repo type (replace `COMMIT MESSAGE` with short description of what you've changed).
+
+If you are working on known issue, don't forget to add "`(close #N)`" in the end of your message (N - number of issue).
 
 ```bash
 git commit -m "COMMIT MESSAGE"
