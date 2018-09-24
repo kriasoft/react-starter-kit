@@ -37,6 +37,11 @@ import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
 import config from './config';
 import models, { User, File } from './data/models';
+import sequelize from './data/sequelize';
+
+const SequelizeStore = require('connect-session-sequelize')(
+  expressSession.Store,
+);
 
 process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled Rejection at:', p, 'reason:', reason);
@@ -69,6 +74,7 @@ app.use(bodyParser.json());
 app.use(
   expressSession({
     secret: 'keyboard cat',
+    store: new SequelizeStore({ db: sequelize }),
     resave: false,
     saveUninitialized: true,
   }),
