@@ -1,13 +1,13 @@
-# Necessary apps
+## Necessary apps
 
 1.  [Visual Studio Code](https://code.visualstudio.com)
 2.  [Nodejs](https://nodejs.org/en/)
 3.  [Yarn](https://yarnpkg.com/en/)
 4.  [SqliteDB Browser](http://sqlitebrowser.org)
 
-# ISU proxy config
+## ISU proxy config
 
-## Enable
+### Enable
 
 Git proxy setup
 
@@ -22,7 +22,7 @@ yarn config set proxy http://proxy.isu.ru:3128
 yarn config set https-proxy http://proxy.isu.ru:3128
 ```
 
-## Disable
+### Disable
 
 Git remove proxy
 
