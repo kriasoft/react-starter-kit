@@ -423,9 +423,8 @@ class StudyEntity extends React.Component {
             <td>{mark.mark}</td>
             <td>{mark.comment}</td>
             <td>
-              {moment(mark.createdAt).fromNow()} ({moment(
-                mark.createdAt,
-              ).format('llll')})
+              {moment(mark.createdAt).fromNow()} (
+              {moment(mark.createdAt).format('llll')})
             </td>
           </tr>
         ),
@@ -494,7 +493,8 @@ class StudyEntity extends React.Component {
           <h1>
             <a href={`/courses/${this.props.course.id}`}>
               {this.props.course.title}
-            </a>/{headerComponent}
+            </a>
+            /{headerComponent}
             {answerChooser}
           </h1>
           {bodyComponent}

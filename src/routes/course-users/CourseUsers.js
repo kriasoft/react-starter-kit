@@ -37,9 +37,8 @@ class CourseUsers extends React.Component {
     for (let i = 0; i < users.length; i += 1) {
       usersList.push(
         <li key={users[i].id}>
-          <a href={`/users/${users[i].id}`}>{users[i].email}</a> ({
-            users[i].role
-          })
+          <a href={`/users/${users[i].id}`}>{users[i].email}</a> (
+          {users[i].role})
         </li>,
       );
     }
