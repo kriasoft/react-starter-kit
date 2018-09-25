@@ -9,23 +9,23 @@
 
 import React from 'react';
 import {
-  Button,
-  Glyphicon,
-  DropdownButton,
-  MenuItem,
   Form,
   FormControl,
   FormGroup,
-  Table,
+  Button,
+  DropdownButton,
+  MenuItem,
 } from 'react-bootstrap';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as moment from 'moment';
+import { connect } from 'react-redux';
 import TextEditor from '../../components/TextEditor';
+import MarksTable from '../../components/MarksTable';
 import StudyEntityView from '../../components/StudyEntityView';
 import { setStudyEntityHeaders } from '../../actions/study-entity';
 import s from './StudyEntity.css';
+import IconButton from '../../components/IconButton/IconButton';
 
 class StudyEntity extends React.Component {
   static propTypes = {
@@ -33,6 +33,12 @@ class StudyEntity extends React.Component {
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
     }).isRequired,
+    setStudyEntityHeaders: PropTypes.func.isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      email: PropTypes.string,
+      role: PropTypes.string,
+    }),
     studyEntity: PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
@@ -41,8 +47,15 @@ class StudyEntity extends React.Component {
   };
 
   static contextTypes = {
-    store: PropTypes.any.isRequired,
     fetch: PropTypes.func.isRequired,
+  };
+
+  static defaultProps = {
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      email: PropTypes.string,
+      role: PropTypes.string,
+    }),
   };
 
   constructor(props) {
@@ -55,7 +68,6 @@ class StudyEntity extends React.Component {
       mark: 0,
       comment: '',
       answer: {},
-      role: '',
     };
     this.switchMode = this.switchMode.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
@@ -71,11 +83,10 @@ class StudyEntity extends React.Component {
     this.updateHeaders = this.updateHeaders.bind(this);
   }
 
-  async componentWillMount() {
-    if (this.context.store.getState().user) {
+  async componentDidMount() {
+    const { user } = this.props;
+    if (user) {
       this.retrieveAnswer();
-      const role = await this.getUserRole();
-      this.setState({ role });
     }
   }
 
@@ -83,29 +94,6 @@ class StudyEntity extends React.Component {
     const { mark } = this.state;
     if (mark <= 100 && mark >= 0) return 'success';
     return 'error';
-  }
-
-  async getUserRole() {
-    const resp = await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: `query getUserRole(
-          $courseIds: [String],
-          $userId: [String]
-        ){
-          courses(ids: $courseIds){
-            users(ids: $userId) {
-              role,
-            }
-          }  
-        }`,
-        variables: {
-          courseIds: [this.props.course.id],
-          userId: [this.context.store.getState().user.id],
-        },
-      }),
-    });
-    const { data } = await resp.json();
-    return _.get(data, 'courses[0].users[0].role');
   }
 
   changeTitle(event) {
@@ -129,6 +117,7 @@ class StudyEntity extends React.Component {
   }
 
   async uploadFile(key, file) {
+    const { user } = this.props;
     const formData = new FormData();
     formData.append(
       'query',
@@ -139,7 +128,7 @@ class StudyEntity extends React.Component {
     formData.append(
       'variables',
       JSON.stringify({
-        userId: this.context.store.getState().user.id,
+        userId: user.id,
         internalName: file.name,
       }),
     );
@@ -168,6 +157,7 @@ class StudyEntity extends React.Component {
   }
 
   async saveAnswer() {
+    const { user, course, studyEntity } = this.props;
     if (this.state.answerId) {
       const answer = await this.postProcessAnswer(this.state.answer);
       await this.context.fetch('/graphql', {
@@ -209,9 +199,9 @@ class StudyEntity extends React.Component {
           }`,
           variables: {
             body: JSON.stringify(this.state.answer),
-            courseId: this.props.course.id,
-            userId: this.context.store.getState().user.id,
-            studyEntityId: this.props.studyEntity.id,
+            courseId: course.id,
+            userId: user.id,
+            studyEntityId: studyEntity.id,
           },
         }),
       });
@@ -254,6 +244,8 @@ class StudyEntity extends React.Component {
   }
 
   async addMark() {
+    const { user } = this.props;
+    const { mark, comment, answerId } = this.state;
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation addMark($mark: Float, $comment: String, $answerId: String, $authorId: String) {
@@ -267,10 +259,10 @@ class StudyEntity extends React.Component {
           }     
         }`,
         variables: {
-          mark: this.state.mark,
-          comment: this.state.comment,
-          answerId: this.state.answerId,
-          authorId: this.context.store.getState().user.id,
+          mark,
+          comment,
+          answerId,
+          authorId: user.id,
         },
       }),
     });
@@ -281,6 +273,7 @@ class StudyEntity extends React.Component {
   }
 
   async retrieveAnswer() {
+    const { user, course, studyEntity } = this.props;
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `query retrieveAnswers (
@@ -305,11 +298,9 @@ class StudyEntity extends React.Component {
           }            
         }`,
         variables: {
-          userIds: !this.context.store.getState().user.isAdmin
-            ? [this.context.store.getState().user.id]
-            : null,
-          studyEntityIds: [this.props.studyEntity.id],
-          courseIds: [this.props.course.id],
+          userIds: !user.isAdmin && [user.id],
+          studyEntityIds: [studyEntity.id],
+          courseIds: [course.id],
         },
       }),
     });
@@ -339,10 +330,11 @@ class StudyEntity extends React.Component {
   }
 
   updateHeaders(headers) {
-    this.context.store.dispatch(setStudyEntityHeaders(headers));
+    this.props.setStudyEntityHeaders(headers);
   }
 
   render() {
+    const { user } = this.props;
     let bodyComponent;
     let headerComponent;
     if (this.state.editMode) {
@@ -356,12 +348,8 @@ class StudyEntity extends React.Component {
             type="text"
             onChange={this.changeTitle}
           />
-          <Button onClick={this.save}>
-            <Glyphicon glyph="ok" />
-          </Button>
-          <Button onClick={this.cancel}>
-            <Glyphicon glyph="remove" />
-          </Button>
+          <IconButton onClick={this.save} glyph="ok" />
+          <IconButton onClick={this.cancel} glyph="remove" />
         </span>
       );
     } else {
@@ -374,25 +362,18 @@ class StudyEntity extends React.Component {
             onChange={this.changeAnswer}
             onHeadersChange={this.updateHeaders}
           />
-          {this.context.store.getState().user ? (
-            <Button onClick={this.saveAnswer}>Save</Button>
-          ) : (
-            undefined
-          )}
+          {user && <Button onClick={this.saveAnswer}>Save</Button>}
         </span>
       );
       headerComponent = (
         <span>
           {this.state.title}
-          {this.state.role === 'teacher' ? (
-            <Button onClick={this.switchMode}>
-              <Glyphicon glyph="pencil" />
-            </Button>
-          ) : null}
+          {user.role === 'teacher' && (
+            <IconButton onClick={this.switchMode} glyph="pencil" />
+          )}
         </span>
       );
     }
-    const { user } = this.context.store.getState();
     let answerChooser;
     let markView;
     if (user && user.isAdmin && this.state.answers) {
@@ -431,18 +412,8 @@ class StudyEntity extends React.Component {
       );
       markView = (
         <div>
-          <h3>Marks list</h3>
-          <Table striped bordered condensed hover>
-            <thead>
-              <tr>
-                <th>N</th>
-                <th>Mark</th>
-                <th>Comment</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {marks}
+          <MarksTable marks={marks}>
+            {() => (
               <tr>
                 <td />
                 <td>
@@ -473,15 +444,13 @@ class StudyEntity extends React.Component {
                   </Form>
                 </td>
                 <td>
-                  {this.getValidationState() === 'success' ? (
-                    <Button onClick={this.addMark}>
-                      <Glyphicon glyph="ok" />
-                    </Button>
-                  ) : null}
+                  {this.getValidationState() === 'success' && (
+                    <IconButton onClick={this.addMark} glyph="ok" />
+                  )}
                 </td>
               </tr>
-            </tbody>
-          </Table>
+            )}
+          </MarksTable>
           {/* Form for setting marks and making a comment */}
         </div>
       );
@@ -505,4 +474,12 @@ class StudyEntity extends React.Component {
   }
 }
 
-export default withStyles(s)(StudyEntity);
+const mapStateToProps = state => ({
+  user: state.user,
+  lol: state.studyEntities,
+});
+
+export default connect(
+  mapStateToProps,
+  { setStudyEntityHeaders },
+)(withStyles(s)(StudyEntity));

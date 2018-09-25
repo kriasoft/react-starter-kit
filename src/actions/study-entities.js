@@ -2,7 +2,7 @@
 
 import { ADD_STUDY_ENTITY, SET_STUDY_ENTITIES } from '../constants';
 
-export function addStudyEntity({ id, title }) {
+export function addStudyEntity(id, title) {
   return {
     type: ADD_STUDY_ENTITY,
     data: {

@@ -28,7 +28,7 @@ async function action({ fetch, params }) {
   });
   const { data } = await resp.json();
   if (!data && !data.courses.length && !data.studyEntities.length)
-    throw new Error('Failed to load course.');
+    throw new Error('Failed to load study entity.');
   return {
     title,
     component: (
