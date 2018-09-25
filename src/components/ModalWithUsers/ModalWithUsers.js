@@ -1,53 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button, Table } from 'react-bootstrap';
+import { Modal, Button, Grid, Row, Col } from 'react-bootstrap';
+import UsersTable from '../UsersTable/UsersTable';
 
 class ModalWithUsers extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    titleLeft: PropTypes.string.isRequired,
     usersLeft: PropTypes.element.isRequired,
-    titleRight: PropTypes.string.isRequired,
     usersRight: PropTypes.element.isRequired,
   };
   render() {
-    const {
-      show,
-      handleClose,
-      titleLeft,
-      usersLeft,
-      titleRight,
-      usersRight,
-    } = this.props;
+    const { show, handleClose, usersLeft, usersRight } = this.props;
 
     return (
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <div className="row">
-            <div className="col-md-6">
-              <h4>{titleLeft}</h4>
-              <Table striped bordered condensed hover>
-                <thead>
-                  <tr>
-                    <th>User email</th>
-                  </tr>
-                </thead>
-                <tbody>{usersLeft}</tbody>
-              </Table>
-            </div>
-            <div className="col-md-6">
-              <h4>{titleRight}</h4>
-              <Table striped bordered condensed hover>
-                <thead>
-                  <tr>
-                    <th>User email</th>
-                  </tr>
-                </thead>
-                <tbody>{usersRight}</tbody>
-              </Table>
-            </div>
-          </div>
+          <Grid fluid>
+            <Row>
+              <Col md={6}>
+                <h4>Subscribed</h4>
+                <UsersTable users={usersLeft} />
+              </Col>
+              <Col md={6}>
+                <h4>Unsubscribed</h4>
+                <UsersTable users={usersRight} />
+              </Col>
+            </Row>
+          </Grid>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={handleClose}>Close</Button>

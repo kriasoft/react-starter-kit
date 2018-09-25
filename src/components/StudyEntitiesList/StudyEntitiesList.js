@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const StudyEntitiesList = ({ course, studyEntities }) => (
+const StudyEntitiesList = ({ courseId, studyEntities }) => (
   <ol>
-    {studyEntities.map(se => (
-      <li key={se.id}>
-        <a href={`/courses/${course.id}/${se.id}`}>{se.title}</a>
+    {studyEntities.map(({ id, title }) => (
+      <li key={id}>
+        <a href={`/courses/${courseId}/${id}`}>{title}</a>
       </li>
     ))}
   </ol>
@@ -18,16 +18,7 @@ StudyEntitiesList.propTypes = {
       title: PropTypes.string,
     }),
   ).isRequired,
-  course: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    studyEntities: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        title: PropTypes.string,
-      }),
-    ),
-  }).isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
 export default StudyEntitiesList;

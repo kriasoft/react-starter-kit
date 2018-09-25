@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 const CoursesList = ({ courses }) => (
   <ol>
-    {courses.map(c => (
-      <li key={c.id}>
-        <a href={`/courses/${c.id}`}>{c.title} </a>
+    {courses.map(({ id, title }) => (
+      <li key={id}>
+        <a href={`/courses/${id}`}>{title} </a>
       </li>
     ))}
   </ol>
