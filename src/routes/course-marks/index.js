@@ -20,7 +20,7 @@ async function action({ fetch, params }) {
         courses(ids: $ids) { id, title, studyEntities {
           id,
           title
-        } 
+        }
         answers ( studyEntityIds:$studyEntityIds){
           id,
           marks {
