@@ -7,7 +7,7 @@ import {
 
 const MarkType = new ObjectType({
   name: 'MarkType',
-  fields: {
+  fields: () => ({
     id: { type: new NonNull(StringType) },
     mark: { type: new NonNull(FloatType) },
     comment: { type: new NonNull(StringType) },
@@ -15,7 +15,7 @@ const MarkType = new ObjectType({
       type: StringType,
       resolve: mark => mark.createdAt.toISOString(),
     },
-  },
+  }),
 });
 
 export default MarkType;

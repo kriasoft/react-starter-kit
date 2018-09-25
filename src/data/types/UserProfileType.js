@@ -16,14 +16,14 @@ import {
 
 const UserProfileType = new ObjectType({
   name: 'UserProfileType',
-  fields: {
+  fields: () => ({
     userId: { type: new NonNull(ID) },
     displayName: { type: new NonNull(StringType) },
     picture: { type: new NonNull(StringType) },
     gender: { type: new NonNull(StringType) },
     location: { type: new NonNull(StringType) },
     website: { type: new NonNull(StringType) },
-  },
+  }),
 });
 
 export default UserProfileType;

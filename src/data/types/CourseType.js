@@ -12,7 +12,7 @@ import User from '../models/User';
 
 const CourseType = new ObjectType({
   name: 'CourseType',
-  fields: {
+  fields: () => ({
     id: { type: new NonNull(StringType) },
     title: { type: new NonNull(StringType) },
     studyEntities: {
@@ -50,7 +50,7 @@ const CourseType = new ObjectType({
           })),
         ),
     },
-  },
+  }),
 });
 
 export default CourseType;

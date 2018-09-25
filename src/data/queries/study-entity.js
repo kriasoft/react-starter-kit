@@ -7,15 +7,15 @@ const createStudyEntity = {
   type: StudyEntityType,
   args: {
     title: {
-      description: 'The title of the new StudyEntity',
+      description: 'The title of the new unit',
       type: StringType,
     },
     courseId: {
-      description: 'Id of the course',
+      description: 'Id of the unit',
       type: StringType,
     },
     body: {
-      description: 'body of the course',
+      description: 'body of the unit',
       type: StringType,
     },
   },

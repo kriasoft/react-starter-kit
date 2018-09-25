@@ -15,10 +15,10 @@ import {
 
 const UserLoginType = new ObjectType({
   name: 'UserLoginType',
-  fields: {
+  fields: () => ({
     name: { type: new NonNull(StringType) },
     key: { type: new NonNull(StringType) },
-  },
+  }),
 });
 
 export default UserLoginType;

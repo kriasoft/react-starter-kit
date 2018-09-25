@@ -15,10 +15,10 @@ import {
 
 const UserClaimType = new ObjectType({
   name: 'UserClaimType',
-  fields: {
+  fields: () => ({
     type: { type: new NonNull(StringType) },
     value: { type: new NonNull(StringType) },
-  },
+  }),
 });
 
 export default UserClaimType;

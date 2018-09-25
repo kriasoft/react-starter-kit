@@ -7,7 +7,7 @@ import UserType from './UserType';
 
 const FileType = new ObjectType({
   name: 'FileType',
-  fields: {
+  fields: () => ({
     id: { type: new NonNull(StringType) },
     url: { type: new NonNull(StringType) },
     internalName: { type: new NonNull(StringType) },
@@ -19,7 +19,7 @@ const FileType = new ObjectType({
       type: StringType,
       resolve: file => file.createdAt.toISOString(),
     },
-  },
+  }),
 });
 
 export default FileType;

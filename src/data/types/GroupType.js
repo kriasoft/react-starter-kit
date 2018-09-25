@@ -11,7 +11,7 @@ import UserGroup from '../models/UserGroup';
 
 const GroupType = new ObjectType({
   name: 'GroupType',
-  fields: {
+  fields: () => ({
     id: { type: new NonNull(StringType) },
     title: {
       type: new NonNull(StringType),
@@ -39,7 +39,7 @@ const GroupType = new ObjectType({
           })),
         ),
     },
-  },
+  }),
 });
 
 export default GroupType;

@@ -22,7 +22,7 @@ import UserClaimType from './UserClaimType';
 
 const UserType = new ObjectType({
   name: 'UserType',
-  fields: {
+  fields: () => ({
     id: { type: new NonNull(ID) },
     email: { type: StringType },
     isAdmin: { type: Boolean },
@@ -42,7 +42,7 @@ const UserType = new ObjectType({
       type: new NonNull(UserProfileType),
       resolve: user => user.getProfile(),
     },
-  },
+  }),
 });
 
 export default UserType;

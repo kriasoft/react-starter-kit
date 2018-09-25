@@ -9,7 +9,7 @@ import UserType from './UserType';
 
 const AnswerType = new ObjectType({
   name: 'AnswerType',
-  fields: {
+  fields: () => ({
     id: { type: new NonNull(StringType) },
     body: { type: new NonNull(StringType) },
     marks: {
@@ -24,7 +24,7 @@ const AnswerType = new ObjectType({
       type: StringType,
       resolve: answer => answer.createdAt.toISOString(),
     },
-  },
+  }),
 });
 
 export default AnswerType;
