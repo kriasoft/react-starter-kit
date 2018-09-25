@@ -89,6 +89,7 @@ module.exports = {
     'prettier/prettier': 'error',
 
     'no-param-reassign': 'off',
+    'no-return-assign': 'off',
   },
 
   settings: {
