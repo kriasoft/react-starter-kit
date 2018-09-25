@@ -13,7 +13,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
 import s from './Courses.css';
 import ModalAdd from '../../components/ModalAdd';
-import AddNewButton from '../../components/AddNewButton';
+import IconButton from '../../components/IconButton';
 import { createCourse, fetchCourses } from '../../actions/courses';
 import CoursesList from '../../components/CoursesList';
 
@@ -77,9 +77,12 @@ class Courses extends React.Component {
           <div>
             <h1>
               {title}
-              {user ? (
-                <AddNewButton onClick={() => this.setState({ show: true })} />
-              ) : null}
+              {user && (
+                <IconButton
+                  onClick={() => this.setState({ show: true })}
+                  glyph="plus"
+                />
+              )}
             </h1>
           </div>
           <CoursesList courses={courses} />

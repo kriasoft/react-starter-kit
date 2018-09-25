@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Button, Glyphicon } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import User from '../../components/User';
@@ -23,6 +23,7 @@ import {
 } from '../../actions/groups';
 import UsersList from '../../components/UsersList';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
+import IconButton from '../../components/IconButton/IconButton';
 
 class Users extends React.Component {
   static propTypes = {
@@ -183,9 +184,10 @@ class Users extends React.Component {
             <p>{g.title} </p>
           </Col>
           <Col md={4}>
-            <Button onClick={() => this.openUserGroupEditor(g)}>
-              <Glyphicon glyph="pencil" />
-            </Button>
+            <IconButton
+              onClick={() => this.openUserGroupEditor(g)}
+              glyph="pencil"
+            />
           </Col>
         </Row>
       </ul>
