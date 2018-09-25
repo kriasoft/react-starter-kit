@@ -158,8 +158,8 @@ class StudyEntity extends React.Component {
 
   async saveAnswer() {
     const { user, course, studyEntity } = this.props;
+    const answer = await this.postProcessAnswer(this.state.answer);
     if (this.state.answerId) {
-      const answer = await this.postProcessAnswer(this.state.answer);
       await this.context.fetch('/graphql', {
         body: JSON.stringify({
           query: `mutation update(
@@ -171,7 +171,7 @@ class StudyEntity extends React.Component {
               id: $id
             ){
               id
-            }            
+            }
           }`,
           variables: {
             body: JSON.stringify(answer),
@@ -195,10 +195,10 @@ class StudyEntity extends React.Component {
               studyEntityId: $studyEntityId
             ){
               id
-            }            
+            }
           }`,
           variables: {
-            body: JSON.stringify(this.state.answer),
+            body: JSON.stringify(answer),
             courseId: course.id,
             userId: user.id,
             studyEntityId: studyEntity.id,

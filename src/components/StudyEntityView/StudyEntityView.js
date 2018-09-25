@@ -41,6 +41,48 @@ function getCachedExpr(expr, template) {
   return EXPR_CACHE[expr];
 }
 
+class BaseProcessingInstruction {
+  constructor(root, tag, filterAttrs) {
+    this.tag = tag;
+    this.filterAttrs = filterAttrs || {};
+    this.root = root;
+  }
+
+  shouldProcessNode(node) {
+    if (node.name !== this.tag || !_.get(node, 'attribs.name')) return false;
+    return Object.keys(this.filterAttrs).every(
+      k => _.get(node, `attribs.${k}`) === this.filterAttrs[k],
+    );
+  }
+}
+
+/**
+ * <input type=file name=...>
+ */
+class InputFilePI extends BaseProcessingInstruction {
+  constructor(root) {
+    super(root, 'input', { type: 'file' });
+  }
+
+  processNode(node, children, index) {
+    const name = _.get(node, 'attribs.name');
+    const renderAttrs = inputRenderAttrs(node, children, index);
+    return (
+      <div className={s.inputFile}>
+        {_.get(this.root.state.answers[name], 'id')}
+        <button onClick={() => this.ref.click()}>upload new file</button>
+        <input
+          ref={ref => (this.ref = ref)}
+          {...renderAttrs}
+          onChange={event =>
+            this.root.updateAnswer(name, event.target.files[0])
+          }
+        />
+      </div>
+    );
+  }
+}
+
 class StudyEntityView extends React.Component {
   static propTypes = {
     body: PropTypes.string.isRequired,
@@ -218,25 +260,7 @@ class StudyEntityView extends React.Component {
           return <input {...renderAttrs} {...valueAttrs} />;
         },
       },
-      /**
-       * <input type=file name=...>
-       */
-      {
-        shouldProcessNode: node =>
-          node.name === 'input' &&
-          _.get(node, 'attribs.name') &&
-          _.get(node, 'attribs.type') === 'file',
-        processNode: (node, children, index) => {
-          const name = _.get(node, 'attribs.name');
-          const renderAttrs = inputRenderAttrs(node, children, index);
-          return (
-            <input
-              {...renderAttrs}
-              onChange={event => this.updateAnswer(name, event.target.files[0])}
-            />
-          );
-        },
-      },
+      new InputFilePI(this),
       /**
        * gathering info about H0..6 tags
        */
