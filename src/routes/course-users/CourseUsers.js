@@ -32,23 +32,21 @@ class CourseUsers extends React.Component {
   };
 
   render() {
-    const usersList = [];
     const { users } = this.props.course;
-    for (let i = 0; i < users.length; i += 1) {
-      usersList.push(
-        <li key={users[i].id}>
-          <a href={`/users/${users[i].id}`}>{users[i].email}</a> (
-          {users[i].role})
-        </li>,
-      );
-    }
     return (
       <div className={s.root}>
         <div className={s.container}>
           <Row>
             <h2>Subscribed to {this.props.course.title}:</h2>
             <Col xs={12} md={10}>
-              <ol>{usersList}</ol>
+              <ol>
+                {users.map(user => (
+                  <li key={user.id}>
+                    <a href={`/users/${user.id}`}>{user.email}</a> (
+                    {user.role})
+                  </li>
+                ))}
+              </ol>
             </Col>
           </Row>
         </div>

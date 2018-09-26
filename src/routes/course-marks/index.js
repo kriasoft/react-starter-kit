@@ -16,18 +16,21 @@ const title = 'Users of Course';
 async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `query courses($ids: [String],$studyEntityIds:[String]) {
-        courses(ids: $ids) { id, title, studyEntities {
+      query: `query courses($ids: [String]) {
+        courses(ids: $ids) { id, title, 
+          studyEntities {
           id,
           title
-        }
-        answers ( studyEntityIds:$studyEntityIds){
-          id,
-          marks {
-            id, mark
+          answers{
+            id,
+            marks{
+              id,
+              mark,
+              createdAt,
+              }
+            }
           }
         }
-      }
       }`,
       variables: {
         ids: params.idCourse,
