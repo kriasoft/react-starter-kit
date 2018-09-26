@@ -24,9 +24,16 @@ Open bash/cmd or any other terminal app and type (http...-value is in your clipb
 git clone https://github.com/YOUR_NAME/ndo.git
 ```
 
+Configure upstream:
+
+```bash
+cd ndo
+git remote add upstream https://github.com/fkn/ndo.git
+```
+
 ### Add new terrific features
 
-Codking magic.
+Coding magic.
 
 ### Commit it
 
