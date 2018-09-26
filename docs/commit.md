@@ -90,5 +90,5 @@ Usually it's enough to run this commands:
 ```bash
 git fetch upstream
 git checkout master
-git merge upstream/master
+git rebase upstream/master
 ```
