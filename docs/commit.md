@@ -75,3 +75,13 @@ git push origin master
 ### Create pull request
 
 Open page https://github.com/fkn/ndo/pulls and click "New pull request". Follow instructions and create new pull request.
+
+## Sync with upstream
+
+Usually it's enough to run this commands:
+
+```bash
+git fetch upstream
+git checkout master
+git merge upstream/master
+```
