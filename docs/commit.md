@@ -37,7 +37,7 @@ Coding magic.
 
 ### Commit it
 
-To check what's your changes type:
+To check your changes type:
 
 ```bash
 git status
