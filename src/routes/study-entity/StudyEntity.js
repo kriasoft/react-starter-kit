@@ -221,8 +221,8 @@ class StudyEntity extends React.Component {
             id: $id,
             body: $body,
           ){
-            id,title  
-          }            
+            id,title
+          }
         }`,
         variables: {
           title: this.state.title,
@@ -253,10 +253,10 @@ class StudyEntity extends React.Component {
             mark: $mark,
             comment: $comment,
             answerId: $answerId,
-            authorId: $authorId,            
+            authorId: $authorId,
           ) {
             id
-          }     
+          }
         }`,
         variables: {
           mark,
@@ -289,16 +289,16 @@ class StudyEntity extends React.Component {
             id, body, marks {
               id, mark, comment, createdAt
             },
-            user { 
+            user {
               id, profile {
                 displayName
               }
             },
             createdAt
-          }            
+          }
         }`,
         variables: {
-          userIds: !user.isAdmin && [user.id],
+          userIds: (!user.isAdmin && [user.id]) || null,
           studyEntityIds: [studyEntity.id],
           courseIds: [course.id],
         },
