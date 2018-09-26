@@ -20,6 +20,7 @@ import { addStudyEntity } from '../../actions/study-entities';
 import { addUserToCourse, deleteUserFromCourse } from '../../actions/courses';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
 import IconButton from '../../components/IconButton/IconButton';
+import ModalAdd from '../../components/ModalAdd';
 
 class Course extends React.Component {
   static propTypes = {
@@ -68,6 +69,8 @@ class Course extends React.Component {
       showModalSubscribe: false,
       studyEntityName: '',
       subscribedUsersList: [],
+      showModalAdd: false,
+      courseName: props.title,
     };
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -107,7 +110,9 @@ class Course extends React.Component {
   closeModalStudyEntity = () => {
     this.setState({ showModalEditor: false });
   };
-
+  closeModalAdd = () => {
+    this.setState({ showModalAdd: false });
+  };
   async addUserToCourse(user, role) {
     const { id } = this.props;
     const userRole = {
@@ -227,6 +232,14 @@ class Course extends React.Component {
                 glyph="plus"
               />
             )}
+            {user && (
+              <IconButton
+                onClick={() => {
+                  this.setState({ showModalAdd: true });
+                }}
+                glyph="pencil"
+              />
+            )}
           </h1>
           <StudyEntitiesList studyEntities={studyEntities} courseId={id} />
           <ModalEditor
@@ -238,6 +251,17 @@ class Course extends React.Component {
             onEditorChange={this.handleChangeBody}
             onSubmitClick={this.addStudyEntity}
             handleClose={this.closeModalStudyEntity}
+          />
+          <ModalAdd
+            value={this.state.courseName}
+            title="Course"
+            show={this.state.showModalAdd}
+            onInputChange={e => this.setState({ courseName: e.target.value })}
+            // onSubmitClick={() => {
+            // onSubmitClick(courseName);
+            // this.close();
+            // }}
+            handleClose={this.closeModalAdd}
           />
           <Button
             bsStyle="primary"
