@@ -35,8 +35,7 @@ const routes = {
     },
     {
       path: '/courses/:idCourse/:idUnit',
-      load: () =>
-        import(/* webpackChunkName: 'studyEntity' */ './study-entity'),
+      load: () => import(/* webpackChunkName: 'unit' */ './unit'),
     },
     {
       path: '/users',

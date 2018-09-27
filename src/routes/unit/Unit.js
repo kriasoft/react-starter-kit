@@ -23,8 +23,8 @@ import { connect } from 'react-redux';
 import TextEditor from '../../components/TextEditor';
 import MarksTable from '../../components/MarksTable';
 import UnitView from '../../components/UnitView';
-import { setUnitHeaders } from '../../actions/study-entity';
-import s from './StudyEntity.css';
+import { setUnitHeaders } from '../../actions/unit';
+import s from './Unit.css';
 import IconButton from '../../components/IconButton/IconButton';
 
 class Unit extends React.Component {

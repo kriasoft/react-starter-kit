@@ -10,7 +10,7 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Course from './Course';
-import { setUnits } from '../../actions/study-entities';
+import { setUnits } from '../../actions/units';
 
 async function action({ fetch, params, store }) {
   const resp = await fetch('/graphql', {

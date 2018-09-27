@@ -9,7 +9,7 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-import Unit from './StudyEntity';
+import Unit from './Unit';
 
 const title = 'Unit';
 
