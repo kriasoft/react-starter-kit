@@ -41,7 +41,7 @@ import {
   removeStudyEntity,
   studyEntities,
   updateStudyEntity,
-} from './queries/study-entity';
+} from './queries/unit';
 import {
   addAnswer,
   answers,

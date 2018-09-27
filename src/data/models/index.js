@@ -13,8 +13,8 @@ import UserLogin from './UserLogin';
 import UserClaim from './UserClaim';
 import UserProfile from './UserProfile';
 import Course from './Course';
-import StudyEntity from './StudyEntity';
-import CourseStudyEntity from './CourseStudyEntity';
+import Unit from './Unit';
+import CourseUnit from './CourseUnit';
 import UserCourse from './UserCourse';
 import Answer from './Answer';
 import Mark from './Mark';
@@ -43,20 +43,20 @@ User.hasOne(UserProfile, {
   onDelete: 'cascade',
 });
 
-Course.belongsToMany(StudyEntity, {
-  as: 'studyEntities',
+Course.belongsToMany(Unit, {
+  as: 'units',
   through: {
-    model: CourseStudyEntity,
+    model: CourseUnit,
   },
   foreignKey: 'courseId',
 });
 
-StudyEntity.belongsToMany(Course, {
+Unit.belongsToMany(Course, {
   as: 'courses',
   through: {
-    model: CourseStudyEntity,
+    model: CourseUnit,
   },
-  foreignKey: 'studyEntityId',
+  foreignKey: 'unitId',
 });
 
 User.belongsToMany(Course, {
@@ -96,11 +96,11 @@ Group.belongsToMany(User, {
 });
 
 User.hasMany(Answer);
-StudyEntity.hasMany(Answer);
+Unit.hasMany(Answer);
 Course.hasMany(Answer);
 
 Answer.belongsTo(User);
-Answer.belongsTo(StudyEntity);
+Answer.belongsTo(Unit);
 Answer.belongsTo(Course);
 
 Answer.hasMany(Mark);
@@ -118,7 +118,7 @@ export {
   UserClaim,
   UserProfile,
   Course,
-  StudyEntity,
+  Unit,
   UserCourse,
   Group,
   File,

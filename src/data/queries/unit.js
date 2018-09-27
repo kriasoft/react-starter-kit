@@ -1,10 +1,10 @@
 import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
-import StudyEntityType from '../types/StudyEntityType';
-import StudyEntity from '../models/StudyEntity';
+import UnitType from '../types/UnitType';
+import Unit from '../models/Unit';
 import Course from '../models/Course';
 
 const createStudyEntity = {
-  type: StudyEntityType,
+  type: UnitType,
   args: {
     title: {
       description: 'The title of the new unit',
@@ -29,11 +29,11 @@ const createStudyEntity = {
       return Course.findById(args.courseId)
         .then(course => {
           c = course;
-          return StudyEntity.create({ title: args.title, body: args.body });
+          return Unit.create({ title: args.title, body: args.body });
         })
-        .then(studyEntity => {
-          studyEntity.setCourses([c]);
-          return studyEntity.save();
+        .then(unit => {
+          unit.setCourses([c]);
+          return unit.save();
         })
         .catch(err => {
           console.error(err);
@@ -47,15 +47,15 @@ const createStudyEntity = {
 
 // when this method is called there is crash in GraphQL
 const removeStudyEntity = {
-  type: StudyEntityType,
+  type: UnitType,
   args: {
     id: {
-      description: 'id of the StudyEntity',
+      description: 'id of the Unit',
       type: StringType,
     },
   },
   resolve(parent, args) {
-    return StudyEntity.destroy({
+    return Unit.destroy({
       where: {
         id: args.id,
       },
@@ -64,43 +64,43 @@ const removeStudyEntity = {
 };
 
 const studyEntities = {
-  type: new List(StudyEntityType),
+  type: new List(UnitType),
   args: {
     ids: {
-      description: 'ids of the StudyEntity',
+      description: 'ids of the Unit',
       type: new List(StringType),
     },
   },
   resolve(obj, args) {
     if (args.ids) {
-      return StudyEntity.findAll({
+      return Unit.findAll({
         where: {
           id: args.ids,
         },
       });
     }
-    return StudyEntity.findAll();
+    return Unit.findAll();
   },
 };
 
 const updateStudyEntity = {
-  type: StudyEntityType,
+  type: UnitType,
   args: {
     id: {
-      description: 'id of the studyEntity',
+      description: 'id of the Unit',
       type: StringType,
     },
     title: {
-      description: 'The title of the studyEntity',
+      description: 'The title of the Unit',
       type: StringType,
     },
     body: {
-      description: 'The body of the studyEntity',
+      description: 'The body of the Unit',
       type: StringType,
     },
   },
   resolve(parent, args) {
-    StudyEntity.findById(args.id).then(_se => {
+    Unit.findById(args.id).then(_se => {
       const se = _se;
       if (args.title) {
         se.title = args.title;

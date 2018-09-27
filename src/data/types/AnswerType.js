@@ -6,7 +6,7 @@ import {
 } from 'graphql';
 import MarkType from './MarkType';
 import UserType from './UserType';
-import StudyEntityType from './StudyEntityType';
+import UnitType from './UnitType';
 import CourseType from './CourseType';
 
 const AnswerType = new ObjectType({
@@ -27,8 +27,8 @@ const AnswerType = new ObjectType({
       resolve: answer => answer.createdAt.toISOString(),
     },
     studyEntity: {
-      type: StudyEntityType,
-      resolve: answer => answer.getStudyEntity(),
+      type: UnitType,
+      resolve: answer => answer.getUnit(),
     },
     course: {
       type: CourseType,

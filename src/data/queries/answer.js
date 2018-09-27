@@ -26,7 +26,7 @@ const addAnswer = {
     return Answer.create({
       body: args.body,
       CourseId: args.courseId,
-      StudyEntityId: args.studyEntityId,
+      UnitId: args.unitId,
       UserId: args.userId,
     });
   },

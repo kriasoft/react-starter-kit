@@ -132,7 +132,7 @@ const updateCourses = {
         if (args.title) {
           course.title = args.title;
         }
-        return course.getStudyEntities();
+        return course.getUnits();
       })
       .then(_studyEntities => {
         let studyEntities = _studyEntities;

@@ -6,7 +6,7 @@ import {
 } from 'graphql';
 import _ from 'lodash';
 import AnswerType from './AnswerType';
-import StudyEntityType from './StudyEntityType';
+import UnitType from './UnitType';
 import UserType from './UserType';
 
 const CourseType = new ObjectType({
@@ -15,8 +15,8 @@ const CourseType = new ObjectType({
     id: { type: new NonNull(StringType) },
     title: { type: new NonNull(StringType) },
     studyEntities: {
-      type: new GraphQLList(StudyEntityType),
-      resolve: course => course.getStudyEntities(),
+      type: new GraphQLList(UnitType),
+      resolve: course => course.getUnits(),
     },
     users: {
       args: {

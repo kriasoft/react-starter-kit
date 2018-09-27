@@ -77,8 +77,8 @@ function getMarkForAnswer(answerStr, schema) {
 }
 
 Answer.hook('afterUpdate', async answer => {
-  const studyEntity = await answer.getStudyEntity();
-  const mark = getMarkForAnswer(answer.body, studyEntity.schema);
+  const unit = await answer.getUnit();
+  const mark = getMarkForAnswer(answer.body, unit.schema);
   // TODO: use special authorId (or the user who added answer)
   if (mark && mark.mark) {
     Mark.create({
