@@ -6,6 +6,7 @@ import {
 } from 'graphql';
 
 import AnswerType from './AnswerType';
+import CourseType from './CourseType';
 
 const StudyEntityType = new ObjectType({
   name: 'StudyEntityType',
@@ -16,6 +17,10 @@ const StudyEntityType = new ObjectType({
     answers: {
       type: new GraphQLList(AnswerType),
       resolve: studyEntity => studyEntity.getAnswers(),
+    },
+    courses: {
+      type: new GraphQLList(CourseType),
+      resolve: studyEntity => studyEntity.getCourses(),
     },
   }),
 });

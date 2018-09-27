@@ -44,34 +44,13 @@ const courses = {
       description: 'ids of the courses',
       type: new List(StringType),
     },
-    userId: {
-      description: 'id of the logged in user',
-      type: new List(StringType),
-    },
   },
   resolve(obj, args) {
+    const where = {};
     if (args.ids) {
-      return Course.findAll({
-        where: {
-          id: args.ids,
-        },
-      });
+      where.id = args.ids;
     }
-    if (args.userId) {
-      return Course.findAll({
-        where: {
-          '$users.Id$': args.userId,
-        },
-        include: [
-          {
-            model: User,
-            as: 'users',
-            required: true,
-          },
-        ],
-      });
-    }
-    return Course.findAll();
+    return Course.findAll({ where });
   },
 };
 

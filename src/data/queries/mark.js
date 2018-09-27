@@ -61,33 +61,13 @@ const marks = {
       description: 'ids of the marks',
       type: new List(StringType),
     },
-    answerId: {
-      description: 'Id of an answer',
-      type: StringType,
-    },
   },
   resolve(obj, args) {
+    const where = {};
     if (args.ids) {
-      return Mark.findAll({
-        where: {
-          id: args.ids,
-        },
-      });
+      where.id = args.ids;
     }
-    if (args.answerId) {
-      return Mark.findAll({
-        where: {
-          AnswerId: args.answerId,
-        },
-      });
-    }
-    return Mark.findAll().then(mark => {
-      const markn = mark.map(m => m.dataValues);
-      /* eslint-disable */
-      markn.forEach(m => (m.createdAt = m.createdAt.toISOString()));
-      /* eslint-enable */
-      return markn;
-    });
+    return Mark.findAll({ where });
   },
 };
 

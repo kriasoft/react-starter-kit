@@ -82,7 +82,7 @@ describe('graphql courses', () => {
         users(ids: $user) {
           role,
         }
-      }  
+      }
     }`;
 
     const res = await graphql(schema, Q, null, null, {

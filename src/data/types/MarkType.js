@@ -4,6 +4,8 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLFloat as FloatType,
 } from 'graphql';
+import AnswerType from './AnswerType';
+import UserType from './UserType';
 
 const MarkType = new ObjectType({
   name: 'MarkType',
@@ -14,6 +16,14 @@ const MarkType = new ObjectType({
     createdAt: {
       type: StringType,
       resolve: mark => mark.createdAt.toISOString(),
+    },
+    answer: {
+      type: new NonNull(AnswerType),
+      resolve: mark => mark.getAnswer(),
+    },
+    author: {
+      type: UserType,
+      resolve: mark => mark.getAuthor(),
     },
   }),
 });
