@@ -10,7 +10,7 @@ class CourseMarks extends React.Component {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      studyEntities: PropTypes.arrayOf(
+      units: PropTypes.arrayOf(
         PropTypes.shape({
           id: PropTypes.string,
           title: PropTypes.string,
@@ -36,7 +36,7 @@ class CourseMarks extends React.Component {
     fetch: PropTypes.func.isRequired,
   };
   render() {
-    const { studyEntities } = this.props.course;
+    const { units } = this.props.course;
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -44,9 +44,9 @@ class CourseMarks extends React.Component {
             <h2>Marks of {this.props.course.title}:</h2>
             <Col xs={12} md={10}>
               <ol>
-                {studyEntities.map(ent => (
+                {units.map(ent => (
                   <li>
-                    <AnswerList studyEntity={ent} />
+                    <AnswerList unit={ent} />
                   </li>
                 ))}
               </ol>

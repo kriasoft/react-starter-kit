@@ -23,23 +23,23 @@ import { connect } from 'react-redux';
 import TextEditor from '../../components/TextEditor';
 import MarksTable from '../../components/MarksTable';
 import UnitView from '../../components/UnitView';
-import { setStudyEntityHeaders } from '../../actions/study-entity';
+import { setUnitHeaders } from '../../actions/study-entity';
 import s from './StudyEntity.css';
 import IconButton from '../../components/IconButton/IconButton';
 
-class StudyEntity extends React.Component {
+class Unit extends React.Component {
   static propTypes = {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
     }).isRequired,
-    setStudyEntityHeaders: PropTypes.func.isRequired,
+    setUnitHeaders: PropTypes.func.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
       role: PropTypes.string,
     }),
-    studyEntity: PropTypes.shape({
+    unit: PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
       body: PropTypes.string,
@@ -62,8 +62,8 @@ class StudyEntity extends React.Component {
     super(props);
     this.state = {
       editMode: false,
-      title: this.props.studyEntity.title,
-      body: this.props.studyEntity.body,
+      title: this.props.unit.title,
+      body: this.props.unit.body,
       answerId: null,
       mark: 0,
       comment: '',
@@ -157,7 +157,7 @@ class StudyEntity extends React.Component {
   }
 
   async saveAnswer() {
-    const { user, course, studyEntity } = this.props;
+    const { user, course, unit } = this.props;
     const answer = await this.postProcessAnswer(this.state.answer);
     if (this.state.answerId) {
       await this.context.fetch('/graphql', {
@@ -186,13 +186,13 @@ class StudyEntity extends React.Component {
             $body: String,
             $courseId: String,
             $userId: String,
-            $studyEntityId: String
+            $unitId: String
           ){
             addAnswer(
               body: $body,
               courseId: $courseId,
               userId: $userId,
-              studyEntityId: $studyEntityId
+              unitId: $unitId
             ){
               id
             }
@@ -201,7 +201,7 @@ class StudyEntity extends React.Component {
             body: JSON.stringify(answer),
             courseId: course.id,
             userId: user.id,
-            studyEntityId: studyEntity.id,
+            unitId: unit.id,
           },
         }),
       });
@@ -216,7 +216,7 @@ class StudyEntity extends React.Component {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation create($title: String, $id: String, $body: String) {
-          updateStudyEntity(
+          updateUnit(
             title: $title,
             id: $id,
             body: $body,
@@ -226,7 +226,7 @@ class StudyEntity extends React.Component {
         }`,
         variables: {
           title: this.state.title,
-          id: this.props.studyEntity.id,
+          id: this.props.unit.id,
           body: this.state.body,
         },
       }),
@@ -238,8 +238,8 @@ class StudyEntity extends React.Component {
     // TODO: change cancel bahaviour when user save values once
     this.setState({
       editMode: false,
-      title: this.props.studyEntity.title,
-      body: this.props.studyEntity.body,
+      title: this.props.unit.title,
+      body: this.props.unit.body,
     });
   }
 
@@ -273,17 +273,17 @@ class StudyEntity extends React.Component {
   }
 
   async retrieveAnswer() {
-    const { user, course, studyEntity } = this.props;
+    const { user, course, unit } = this.props;
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `query retrieveAnswers (
           $userIds: [String]
-          $studyEntityIds: [String]
+          $unitIds: [String]
           $courseIds: [String]
         ){
           answers(
             userIds: $userIds,
-            studyEntityIds: $studyEntityIds,
+            unitIds: $unitIds,
             courseIds: $courseIds
           ){
             id, body, marks {
@@ -299,7 +299,7 @@ class StudyEntity extends React.Component {
         }`,
         variables: {
           userIds: (!user.isAdmin && [user.id]) || null,
-          studyEntityIds: [studyEntity.id],
+          unitIds: [unit.id],
           courseIds: [course.id],
         },
       }),
@@ -330,7 +330,7 @@ class StudyEntity extends React.Component {
   }
 
   updateHeaders(headers) {
-    this.props.setStudyEntityHeaders(headers);
+    this.props.setUnitHeaders(headers);
   }
 
   render() {
@@ -476,10 +476,10 @@ class StudyEntity extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.user,
-  lol: state.studyEntities,
+  lol: state.units,
 });
 
 export default connect(
   mapStateToProps,
-  { setStudyEntityHeaders },
-)(withStyles(s)(StudyEntity));
+  { setUnitHeaders },
+)(withStyles(s)(Unit));

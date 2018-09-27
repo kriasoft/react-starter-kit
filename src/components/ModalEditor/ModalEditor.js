@@ -6,8 +6,8 @@ import TextEditor from '../../components/TextEditor';
 const ModalEditor = ({
   title,
   show,
-  studyEntityName,
-  studyEntityBody,
+  unitName,
+  unitBody,
   onInputChange,
   onEditorChange,
   onSubmitClick,
@@ -16,18 +16,14 @@ const ModalEditor = ({
   <Modal show={show} onHide={handleClose}>
     <Modal.Body>
       <h4>{title} name</h4>
-      <FormControl
-        type="text"
-        value={studyEntityName}
-        onChange={onInputChange}
-      />
+      <FormControl type="text" value={unitName} onChange={onInputChange} />
       <div>
         <br />
-        <TextEditor value={studyEntityBody} onChange={onEditorChange} />
+        <TextEditor value={unitBody} onChange={onEditorChange} />
       </div>
     </Modal.Body>
     <Modal.Footer>
-      <Button disabled={studyEntityName.length === 0} onClick={onSubmitClick}>
+      <Button disabled={unitName.length === 0} onClick={onSubmitClick}>
         Add {title}
       </Button>
       <Button onClick={handleClose}>Close</Button>
@@ -38,8 +34,8 @@ const ModalEditor = ({
 ModalEditor.propTypes = {
   title: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
-  studyEntityName: PropTypes.string.isRequired,
-  studyEntityBody: PropTypes.string.isRequired,
+  unitName: PropTypes.string.isRequired,
+  unitBody: PropTypes.string.isRequired,
   onInputChange: PropTypes.func.isRequired,
   onEditorChange: PropTypes.func.isRequired,
   onSubmitClick: PropTypes.func.isRequired,

@@ -21,7 +21,7 @@ import Footer from '../Footer';
 class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    showStudyEntityHeaders: PropTypes.bool,
+    showUnitHeaders: PropTypes.bool,
     menuSecond: PropTypes.arrayOf(
       PropTypes.arrayOf(
         PropTypes.shape({
@@ -39,7 +39,7 @@ class Layout extends React.Component {
 
   static defaultProps = {
     menuSecond: [],
-    showStudyEntityHeaders: false,
+    showUnitHeaders: false,
   };
 
   constructor(props) {
@@ -50,10 +50,7 @@ class Layout extends React.Component {
   componentWillMount() {
     this.context.store.subscribe(() => {
       this.setState({
-        studyEntitiesHeaders: _.get(
-          this.context.store.getState(),
-          'studyEntity.headers',
-        ),
+        unitHeaders: _.get(this.context.store.getState(), 'unit.headers'),
       });
     });
   }
@@ -61,8 +58,8 @@ class Layout extends React.Component {
   render() {
     const menuSecondList = [];
     const items = this.props.menuSecond;
-    if (this.props.showStudyEntityHeaders) {
-      const secondLevel = (this.state.studyEntitiesHeaders || [])
+    if (this.props.showUnitHeaders) {
+      const secondLevel = (this.state.unitHeaders || [])
         .filter(h => h.level === 2)
         .map(h => (
           <li key={h.id}>

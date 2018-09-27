@@ -293,22 +293,22 @@ class UnitView extends React.Component {
     ];
   }
 
-  renderStudyEntity() {
+  renderUnit() {
     if (!this.domTree) return null;
     const oldHeaders = this.headers;
     this.headers = [];
-    const studyEntityElement = htmlToReactParser.traverseDomToTree(
+    const unitElement = htmlToReactParser.traverseDomToTree(
       this.domTree,
       node => !!node,
       this.processingInstructions,
     );
     if (this.props.onHeadersChange && !_.isEqual(oldHeaders, this.headers))
       setTimeout(() => this.props.onHeadersChange(this.headers), 0);
-    return studyEntityElement;
+    return unitElement;
   }
 
   render() {
-    return <div className={s.root}>{this.renderStudyEntity()}</div>;
+    return <div className={s.root}>{this.renderUnit()}</div>;
   }
 }
 

@@ -26,7 +26,7 @@ const AnswerType = new ObjectType({
       type: StringType,
       resolve: answer => answer.createdAt.toISOString(),
     },
-    studyEntity: {
+    unit: {
       type: UnitType,
       resolve: answer => answer.getUnit(),
     },

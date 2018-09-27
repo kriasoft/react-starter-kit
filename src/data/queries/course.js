@@ -115,12 +115,12 @@ const updateCourses = {
       description: 'The title of the course',
       type: StringType,
     },
-    addStudyEntities: {
-      description: 'StudyEntities of the courses',
+    addUnits: {
+      description: 'Units of the courses',
       type: new List(StringType),
     },
-    removeStudyEntities: {
-      description: 'StudyEntities of the courses',
+    removeUnits: {
+      description: 'Units of the courses',
       type: new List(StringType),
     },
   },
@@ -134,21 +134,18 @@ const updateCourses = {
         }
         return course.getUnits();
       })
-      .then(_studyEntities => {
-        let studyEntities = _studyEntities;
-        // studyEntities = studyEntities.filter(se => !args.removeStudyEntities.includes(se.id));
-        const removeStudyEntities = args.removeStudyEntities || [];
-        const addStudyEntities = args.addStudyEntities || [];
-        const idsEqual = (i, rse) =>
-          String(rse) === String(studyEntities[i].id);
-        for (let i = 0; i < studyEntities.length; i += 1) {
-          if (removeStudyEntities.find(idsEqual.bind(this, i))) {
-            studyEntities.splice(i, 1);
+      .then(units => {
+        const removeUnits = args.removeUnits || [];
+        const addUnits = args.addUnits || [];
+        const idsEqual = (i, rse) => String(rse) === String(units[i].id);
+        for (let i = 0; i < units.length; i += 1) {
+          if (removeUnits.find(idsEqual.bind(this, i))) {
+            units.splice(i, 1);
             i -= 1;
           }
         }
-        studyEntities = studyEntities.concat(addStudyEntities);
-        course.setStudyEntities(studyEntities);
+        units = units.concat(addUnits);
+        course.setUnits(units);
         return course.save();
       });
   },

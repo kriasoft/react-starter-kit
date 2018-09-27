@@ -1,10 +1,10 @@
-import { SET_STUDY_ENTITY_HEADERS } from '../constants';
+import { SET_UNIT_HEADERS } from '../constants';
 
 export function dumb() {}
 
-export function setStudyEntityHeaders(headers) {
+export function setUnitHeaders(headers) {
   return {
-    type: SET_STUDY_ENTITY_HEADERS,
+    type: SET_UNIT_HEADERS,
     data: headers,
   };
 }

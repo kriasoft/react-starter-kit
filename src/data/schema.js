@@ -36,12 +36,7 @@ import {
   addUserToCourse,
   deleteUserFromCourse,
 } from './queries/course';
-import {
-  createStudyEntity,
-  removeStudyEntity,
-  studyEntities,
-  updateStudyEntity,
-} from './queries/unit';
+import { createUnit, removeUnit, units, updateUnit } from './queries/unit';
 import {
   addAnswer,
   answers,
@@ -58,7 +53,7 @@ const schema = new Schema({
       users,
       files,
       courses,
-      studyEntities,
+      units,
       answers,
       marks,
       groups,
@@ -69,10 +64,10 @@ const schema = new Schema({
     fields: {
       createCourse,
       removeCourse,
-      createStudyEntity,
-      removeStudyEntity,
+      createUnit,
+      removeUnit,
       updateCourses,
-      updateStudyEntity,
+      updateUnit,
       createUser,
       removeUser,
       updateUser,

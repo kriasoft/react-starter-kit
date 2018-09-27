@@ -17,8 +17,8 @@ async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title, 
-          studyEntities {
+        courses(ids: $ids) { id, title,
+          units {
           id,
           title
           answers{
@@ -43,7 +43,7 @@ async function action({ fetch, params }) {
   const mas = [
     [
       {
-        title: 'Study entities',
+        title: 'Units',
         action: `/courses/${data.courses[0].id}`,
       },
       {

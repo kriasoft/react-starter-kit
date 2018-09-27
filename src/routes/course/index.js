@@ -10,13 +10,13 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Course from './Course';
-import { setStudyEntities } from '../../actions/study-entities';
+import { setUnits } from '../../actions/study-entities';
 
 async function action({ fetch, params, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title, studyEntities{ id,title }, users{ id,email,role } }
+        courses(ids: $ids) { id, title, units { id,title }, users{ id,email,role } }
       }`,
       variables: {
         ids: params.idCourse,
@@ -26,11 +26,11 @@ async function action({ fetch, params, store }) {
   const { data } = await resp.json();
   if (!data && !data.courses) throw new Error('Failed to load course.');
   const course = data.courses[0];
-  store.dispatch(setStudyEntities(course.studyEntities));
+  store.dispatch(setUnits(course.units));
   const mas = [
     [
       {
-        title: 'Study entities',
+        title: 'Units',
         action: `/courses/${course.id}`,
         isActive: true,
       },

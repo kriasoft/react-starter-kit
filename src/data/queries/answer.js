@@ -17,8 +17,8 @@ const addAnswer = {
       description: 'id of the users',
       type: StringType,
     },
-    studyEntityId: {
-      description: 'id of the StudyEntities',
+    unitId: {
+      description: 'id of the unit',
       type: StringType,
     },
   },

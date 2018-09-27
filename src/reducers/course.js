@@ -1,21 +1,21 @@
 import {
-  ADD_STUDY_ENTITY,
-  SET_STUDY_ENTITIES,
+  ADD_UNIT,
+  SET_UNITS,
   SUBSCRIBE_USER,
   UNSUBSCRIBE_USER,
 } from '../constants';
 
 const initialState = {
   subscribedUsers: [],
-  studyEntities: [],
+  units: [],
 };
 
-export default function studyEntities(state = initialState, action) {
+export default function units(state = initialState, action) {
   switch (action.type) {
-    case ADD_STUDY_ENTITY:
-      return { ...state, studyEntities: [...state.studyEntities, action.data] };
-    case SET_STUDY_ENTITIES:
-      return { ...state, studyEntities: action.data };
+    case ADD_UNIT:
+      return { ...state, units: [...state.units, action.data] };
+    case SET_UNITS:
+      return { ...state, units: action.data };
     case SUBSCRIBE_USER:
       return {
         ...state,

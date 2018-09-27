@@ -1,10 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 
-import { ADD_STUDY_ENTITY, SET_STUDY_ENTITIES } from '../constants';
+import { ADD_UNIT, SET_UNITS } from '../constants';
 
-export function addStudyEntity(id, title) {
+export function addUnit(id, title) {
   return {
-    type: ADD_STUDY_ENTITY,
+    type: ADD_UNIT,
     data: {
       id,
       title,
@@ -12,9 +12,9 @@ export function addStudyEntity(id, title) {
   };
 }
 
-export function setStudyEntities(studyEntities) {
+export function setUnits(units) {
   return {
-    type: SET_STUDY_ENTITIES,
-    data: studyEntities,
+    type: SET_UNITS,
+    data: units,
   };
 }

@@ -13,10 +13,10 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import ModalEditor from '../../components/ModalEditor';
-import StudyEntitiesList from '../../components/StudyEntitiesList';
+import UnitsList from '../../components/StudyEntitiesList';
 import UsersList from '../../components/UsersList';
 import s from './Course.css';
-import { addStudyEntity } from '../../actions/study-entities';
+import { addUnit } from '../../actions/study-entities';
 import { addUserToCourse, deleteUserFromCourse } from '../../actions/courses';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
 import IconButton from '../../components/IconButton/IconButton';
@@ -30,9 +30,9 @@ class Course extends React.Component {
       role: PropTypes.string,
     }),
     addUserToCourse: PropTypes.func.isRequired,
-    addStudyEntity: PropTypes.func.isRequired,
+    addUnit: PropTypes.func.isRequired,
     deleteUserFromCourse: PropTypes.func.isRequired,
-    studyEntities: PropTypes.arrayOf(
+    units: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string,
         title: PropTypes.string,
@@ -64,17 +64,17 @@ class Course extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      studyEntityBody: '',
+      unitBody: '',
       showModalEditor: false,
       showModalSubscribe: false,
-      studyEntityName: '',
+      unitName: '',
       subscribedUsersList: [],
       showModalAdd: false,
       courseName: props.title,
     };
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.addStudyEntity = this.addStudyEntity.bind(this);
+    this.addUnit = this.addUnit.bind(this);
   }
 
   componentWillMount() {
@@ -100,14 +100,14 @@ class Course extends React.Component {
   }
 
   handleChange(event) {
-    this.setState({ studyEntityName: event.target.value });
+    this.setState({ unitName: event.target.value });
   }
 
   handleChangeBody(val) {
-    this.setState({ studyEntityBody: val });
+    this.setState({ unitBody: val });
   }
 
-  closeModalStudyEntity = () => {
+  closeModalUnit = () => {
     this.setState({ showModalEditor: false });
   };
   closeModalAdd = () => {
@@ -169,27 +169,27 @@ class Course extends React.Component {
     });
   }
 
-  async addStudyEntity() {
+  async addUnit() {
     const { id } = this.props;
-    const { studyEntityName, studyEntityBody } = this.state;
+    const { unitName, unitBody } = this.state;
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation create($courseId: String, $title: String, $body: String){ 
-          createStudyEntity(
+        query: `mutation create($courseId: String, $title: String, $body: String){
+          createUnit(
             title: $title,
             courseId: $courseId,
             body: $body)
           { id, title }
         }`,
         variables: {
-          title: studyEntityName,
+          title: unitName,
           courseId: id,
-          body: studyEntityBody,
+          body: unitBody,
         },
       }),
     });
-    this.props.addStudyEntity(id, studyEntityName);
-    this.closeModalStudyEntity();
+    this.props.addUnit(id, unitName);
+    this.closeModalUnit();
   }
   render() {
     const usersListArray = (this.state.users || []).filter(
@@ -218,7 +218,7 @@ class Course extends React.Component {
       />
     );
 
-    const { user, studyEntities, title, id } = this.props;
+    const { user, units, title, id } = this.props;
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -241,16 +241,16 @@ class Course extends React.Component {
               />
             )}
           </h1>
-          <StudyEntitiesList studyEntities={studyEntities} courseId={id} />
+          <UnitsList units={units} courseId={id} />
           <ModalEditor
-            title="Study entity"
+            title="Unit"
             show={this.state.showModalEditor}
-            studyEntityName={this.state.studyEntityName}
-            studyEntityBody={this.state.studyEntityBody}
+            unitName={this.state.unitName}
+            unitBody={this.state.unitBody}
             onInputChange={this.handleChange}
             onEditorChange={this.handleChangeBody}
-            onSubmitClick={this.addStudyEntity}
-            handleClose={this.closeModalStudyEntity}
+            onSubmitClick={this.addUnit}
+            handleClose={this.closeModalUnit}
           />
           <ModalAdd
             value={this.state.courseName}
@@ -284,11 +284,11 @@ class Course extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  studyEntities: state.course.studyEntities,
+  units: state.course.units,
   user: state.user,
 });
 
 export default connect(
   mapStateToProps,
-  { addUserToCourse, deleteUserFromCourse, addStudyEntity },
+  { addUserToCourse, deleteUserFromCourse, addUnit },
 )(withStyles(s)(Course));

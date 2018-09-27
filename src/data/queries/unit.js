@@ -3,7 +3,7 @@ import UnitType from '../types/UnitType';
 import Unit from '../models/Unit';
 import Course from '../models/Course';
 
-const createStudyEntity = {
+const createUnit = {
   type: UnitType,
   args: {
     title: {
@@ -46,7 +46,7 @@ const createStudyEntity = {
 };
 
 // when this method is called there is crash in GraphQL
-const removeStudyEntity = {
+const removeUnit = {
   type: UnitType,
   args: {
     id: {
@@ -63,7 +63,7 @@ const removeStudyEntity = {
   },
 };
 
-const studyEntities = {
+const units = {
   type: new List(UnitType),
   args: {
     ids: {
@@ -83,7 +83,7 @@ const studyEntities = {
   },
 };
 
-const updateStudyEntity = {
+const updateUnit = {
   type: UnitType,
   args: {
     id: {
@@ -113,9 +113,4 @@ const updateStudyEntity = {
   },
 };
 
-export {
-  createStudyEntity,
-  removeStudyEntity,
-  studyEntities,
-  updateStudyEntity,
-};
+export { createUnit, removeUnit, units, updateUnit };

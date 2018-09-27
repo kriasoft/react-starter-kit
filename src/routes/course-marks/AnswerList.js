@@ -2,16 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'react-bootstrap';
 
-const AnswerList = ({ studyEntity }) => (
+const AnswerList = ({ unit }) => (
   <Table>
     <thead>
       <tr>
-        <th scope="col">{studyEntity.title}</th>
+        <th scope="col">{unit.title}</th>
         <th>Date</th>
         <th scope="col">Mark</th>
       </tr>
-      {studyEntity.answers[0] !== undefined ? (
-        studyEntity.answers[0].marks.map(mark => (
+      {unit.answers[0] !== undefined ? (
+        unit.answers[0].marks.map(mark => (
           <tr>
             <td>NameAnswer</td>
             <td>{mark.createdAt.substr(0, 10) || 'No'}</td>
@@ -25,7 +25,7 @@ const AnswerList = ({ studyEntity }) => (
   </Table>
 );
 AnswerList.propTypes = {
-  studyEntity: PropTypes.shape({
+  unit: PropTypes.shape({
     id: PropTypes.string,
     title: PropTypes.string,
     answers: PropTypes.arrayOf(

@@ -14,7 +14,7 @@ const CourseType = new ObjectType({
   fields: () => ({
     id: { type: new NonNull(StringType) },
     title: { type: new NonNull(StringType) },
-    studyEntities: {
+    units: {
       type: new GraphQLList(UnitType),
       resolve: course => course.getUnits(),
     },
