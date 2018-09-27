@@ -15,7 +15,7 @@ import * as HtmlToReact from 'html-to-react';
 import { github } from 'react-syntax-highlighter/dist/styles/hljs';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import TextEditor from '../TextEditor';
-import s from './StudyEntityView.css';
+import s from './UnitView.css';
 
 const htmlToReactParser = new HtmlToReact.Parser();
 
@@ -83,7 +83,7 @@ class InputFilePI extends BaseProcessingInstruction {
   }
 }
 
-class StudyEntityView extends React.Component {
+class UnitView extends React.Component {
   static propTypes = {
     body: PropTypes.string.isRequired,
     value: PropTypes.instanceOf(Object),
@@ -312,4 +312,4 @@ class StudyEntityView extends React.Component {
   }
 }
 
-export default withStyles(s)(StudyEntityView);
+export default withStyles(s)(UnitView);

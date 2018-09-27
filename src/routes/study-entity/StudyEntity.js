@@ -22,7 +22,7 @@ import * as moment from 'moment';
 import { connect } from 'react-redux';
 import TextEditor from '../../components/TextEditor';
 import MarksTable from '../../components/MarksTable';
-import StudyEntityView from '../../components/StudyEntityView';
+import UnitView from '../../components/UnitView';
 import { setStudyEntityHeaders } from '../../actions/study-entity';
 import s from './StudyEntity.css';
 import IconButton from '../../components/IconButton/IconButton';
@@ -355,7 +355,7 @@ class StudyEntity extends React.Component {
     } else {
       bodyComponent = (
         <span>
-          <StudyEntityView
+          <UnitView
             answerId={this.state.answerId}
             value={this.state.answer}
             body={this.state.body}
