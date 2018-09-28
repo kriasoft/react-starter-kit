@@ -4,7 +4,7 @@ import Base from './Base';
 import TextEditor from '../../TextEditor';
 
 /**
- * <input name="" type="text|color">
+ * <textarea name="" language="">
  */
 export default class TextareaLanguage extends Base {
   constructor(root) {
