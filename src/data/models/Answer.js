@@ -64,7 +64,7 @@ class AnswerChecker {
  * @param {string|object} schema represents unit schema
  */
 function getMarkForAnswer(answerStr, schema) {
-  if (!answerStr) return {};
+  if (!answerStr || !schema) return {};
   const answer = JSON.parse(answerStr);
   const checker = AnswerChecker.create(schema);
   const res = { mark: 0, comment: 'Marks:' };
