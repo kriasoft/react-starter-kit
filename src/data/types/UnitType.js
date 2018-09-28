@@ -15,8 +15,16 @@ const UnitType = new ObjectType({
     title: { type: new NonNull(StringType) },
     body: { type: new NonNull(StringType) },
     answers: {
+      args: {
+        userIds: {
+          type: new GraphQLList(StringType),
+        },
+      },
       type: new GraphQLList(AnswerType),
-      resolve: unit => unit.getAnswers(),
+      resolve: (unit, args) =>
+        unit.getAnswers({
+          where: args.userIds ? { userId: args.userIds } : {},
+        }),
     },
     courses: {
       type: new GraphQLList(CourseType),

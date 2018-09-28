@@ -15,8 +15,14 @@ const CourseType = new ObjectType({
     id: { type: new NonNull(StringType) },
     title: { type: new NonNull(StringType) },
     units: {
+      args: {
+        ids: {
+          type: new GraphQLList(StringType),
+        },
+      },
       type: new GraphQLList(UnitType),
-      resolve: course => course.getUnits(),
+      resolve: (course, args) =>
+        course.getUnits({ where: args.ids ? { id: args.ids } : {} }),
     },
     users: {
       args: {

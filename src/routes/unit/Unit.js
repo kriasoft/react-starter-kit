@@ -16,6 +16,7 @@ import {
   DropdownButton,
   MenuItem,
 } from 'react-bootstrap';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as moment from 'moment';
@@ -275,25 +276,24 @@ class Unit extends React.Component {
     const { user, course, unit } = this.props;
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `query retrieveAnswers (
-          $userIds: [String]
-          $unitIds: [String]
-          $courseIds: [String]
-        ){
-          answers(
-            userIds: $userIds,
-            unitIds: $unitIds,
-            courseIds: $courseIds
-          ){
-            id, body, marks {
-              id, mark, comment, createdAt
-            },
-            user {
-              id, profile {
-                displayName
+        query: `query retireve(
+          $courseIds: [String],
+          $unitIds: [String],
+          $userIds: [String])
+        {
+          courses (ids:$courseIds) {
+            units (ids:$unitIds) {
+              answers (userIds: $userIds) {
+                id,
+                body
+                marks { id, mark, comment, createdAt }
+                user {
+                  id,
+                  profile { displayName }
+                }
+                createdAt
               }
-            },
-            createdAt
+            }
           }
         }`,
         variables: {
@@ -304,16 +304,17 @@ class Unit extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    if (data && data.answers && data.answers.length) {
+    const answers = _.get(data, 'courses[0].units[0].answers');
+    if (answers && answers.length) {
       const answerCur = 0;
       this.setState({
-        answers: data.answers.map(answer => {
+        answers: answers.map(answer => {
           const ans = answer;
           ans.body = JSON.parse(answer.body);
           return ans;
         }),
-        answerId: data.answers[answerCur].id,
-        answer: data.answers[answerCur].body,
+        answerId: answers[answerCur].id,
+        answer: answers[answerCur].body,
         answerCur,
       });
     }
