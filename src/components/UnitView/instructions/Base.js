@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 export default class Base {
   constructor(root, tag, filterAttrs) {
-    this.tag = tag;
+    this.tag = tag || '';
     this.filterAttrs = filterAttrs || {};
     this.root = root;
   }
@@ -17,7 +17,7 @@ export default class Base {
   }
 
   shouldProcessNode(node) {
-    if (node.name !== this.tag || !_.get(node, 'attribs.name')) return false;
+    if (node.name !== this.tag) return false;
     return Object.keys(this.filterAttrs).every(k => {
       const f = this.filterAttrs[k];
       const val = _.get(node, `attribs.${k}`);

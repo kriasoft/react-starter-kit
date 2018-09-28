@@ -8,7 +8,7 @@ import s from './InputFile.css';
  */
 export default class InputFile extends Base {
   constructor(root) {
-    super(root, 'input', { type: 'file' });
+    super(root, 'input', { name: { $exists: true }, type: 'file' });
   }
 
   processNode(node, children, index) {
