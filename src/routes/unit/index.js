@@ -13,16 +13,17 @@ import Unit from './Unit';
 
 const title = 'Unit';
 
-async function action({ fetch, params }) {
+async function action({ fetch, params, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `query courses($idCourse: [String], $idUnit: [String]) {
-        courses(ids: $idCourse) { id, title },
+      query: `query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) {
+        courses(ids: $idCourse) { id, title, users(ids: $idUser) { role } },
         units(ids: $idUnit) { id, title, body }
       }`,
       variables: {
         idCourse: params.idCourse,
         idUnit: params.idUnit,
+        idUser: store.getState().user.id,
       },
     }),
   });
@@ -33,7 +34,11 @@ async function action({ fetch, params }) {
     title,
     component: (
       <Layout showUnitHeaders>
-        <Unit course={data.courses[0]} unit={data.units[0]} />
+        <Unit
+          course={data.courses[0]}
+          unit={data.units[0]}
+          role={data.courses[0].users[0].role}
+        />
       </Layout>
     ),
   };

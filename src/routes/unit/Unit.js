@@ -33,11 +33,11 @@ class Unit extends React.Component {
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
     }).isRequired,
+    role: PropTypes.string.isRequired,
     setUnitHeaders: PropTypes.func.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
-      role: PropTypes.string,
     }),
     unit: PropTypes.shape({
       id: PropTypes.string,
@@ -54,7 +54,6 @@ class Unit extends React.Component {
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
-      role: PropTypes.string,
     }),
   };
 
@@ -334,7 +333,8 @@ class Unit extends React.Component {
   }
 
   render() {
-    const { user } = this.props;
+    const { user, role } = this.props;
+
     let bodyComponent;
     let headerComponent;
     if (this.state.editMode) {
@@ -368,7 +368,7 @@ class Unit extends React.Component {
       headerComponent = (
         <span>
           {this.state.title}
-          {user.role === 'teacher' && (
+          {role === 'teacher' && (
             <IconButton onClick={this.switchMode} glyph="pencil" />
           )}
         </span>
@@ -476,7 +476,6 @@ class Unit extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.user,
-  lol: state.units,
 });
 
 export default connect(
