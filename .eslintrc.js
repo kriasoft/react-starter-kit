@@ -90,6 +90,7 @@ module.exports = {
 
     'no-param-reassign': 'off',
     'no-return-assign': 'off',
+    'no-bitwise': 'off',
   },
 
   settings: {

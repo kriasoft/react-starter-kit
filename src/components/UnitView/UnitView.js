@@ -16,6 +16,7 @@ import { github } from 'react-syntax-highlighter/dist/styles/hljs';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import TextEditor from '../TextEditor';
 import s from './UnitView.css';
+import * as PI from './instructions';
 
 const htmlToReactParser = new HtmlToReact.Parser();
 
@@ -39,48 +40,6 @@ function getCachedExpr(expr, template) {
       EXPR_CACHE[expr] = _.noop;
     }
   return EXPR_CACHE[expr];
-}
-
-class BaseProcessingInstruction {
-  constructor(root, tag, filterAttrs) {
-    this.tag = tag;
-    this.filterAttrs = filterAttrs || {};
-    this.root = root;
-  }
-
-  shouldProcessNode(node) {
-    if (node.name !== this.tag || !_.get(node, 'attribs.name')) return false;
-    return Object.keys(this.filterAttrs).every(
-      k => _.get(node, `attribs.${k}`) === this.filterAttrs[k],
-    );
-  }
-}
-
-/**
- * <input type=file name=...>
- */
-class InputFilePI extends BaseProcessingInstruction {
-  constructor(root) {
-    super(root, 'input', { type: 'file' });
-  }
-
-  processNode(node, children, index) {
-    const name = _.get(node, 'attribs.name');
-    const renderAttrs = inputRenderAttrs(node, children, index);
-    return (
-      <div className={s.inputFile}>
-        {_.get(this.root.state.answers[name], 'id')}
-        <button onClick={() => this.ref.click()}>upload new file</button>
-        <input
-          ref={ref => (this.ref = ref)}
-          {...renderAttrs}
-          onChange={event =>
-            this.root.updateAnswer(name, event.target.files[0])
-          }
-        />
-      </div>
-    );
-  }
 }
 
 class UnitView extends React.Component {
@@ -239,28 +198,8 @@ class UnitView extends React.Component {
           return <input {...renderAttrs} {...valueAttrs} />;
         },
       },
-      /**
-       * <input name="" type="radio" value="">
-       */
-      {
-        shouldProcessNode: node =>
-          node.name === 'input' &&
-          _.get(node, 'attribs.name') &&
-          _.get(node, 'attribs.value') &&
-          _.get(node, 'attribs.type') === 'radio',
-        processNode: (node, children, index) => {
-          const name = _.get(node, 'attribs.name');
-          const renderAttrs = inputRenderAttrs(node, children, index);
-          const value = _.get(node, 'attribs.value');
-          const valueAttrs = {
-            value,
-            checked: this.state.answers[name] === value,
-            onChange: event => this.updateAnswer(name, event.target.value),
-          };
-          return <input {...renderAttrs} {...valueAttrs} />;
-        },
-      },
-      new InputFilePI(this),
+      new PI.InputRadio(this),
+      new PI.InputFile(this),
       /**
        * gathering info about H0..6 tags
        */
