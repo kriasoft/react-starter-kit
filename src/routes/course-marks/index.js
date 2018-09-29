@@ -17,16 +17,18 @@ async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title,
-          units {
+        courses(ids: $ids) {
           id,
-          title
-          answers{
+          title,
+          units {
             id,
-            marks{
+            title
+            answers {
               id,
-              mark,
-              createdAt,
+              marks{
+                id,
+                mark,
+                createdAt,
               }
             }
           }
