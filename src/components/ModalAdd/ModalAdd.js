@@ -9,6 +9,7 @@ const ModalAdd = ({
   onInputChange,
   onSubmitClick,
   handleClose,
+  submitText,
 }) => (
   <Modal show={show} onHide={handleClose}>
     <Modal.Body>
@@ -18,7 +19,7 @@ const ModalAdd = ({
     </Modal.Body>
     <Modal.Footer>
       <Button disabled={value.length === 0} onClick={onSubmitClick}>
-        Add {title}
+        {submitText} {title}
       </Button>
       <Button onClick={handleClose}>Close</Button>
     </Modal.Footer>
@@ -32,6 +33,7 @@ ModalAdd.propTypes = {
   onInputChange: PropTypes.func.isRequired,
   onSubmitClick: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
+  submitText: PropTypes.string.isRequired,
 };
 
 export default ModalAdd;

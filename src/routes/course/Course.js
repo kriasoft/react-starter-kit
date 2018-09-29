@@ -75,6 +75,7 @@ class Course extends React.Component {
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.addUnit = this.addUnit.bind(this);
+    this.updateCourse = this.updateCourse.bind(this);
   }
 
   componentWillMount() {
@@ -168,7 +169,6 @@ class Course extends React.Component {
       subscribedUsersList: this.state.subscribedUsersList,
     });
   }
-
   async addUnit() {
     const { id } = this.props;
     const { unitName, unitBody } = this.state;
@@ -190,6 +190,25 @@ class Course extends React.Component {
     });
     this.props.addUnit(id, unitName);
     this.closeModalUnit();
+  }
+  async updateCourse() {
+    const { id } = this.props;
+    const { courseName } = this.state;
+    await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation updateCourse($courseId: String, $title: String){
+          updateCourses (
+            title: $title,
+            id: $courseId)
+          { id, title }
+        }`,
+        variables: {
+          title: courseName,
+          courseId: id,
+        },
+      }),
+    });
+    this.closeModalAdd();
   }
   render() {
     const usersListArray = (this.state.users || []).filter(
@@ -256,11 +275,9 @@ class Course extends React.Component {
             value={this.state.courseName}
             title="Course"
             show={this.state.showModalAdd}
+            submitText="update"
             onInputChange={e => this.setState({ courseName: e.target.value })}
-            // onSubmitClick={() => {
-            // onSubmitClick(courseName);
-            // this.close();
-            // }}
+            onSubmitClick={this.updateCourse}
             handleClose={this.closeModalAdd}
           />
           <Button

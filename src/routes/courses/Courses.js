@@ -90,6 +90,7 @@ class Courses extends React.Component {
             value={courseName}
             title="Course"
             show={show}
+            submitText="Add"
             onInputChange={e => this.setState({ courseName: e.target.value })}
             onSubmitClick={() => {
               onSubmitClick(courseName);
