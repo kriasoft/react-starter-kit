@@ -10,7 +10,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Row, Col } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import s from './CourseUsers.css';
 
 class CourseUsers extends React.Component {
@@ -36,19 +36,17 @@ class CourseUsers extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <Row>
-            <h2>Subscribed to {this.props.course.title}:</h2>
-            <Col xs={12} md={10}>
-              <ol>
-                {users.map(user => (
-                  <li key={user.id}>
-                    <a href={`/users/${user.id}`}>{user.email}</a> (
-                    {user.role})
-                  </li>
-                ))}
-              </ol>
-            </Col>
-          </Row>
+          <h1>Subscribed to {this.props.course.title}</h1>
+          <Col xs={12} md={10}>
+            <ol>
+              {users.map(user => (
+                <li key={user.id}>
+                  <a href={`/users/${user.id}`}>{user.email}</a> (
+                  {user.role})
+                </li>
+              ))}
+            </ol>
+          </Col>
         </div>
       </div>
     );
