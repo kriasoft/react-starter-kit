@@ -50,7 +50,14 @@ const UserType = new ObjectType({
     },
     answers: {
       type: new GraphQLList(AnswerType),
-      resolve: user => user.getAnswers(),
+      resolve: user => {
+        const where = {};
+        const userCourse = user.UserCourse;
+        if (userCourse) {
+          where.courseId = userCourse.courseId;
+        }
+        return user.getAnswers({ where });
+      },
     },
   }),
 });

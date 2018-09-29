@@ -4,7 +4,6 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLList,
 } from 'graphql';
-
 import AnswerType from './AnswerType';
 import CourseType from './CourseType';
 
@@ -21,10 +20,18 @@ const UnitType = new ObjectType({
         },
       },
       type: new GraphQLList(AnswerType),
-      resolve: (unit, args) =>
-        unit.getAnswers({
-          where: args.userIds ? { userId: args.userIds } : {},
-        }),
+      resolve: (unit, args) => {
+        const where = {};
+        if (args.userIds) {
+          where.userId = args.userIds;
+        }
+        const courseUnit = unit.CourseUnit;
+        if (courseUnit) {
+          where.courseId = courseUnit.courseId;
+          where.unitId = courseUnit.unitId;
+        }
+        return unit.getAnswers({ where });
+      },
     },
     courses: {
       type: new GraphQLList(CourseType),
