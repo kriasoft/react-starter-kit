@@ -75,6 +75,16 @@ class User extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <Row>
+            <Col xs={12} md={3}>
+              <h1>
+                {this.props.title} {this.props.user.profile.displayName}
+              </h1>
+              <div>Gender: {this.props.user.profile.gender}</div>
+              <div>E-mail: {this.props.user.email}</div>
+              <Button bsStyle="primary" onClick={this.open}>
+                Change password
+              </Button>
+            </Col>
             <Col xs={12} md={2}>
               <img
                 className={s.picture}
@@ -82,21 +92,10 @@ class User extends React.Component {
                 alt="Profile"
               />
             </Col>
-            <Col xs={12} md={10}>
-              <h1>
-                {this.props.title} {this.props.user.profile.displayName}
-              </h1>
-              <div>Id: {this.props.user.id}</div>
-              <div>Gender: {this.props.user.profile.gender}</div>
-              <div>E-mail: {this.props.user.email}</div>
-              <Button bsStyle="primary" onClick={this.open}>
-                Change password
-              </Button>
-            </Col>
           </Row>
           <Row>
             <h2>Courses</h2>
-            <Col xs={12} md={10}>
+            <Col xs={12} md={4}>
               {coursesList}
             </Col>
           </Row>
