@@ -15,9 +15,9 @@ services:
     restart: 'always'
     image: postgres:9.6
     volumes:
-      - ./ndodb:/var/lib/postgresql
+      - ./ndodb-data:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=ndo
       - POSTGRES_PASSWORD=ndo
