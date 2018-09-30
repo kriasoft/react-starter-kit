@@ -7,19 +7,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React from 'react';
-import {
-  Form,
-  FormControl,
-  FormGroup,
-  Button,
-  DropdownButton,
-  MenuItem,
-} from 'react-bootstrap';
-import _ from 'lodash';
+import React, { Fragment } from 'react';
+import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import * as moment from 'moment';
 import { connect } from 'react-redux';
 import TextEditor from '../../components/TextEditor';
 import MarksTable from '../../components/MarksTable';
@@ -35,7 +26,6 @@ class Unit extends React.Component {
       title: PropTypes.string.isRequired,
     }).isRequired,
     role: PropTypes.string.isRequired,
-    setUnitHeaders: PropTypes.func.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
@@ -65,22 +55,11 @@ class Unit extends React.Component {
       title: this.props.unit.title,
       body: this.props.unit.body,
       answerId: null,
-      mark: 0,
-      comment: '',
       answer: {},
     };
-    this.switchMode = this.switchMode.bind(this);
-    this.changeTitle = this.changeTitle.bind(this);
-    this.changeBody = this.changeBody.bind(this);
-    this.changeAnswer = this.changeAnswer.bind(this);
     this.saveAnswer = this.saveAnswer.bind(this);
     this.save = this.save.bind(this);
     this.addMark = this.addMark.bind(this);
-    this.changeMark = this.changeMark.bind(this);
-    this.changeComment = this.changeComment.bind(this);
-    this.cancel = this.cancel.bind(this);
-    this.selectAnswer = this.selectAnswer.bind(this);
-    this.updateHeaders = this.updateHeaders.bind(this);
   }
 
   async componentDidMount() {
@@ -90,31 +69,23 @@ class Unit extends React.Component {
     }
   }
 
-  getValidationState() {
-    const { mark } = this.state;
-    if (mark <= 100 && mark >= 0) return 'success';
-    return 'error';
-  }
+  handleChange = name => ({ target: { value } }) =>
+    this.setState({
+      [name]: value,
+    });
 
-  changeTitle(event) {
-    this.setState({ title: event.target.value });
-  }
+  switchMode = () => {
+    this.setState({ editMode: !this.state.editMode });
+  };
 
-  changeBody(val) {
-    this.setState({ body: val });
-  }
-
-  changeMark(event) {
-    this.setState({ mark: event.target.value });
-  }
-
-  changeComment(event) {
-    this.setState({ comment: event.target.value });
-  }
-
-  changeAnswer(val) {
-    this.setState({ answer: val });
-  }
+  handleAnswerSelect = eventKey => {
+    const answerCur = parseInt(eventKey, 10);
+    this.setState({
+      answerCur,
+      answer: this.state.answers[answerCur].body,
+      answerId: this.state.answers[answerCur].id,
+    });
+  };
 
   async uploadFile(key, file) {
     const { user } = this.props;
@@ -208,10 +179,6 @@ class Unit extends React.Component {
     }
   }
 
-  switchMode() {
-    this.setState({ editMode: !this.state.editMode });
-  }
-
   async save() {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
@@ -234,26 +201,15 @@ class Unit extends React.Component {
     this.switchMode();
   }
 
-  cancel() {
-    // TODO: change cancel bahaviour when user save values once
-    this.setState({
-      editMode: false,
-      title: this.props.unit.title,
-      body: this.props.unit.body,
-    });
-  }
-
-  async addMark() {
-    const { user } = this.props;
-    const { mark, comment, answerId } = this.state;
+  async addMark({ mark, comment }) {
+    const { answerId } = this.state;
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation addMark($mark: Float, $comment: String, $answerId: String, $authorId: String) {
+        query: `mutation addMark($mark: Float, $comment: String, $answerId: String) {
           addMark(
             mark: $mark,
             comment: $comment,
             answerId: $answerId,
-            authorId: $authorId,
           ) {
             id
           }
@@ -262,14 +218,9 @@ class Unit extends React.Component {
           mark,
           comment,
           answerId,
-          authorId: user.id,
         },
       }),
     });
-    /* this.setState({
-      mark: '',
-      comment: '',
-    }); */
   }
 
   async retrieveAnswer() {
@@ -304,7 +255,7 @@ class Unit extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    const answers = _.get(data, 'courses[0].units[0].answers');
+    const { answers } = data.courses[0].units[0];
     if (answers && answers.length) {
       const answerCur = 0;
       this.setState({
@@ -320,155 +271,97 @@ class Unit extends React.Component {
     }
   }
 
-  selectAnswer(eventKey) {
-    const answerCur = parseInt(eventKey, 10);
-    this.setState({
-      answerCur,
-      answer: this.state.answers[answerCur].body,
-      answerId: this.state.answers[answerCur].id,
-    });
-  }
-
-  updateHeaders(headers) {
-    this.props.setUnitHeaders(headers);
-  }
-
   render() {
-    const { user, role } = this.props;
-
-    let bodyComponent;
-    let headerComponent;
-    if (this.state.editMode) {
-      bodyComponent = (
-        <TextEditor value={this.state.body} onChange={this.changeBody} />
-      );
-      headerComponent = (
-        <span>
-          <input
-            value={this.state.title}
-            type="text"
-            onChange={this.changeTitle}
-          />
-          <IconButton onClick={this.save} glyph="ok" />
-          <IconButton onClick={this.cancel} glyph="remove" />
-        </span>
-      );
-    } else {
-      bodyComponent = (
-        <span>
-          <UnitView
-            answerId={this.state.answerId}
-            value={this.state.answer}
-            body={this.state.body}
-            onChange={this.changeAnswer}
-            onHeadersChange={this.updateHeaders}
-          />
-          {user && <Button onClick={this.saveAnswer}>Save</Button>}
-        </span>
-      );
-      headerComponent = (
-        <span>
-          {this.state.title}
-          {role === 'teacher' && (
-            <IconButton onClick={this.switchMode} glyph="pencil" />
-          )}
-        </span>
-      );
-    }
-    let answerChooser;
-    let markView;
-    if (user && user.isAdmin && this.state.answers) {
-      const answerTitle = answer =>
-        `${answer.user.profile.displayName} ${answer.createdAt}`;
-      const answers = this.state.answers.map((answer, i) => (
-        <MenuItem
-          key={answer.id}
-          eventKey={i}
-          active={i === this.state.answerCur}
-        >
-          {answerTitle(answer)}
-        </MenuItem>
-      ));
-      answerChooser = (
-        <DropdownButton
-          id="answer_chooser"
-          title={answerTitle(this.state.answers[this.state.answerCur])}
-          onSelect={this.selectAnswer}
-        >
-          {answers}
-        </DropdownButton>
-      );
-      const marks = this.state.answers[this.state.answerCur].marks.map(
-        (mark, i) => (
-          <tr key={mark.id}>
-            <td>{i + 1}</td>
-            <td>{mark.mark}</td>
-            <td>{mark.comment}</td>
-            <td>
-              {moment(mark.createdAt).fromNow()} (
-              {moment(mark.createdAt).format('llll')})
-            </td>
-          </tr>
-        ),
-      );
-      markView = (
-        <div>
-          <MarksTable marks={marks}>
-            {() => (
-              <tr>
-                <td />
-                <td>
-                  <Form inline>
-                    <FormGroup
-                      controlId="Mark"
-                      validationState={this.getValidationState()}
-                    >
-                      <FormControl
-                        type="number"
-                        placeholder="Mark"
-                        value={this.state.mark}
-                        onChange={this.changeMark}
-                      />
-                    </FormGroup>
-                  </Form>
-                </td>
-                <td>
-                  <Form inline>
-                    <FormGroup controlId="Comment">
-                      <FormControl
-                        type="text"
-                        placeholder="Comment"
-                        value={this.state.comment}
-                        onChange={this.changeComment}
-                      />
-                    </FormGroup>
-                  </Form>
-                </td>
-                <td>
-                  {this.getValidationState() === 'success' && (
-                    <IconButton onClick={this.addMark} glyph="ok" />
-                  )}
-                </td>
-              </tr>
-            )}
-          </MarksTable>
-          {/* Form for setting marks and making a comment */}
-        </div>
-      );
-    }
+    const { user, role, course, unit } = this.props;
+    const {
+      title,
+      editMode,
+      answers,
+      answerCur,
+      body,
+      answerId,
+      answer,
+    } = this.state;
 
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            <a href={`/courses/${this.props.course.id}`}>
-              {this.props.course.title}
-            </a>
-            /{headerComponent}
-            {answerChooser}
+            <a href={`/courses/${course.id}`}>{course.title}</a>
+            /{editMode ? (
+              <span>
+                <input
+                  value={title}
+                  type="text"
+                  onChange={this.handleChange('title')}
+                />
+                <IconButton onClick={this.save} glyph="ok" />
+                <IconButton
+                  onClick={() => {
+                    this.setState({
+                      editMode: false,
+                      title: unit.title,
+                      body: unit.body,
+                    });
+                  }}
+                  glyph="remove"
+                />
+              </span>
+            ) : (
+              <Fragment>
+                <span>
+                  {title}
+                  {role === 'teacher' && (
+                    <IconButton onClick={this.switchMode} glyph="pencil" />
+                  )}
+                </span>
+                <DropdownButton
+                  id="answer_chooser"
+                  title={`${unit.answers[0].user.profile.displayName} ${
+                    unit.answers[0].createdAt
+                  }`}
+                  onSelect={this.handleAnswerSelect}
+                >
+                  {user &&
+                    user.isAdmin &&
+                    answers &&
+                    answers.map((ans, i) => (
+                      <MenuItem
+                        key={ans.id}
+                        eventKey={i}
+                        active={i === answerCur}
+                      >
+                        {`${ans.user.profile.displayName} ${ans.createdAt}`}
+                      </MenuItem>
+                    ))}
+                </DropdownButton>
+              </Fragment>
+            )}
           </h1>
-          {bodyComponent}
-          {markView}
+          {editMode ? (
+            <TextEditor
+              value={body}
+              onChange={val => this.setState({ body: val })}
+            />
+          ) : (
+            <Fragment>
+              <span>
+                <UnitView
+                  answerId={answerId}
+                  value={answer}
+                  body={body}
+                  onChange={val => this.setState({ answer: val })}
+                  onHeadersChange={headers => setUnitHeaders(headers)}
+                />
+                {user && <Button onClick={this.saveAnswer}>Save</Button>}
+              </span>
+              <MarksTable
+                // TODO: make newly added mark appear ih the table
+                marks={unit.answers[0].marks}
+                onSubmit={this.addMark}
+              />
+            </Fragment>
+          )}
         </div>
       </div>
     );
