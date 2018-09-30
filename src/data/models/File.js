@@ -19,6 +19,8 @@ const File = Model.define('File', {
   },
 });
 
+const FILES_DIR = path.join(__dirname, './files');
+
 File.uploadFile = ({ buffer, internalName, userId }, store = 'fs') => {
   if (store === 'fs') {
     return Model.transaction(t =>
@@ -32,8 +34,7 @@ File.uploadFile = ({ buffer, internalName, userId }, store = 'fs') => {
         .then(file => {
           const d = new Date();
           const dir = path.join(
-            __dirname,
-            './files',
+            process.env.FILES_DIR || FILES_DIR,
             `${d.getFullYear()}-${
               d.getMonth() + 1 < 10 ? '0' : ''
             }${d.getMonth() + 1}`,

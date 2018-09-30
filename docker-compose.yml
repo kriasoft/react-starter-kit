@@ -5,10 +5,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - ./files:/files
     ports:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgres://ndo:ndo@db:5432/ndodb
+      - FILES_DIR=/files
     depends_on:
       - "db"
   db:

@@ -24,7 +24,7 @@ class UsersCmds {
       name,
       gender,
       isAdmin,
-    });
+    }).then(() => process.exit());
   }
   async reset() {
     this.message.log('Reset existing user:');
