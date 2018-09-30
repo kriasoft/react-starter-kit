@@ -10,6 +10,11 @@ const Mark = Model.define('Mark', {
 
   mark: {
     type: DataType.FLOAT,
+    validate: {
+      max: 100,
+      min: 0,
+      isFloat: true,
+    },
   },
 
   comment: {

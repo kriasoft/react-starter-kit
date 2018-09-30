@@ -12,7 +12,7 @@ const MarkType = new ObjectType({
   fields: () => ({
     id: { type: new NonNull(StringType) },
     mark: { type: new NonNull(FloatType) },
-    comment: { type: new NonNull(StringType) },
+    comment: { type: StringType },
     createdAt: {
       type: StringType,
       resolve: mark => mark.createdAt.toISOString(),

@@ -26,12 +26,10 @@ const addMark = {
       type: StringType,
     },
   },
-  resolve(parent, args) {
+  resolve({ request }, args) {
     return Mark.create({
-      mark: args.mark,
-      comment: args.comment,
-      AnswerId: args.answerId,
-      authorId: args.authorId,
+      ...args,
+      authorId: request.user.id,
     });
   },
 };
@@ -46,11 +44,9 @@ const removeMark = {
     },
   },
   resolve(parent, args) {
-    return Mark.destroy({
-      where: {
-        id: args.id,
-      },
-    });
+    return Mark.findById(args.id)
+      .then(mark => mark.destroy())
+      .then(() => {});
   },
 };
 
@@ -88,14 +84,7 @@ const updateMark = {
     },
   },
   resolve(parent, args) {
-    Mark.findById(args.id).then(_mark => {
-      const mark = _mark;
-      if (args.mark) {
-        mark.mark = args.mark;
-        mark.comment = args.comment;
-      }
-      return mark.save();
-    });
+    return Mark.findById(args.id).then(mark => mark.update({ ...args }));
   },
 };
 
