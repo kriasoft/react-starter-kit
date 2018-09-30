@@ -1,0 +1,24 @@
+version: '2'
+services:
+  web:
+    restart: 'always'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://ndo:ndo@db:5432/ndodb
+    depends_on:
+      - "db"
+  db:
+    restart: 'always'
+    image: postgres:9.6
+    volumes:
+      - ./ndodb:/var/lib/postgresql
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=ndo
+      - POSTGRES_PASSWORD=ndo
+      - POSTGRES_DB=ndodb
