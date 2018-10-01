@@ -22,7 +22,7 @@ const MarkType = new ObjectType({
       resolve: mark => mark.getAnswer(),
     },
     author: {
-      type: UserType,
+      type: new NonNull(UserType),
       resolve: mark => mark.getAuthor(),
     },
   }),

@@ -21,6 +21,7 @@ import IconButton from '../../components/IconButton/IconButton';
 
 class Unit extends React.Component {
   static propTypes = {
+    setUnitHeaders: PropTypes.func.isRequired,
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
@@ -74,7 +75,7 @@ class Unit extends React.Component {
       [name]: value,
     });
 
-  switchMode = () => {
+  handleToggleEdit = () => {
     this.setState({ editMode: !this.state.editMode });
   };
 
@@ -198,14 +199,15 @@ class Unit extends React.Component {
         },
       }),
     });
-    this.switchMode();
+    this.handleToggleEdit();
   }
 
   async addMark({ mark, comment }) {
     const { answerId } = this.state;
+
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation addMark($mark: Float, $comment: String, $answerId: String) {
+        query: `mutation addMark($mark: Float, $comment: String, $answerId: String!) {
           addMark(
             mark: $mark,
             comment: $comment,
@@ -312,7 +314,10 @@ class Unit extends React.Component {
                 <span>
                   {title}
                   {role === 'teacher' && (
-                    <IconButton onClick={this.switchMode} glyph="pencil" />
+                    <IconButton
+                      onClick={this.handleToggleEdit}
+                      glyph="pencil"
+                    />
                   )}
                 </span>
                 <DropdownButton
@@ -351,7 +356,9 @@ class Unit extends React.Component {
                   value={answer}
                   body={body}
                   onChange={val => this.setState({ answer: val })}
-                  onHeadersChange={headers => setUnitHeaders(headers)}
+                  onHeadersChange={headers =>
+                    this.props.setUnitHeaders(headers)
+                  }
                 />
                 {user && <Button onClick={this.saveAnswer}>Save</Button>}
               </span>

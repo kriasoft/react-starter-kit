@@ -2,6 +2,7 @@ import {
   GraphQLString as StringType,
   GraphQLList as List,
   GraphQLFloat as FloatType,
+  GraphQLNonNull as NonNull,
 } from 'graphql';
 import MarkType from '../types/MarkType';
 import Mark from '../models/Mark';
@@ -19,16 +20,13 @@ const addMark = {
     },
     answerId: {
       description: 'The answerId of the mark',
-      type: StringType,
-    },
-    authorId: {
-      description: 'The userId for user adding a mark',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve({ request }, args) {
     return Mark.create({
       ...args,
+      AnswerId: args.answerId,
       authorId: request.user.id,
     });
   },
@@ -40,7 +38,7 @@ const removeMark = {
   args: {
     id: {
       description: 'id of the mark',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(parent, args) {
@@ -72,7 +70,7 @@ const updateMark = {
   args: {
     id: {
       description: 'id of the mark',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     mark: {
       description: 'The grade of the mark',
