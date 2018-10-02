@@ -28,18 +28,18 @@ class ErrorPage extends React.Component {
   render() {
     if (__DEV__ && this.props.error) {
       return (
-        <div>
+        <React.Fragment>
           <h1>{this.props.error.name}</h1>
           <pre>{this.props.error.stack}</pre>
-        </div>
+        </React.Fragment>
       );
     }
 
     return (
-      <div>
+      <React.Fragment>
         <h1>Error</h1>
         <p>Sorry, a critical error occurred on this page.</p>
-      </div>
+      </React.Fragment>
     );
   }
 }
