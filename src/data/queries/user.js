@@ -29,7 +29,7 @@ const createUser = {
     },
   },
   resolve(parent, args) {
-    return User.createUser(args);
+    return User.create({ ...args });
   },
 };
 
@@ -37,7 +37,7 @@ const setPassword = {
   type: UserType,
   args: {
     id: { type: new NonNull(ID) },
-    newPassword: { type: StringType },
+    newPassword: { type: new NonNull(StringType) },
   },
   resolve(parent, args) {
     return User.findById(args.id).then(user => {
@@ -53,15 +53,13 @@ const removeUser = {
   args: {
     id: {
       description: 'id of the user',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(parent, args) {
-    return User.destroy({
-      where: {
-        id: args.id,
-      },
-    });
+    return User.findById(args.id)
+      .then(user => user.destroy())
+      .then(() => {});
   },
 };
 
@@ -90,7 +88,7 @@ const updateUser = {
   args: {
     id: {
       description: 'id of the user',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     email: {
       description: 'The email of the user',
@@ -98,14 +96,7 @@ const updateUser = {
     },
   },
   resolve(parent, args) {
-    let user;
-    User.findById(args.id).then(_user => {
-      user = _user;
-      if (args.email) {
-        user.email = args.email;
-      }
-      return user.save();
-    });
+    User.findById(args.id).then(user => user.update({ ...args }));
   },
 };
 

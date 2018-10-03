@@ -10,7 +10,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const Course = Model.define('Course', {
+const Course = Model.define('course', {
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,

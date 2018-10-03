@@ -30,13 +30,12 @@ const uploadFile = {
   type: FileType,
   args: {
     internalName: { type: new NonNull(StringType) },
-    userId: { type: new NonNull(StringType) },
   },
-  resolve(obj, args) {
+  resolve({ request }, args) {
     return File.uploadFile({
       internalName: args.internalName,
-      buffer: obj.request.file.buffer,
-      userId: args.userId,
+      buffer: request.file.buffer,
+      userId: request.user.id,
     });
   },
 };

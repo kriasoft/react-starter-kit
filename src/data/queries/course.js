@@ -1,4 +1,8 @@
-import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
+import {
+  GraphQLString as StringType,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+} from 'graphql';
 import CourseType from '../types/CourseType';
 import UserType from '../types/UserType';
 import { Course, User } from '../models';
@@ -8,7 +12,7 @@ const createCourse = {
   args: {
     title: {
       description: 'The title of the new course',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve({ request }, args) {
@@ -19,21 +23,18 @@ const createCourse = {
   },
 };
 
-// when this method is called there is crash in GraphQL
 const removeCourse = {
   type: CourseType,
   args: {
     id: {
       description: 'id of the courses',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(parent, args) {
-    return Course.destroy({
-      where: {
-        id: args.id,
-      },
-    });
+    return Course.findById(args.id)
+      .then(course => course.destroy())
+      .then(() => {});
   },
 };
 
@@ -59,11 +60,11 @@ const addUserToCourse = {
   args: {
     id: {
       description: 'id of the user',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     courseId: {
       description: 'id of the course',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     role: {
       description: 'role of the user',
@@ -90,11 +91,11 @@ const deleteUserFromCourse = {
   args: {
     id: {
       description: 'id of the user',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     courseId: {
       description: 'id of the course',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(obj, args) {
@@ -104,50 +105,51 @@ const deleteUserFromCourse = {
   },
 };
 
-const updateCourses = {
+const updateCourse = {
   type: CourseType,
   args: {
     id: {
-      description: 'id of the courses',
-      type: StringType,
+      description: 'id of the course',
+      type: new NonNull(StringType),
     },
     title: {
       description: 'The title of the course',
       type: StringType,
     },
-    addUnits: {
-      description: 'Units of the courses',
-      type: new List(StringType),
-    },
-    removeUnits: {
-      description: 'Units of the courses',
-      type: new List(StringType),
-    },
+    // addUnits: {
+    //   description: 'Units of the courses',
+    //   type: new List(StringType),
+    // },
+    // removeUnits: {
+    //   description: 'Units of the courses',
+    //   type: new List(StringType),
+    // },
   },
   resolve(parent, args) {
-    let course;
-    Course.findById(args.id)
-      .then(_course => {
-        course = _course;
-        if (args.title) {
-          course.title = args.title;
-        }
-        return course.getUnits();
-      })
-      .then(units => {
-        const removeUnits = args.removeUnits || [];
-        const addUnits = args.addUnits || [];
-        const idsEqual = (i, rse) => String(rse) === String(units[i].id);
-        for (let i = 0; i < units.length; i += 1) {
-          if (removeUnits.find(idsEqual.bind(this, i))) {
-            units.splice(i, 1);
-            i -= 1;
-          }
-        }
-        units = units.concat(addUnits);
-        course.setUnits(units);
-        return course.save();
-      });
+    return Course.findById(args.id).then(course => course.update({ ...args }));
+    // let course;
+    // Course.findById(args.id)
+    //   .then(_course => {
+    //     course = _course;
+    //     if (args.title) {
+    //       course.title = args.title;
+    //     }
+    //     return course.getUnits();
+    //   })
+    //   .then(units => {
+    //     const removeUnits = args.removeUnits || [];
+    //     const addUnits = args.addUnits || [];
+    //     const idsEqual = (i, rse) => String(rse) === String(units[i].id);
+    //     for (let i = 0; i < units.length; i += 1) {
+    //       if (removeUnits.find(idsEqual.bind(this, i))) {
+    //         units.splice(i, 1);
+    //         i -= 1;
+    //       }
+    //     }
+    //     units = units.concat(addUnits);
+    //     course.setUnits(units);
+    //     return course.save();
+    //   });
   },
 };
 
@@ -155,7 +157,7 @@ export {
   createCourse,
   courses,
   removeCourse,
-  updateCourses,
+  updateCourse,
   addUserToCourse,
   deleteUserFromCourse,
 };

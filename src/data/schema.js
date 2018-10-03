@@ -32,18 +32,18 @@ import {
   createCourse,
   removeCourse,
   courses,
-  updateCourses,
+  updateCourse,
   addUserToCourse,
   deleteUserFromCourse,
 } from './queries/course';
 import { createUnit, removeUnit, units, updateUnit } from './queries/unit';
 import {
-  addAnswer,
+  createAnswer,
   answers,
   removeAnswer,
   updateAnswer,
 } from './queries/answer';
-import { addMark, marks, removeMark, updateMark } from './queries/mark';
+import { createMark, marks, removeMark, updateMark } from './queries/mark';
 
 const schema = new Schema({
   query: new ObjectType({
@@ -63,28 +63,28 @@ const schema = new Schema({
     name: 'Mutation',
     fields: {
       createCourse,
-      removeCourse,
+      createAnswer,
       createUnit,
-      removeUnit,
-      updateCourses,
-      updateUnit,
-      createUser,
-      removeUser,
-      updateUser,
-      addUserToCourse,
-      deleteUserFromCourse,
       createGroup,
-      removeGroup,
-      addUserToGroup,
-      deleteUserFromGroup,
-      addAnswer,
-      removeAnswer,
-      updateAnswer,
-      addMark,
-      removeMark,
+      createUser,
+      createMark,
+      updateCourse,
+      updateUnit,
+      updateUser,
       updateMark,
+      updateAnswer,
       uploadFile,
+      addUserToCourse,
+      addUserToGroup,
       setPassword,
+      deleteUserFromCourse,
+      deleteUserFromGroup,
+      removeUnit,
+      removeGroup,
+      removeUser,
+      removeAnswer,
+      removeCourse,
+      removeMark,
     },
   }),
 });

@@ -7,12 +7,12 @@ import {
 import MarkType from '../types/MarkType';
 import Mark from '../models/Mark';
 
-const addMark = {
+const createMark = {
   type: MarkType,
   args: {
     mark: {
       description: 'The mark of the new mark',
-      type: FloatType,
+      type: new NonNull(FloatType),
     },
     comment: {
       description: 'The comment of the mark',
@@ -26,7 +26,6 @@ const addMark = {
   resolve({ request }, args) {
     return Mark.create({
       ...args,
-      AnswerId: args.answerId,
       authorId: request.user.id,
     });
   },
@@ -86,4 +85,4 @@ const updateMark = {
   },
 };
 
-export { addMark, marks, removeMark, updateMark };
+export { createMark, marks, removeMark, updateMark };

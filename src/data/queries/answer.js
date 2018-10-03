@@ -1,33 +1,31 @@
-import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
+import {
+  GraphQLString as StringType,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+} from 'graphql';
 import Answer from '../models/Answer';
 import AnswerType from '../types/AnswerType';
 
-const addAnswer = {
+const createAnswer = {
   type: AnswerType,
   args: {
     body: {
       description: 'The body of the new answer',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     courseId: {
-      description: 'id of the courses',
-      type: StringType,
-    },
-    userId: {
-      description: 'id of the users',
-      type: StringType,
+      description: 'id of the course',
+      type: new NonNull(StringType),
     },
     unitId: {
       description: 'id of the unit',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
-  resolve(parent, args) {
+  resolve({ request }, args) {
     return Answer.create({
-      body: args.body,
-      CourseId: args.courseId,
-      UnitId: args.unitId,
-      UserId: args.userId,
+      ...args,
+      userId: request.user.id,
     });
   },
 };
@@ -38,15 +36,13 @@ const removeAnswer = {
   args: {
     id: {
       description: 'id of the courses',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(parent, args) {
-    return Answer.destroy({
-      where: {
-        id: args.id,
-      },
-    });
+    return Answer.findById(args.id)
+      .then(answer => answer.destroy())
+      .then(() => {});
   },
 };
 
@@ -72,7 +68,7 @@ const updateAnswer = {
   args: {
     id: {
       description: 'id of the answer',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     body: {
       description: 'The body of the answer',
@@ -80,14 +76,8 @@ const updateAnswer = {
     },
   },
   resolve(parent, args) {
-    Answer.findById(args.id).then(_answer => {
-      const answer = _answer;
-      if (args.body) {
-        answer.body = args.body;
-      }
-      return answer.save();
-    });
+    Answer.findById(args.id).then(answer => answer.update({ ...args }));
   },
 };
 
-export { addAnswer, answers, removeAnswer, updateAnswer };
+export { createAnswer, answers, removeAnswer, updateAnswer };

@@ -2,7 +2,7 @@ import DataType from 'sequelize';
 import Model from '../sequelize';
 import Mark from './Mark';
 
-const Answer = Model.define('Answer', {
+const Answer = Model.define('answer', {
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
@@ -84,7 +84,7 @@ Answer.hook('afterUpdate', async answer => {
     Mark.create({
       mark: mark.mark,
       comment: mark.comment,
-      AnswerId: answer.id,
+      answerId: answer.id,
       // authorId: args.authorId,
     });
   }

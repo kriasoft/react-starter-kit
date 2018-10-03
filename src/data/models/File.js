@@ -5,7 +5,7 @@ import fileUrl from 'file-url';
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const File = Model.define('File', {
+const File = Model.define('file', {
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,

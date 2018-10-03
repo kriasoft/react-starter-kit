@@ -1,4 +1,8 @@
-import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
+import {
+  GraphQLString as StringType,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+} from 'graphql';
 import UserType from '../types/UserType';
 import User from '../models/User';
 import GroupType from '../types/GroupType';
@@ -9,7 +13,7 @@ const createGroup = {
   args: {
     title: {
       description: 'The title of the new group',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(parent, args) {
@@ -24,15 +28,13 @@ const removeGroup = {
   args: {
     id: {
       description: 'id of the group',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(parent, args) {
-    return Group.destroy({
-      where: {
-        id: args.id,
-      },
-    });
+    return Group.findById(args.id)
+      .then(group => group.destroy())
+      .then(() => {});
   },
 };
 
@@ -61,11 +63,11 @@ const addUserToGroup = {
   args: {
     id: {
       description: 'id of the user',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     groupId: {
       description: 'id of the group',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(obj, args) {

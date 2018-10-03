@@ -1,7 +1,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const Unit = Model.define('Unit', {
+const Unit = Model.define('unit', {
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,

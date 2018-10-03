@@ -10,7 +10,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const UserClaim = Model.define('UserClaim', {
+const UserClaim = Model.define('userClaim', {
   type: {
     type: DataType.STRING,
   },

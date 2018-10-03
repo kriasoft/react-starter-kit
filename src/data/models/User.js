@@ -17,7 +17,7 @@ import UserClaim from './UserClaim';
 import Course from './Course';
 
 const User = Model.define(
-  'User',
+  'user',
   {
     id: {
       type: DataType.UUID,
@@ -27,7 +27,14 @@ const User = Model.define(
 
     email: {
       type: DataType.STRING(255),
+      allowNull: false,
       validate: { isEmail: true },
+      unique: {
+        args: true,
+        fields: ['email'],
+        msg:
+          'Oops. Looks like you already have an account with this email address. Please try to login.',
+      },
     },
 
     emailConfirmed: {
@@ -41,7 +48,7 @@ const User = Model.define(
     },
   },
   {
-    indexes: [{ fields: ['email'] }],
+    indexes: [{ unique: true, fields: ['email'] }],
   },
 );
 

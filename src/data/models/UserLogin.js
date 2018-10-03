@@ -10,7 +10,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const UserLogin = Model.define('UserLogin', {
+const UserLogin = Model.define('userLogin', {
   name: {
     type: DataType.STRING(50),
     primaryKey: true,

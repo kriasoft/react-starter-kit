@@ -1,7 +1,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const Mark = Model.define('Mark', {
+const Mark = Model.define('mark', {
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,

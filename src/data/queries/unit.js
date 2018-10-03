@@ -1,4 +1,8 @@
-import { GraphQLString as StringType, GraphQLList as List } from 'graphql';
+import {
+  GraphQLString as StringType,
+  GraphQLList as List,
+  GraphQLNonNull as NonNull,
+} from 'graphql';
 import UnitType from '../types/UnitType';
 import Unit from '../models/Unit';
 import Course from '../models/Course';
@@ -8,11 +12,11 @@ const createUnit = {
   args: {
     title: {
       description: 'The title of the new unit',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     courseId: {
       description: 'Id of the unit',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     body: {
       description: 'body of the unit',
@@ -45,21 +49,18 @@ const createUnit = {
   },
 };
 
-// when this method is called there is crash in GraphQL
 const removeUnit = {
   type: UnitType,
   args: {
     id: {
       description: 'id of the Unit',
-      type: StringType,
+      type: new NonNull(StringType),
     },
   },
   resolve(parent, args) {
-    return Unit.destroy({
-      where: {
-        id: args.id,
-      },
-    });
+    return Unit.findById(args.id)
+      .then(unit => unit.destroy())
+      .then(() => {});
   },
 };
 
@@ -88,7 +89,7 @@ const updateUnit = {
   args: {
     id: {
       description: 'id of the Unit',
-      type: StringType,
+      type: new NonNull(StringType),
     },
     title: {
       description: 'The title of the Unit',
@@ -100,16 +101,7 @@ const updateUnit = {
     },
   },
   resolve(parent, args) {
-    Unit.findById(args.id).then(_se => {
-      const se = _se;
-      if (args.title) {
-        se.title = args.title;
-      }
-      if (args.body) {
-        se.body = args.body;
-      }
-      return se.save();
-    });
+    return Unit.findById(args.id).then(unit => unit.update({ ...args }));
   },
 };
 

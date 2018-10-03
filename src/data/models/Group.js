@@ -1,7 +1,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const Group = Model.define('Group', {
+const Group = Model.define('group', {
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
