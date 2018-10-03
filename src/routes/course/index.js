@@ -10,7 +10,7 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Course from './Course';
-import { setUnits } from '../../actions/units';
+import { setCourse } from '../../actions/courses';
 
 async function action({ fetch, params, store }) {
   const resp = await fetch('/graphql', {
@@ -26,7 +26,7 @@ async function action({ fetch, params, store }) {
   const { data } = await resp.json();
   if (!data && !data.courses) throw new Error('Failed to load course.');
   const course = data.courses[0];
-  store.dispatch(setUnits(course.units));
+  store.dispatch(setCourse(course));
   const mas = [
     [
       {
@@ -54,7 +54,7 @@ async function action({ fetch, params, store }) {
     title: course.title,
     component: (
       <Layout menuSecond={mas}>
-        <Course {...course} />
+        <Course />
       </Layout>
     ),
   };

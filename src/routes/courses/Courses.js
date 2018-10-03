@@ -13,15 +13,14 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
 import s from './Courses.css';
 import ModalAdd from '../../components/ModalAdd';
-import IconButton from '../../components/IconButton';
 import { createCourse, fetchCourses } from '../../actions/courses';
 import CoursesList from '../../components/CoursesList';
 
 class Courses extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    onSubmitClick: PropTypes.func.isRequired,
-    getCourses: PropTypes.func.isRequired,
+    loadCourses: PropTypes.func.isRequired,
+    addCourse: PropTypes.func.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
@@ -48,56 +47,23 @@ class Courses extends React.Component {
     }),
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      courseName: '',
-      show: false,
-    };
-    this.close = this.close.bind(this);
-  }
-
   componentDidMount() {
-    const user = this.props.user || {};
-    const { getCourses } = this.props;
-    getCourses(!user.isAdmin);
-  }
-
-  close() {
-    this.setState({ show: false });
+    const { user, loadCourses } = this.props;
+    if (user) {
+      loadCourses(user);
+    }
   }
 
   render() {
-    const { user, courses, onSubmitClick, title } = this.props;
-    const { courseName, show } = this.state;
+    const { user, courses, title, addCourse } = this.props;
 
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <div>
-            <h1>
-              {title}
-              {user && (
-                <IconButton
-                  onClick={() => this.setState({ show: true })}
-                  glyph="plus"
-                />
-              )}
-            </h1>
-          </div>
+          <h1>
+            {title} {user && <ModalAdd onUpdate={t => addCourse(t)} />}
+          </h1>
           <CoursesList courses={courses} />
-          <ModalAdd
-            value={courseName}
-            title="Course"
-            show={show}
-            submitText="Add"
-            onInputChange={e => this.setState({ courseName: e.target.value })}
-            onSubmitClick={() => {
-              onSubmitClick(courseName);
-              this.close();
-            }}
-            handleClose={this.close}
-          />
         </div>
       </div>
     );
@@ -110,14 +76,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSubmitClick: title => {
+  addCourse: title => {
     dispatch(createCourse(title));
   },
-  getCourses: role => {
-    dispatch(fetchCourses(role));
+  loadCourses: user => {
+    dispatch(fetchCourses(user));
   },
 });
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

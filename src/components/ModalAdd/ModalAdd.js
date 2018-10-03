@@ -1,39 +1,56 @@
-import React from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button, FormControl } from 'react-bootstrap';
+import { Modal, Button, Glyphicon } from 'react-bootstrap';
+import UpdateForm from '../UpdateForm/UpdateForm';
 
-const ModalAdd = ({
-  value,
-  title,
-  show,
-  onInputChange,
-  onSubmitClick,
-  handleClose,
-  submitText,
-}) => (
-  <Modal show={show} onHide={handleClose}>
-    <Modal.Body>
-      <h4>{title} name</h4>
-      <FormControl type="text" value={value} onChange={onInputChange} />
-      <div />
-    </Modal.Body>
-    <Modal.Footer>
-      <Button disabled={value.length === 0} onClick={onSubmitClick}>
-        {submitText} {title}
-      </Button>
-      <Button onClick={handleClose}>Close</Button>
-    </Modal.Footer>
-  </Modal>
-);
+export default class ModalAdd extends Component {
+  static propTypes = {
+    onUpdate: PropTypes.func.isRequired,
+    title: PropTypes.string,
+    buttonText: PropTypes.string,
+  };
 
-ModalAdd.propTypes = {
-  title: PropTypes.string.isRequired,
-  show: PropTypes.bool.isRequired,
-  value: PropTypes.string.isRequired,
-  onInputChange: PropTypes.func.isRequired,
-  onSubmitClick: PropTypes.func.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  submitText: PropTypes.string.isRequired,
-};
+  static defaultProps = {
+    title: '',
+    buttonText: '',
+  };
 
-export default ModalAdd;
+  state = {
+    show: false,
+  };
+
+  handleToggle = () => {
+    this.setState({
+      show: !this.state.show,
+    });
+  };
+
+  handleFormSubmit = ({ title }) => {
+    this.handleToggle();
+    this.props.onUpdate(title);
+  };
+
+  render() {
+    const { title, buttonText } = this.props;
+    const { show } = this.state;
+    return (
+      <Fragment>
+        <Button onClick={this.handleToggle}>
+          {buttonText || (
+            <Glyphicon
+              glyph={`glyphicon glyphicon-${title ? 'pencil' : 'plus'}`}
+            />
+          )}
+        </Button>
+        <Modal show={show} onHide={this.handleToggle}>
+          <Modal.Body>
+            <UpdateForm title={title} onSubmit={this.handleFormSubmit} />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.handleToggle}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </Fragment>
+    );
+  }
+}

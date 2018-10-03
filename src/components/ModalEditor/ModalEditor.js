@@ -1,45 +1,43 @@
-import React from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button, FormControl } from 'react-bootstrap';
-import TextEditor from '../../components/TextEditor';
+import { Modal, Button } from 'react-bootstrap';
+import IconButton from '../IconButton/IconButton';
+import CreateForm from '../CreateForm/CreateForm';
 
-const ModalEditor = ({
-  title,
-  show,
-  unitName,
-  unitBody,
-  onInputChange,
-  onEditorChange,
-  onSubmitClick,
-  handleClose,
-}) => (
-  <Modal show={show} onHide={handleClose}>
-    <Modal.Body>
-      <h4>{title} name</h4>
-      <FormControl type="text" value={unitName} onChange={onInputChange} />
-      <div>
-        <br />
-        <TextEditor value={unitBody} onChange={onEditorChange} />
-      </div>
-    </Modal.Body>
-    <Modal.Footer>
-      <Button disabled={unitName.length === 0} onClick={onSubmitClick}>
-        Add {title}
-      </Button>
-      <Button onClick={handleClose}>Close</Button>
-    </Modal.Footer>
-  </Modal>
-);
+export default class ModalEditor extends Component {
+  static propTypes = {
+    onCreate: PropTypes.func.isRequired,
+  };
 
-ModalEditor.propTypes = {
-  title: PropTypes.string.isRequired,
-  show: PropTypes.bool.isRequired,
-  unitName: PropTypes.string.isRequired,
-  unitBody: PropTypes.string.isRequired,
-  onInputChange: PropTypes.func.isRequired,
-  onEditorChange: PropTypes.func.isRequired,
-  onSubmitClick: PropTypes.func.isRequired,
-  handleClose: PropTypes.func.isRequired,
-};
+  state = {
+    show: false,
+  };
 
-export default ModalEditor;
+  handleToggle = () => {
+    this.setState({
+      show: !this.state.show,
+    });
+  };
+
+  handleFormSubmit = unit => {
+    this.handleToggle();
+    this.props.onCreate(unit);
+  };
+
+  render() {
+    const { show } = this.state;
+    return (
+      <Fragment>
+        <IconButton onClick={this.handleToggle} glyph="plus" />
+        <Modal show={show} onHide={this.handleToggle}>
+          <Modal.Body>
+            <CreateForm onSubmit={this.handleFormSubmit} />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.handleToggle}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </Fragment>
+    );
+  }
+}
