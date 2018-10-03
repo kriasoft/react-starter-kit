@@ -2,9 +2,10 @@
 
 export const SET_RUNTIME_VARIABLE = 'SET_RUNTIME_VARIABLE';
 export const ADD_COURSE = 'ADD_COURSE';
+export const UPDATE_COURSE = 'UPDATE_COURSE';
 export const SET_COURSES = 'SET_COURSES';
+export const SET_COURSE = 'SET_COURSE';
 export const ADD_UNIT = 'ADD_UNIT';
-export const SET_UNITS = 'SET_UNITS';
 export const SUBSCRIBE_USER = 'SUBSCRIBE_USER';
 export const UNSUBSCRIBE_USER = 'UNSUBSCRIBE_USER';
 export const SET_UNIT_HEADERS = 'SET_UNIT_HEADERS';

@@ -35,14 +35,10 @@ export function setGroup(group) {
   };
 }
 
-export function addGroup({ id, title, users }) {
+export function addGroup(group) {
   return {
     type: ADD_GROUP,
-    data: {
-      id,
-      title,
-      users,
-    },
+    data: group,
   };
 }
 

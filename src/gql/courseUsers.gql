@@ -1,0 +1,6 @@
+  query userCourses($users: [String]) {
+    courses(userId: $users) {
+      id
+      title
+    }
+  }

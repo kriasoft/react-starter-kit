@@ -1,20 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 
-import { ADD_UNIT, SET_UNITS } from '../constants';
+import { ADD_UNIT } from '../constants';
 
-export function addUnit(id, title) {
+export function createUnit(unit) {
   return {
     type: ADD_UNIT,
-    data: {
-      id,
-      title,
-    },
-  };
-}
-
-export function setUnits(units) {
-  return {
-    type: SET_UNITS,
-    data: units,
+    data: unit,
   };
 }
