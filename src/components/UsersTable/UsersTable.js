@@ -2,19 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'react-bootstrap';
 
-export default function UsersTable({ users }) {
+export default function UsersTable({ children }) {
   return (
-    <Table striped bordered condensed hover>
+    <Table striped bordered responsive hover>
       <thead>
         <tr>
           <th>User email</th>
         </tr>
       </thead>
-      <tbody>{users}</tbody>
+      <tbody>{children()}</tbody>
     </Table>
   );
 }
 
 UsersTable.propTypes = {
-  users: PropTypes.element.isRequired,
+  children: PropTypes.element.isRequired,
 };

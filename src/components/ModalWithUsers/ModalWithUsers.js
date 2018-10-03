@@ -1,38 +1,35 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Modal, Button, Grid, Row, Col } from 'react-bootstrap';
-import UsersTable from '../UsersTable/UsersTable';
+import React, { Component, Fragment } from 'react';
+import { Modal, Button } from 'react-bootstrap';
+import CourseUsers from '../CourseUsers/CourseUsers';
 
-class ModalWithUsers extends React.Component {
-  static propTypes = {
-    show: PropTypes.bool.isRequired,
-    handleClose: PropTypes.func.isRequired,
-    usersLeft: PropTypes.element.isRequired,
-    usersRight: PropTypes.element.isRequired,
+class ModalWithUsers extends Component {
+  state = {
+    show: false,
   };
+
+  handleToggle = () => {
+    this.setState({
+      show: !this.state.show,
+    });
+  };
+
   render() {
-    const { show, handleClose, usersLeft, usersRight } = this.props;
+    const { show } = this.state;
 
     return (
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Body>
-          <Grid fluid>
-            <Row>
-              <Col md={6}>
-                <h4>Subscribed</h4>
-                <UsersTable users={usersLeft} />
-              </Col>
-              <Col md={6}>
-                <h4>Unsubscribed</h4>
-                <UsersTable users={usersRight} />
-              </Col>
-            </Row>
-          </Grid>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={handleClose}>Close</Button>
-        </Modal.Footer>
-      </Modal>
+      <Fragment>
+        <Button bsStyle="primary" onClick={this.handleToggle}>
+          Subscribe user
+        </Button>
+        <Modal show={show} onHide={this.handleToggle}>
+          <Modal.Body>
+            <CourseUsers />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.handleToggle}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </Fragment>
     );
   }
 }

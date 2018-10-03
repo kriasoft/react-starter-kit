@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import User from '../../components/User';
@@ -23,10 +23,10 @@ import {
 } from '../../actions/groups';
 import UsersList from '../../components/UsersList';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
-import IconButton from '../../components/IconButton/IconButton';
 
 class Users extends React.Component {
   static propTypes = {
+    addGroup: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     users: PropTypes.arrayOf(PropTypes.object).isRequired,
     groups: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -43,22 +43,11 @@ class Users extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      groupName: '',
-      showModal: false,
-      showModalSubscribe: false,
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.close = this.close.bind(this);
-    this.addGroup = this.addGroup.bind(this);
-    this.closeModalSubscribe = this.closeModalSubscribe.bind(this);
-    this.getUsersOfGroup = this.getUsersOfGroup.bind(this);
-    this.openUserGroupEditor = this.openUserGroupEditor.bind(this);
     this.deleteUserFromGroup = this.deleteUserFromGroup.bind(this);
     this.addUserToGroup = this.addUserToGroup.bind(this);
   }
 
-  async getUsersOfGroup(id) {
+  getUsersOfGroup = async id => {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `query groups($id: [String]) {
@@ -71,7 +60,7 @@ class Users extends React.Component {
     // if (!data && !data.users) throw new Error('Failed to load user profile.');
     return data.groups[0].users;
     // this.context.store.dispatch(addGroup(data.createGroup));
-  }
+  };
 
   getUserGroupIds(user) {
     return {
@@ -82,9 +71,6 @@ class Users extends React.Component {
 
   async openUserGroupEditor(g) {
     this.context.store.dispatch(setGroup(g));
-    this.setState({
-      showModalSubscribe: true,
-    });
   }
 
   async deleteUserFromGroup(user) {
@@ -112,40 +98,23 @@ class Users extends React.Component {
     this.close();
   }
 
-  handleChange(event) {
-    this.setState({ groupName: event.target.value });
-  }
-
-  handleOpen() {
-    this.setState({ showModal: true });
-  }
-
-  close() {
-    this.setState({ showModal: false });
-  }
-
-  async addGroup() {
+  addGroup = async title => {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation createGroup($title: String) {
-          createGroup(title: $title) { id, title, users{ id} } 
+        query: `mutation createGroup($title: String!) {
+          createGroup(title: $title) { id, title } 
         }`,
         variables: {
-          title: this.state.groupName,
+          title,
         },
       }),
     });
     const { data } = await resp.json();
-    this.context.store.dispatch(addGroup(data.createGroup));
-    this.close();
-  }
-
-  closeModalSubscribe() {
-    this.setState({ showModalSubscribe: false });
-  }
+    this.props.addGroup(data.createGroup);
+  };
 
   render() {
-    const { groups, group } = this.props;
+    const { groups, users, group } = this.props;
     let usersSub = [];
     let usersSubId = [];
     if (Object.keys(group).length !== 0) {
@@ -168,63 +137,39 @@ class Users extends React.Component {
         onClick={user => this.addUserToGroup(user)}
       />
     );
-    const usersList = [];
-    for (let i = 0; i < this.props.users.length; i += 1) {
-      usersList.push(
-        <li key={this.props.users[i].id}>
-          <User user={this.props.users[i]} />
-          {this.props.users[i].isAdmin}
-        </li>,
-      );
-    }
-    const groupsList = groups.map(g => (
-      <ul key={g.id}>
-        <Row>
-          <Col md={6}>
-            <p>{g.title} </p>
-          </Col>
-          <Col md={4}>
-            <IconButton
-              onClick={() => this.openUserGroupEditor(g)}
-              glyph="pencil"
-            />
-          </Col>
-        </Row>
-      </ul>
-    ));
 
     return (
       <div className={s.root}>
         <div className={s.container}>
           <Row>
             <Col md={4}>
-              <h1>Groups</h1>
-              <ol>{groupsList}</ol>
-              <Button bsStyle="primary" onClick={() => this.handleOpen()}>
-                Add Group
-              </Button>
-              <ModalAdd
-                value={this.state.groupName}
-                title="Group"
-                show={this.state.showModal}
-                onInputChange={this.handleChange}
-                onSubmitClick={this.addGroup}
-                handleClose={this.close}
-              />
+              <h1>
+                Groups{' '}
+                <ModalAdd buttonText="Add Group" onUpdate={this.addGroup} />
+              </h1>
+              <ol>
+                {groups.map(({ id, title }) => (
+                  <ul key={id}>
+                    <p>{title} </p>
+                    <ModalWithUsers
+                      usersLeft={subscribedUsersList}
+                      usersRight={mainUsersList}
+                    />
+                  </ul>
+                ))}
+              </ol>
             </Col>
             <Col md={8}>
               <h1>{this.props.title}</h1>
-              <ol>{usersList}</ol>
+              <ol>
+                {users.map(user => (
+                  <li key={user.id}>
+                    <User user={user} />
+                  </li>
+                ))}
+              </ol>
             </Col>
           </Row>
-          <ModalWithUsers
-            show={this.state.showModalSubscribe}
-            titleLeft="Subscribed"
-            usersLeft={subscribedUsersList}
-            titleRight="Unsubscribed"
-            usersRight={mainUsersList}
-            handleClose={this.closeModalSubscribe}
-          />
         </div>
       </div>
     );
@@ -237,4 +182,7 @@ const mapStateToProps = state => ({
   group: state.groups.group,
 });
 
-export default connect(mapStateToProps)(withStyles(s)(Users));
+export default connect(
+  mapStateToProps,
+  { addUserToGroup, deleteUserFromGroup, addGroup },
+)(withStyles(s)(Users));
