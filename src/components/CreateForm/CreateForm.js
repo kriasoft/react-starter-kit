@@ -48,7 +48,10 @@ export default class CreateForm extends Component {
           <HelpBlock>Title can not be empty</HelpBlock>
         </FormGroup>
         <FormGroup controlId="editor">
-          <TextEditor value={body} onChange={this.handleChange('body')} />
+          <TextEditor
+            value={body}
+            onChange={value => this.setState({ body: value })}
+          />
         </FormGroup>
         <Button
           type="submit"
