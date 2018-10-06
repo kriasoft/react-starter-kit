@@ -14,6 +14,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
 import TextEditor from '../../components/TextEditor';
 import MarksTable from '../../components/MarksTable';
+import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
 import { setUnitHeaders } from '../../actions/unit';
 import s from './Unit.css';
@@ -66,7 +67,7 @@ class Unit extends React.Component {
   async componentDidMount() {
     const { user } = this.props;
     if (user) {
-      this.retrieveAnswer();
+      //  this.retrieveAnswer();
     }
   }
 
@@ -289,86 +290,45 @@ class Unit extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            <a href={`/courses/${course.id}`}>{course.title}</a>
-            /{editMode ? (
-              <span>
-                <input
-                  value={title}
-                  type="text"
-                  onChange={this.handleChange('title')}
-                />
-                <IconButton onClick={this.save} glyph="ok" />
-                <IconButton
-                  onClick={() => {
-                    this.setState({
-                      editMode: false,
-                      title: unit.title,
-                      body: unit.body,
-                    });
-                  }}
-                  glyph="remove"
-                />
-              </span>
-            ) : (
-              <Fragment>
-                <span>
-                  {title}
-                  {role === 'teacher' && (
-                    <IconButton
-                      onClick={this.handleToggleEdit}
-                      glyph="pencil"
-                    />
-                  )}
-                </span>
-                <DropdownButton
-                  id="answer_chooser"
-                  title={`${unit.answers[0].user.profile.displayName} ${
-                    unit.answers[0].createdAt
-                  }`}
-                  onSelect={this.handleAnswerSelect}
-                >
-                  {user &&
-                    user.isAdmin &&
-                    answers &&
-                    answers.map((ans, i) => (
-                      <MenuItem
-                        key={ans.id}
-                        eventKey={i}
-                        active={i === answerCur}
-                      >
-                        {`${ans.user.profile.displayName} ${ans.createdAt}`}
-                      </MenuItem>
-                    ))}
-                </DropdownButton>
-              </Fragment>
+            {/* <a href={`/courses/${course.id}`}>{course.title}</a> */}
+            / {title}
+            {role === 'teacher' && (
+              <ModalEditor title={unit.title} body={unit.body} />
             )}
+            <DropdownButton
+              id="answer_chooser"
+              // title={`${unit.answers[0].user.profile.displayName} ${
+              //   unit.answers[0].createdAt
+              // }`}
+              onSelect={this.handleAnswerSelect}
+            >
+              {user &&
+                user.isAdmin &&
+                answers &&
+                answers.map((ans, i) => (
+                  <MenuItem key={ans.id} eventKey={i} active={i === answerCur}>
+                    {/* {`${ans.user.profile.displayName} ${ans.createdAt}`} */}
+                  </MenuItem>
+                ))}
+            </DropdownButton>
           </h1>
-          {editMode ? (
-            <TextEditor
-              value={body}
-              onChange={val => this.setState({ body: val })}
-            />
-          ) : (
-            <Fragment>
-              <span>
-                <UnitView
-                  answerId={answerId}
-                  value={answer}
-                  body={body}
-                  onChange={val => this.setState({ answer: val })}
-                  onHeadersChange={headers =>
-                    this.props.setUnitHeaders(headers)
-                  }
-                />
-                {user && <Button onClick={this.saveAnswer}>Save</Button>}
-              </span>
-              <MarksTable
-                // TODO: make newly added mark appear ih the table
-                marks={unit.answers[0].marks}
-                onSubmit={this.addMark}
+          <Fragment>
+            <span>
+              <UnitView
+                answerId={answerId}
+                value={answer}
+                body={body}
+                onChange={val => this.setState({ answer: val })}
+                onHeadersChange={headers => this.props.setUnitHeaders(headers)}
               />
-            </Fragment>
-          )}
+              {user && <Button onClick={this.saveAnswer}>Save</Button>}
+            </span>
+            <MarksTable
+              // TODO: make newly added mark appear ih the table
+              marks={unit.answers[0].marks}
+              onSubmit={this.addMark}
+            />
+          </Fragment>
         </div>
       </div>
     );

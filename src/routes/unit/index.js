@@ -29,15 +29,15 @@ async function action({ fetch, params, store }) {
   const { data } = await resp.json();
   if (!data && !data.courses.length && !data.units.length)
     throw new Error('Failed to load unit.');
-  store.dispatch(setUnit(data.unit));
+  store.dispatch(setUnit(data.units[0]));
   return {
     title,
     component: (
       <Layout showUnitHeaders>
         <Unit
-          course={data.courses[0]}
+          //course={data.courses[0]}
           unit={data.units[0]}
-          role={data.courses[0].users[0].role}
+          //role={data.courses[0].users[0].role}
         />
       </Layout>
     ),
