@@ -12,11 +12,13 @@ import TextEditor from '../TextEditor/TextEditor';
 export default class CreateForm extends Component {
   static propTypes = {
     onSubmit: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    body: PropTypes.string.isRequired,
   };
 
   state = {
-    title: '',
-    body: '',
+    title: this.props.title,
+    body: this.props.body,
   };
 
   handleChange = name => ({ target: { value } }) =>

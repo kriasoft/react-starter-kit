@@ -7,6 +7,13 @@ import CreateForm from '../CreateForm/CreateForm';
 export default class ModalEditor extends Component {
   static propTypes = {
     onCreate: PropTypes.func.isRequired,
+    title: PropTypes.string,
+    body: PropTypes.string,
+  };
+
+  static defaultProps = {
+    title: '',
+    body: '',
   };
 
   state = {
@@ -26,12 +33,20 @@ export default class ModalEditor extends Component {
 
   render() {
     const { show } = this.state;
+    const { title, body } = this.props;
     return (
       <Fragment>
-        <IconButton onClick={this.handleToggle} glyph="plus" />
+        <IconButton
+          onClick={this.handleToggle}
+          glyph={title ? 'pencil' : 'plus'}
+        />
         <Modal show={show} onHide={this.handleToggle}>
           <Modal.Body>
-            <CreateForm onSubmit={this.handleFormSubmit} />
+            <CreateForm
+              title={title}
+              body={body}
+              onSubmit={this.handleFormSubmit}
+            />
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.handleToggle}>Close</Button>
