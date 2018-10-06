@@ -1,0 +1,15 @@
+query loadCourse($id: [String]) {
+  courses(ids: $id) {
+    id
+    title
+    units {
+      id
+      title
+    }
+    users {
+      id
+      email
+      role
+    }
+  }
+}

@@ -30,6 +30,7 @@ async function action({ fetch, store }) {
   if (!data && !data.files) throw new Error('Failed to load course.');
   store.dispatch(setFiles(data.files));
   return {
+    chunks: ['files'],
     title,
     component: (
       <Layout>

@@ -19,8 +19,8 @@ import CoursesList from '../../components/CoursesList';
 class Courses extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    loadCourses: PropTypes.func.isRequired,
-    addCourse: PropTypes.func.isRequired,
+    fetchCourses: PropTypes.func.isRequired,
+    createCourse: PropTypes.func.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
@@ -48,20 +48,21 @@ class Courses extends React.Component {
   };
 
   componentDidMount() {
-    const { user, loadCourses } = this.props;
+    const { user } = this.props;
     if (user) {
-      loadCourses(user);
+      this.props.fetchCourses(user);
     }
   }
 
   render() {
-    const { user, courses, title, addCourse } = this.props;
+    const { user, courses, title } = this.props;
 
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            {title} {user && <ModalAdd onUpdate={t => addCourse(t)} />}
+            {title}
+            {user && <ModalAdd onUpdate={t => this.props.createCourse(t)} />}
           </h1>
           <CoursesList courses={courses} />
         </div>
@@ -71,19 +72,10 @@ class Courses extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  courses: state.courses || [],
+  courses: state.courses,
   user: state.user,
-});
-
-const mapDispatchToProps = dispatch => ({
-  addCourse: title => {
-    dispatch(createCourse(title));
-  },
-  loadCourses: user => {
-    dispatch(fetchCourses(user));
-  },
 });
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  { createCourse, fetchCourses },
 )(withStyles(s)(Courses));

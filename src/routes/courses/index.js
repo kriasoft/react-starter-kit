@@ -15,6 +15,7 @@ const title = 'Courses';
 
 async function action() {
   return {
+    chunks: ['courses'],
     title,
     component: (
       <Layout>

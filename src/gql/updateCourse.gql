@@ -1,0 +1,6 @@
+mutation updateCourse($id: String!, $title: String) {
+  updateCourse(title: $title, id: $id) {
+    id
+    title
+  }
+}

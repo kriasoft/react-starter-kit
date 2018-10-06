@@ -8,6 +8,8 @@ import {
   DELETE_USER_FROM_GROUP,
 } from '../constants';
 
+import loadGroups from '../gql/loadGroups.gql';
+
 export function addUserToGroup(groupId, user) {
   return {
     type: ADD_USER_TO_GROUP,
@@ -46,5 +48,12 @@ export function setGroups(groups) {
   return {
     type: SET_GROUPS,
     data: groups,
+  };
+}
+
+export function fetchGroups() {
+  return async (dispatch, _, { graphqlRequest }) => {
+    const { data } = await graphqlRequest(loadGroups);
+    dispatch(setGroups(data.groups));
   };
 }

@@ -6,6 +6,7 @@ const title = 'Tests';
 
 function action() {
   return {
+    chunks: ['tests'],
     title,
     component: (
       <Layout>

@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import ModalEditor from '../../components/ModalEditor';
 import UnitsList from '../../components/UnitsList';
 import s from './Course.css';
-import { createUnit } from '../../actions/units';
+import { addUnit } from '../../actions/units';
 import { updateCourse } from '../../actions/courses';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
 import ModalAdd from '../../components/ModalAdd';
@@ -27,7 +27,7 @@ class Course extends React.Component {
       role: PropTypes.string,
     }).isRequired,
     updateCourse: PropTypes.func.isRequired,
-    createUnit: PropTypes.func.isRequired,
+    addUnit: PropTypes.func.isRequired,
     units: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string,
@@ -42,48 +42,6 @@ class Course extends React.Component {
     fetch: PropTypes.func.isRequired,
   };
 
-  createUnit = async ({ title, body }) => {
-    const { id } = this.props;
-    const resp = await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: `mutation createUnit($id: String!, $title: String!, $body: String){
-          createUnit(
-            title: $title,
-            courseId: $id,
-            body: $body)
-          { id, title }
-        }`,
-        variables: {
-          title,
-          id,
-          body,
-        },
-      }),
-    });
-    const { data } = await resp.json();
-    this.props.createUnit(data.createUnit);
-  };
-
-  updateCourse = async title => {
-    const { id } = this.props;
-    const resp = await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: `mutation updateCourse($id: String!, $title: String){
-          updateCourse (
-            title: $title,
-            id: $id)
-          { id, title }
-        }`,
-        variables: {
-          title,
-          id,
-        },
-      }),
-    });
-    const { data } = await resp.json();
-    this.props.updateCourse(data.updateCourse);
-  };
-
   render() {
     const { user, units, id, title } = this.props;
     return (
@@ -93,8 +51,11 @@ class Course extends React.Component {
             {title}
             {user && (
               <Fragment>
-                <ModalAdd title={title} onUpdate={this.updateCourse} />
-                <ModalEditor onCreate={this.createUnit} />
+                <ModalAdd
+                  title={title}
+                  onUpdate={t => this.props.updateCourse(t)}
+                />
+                <ModalEditor onCreate={unit => this.props.addUnit(unit)} />
               </Fragment>
             )}
           </h1>
@@ -115,5 +76,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { updateCourse, createUnit },
+  { updateCourse, addUnit },
 )(withStyles(s)(Course));

@@ -1,0 +1,6 @@
+mutation createUnit($id: String!, $title: String!, $body: String) {
+  createUnit(title: $title, courseId: $id, body: $body) {
+    id
+    title
+  }
+}

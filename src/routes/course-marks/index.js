@@ -61,6 +61,7 @@ async function action({ fetch, params }) {
   ];
 
   return {
+    chunks: ['courseMarks'],
     title,
     component: (
       <Layout menuSecond={mas}>

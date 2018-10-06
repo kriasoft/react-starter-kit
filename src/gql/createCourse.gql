@@ -1,6 +1,6 @@
-  mutation createCourse($title: String!) {
-    createCourse(title: $title) {
-      id
-      title
-    }
+mutation createCourse($title: String!) {
+  createCourse(title: $title) {
+    id
+    title
   }
+}

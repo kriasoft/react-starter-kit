@@ -1,0 +1,11 @@
+query loadGroups {
+  groups {
+    id
+    title
+    users {
+      id
+      email
+      role
+    }
+  }
+}
