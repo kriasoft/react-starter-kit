@@ -25,6 +25,18 @@ class UsersList extends React.Component {
     actions: [],
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      input: '',
+    };
+  }
+
+  onInputChange = e => {
+    this.setState({ input: e.target.value });
+  };
+
   static renderActions(user, actions) {
     return actions.map((item, i) => {
       const attrs = {};
@@ -41,27 +53,43 @@ class UsersList extends React.Component {
 
   render() {
     const { usersList, onClick, actions } = this.props;
-    const users = usersList.map(user => (
-      <tr key={user.id}>
-        <td>
-          {actions.length ? (
-            <SplitButton
-              onClick={() => onClick(user)}
-              bsStyle="default"
-              title={user.email + (user.isAdmin ? ' (a)' : '')}
-            >
-              {UsersList.renderActions(user, actions)}
-            </SplitButton>
-          ) : (
-            <Button bsStyle="primary" role="link" onClick={() => onClick(user)}>
-              <User user={user} link={false} />
-            </Button>
-          )}
-          {user.role ? ` [${user.role}]` : ''}
-        </td>
-      </tr>
-    ));
-    return <Fragment>{users}</Fragment>;
+    const { input } = this.state;
+    const users = usersList
+      .filter(({ email }) => email.includes(`${input}`))
+      .map(user => (
+        <tr key={user.id}>
+          <td>
+            {actions.length ? (
+              <SplitButton
+                onClick={() => onClick(user)}
+                bsStyle="default"
+                title={user.email + (user.isAdmin ? ' (a)' : '')}
+              >
+                {UsersList.renderActions(user, actions)}
+              </SplitButton>
+            ) : (
+              <Button
+                bsStyle="primary"
+                role="link"
+                onClick={() => onClick(user)}
+              >
+                <User user={user} link={false} />
+              </Button>
+            )}
+            {user.role ? ` [${user.role}]` : ''}
+          </td>
+        </tr>
+      ));
+    return (
+      <Fragment>
+        <input
+          type="text"
+          value={input}
+          onChange={e => this.onInputChange(e)}
+        />
+        {users}
+      </Fragment>
+    );
   }
 }
 
