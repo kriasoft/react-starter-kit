@@ -1,4 +1,5 @@
 import { SET_FILES, ADD_FILE } from '../constants';
+import loadFiles from '../gql/loadFiles.gql';
 
 export function setFiles(files) {
   return {
@@ -15,5 +16,12 @@ export function addFile({ id, internalName, owner }) {
       internalName,
       owner,
     },
+  };
+}
+
+export function fetchFiles() {
+  return async (dispatch, _, { graphqlRequest }) => {
+    const { data } = await graphqlRequest(loadFiles);
+    dispatch(setFiles(data.files));
   };
 }

@@ -10,25 +10,12 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Files from './Files';
-import { setFiles } from '../../actions/files';
+import { fetchFiles } from '../../actions/files';
 
 const title = 'Files';
 
-async function action({ fetch, store }) {
-  const resp = await fetch('/graphql', {
-    body: JSON.stringify({
-      query: `query {
-        files {
-          internalName,
-          id,
-          url
-        }
-      }`,
-    }),
-  });
-  const { data } = await resp.json();
-  if (!data && !data.files) throw new Error('Failed to load course.');
-  store.dispatch(setFiles(data.files));
+async function action({ store }) {
+  store.dispatch(fetchFiles());
   return {
     chunks: ['files'],
     title,
