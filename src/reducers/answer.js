@@ -1,6 +1,6 @@
 import { SET_ANSWER, ADD_MARK } from '../constants';
 
-export default function answer(state = {}, action) {
+export default function answer(state = { marks: [] }, action) {
   switch (action.type) {
     case SET_ANSWER:
       return action.data;

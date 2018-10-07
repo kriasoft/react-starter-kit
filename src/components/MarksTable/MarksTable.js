@@ -32,9 +32,7 @@ class MarksTable extends Component {
 
   componentDidMount = async () => {
     const { answerId } = this.props;
-    if (answerId) {
-      await this.props.loadAnswer(answerId);
-    }
+    await this.props.loadAnswer(answerId);
   };
 
   getValidationState() {
@@ -140,8 +138,7 @@ class MarksTable extends Component {
 }
 
 const mapStateToProps = state => ({
-  marks: state.answer.marks || [],
-  answerId: state.unit.answers && state.unit.answers[0].id,
+  marks: state.answer.marks,
 });
 
 export default connect(
