@@ -1,10 +1,26 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormControl, FormGroup, Table } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import IconButton from '../IconButton/IconButton';
+import { loadAnswer, createMark } from '../../actions/unit';
 
-export default class MarksTable extends Component {
+class MarksTable extends Component {
+  static propTypes = {
+    answerId: PropTypes.string.isRequired,
+    createMark: PropTypes.func.isRequired,
+    loadAnswer: PropTypes.func.isRequired,
+    marks: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        mark: PropTypes.number.isRequired,
+        comment: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
+      }),
+    ).isRequired,
+  };
+
   constructor(props) {
     super(props);
 
@@ -14,6 +30,13 @@ export default class MarksTable extends Component {
     };
   }
 
+  componentDidMount = async () => {
+    const { answerId } = this.props;
+    if (answerId) {
+      await this.props.loadAnswer(answerId);
+    }
+  };
+
   getValidationState() {
     const { mark } = this.state;
     if (mark < 0 || mark > 100) return 'error';
@@ -21,14 +44,10 @@ export default class MarksTable extends Component {
     return null;
   }
 
-  handleSubmit = () => {
-    this.props.onSubmit({
-      ...this.state,
-    });
-    this.setState({
-      mark: '',
-      comment: '',
-    });
+  handleSubmit = e => {
+    const { answerId } = this.props;
+    e.preventDefault();
+    this.props.createMark({ ...this.state, answerId });
   };
 
   handleChange = name => ({ target: { value } }) =>
@@ -54,18 +73,26 @@ export default class MarksTable extends Component {
               </tr>
             </thead>
             <tbody>
-              {marks.map((m, index) => (
-                <tr key={m.id}>
-                  <td>{index + 1}</td>
-                  <td>{m.mark.toFixed(2)}</td>
-                  <td>{m.comment}</td>
-                  <td>
-                    {`${moment(m.createdAt).fromNow()} ( ${moment(
-                      m.createdAt,
-                    ).format('llll')})`}
+              {marks.length > 0 ? (
+                marks.map((m, index) => (
+                  <tr key={m.id}>
+                    <td>{index + 1}</td>
+                    <td>{m.mark.toFixed(2)}</td>
+                    <td>{m.comment}</td>
+                    <td>
+                      {`${moment(m.createdAt).fromNow()} ( ${moment(
+                        m.createdAt,
+                      ).format('llll')})`}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">
+                    <p>No marks yet</p>
                   </td>
                 </tr>
-              ))}
+              )}
               <tr>
                 <td />
                 <td>
@@ -112,13 +139,12 @@ export default class MarksTable extends Component {
   }
 }
 
-MarksTable.propTypes = {
-  marks: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      mark: PropTypes.number.isRequired,
-      comment: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-  onSubmit: PropTypes.func.isRequired,
-};
+const mapStateToProps = state => ({
+  marks: state.answer.marks || [],
+  answerId: state.unit.answers && state.unit.answers[0].id,
+});
+
+export default connect(
+  mapStateToProps,
+  { createMark, loadAnswer },
+)(MarksTable);

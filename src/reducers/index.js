@@ -7,6 +7,7 @@ import unit from './unit';
 import users from './users';
 import files from './files';
 import groups from './groups';
+import answer from './answer';
 
 export default combineReducers({
   user,
@@ -17,4 +18,5 @@ export default combineReducers({
   users,
   files,
   groups,
+  answer,
 });

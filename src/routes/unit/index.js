@@ -14,14 +14,15 @@ import { setUnit } from '../../actions/units';
 
 const title = 'Unit';
 
-async function action({ fetch, params, store }) {
+async function action({ fetch, params: { idCourse, idUnit }, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `query unit($idUnit: [String], $idUser: [String]) { units(ids: $idUnit)
-         { id title body answers(userIds: $idUser)  { createdAt user { profile { displayName } }
-          marks { id mark comment createdAt } } } }`,
+      query: `query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) { courses(ids: $idCourse) { id title users(ids: $idUser) { role } }
+      units(ids: $idUnit) { id title body answers(userIds: $idUser) { createdAt user { profile{ displayName } }
+       marks { id mark comment createdAt } } } } `,
       variables: {
-        idUnit: params.idUnit,
+        idCourse,
+        idUnit,
         idUser: store.getState().user.id,
       },
     }),
@@ -36,9 +37,8 @@ async function action({ fetch, params, store }) {
     component: (
       <Layout showUnitHeaders>
         <Unit
-          // course={data.courses[0]}
-          unit={data.units[0]}
-          // role={data.courses[0].users[0].role}
+          course={data.courses[0]}
+          role={data.courses[0].users[0].role || 'teacher'}
         />
       </Layout>
     ),

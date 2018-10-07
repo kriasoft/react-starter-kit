@@ -12,17 +12,17 @@ import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
-import TextEditor from '../../components/TextEditor';
 import MarksTable from '../../components/MarksTable';
 import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
-import { setUnitHeaders } from '../../actions/unit';
+import { setUnitHeaders, createMark } from '../../actions/unit';
+import { updateUnit } from '../../actions/units';
 import s from './Unit.css';
-import IconButton from '../../components/IconButton/IconButton';
 
 class Unit extends React.Component {
   static propTypes = {
     setUnitHeaders: PropTypes.func.isRequired,
+    updateUnit: PropTypes.func.isRequired,
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
@@ -53,21 +53,15 @@ class Unit extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      editMode: false,
-      title: this.props.unit.title,
-      body: this.props.unit.body,
       answerId: null,
       answer: {},
     };
-    this.saveAnswer = this.saveAnswer.bind(this);
-    this.save = this.save.bind(this);
-    this.addMark = this.addMark.bind(this);
   }
 
   async componentDidMount() {
     const { user } = this.props;
     if (user) {
-      //  this.retrieveAnswer();
+      this.retrieveAnswer();
     }
   }
 
@@ -128,8 +122,7 @@ class Unit extends React.Component {
     });
     return res;
   }
-
-  async saveAnswer() {
+  saveAnswer = async () => {
     const { user, course, unit } = this.props;
     const answer = await this.postProcessAnswer(this.state.answer);
     if (this.state.answerId) {
@@ -179,52 +172,7 @@ class Unit extends React.Component {
         }),
       });
     }
-  }
-
-  async save() {
-    await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: `mutation create($title: String, $id: String, $body: String) {
-          updateUnit(
-            title: $title,
-            id: $id,
-            body: $body,
-          ){
-            id,title
-          }
-        }`,
-        variables: {
-          title: this.state.title,
-          id: this.props.unit.id,
-          body: this.state.body,
-        },
-      }),
-    });
-    this.handleToggleEdit();
-  }
-
-  async addMark({ mark, comment }) {
-    const { answerId } = this.state;
-
-    await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: `mutation addMark($mark: Float, $comment: String, $answerId: String!) {
-          addMark(
-            mark: $mark,
-            comment: $comment,
-            answerId: $answerId,
-          ) {
-            id
-          }
-        }`,
-        variables: {
-          mark,
-          comment,
-          answerId,
-        },
-      }),
-    });
-  }
+  };
 
   async retrieveAnswer() {
     const { user, course, unit } = this.props;
@@ -275,25 +223,21 @@ class Unit extends React.Component {
   }
 
   render() {
-    const { user, role, course, unit } = this.props;
-    const {
-      title,
-      editMode,
-      answers,
-      answerCur,
-      body,
-      answerId,
-      answer,
-    } = this.state;
+    const { user, role, unit, course } = this.props;
+    const { answers, answerCur, answerId, answer } = this.state;
 
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            {/* <a href={`/courses/${course.id}`}>{course.title}</a> */}
-            / {title}
+            <a href={`/courses/${course.id}`}>{course.title}</a>
+            / {unit.title}
             {role === 'teacher' && (
-              <ModalEditor title={unit.title} body={unit.body} />
+              <ModalEditor
+                title={unit.title}
+                body={unit.body}
+                onCreate={u => this.props.updateUnit({ ...u, id: unit.id })}
+              />
             )}
             <DropdownButton
               id="answer_chooser"
@@ -307,7 +251,9 @@ class Unit extends React.Component {
                 answers &&
                 answers.map((ans, i) => (
                   <MenuItem key={ans.id} eventKey={i} active={i === answerCur}>
-                    {/* {`${ans.user.profile.displayName} ${ans.createdAt}`} */}
+                    {/* {`
+                    ${ans.user.profile.displayName} 
+                    ${ans.createdAt}`} */}
                   </MenuItem>
                 ))}
             </DropdownButton>
@@ -317,17 +263,17 @@ class Unit extends React.Component {
               <UnitView
                 answerId={answerId}
                 value={answer}
-                body={body}
+                body={unit.body}
                 onChange={val => this.setState({ answer: val })}
                 onHeadersChange={headers => this.props.setUnitHeaders(headers)}
               />
               {user && <Button onClick={this.saveAnswer}>Save</Button>}
             </span>
-            <MarksTable
-              // TODO: make newly added mark appear ih the table
-              marks={unit.answers[0].marks}
-              onSubmit={this.addMark}
-            />
+            {unit.answers[0] ? (
+              <MarksTable answerId={answerId} />
+            ) : (
+              <p>This unit has no answers yet</p>
+            )}
           </Fragment>
         </div>
       </div>
@@ -336,10 +282,11 @@ class Unit extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  unit: state.unit,
   user: state.user,
 });
 
 export default connect(
   mapStateToProps,
-  { setUnitHeaders },
+  { setUnitHeaders, createMark, updateUnit },
 )(withStyles(s)(Unit));

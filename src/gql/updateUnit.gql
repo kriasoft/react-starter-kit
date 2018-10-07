@@ -1,0 +1,7 @@
+mutation updateUnit($id: String!, $title: String!, $body: String) {
+  updateUnit(title: $title, id: $id, body: $body) {
+    id
+    title
+    body
+  }
+}

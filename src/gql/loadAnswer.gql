@@ -1,0 +1,10 @@
+query loadAnswer($id: [String]) {
+  answers(ids: $id) {
+    marks {
+      id
+      mark
+      comment
+      createdAt
+    }
+  }
+}

@@ -1,0 +1,8 @@
+mutation addMark($mark: Float!, $comment: String, $answerId: String!) {
+  createMark(mark: $mark, comment: $comment, answerId: $answerId) {
+    id
+    mark
+    comment
+    createdAt
+  }
+}
