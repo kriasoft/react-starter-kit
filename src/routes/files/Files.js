@@ -18,15 +18,15 @@ import FilesList from '../../components/FilesList';
 import { addFile } from '../../actions/files';
 
 class Files extends React.Component {
-  static contextTypes = {
-    store: PropTypes.any.isRequired,
-    fetch: PropTypes.func.isRequired,
-  };
-
   static propTypes = {
     title: PropTypes.string.isRequired,
     files: PropTypes.arrayOf(PropTypes.object).isRequired,
     addFile: PropTypes.func.isRequired,
+  };
+
+  static contextTypes = {
+    store: PropTypes.any.isRequired,
+    fetch: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -110,4 +110,7 @@ const mapDispatch = {
   addFile,
 };
 
-export default connect(mapState, mapDispatch)(withStyles(s)(Files));
+export default connect(
+  mapState,
+  mapDispatch,
+)(withStyles(s)(Files));

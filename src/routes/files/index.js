@@ -15,7 +15,7 @@ import { fetchFiles } from '../../actions/files';
 const title = 'Files';
 
 async function action({ store }) {
-  store.dispatch(fetchFiles());
+  await store.dispatch(fetchFiles());
   return {
     chunks: ['files'],
     title,
