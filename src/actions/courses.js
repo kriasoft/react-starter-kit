@@ -14,6 +14,8 @@ import courseUsers from '../gql/courseUsers.gql';
 import createCourseGql from '../gql/createCourse.gql';
 import loadCourse from '../gql/loadCourse.gql';
 import updateCourseGql from '../gql/updateCourse.gql';
+import subscribeUserGql from '../gql/subscribeUser.gql';
+import unsubscribeUserGql from '../gql/unsubscribeUser.gql';
 
 export function addCourse({ id, title }) {
   return {
@@ -96,5 +98,27 @@ export function updateCourse(title) {
     const { id } = getState().course;
     const { data } = await graphqlRequest(updateCourseGql, { title, id });
     dispatch(renameCourse(data.updateCourse));
+  };
+}
+
+export function subscribeUser(id, courseId) {
+  return async (dispatch, getState, { graphqlRequest }) => {
+    // const { id } = getState().course;
+    const { data } = await graphqlRequest(subscribeUserGql, {
+      id,
+      courseId,
+    });
+    dispatch(addUserToCourse(data.addUserToCourse));
+  };
+}
+
+export function unsubscribeUser(id, courseId) {
+  return async (dispatch, getState, { graphqlRequest }) => {
+    // const { id } = getState().course;
+    const { data } = await graphqlRequest(unsubscribeUserGql, {
+      id,
+      courseId,
+    });
+    dispatch(deleteUserFromCourse(data.deleteUserFromCourse));
   };
 }

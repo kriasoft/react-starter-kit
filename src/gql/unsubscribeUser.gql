@@ -1,0 +1,5 @@
+mutation unsubscribe($id: String!, $courseId: String!) {
+  deleteUserFromCourse(id: $id, courseId: $courseId) {
+    id
+  }
+}
