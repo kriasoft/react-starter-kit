@@ -46,7 +46,7 @@ const UserType = new ObjectType({
     },
     role: {
       type: StringType,
-      resolve: user => _.get(user, 'UserCourse.role'),
+      resolve: user => _.get(user, 'userCourse.role'),
     },
     answers: {
       type: new GraphQLList(AnswerType),

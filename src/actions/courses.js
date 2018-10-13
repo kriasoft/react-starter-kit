@@ -9,7 +9,6 @@ import {
   UPDATE_COURSE,
 } from '../constants';
 
-import courses from '../gql/courses.gql';
 import courseUsers from '../gql/courseUsers.gql';
 import createCourseGql from '../gql/createCourse.gql';
 import loadCourse from '../gql/loadCourse.gql';
@@ -73,12 +72,9 @@ export function fetchCourse(id) {
   };
 }
 
-export function fetchCourses(user) {
+export function fetchCourses(userId) {
   return async (dispatch, _, { graphqlRequest }) => {
-    const { data } = await graphqlRequest.apply(
-      this,
-      user.isAdmin ? [courses] : [courseUsers, { users: [user] }],
-    );
+    const { data } = await graphqlRequest(courseUsers, { users: userId });
     dispatch(setCourses(data.courses));
   };
 }

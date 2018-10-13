@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
@@ -21,11 +21,7 @@ class Courses extends React.Component {
     title: PropTypes.string.isRequired,
     fetchCourses: PropTypes.func.isRequired,
     createCourse: PropTypes.func.isRequired,
-    user: PropTypes.shape({
-      id: PropTypes.string,
-      email: PropTypes.string,
-      role: PropTypes.string,
-    }),
+    userId: PropTypes.string.isRequired,
     courses: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string,
@@ -39,32 +35,48 @@ class Courses extends React.Component {
     fetch: PropTypes.func.isRequired,
   };
 
-  static defaultProps = {
-    user: PropTypes.shape({
-      id: PropTypes.string,
-      email: PropTypes.string,
-      role: PropTypes.string,
-    }),
-  };
-
   componentDidMount() {
-    const { user } = this.props;
-    if (user) {
-      this.props.fetchCourses(user);
+    const { userId } = this.props;
+    if (userId) {
+      this.props.fetchCourses(userId);
     }
   }
 
   render() {
-    const { user, courses, title } = this.props;
+    const { userId, courses, title } = this.props;
+    const student = courses.filter(
+      ({ users }) => users.length > 0 && users[0].role === 'student',
+    );
+    const teacher = courses.filter(
+      ({ users }) => users.length > 0 && users[0].role === 'teacher',
+    );
+    const all = courses.filter(({ users }) => !users.length);
 
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
             {title}
-            {user && <ModalAdd onUpdate={t => this.props.createCourse(t)} />}
+            {userId && <ModalAdd onUpdate={t => this.props.createCourse(t)} />}
           </h1>
-          <CoursesList courses={courses} />
+          {student.length > 0 && (
+            <Fragment>
+              <h5>Student:</h5>
+              <CoursesList courses={student} />
+            </Fragment>
+          )}
+          {teacher.length > 0 && (
+            <Fragment>
+              <h5>Teacher:</h5>
+              <CoursesList courses={teacher} />
+            </Fragment>
+          )}
+          {all.length > 0 && (
+            <Fragment>
+              <h5>All:</h5>
+              <CoursesList courses={all} />
+            </Fragment>
+          )}
         </div>
       </div>
     );
@@ -73,7 +85,7 @@ class Courses extends React.Component {
 
 const mapStateToProps = state => ({
   courses: state.courses || [],
-  user: state.user,
+  userId: state.user.id,
 });
 export default connect(
   mapStateToProps,
