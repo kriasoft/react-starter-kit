@@ -21,7 +21,7 @@ class ModalWithUsers extends Component {
         <Button bsStyle="primary" onClick={this.handleToggle}>
           Subscribe user
         </Button>
-        <Modal show={show} onHide={this.handleToggle}>
+        <Modal show={show} onHide={this.handleToggle} bsSize="large">
           <Modal.Body>
             <CourseUsers />
           </Modal.Body>

@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Grid, Col, Row } from 'react-bootstrap';
-import UsersTable from '../UsersTable/UsersTable';
-import UsersList from '../UsersList/UsersList';
+import {
+  Grid,
+  Col,
+  Row,
+  ListGroup,
+  ListGroupItem,
+  Button,
+  DropdownButton,
+  ButtonGroup,
+  MenuItem,
+} from 'react-bootstrap';
 import { subscribeUser, unsubscribeUser } from '../../actions/courses';
 import { fetchUsers } from '../../actions/users';
 
@@ -34,44 +42,56 @@ class CourseUsers extends Component {
 
   render() {
     const { subscribers, users } = this.props;
+    const unsubscribed = users.filter(
+      ({ id }) => !subscribers.find(user => user.id === id),
+    );
+
     return (
       <Grid fluid>
         <Row>
           <Col md={6}>
-            <h4>Unubscribed</h4>
-            <UsersTable>
-              {() => (
-                <UsersList
-                  usersList={users.filter(
-                    ({ id }) =>
-                      !this.props.subscribers.find(user => user.id === id),
-                  )}
-                  onClick={id => this.props.subscribeUser(id)}
-                  // actions={[
-                  //   {
-                  //     title: 'Student',
-                  //     action: user => this.addUserToCourse(user),
-                  //   },
-                  //   { divider: true },
-                  //   {
-                  //     title: 'Teacher',
-                  //     action: user => this.addUserToCourse(user, 'teacher'),
-                  //   },
-                  // ]}
-                />
-              )}
-            </UsersTable>
+            <ListGroup>
+              <ListGroupItem header="Unsubscribed" />
+              {unsubscribed.map(({ id, email }) => (
+                <ListGroupItem key={id}>
+                  <ButtonGroup>
+                    <Button
+                      onClick={() => this.props.subscribeUser(id)}
+                      bsStyle="default"
+                    >
+                      {email}
+                    </Button>
+                    <DropdownButton id="role-chooser" title="Role">
+                      <MenuItem
+                        eventKey="1"
+                        onClick={() => this.props.subscribeUser(id)}
+                      >
+                        Student
+                      </MenuItem>
+                      <MenuItem
+                        eventKey="2"
+                        onClick={() => this.props.subscribeUser(id, 'teacher')}
+                      >
+                        Teacher
+                      </MenuItem>
+                    </DropdownButton>
+                  </ButtonGroup>
+                </ListGroupItem>
+              ))}
+            </ListGroup>
           </Col>
           <Col md={6}>
-            <h4>Subscribed</h4>
-            <UsersTable>
-              {() => (
-                <UsersList
-                  usersList={subscribers}
-                  onClick={id => this.props.unsubscribeUser(id)}
-                />
-              )}
-            </UsersTable>
+            <ListGroup>
+              <ListGroupItem header="Subscribed" />
+              {subscribers.map(({ id, email, role }) => (
+                <ListGroupItem
+                  key={id}
+                  onClick={() => this.props.unsubscribeUser(id)}
+                >
+                  {`${email} (${role})`}
+                </ListGroupItem>
+              ))}
+            </ListGroup>
           </Col>
         </Row>
       </Grid>

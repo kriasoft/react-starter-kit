@@ -94,14 +94,15 @@ export function updateCourse(title) {
   };
 }
 
-export function subscribeUser(id) {
+export function subscribeUser(id, role = 'student') {
   return async (dispatch, getState, { graphqlRequest }) => {
     const courseId = getState().course.id;
     const { data } = await graphqlRequest(subscribeUserGql, {
       id,
+      role,
       courseId,
     });
-    dispatch(addUserToCourse(data.addUserToCourse));
+    dispatch(addUserToCourse({ ...data.addUserToCourse, role }));
   };
 }
 

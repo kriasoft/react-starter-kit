@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Button, SplitButton, MenuItem } from 'react-bootstrap';
+import { Button, DropdownButton, ButtonGroup, MenuItem } from 'react-bootstrap';
 import User from '../../components/User';
 
 class UsersList extends React.Component {
@@ -25,17 +25,17 @@ class UsersList extends React.Component {
     actions: [],
   };
 
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    this.state = {
-      input: '',
-    };
-  }
+  //   this.state = {
+  //     input: '',
+  //   };
+  // }
 
-  onInputChange = e => {
-    this.setState({ input: e.target.value });
-  };
+  // onInputChange = e => {
+  //   this.setState({ input: e.target.value });
+  // };
 
   static renderActions(user, actions) {
     return actions.map((item, i) => {
@@ -53,20 +53,21 @@ class UsersList extends React.Component {
 
   render() {
     const { usersList, onClick, actions } = this.props;
-    const { input } = this.state;
+    // const { input } = this.state;
     const users = usersList
       // .filter(({ email }) => email.includes(`${input}`))
       .map(user => (
         <tr key={user.id}>
           <td>
             {actions.length ? (
-              <SplitButton
-                onClick={() => onClick(user)}
-                bsStyle="default"
-                title={user.email + (user.isAdmin ? ' (a)' : '')}
-              >
-                {UsersList.renderActions(user, actions)}
-              </SplitButton>
+              <ButtonGroup>
+                <Button onClick={() => onClick(user)} bsStyle="default">
+                  {`${user.email} ${user.isAdmin ? '(a)' : ''}`}
+                </Button>
+                <DropdownButton>
+                  {UsersList.renderActions(user, actions)}
+                </DropdownButton>
+              </ButtonGroup>
             ) : (
               <Button
                 bsStyle="primary"
