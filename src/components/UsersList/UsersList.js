@@ -55,7 +55,7 @@ class UsersList extends React.Component {
     const { usersList, onClick, actions } = this.props;
     const { input } = this.state;
     const users = usersList
-      .filter(({ email }) => email.includes(`${input}`))
+      // .filter(({ email }) => email.includes(`${input}`))
       .map(user => (
         <tr key={user.id}>
           <td>
@@ -71,7 +71,7 @@ class UsersList extends React.Component {
               <Button
                 bsStyle="primary"
                 role="link"
-                onClick={() => onClick(user)}
+                onClick={() => onClick(user.id)}
               >
                 <User user={user} link={false} />
               </Button>
@@ -82,11 +82,11 @@ class UsersList extends React.Component {
       ));
     return (
       <Fragment>
-        <input
+        {/* <input
           type="text"
           value={input}
           onChange={e => this.onInputChange(e)}
-        />
+        /> */}
         {users}
       </Fragment>
     );

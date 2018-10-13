@@ -50,13 +50,10 @@ export function setCourses(c) {
   };
 }
 
-export function addUserToCourse(id, courseId) {
+export function addUserToCourse(user) {
   return {
     type: SUBSCRIBE_USER,
-    data: {
-      id,
-      courseId,
-    },
+    data: user,
   };
 }
 
@@ -101,9 +98,9 @@ export function updateCourse(title) {
   };
 }
 
-export function subscribeUser(id, courseId) {
+export function subscribeUser(id) {
   return async (dispatch, getState, { graphqlRequest }) => {
-    // const { id } = getState().course;
+    const courseId = getState().course.id;
     const { data } = await graphqlRequest(subscribeUserGql, {
       id,
       courseId,
@@ -112,9 +109,9 @@ export function subscribeUser(id, courseId) {
   };
 }
 
-export function unsubscribeUser(id, courseId) {
+export function unsubscribeUser(id) {
   return async (dispatch, getState, { graphqlRequest }) => {
-    // const { id } = getState().course;
+    const courseId = getState().course.id;
     const { data } = await graphqlRequest(unsubscribeUserGql, {
       id,
       courseId,

@@ -1,5 +1,6 @@
 mutation subscribe($id: String!, $courseId: String!, $role: String) {
   addUserToCourse(id: $id, courseId: $courseId, role: $role) {
     id
+    email
   }
 }

@@ -10,7 +10,6 @@ import { fetchUsers } from '../../actions/users';
 class CourseUsers extends Component {
   static propTypes = {
     subscribeUser: PropTypes.func.isRequired,
-    courseId: PropTypes.string.isRequired,
     fetchUsers: PropTypes.func.isRequired,
     unsubscribeUser: PropTypes.func.isRequired,
     subscribers: PropTypes.arrayOf(
@@ -29,65 +28,12 @@ class CourseUsers extends Component {
     ).isRequired,
   };
 
-  // constructor(props) {
-  //   super(props);
-
-  //   this.state = {
-  //     users: [],
-  //   };
-  // }
-
   async componentDidMount() {
     await this.props.fetchUsers();
-    // this.updateUsers();
   }
 
-  // async updateUsers() {
-  // const resp = await this.context.fetch('/graphql', {
-  //   body: JSON.stringify({
-  //     query: `{users
-  //         { id, email }
-  //       }`,
-  //   }),
-  // });
-  // const { data } = await resp.json();
-  // this.setState({ users: data.users });
-  // }
-
-  // async addUserToCourse({ id, email }, role) {
-  //   const { courseId } = this.props;
-  //   const userRole = {
-  //     id,
-  //     email,
-  //     role: role || 'student',
-  //   };
-  //   this.state.subscribers.push(userRole);
-  //   await this.context.fetch('/graphql', {
-  //     body: JSON.stringify({
-  //       query: `mutation  subscribe($id: String!, $courseId: String!, $role: String){
-  //         addUserToCourse(
-  //           id: $id,
-  //           courseId: $courseId
-  //           role: $role
-  //         )
-  //           { id }
-  //       }`,
-  //       variables: {
-  //         id,
-  //         courseId,
-  //         role: role || 'student',
-  //       },
-  //     }),
-  //   });
-  //   this.props.addUserToCourse(courseId, id);
-  //   this.setState({
-  //     subscribers: this.state.subscribers,
-  //   });
-  // }
-
   render() {
-    // const { users } = this.state;
-    const { subscribers, courseId, users } = this.props;
+    const { subscribers, users } = this.props;
     return (
       <Grid fluid>
         <Row>
@@ -96,12 +42,11 @@ class CourseUsers extends Component {
             <UsersTable>
               {() => (
                 <UsersList
-                  usersList={users}
-                  // .filter(
-                  //   ({ id }) =>
-                  //     !this.state.subscribers.find(user => user.id === id),
-                  // )}
-                  onClick={({ id }) => this.props.subscribeUser(id, courseId)}
+                  usersList={users.filter(
+                    ({ id }) =>
+                      !this.props.subscribers.find(user => user.id === id),
+                  )}
+                  onClick={id => this.props.subscribeUser(id)}
                   // actions={[
                   //   {
                   //     title: 'Student',
@@ -123,7 +68,7 @@ class CourseUsers extends Component {
               {() => (
                 <UsersList
                   usersList={subscribers}
-                  onClick={({ id }) => this.props.unsubscribeUser(id, courseId)}
+                  onClick={id => this.props.unsubscribeUser(id)}
                 />
               )}
             </UsersTable>
@@ -136,7 +81,6 @@ class CourseUsers extends Component {
 
 const mapStateToProps = state => ({
   subscribers: state.course.users,
-  courseId: state.course.id,
   user: state.user,
   users: state.users,
 });
