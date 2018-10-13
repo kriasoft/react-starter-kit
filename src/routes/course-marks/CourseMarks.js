@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Row, Col } from 'react-bootstrap';
+import { Col, Row, Table } from 'react-bootstrap';
 import s from './CourseMarks.css';
 import AnswerList from './AnswerList';
 
-class CourseMarks extends React.Component {
+class UserMarks extends React.Component {
   static propTypes = {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -30,26 +30,25 @@ class CourseMarks extends React.Component {
       ),
     }).isRequired,
   };
-
-  static contextTypes = {
-    store: PropTypes.any.isRequired,
-    fetch: PropTypes.func.isRequired,
-  };
   render() {
-    const { units } = this.props.course;
+    const { units, title } = this.props.course;
     return (
       <div className={s.root}>
         <div className={s.container}>
           <Row>
-            <h2>Marks of {this.props.course.title}:</h2>
+            <h2>Marks of Course {title}</h2>
             <Col xs={12} md={10}>
-              <ol>
-                {units.map(ent => (
-                  <li>
-                    <AnswerList unit={ent} />
-                  </li>
-                ))}
-              </ol>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Unit name</th>
+                    <th>Mark</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {units.map(ent => <AnswerList unit={ent} key={ent.id} />)}
+                </tbody>
+              </Table>
             </Col>
           </Row>
         </div>
@@ -58,4 +57,4 @@ class CourseMarks extends React.Component {
   }
 }
 
-export default withStyles(s)(CourseMarks);
+export default withStyles(s)(UserMarks);
