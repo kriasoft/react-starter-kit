@@ -13,14 +13,13 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
 import s from './Courses.css';
 import ModalAdd from '../../components/ModalAdd';
-import { createCourse, fetchCourses } from '../../actions/courses';
+import { createCourse } from '../../actions/courses';
 import CoursesList from '../../components/CoursesList';
 
 class Courses extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    fetchCourses: PropTypes.func.isRequired,
-    createCourse: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     userId: PropTypes.string.isRequired,
     courses: PropTypes.arrayOf(
       PropTypes.shape({
@@ -32,18 +31,10 @@ class Courses extends React.Component {
 
   static contextTypes = {
     store: PropTypes.any.isRequired,
-    fetch: PropTypes.func.isRequired,
   };
 
-  componentDidMount() {
-    const { userId } = this.props;
-    if (userId) {
-      this.props.fetchCourses(userId);
-    }
-  }
-
   render() {
-    const { userId, courses, title } = this.props;
+    const { userId, courses, title, dispatch } = this.props;
     const student = courses.filter(
       ({ users }) => users.length > 0 && users[0].role === 'student',
     );
@@ -57,7 +48,7 @@ class Courses extends React.Component {
         <div className={s.container}>
           <h1>
             {title}
-            {userId && <ModalAdd onUpdate={t => this.props.createCourse(t)} />}
+            {userId && <ModalAdd onUpdate={t => dispatch(createCourse(t))} />}
           </h1>
           {student.length > 0 && (
             <Fragment>
@@ -84,10 +75,7 @@ class Courses extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  courses: state.courses || [],
+  courses: state.courses,
   userId: state.user.id,
 });
-export default connect(
-  mapStateToProps,
-  { createCourse, fetchCourses },
-)(withStyles(s)(Courses));
+export default connect(mapStateToProps)(withStyles(s)(Courses));

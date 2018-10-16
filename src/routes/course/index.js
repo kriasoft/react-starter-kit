@@ -15,21 +15,21 @@ import { fetchCourse } from '../../actions/courses';
 async function action({ params, store }) {
   await store.dispatch(fetchCourse(params.idCourse));
   const { course } = store.getState();
-
+  const { id, title } = course;
   const mas = [
     [
       {
         title: 'Units',
-        action: `/courses/${course.id}`,
+        action: `/courses/${id}`,
         isActive: true,
       },
       {
         title: 'Users list',
-        action: `/courses/${course.id}/users`,
+        action: `/courses/${id}/users`,
       },
       {
         title: 'Marks list',
-        action: `/courses/${course.id}/marks`,
+        action: `/courses/${id}/marks`,
       },
     ],
     [
@@ -41,7 +41,7 @@ async function action({ params, store }) {
   ];
   return {
     chunks: ['course'],
-    title: course.title,
+    title,
     component: (
       <Layout menuSecond={mas}>
         <Course />

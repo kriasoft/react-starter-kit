@@ -10,10 +10,16 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Courses from './Courses';
+import { fetchCourses } from '../../actions/courses';
 
 const title = 'Courses';
 
-async function action() {
+async function action({ store }) {
+  const { id } = store.getState().user;
+  if (id) {
+    await store.dispatch(fetchCourses(id));
+  }
+
   return {
     chunks: ['courses'],
     title,

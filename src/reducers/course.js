@@ -6,7 +6,12 @@ import {
   UPDATE_COURSE,
 } from '../constants';
 
-export default function course(state = {}, action) {
+const initialState = {
+  units: [],
+  users: [],
+};
+
+export default function course(state = initialState, action) {
   switch (action.type) {
     case SET_COURSE:
       return action.data;

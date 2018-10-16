@@ -16,13 +16,10 @@ import updateCourseGql from '../gql/updateCourse.gql';
 import subscribeUserGql from '../gql/subscribeUser.gql';
 import unsubscribeUserGql from '../gql/unsubscribeUser.gql';
 
-export function addCourse({ id, title }) {
+export function addCourse(course) {
   return {
     type: ADD_COURSE,
-    data: {
-      id,
-      title,
-    },
+    data: course,
   };
 }
 
