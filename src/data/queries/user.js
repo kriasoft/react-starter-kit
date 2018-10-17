@@ -29,7 +29,7 @@ const createUser = {
     },
   },
   resolve(parent, args) {
-    return User.create({ ...args });
+    return User.createUser({ ...args });
   },
 };
 

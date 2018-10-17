@@ -14,7 +14,7 @@ beforeEach(async () => setupTest());
 
 describe('graphql groups', () => {
   function t(title) {
-    const Q = `mutation create($title:String) {
+    const Q = `mutation create($title:String!) {
     createGroup(title: $title) {
         title,id
     }

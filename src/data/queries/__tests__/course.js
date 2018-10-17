@@ -36,7 +36,7 @@ describe('graphql courses', () => {
   }
 
   async function createMockCourse(title) {
-    const createCourseQ = `mutation createCourse($title:String) {
+    const createCourseQ = `mutation createCourse($title:String!) {
       createCourse(title: $title) {
         id, title
       }
@@ -54,7 +54,7 @@ describe('graphql courses', () => {
   }
 
   async function subscribeUser(user, course, role) {
-    const addUserToCourseQ = `mutation addUserToCourse($course:String,$user:String,$role:String) {
+    const addUserToCourseQ = `mutation addUserToCourse($course:String!,$user:String!,$role:String) {
       addUserToCourse(courseId: $course,id: $user,role: $role) {
         id
       }
