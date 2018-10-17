@@ -3,31 +3,14 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Col, Row, Table } from 'react-bootstrap';
 import s from './CourseMarks.css';
-import AnswerList from './AnswerList';
+import AnswerList, { UnitPropType } from './AnswerList';
 
 class UserMarks extends React.Component {
   static propTypes = {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      units: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string,
-          title: PropTypes.string,
-          answers: PropTypes.arrayOf(
-            PropTypes.shape({
-              id: PropTypes.string,
-              marks: PropTypes.arrayOf(
-                PropTypes.shape({
-                  createdAt: PropTypes.string,
-                  id: PropTypes.string,
-                  mark: PropTypes.float,
-                }),
-              ),
-            }),
-          ),
-        }),
-      ),
+      units: PropTypes.arrayOf(UnitPropType),
     }).isRequired,
   };
   render() {

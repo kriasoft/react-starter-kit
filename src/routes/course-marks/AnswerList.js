@@ -14,23 +14,25 @@ const AnswerList = ({ unit }) => (
   </tr>
 );
 
+export const UnitPropType = PropTypes.shape({
+  id: PropTypes.string,
+  title: PropTypes.string,
+  answers: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      marks: PropTypes.arrayOf(
+        PropTypes.shape({
+          createdAt: PropTypes.string,
+          id: PropTypes.string,
+          mark: PropTypes.float,
+        }),
+      ),
+    }),
+  ),
+});
+
 AnswerList.propTypes = {
-  unit: PropTypes.shape({
-    id: PropTypes.string,
-    title: PropTypes.string,
-    answers: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        marks: PropTypes.arrayOf(
-          PropTypes.shape({
-            createdAt: PropTypes.string,
-            id: PropTypes.string,
-            mark: PropTypes.float,
-          }),
-        ),
-      }),
-    ),
-  }).isRequired,
+  unit: UnitPropType.isRequired,
 };
 
 export default AnswerList;
