@@ -113,6 +113,20 @@ class Users extends React.Component {
     this.props.addGroup(data.createGroup);
   };
 
+  updateGroup = async (id, title) => {
+    await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `mutation updateGroup($id: String!, $title: String!) {
+          updateGroup(id: $id, title: $title) { id, title } 
+        }`,
+        variables: {
+          id,
+          title,
+        },
+      }),
+    });
+  };
+
   render() {
     const { groups, users, group } = this.props;
     let usersSub = [];
@@ -154,6 +168,10 @@ class Users extends React.Component {
                     <ModalWithUsers
                       usersLeft={subscribedUsersList}
                       usersRight={mainUsersList}
+                    />
+                    <ModalAdd
+                      title={title}
+                      onUpdate={this.updateGroup.bind(this, id)} // eslint-disable-line
                     />
                   </ul>
                 ))}

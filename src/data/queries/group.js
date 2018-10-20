@@ -38,6 +38,23 @@ const removeGroup = {
   },
 };
 
+const updateGroup = {
+  type: GroupType,
+  args: {
+    id: {
+      description: 'id of the group',
+      type: new NonNull(StringType),
+    },
+    title: {
+      description: 'The title of the group',
+      type: StringType,
+    },
+  },
+  resolve(parent, args) {
+    return Group.findById(args.id).then(group => group.update({ ...args }));
+  },
+};
+
 const groups = {
   type: new List(GroupType),
   args: {
@@ -100,6 +117,7 @@ export {
   groups,
   createGroup,
   removeGroup,
+  updateGroup,
   addUserToGroup,
   deleteUserFromGroup,
 };
