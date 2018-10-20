@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Col } from 'react-bootstrap';
 import s from './CourseUsers.css';
-import User from '../../components/User/User';
+import User from '../../components/User';
 
 function CourseUsers({ course }) {
   return (

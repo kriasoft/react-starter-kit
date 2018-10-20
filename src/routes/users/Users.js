@@ -22,7 +22,7 @@ import {
   addGroup,
 } from '../../actions/groups';
 import UsersList from '../../components/UsersList';
-import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
+import ModalWithUsers from '../../components/ModalWithUsers';
 
 class Users extends React.Component {
   static propTypes = {

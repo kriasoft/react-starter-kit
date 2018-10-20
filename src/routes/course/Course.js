@@ -7,7 +7,7 @@ import UnitsList from '../../components/UnitsList';
 import s from './Course.css';
 import { addUnit } from '../../actions/units';
 import { updateCourse } from '../../actions/courses';
-import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
+import ModalWithUsers from '../../components/ModalWithUsers';
 import ModalAdd from '../../components/ModalAdd';
 
 function Course({ user, course, dispatch }) {
