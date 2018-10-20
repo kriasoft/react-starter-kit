@@ -4,6 +4,7 @@ import {
   DELETE_USER_FROM_GROUP,
   SET_GROUPS,
   ADD_GROUP,
+  UPDATE_GROUP,
 } from '../constants';
 
 const initialState = {
@@ -57,6 +58,17 @@ export default function groups(state = initialState, action) {
 
     case ADD_GROUP:
       return { ...state, groups: [...state.groups, action.data] };
+
+    case UPDATE_GROUP:
+      return {
+        ...state,
+        groups: state.groups.map(g => {
+          if (g.id !== action.data.id) {
+            return g;
+          }
+          return { ...g, title: action.data.title };
+        }),
+      };
 
     default:
       return state;

@@ -20,6 +20,7 @@ import {
   setGroup,
   deleteUserFromGroup,
   addGroup,
+  updateGroup,
 } from '../../actions/groups';
 import UsersList from '../../components/UsersList';
 import ModalWithUsers from '../../components/ModalWithUsers';
@@ -125,6 +126,7 @@ class Users extends React.Component {
         },
       }),
     });
+    this.context.store.dispatch(updateGroup(id, title));
   };
 
   render() {

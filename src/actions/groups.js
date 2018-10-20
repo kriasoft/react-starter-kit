@@ -6,6 +6,7 @@ import {
   ADD_USER_TO_GROUP,
   SET_GROUP,
   DELETE_USER_FROM_GROUP,
+  UPDATE_GROUP,
 } from '../constants';
 
 import loadGroups from '../gql/loadGroups.gql';
@@ -48,6 +49,13 @@ export function setGroups(groups) {
   return {
     type: SET_GROUPS,
     data: groups,
+  };
+}
+
+export function updateGroup(id, title) {
+  return {
+    type: UPDATE_GROUP,
+    data: { id, title },
   };
 }
 
