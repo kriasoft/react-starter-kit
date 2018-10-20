@@ -15,9 +15,9 @@ import { fetchCourses } from '../../actions/courses';
 const title = 'Courses';
 
 async function action({ store }) {
-  const { id } = store.getState().user;
-  if (id) {
-    await store.dispatch(fetchCourses(id));
+  const { user } = store.getState();
+  if (user) {
+    await store.dispatch(fetchCourses(user.id));
   }
 
   return {

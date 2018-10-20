@@ -76,6 +76,6 @@ class Courses extends React.Component {
 
 const mapStateToProps = state => ({
   courses: state.courses,
-  userId: state.user.id,
+  userId: state.user && state.user.id,
 });
 export default connect(mapStateToProps)(withStyles(s)(Courses));
