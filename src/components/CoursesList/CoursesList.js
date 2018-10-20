@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Link from '../Link';
 
 const CoursesList = ({ courses, user }) => (
   <ol>
@@ -8,7 +9,7 @@ const CoursesList = ({ courses, user }) => (
       ({ id, title }) =>
         user.isAdmin ? (
           <li key={id}>
-            <a href={`/courses/${id}`}>{title} </a>
+            <Link to={`/courses/${id}`}>{title} </Link>
           </li>
         ) : (
           <li key={id}>{title}</li>

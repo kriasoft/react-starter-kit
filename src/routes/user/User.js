@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Modal, Button, FormControl, Row, Col } from 'react-bootstrap';
 import s from './User.css';
+import Link from '../../components/Link';
 
 class User extends React.Component {
   static propTypes = {
@@ -67,7 +68,7 @@ class User extends React.Component {
     for (let i = 0; i < courses.length; i += 1) {
       coursesList.push(
         <li key={courses[i].id}>
-          <a href={`/courses/${courses[i].id}`}>{courses[i].title}</a>
+          <Link to={`/courses/${courses[i].id}`}>{courses[i].title}</Link>
         </li>,
       );
     }

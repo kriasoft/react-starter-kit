@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Link from '../Link';
 
 const File = ({ file }) => (
   <span>
-    <a href={`/api/get_file/${file.id}`}>{file.internalName}</a>
+    <Link to={`/api/get_file/${file.id}`}>{file.internalName}</Link>
   </span>
 );
 

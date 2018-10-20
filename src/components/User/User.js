@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Link from '../Link';
 
 const User = ({ user, link }) =>
   link ? (
     <span>
-      <a href={`/users/${user.id}`}>{user.email}</a>
-      {user.isAdmin ? ' (admin)' : ''}
+      <Link to={`/users/${user.id}`}>{user.email}</Link>
+      {user.isAdmin ? ' (admin)' : ` (${user.role})`}
     </span>
   ) : (
     <span>{user.email}</span>
@@ -20,6 +21,7 @@ User.propTypes = {
     id: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     isAdmin: PropTypes.bool,
+    role: PropTypes.string,
   }).isRequired,
   link: PropTypes.bool,
 };

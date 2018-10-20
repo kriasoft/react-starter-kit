@@ -20,7 +20,13 @@ function CourseUsers({ course }) {
       <div className={s.container}>
         <h1>Subscribed to {course.title}</h1>
         <Col xs={12} md={10}>
-          <ol>{course.users.map(user => <User user={user} />)}</ol>
+          <ol>
+            {course.users.map(user => (
+              <li key={user.id}>
+                <User user={user} />
+              </li>
+            ))}
+          </ol>
         </Col>
       </div>
     </div>

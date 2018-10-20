@@ -17,6 +17,7 @@ import normalizeCss from 'normalize.css';
 import s from './Layout.css';
 import Header from '../Header';
 import Footer from '../Footer';
+import Link from '../Link';
 
 class Layout extends React.Component {
   static propTypes = {
@@ -63,7 +64,7 @@ class Layout extends React.Component {
         .filter(h => h.level === 2)
         .map(h => (
           <li key={h.id}>
-            <a href={`#${h.id}`}>{h.title}</a>
+            <Link to={`#${h.id}`}>{h.title}</Link>
           </li>
         ));
       menuSecondList.push(
@@ -78,14 +79,14 @@ class Layout extends React.Component {
             key={`${i} ${j}`}
             className={items[i][j].isActive ? s.active : null}
           >
-            <a href={items[i][j].action}>
+            <Link to={items[i][j].action}>
               {items[i][j].title}
               {s.active ? (
                 <span className="sr-only">(current)</span>
               ) : (
                 undefined
               )}
-            </a>
+            </Link>
           </li>,
         );
       }
