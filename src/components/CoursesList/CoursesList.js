@@ -1,13 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-const CoursesList = ({ courses }) => (
+const CoursesList = ({ courses, user }) => (
   <ol>
-    {courses.map(({ id, title }) => (
-      <li key={id}>
-        <a href={`/courses/${id}`}>{title} </a>
-      </li>
-    ))}
+    {courses.map(
+      ({ id, title }) =>
+        user.isAdmin ? (
+          <li key={id}>
+            <a href={`/courses/${id}`}>{title} </a>
+          </li>
+        ) : (
+          <li key={id}>{title}</li>
+        ),
+    )}
   </ol>
 );
 
@@ -18,6 +24,13 @@ CoursesList.propTypes = {
       title: PropTypes.string,
     }),
   ).isRequired,
+  user: PropTypes.shape({
+    isAdmin: PropTypes.bool,
+  }).isRequired,
 };
 
-export default CoursesList;
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+export default connect(mapStateToProps)(CoursesList);
