@@ -7,22 +7,22 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Fragment } from 'react';
-import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
 import MarksTable from '../../components/MarksTable';
 import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
-import { setUnitHeaders, createMark } from '../../actions/unit';
-import { updateUnit } from '../../actions/units';
+import { setUnitHeaders, updateUnit, createMark } from '../../actions/units';
+
 import s from './Unit.css';
+import Link from '../../components/Link/Link';
 
 class Unit extends React.Component {
   static propTypes = {
-    setUnitHeaders: PropTypes.func.isRequired,
-    updateUnit: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
@@ -54,6 +54,7 @@ class Unit extends React.Component {
     super(props);
     this.state = {
       answerId: null,
+      answerCur: 0,
       answer: {},
     };
   }
@@ -61,7 +62,7 @@ class Unit extends React.Component {
   async componentDidMount() {
     const { user } = this.props;
     if (user) {
-      this.retrieveAnswer();
+      await this.retrieveAnswer();
     }
   }
 
@@ -200,42 +201,39 @@ class Unit extends React.Component {
     const { data } = await resp.json();
     const { answers } = data.courses[0].units[0];
     if (answers && answers.length) {
-      const answerCur = 0;
       this.setState({
         answers: answers.map(answer => {
           const ans = answer;
           ans.body = JSON.parse(answer.body);
           return ans;
         }),
-        answerId: answers[answerCur].id,
-        answer: answers[answerCur].body,
-        answerCur,
+        answerId: answers[0].id,
+        answer: answers[0].body,
       });
     }
   }
 
   render() {
-    const { user, role, unit, course } = this.props;
+    const { user, role, unit, course, dispatch } = this.props;
     const { answers, answerCur, answerId, answer } = this.state;
-
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            <a href={`/courses/${course.id}`}>{course.title}</a>
-            / {unit.title}
+            <Link to={`/courses/${course.id}`}>{course.title}</Link>
+            {`/${unit.title}`}
             {role === 'teacher' && (
               <ModalEditor
                 title={unit.title}
                 body={unit.body}
-                onCreate={u => this.props.updateUnit({ ...u, id: unit.id })}
+                onCreate={u => dispatch(updateUnit({ ...u, id: unit.id }))}
               />
             )}
             <DropdownButton
               id="answer_chooser"
-              // title={`${unit.answers[0].user.profile.displayName} ${
-              //   unit.answers[0].createdAt
-              // }`}
+              title={`${unit.answers[answerCur].user.profile.displayName} ${
+                unit.answers[answerCur].createdAt
+              }`}
               onSelect={this.handleAnswerSelect}
             >
               {user &&
@@ -243,30 +241,29 @@ class Unit extends React.Component {
                 answers &&
                 answers.map((ans, i) => (
                   <MenuItem key={ans.id} eventKey={i} active={i === answerCur}>
-                    {/* {`
+                    {`
                     ${ans.user.profile.displayName} 
-                    ${ans.createdAt}`} */}
+                    ${ans.createdAt}`}
                   </MenuItem>
                 ))}
             </DropdownButton>
           </h1>
-          <Fragment>
-            <span>
-              <UnitView
-                answerId={answerId}
-                value={answer}
-                body={unit.body}
-                onChange={val => this.setState({ answer: val })}
-                onHeadersChange={headers => this.props.setUnitHeaders(headers)}
-              />
-              {user && <Button onClick={this.saveAnswer}>Save</Button>}
-            </span>
-            {unit.answers[0] ? (
-              <MarksTable answerId={answerId} />
-            ) : (
-              <p>This unit has no answers yet</p>
-            )}
-          </Fragment>
+          <UnitView
+            answerId={answerId}
+            value={answer}
+            body={unit.body}
+            onChange={val => this.setState({ answer: val })}
+            onHeadersChange={headers => dispatch(setUnitHeaders(headers))}
+          />
+          {user && <Button onClick={this.saveAnswer}>Save</Button>}
+          {unit.answers[0] ? (
+            <MarksTable
+              marks={unit.answers[answerCur].marks}
+              onMarkCreate={m => dispatch(createMark({ ...m, answerId }))}
+            />
+          ) : (
+            <p>This unit has no answers yet</p>
+          )}
         </div>
       </div>
     );
@@ -278,7 +275,4 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-export default connect(
-  mapStateToProps,
-  { setUnitHeaders, createMark, updateUnit },
-)(withStyles(s)(Unit));
+export default connect(mapStateToProps)(withStyles(s)(Unit));

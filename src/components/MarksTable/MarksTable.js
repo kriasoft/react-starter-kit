@@ -1,16 +1,12 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormControl, FormGroup, Table } from 'react-bootstrap';
-import { connect } from 'react-redux';
 import moment from 'moment';
 import IconButton from '../IconButton/IconButton';
-import { loadAnswer, createMark } from '../../actions/unit';
 
 class MarksTable extends Component {
   static propTypes = {
-    answerId: PropTypes.string.isRequired,
-    createMark: PropTypes.func.isRequired,
-    loadAnswer: PropTypes.func.isRequired,
+    onMarkCreate: PropTypes.func.isRequired,
     marks: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -30,11 +26,6 @@ class MarksTable extends Component {
     };
   }
 
-  componentDidMount = async () => {
-    const { answerId } = this.props;
-    await this.props.loadAnswer(answerId);
-  };
-
   getValidationState() {
     const { mark } = this.state;
     if (mark < 0 || mark > 100) return 'error';
@@ -43,9 +34,8 @@ class MarksTable extends Component {
   }
 
   handleSubmit = e => {
-    const { answerId } = this.props;
     e.preventDefault();
-    this.props.createMark({ ...this.state, answerId });
+    this.props.onMarkCreate({ ...this.state });
   };
 
   handleChange = name => ({ target: { value } }) =>
@@ -71,23 +61,22 @@ class MarksTable extends Component {
               </tr>
             </thead>
             <tbody>
-              {marks.length > 0 ? (
-                marks.map((m, index) => (
-                  <tr key={m.id}>
-                    <td>{index + 1}</td>
-                    <td>{m.mark.toFixed(2)}</td>
-                    <td>{m.comment}</td>
-                    <td>
-                      {`${moment(m.createdAt).fromNow()} ( ${moment(
-                        m.createdAt,
-                      ).format('llll')})`}
-                    </td>
-                  </tr>
-                ))
-              ) : (
+              {marks.map((m, index) => (
+                <tr key={m.id}>
+                  <td>{index + 1}</td>
+                  <td>{m.mark.toFixed(2)}</td>
+                  <td>{m.comment}</td>
+                  <td>
+                    {`${moment(m.createdAt).fromNow()} ( ${moment(
+                      m.createdAt,
+                    ).format('llll')})`}
+                  </td>
+                </tr>
+              ))}
+              {!marks.length && (
                 <tr>
                   <td colSpan="4">
-                    <p>No marks yet</p>
+                    <span>No marks yet</span>
                   </td>
                 </tr>
               )}
@@ -137,11 +126,4 @@ class MarksTable extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  marks: state.answer.marks,
-});
-
-export default connect(
-  mapStateToProps,
-  { createMark, loadAnswer },
-)(MarksTable);
+export default MarksTable;

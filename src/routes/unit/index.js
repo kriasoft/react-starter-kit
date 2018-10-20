@@ -14,7 +14,7 @@ import { setUnit } from '../../actions/units';
 
 const title = 'Unit';
 
-async function action({ fetch, params: { idCourse, idUnit }, store }) {
+async function action({ fetch, store }, { idCourse, idUnit }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) { courses(ids: $idCourse) { id title users(ids: $idUser) { role } }

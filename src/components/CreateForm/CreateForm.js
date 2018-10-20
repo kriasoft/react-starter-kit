@@ -56,7 +56,7 @@ export default class CreateForm extends Component {
         <Button
           type="submit"
           bsStyle="primary"
-          disabled={title.length === 0}
+          disabled={!title.length}
           onClick={this.handleSubmit}
         >
           Save
