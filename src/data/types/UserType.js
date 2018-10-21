@@ -21,6 +21,7 @@ import CourseType from './CourseType';
 import UserLoginType from './UserLoginType';
 import UserProfileType from './UserProfileType';
 import UserClaimType from './UserClaimType';
+import UserCourseRoleType from './UserCourseRoleType';
 
 const UserType = new ObjectType({
   name: 'UserType',
@@ -45,7 +46,7 @@ const UserType = new ObjectType({
       resolve: user => user.getProfile(),
     },
     role: {
-      type: StringType,
+      type: UserCourseRoleType,
       resolve: user => _.get(user, 'userCourse.role'),
     },
     answers: {

@@ -8,6 +8,7 @@ import _ from 'lodash';
 import AnswerType from './AnswerType';
 import UnitType from './UnitType';
 import UserType from './UserType';
+import UserCourseRoleType from './UserCourseRoleType';
 
 const CourseType = new ObjectType({
   name: 'CourseType',
@@ -35,7 +36,7 @@ const CourseType = new ObjectType({
         course.getUsers({ where: args.ids ? { id: args.ids } : {} }),
     },
     role: {
-      type: StringType,
+      type: new NonNull(UserCourseRoleType),
       resolve: course => _.get(course, 'userCourse.role'),
     },
     answers: {

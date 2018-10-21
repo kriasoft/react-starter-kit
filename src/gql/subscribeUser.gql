@@ -1,4 +1,4 @@
-mutation subscribe($id: String!, $courseId: String!, $role: String) {
+mutation subscribe($id: String!, $courseId: String!, $role: UserCourseRole!) {
   addUserToCourse(id: $id, courseId: $courseId, role: $role) {
     id
     email

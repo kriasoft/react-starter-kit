@@ -3,7 +3,7 @@ import Model from '../sequelize';
 
 const UserCourse = Model.define('userCourse', {
   role: {
-    type: DataType.STRING(255),
+    type: DataType.ENUM('teacher', 'student'),
   },
 });
 

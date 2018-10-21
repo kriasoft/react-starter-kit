@@ -5,6 +5,7 @@ import {
 } from 'graphql';
 import CourseType from '../types/CourseType';
 import UserType from '../types/UserType';
+import UserCourseRoleType from '../types/UserCourseRoleType';
 import { Course, User } from '../models';
 
 const createCourse = {
@@ -68,7 +69,7 @@ const addUserToCourse = {
     },
     role: {
       description: 'role of the user',
-      type: StringType,
+      type: new NonNull(UserCourseRoleType),
     },
   },
   async resolve({ request }, args) {
@@ -79,7 +80,7 @@ const addUserToCourse = {
     return User.findById(args.id).then(user =>
       user
         .addCourse(args.courseId, {
-          through: { role: args.role || 'student' },
+          through: { role: args.role },
         })
         .then(() => user),
     );
