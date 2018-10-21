@@ -19,7 +19,7 @@ const createCourse = {
   resolve({ request }, args) {
     if (!request.user) throw new Error('User is not logged in');
     return Course.create({
-      title: args.title,
+      ...args,
     });
   },
 };
@@ -28,7 +28,7 @@ const removeCourse = {
   type: CourseType,
   args: {
     id: {
-      description: 'id of the courses',
+      description: 'id of the course',
       type: new NonNull(StringType),
     },
   },

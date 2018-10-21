@@ -1,7 +1,7 @@
-query loadFiles{
-        files {
-          internalName,
-          id,
-          url
-        }
-      }
+query loadFiles {
+  files {
+    internalName
+    id
+    url
+  }
+}
