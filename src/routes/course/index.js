@@ -32,12 +32,6 @@ async function action({ params, store }) {
         action: `/courses/${id}/marks`,
       },
     ],
-    [
-      {
-        title: 'Test second level',
-        action: `/`,
-      },
-    ],
   ];
   return {
     chunks: ['course'],

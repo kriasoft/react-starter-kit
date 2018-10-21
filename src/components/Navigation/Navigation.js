@@ -13,7 +13,6 @@ import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.css';
 import history from '../../history';
-import User from '../../components/User';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -66,9 +65,7 @@ class Navigation extends React.Component {
           </Nav>
           {user ? (
             <Nav pullRight>
-              <NavItem href={`/users/${user.id}`}>
-                <User user={user} link={false} />
-              </NavItem>
+              <NavItem href={`/users/${user.id}`}>{user.email}</NavItem>
               <NavItem href="/logout" onSelect={logout}>
                 Log out
               </NavItem>
