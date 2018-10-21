@@ -31,7 +31,6 @@ const createMark = {
   },
 };
 
-// when this method is called there is crash in GraphQL
 const removeMark = {
   type: MarkType,
   args: {
@@ -80,8 +79,8 @@ const updateMark = {
       type: StringType,
     },
   },
-  resolve(parent, args) {
-    return Mark.findById(args.id).then(mark => mark.update({ ...args }));
+  resolve(parent, { id, ...rest }) {
+    return Mark.findById(id).then(mark => mark.update({ ...rest }));
   },
 };
 

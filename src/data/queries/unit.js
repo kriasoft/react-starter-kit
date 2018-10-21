@@ -100,8 +100,8 @@ const updateUnit = {
       type: StringType,
     },
   },
-  resolve(parent, args) {
-    return Unit.findById(args.id).then(unit => unit.update({ ...args }));
+  resolve(parent, { id, ...rest }) {
+    return Unit.findById(id).then(unit => unit.update({ ...rest }));
   },
 };
 

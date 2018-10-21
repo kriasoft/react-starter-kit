@@ -78,11 +78,13 @@ const addUserToCourse = {
     if (!request.user.isAdmin && (!role || role !== 'teacher'))
       throw new Error("User doesn't have rights to edit this course");
     return User.findById(args.id).then(user =>
-      user
-        .addCourse(args.courseId, {
-          through: { role: args.role },
-        })
-        .then(() => user),
+      Course.findById(args.courseId).then(course =>
+        course
+          .addUser(user, {
+            through: { role: args.role },
+          })
+          .then(() => user),
+      ),
     );
   },
 };
@@ -101,7 +103,9 @@ const deleteUserFromCourse = {
   },
   resolve(obj, args) {
     return User.findById(args.id).then(user =>
-      user.removeCourse(args.courseId).then(() => user),
+      Course.findById(args.courseId).then(course =>
+        course.removeUser(user).then(() => user),
+      ),
     );
   },
 };
@@ -127,7 +131,9 @@ const updateCourse = {
     // },
   },
   resolve(parent, args) {
-    return Course.findById(args.id).then(course => course.update({ ...args }));
+    return Course.findById(args.id).then(course =>
+      course.update({ title: args.title }),
+    );
     // let course;
     // Course.findById(args.id)
     //   .then(_course => {

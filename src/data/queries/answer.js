@@ -76,7 +76,7 @@ const updateAnswer = {
     },
   },
   resolve(parent, args) {
-    Answer.findById(args.id).then(answer => answer.update({ ...args }));
+    Answer.findById(args.id).then(answer => answer.update({ body: args.body }));
   },
 };
 

@@ -18,7 +18,7 @@ const createGroup = {
   },
   resolve(parent, args) {
     return Group.create({
-      title: args.title,
+      ...args,
     });
   },
 };
@@ -51,7 +51,9 @@ const updateGroup = {
     },
   },
   resolve(parent, args) {
-    return Group.findById(args.id).then(group => group.update({ ...args }));
+    return Group.findById(args.id).then(group =>
+      group.update({ title: args.title }),
+    );
   },
 };
 
@@ -89,7 +91,9 @@ const addUserToGroup = {
   },
   resolve(obj, args) {
     return User.findById(args.id).then(user =>
-      user.addGroup(args.groupId).then(() => user),
+      Group.findById(args.groupId).then(group =>
+        group.addUser(user).then(() => user),
+      ),
     );
   },
 };
@@ -108,7 +112,9 @@ const deleteUserFromGroup = {
   },
   resolve(obj, args) {
     return User.findById(args.id).then(user =>
-      user.removeGroup(args.groupId).then(() => user),
+      Group.findById(args.groupId).then(group =>
+        group.removeUser(user).then(() => user),
+      ),
     );
   },
 };

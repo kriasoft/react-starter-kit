@@ -96,7 +96,7 @@ const updateUser = {
     },
   },
   resolve(parent, args) {
-    User.findById(args.id).then(user => user.update({ ...args }));
+    User.findById(args.id).then(user => user.update({ email: args.email }));
   },
 };
 
