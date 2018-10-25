@@ -65,21 +65,21 @@ export function deleteUserFromCourse({ id }) {
 export function fetchCourse(id) {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(loadCourse, { id });
-    dispatch(setCourse(data.courses[0]));
+    return dispatch(setCourse(data.courses[0]));
   };
 }
 
 export function fetchCourses(userId) {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(courseUsers, { users: userId });
-    dispatch(setCourses(data.courses));
+    return dispatch(setCourses(data.courses));
   };
 }
 
 export function createCourse(title) {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(createCourseGql, { title });
-    dispatch(addCourse(data.createCourse));
+    return dispatch(addCourse(data.createCourse));
   };
 }
 
@@ -87,7 +87,7 @@ export function updateCourse(title) {
   return async (dispatch, getState, { graphqlRequest }) => {
     const { id } = getState().course;
     const { data } = await graphqlRequest(updateCourseGql, { title, id });
-    dispatch(renameCourse(data.updateCourse));
+    return dispatch(renameCourse(data.updateCourse));
   };
 }
 
@@ -99,7 +99,7 @@ export function subscribeUser(id, role = 'student') {
       role,
       courseId,
     });
-    dispatch(addUserToCourse({ ...data.addUserToCourse, role }));
+    return dispatch(addUserToCourse({ ...data.addUserToCourse, role }));
   };
 }
 
@@ -110,6 +110,6 @@ export function unsubscribeUser(id) {
       id,
       courseId,
     });
-    dispatch(deleteUserFromCourse(data.deleteUserFromCourse));
+    return dispatch(deleteUserFromCourse(data.deleteUserFromCourse));
   };
 }

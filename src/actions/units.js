@@ -35,14 +35,14 @@ export function setAnswer(answer) {
 export function createMark(mark) {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(createMarkGql, mark);
-    dispatch(addMark(data.createMark));
+    return dispatch(addMark(data.createMark));
   };
 }
 
 export function loadAnswer(id) {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(loadAnswerGql, { id });
-    dispatch(setAnswer(data.answers[0]));
+    return dispatch(setAnswer(data.answers[0]));
   };
 }
 
@@ -71,13 +71,13 @@ export function addUnit(unit) {
   return async (dispatch, getState, { graphqlRequest }) => {
     const { id } = getState().course;
     const { data } = await graphqlRequest(createUnitGql, { ...unit, id });
-    dispatch(createUnit(data.createUnit));
+    return dispatch(createUnit(data.createUnit));
   };
 }
 
 export function updateUnit(unit) {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(updateUnitGql, unit);
-    dispatch(editUnit(data.updateUnit));
+    return dispatch(editUnit(data.updateUnit));
   };
 }

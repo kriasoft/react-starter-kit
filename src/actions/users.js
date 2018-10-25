@@ -13,6 +13,6 @@ export function setUsers(users) {
 export function fetchUsers() {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(loadUsers);
-    dispatch(setUsers(data.users));
+    return dispatch(setUsers(data.users));
   };
 }

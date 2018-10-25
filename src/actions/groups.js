@@ -62,6 +62,6 @@ export function updateGroup(id, title) {
 export function fetchGroups() {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(loadGroups);
-    dispatch(setGroups(data.groups));
+    return dispatch(setGroups(data.groups));
   };
 }
