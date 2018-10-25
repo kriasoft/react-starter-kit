@@ -4,6 +4,7 @@ import {
   GraphQLNonNull as NonNull,
 } from 'graphql';
 import UserType from './UserType';
+import User from '../models/User';
 
 const FileType = new ObjectType({
   name: 'FileType',
@@ -13,7 +14,7 @@ const FileType = new ObjectType({
     internalName: { type: new NonNull(StringType) },
     user: {
       type: UserType,
-      resolve: file => file.getUser(),
+      resolve: file => User.findById(file.userId),
     },
     createdAt: {
       type: StringType,

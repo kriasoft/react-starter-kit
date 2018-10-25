@@ -27,7 +27,7 @@ File.uploadFile = ({ buffer, internalName, userId }, store = 'fs') => {
       File.create(
         {
           internalName,
-          UserId: userId,
+          userId,
         },
         { transaction: t },
       )

@@ -8,13 +8,13 @@ export function setFiles(files) {
   };
 }
 
-export function addFile({ id, internalName, owner }) {
+export function addFile({ id, internalName, user }) {
   return {
     type: ADD_FILE,
     data: {
       id,
       internalName,
-      owner,
+      owner: user.id,
     },
   };
 }
@@ -22,6 +22,6 @@ export function addFile({ id, internalName, owner }) {
 export function fetchFiles() {
   return async (dispatch, _, { graphqlRequest }) => {
     const { data } = await graphqlRequest(loadFiles);
-    dispatch(setFiles(data.files));
+    return dispatch(setFiles(data.files));
   };
 }

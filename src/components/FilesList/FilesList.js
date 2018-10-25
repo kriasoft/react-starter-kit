@@ -1,16 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import File from '../File';
 
-const FilesList = ({ files }) => (
-  <ol>
-    {files.map(file => (
-      <li key={file.id}>
-        <File file={file} />
-      </li>
-    ))}
-  </ol>
-);
+function FilesList({ files = [] }) {
+  if (!files.length) {
+    return <p>You have no files yet</p>;
+  }
+  return (
+    <ListGroup>
+      {files.map(file => (
+        <ListGroupItem key={file.id}>
+          <File file={file} />
+        </ListGroupItem>
+      ))}
+    </ListGroup>
+  );
+}
 
 FilesList.propTypes = {
   files: PropTypes.arrayOf(
