@@ -10,6 +10,7 @@ const Unit = Model.define('unit', {
 
   title: {
     type: DataType.STRING(255),
+    allowNull: false,
   },
 
   body: {

@@ -13,9 +13,13 @@ const File = Model.define('file', {
   },
   internalName: {
     type: DataType.STRING,
+    allowNull: false,
   },
   url: {
     type: DataType.STRING,
+    validate: {
+      isUrl: true,
+    },
   },
 });
 

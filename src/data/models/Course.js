@@ -19,6 +19,7 @@ const Course = Model.define('course', {
 
   title: {
     type: DataType.STRING(255),
+    allowNull: false,
   },
 });
 

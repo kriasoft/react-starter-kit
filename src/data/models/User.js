@@ -40,11 +40,13 @@ const User = Model.define(
     emailConfirmed: {
       type: DataType.BOOLEAN,
       defaultValue: false,
+      allowNull: false,
     },
 
     isAdmin: {
       type: DataType.BOOLEAN,
       defaultValue: false,
+      allowNull: false,
     },
   },
   {

@@ -9,6 +9,7 @@ const Group = Model.define('group', {
   },
   title: {
     type: DataType.STRING(255),
+    allowNull: false,
   },
 });
 
