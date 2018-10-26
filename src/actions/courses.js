@@ -69,9 +69,9 @@ export function fetchCourse(id) {
   };
 }
 
-export function fetchCourses(userId) {
+export function fetchCourses(id) {
   return async (dispatch, _, { graphqlRequest }) => {
-    const { data } = await graphqlRequest(courseUsers, { users: userId });
+    const { data } = await graphqlRequest(courseUsers, { id });
     return dispatch(setCourses(data.courses));
   };
 }

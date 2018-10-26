@@ -1,8 +1,8 @@
-query userCourses($users: [String]) {
+query userCourses($id: [String]) {
   courses {
     id
     title
-    users(ids: $users) {
+    users(ids: $id) {
       id
       email
       role
