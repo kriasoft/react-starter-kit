@@ -10,13 +10,11 @@
 import path from 'path';
 import express from 'express';
 import browserSync from 'browser-sync';
-import ncp from 'ncp';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import errorOverlayMiddleware from 'react-dev-utils/errorOverlayMiddleware';
 import webpackConfig from './webpack.config';
-import { copyDir } from './lib/fs';
 import run, { format } from './run';
 import clean from './clean';
 
@@ -226,12 +224,6 @@ async function start() {
       (error, bs) => (error ? reject(error) : resolve(bs)),
     ),
   );
-
-  await Promise.all([
-    copyDir('public', 'build/public'),
-    ncp('node_modules/bootstrap/dist/css', 'build/public/css'),
-    ncp('node_modules/bootstrap/dist/fonts', 'build/public/fonts'),
-  ]);
 
   const timeEnd = new Date();
   const time = timeEnd.getTime() - timeStart.getTime();
