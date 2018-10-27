@@ -11,13 +11,17 @@ class Courses extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
-    userId: PropTypes.string.isRequired,
+    userId: PropTypes.string,
     courses: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string,
         title: PropTypes.string,
       }),
     ).isRequired,
+  };
+
+  static defaultProps = {
+    userId: null,
   };
 
   static contextTypes = {

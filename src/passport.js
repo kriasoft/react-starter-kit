@@ -156,9 +156,12 @@ passport.use(
           },
         ],
       });
-      if (bcrypt.compareSync(password, users[0].claims[0].value))
-        return done(null, users[0]);
-      return done(null, false);
+      if (!users[0]) {
+        return done(null, false);
+      }
+      if (!bcrypt.compareSync(password, users[0].claims[0].value))
+        return done(null, false);
+      return done(null, users[0]);
     },
   ),
 );
@@ -168,8 +171,8 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  User.findById(id).then(user => {
-    done(null, user);
+  User.findById(id).then((err, user) => {
+    done(err, user);
   });
 });
 

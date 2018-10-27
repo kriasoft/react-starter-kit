@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Navigation.css';
+import Link from '../Link';
 import history from '../../history';
 
 function isLeftClickEvent(event) {
@@ -13,25 +12,25 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
+function processClick(a, event) {
+  if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
+    return;
+  }
+  event.preventDefault();
+  history.push(event.target.getAttribute('href'));
+}
+
+function logout(event) {
+  window.location.href = '/logout';
+  event.preventDefault();
+}
+
 class Navigation extends React.Component {
   static contextTypes = { store: PropTypes.any.isRequired };
 
   render() {
-    function processClick(a, event) {
-      if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
-        return;
-      }
-      event.preventDefault();
-      history.push(event.target.getAttribute('href'));
-    }
-
-    function logout(event) {
-      window.location.href = '/logout';
-      event.preventDefault();
-    }
-
-    const { user } = this.context.store.getState();
-
+    const { store } = this.context;
+    const { user } = store.getState();
     return (
       <Navbar
         inverse
@@ -43,28 +42,42 @@ class Navigation extends React.Component {
       >
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="/">NDO</a>
+            <Link to="/">NDO</Link>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>
-            <NavItem href="/courses">Courses</NavItem>
-            <NavItem href="/users">Users</NavItem>
-            <NavItem href="/files">Files</NavItem>
-            <NavItem href="/tests">Tests</NavItem>
+            <NavItem eventKey={1} href="/courses">
+              Courses
+            </NavItem>
+            <NavItem eventKey={2} href="/users">
+              Users
+            </NavItem>
+            <NavItem eventKey={3} href="/files">
+              Files
+            </NavItem>
+            <NavItem eventKey={4} href="/tests">
+              Tests
+            </NavItem>
           </Nav>
           {user ? (
             <Nav pullRight>
-              <NavItem href={`/users/${user.id}`}>{user.email}</NavItem>
-              <NavItem href="/logout" onSelect={logout}>
+              <NavItem eventKey={1} href={`/users/${user.id}`}>
+                {user.email}
+              </NavItem>
+              <NavItem eventKey={2} href="/logout" onSelect={logout}>
                 Log out
               </NavItem>
             </Nav>
           ) : (
             <Nav pullRight>
-              <NavItem href="/login">Log in</NavItem>
-              <NavItem href="/register">Sign up</NavItem>
+              <NavItem eventKey={1} href="/login">
+                Log in
+              </NavItem>
+              <NavItem eventKey={2} href="/register">
+                Sign up
+              </NavItem>
             </Nav>
           )}
         </Navbar.Collapse>
@@ -73,4 +86,4 @@ class Navigation extends React.Component {
   }
 }
 
-export default withStyles(s)(Navigation);
+export default Navigation;
