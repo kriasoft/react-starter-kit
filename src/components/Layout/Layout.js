@@ -40,13 +40,11 @@ class Layout extends React.Component {
 
   renderSecondMenu(name) {
     const { pathname } = this.context;
-    const menu = this.props.secondMenu[name]
-      .filter(menuItem => menuItem.level === 2)
-      .map(item => (
-        <li key={item.id} className={pathname === item.link ? s.active : null}>
-          <Link to={item.link}>{item.title}</Link>
-        </li>
-      ));
+    const menu = this.props.secondMenu[name].map(item => (
+      <li key={item.id} className={pathname === item.link ? s.active : null}>
+        <Link to={item.link}>{item.title}</Link>
+      </li>
+    ));
     return (
       <ul key={name} className={`nav ${s['nav-sidebar']}`}>
         {menu}

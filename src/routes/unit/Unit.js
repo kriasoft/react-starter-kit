@@ -260,7 +260,9 @@ class Unit extends React.Component {
             body={unit.body}
             onChange={val => this.setState({ answer: val })}
             onHeadersChange={headers =>
-              dispatch(setSecondMenu('unit', headers))
+              dispatch(
+                setSecondMenu('unit', headers.filter(item => item.level === 2)),
+              )
             }
           />
           {user && <Button onClick={this.saveAnswer}>Save</Button>}
