@@ -23,7 +23,6 @@ import Link from '../Link';
 class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    secondMenu: PropTypes.arrayOf(PropTypes.any).isRequired,
   };
 
   static contextTypes = {
@@ -40,7 +39,7 @@ class Layout extends React.Component {
 
   renderSecondMenu(name) {
     const { pathname } = this.context;
-    const menu = this.props.secondMenu[name].map(item => (
+    const menu = this.props.secondMenu[name].map(item => ( // eslint-disable-line
       <li key={item.id} className={pathname === item.link ? s.active : null}>
         <Link to={item.link}>{item.title}</Link>
       </li>
@@ -56,7 +55,7 @@ class Layout extends React.Component {
     const menuSecondList = [];
     for (let i = 0; i < Layout.menuSecondOrder.length; i += 1) {
       const name = Layout.menuSecondOrder[i];
-      if (this.props.secondMenu[name] && this.props.secondMenu[name].length) {
+      if (this.props.secondMenu[name] && this.props.secondMenu[name].length) { // eslint-disable-line
         menuSecondList.push(this.renderSecondMenu(name));
       }
     }
