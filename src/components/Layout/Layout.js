@@ -23,74 +23,44 @@ import Link from '../Link';
 class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    menuSecond: PropTypes.arrayOf(
-      PropTypes.arrayOf(
-        PropTypes.shape({
-          title: PropTypes.string,
-          action: PropTypes.string,
-          isActive: PropTypes.bool,
-        }),
-      ),
-    ),
     secondMenu: PropTypes.arrayOf(PropTypes.any).isRequired,
   };
 
   static contextTypes = {
     store: PropTypes.any.isRequired,
+    pathname: PropTypes.any.isRequired,
   };
 
-  static defaultProps = {
-    menuSecond: [],
-  };
-
-  static menuSecondOrder = ['unit'];
+  static menuSecondOrder = ['unit', 'course'];
 
   constructor(props) {
     super(props);
     this.state = {};
   }
 
+  renderSecondMenu(name) {
+    const { pathname } = this.context;
+    const menu = this.props.secondMenu[name]
+      .filter(menuItem => menuItem.level === 2)
+      .map(item => (
+        <li key={item.id} className={pathname === item.link ? s.active : null}>
+          <Link to={item.link}>{item.title}</Link>
+        </li>
+      ));
+    return (
+      <ul key={name} className={`nav ${s['nav-sidebar']}`}>
+        {menu}
+      </ul>
+    );
+  }
+
   render() {
     const menuSecondList = [];
-    const items = this.props.menuSecond;
     for (let i = 0; i < Layout.menuSecondOrder.length; i += 1) {
-      const m = Layout.menuSecondOrder[i];
-      const secondLevel = (this.props.secondMenu[m] || [])
-        .filter(menuItem => menuItem.level === 2)
-        .map(menuItem => (
-          <li key={menuItem.id}>
-            <Link to={menuItem.link}>{menuItem.title}</Link>
-          </li>
-        ));
-      menuSecondList.push(
-        <ul className={`nav ${s['nav-sidebar']}`}>{secondLevel}</ul>,
-      );
-    }
-
-    for (let i = 0; i < items.length; i += 1) {
-      const secondLevel = [];
-      for (let j = 0; j < items[i].length; j += 1) {
-        secondLevel.push(
-          <li
-            key={`${i} ${j}`}
-            className={items[i][j].isActive ? s.active : null}
-          >
-            <Link to={items[i][j].action}>
-              {items[i][j].title}
-              {s.active ? (
-                <span className="sr-only">(current)</span>
-              ) : (
-                undefined
-              )}
-            </Link>
-          </li>,
-        );
+      const name = Layout.menuSecondOrder[i];
+      if (this.props.secondMenu[name] && this.props.secondMenu[name].length) {
+        menuSecondList.push(this.renderSecondMenu(name));
       }
-      menuSecondList.push(
-        <ul key={i} className={`nav ${s['nav-sidebar']}`}>
-          {secondLevel}
-        </ul>,
-      );
     }
     return (
       <div>

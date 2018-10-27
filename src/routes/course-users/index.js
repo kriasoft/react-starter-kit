@@ -27,28 +27,11 @@ async function action({ fetch, params }) {
   const { data } = await resp.json();
   if (!data && !data.courses)
     throw new Error('Failed to load user of a course.');
-  const mas = [
-    [
-      {
-        title: 'Units',
-        action: `/courses/${data.courses[0].id}`,
-      },
-      {
-        title: 'Users list',
-        action: `/courses/${data.courses[0].id}/users`,
-        isActive: true,
-      },
-      {
-        title: 'Marks list',
-        action: `/courses/${data.courses[0].id}/marks`,
-      },
-    ],
-  ];
   return {
     chunks: ['courseUsers'],
     title,
     component: (
-      <Layout menuSecond={mas}>
+      <Layout>
         <CourseUsers title={data.courses[0].title} course={data.courses[0]} />
       </Layout>
     ),

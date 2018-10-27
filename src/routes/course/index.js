@@ -15,29 +15,12 @@ import { fetchCourse } from '../../actions/courses';
 async function action({ params, store }) {
   await store.dispatch(fetchCourse(params.idCourse));
   const { course } = store.getState();
-  const { id, title } = course;
-  const mas = [
-    [
-      {
-        title: 'Units',
-        action: `/courses/${id}`,
-        isActive: true,
-      },
-      {
-        title: 'Users list',
-        action: `/courses/${id}/users`,
-      },
-      {
-        title: 'Marks list',
-        action: `/courses/${id}/marks`,
-      },
-    ],
-  ];
+  const { title } = course;
   return {
     chunks: ['course'],
     title,
     component: (
-      <Layout menuSecond={mas}>
+      <Layout>
         <Course />
       </Layout>
     ),
