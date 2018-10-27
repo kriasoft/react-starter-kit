@@ -6,7 +6,8 @@ const User = ({ user, link }) =>
   link ? (
     <span>
       <Link to={`/users/${user.id}`}>{user.email}</Link>
-      {user.isAdmin ? ' (admin)' : ` (${user.role})`}
+      {user.isAdmin && '(admin)'}
+      {user.role && ` (${user.role})`}
     </span>
   ) : (
     <span>{user.email}</span>

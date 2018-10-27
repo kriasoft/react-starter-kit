@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
@@ -52,7 +43,7 @@ class Users extends React.Component {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `query groups($id: [String]) {
-          groups(ids: $id) { users {id,email}} 
+          groups(ids: $id) { users {id,email}}
         }`,
         variables: { id },
       }),
@@ -90,7 +81,7 @@ class Users extends React.Component {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation addUserToGroup($id:String, $groupId: String) {
-          addUserToGroup(id: $id, groupId: $groupId) { id } 
+          addUserToGroup(id: $id, groupId: $groupId) { id }
         }`,
         variables: this.getUserGroupIds(user),
       }),
@@ -103,7 +94,7 @@ class Users extends React.Component {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation createGroup($title: String!) {
-          createGroup(title: $title) { id, title } 
+          createGroup(title: $title) { id, title }
         }`,
         variables: {
           title,
@@ -118,7 +109,7 @@ class Users extends React.Component {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation updateGroup($id: String!, $title: String!) {
-          updateGroup(id: $id, title: $title) { id, title } 
+          updateGroup(id: $id, title: $title) { id, title }
         }`,
         variables: {
           id,

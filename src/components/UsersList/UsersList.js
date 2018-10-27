@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Button, DropdownButton, ButtonGroup, MenuItem } from 'react-bootstrap';
-import User from '../../components/User';
+import User from '../User';
 
 class UsersList extends React.Component {
   static propTypes = {
