@@ -15,7 +15,8 @@ import { connect } from 'react-redux';
 import MarksTable from '../../components/MarksTable';
 import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
-import { setUnitHeaders, updateUnit, createMark } from '../../actions/units';
+import { updateUnit, createMark } from '../../actions/units';
+import { setSecondMenu } from '../../actions/menu';
 
 import s from './Unit.css';
 import Link from '../../components/Link/Link';
@@ -64,6 +65,11 @@ class Unit extends React.Component {
     if (user) {
       await this.retrieveAnswer();
     }
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(setSecondMenu('unit', []));
   }
 
   handleChange = name => ({ target: { value } }) =>
@@ -253,7 +259,9 @@ class Unit extends React.Component {
             value={answer}
             body={unit.body}
             onChange={val => this.setState({ answer: val })}
-            onHeadersChange={headers => dispatch(setUnitHeaders(headers))}
+            onHeadersChange={headers =>
+              dispatch(setSecondMenu('unit', headers))
+            }
           />
           {user && <Button onClick={this.saveAnswer}>Save</Button>}
           {unit.answers[0] ? (

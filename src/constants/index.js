@@ -22,3 +22,4 @@ export const ADD_FILE = 'ADD_FILE';
 export const ADD_USER_TO_GROUP = 'ADD_USER_TO_GROUP';
 export const DELETE_USER_FROM_GROUP = 'DELETE_USER_FROM_GROUP';
 export const UPDATE_GROUP = 'UPDATE_GROUP';
+export const SET_SECOND_MENU = 'SET_SECOND_MENU';

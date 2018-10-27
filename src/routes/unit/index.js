@@ -35,7 +35,7 @@ async function action({ fetch, store }, { idCourse, idUnit }) {
     chunks: ['unit'],
     title,
     component: (
-      <Layout showUnitHeaders>
+      <Layout>
         <Unit
           course={data.courses[0]}
           role={data.courses[0].users[0].role || 'teacher'}

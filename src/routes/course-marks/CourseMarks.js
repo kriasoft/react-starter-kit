@@ -29,7 +29,9 @@ class UserMarks extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {units.map(ent => <AnswerList unit={ent} key={ent.id} />)}
+                  {units.map(ent => (
+                    <AnswerList unit={ent} key={ent.id} />
+                  ))}
                 </tbody>
               </Table>
             </Col>

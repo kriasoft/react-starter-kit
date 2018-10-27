@@ -10,7 +10,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import _ from 'lodash';
+import { connect } from 'react-redux';
 import bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
 // external-global styles must be imported in your JS.
@@ -23,7 +23,6 @@ import Link from '../Link';
 class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    showUnitHeaders: PropTypes.bool,
     menuSecond: PropTypes.arrayOf(
       PropTypes.arrayOf(
         PropTypes.shape({
@@ -33,6 +32,7 @@ class Layout extends React.Component {
         }),
       ),
     ),
+    secondMenu: PropTypes.arrayOf(PropTypes.any).isRequired,
   };
 
   static contextTypes = {
@@ -41,37 +41,32 @@ class Layout extends React.Component {
 
   static defaultProps = {
     menuSecond: [],
-    showUnitHeaders: false,
   };
+
+  static menuSecondOrder = ['unit'];
 
   constructor(props) {
     super(props);
     this.state = {};
   }
 
-  componentWillMount() {
-    this.context.store.subscribe(() => {
-      this.setState({
-        unitHeaders: _.get(this.context.store.getState(), 'unit.headers'),
-      });
-    });
-  }
-
   render() {
     const menuSecondList = [];
     const items = this.props.menuSecond;
-    if (this.props.showUnitHeaders) {
-      const secondLevel = (this.state.unitHeaders || [])
-        .filter(h => h.level === 2)
-        .map(h => (
-          <li key={h.id}>
-            <Link to={`#${h.id}`}>{h.title}</Link>
+    for (let i = 0; i < Layout.menuSecondOrder.length; i += 1) {
+      const m = Layout.menuSecondOrder[i];
+      const secondLevel = (this.props.secondMenu[m] || [])
+        .filter(menuItem => menuItem.level === 2)
+        .map(menuItem => (
+          <li key={menuItem.id}>
+            <Link to={menuItem.link}>{menuItem.title}</Link>
           </li>
         ));
       menuSecondList.push(
         <ul className={`nav ${s['nav-sidebar']}`}>{secondLevel}</ul>,
       );
     }
+
     for (let i = 0; i < items.length; i += 1) {
       const secondLevel = [];
       for (let j = 0; j < items[i].length; j += 1) {
@@ -120,4 +115,10 @@ class Layout extends React.Component {
   }
 }
 
-export default withStyles(normalizeCss, bootstrap, s)(Layout);
+const mapStateToProps = state => ({
+  secondMenu: state.secondMenu || [],
+});
+
+export default connect(mapStateToProps)(
+  withStyles(normalizeCss, bootstrap, s)(Layout),
+);

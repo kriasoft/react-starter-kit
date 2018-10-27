@@ -29,6 +29,7 @@ export default class Headers extends Base {
         .filter(c => c.type === 'text')
         .map(c => c.data)
         .join(' '),
+      link: `#${id}`,
     });
     const renderAttrs = { id, key: index };
     const CustomTag = node.name;
