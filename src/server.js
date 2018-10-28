@@ -36,7 +36,7 @@ import chunks from './chunk-manifest.json'; // eslint-disable-line import/no-unr
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
 import config from './config';
-import models, { User, File } from './data/models';
+import models, { File } from './data/models';
 import sequelize from './data/sequelize';
 
 const SequelizeStore = require('connect-session-sequelize')(
@@ -107,22 +107,16 @@ app.use(passport.session());
 if (__DEV__) {
   app.enable('trust proxy');
 }
-app.post('/register', (req, res) => {
-  User.createUser({
-    email: req.body.email,
-    key: req.body.password,
-    name: req.body.name,
-    gender: req.body.gender,
-  }).then(user => {
-    req.login(user, err => {
-      if (!err) res.redirect('/');
-    });
-  });
-});
-
+app.post(
+  '/register',
+  passport.authenticate('local-signup', {
+    successRedirect: '/',
+    failureRedirect: '/register',
+  }),
+);
 app.post(
   '/login',
-  passport.authenticate('local', {
+  passport.authenticate('local-login', {
     successRedirect: '/',
     failureRedirect: '/login',
   }),
