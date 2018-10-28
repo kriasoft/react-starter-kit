@@ -15,6 +15,10 @@ import {
   ToggleButtonGroup,
   FormControl,
   FormGroup,
+  Button,
+  PageHeader,
+  HelpBlock,
+  ControlLabel,
 } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Register.css';
@@ -27,114 +31,109 @@ class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      validation: {},
       email: '',
       password: '',
       password2: '',
     };
-    this.onEmailChange = this.onEmailChange.bind(this);
-    this.onPasswordChange = this.onPasswordChange.bind(this);
-    this.onPassword2Change = this.onPassword2Change.bind(this);
   }
 
-  onEmailChange(event) {
-    this.setState({ email: event.target.value });
-    this.updateValidationState();
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  validatePassword() {
+    const { password, password2 } = this.state;
+    if (!password.length && !password2.length) return null;
+    return password === password2 ? 'success' : 'error';
   }
 
-  onPasswordChange(event) {
-    this.setState({ password: event.target.value });
-  }
-
-  onPassword2Change(event) {
-    this.setState({ password2: event.target.value });
-    this.updateValidationState();
-  }
-
-  updateValidationState() {
-    this.setState({
-      validation: {
-        email: /^[a-zA-Z0-9+.\-_]+@[a-zA-Z0-9+.\-_]+$/.test(this.state.email)
-          ? 'success'
-          : 'error',
-        password:
-          this.state.password === this.state.password2 ? 'success' : 'error',
-      },
-    });
+  validateEmail() {
+    const { email } = this.state;
+    if (!email.length) return null;
+    return /^[a-zA-Z0-9+.\-_]+@[a-zA-Z0-9+.\-_]+$/.test(email)
+      ? 'success'
+      : 'error';
   }
 
   render() {
+    const { title } = this.props;
+    const { email, password, password2 } = this.state;
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.title}</h1>
-          <p className={s.lead}>Fill the form with your data.</p>
-          <form method="post">
-            <FormGroup
-              className={s.formGroup}
-              validationState={this.state.validation.email}
-            >
-              <label className={s.label} htmlFor="email">
-                Email address:
-                <FormControl
-                  className={s.input}
-                  onChange={this.onEmailChange}
-                  id="email"
-                  type="text"
-                  name="email"
-                  autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-                />
-              </label>
-            </FormGroup>
-            <FormGroup className={s.formGroup}>
-              <label className={s.label} htmlFor="password">
-                Password:
-                <FormControl
-                  className={s.input}
-                  onChange={this.onPasswordChange}
-                  id="password"
-                  type="password"
-                  name="password"
-                />
-              </label>
+          <PageHeader>{title}</PageHeader>
+          <form action="/register" method="post">
+            <FormGroup controlId="email" validationState={this.validateEmail()}>
+              <ControlLabel>Email address</ControlLabel>
+              <FormControl
+                required
+                onChange={this.handleChange}
+                type="email"
+                placeholder="email@example.com"
+                name="email"
+                autoFocus
+                value={email}
+              />
+              <FormControl.Feedback />
             </FormGroup>
             <FormGroup
-              className={s.formGroup}
-              validationState={this.state.validation.password}
+              controlId="password"
+              validationState={this.validatePassword()}
             >
-              <label className={s.label} htmlFor="password2">
-                Repeat password:
-                <FormControl
-                  className={s.input}
-                  onChange={this.onPassword2Change}
-                  id="password2"
-                  type="password"
-                  name="password2"
-                />
-              </label>
+              <ControlLabel>Password</ControlLabel>
+              <FormControl
+                required
+                minLength={6}
+                onChange={this.handleChange}
+                type="password"
+                name="password"
+                value={password}
+              />
+              <HelpBlock>Make sure it`s at least 6 characters.</HelpBlock>
             </FormGroup>
-            <div className={s.formGroup}>
-              <label className={s.label} htmlFor="Name">
-                Name:
-                <input className={s.input} id="name" type="text" name="name" />
-              </label>
-            </div>
-            <div className={s.formGroup}>
-              <label className={s.label} htmlFor="Gender">
-                Gender:
-                <ButtonToolbar>
-                  <ToggleButtonGroup type="radio" name="gender">
-                    <ToggleButton value="male">Male</ToggleButton>
-                    <ToggleButton value="female">Female</ToggleButton>
-                  </ToggleButtonGroup>
-                </ButtonToolbar>
-              </label>
-            </div>
-            <div className={s.formGroup}>
-              <button className={s.button} type="submit">
-                Register
-              </button>
-            </div>
+            <FormGroup
+              controlId="password2"
+              validationState={this.validatePassword()}
+            >
+              <ControlLabel>Repeat password</ControlLabel>
+              <FormControl
+                required
+                minLength={6}
+                onChange={this.handleChange}
+                type="password"
+                value={password2}
+                name="password2"
+              />
+              <HelpBlock>Passwords must match</HelpBlock>
+            </FormGroup>
+            <FormGroup controlId="username">
+              <ControlLabel>Username</ControlLabel>
+              <FormControl
+                type="text"
+                name="name"
+                placeholder="pick username"
+              />
+            </FormGroup>
+            <FormGroup controlId="gender">
+              <ControlLabel>Gender</ControlLabel>
+              <ButtonToolbar>
+                <ToggleButtonGroup type="radio" name="gender">
+                  <ToggleButton value="male">Male</ToggleButton>
+                  <ToggleButton value="female">Female</ToggleButton>
+                </ToggleButtonGroup>
+              </ButtonToolbar>
+            </FormGroup>
+            <Button
+              bsStyle="primary"
+              bsSize="large"
+              type="submit"
+              disabled={
+                this.validateEmail() === 'error' ||
+                this.validatePassword() === 'error'
+              }
+            >
+              Sign up
+            </Button>
           </form>
         </div>
       </div>

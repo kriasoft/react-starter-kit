@@ -57,6 +57,7 @@ class Login extends React.Component {
                 value={email}
                 onChange={this.handleChange}
               />
+              <FormControl.Feedback />
             </FormGroup>
             <FormGroup bsSize="large" controlId="password">
               <ControlLabel>Password</ControlLabel>
@@ -68,7 +69,7 @@ class Login extends React.Component {
                 value={password}
                 onChange={this.handleChange}
               />
-              <HelpBlock>Password must have at least 6 characters.</HelpBlock>
+              <HelpBlock>Make sure it`s at least 6 characters.</HelpBlock>
             </FormGroup>
             <FormGroup>
               <Button bsSize="large" bsStyle="primary" type="submit" block>
