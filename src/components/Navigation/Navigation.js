@@ -20,9 +20,8 @@ function processClick(a, event) {
   history.push(event.target.getAttribute('href'));
 }
 
-function logout(event) {
+function logout() {
   window.location.href = '/logout';
-  event.preventDefault();
 }
 
 class Navigation extends React.Component {
@@ -66,7 +65,7 @@ class Navigation extends React.Component {
               <NavItem eventKey={1} href={`/users/${user.id}`}>
                 {user.email}
               </NavItem>
-              <NavItem eventKey={2} href="/logout" onSelect={logout}>
+              <NavItem eventKey={2} onSelect={logout}>
                 Log out
               </NavItem>
             </Nav>

@@ -76,6 +76,12 @@ class Login extends React.Component {
                 Log in
               </Button>
             </FormGroup>
+            <HelpBlock>
+              Don`t have an account?
+              <Button bsStyle="link" href="/register">
+                Sign up
+              </Button>
+            </HelpBlock>
             <Button bsStyle="link" href="login/facebook" block>
               <svg
                 className={s.icon}

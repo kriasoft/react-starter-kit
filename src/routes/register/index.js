@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '../../components/Layout';
 import Register from './Register';
 
-const title = 'Sign up';
+const title = 'Sign up to NDO';
 
 function action() {
   return {

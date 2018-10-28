@@ -134,6 +134,12 @@ class Register extends React.Component {
             >
               Sign up
             </Button>
+            <HelpBlock>
+              Already have an account?
+              <Button bsStyle="link" href="/login">
+                Log in
+              </Button>
+            </HelpBlock>
           </form>
         </div>
       </div>
