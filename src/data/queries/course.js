@@ -74,16 +74,17 @@ const addUserToCourse = {
   },
   async resolve({ request }, args) {
     if (!request.user) throw new Error('User is not logged in');
-    const role = await request.user.getRole(args.courseId);
-    if (!request.user.isAdmin && (!role || role !== 'teacher'))
+    const user = await User.findById(request.user.id);
+    const role = await user.getRole(args.courseId);
+    if (!user.isAdmin && (!role || role !== 'teacher'))
       throw new Error("User doesn't have rights to edit this course");
-    return User.findById(args.id).then(user =>
+    return User.findById(args.id).then(u =>
       Course.findById(args.courseId).then(course =>
         course
-          .addUser(user, {
+          .addUser(u, {
             through: { role: args.role },
           })
-          .then(() => user),
+          .then(() => u),
       ),
     );
   },
