@@ -5,9 +5,7 @@ import {
   GraphQLList,
   GraphQLID as ID,
 } from 'graphql';
-import User from '../models/User';
-import Group from '../models/Group';
-import UserGroup from '../models/UserGroup';
+import { User, Group, UserGroup } from '../models';
 
 const GroupType = new ObjectType({
   name: 'GroupType',

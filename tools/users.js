@@ -1,8 +1,5 @@
 import readlineSync from 'readline-sync';
-import User from '../src/data/models/User';
-import UserLogin from '../src/data/models/UserLogin';
-import UserClaim from '../src/data/models/UserClaim';
-import models from '../src/data/models';
+import models, { User, UserLogin, UserClaim } from '../src/data/models';
 
 const promise = models.sync().catch(err => console.error(err.stack));
 

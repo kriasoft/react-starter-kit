@@ -4,9 +4,8 @@ import {
   GraphQLNonNull as NonNull,
 } from 'graphql';
 import UserType from '../types/UserType';
-import User from '../models/User';
+import { User, Group } from '../models';
 import GroupType from '../types/GroupType';
-import Group from '../models/Group';
 
 const createGroup = {
   type: GroupType,

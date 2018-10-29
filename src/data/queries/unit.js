@@ -4,9 +4,7 @@ import {
   GraphQLNonNull as NonNull,
 } from 'graphql';
 import UnitType from '../types/UnitType';
-import Unit from '../models/Unit';
-import User from '../models/User';
-import Course from '../models/Course';
+import { Unit, User, Course } from '../models';
 
 const createUnit = {
   type: UnitType,
