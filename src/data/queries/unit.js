@@ -32,12 +32,14 @@ const createUnit = {
       if (!user.isAdmin && (!role || role !== 'teacher'))
         throw new Error("User doesn't have rights to edit this course");
       const course = await Course.findById(courseId);
-      const unit = Unit.create({ title, body })
-        .then(u => u.setCourses([course]))
+      return Unit.create({ title, body })
+        .then(u => {
+          u.setCourses([course]);
+          return u;
+        })
         .catch(err => {
           console.error(err);
         });
-      return unit;
     } catch (err) {
       console.error(err);
       throw err;
