@@ -4,10 +4,7 @@ import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import File from '../File';
 
 function FilesList({ files = [] }) {
-  if (!files.length) {
-    return <p>You have no files yet</p>;
-  }
-  return (
+  return files.length ? (
     <ListGroup>
       {files.map(file => (
         <ListGroupItem key={file.id}>
@@ -15,6 +12,8 @@ function FilesList({ files = [] }) {
         </ListGroupItem>
       ))}
     </ListGroup>
+  ) : (
+    <p>You have no files yet</p>
   );
 }
 

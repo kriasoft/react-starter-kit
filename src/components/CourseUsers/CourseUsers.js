@@ -17,9 +17,7 @@ import { fetchUsers } from '../../actions/users';
 
 class CourseUsers extends Component {
   static propTypes = {
-    subscribeUser: PropTypes.func.isRequired,
-    fetchUsers: PropTypes.func.isRequired,
-    unsubscribeUser: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     subscribers: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string,
@@ -37,11 +35,12 @@ class CourseUsers extends Component {
   };
 
   async componentDidMount() {
-    await this.props.fetchUsers();
+    const { dispatch } = this.props;
+    await dispatch(fetchUsers());
   }
 
   render() {
-    const { subscribers, users } = this.props;
+    const { subscribers, users, dispatch } = this.props;
     const unsubscribed = users.filter(
       ({ id }) => !subscribers.find(user => user.id === id),
     );
@@ -56,7 +55,7 @@ class CourseUsers extends Component {
                 <ListGroupItem key={id}>
                   <ButtonGroup>
                     <Button
-                      onClick={() => this.props.subscribeUser(id)}
+                      onClick={() => dispatch(subscribeUser(id))}
                       bsStyle="default"
                     >
                       {email}
@@ -64,13 +63,13 @@ class CourseUsers extends Component {
                     <DropdownButton id="role-chooser" title="Role">
                       <MenuItem
                         eventKey="1"
-                        onClick={() => this.props.subscribeUser(id)}
+                        onClick={() => dispatch(subscribeUser(id))}
                       >
                         Student
                       </MenuItem>
                       <MenuItem
                         eventKey="2"
-                        onClick={() => this.props.subscribeUser(id, 'teacher')}
+                        onClick={() => dispatch(subscribeUser(id, 'teacher'))}
                       >
                         Teacher
                       </MenuItem>
@@ -86,7 +85,7 @@ class CourseUsers extends Component {
               {subscribers.map(({ id, email, role }) => (
                 <ListGroupItem
                   key={id}
-                  onClick={() => this.props.unsubscribeUser(id)}
+                  onClick={() => dispatch(unsubscribeUser(id))}
                 >
                   {`${email} (${role})`}
                 </ListGroupItem>
@@ -105,7 +104,4 @@ const mapStateToProps = state => ({
   users: state.users,
 });
 
-export default connect(
-  mapStateToProps,
-  { subscribeUser, unsubscribeUser, fetchUsers },
-)(CourseUsers);
+export default connect(mapStateToProps)(CourseUsers);
