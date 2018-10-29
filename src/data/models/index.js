@@ -122,4 +122,5 @@ export {
   UserCourse,
   Group,
   File,
+  UserGroup,
 };

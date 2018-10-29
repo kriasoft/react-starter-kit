@@ -8,7 +8,7 @@ import users from './users';
 import files from './files';
 import groups from './groups';
 import answer from './answer';
-import { secondMenu } from './menu';
+import secondMenu from './menu';
 
 export default combineReducers({
   user,

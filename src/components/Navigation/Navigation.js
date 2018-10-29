@@ -84,7 +84,11 @@ Navigation.propTypes = {
   user: PropTypes.shape({
     id: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
+};
+
+Navigation.defaultProps = {
+  user: null,
 };
 
 const mapStateToProps = state => ({

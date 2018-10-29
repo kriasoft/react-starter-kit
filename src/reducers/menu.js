@@ -2,7 +2,7 @@
 
 import { SET_SECOND_MENU } from '../constants';
 
-export function secondMenu(state = {}, action) {
+export default function secondMenu(state = {}, action) {
   switch (action.type) {
     case SET_SECOND_MENU:
       return { ...state, [action.data.type]: action.data.items };
