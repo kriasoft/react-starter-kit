@@ -8,7 +8,7 @@ const title = 'Unit';
 async function action({ fetch, store }, { idCourse, idUnit }) {
   const { user } = store.getState();
   if (!user) {
-    return { redirect: '/' };
+    return { redirect: '/login' };
   }
   const resp = await fetch('/graphql', {
     body: JSON.stringify({

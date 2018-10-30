@@ -7,7 +7,7 @@ const title = 'Tests';
 function action({ store }) {
   const { user } = store.getState();
   if (!user) {
-    return { redirect: '/' };
+    return { redirect: '/login' };
   }
   return {
     chunks: ['tests'],

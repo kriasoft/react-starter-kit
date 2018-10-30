@@ -8,7 +8,7 @@ const title = 'Files';
 async function action({ store }) {
   const { user } = store.getState();
   if (!user) {
-    return { redirect: '/' };
+    return { redirect: '/login' };
   }
   await store.dispatch(fetchFiles());
   return {

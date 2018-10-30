@@ -7,7 +7,7 @@ const title = 'User';
 async function action({ fetch, params, store }) {
   const { user } = store.getState();
   if (!user) {
-    return { redirect: '/' };
+    return { redirect: '/login' };
   }
   const resp = await fetch('/graphql', {
     body: JSON.stringify({

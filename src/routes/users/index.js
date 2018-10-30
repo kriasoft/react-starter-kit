@@ -9,7 +9,7 @@ const title = 'Users';
 async function action({ store }) {
   const { user } = store.getState();
   if (!user) {
-    return { redirect: '/' };
+    return { redirect: '/login' };
   }
   store.dispatch(fetchUsers());
   store.dispatch(fetchGroups());

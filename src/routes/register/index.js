@@ -7,7 +7,7 @@ const title = 'Sign up to NDO';
 function action({ store }) {
   const { user } = store.getState();
   if (user) {
-    return { redirect: '/' };
+    return { redirect: '/login' };
   }
   return {
     chunks: ['register'],
