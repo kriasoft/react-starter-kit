@@ -4,7 +4,11 @@ import Register from './Register';
 
 const title = 'Sign up to NDO';
 
-function action() {
+function action({ store }) {
+  const { user } = store.getState();
+  if (user) {
+    return { redirect: '/' };
+  }
   return {
     chunks: ['register'],
     title,

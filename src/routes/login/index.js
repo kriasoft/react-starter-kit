@@ -4,7 +4,11 @@ import Login from './Login';
 
 const title = 'Log In';
 
-function action() {
+function action({ store }) {
+  const { user } = store.getState();
+  if (user) {
+    return { redirect: '/' };
+  }
   return {
     chunks: ['login'],
     title,
