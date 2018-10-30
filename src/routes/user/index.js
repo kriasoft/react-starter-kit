@@ -4,7 +4,11 @@ import User from './User';
 
 const title = 'User';
 
-async function action({ fetch, params }) {
+async function action({ fetch, params, store }) {
+  const { user } = store.getState();
+  if (!user) {
+    return { redirect: '/' };
+  }
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query users($users: [String]) {

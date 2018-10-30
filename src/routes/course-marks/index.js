@@ -5,6 +5,10 @@ import CourseMarks from './CourseMarks';
 const title = 'Users of Course';
 
 async function action({ fetch, params, store }) {
+  const { user } = store.getState();
+  if (!user) {
+    return { redirect: '/' };
+  }
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($ids: [String], $userIds: [String]) {

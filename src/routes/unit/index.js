@@ -6,6 +6,10 @@ import { setUnit } from '../../actions/units';
 const title = 'Unit';
 
 async function action({ fetch, store }, { idCourse, idUnit }) {
+  const { user } = store.getState();
+  if (!user) {
+    return { redirect: '/' };
+  }
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) { courses(ids: $idCourse) { id title users(ids: $idUser) { role } }

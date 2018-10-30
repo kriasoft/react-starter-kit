@@ -4,7 +4,11 @@ import Tests from './Tests';
 
 const title = 'Tests';
 
-function action() {
+function action({ store }) {
+  const { user } = store.getState();
+  if (!user) {
+    return { redirect: '/' };
+  }
   return {
     chunks: ['tests'],
     title,

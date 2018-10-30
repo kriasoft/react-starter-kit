@@ -7,6 +7,10 @@ import { fetchGroups } from '../../actions/groups';
 const title = 'Users';
 
 async function action({ store }) {
+  const { user } = store.getState();
+  if (!user) {
+    return { redirect: '/' };
+  }
   store.dispatch(fetchUsers());
   store.dispatch(fetchGroups());
   return {

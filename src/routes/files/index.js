@@ -6,6 +6,10 @@ import { fetchFiles } from '../../actions/files';
 const title = 'Files';
 
 async function action({ store }) {
+  const { user } = store.getState();
+  if (!user) {
+    return { redirect: '/' };
+  }
   await store.dispatch(fetchFiles());
   return {
     chunks: ['files'],
