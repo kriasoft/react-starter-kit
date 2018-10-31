@@ -32,8 +32,6 @@ class Sidebar extends Component {
     return (
       <Col sm={3} md={2} className={s.sidebar}>
         {secondMenu &&
-          history.location &&
-          history.location.pathname.startsWith('/courses/') &&
           Object.keys(secondMenu).map(key => (
             <Nav bsStyle="pills" stacked key={key}>
               {secondMenu[key].map(item => (
