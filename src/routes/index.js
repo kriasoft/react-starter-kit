@@ -78,13 +78,13 @@ const routes = {
     },
   ],
 
-  async action({ next, store, pathname }) {
+  async action({ next }) {
     // Execute each child route until one of them return the result
     const route = await next();
 
-    if (!pathname.startsWith('/courses/')) {
-      store.dispatch(setSecondMenu('course', []));
-    }
+    // if (!pathname.startsWith('/courses/')) {
+    //   store.dispatch(setSecondMenu('course', []));
+    // }
 
     // Provide default values for title, description etc.
     route.title = `${route.title || 'Untitled Page'} - NDO`;
