@@ -3,38 +3,17 @@ import PropTypes from 'prop-types';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import Link from '../Link';
-import history from '../../history';
 
-function isLeftClickEvent(event) {
-  return event.button === 0;
-}
-
-function isModifiedEvent(event) {
-  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
-}
-
-function processClick(a, event) {
-  if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
-    return;
-  }
+function logout(event) {
   event.preventDefault();
-  history.push(event.target.getAttribute('href'));
-}
-
-function logout() {
-  window.location.href = '/logout';
+  fetch('/logout', { method: 'POST' }).then(
+    () => (window.location.href = 'login'),
+  );
 }
 
 function Navigation({ user }) {
   return (
-    <Navbar
-      inverse
-      collapseOnSelect
-      fixedTop
-      defaultExpanded
-      fluid
-      onSelect={processClick}
-    >
+    <Navbar inverse fixedTop defaultExpanded fluid>
       <Navbar.Header>
         <Navbar.Brand>
           <Link to="/">NDO</Link>
@@ -43,34 +22,55 @@ function Navigation({ user }) {
       </Navbar.Header>
       <Navbar.Collapse>
         <Nav>
-          <NavItem eventKey={1} href="/courses">
+          <NavItem
+            componentClass={Link}
+            eventKey={1}
+            to="/courses"
+            href="/courses"
+          >
             Courses
           </NavItem>
-          <NavItem eventKey={2} href="/users">
+          <NavItem componentClass={Link} eventKey={2} to="/users" href="/users">
             Users
           </NavItem>
-          <NavItem eventKey={3} href="/files">
+          <NavItem componentClass={Link} eventKey={3} to="/files" href="/files">
             Files
           </NavItem>
-          <NavItem eventKey={4} href="/tests">
+          <NavItem componentClass={Link} eventKey={4} to="/tests" href="/tests">
             Tests
           </NavItem>
         </Nav>
         {user ? (
           <Nav pullRight>
-            <NavItem eventKey={1} href={`/users/${user.id}`}>
+            <NavItem
+              componentClass={Link}
+              eventKey={1}
+              to={`/users/${user.id}`}
+              href={`/users/${user.id}`}
+            >
               {user.email}
             </NavItem>
-            <NavItem eventKey={2} onSelect={logout}>
+
+            <NavItem eventKey={2} onClick={logout}>
               Log out
             </NavItem>
           </Nav>
         ) : (
           <Nav pullRight>
-            <NavItem eventKey={1} href="/login">
+            <NavItem
+              componentClass={Link}
+              eventKey={1}
+              to="/login"
+              href="/login"
+            >
               Log in
             </NavItem>
-            <NavItem eventKey={2} href="/register">
+            <NavItem
+              componentClass={Link}
+              eventKey={2}
+              to="/register"
+              href="/register"
+            >
               Sign up
             </NavItem>
           </Nav>
@@ -91,8 +91,6 @@ Navigation.defaultProps = {
   user: null,
 };
 
-const mapStateToProps = state => ({
+export default connect(state => ({
   user: state.user,
-});
-
-export default connect(mapStateToProps)(Navigation);
+}))(Navigation);

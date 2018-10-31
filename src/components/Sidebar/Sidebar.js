@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
-import { Col } from 'react-bootstrap';
+import { Col, Nav, NavItem } from 'react-bootstrap';
 import s from './Sidebar.css';
 import Link from '../Link';
-
-const menuSecondOrder = ['unit', 'course'];
+import history from '../../history';
 
 class Sidebar extends Component {
   static propTypes = {
@@ -25,48 +24,29 @@ class Sidebar extends Component {
           title: PropTypes.string.isRequired,
         }),
       ),
-    }),
+    }).isRequired,
   };
-
-  static defaultProps = {
-    secondMenu: {},
-  };
-
-  static contextTypes = {
-    pathname: PropTypes.any.isRequired,
-  };
-
-  renderSecondMenu(name) {
-    const { pathname } = this.context;
-    const { secondMenu } = this.props;
-    const menu = secondMenu[name].map(item => (
-      <li
-        key={item.id}
-        className={pathname === item.link ? 'active' : undefined}
-      >
-        <Link to={item.link}>{item.title}</Link>
-      </li>
-    ));
-    return (
-      <ul key={name} className="nav nav-pills nav-stacked">
-        {menu}
-      </ul>
-    );
-  }
 
   render() {
-    const menuSecondList = [];
     const { secondMenu } = this.props;
-
-    for (let i = 0; i < menuSecondOrder.length; i += 1) {
-      const name = menuSecondOrder[i];
-      if (secondMenu[name] && secondMenu[name].length) {
-        menuSecondList.push(this.renderSecondMenu(name));
-      }
-    }
     return (
       <Col sm={3} md={2} className={s.sidebar}>
-        {menuSecondList}
+        {secondMenu &&
+          Object.keys(secondMenu).map(key => (
+            <Nav bsStyle="pills" stacked key={key}>
+              {secondMenu[key].map(item => (
+                <NavItem
+                  componentClass={Link}
+                  href={item.link}
+                  to={item.link}
+                  key={item.id}
+                  active={history.location.pathname === item.link}
+                >
+                  {item.title}
+                </NavItem>
+              ))}
+            </Nav>
+          ))}
       </Col>
     );
   }
