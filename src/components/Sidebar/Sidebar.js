@@ -7,6 +7,7 @@ import s from './Sidebar.css';
 import Link from '../Link';
 import history from '../../history';
 
+const menuSecondOrder = ['unit', 'course'];
 class Sidebar extends Component {
   static propTypes = {
     secondMenu: PropTypes.shape({
@@ -32,19 +33,23 @@ class Sidebar extends Component {
     return (
       <Col sm={3} md={2} className={s.sidebar}>
         {secondMenu &&
-          Object.keys(secondMenu).map(key => (
+          menuSecondOrder.map(key => (
             <Nav bsStyle="pills" stacked key={key}>
-              {secondMenu[key].map(item => (
-                <NavItem
-                  componentClass={Link}
-                  href={item.link}
-                  to={item.link}
-                  key={item.id}
-                  active={history.location.pathname === item.link}
-                >
-                  {item.title}
-                </NavItem>
-              ))}
+              {secondMenu[key] &&
+                secondMenu[key].map(item => (
+                  <NavItem
+                    componentClass={Link}
+                    href={item.link}
+                    to={item.link}
+                    key={item.id}
+                    active={
+                      history.location &&
+                      history.location.pathname === item.link
+                    }
+                  >
+                    {item.title}
+                  </NavItem>
+                ))}
             </Nav>
           ))}
       </Col>
