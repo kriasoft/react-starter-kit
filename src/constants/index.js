@@ -23,3 +23,5 @@ export const ADD_USER_TO_GROUP = 'ADD_USER_TO_GROUP';
 export const DELETE_USER_FROM_GROUP = 'DELETE_USER_FROM_GROUP';
 export const UPDATE_GROUP = 'UPDATE_GROUP';
 export const SET_SECOND_MENU = 'SET_SECOND_MENU';
+export const SHOW_MODAL = 'SHOW_MODAL';
+export const HIDE_MODAL = 'HIDE_MODAL';

@@ -8,6 +8,7 @@ import files from './files';
 import groups from './groups';
 import answer from './answer';
 import secondMenu from './menu';
+import modals from './modals';
 
 export default combineReducers({
   user,
@@ -19,4 +20,5 @@ export default combineReducers({
   groups,
   answer,
   secondMenu,
+  modals,
 });
