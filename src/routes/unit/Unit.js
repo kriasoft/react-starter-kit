@@ -68,10 +68,6 @@ class Unit extends React.Component {
       [name]: value,
     });
 
-  handleToggleEdit = () => {
-    this.setState({ editMode: !this.state.editMode });
-  };
-
   handleAnswerSelect = eventKey => {
     const answerCur = parseInt(eventKey, 10);
     this.setState({
@@ -120,6 +116,7 @@ class Unit extends React.Component {
     });
     return res;
   }
+
   saveAnswer = async () => {
     const { course, unit } = this.props;
     const answer = await this.postProcessAnswer(this.state.answer);
