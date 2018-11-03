@@ -226,24 +226,30 @@ class Unit extends React.Component {
                 onCreate={u => dispatch(updateUnit({ ...u, id: unit.id }))}
               />
             )}
-            <DropdownButton
-              id="answer_chooser"
-              title={`${unit.answers[answerCur].user.profile.displayName} ${
-                unit.answers[answerCur].createdAt
-              }`}
-              onSelect={this.handleAnswerSelect}
-            >
-              {user &&
-                user.isAdmin &&
-                answers &&
-                answers.map((ans, i) => (
-                  <MenuItem key={ans.id} eventKey={i} active={i === answerCur}>
-                    {`
-                    ${ans.user.profile.displayName}
-                    ${ans.createdAt}`}
-                  </MenuItem>
-                ))}
-            </DropdownButton>
+            {unit.answers[answerCur] && (
+              <DropdownButton
+                id="answer_chooser"
+                title={`${unit.answers[answerCur].user.profile.displayName} ${
+                  unit.answers[answerCur].createdAt
+                }`}
+                onSelect={this.handleAnswerSelect}
+              >
+                {user &&
+                  user.isAdmin &&
+                  answers &&
+                  answers.map((ans, i) => (
+                    <MenuItem
+                      key={ans.id}
+                      eventKey={i}
+                      active={i === answerCur}
+                    >
+                      {`
+                      ${ans.user.profile.displayName}
+                      ${ans.createdAt}`}
+                    </MenuItem>
+                  ))}
+              </DropdownButton>
+            )}
           </h1>
           <UnitView
             answerId={answerId}
