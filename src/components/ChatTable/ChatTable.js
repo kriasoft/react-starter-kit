@@ -1,26 +1,24 @@
-import React from 'react'
-import { Table } from 'react-bootstrap'
+import React from 'react';
+import { Table } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 class ChatTableComponent extends React.Component {
-
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     return (
       <Table striped hover>
         <tbody>
-          {this.props.messages.map( message =>
+          {this.props.messages.map(message => (
             <tr key={message.key}>
               <td className="name-column">{message.name}</td>
               <td>{message.message}</td>
             </tr>
-          )}
+          ))}
         </tbody>
       </Table>
-    )
+    );
   }
 }
-
-export default ChatTableComponent
+ChatTableComponent.propTypes = {
+  messages: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+export default ChatTableComponent;

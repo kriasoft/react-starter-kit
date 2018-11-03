@@ -1,52 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid } from 'react-bootstrap'
-import ChatRoom from '../ChatRoom'
-
+import { Grid } from 'react-bootstrap';
+import ChatRoom from '../ChatRoom';
 
 class ChatWS extends React.Component {
   static contextTypes = { store: PropTypes.any.isRequired };
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       name: '',
-      user:{
-        id:PropTypes.string.isRequired
-      }
-    }
-    this.handleSubmitName = this.handleSubmitName.bind(this)
+    };
   }
 
   render() {
     const { user } = this.context.store.getState();
-    {user ? (this.state.name=user.email) : (this.state.name='')}
+    if (user !== null) this.state.name = user.email;
 
     return (
       <Grid>
         {user ? (
-          <Grid>
-          {!this.state.name &&
-            <ChatName
-              handleSubmitName={this.handleSubmitName}
-            />
-          }
-          {this.state.name &&
-            <ChatRoom
-              name={this.state.name}
-            />
-          }
-        </Grid>  
-        ):(
-          <p></p>        
+          <Grid>{this.state.name && <ChatRoom name={this.state.name} />}</Grid>
+        ) : (
+          <p />
         )}
       </Grid>
-    )
-  }
-
-  handleSubmitName(name) {
-    this.setState({
-      name: name
-    })
+    );
   }
 }
 export default ChatWS;
