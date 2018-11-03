@@ -43,7 +43,18 @@ class NewModal extends Component {
       case 'add_close':
         return (
           <Modal.Footer>
-            <Button onClick={this.handleSubmit}>Add</Button>
+            <Button bsStyle="primary" onClick={this.handleSubmit}>
+              Add
+            </Button>
+            <Button onClick={this.handleClose}>Close</Button>
+          </Modal.Footer>
+        );
+      case 'save_close':
+        return (
+          <Modal.Footer>
+            <Button bsStyle="primary" onClick={this.handleSubmit}>
+              Save
+            </Button>
             <Button onClick={this.handleClose}>Close</Button>
           </Modal.Footer>
         );
