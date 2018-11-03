@@ -1,33 +1,22 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import CourseUsers from './CourseUsers';
+import { fetchCourse } from '../../actions/courses';
 
 const title = 'Users of Course';
 
-async function action({ fetch, params, store }) {
+async function action({ params, store }) {
   const { user } = store.getState();
   if (!user) {
     return { redirect: '/login' };
   }
-  const resp = await fetch('/graphql', {
-    body: JSON.stringify({
-      query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title, users{ id, email, role } }
-      }`,
-      variables: {
-        ids: params.idCourse,
-      },
-    }),
-  });
-  const { data } = await resp.json();
-  if (!data && !data.courses)
-    throw new Error('Failed to load user of a course.');
+  await store.dispatch(fetchCourse(params.idCourse));
   return {
     chunks: ['courseUsers'],
     title,
     component: (
       <Layout>
-        <CourseUsers title={data.courses[0].title} course={data.courses[0]} />
+        <CourseUsers />
       </Layout>
     ),
   };
