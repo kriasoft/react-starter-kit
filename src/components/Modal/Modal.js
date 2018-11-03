@@ -7,9 +7,8 @@ import { hideModal } from '../../actions/modals';
 class NewModal extends Component {
   static propTypes = {
     modalId: PropTypes.string.isRequired,
-    hideModal: PropTypes.func.isRequired,
     modals: PropTypes.instanceOf(Object).isRequired,
-    children: PropTypes.instanceOf(Array).isRequired,
+    children: PropTypes.element.isRequired,
     defaultFooter: PropTypes.string,
     onSubmit: PropTypes.func,
   };
@@ -25,6 +24,7 @@ class NewModal extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.onSubmit();
+    // eslint-disable-next-line react/prop-types
     this.props.hideModal(this.props.modalId);
   };
 

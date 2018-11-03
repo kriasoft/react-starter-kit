@@ -19,7 +19,6 @@ import { showModal } from '../../actions/modals';
 class Courses extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    dispatch: PropTypes.func.isRequired,
     userId: PropTypes.string,
     courses: PropTypes.arrayOf(
       PropTypes.shape({
@@ -42,7 +41,7 @@ class Courses extends React.Component {
   handleChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { userId, courses, title, dispatch } = this.props;
+    const { userId, courses, title } = this.props;
     const student = courses.filter(
       ({ users }) => users.length > 0 && users[0].role === 'student',
     );
@@ -57,7 +56,8 @@ class Courses extends React.Component {
           <Modal
             modalId="modalAdd"
             defaultFooter="add_close"
-            onSubmit={() => dispatch(createCourse(this.state.courseTitle))}
+            // eslint-disable-next-line react/prop-types
+            onSubmit={() => this.props.createCourse(this.state.courseTitle)}
           >
             <Modal.Body>
               <FormGroup controlId="title">
@@ -76,7 +76,8 @@ class Courses extends React.Component {
           <h1>
             {title}
             {userId && (
-              <Button onClick={() => dispatch(showModal('modalAdd'))}>
+              // eslint-disable-next-line react/prop-types
+              <Button onClick={() => this.props.showModal('modalAdd')}>
                 <Glyphicon glyph="glyphicon glyphicon-plus" />
               </Button>
             )}
@@ -110,4 +111,7 @@ const mapStateToProps = state => ({
   userId: state.user && state.user.id,
   modals: state.modals,
 });
-export default connect(mapStateToProps)(withStyles(s)(Courses));
+export default connect(
+  mapStateToProps,
+  { createCourse, showModal },
+)(withStyles(s)(Courses));
