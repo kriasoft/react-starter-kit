@@ -7,7 +7,7 @@ import Link from '../Link';
 function logout(event) {
   event.preventDefault();
   fetch('/logout', { method: 'POST' }).then(
-    () => (window.location.href = 'login'),
+    () => (window.location.pathname = 'login'),
   );
 }
 
@@ -51,7 +51,7 @@ function Navigation({ user }) {
               {user.email}
             </NavItem>
 
-            <NavItem eventKey={2} onClick={logout}>
+            <NavItem componentClass={Link} eventKey={2} onClick={logout}>
               Log out
             </NavItem>
           </Nav>
