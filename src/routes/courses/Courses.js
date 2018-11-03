@@ -1,11 +1,20 @@
 import React, { Fragment } from 'react';
+import {
+  Button,
+  Glyphicon,
+  FormControl,
+  ControlLabel,
+  FormGroup,
+  HelpBlock,
+} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
 import s from './Courses.css';
-import ModalAdd from '../../components/ModalAdd';
+import Modal from '../../components/Modal';
 import { createCourse } from '../../actions/courses';
 import CoursesList from '../../components/CoursesList';
+import { showModal } from '../../actions/modals';
 
 class Courses extends React.Component {
   static propTypes = {
@@ -28,6 +37,10 @@ class Courses extends React.Component {
     store: PropTypes.any.isRequired,
   };
 
+  state = {};
+
+  handleChange = e => this.setState({ [e.target.name]: e.target.value });
+
   render() {
     const { userId, courses, title, dispatch } = this.props;
     const student = courses.filter(
@@ -41,9 +54,32 @@ class Courses extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
+          <Modal
+            modalId="modalAdd"
+            defaultFooter="add_close"
+            onSubmit={() => dispatch(createCourse(this.state.courseTitle))}
+          >
+            <Modal.Body>
+              <FormGroup controlId="title">
+                <ControlLabel>Title</ControlLabel>
+                <FormControl
+                  autoFocus
+                  type="text"
+                  name="courseTitle"
+                  value={this.state.courseTitle}
+                  onChange={this.handleChange}
+                />
+                <HelpBlock>Title can not be empty</HelpBlock>
+              </FormGroup>
+            </Modal.Body>
+          </Modal>
           <h1>
             {title}
-            {userId && <ModalAdd onUpdate={t => dispatch(createCourse(t))} />}
+            {userId && (
+              <Button onClick={() => dispatch(showModal('modalAdd'))}>
+                <Glyphicon glyph="glyphicon glyphicon-plus" />
+              </Button>
+            )}
           </h1>
           {student.length > 0 && (
             <Fragment>
@@ -72,5 +108,6 @@ class Courses extends React.Component {
 const mapStateToProps = state => ({
   courses: state.courses,
   userId: state.user && state.user.id,
+  modals: state.modals,
 });
 export default connect(mapStateToProps)(withStyles(s)(Courses));

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { hideModal } from '../../actions/modals';
 
@@ -10,11 +10,47 @@ class NewModal extends Component {
     hideModal: PropTypes.func.isRequired,
     modals: PropTypes.instanceOf(Object).isRequired,
     children: PropTypes.instanceOf(Array).isRequired,
+    defaultFooter: PropTypes.string,
+    onSubmit: PropTypes.func,
+  };
+
+  static defaultProps = {
+    defaultFooter: '',
+    onSubmit: () => {
+      // eslint-disable-next-line no-throw-literal
+      throw `onSubmit is undefined in ${this.props.modalId}`;
+    },
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.onSubmit();
+    this.props.hideModal(this.props.modalId);
   };
 
   handleClose = () => {
     this.props.hideModal(this.props.modalId);
   };
+
+  renderDefaultFooter() {
+    switch (this.props.defaultFooter) {
+      case 'close':
+        return (
+          <Modal.Footer>
+            <Button onClick={this.handleClose}>Close</Button>
+          </Modal.Footer>
+        );
+      case 'add_close':
+        return (
+          <Modal.Footer>
+            <Button onClick={this.handleSubmit}>Add</Button>
+            <Button onClick={this.handleClose}>Close</Button>
+          </Modal.Footer>
+        );
+      default:
+        return undefined;
+    }
+  }
 
   render() {
     return (
@@ -23,6 +59,7 @@ class NewModal extends Component {
         onHide={this.handleClose}
       >
         {this.props.children}
+        {this.renderDefaultFooter()}
       </Modal>
     );
   }
