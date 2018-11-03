@@ -1,8 +1,12 @@
 import React, { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { Modal, Button } from 'react-bootstrap';
 import CourseUsers from '../CourseUsers/CourseUsers';
 
 class ModalWithUsers extends Component {
+  static propTypes = {
+    toggleButton: PropTypes.func.isRequired,
+  };
   state = {
     show: false,
   };
@@ -15,12 +19,11 @@ class ModalWithUsers extends Component {
 
   render() {
     const { show } = this.state;
+    const { toggleButton } = this.props;
 
     return (
       <Fragment>
-        <Button bsStyle="primary" onClick={this.handleToggle}>
-          Subscribe user
-        </Button>
+        {toggleButton(this.handleToggle)}
         <Modal show={show} onHide={this.handleToggle} bsSize="large">
           <Modal.Body>
             <CourseUsers />

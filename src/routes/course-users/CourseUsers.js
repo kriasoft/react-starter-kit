@@ -1,24 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Col } from 'react-bootstrap';
+import { Glyphicon, Button } from 'react-bootstrap';
 import s from './CourseUsers.css';
 import User from '../../components/User';
+import ModalWithUsers from '../../components/ModalWithUsers';
 
 function CourseUsers({ course }) {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <h1>Subscribed to {course.title}</h1>
-        <Col xs={12} md={10}>
-          <ol>
-            {course.users.map(user => (
-              <li key={user.id}>
-                <User user={user} />
-              </li>
-            ))}
-          </ol>
-        </Col>
+        <h1>
+          Subscribed to {course.title}
+          <ModalWithUsers
+            toggleButton={onToggle => (
+              <Button onClick={onToggle}>
+                <Glyphicon glyph="plus" />
+              </Button>
+            )}
+          />
+        </h1>
+        <ol>
+          {course.users.map(user => (
+            <li key={user.id}>
+              <User user={user} />
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   );

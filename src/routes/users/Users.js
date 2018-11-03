@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Button, Glyphicon } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import User from '../../components/User';
@@ -13,7 +13,7 @@ import {
   addGroup,
   updateGroup,
 } from '../../actions/groups';
-import UsersList from '../../components/UsersList';
+// import UsersList from '../../components/UsersList';
 import ModalWithUsers from '../../components/ModalWithUsers';
 
 class Users extends React.Component {
@@ -121,29 +121,33 @@ class Users extends React.Component {
   };
 
   render() {
-    const { groups, users, group } = this.props;
-    let usersSub = [];
-    let usersSubId = [];
-    if (Object.keys(group).length !== 0) {
-      usersSub = groups.find(_group => _group.id === group.id).users;
-      usersSubId = usersSub.map(u => u.id);
-    }
+    const {
+      groups,
+      users,
+      // group
+    } = this.props;
+    // let usersSub = [];
+    // let usersSubId = [];
+    // if (Object.keys(group).length !== 0) {
+    // usersSub = groups.find(_group => _group.id === group.id).users;
+    // usersSubId = usersSub.map(u => u.id);
+    // }
 
-    const unsubscribeUsers = this.props.users.filter(
-      el => !usersSubId.includes(el.id),
-    );
-    const subscribedUsersList = (
-      <UsersList
-        usersList={usersSub}
-        onClick={user => this.deleteUserFromGroup(user)}
-      />
-    );
-    const mainUsersList = (
-      <UsersList
-        usersList={unsubscribeUsers}
-        onClick={user => this.addUserToGroup(user)}
-      />
-    );
+    // const unsubscribeUsers = this.props.users.filter(
+    //   el => !usersSubId.includes(el.id),
+    // );
+    // const subscribedUsersList = (
+    //   <UsersList
+    //     usersList={usersSub}
+    //     onClick={user => this.deleteUserFromGroup(user)}
+    //   />
+    // );
+    // const mainUsersList = (
+    //   <UsersList
+    //     usersList={unsubscribeUsers}
+    //     onClick={user => this.addUserToGroup(user)}
+    //   />
+    // );
 
     return (
       <div className={s.root}>
@@ -159,8 +163,11 @@ class Users extends React.Component {
                   <ul key={id}>
                     <p>{title} </p>
                     <ModalWithUsers
-                      usersLeft={subscribedUsersList}
-                      usersRight={mainUsersList}
+                      toggleButton={onToggle => (
+                        <Button onClick={onToggle}>
+                          <Glyphicon glyph="plus" />
+                        </Button>
+                      )}
                     />
                     <ModalAdd
                       title={title}
