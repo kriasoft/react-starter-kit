@@ -4,7 +4,7 @@ import { Button, Glyphicon } from 'react-bootstrap';
 
 const IconButton = ({ onClick, glyph }) => (
   <Button onClick={onClick}>
-    <Glyphicon glyph={`glyphicon glyphicon-${glyph}`} />
+    <Glyphicon glyph={glyph} />
   </Button>
 );
 

@@ -36,11 +36,7 @@ export default class ModalAdd extends Component {
     return (
       <Fragment>
         <Button onClick={this.handleToggle}>
-          {buttonText || (
-            <Glyphicon
-              glyph={`glyphicon glyphicon-${title ? 'pencil' : 'plus'}`}
-            />
-          )}
+          {buttonText || <Glyphicon glyph={title ? 'pencil' : 'plus'} />}
         </Button>
         <Modal show={show} onHide={this.handleToggle}>
           <Modal.Body>

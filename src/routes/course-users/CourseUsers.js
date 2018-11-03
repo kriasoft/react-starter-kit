@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Glyphicon, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import s from './CourseUsers.css';
 import User from '../../components/User';
 import ModalWithUsers from '../../components/ModalWithUsers';
+import IconButton from '../../components/IconButton';
 
 function CourseUsers({ course: { title, users } }) {
   return (
@@ -15,9 +15,7 @@ function CourseUsers({ course: { title, users } }) {
           {`Subscribed to ${title}:`}
           <ModalWithUsers
             toggleButton={onToggle => (
-              <Button onClick={onToggle}>
-                <Glyphicon glyph="plus" />
-              </Button>
+              <IconButton onClick={onToggle} glyph="plus" />
             )}
           />
         </h1>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Button, Glyphicon } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import User from '../../components/User';
@@ -15,6 +15,7 @@ import {
 } from '../../actions/groups';
 // import UsersList from '../../components/UsersList';
 import ModalWithUsers from '../../components/ModalWithUsers';
+import IconButton from '../../components/IconButton';
 
 class Users extends React.Component {
   static propTypes = {
@@ -164,9 +165,7 @@ class Users extends React.Component {
                     <p>{title} </p>
                     <ModalWithUsers
                       toggleButton={onToggle => (
-                        <Button onClick={onToggle}>
-                          <Glyphicon glyph="plus" />
-                        </Button>
+                        <IconButton onClick={onToggle} glyph="plus" />
                       )}
                     />
                     <ModalAdd

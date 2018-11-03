@@ -1,7 +1,5 @@
 import React, { Fragment } from 'react';
 import {
-  Button,
-  Glyphicon,
   FormControl,
   ControlLabel,
   FormGroup,
@@ -10,14 +8,16 @@ import {
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
-import s from './Courses.css';
 import Modal from '../../components/Modal';
-import { createCourse } from '../../actions/courses';
 import CoursesList from '../../components/CoursesList';
+import { createCourse } from '../../actions/courses';
 import { showModal } from '../../actions/modals';
+import s from './Courses.css';
+import IconButton from '../../components/IconButton';
 
 class Courses extends React.Component {
   static propTypes = {
+    dispatch: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     userId: PropTypes.string,
     courses: PropTypes.arrayOf(
@@ -41,7 +41,7 @@ class Courses extends React.Component {
   handleChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { userId, courses, title } = this.props;
+    const { userId, courses, title, dispatch } = this.props;
     const student = courses.filter(
       ({ users }) => users.length > 0 && users[0].role === 'student',
     );
@@ -56,8 +56,7 @@ class Courses extends React.Component {
           <Modal
             modalId="modalAdd"
             defaultFooter="add_close"
-            // eslint-disable-next-line react/prop-types
-            onSubmit={() => this.props.createCourse(this.state.courseTitle)}
+            onSubmit={() => dispatch(createCourse(this.state.courseTitle))}
           >
             <Modal.Body>
               <FormGroup controlId="title">
@@ -77,9 +76,10 @@ class Courses extends React.Component {
             {title}
             {userId && (
               // eslint-disable-next-line react/prop-types
-              <Button onClick={() => this.props.showModal('modalAdd')}>
-                <Glyphicon glyph="glyphicon glyphicon-plus" />
-              </Button>
+              <IconButton
+                onClick={() => dispatch(showModal('modalAdd'))}
+                glyph="plus"
+              />
             )}
           </h1>
           {student.length > 0 && (
@@ -111,7 +111,4 @@ const mapStateToProps = state => ({
   userId: state.user && state.user.id,
   modals: state.modals,
 });
-export default connect(
-  mapStateToProps,
-  { createCourse, showModal },
-)(withStyles(s)(Courses));
+export default connect(mapStateToProps)(withStyles(s)(Courses));
