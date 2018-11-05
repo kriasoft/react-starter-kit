@@ -54,11 +54,12 @@ describe('graphql courses', () => {
   }
 
   async function subscribeUser(user, course, role) {
-    const addUserToCourseQ = `mutation addUserToCourse($course:String!,$user:String!,$role:String) {
-      addUserToCourse(courseId: $course,id: $user,role: $role) {
+    const addUserToCourseQ = `mutation addUserToCourse($course: String!, $user: String!, $role: UserCourseRole!) {
+      addUserToCourse(courseId: $course, id: $user, role: $role) {
         id
       }
-    }`;
+    }
+    `;
     const res = await graphql(
       schema,
       addUserToCourseQ,
@@ -86,8 +87,8 @@ describe('graphql courses', () => {
     }`;
 
     const res = await graphql(schema, Q, null, null, {
-      user: [user],
-      course: [course],
+      user,
+      course,
     });
 
     return res.data.courses[0].users[0].role;

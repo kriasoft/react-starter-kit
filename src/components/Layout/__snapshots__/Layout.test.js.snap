@@ -1,134 +1,121 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Layout renders children correctly 1`] = `
-<div>
-  <div>
-    <nav
-      className="navbar navbar-inverse navbar-fixed-top"
+Array [
+  <nav
+    className="navbar navbar-inverse navbar-fixed-top"
+  >
+    <div
+      className="container-fluid"
     >
       <div
-        className="container-fluid"
+        className="navbar-header"
       >
-        <div
-          className="navbar-header"
+        <a
+          className="navbar-brand"
+          href="/"
+          onClick={[Function]}
         >
-          <a
-            className="navbar-brand"
-            href="/"
-          >
-            NDO
-          </a>
-          <button
-            className="navbar-toggle"
-            onClick={[Function]}
-            type="button"
-          >
-            <span
-              className="sr-only"
-            >
-              Toggle navigation
-            </span>
-            <span
-              className="icon-bar"
-            />
-            <span
-              className="icon-bar"
-            />
-            <span
-              className="icon-bar"
-            />
-          </button>
-        </div>
-        <div
-          aria-expanded={null}
-          className="navbar-collapse collapse in"
+          NDO
+        </a>
+        <button
+          className="navbar-toggle"
+          onClick={[Function]}
+          type="button"
         >
-          <ul
-            className="nav navbar-nav"
-            role={null}
+          <span
+            className="sr-only"
           >
-            <li
-              className=""
-              role="presentation"
-            >
-              <a
-                href="/courses"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-              >
-                Courses
-              </a>
-            </li>
-            <li
-              className=""
-              role="presentation"
-            >
-              <a
-                href="/users"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-              >
-                Users
-              </a>
-            </li>
-            <li
-              className=""
-              role="presentation"
-            >
-              <a
-                href="/files"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-              >
-                Files
-              </a>
-            </li>
-            <li
-              className=""
-              role="presentation"
-            >
-              <a
-                href="/tests"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-              >
-                Tests
-              </a>
-            </li>
-          </ul>
-          <ul
-            className="nav navbar-nav navbar-right"
-            role={null}
-          >
-            <li
-              className=""
-              role="presentation"
-            >
-              <a
-                href="/login"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-              >
-                Log in
-              </a>
-            </li>
-            <li
-              className=""
-              role="presentation"
-            >
-              <a
-                href="/register"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-              >
-                Sign up
-              </a>
-            </li>
-          </ul>
-        </div>
+            Toggle navigation
+          </span>
+          <span
+            className="icon-bar"
+          />
+          <span
+            className="icon-bar"
+          />
+          <span
+            className="icon-bar"
+          />
+        </button>
       </div>
-    </nav>
-  </div>
+      <div
+        aria-expanded={null}
+        className="navbar-collapse collapse in"
+      >
+        <ul
+          className="nav navbar-nav"
+          role={null}
+        >
+          <li
+            className=""
+            role="presentation"
+          >
+            <a
+              href="/courses"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+            >
+              Courses
+            </a>
+          </li>
+          <li
+            className=""
+            role="presentation"
+          >
+            <a
+              href="/users"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+            >
+              Users
+            </a>
+          </li>
+          <li
+            className=""
+            role="presentation"
+          >
+            <a
+              href="/files"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+            >
+              Files
+            </a>
+          </li>
+          <li
+            className=""
+            role="presentation"
+          >
+            <a
+              href="/tests"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+            >
+              Tests
+            </a>
+          </li>
+        </ul>
+        <ul
+          className="nav navbar-nav navbar-right"
+          role={null}
+        >
+          <li
+            className=""
+            role="presentation"
+          >
+            <a
+              href="/login"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+            >
+              Log in
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>,
   <div
     className="container-fluid"
   >
@@ -136,10 +123,19 @@ exports[`Layout renders children correctly 1`] = `
       className="row"
     >
       <div
-        className="col-sm-3 col-md-2 sidebar"
-      />
+        className="sidebar col-md-2 col-sm-3"
+      >
+        <ul
+          className="nav nav-pills nav-stacked"
+          role={null}
+        />
+        <ul
+          className="nav nav-pills nav-stacked"
+          role={null}
+        />
+      </div>
       <div
-        className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"
+        className="main col-md-10 col-md-offset-2 col-sm-9 col-sm-offset-3"
       >
         <div
           className="child"
@@ -151,6 +147,6 @@ exports[`Layout renders children correctly 1`] = `
         </footer>
       </div>
     </div>
-  </div>
-</div>
+  </div>,
+]
 `;
