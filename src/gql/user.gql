@@ -1,0 +1,15 @@
+query users($id: [String]) {
+  users(ids: $id) {
+    id
+    email
+    profile {
+      displayName
+      gender
+      picture
+    }
+    courses {
+      id
+      title
+    }
+  }
+}

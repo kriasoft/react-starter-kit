@@ -8,7 +8,9 @@ import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
 import { updateUnit, createMark } from '../../actions/units';
 import { setSecondMenu } from '../../actions/menu';
-
+import updateAnswer from '../../gql/updateAnswer.gql';
+import createAnswer from '../../gql/createAnswer.gql';
+import retrieveAnswerQuery from '../../gql/retrieveAnswer.gql';
 import s from './Unit.css';
 import Link from '../../components/Link/Link';
 
@@ -123,12 +125,7 @@ class Unit extends React.Component {
     if (this.state.answerId) {
       await this.context.fetch('/graphql', {
         body: JSON.stringify({
-          query: `mutation update($body: String, $id: String!) {
-            updateAnswer(body: $body, id: $id) {
-              id
-            }
-          }
-          `,
+          query: updateAnswer,
           variables: {
             body: JSON.stringify(answer),
             id: this.state.answerId,
@@ -138,19 +135,7 @@ class Unit extends React.Component {
     } else {
       await this.context.fetch('/graphql', {
         body: JSON.stringify({
-          query: `mutation add(
-            $body: String!,
-            $courseId: String!,
-            $unitId: String!
-          ){
-            createAnswer(
-              body: $body,
-              courseId: $courseId,
-              unitId: $unitId
-            ){
-              id
-            }
-          }`,
+          query: createAnswer,
           variables: {
             body: JSON.stringify(answer),
             courseId: course.id,
@@ -165,26 +150,7 @@ class Unit extends React.Component {
     const { user, course, unit } = this.props;
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `query retireve(
-          $courseIds: [String],
-          $unitIds: [String],
-          $userIds: [String])
-        {
-          courses (ids:$courseIds) {
-            units (ids:$unitIds) {
-              answers (userIds: $userIds) {
-                id,
-                body
-                marks { id, mark, comment, createdAt }
-                user {
-                  id,
-                  profile { displayName }
-                }
-                createdAt
-              }
-            }
-          }
-        }`,
+        query: retrieveAnswerQuery,
         variables: {
           userIds: (!user.isAdmin && [user.id]) || null,
           unitIds: [unit.id],

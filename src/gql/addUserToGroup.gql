@@ -1,0 +1,5 @@
+mutation addUserToGroup($id: String, $groupId: String) {
+  addUserToGroup(id: $id, groupId: $groupId) {
+    id
+  }
+}

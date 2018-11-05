@@ -16,6 +16,11 @@ import {
 // import UsersList from '../../components/UsersList';
 import ModalWithUsers from '../../components/ModalWithUsers';
 import IconButton from '../../components/IconButton';
+import groupUsers from '../../gql/groupUsers.gql';
+import deleteUserFromGroupMutation from '../../gql/deleteUserFromGroup.gql';
+import addUserToGroupMutation from '../../gql/addUserToGroup.gql';
+import createGroup from '../../gql/createGroup.gql';
+import updateGroupMutation from '../../gql/updateGroup.gql';
 
 class Users extends React.Component {
   static propTypes = {
@@ -43,9 +48,7 @@ class Users extends React.Component {
   getUsersOfGroup = async id => {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `query groups($id: [String]) {
-          groups(ids: $id) { users {id,email}}
-        }`,
+        query: groupUsers,
         variables: { id },
       }),
     });
@@ -69,9 +72,7 @@ class Users extends React.Component {
   async deleteUserFromGroup(user) {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation  deleteUserFromGroup($id: String, $groupId: String) {
-          deleteUserFromGroup(id: $id, groupId: $groupId) { id }
-        }`,
+        query: deleteUserFromGroupMutation,
         variables: this.getUserGroupIds(user),
       }),
     });
@@ -81,9 +82,7 @@ class Users extends React.Component {
   async addUserToGroup(user) {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation addUserToGroup($id:String, $groupId: String) {
-          addUserToGroup(id: $id, groupId: $groupId) { id }
-        }`,
+        query: addUserToGroupMutation,
         variables: this.getUserGroupIds(user),
       }),
     });
@@ -94,9 +93,7 @@ class Users extends React.Component {
   addGroup = async title => {
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation createGroup($title: String!) {
-          createGroup(title: $title) { id, title }
-        }`,
+        query: createGroup,
         variables: {
           title,
         },
@@ -109,9 +106,7 @@ class Users extends React.Component {
   updateGroup = async (id, title) => {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `mutation updateGroup($id: String!, $title: String!) {
-          updateGroup(id: $id, title: $title) { id, title }
-        }`,
+        query: updateGroupMutation,
         variables: {
           id,
           title,

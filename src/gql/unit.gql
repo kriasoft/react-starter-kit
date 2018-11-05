@@ -1,0 +1,28 @@
+query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) {
+  courses(ids: $idCourse) {
+    id
+    title
+    users(ids: $idUser) {
+      role
+    }
+  }
+  units(ids: $idUnit) {
+    id
+    title
+    body
+    answers(userIds: $idUser) {
+      createdAt
+      user {
+        profile {
+          displayName
+        }
+      }
+      marks {
+        id
+        mark
+        comment
+        createdAt
+      }
+    }
+  }
+}

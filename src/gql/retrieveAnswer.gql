@@ -1,0 +1,23 @@
+query retireve($courseIds: [String], $unitIds: [String], $userIds: [String]) {
+  courses(ids: $courseIds) {
+    units(ids: $unitIds) {
+      answers(userIds: $userIds) {
+        id
+        body
+        marks {
+          id
+          mark
+          comment
+          createdAt
+        }
+        user {
+          id
+          profile {
+            displayName
+          }
+        }
+        createdAt
+      }
+    }
+  }
+}

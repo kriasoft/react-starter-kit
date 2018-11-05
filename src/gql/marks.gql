@@ -1,0 +1,18 @@
+query marks($ids: [String], $userIds: [String]) {
+  courses(ids: $ids) {
+    id
+    title
+    units {
+      id
+      title
+      answers(userIds: $userIds) {
+        id
+        marks {
+          id
+          mark
+          createdAt
+        }
+      }
+    }
+  }
+}

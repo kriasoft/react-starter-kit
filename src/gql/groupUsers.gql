@@ -1,0 +1,8 @@
+query groups($id: [String]) {
+  groups(ids: $id) {
+    users {
+      id
+      email
+    }
+  }
+}

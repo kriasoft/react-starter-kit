@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import User from './User';
+import userQuery from '../../gql/user.gql';
 
 const title = 'User';
 
@@ -11,16 +12,9 @@ async function action({ fetch, params, store }) {
   }
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `query users($users: [String]) {
-        users(ids: $users) {
-          id,
-          email,
-          profile { displayName,  gender, picture },
-          courses { id, title }
-        }
-      }`,
+      query: userQuery,
       variables: {
-        users: [params.idUser],
+        id: params.idUser,
       },
     }),
   });

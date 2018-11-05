@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import CourseMarks from './CourseMarks';
+import marksQuery from '../../gql/marks.gql';
 
 const title = 'Users of Course';
 
@@ -11,24 +12,7 @@ async function action({ fetch, params, store }) {
   }
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `query courses($ids: [String], $userIds: [String]) {
-        courses(ids: $ids) {
-          id,
-          title,
-          units {
-            id,
-            title
-            answers(userIds:$userIds) {
-              id,
-              marks{
-                id,
-                mark,
-                createdAt,
-              }
-            }
-          }
-        }
-      }`,
+      query: marksQuery,
       variables: {
         ids: params.idCourse,
         userIds: store.getState().user.id,
