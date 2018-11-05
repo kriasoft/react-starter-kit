@@ -65,14 +65,14 @@ function Navigation({ user }) {
             >
               Log in
             </NavItem>
-            <NavItem
+            {/* <NavItem
               componentClass={Link}
               eventKey={2}
               to="/register"
               href="/register"
             >
               Sign up
-            </NavItem>
+            </NavItem> */}
           </Nav>
         )}
       </Navbar.Collapse>
