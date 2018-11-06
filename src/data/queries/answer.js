@@ -5,6 +5,7 @@ import {
 } from 'graphql';
 import Answer from '../models/Answer';
 import AnswerType from '../types/AnswerType';
+import { NoAccessError } from '../../errors';
 
 const createAnswer = {
   type: AnswerType,
@@ -54,12 +55,15 @@ const answers = {
       type: new List(StringType),
     },
   },
-  resolve(obj, args) {
+  async resolve({ request }, args) {
+    if (!request.user) throw new NoAccessError();
     const where = {};
     if (args.ids) {
       where.id = args.ids;
     }
-    return Answer.findAll({ where });
+    const a = await Answer.findAll({ where });
+    // TODO: check if user is a teacher for the rest answers
+    return a.filter(answer => request.haveAccess(answer.userId));
   },
 };
 
@@ -75,8 +79,11 @@ const updateAnswer = {
       type: StringType,
     },
   },
-  resolve(parent, args) {
-    Answer.findById(args.id).then(answer => answer.update({ body: args.body }));
+  async resolve({ request }, args) {
+    // answer can be saved only by its owner
+    const answer = await Answer.findById(args.id);
+    if (!request.haveAccess(answer.userId)) throw new NoAccessError();
+    return answer.update({ body: args.body });
   },
 };
 

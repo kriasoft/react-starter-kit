@@ -1,9 +1,23 @@
 import { graphql } from 'graphql';
 import schema from '../../schema';
 
-function mockRequest({ userId = '1' } = {}) {
+export function mockRequest({
+  userId = '1',
+  isAdmin = true,
+  role = 'student',
+} = {}) {
+  const user = { id: userId, isAdmin, getRole: () => role };
   return {
-    request: { user: { id: userId, isAdmin: true, getRole: () => {} } },
+    request: {
+      user,
+      // copied from server.js
+      haveAccess: id => {
+        if (!user) return false;
+        if (user.isAdmin) return true;
+        const ids = Array.isArray(id) ? id : [id];
+        return ids.includes(user.id);
+      },
+    },
   };
 }
 

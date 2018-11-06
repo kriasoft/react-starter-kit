@@ -153,6 +153,19 @@ app.get(
 );
 
 //
+// Register project's middleware
+// -----------------------------------------------------------------------------
+app.use((req, res, next) => {
+  req.haveAccess = id => {
+    if (!req.user) return false;
+    if (req.user.isAdmin) return true;
+    const ids = Array.isArray(id) ? id : [id];
+    return ids.includes(req.user.id);
+  };
+  next();
+});
+
+//
 // Register API middleware
 // -----------------------------------------------------------------------------
 const storage = multer.memoryStorage();
