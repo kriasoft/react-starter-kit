@@ -185,7 +185,7 @@ expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
 
 Anyone and everyone is welcome to [contribute](CONTRIBUTING.md) to this project. The best way to
 start is by checking our [open issues](https://github.com/kriasoft/react-starter-kit/issues),
-[submit a new issues](https://github.com/kriasoft/react-starter-kit/issues/new?labels=bug) or
+[submit a new issue](https://github.com/kriasoft/react-starter-kit/issues/new?labels=bug) or
 [feature request](https://github.com/kriasoft/react-starter-kit/issues/new?labels=enhancement),
 participate in discussions, upvote or downvote the issues you like or dislike, send [pull
 requests](CONTRIBUTING.md#pull-requests).
