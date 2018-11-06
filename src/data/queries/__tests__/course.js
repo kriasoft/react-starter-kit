@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { graphql } from 'graphql';
 import schema from '../../schema';
 import models from '../../models';
+import { createMockCourse, createMockUser } from './common';
 
 async function setupTest() {
   await models.sync({ force: true });
@@ -14,45 +15,6 @@ async function setupTest() {
 beforeEach(async () => setupTest());
 
 describe('graphql courses', () => {
-  async function createMockUser(name) {
-    const createUserQ = `mutation create($email:String, $key:String, $name:String, $gender:String) {
-      createUser(email: $email, key: $key, name: $name, gender: $gender) {
-        id, email, profile { gender }
-      }
-    }`;
-    const user = await graphql(
-      schema,
-      createUserQ,
-      { request: { user: { isAdmin: true } } },
-      null,
-      {
-        email: `${name}@example.com`,
-        key: name,
-        name,
-        gender: 'male',
-      },
-    );
-    return user.data.createUser;
-  }
-
-  async function createMockCourse(title) {
-    const createCourseQ = `mutation createCourse($title:String!) {
-      createCourse(title: $title) {
-        id, title
-      }
-    }`;
-    const course = await graphql(
-      schema,
-      createCourseQ,
-      { request: { user: {} } },
-      null,
-      {
-        title,
-      },
-    );
-    return course.data.createCourse;
-  }
-
   async function subscribeUser(user, course, role) {
     const addUserToCourseQ = `mutation addUserToCourse($course: String!, $user: String!, $role: UserCourseRole!) {
       addUserToCourse(courseId: $course, id: $user, role: $role) {

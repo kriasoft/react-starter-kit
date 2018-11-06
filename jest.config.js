@@ -82,7 +82,7 @@ module.exports = {
   // snapshotSerializers: // [array<string>]
   // testEnvironment: // [string]
   // testMatch: // [array<string>]
-  // testPathIgnorePatterns: // [array<string>]
+  testPathIgnorePatterns: ['common.js'],
   // testRegex: // [string]
   // testResultsProcessor: // [string]
   // testRunner: // [string]

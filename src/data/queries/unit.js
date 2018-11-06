@@ -4,7 +4,7 @@ import {
   GraphQLNonNull as NonNull,
 } from 'graphql';
 import UnitType from '../types/UnitType';
-import { Unit, User, Course } from '../models';
+import { Unit, Course } from '../models';
 
 const createUnit = {
   type: UnitType,
@@ -25,9 +25,8 @@ const createUnit = {
   async resolve({ request }, { title, body, courseId }) {
     try {
       if (!request.user) throw new Error('User is not logged in');
-      const user = await User.findById(request.user.id);
-      const role = await user.getRole(courseId);
-      if (!user.isAdmin && (!role || role !== 'teacher'))
+      const role = await request.user.getRole(courseId);
+      if (!request.user.isAdmin && (!role || role !== 'teacher'))
         throw new Error("User doesn't have rights to edit this course");
       const course = await Course.findById(courseId);
       return Unit.create({ title, body })
