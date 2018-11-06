@@ -7,7 +7,7 @@ export const schema = [
   `
   # GraphQL cannot handle long - normal timestamp will go failed.
   # In that case, use Timestamp.
-  type Timestamp
+  scalar Timestamp
 
 `,
 ];
