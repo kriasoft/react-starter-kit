@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-env jest */
 /* eslint-disable padded-blocks, no-unused-expressions */
 
@@ -12,12 +13,13 @@ import {
   createMockAnswer,
   mockRequest,
 } from './common';
+import { NoAccessError } from '../../../errors';
 
 async function setupTest() {
   await models.sync({ force: true });
 }
 
-beforeEach(async () => setupTest());
+beforeAll(async () => setupTest());
 
 describe('graphql answers', () => {
   test('create', async () => {
@@ -36,7 +38,7 @@ describe('graphql answers', () => {
 describe('answers access rights', () => {
   // eslint-disable-next-line one-var
   let u1, u2, a1, a2;
-  beforeEach(async () => {
+  beforeAll(async () => {
     const course = await createMockCourse();
     const unit = await createMockUnit({ courseId: course.id });
     u1 = await createMockUser('user1');
@@ -52,36 +54,39 @@ describe('answers access rights', () => {
       unitId: unit.id,
     });
   });
-  const t = async ({ userId, isAdmin }) => {
-    const allAnswersQ = `{ answers { id } }`;
-    const res = await graphql(
+  const getAnswers = ({ userId, isAdmin, role, answers }) => {
+    const allAnswersQ = `query data ($ids: [String]) { answers(ids: $ids) { id } }`;
+    return graphql(
       schema,
       allAnswersQ,
-      mockRequest({ userId, isAdmin }),
+      mockRequest({ userId, isAdmin, role }),
       null,
+      answers && { ids: answers.map(ans => ans.id) },
     );
-    return res.data.answers;
   };
-  test('get all answers by admin', async () => {
-    const a = (await t({ isAdmin: true })).map(ans => ans.id).sort();
-    const b = [a1, a2].map(ans => ans.id).sort();
+  const t = async ({ userId, isAdmin, answers, role, error }, expAnswers) => {
+    const res = (await getAnswers({ userId, isAdmin, answers, role }));
+    if (error) {
+      expect((res.errors||[]).length).toBeGreaterThan(0);
+      return;
+    }
+    const a = res.data.answers.map(ans => ans.id).sort();
+    const b = expAnswers.map(ans => ans.id).sort();
     expect(a).toEqual(expect.arrayContaining(b));
     expect(b).toEqual(expect.arrayContaining(a));
-  });
-  test('get all answers by user1', async () => {
-    const a = (await t({ userId: u1.id, isAdmin: false }))
-      .map(ans => ans.id)
-      .sort();
-    const b = [a1].map(ans => ans.id).sort();
-    expect(a).toEqual(expect.arrayContaining(b));
-    expect(b).toEqual(expect.arrayContaining(a));
-  });
-  test('get all answers by user1 [teacher]', async () => {
-    const a = (await t({ userId: u1.id, isAdmin: false, role: 'teacher' }))
-      .map(ans => ans.id)
-      .sort();
-    const b = [a1, a2].map(ans => ans.id).sort();
-    expect(a).toEqual(expect.arrayContaining(b));
-    expect(b).toEqual(expect.arrayContaining(a));
-  });
+  };
+  test('get answers by admin w/o id', async () =>
+    t({}, []));
+  test('get answers by u1', async () =>
+    t({ userId: u1.id }, [a1]));
+  test('get answers by u2', async () =>
+    t({ userId: u2.id }, [a2]));
+  test('get a1 by id by u1', async () =>
+    t({ userId: u1.id, answers: [a1], isAdmin: false }, [a1]));
+  test('get a2 by id by u1[isAdmin]', async () =>
+    t({ userId: u1.id, answers: [a2], isAdmin: true }, [a2]));
+  test('get a2 by id by u1', async () =>
+    t({ userId: u1.id, answers: [a2], isAdmin: false, error: new NoAccessError() }));
+  test('get a2 by id by u1[teacher]', async () =>
+    t({ userId: u1.id, answers: [a2], isAdmin: false, role: 'teacher' }, [a2]));
 });

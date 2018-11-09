@@ -12,7 +12,7 @@ async function setupTest() {
   await models.sync({ force: true });
 }
 
-beforeEach(async () => setupTest());
+beforeAll(async () => setupTest());
 
 describe('graphql courses', () => {
   async function subscribeUser(user, course, role) {

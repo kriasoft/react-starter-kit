@@ -5,14 +5,16 @@ import 'babel-regenerator-runtime';
 import { graphql } from 'graphql';
 import schema from '../../schema';
 import models from '../../models';
+import Group from '../../models/Group';
 
 async function setupTest() {
   await models.sync({ force: true });
 }
 
-beforeEach(async () => setupTest());
+beforeAll(async () => setupTest());
 
 describe('graphql groups', () => {
+  afterEach(async () => Group.destroy({ where: {} }));
   function t(title) {
     const Q = `mutation create($title:String!) {
     createGroup(title: $title) {

@@ -10,7 +10,7 @@ async function setupTest() {
   await models.sync({ force: true });
 }
 
-beforeEach(async () => setupTest());
+beforeAll(async () => setupTest());
 
 describe('graphql users', () => {
   test('create', async () => {

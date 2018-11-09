@@ -1,3 +1,4 @@
+import 'babel-regenerator-runtime';
 import {
   GraphQLString as StringType,
   GraphQLList as List,
@@ -60,10 +61,22 @@ const answers = {
     const where = {};
     if (args.ids) {
       where.id = args.ids;
+    } else {
+      where.userId = request.user.id;
     }
     const a = await Answer.findAll({ where });
-    // TODO: check if user is a teacher for the rest answers
-    return a.filter(answer => request.haveAccess(answer.userId));
+    const ta = new Set(
+      a
+        .filter(answer => !request.haveAccess(answer.userId))
+        .map(answer => answer.courseId),
+    );
+    // eslint-disable-next-line no-restricted-syntax
+    for (const answer of ta) {
+      // eslint-disable-next-line no-await-in-loop
+      if ((await request.user.getRole(answer.courseId)) !== 'teacher')
+        throw new NoAccessError();
+    }
+    return a;
   },
 };
 
