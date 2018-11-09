@@ -2,11 +2,10 @@
 /* eslint-disable padded-blocks, no-unused-expressions */
 
 import 'babel-regenerator-runtime';
-import _ from 'lodash';
 import { graphql } from 'graphql';
 import schema from '../../schema';
 import models from '../../models';
-import { createMockCourse, createMockUser } from './common';
+import { createMockCourse, createMockUser, subscribeUser } from './common';
 
 async function setupTest() {
   await models.sync({ force: true });
@@ -15,27 +14,6 @@ async function setupTest() {
 beforeAll(async () => setupTest());
 
 describe('graphql courses', () => {
-  async function subscribeUser(user, course, role) {
-    const addUserToCourseQ = `mutation addUserToCourse($course: String!, $user: String!, $role: UserCourseRole!) {
-      addUserToCourse(courseId: $course, id: $user, role: $role) {
-        id
-      }
-    }
-    `;
-    const res = await graphql(
-      schema,
-      addUserToCourseQ,
-      { request: { user: { isAdmin: true, getRole: _.noop } } },
-      null,
-      {
-        course,
-        user,
-        role,
-      },
-    );
-    return res.data.addUserToCourse;
-  }
-
   async function getUserRole(user, course) {
     const Q = `query getUserRole(
       $user: [String],

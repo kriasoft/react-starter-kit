@@ -1,4 +1,5 @@
 import { graphql } from 'graphql';
+import _ from 'lodash';
 import schema from '../../schema';
 
 export function mockRequest({
@@ -95,4 +96,25 @@ export async function createMockAnswer({
     unitId,
   });
   return res.data.createAnswer;
+}
+
+export async function subscribeUser(user, course, role) {
+  const addUserToCourseQ = `mutation addUserToCourse($course: String!, $user: String!, $role: UserCourseRole!) {
+    addUserToCourse(courseId: $course, id: $user, role: $role) {
+      id
+    }
+  }
+  `;
+  const res = await graphql(
+    schema,
+    addUserToCourseQ,
+    { request: { user: { isAdmin: true, getRole: _.noop } } },
+    null,
+    {
+      course,
+      user,
+      role,
+    },
+  );
+  return res.data.addUserToCourse;
 }
