@@ -31,7 +31,6 @@ import {
 } from './queries/group';
 import {
   createCourse,
-  removeCourse,
   courses,
   updateCourse,
   addUserToCourse,
@@ -79,7 +78,6 @@ const schema = new Schema({
       deleteUserFromGroup,
       removeUnit,
       removeUser,
-      removeCourse,
       removeMark,
     },
   }),
