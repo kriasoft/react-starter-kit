@@ -31,7 +31,7 @@ export async function createMockCourse(title = 'mock course') {
   const course = await graphql(
     schema,
     createCourseQ,
-    { request: { user: {} } },
+    { request: { user: { isAdmin: true } } },
     null,
     {
       title,

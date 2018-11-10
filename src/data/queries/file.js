@@ -5,6 +5,7 @@ import {
 } from 'graphql';
 import FileType from '../types/FileType';
 import File from '../models/File';
+import { NotLoggedInError } from '../../errors';
 
 const files = {
   type: new List(FileType),
@@ -14,7 +15,10 @@ const files = {
       type: new List(StringType),
     },
   },
-  resolve(obj, args) {
+  resolve({ request }, args) {
+    if (!request.user) throw new NotLoggedInError();
+    // TODO: user should be able to download only own files, files when they are
+    // uploaded as an answer, or files when they are uploaded as a course material
     if (args.ids) {
       return File.findAll({
         where: {
@@ -32,6 +36,7 @@ const uploadFile = {
     internalName: { type: new NonNull(StringType) },
   },
   resolve({ request }, args) {
+    if (!request.user) throw new NotLoggedInError();
     return File.uploadFile({
       internalName: args.internalName,
       buffer: request.file.buffer,
