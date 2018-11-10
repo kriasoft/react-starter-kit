@@ -32,22 +32,6 @@ const createAnswer = {
   },
 };
 
-// when this method is called there is crash in GraphQL
-const removeAnswer = {
-  type: AnswerType,
-  args: {
-    id: {
-      description: 'id of the courses',
-      type: new NonNull(StringType),
-    },
-  },
-  resolve(parent, args) {
-    return Answer.findById(args.id)
-      .then(answer => answer.destroy())
-      .then(() => {});
-  },
-};
-
 const answers = {
   type: new List(AnswerType),
   args: {
@@ -100,4 +84,4 @@ const updateAnswer = {
   },
 };
 
-export { createAnswer, answers, removeAnswer, updateAnswer };
+export { createAnswer, answers, updateAnswer };

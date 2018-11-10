@@ -38,12 +38,7 @@ import {
   deleteUserFromCourse,
 } from './queries/course';
 import { createUnit, removeUnit, units, updateUnit } from './queries/unit';
-import {
-  createAnswer,
-  answers,
-  removeAnswer,
-  updateAnswer,
-} from './queries/answer';
+import { createAnswer, answers, updateAnswer } from './queries/answer';
 import { createMark, marks, removeMark, updateMark } from './queries/mark';
 
 const schema = new Schema({
@@ -84,7 +79,6 @@ const schema = new Schema({
       deleteUserFromGroup,
       removeUnit,
       removeUser,
-      removeAnswer,
       removeCourse,
       removeMark,
     },

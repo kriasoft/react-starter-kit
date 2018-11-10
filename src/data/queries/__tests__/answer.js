@@ -1,3 +1,4 @@
+/* eslint-disable one-var */
 /* eslint-disable prettier/prettier */
 /* eslint-env jest */
 /* eslint-disable padded-blocks, no-unused-expressions */
@@ -19,7 +20,26 @@ async function setupTest() {
   await models.sync({ force: true });
 }
 
-beforeAll(async () => setupTest());
+
+let u1, u2, a1, a2;
+
+beforeAll(async () => {
+  await setupTest();
+  const course = await createMockCourse();
+  const unit = await createMockUnit({ courseId: course.id });
+  u1 = await createMockUser('user1');
+  u2 = await createMockUser('user2');
+  a1 = await createMockAnswer({
+    courseId: course.id,
+    userId: u1.id,
+    unitId: unit.id,
+  });
+  a2 = await createMockAnswer({
+    courseId: course.id,
+    userId: u2.id,
+    unitId: unit.id,
+  });
+});
 
 describe('graphql answers', () => {
   test('create', async () => {
@@ -35,25 +55,7 @@ describe('graphql answers', () => {
   });
 });
 
-describe('answers access rights', () => {
-  // eslint-disable-next-line one-var
-  let u1, u2, a1, a2;
-  beforeAll(async () => {
-    const course = await createMockCourse();
-    const unit = await createMockUnit({ courseId: course.id });
-    u1 = await createMockUser('user1');
-    u2 = await createMockUser('user2');
-    a1 = await createMockAnswer({
-      courseId: course.id,
-      userId: u1.id,
-      unitId: unit.id,
-    });
-    a2 = await createMockAnswer({
-      courseId: course.id,
-      userId: u2.id,
-      unitId: unit.id,
-    });
-  });
+describe('get answers', () => {
   const getAnswers = ({ userId, isAdmin, role, answers }) => {
     const allAnswersQ = `query data ($ids: [String]) { answers(ids: $ids) { id } }`;
     return graphql(
@@ -89,4 +91,37 @@ describe('answers access rights', () => {
     t({ userId: u1.id, answers: [a2], isAdmin: false, error: new NoAccessError() }));
   test('get a2 by id by u1[teacher]', async () =>
     t({ userId: u1.id, answers: [a2], isAdmin: false, role: 'teacher' }, [a2]));
+});
+
+describe('update answers', () => {
+  const t = async ({userId, isAdmin, role, body, expBody, error}) => {
+    const Q = `mutation update($id: String!,  $body: String!) {
+      updateAnswer(id: $id, body:$body) {
+        id,
+        body
+      }
+    }`;
+    const res = await graphql(
+      schema,
+      Q,
+      mockRequest({ userId, isAdmin, role }),
+      null,
+      { id: a1.id, body },
+    );
+    if (error) {
+      expect((res.errors||[]).length).toBeGreaterThan(0);
+      return;
+    }
+    const resBody = res.data.updateAnswer.body;
+    expect(resBody).toEqual(expBody);
+  };
+
+  test('update answer by owner', () =>
+    t({userId: u1.id, isAdmin: false, body: 'test1', expBody: 'test1'}));
+  test('update answer by not owner', () =>
+    t({userId: u2.id, isAdmin: false, body: 'test2', error: new NoAccessError()}));
+  test('update answer by not owner[isAdmin]', () =>
+    t({userId: u2.id, isAdmin: true, body: 'test3', expBody: 'test3'}));
+  test('update answer by not owner[teacher]', () =>
+    t({userId: u2.id, isAdmin: false, role: 'teacher', body: 'test4', error: new NoAccessError()}));
 });
