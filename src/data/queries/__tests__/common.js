@@ -9,16 +9,7 @@ export function mockRequest({
 } = {}) {
   const user = { id: userId, isAdmin, getRole: () => role };
   return {
-    request: {
-      user,
-      // copied from server.js
-      haveAccess: id => {
-        if (!user) return false;
-        if (user.isAdmin) return true;
-        const ids = Array.isArray(id) ? id : [id];
-        return ids.includes(user.id);
-      },
-    },
+    request: { user },
   };
 }
 

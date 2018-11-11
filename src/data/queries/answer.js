@@ -49,16 +49,10 @@ const answers = {
       where.userId = request.user.id;
     }
     const a = await Answer.findAll({ where });
-    const ta = new Set(
-      a
-        .filter(answer => !request.haveAccess(answer.userId))
-        .map(answer => answer.courseId),
-    );
     // eslint-disable-next-line no-restricted-syntax
-    for (const answer of ta) {
+    for (const answer of a) {
       // eslint-disable-next-line no-await-in-loop
-      if ((await request.user.getRole(answer.courseId)) !== 'teacher')
-        throw new NoAccessError();
+      if (!(await answer.canRead(request.user))) throw new NoAccessError();
     }
     return a;
   },
@@ -77,9 +71,8 @@ const updateAnswer = {
     },
   },
   async resolve({ request }, args) {
-    // answer can be saved only by its owner
     const answer = await Answer.findById(args.id);
-    if (!request.haveAccess(answer.userId)) throw new NoAccessError();
+    if (!answer.canWrite(request.user)) throw new NoAccessError();
     return answer.update({ body: args.body });
   },
 };

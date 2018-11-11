@@ -1,6 +1,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 import Mark from './Mark';
+import * as util from './util';
 
 const Answer = Model.define('answer', {
   id: {
@@ -13,6 +14,16 @@ const Answer = Model.define('answer', {
     type: DataType.STRING,
   },
 });
+
+Answer.prototype.canRead = async function canRead(user) {
+  if (util.haveAccess(user, this.userId)) return true;
+  if (user && (await user.getRole(this.courseId)) === 'teacher') return true;
+  return false;
+};
+
+Answer.prototype.canWrite = function canWrite(user) {
+  return util.haveAccess(user, this.userId);
+};
 
 class AnswerChecker {
   static create(schema) {
