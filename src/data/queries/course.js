@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 import {
   GraphQLString as StringType,
   GraphQLList as List,
@@ -35,21 +37,18 @@ const courses = {
       type: new List(StringType),
     },
   },
-  resolve(obj, args) {
+  async resolve({ request }, args) {
     const where = {};
     if (args.ids) {
       where.id = args.ids;
     }
-    return Course.findAll({ where });
+    const res = await Course.findAll({ where });
+    for (const course of res) {
+      if (!(await course.canRead(request.user))) throw new NoAccessError();
+    }
+    return res;
   },
 };
-
-async function checkAccess(request, courseId) {
-  if (!request.user) throw new NotLoggedInError();
-  const role = await request.user.getRole(courseId);
-  if (!request.user.isAdmin && (!role || role !== 'teacher'))
-    throw new NoAccessError();
-}
 
 const addUserToCourse = {
   type: UserType,
@@ -68,16 +67,11 @@ const addUserToCourse = {
     },
   },
   async resolve({ request }, args) {
-    await checkAccess(request, args.courseId);
-    return User.findById(args.id).then(u =>
-      Course.findById(args.courseId).then(course =>
-        course
-          .addUser(u, {
-            through: { role: args.role },
-          })
-          .then(() => u),
-      ),
-    );
+    const course = await Course.findById(args.courseId);
+    if (!(await course.canWrite(request.user))) throw new NoAccessError();
+    const user = await User.findById(args.id);
+    await course.addUser(user, { through: { role: args.role } });
+    return user;
   },
 };
 
@@ -94,12 +88,11 @@ const deleteUserFromCourse = {
     },
   },
   async resolve({ request }, args) {
-    await checkAccess(request, args.courseId);
-    return User.findById(args.id).then(user =>
-      Course.findById(args.courseId).then(course =>
-        course.removeUser(user).then(() => user),
-      ),
-    );
+    const course = await Course.findById(args.courseId);
+    if (!(await course.canWrite(request.user))) throw new NoAccessError();
+    const user = await User.findById(args.id);
+    await course.removeUser(user);
+    return user;
   },
 };
 
@@ -116,10 +109,9 @@ const updateCourse = {
     },
   },
   async resolve({ request }, args) {
-    await checkAccess(request, args.id);
-    return Course.findById(args.id).then(course =>
-      course.update({ title: args.title }),
-    );
+    const course = await Course.findById(args.id);
+    if (!(await course.canWrite(request.user))) throw new NoAccessError();
+    return course.update({ title: args.title });
   },
 };
 

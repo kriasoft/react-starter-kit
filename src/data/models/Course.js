@@ -9,6 +9,7 @@
 
 import DataType from 'sequelize';
 import Model from '../sequelize';
+import * as util from './util';
 
 const Course = Model.define('course', {
   id: {
@@ -22,5 +23,14 @@ const Course = Model.define('course', {
     allowNull: false,
   },
 });
+
+Course.prototype.canRead = function canRead(user) {
+  return !!user;
+};
+
+Course.prototype.canWrite = async function canWrite(user) {
+  if (util.haveAccess(user)) return true;
+  return user && (await user.getRole(this.id)) === 'teacher';
+};
 
 export default Course;

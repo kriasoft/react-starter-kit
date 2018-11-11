@@ -5,7 +5,12 @@ import 'babel-regenerator-runtime';
 import { graphql } from 'graphql';
 import schema from '../../schema';
 import models from '../../models';
-import { createMockCourse, createMockUser, subscribeUser } from './common';
+import {
+  createMockCourse,
+  createMockUser,
+  subscribeUser,
+  mockRequest,
+} from './common';
 
 async function setupTest() {
   await models.sync({ force: true });
@@ -26,7 +31,7 @@ describe('graphql courses', () => {
       }
     }`;
 
-    const res = await graphql(schema, Q, null, null, {
+    const res = await graphql(schema, Q, mockRequest({}), null, {
       user,
       course,
     });
