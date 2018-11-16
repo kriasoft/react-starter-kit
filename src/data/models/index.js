@@ -97,11 +97,17 @@ Group.belongsToMany(User, {
 
 User.hasMany(Answer);
 Unit.hasMany(Answer);
+Unit.hasMany(File, {
+  as: 'files',
+});
 Course.hasMany(Answer);
 
 Answer.belongsTo(User);
 Answer.belongsTo(Unit);
 Answer.belongsTo(Course);
+Answer.hasMany(File, {
+  as: 'files',
+});
 
 Answer.hasMany(Mark);
 Mark.belongsTo(Answer);
