@@ -100,6 +100,7 @@ Unit.hasMany(Answer);
 Unit.hasMany(File, {
   as: 'files',
 });
+File.belongsTo(Unit);
 Course.hasMany(Answer);
 
 Answer.belongsTo(User);
@@ -108,6 +109,7 @@ Answer.belongsTo(Course);
 Answer.hasMany(File, {
   as: 'files',
 });
+File.belongsTo(Answer);
 
 Answer.hasMany(Mark);
 Mark.belongsTo(Answer);

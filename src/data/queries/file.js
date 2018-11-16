@@ -5,7 +5,7 @@ import {
 } from 'graphql';
 import FileType from '../types/FileType';
 import File from '../models/File';
-import { NotLoggedInError } from '../../errors';
+import { NotLoggedInError, NoAccessError } from '../../errors';
 
 const files = {
   type: new List(FileType),
@@ -15,18 +15,22 @@ const files = {
       type: new List(StringType),
     },
   },
-  resolve({ request }, args) {
-    if (!request.user) throw new NotLoggedInError();
-    // TODO: user should be able to download only own files, files when they are
-    // uploaded as an answer, or files when they are uploaded as a course material
+  async resolve({ request }, args) {
+    const { user } = request;
+    if (!user) throw new NotLoggedInError();
+    let fls;
     if (args.ids) {
-      return File.findAll({
+      fls = await File.findAll({
         where: {
           id: args.ids,
         },
       });
+    } else fls = await File.findAll({ where: { userId: user.id } });
+    for (let i = 0; i < fls.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      if (!(await fls[i].canRead(user))) throw new NoAccessError();
     }
-    return File.findAll();
+    return fls;
   },
 };
 
