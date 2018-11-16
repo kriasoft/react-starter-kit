@@ -25,7 +25,7 @@ class Layout extends React.Component {
 
   render() {
     return (
-      <div className={s.wrap}>
+      <div key="layout" className={s.wrap}>
         <Header />
         {this.props.children}
         <div className={s.bottom}>

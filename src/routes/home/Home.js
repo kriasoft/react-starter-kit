@@ -16,7 +16,7 @@ class Home extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>欢迎大佬！</h1>
+          <h1>大佬留个言</h1>
         </div>
       </div>
     );

@@ -32,7 +32,7 @@ class Header extends React.Component {
             </span>
           </Link>
           <div className={s.banner}>
-            <h1 className={s.bannerTitle}>React</h1>
+            <h1 className={s.bannerTitle}>欢迎大佬！</h1>
             <p className={s.bannerDesc}>夜深忽梦少年事，梦啼妆泪红阑干</p>
           </div>
         </div>

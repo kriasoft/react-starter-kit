@@ -190,10 +190,9 @@ textarea {
 
 .wrap {
   position: relative;
-  height: 100%;
-  overflow: auto;
-  padding-bottom: 135px;
+  min-height: 100%;
   box-sizing: border-box;
+  padding-bottom: 135px;
 }
 
 .bottom {
