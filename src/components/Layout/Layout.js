@@ -25,11 +25,13 @@ class Layout extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className={s.wrap}>
         <Header />
         {this.props.children}
-        <Feedback />
-        <Footer />
+        <div className={s.bottom}>
+          <Feedback />
+          <Footer />
+        </div>
       </div>
     );
   }
