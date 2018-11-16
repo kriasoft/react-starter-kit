@@ -17,9 +17,6 @@ const File = Model.define('file', {
   },
   url: {
     type: DataType.STRING,
-    validate: {
-      isUrl: true,
-    },
   },
 });
 
@@ -52,7 +49,10 @@ File.uploadFile = ({ buffer, internalName, userId }, store = 'fs') => {
           file.url = fileUrl(filePath); // eslint-disable-line no-param-reassign
           return file.save({ transaction: t });
         })
-        .catch(() => t.rollback()),
+        .catch(err => {
+          console.error(err);
+          t.rollback();
+        }),
     );
   }
   throw new Error(`store '${store}' is not implemented yet`);

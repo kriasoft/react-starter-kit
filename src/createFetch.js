@@ -50,7 +50,7 @@ function createFetch(
       const result = await graphql(
         schema,
         query.query,
-        { request: {} }, // fill in request vars needed by graphql
+        { request: { user: options.user } }, // fill in request vars needed by graphql
         null,
         query.variables,
       );

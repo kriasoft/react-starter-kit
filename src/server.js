@@ -207,6 +207,7 @@ app.get('*', async (req, res, next) => {
 
     const store = configureStore(initialState, {
       fetch,
+      user: req.user,
       // I should not use `history` on server.. but how I do redirection? follow universal-router
     });
     // Global (context) variables that can be easily accessed from any React component

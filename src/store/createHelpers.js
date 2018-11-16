@@ -1,4 +1,4 @@
-function createGraphqlRequest(fetch) {
+function createGraphqlRequest(fetch, user) {
   return async function graphqlRequest(query, variables) {
     const fetchConfig = {
       method: 'post',
@@ -8,6 +8,7 @@ function createGraphqlRequest(fetch) {
       },
       body: JSON.stringify({ query, variables }),
       credentials: 'include',
+      user,
     };
     const resp = await fetch('/graphql', fetchConfig);
     if (resp.status !== 200) throw new Error(resp.statusText);
@@ -15,10 +16,10 @@ function createGraphqlRequest(fetch) {
   };
 }
 
-export default function createHelpers({ fetch, history }) {
+export default function createHelpers({ fetch, history, user }) {
   return {
     fetch,
     history,
-    graphqlRequest: createGraphqlRequest(fetch),
+    graphqlRequest: createGraphqlRequest(fetch, user),
   };
 }
