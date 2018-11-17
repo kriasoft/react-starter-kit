@@ -11,7 +11,7 @@ const Answer = Model.define('answer', {
   },
 
   body: {
-    type: DataType.STRING,
+    type: DataType.TEXT,
   },
 });
 
