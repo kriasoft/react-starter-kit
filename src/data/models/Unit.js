@@ -15,11 +15,11 @@ const Unit = Model.define('unit', {
   },
 
   body: {
-    type: DataType.STRING,
+    type: DataType.TEXT,
   },
 
   schema: {
-    type: DataType.STRING,
+    type: DataType.TEXT,
   },
 });
 
