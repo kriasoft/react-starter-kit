@@ -194,12 +194,16 @@ app.get('*', async (req, res, next) => {
     };
 
     // Universal HTTP client
-    const fetch = createFetch(nodeFetch, {
-      baseUrl: config.api.serverUrl,
-      cookie: req.headers.cookie,
-      schema,
-      graphql,
-    });
+    const fetch = createFetch(
+      nodeFetch,
+      {
+        baseUrl: config.api.serverUrl,
+        cookie: req.headers.cookie,
+        schema,
+        graphql,
+      },
+      { user: req.user },
+    );
 
     const initialState = {
       user: req.user || null,
@@ -207,7 +211,6 @@ app.get('*', async (req, res, next) => {
 
     const store = configureStore(initialState, {
       fetch,
-      user: req.user,
       // I should not use `history` on server.. but how I do redirection? follow universal-router
     });
     // Global (context) variables that can be easily accessed from any React component
