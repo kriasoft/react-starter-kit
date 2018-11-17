@@ -196,7 +196,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((id, done) => {
   User.findById(id).then(user => {
     if (user) {
-      done(null, user.get());
+      done(null, user);
     } else {
       done(user.errors, null);
     }
