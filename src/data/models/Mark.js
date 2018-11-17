@@ -1,5 +1,6 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
+import * as util from './util';
 
 const Mark = Model.define('mark', {
   id: {
@@ -21,5 +22,15 @@ const Mark = Model.define('mark', {
     type: DataType.STRING,
   },
 });
+
+Mark.prototype.canRead = async function canRead(user) {
+  if (util.haveAccess(user, this.authorId)) return true;
+  const a = await this.getAnswer();
+  return a.canRead(user);
+};
+
+Mark.prototype.canWrite = function canWrite(user) {
+  return util.haveAccess(user, this.authorId);
+};
 
 export default Mark;
