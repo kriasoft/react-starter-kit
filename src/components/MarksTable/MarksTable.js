@@ -1,12 +1,15 @@
 import React, { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FormControl, FormGroup, Table } from 'react-bootstrap';
 import moment from 'moment';
 import IconButton from '../IconButton/IconButton';
+import { createMark } from '../../actions/units';
 
 class MarksTable extends Component {
   static propTypes = {
-    onMarkCreate: PropTypes.func.isRequired,
+    createMark: PropTypes.func.isRequired,
+    answerId: PropTypes.string.isRequired,
     marks: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -35,7 +38,7 @@ class MarksTable extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.onMarkCreate({ ...this.state });
+    this.props.createMark({ ...this.state, answerId: this.props.answerId });
   };
 
   handleChange = name => ({ target: { value } }) =>
@@ -126,4 +129,9 @@ class MarksTable extends Component {
   }
 }
 
-export default MarksTable;
+const mapStateToProps = () => ({});
+
+export default connect(
+  mapStateToProps,
+  { createMark },
+)(MarksTable);

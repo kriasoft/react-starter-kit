@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import MarksTable from '../../components/MarksTable';
 import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
-import { updateUnit, createMark } from '../../actions/units';
+import { updateUnit } from '../../actions/units';
 import { setSecondMenu } from '../../actions/menu';
 import updateAnswer from '../../gql/updateAnswer.gql';
 import createAnswer from '../../gql/createAnswer.gql';
@@ -229,7 +229,7 @@ class Unit extends React.Component {
           {unit.answers[0] ? (
             <MarksTable
               marks={unit.answers[answerCur].marks}
-              onMarkCreate={m => dispatch(createMark({ ...m, answerId }))}
+              answerId={answerId}
             />
           ) : (
             <p>This unit has no answers yet</p>
