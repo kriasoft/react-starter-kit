@@ -2,6 +2,7 @@ import {
   SET_UNIT_HEADERS,
   ADD_MARK,
   SET_ANSWER,
+  SET_ANSWER_BODY,
   ADD_UNIT,
   SET_UNIT,
   UPDATE_UNIT,
@@ -29,6 +30,13 @@ export function setAnswer(answer) {
   return {
     type: SET_ANSWER,
     data: answer,
+  };
+}
+
+export function setAnswerBody(body) {
+  return {
+    type: SET_ANSWER_BODY,
+    data: body,
   };
 }
 

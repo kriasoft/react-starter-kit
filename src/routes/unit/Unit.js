@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import MarksTable from '../../components/MarksTable';
 import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
-import { updateUnit } from '../../actions/units';
+import { updateUnit, setAnswer, setAnswerBody } from '../../actions/units';
 import { setSecondMenu } from '../../actions/menu';
 import updateAnswer from '../../gql/updateAnswer.gql';
 import createAnswer from '../../gql/createAnswer.gql';
@@ -31,6 +31,10 @@ class Unit extends React.Component {
       title: PropTypes.string,
       body: PropTypes.string,
     }).isRequired,
+    answer: PropTypes.shape({
+      id: PropTypes.string,
+      body: PropTypes.shape,
+    }).isRequired,
   };
 
   static contextTypes = {
@@ -46,11 +50,7 @@ class Unit extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      answerId: null,
-      answerCur: 0,
-      answer: {},
-    };
+    this.state = { answerCur: 0, answers: [] };
   }
 
   async componentDidMount() {
@@ -72,11 +72,8 @@ class Unit extends React.Component {
 
   handleAnswerSelect = eventKey => {
     const answerCur = parseInt(eventKey, 10);
-    this.setState({
-      answerCur,
-      answer: this.state.answers[answerCur].body,
-      answerId: this.state.answers[answerCur].id,
-    });
+    this.setState({ answerCur });
+    this.props.dispatch(setAnswer(this.state.answers[answerCur]));
   };
 
   async uploadFile(key, file) {
@@ -121,14 +118,14 @@ class Unit extends React.Component {
 
   saveAnswer = async () => {
     const { course, unit } = this.props;
-    const answer = await this.postProcessAnswer(this.state.answer);
-    if (this.state.answerId) {
+    const answer = await this.postProcessAnswer(this.props.answer.body);
+    if (this.props.answer.id) {
       await this.context.fetch('/graphql', {
         body: JSON.stringify({
           query: updateAnswer,
           variables: {
             body: JSON.stringify(answer),
-            id: this.state.answerId,
+            id: this.props.answer.id,
           },
         }),
       });
@@ -167,15 +164,14 @@ class Unit extends React.Component {
           ans.body = JSON.parse(answer.body);
           return ans;
         }),
-        answerId: answers[0].id,
-        answer: answers[0].body,
       });
+      this.props.dispatch(setAnswer(answers[0]));
     }
   }
 
   render() {
     const { user, role, unit, course, dispatch } = this.props;
-    const { answers, answerCur, answerId, answer } = this.state;
+    const { answers, answerCur } = this.state;
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -215,10 +211,10 @@ class Unit extends React.Component {
             )}
           </h1>
           <UnitView
-            answerId={answerId}
-            value={answer}
+            answerId={this.props.answer.id}
+            value={this.props.answer.body}
             body={unit.body}
-            onChange={val => this.setState({ answer: val })}
+            onChange={val => this.props.dispatch(setAnswerBody(val))}
             onHeadersChange={headers =>
               dispatch(
                 setSecondMenu('unit', headers.filter(item => item.level === 2)),
@@ -229,7 +225,7 @@ class Unit extends React.Component {
           {unit.answers[0] ? (
             <MarksTable
               marks={unit.answers[answerCur].marks}
-              answerId={answerId}
+              answerId={this.props.answer.id}
             />
           ) : (
             <p>This unit has no answers yet</p>
@@ -243,6 +239,7 @@ class Unit extends React.Component {
 const mapStateToProps = state => ({
   unit: state.unit,
   user: state.user,
+  answer: state.answer,
 });
 
 export default connect(mapStateToProps)(withStyles(s)(Unit));
