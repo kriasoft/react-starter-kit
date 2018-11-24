@@ -6,6 +6,7 @@ import { graphql } from 'graphql';
 import schema from '../../schema';
 import models from '../../models';
 import Group from '../../models/Group';
+import { mockRequest } from './common';
 
 async function setupTest() {
   await models.sync({ force: true });
@@ -21,7 +22,7 @@ describe('graphql groups', () => {
         title,id
     }
     }`;
-    return graphql(schema, Q, null, null, { title });
+    return graphql(schema, Q, mockRequest({}), null, { title });
   }
   test('create', async () => {
     const title = 'test title';
@@ -34,7 +35,7 @@ describe('graphql groups', () => {
     const Q = 'query {groups {title}}';
     const titles = ['test title', 'new title', 'another title'];
     await Promise.all(titles.map(title => t(title)));
-    const res = await graphql(schema, Q);
+    const res = await graphql(schema, Q, mockRequest({}));
     res.data.groups.forEach((group, i) => {
       expect(group.title).toBe(titles[i]);
     });

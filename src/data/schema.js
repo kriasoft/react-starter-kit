@@ -23,7 +23,6 @@ import {
 import { files, uploadFile } from './queries/file';
 import {
   createGroup,
-  removeGroup,
   updateGroup,
   addUserToGroup,
   deleteUserFromGroup,
@@ -38,7 +37,7 @@ import {
 } from './queries/course';
 import { createUnit, removeUnit, units, updateUnit } from './queries/unit';
 import { createAnswer, answers, updateAnswer } from './queries/answer';
-import { createMark, marks, removeMark, updateMark } from './queries/mark';
+import { createMark, marks, updateMark } from './queries/mark';
 
 const schema = new Schema({
   query: new ObjectType({
@@ -71,14 +70,12 @@ const schema = new Schema({
       uploadFile,
       addUserToCourse,
       deleteUserFromCourse,
-      removeGroup,
       updateGroup,
       addUserToGroup,
       setPassword,
       deleteUserFromGroup,
       removeUnit,
       removeUser,
-      removeMark,
     },
   }),
 });

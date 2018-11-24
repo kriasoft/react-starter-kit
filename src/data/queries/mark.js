@@ -31,21 +31,6 @@ const createMark = {
   },
 };
 
-const removeMark = {
-  type: MarkType,
-  args: {
-    id: {
-      description: 'id of the mark',
-      type: new NonNull(StringType),
-    },
-  },
-  resolve(parent, args) {
-    return Mark.findById(args.id)
-      .then(mark => mark.destroy())
-      .then(() => {});
-  },
-};
-
 const marks = {
   type: new List(MarkType),
   args: {
@@ -84,4 +69,4 @@ const updateMark = {
   },
 };
 
-export { createMark, marks, removeMark, updateMark };
+export { createMark, marks, updateMark };

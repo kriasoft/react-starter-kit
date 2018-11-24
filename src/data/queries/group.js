@@ -6,6 +6,7 @@ import {
 import UserType from '../types/UserType';
 import { User, Group } from '../models';
 import GroupType from '../types/GroupType';
+import { NotLoggedInError, NoAccessError } from '../../errors';
 
 const createGroup = {
   type: GroupType,
@@ -15,25 +16,13 @@ const createGroup = {
       type: new NonNull(StringType),
     },
   },
-  resolve(parent, args) {
+  resolve({ request }, args) {
+    if (!request.user) throw new NotLoggedInError();
+    // TODO: for now only admin can create/edit groups
+    if (!request.user.isAdmin) throw new NoAccessError();
     return Group.create({
       ...args,
     });
-  },
-};
-
-const removeGroup = {
-  type: GroupType,
-  args: {
-    id: {
-      description: 'id of the group',
-      type: new NonNull(StringType),
-    },
-  },
-  resolve(parent, args) {
-    return Group.findById(args.id)
-      .then(group => group.destroy())
-      .then(() => {});
   },
 };
 
@@ -49,7 +38,10 @@ const updateGroup = {
       type: StringType,
     },
   },
-  resolve(parent, args) {
+  resolve({ request }, args) {
+    if (!request.user) throw new NotLoggedInError();
+    // TODO: for now only admin can create/edit groups
+    if (!request.user.isAdmin) throw new NoAccessError();
     return Group.findById(args.id).then(group =>
       group.update({ title: args.title }),
     );
@@ -64,15 +56,21 @@ const groups = {
       type: new List(StringType),
     },
   },
-  resolve(obj, args) {
+  async resolve({ request }, args) {
+    let gr;
     if (args.ids) {
-      return Group.findAll({
+      gr = await Group.findAll({
         where: {
           id: args.ids,
         },
       });
     }
-    return Group.findAll();
+    gr = await Group.findAll();
+    for (let i = 0; i < gr.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      if (!(await gr[i].canRead(request.user))) throw new NoAccessError();
+    }
+    return gr;
   },
 };
 
@@ -88,7 +86,10 @@ const addUserToGroup = {
       type: new NonNull(StringType),
     },
   },
-  resolve(obj, args) {
+  resolve({ request }, args) {
+    if (!request.user) throw new NotLoggedInError();
+    // TODO: for now only admin can create/edit groups
+    if (!request.user.isAdmin) throw new NoAccessError();
     return User.findById(args.id).then(user =>
       Group.findById(args.groupId).then(group =>
         group.addUser(user).then(() => user),
@@ -109,7 +110,10 @@ const deleteUserFromGroup = {
       type: StringType,
     },
   },
-  resolve(obj, args) {
+  resolve({ request }, args) {
+    if (!request.user) throw new NotLoggedInError();
+    // TODO: for now only admin can create/edit groups
+    if (!request.user.isAdmin) throw new NoAccessError();
     return User.findById(args.id).then(user =>
       Group.findById(args.groupId).then(group =>
         group.removeUser(user).then(() => user),
@@ -121,7 +125,6 @@ const deleteUserFromGroup = {
 export {
   groups,
   createGroup,
-  removeGroup,
   updateGroup,
   addUserToGroup,
   deleteUserFromGroup,
