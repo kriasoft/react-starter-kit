@@ -102,6 +102,7 @@ Unit.hasMany(File, {
 });
 File.belongsTo(Unit);
 Course.hasMany(Answer);
+CourseUnit.hasMany(Answer);
 
 Answer.belongsTo(User);
 Answer.belongsTo(Unit);

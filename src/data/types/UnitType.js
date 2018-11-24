@@ -3,6 +3,7 @@ import {
   GraphQLString as StringType,
   GraphQLNonNull as NonNull,
   GraphQLList,
+  GraphQLFloat as FloatType,
 } from 'graphql';
 import AnswerType from './AnswerType';
 import CourseType from './CourseType';
@@ -36,6 +37,10 @@ const UnitType = new ObjectType({
     courses: {
       type: new GraphQLList(CourseType),
       resolve: unit => unit.getCourses(),
+    },
+    weight: {
+      type: new NonNull(FloatType),
+      resolve: unit => unit.CourseUnit && unit.CourseUnit.weight,
     },
   }),
 });
