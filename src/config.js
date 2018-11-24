@@ -15,7 +15,7 @@ if (process.env.BROWSER) {
   );
 }
 
-function checkDatabaseUrl() {
+function getDatabaseUrl() {
   if (process.env.NODE_ENV === 'test') return 'sqlite://:memory:';
   return process.env.DATABASE_URL || 'sqlite:database.sqlite';
 }
@@ -38,7 +38,7 @@ module.exports = {
   },
 
   // Database
-  databaseUrl: checkDatabaseUrl(),
+  databaseUrl: getDatabaseUrl(),
 
   // Web analytics
   analytics: {
