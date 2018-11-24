@@ -8,16 +8,18 @@ import { createMark } from '../../actions/units';
 
 class MarksTable extends Component {
   static propTypes = {
+    answer: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      marks: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          mark: PropTypes.number.isRequired,
+          comment: PropTypes.string.isRequired,
+          createdAt: PropTypes.string.isRequired,
+        }),
+      ).isRequired,
+    }).isRequired,
     createMark: PropTypes.func.isRequired,
-    answerId: PropTypes.string.isRequired,
-    marks: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        mark: PropTypes.number.isRequired,
-        comment: PropTypes.string.isRequired,
-        createdAt: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
   };
 
   constructor(props) {
@@ -38,7 +40,7 @@ class MarksTable extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.createMark({ ...this.state, answerId: this.props.answerId });
+    this.props.createMark({ ...this.state, answerId: this.props.answer.id });
   };
 
   handleChange = name => ({ target: { value } }) =>
@@ -48,7 +50,8 @@ class MarksTable extends Component {
 
   render() {
     const { mark, comment } = this.state;
-    const { marks } = this.props;
+    const { answer } = this.props;
+    const { marks } = answer;
 
     return (
       <Fragment>
@@ -129,7 +132,9 @@ class MarksTable extends Component {
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = state => ({
+  answer: state.answer,
+});
 
 export default connect(
   mapStateToProps,

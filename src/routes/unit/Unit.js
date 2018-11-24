@@ -223,10 +223,7 @@ class Unit extends React.Component {
           />
           {user && <Button onClick={this.saveAnswer}>Save</Button>}
           {unit.answers[0] ? (
-            <MarksTable
-              marks={unit.answers[answerCur].marks}
-              answerId={this.props.answer.id}
-            />
+            <MarksTable />
           ) : (
             <p>This unit has no answers yet</p>
           )}
