@@ -6,7 +6,7 @@ import CoursesList from '../../components/CoursesList';
 import { showModal } from '../../actions/modals';
 import s from './Courses.css';
 import IconButton from '../../components/IconButton';
-import ModalCourse from '../../components/ModalCourse/ModalCourse';
+import ModalCourseEdit from '../../components/ModalCourseEdit/ModalCourseEdit';
 
 class Courses extends React.Component {
   static propTypes = {
@@ -46,7 +46,7 @@ class Courses extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <ModalCourse modalId="modalAddCourse" edit={false} />
+          <ModalCourseEdit modalId="modalAddCourse" edit={false} />
           <h1>
             {title}
             {userId && (

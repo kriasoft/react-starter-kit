@@ -10,7 +10,7 @@ import {
 import { updateCourse, createCourse } from '../../actions/courses';
 import Modal from '../../components/Modal';
 
-class ModalCourse extends React.Component {
+class ModalCourseEdit extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     modalId: PropTypes.string.isRequired,
@@ -59,4 +59,4 @@ const mapStateToProps = state => ({
   course: state.course,
 });
 
-export default connect(mapStateToProps)(ModalCourse);
+export default connect(mapStateToProps)(ModalCourseEdit);
