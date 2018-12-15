@@ -9,12 +9,22 @@ import {
 } from 'react-bootstrap';
 import Modal from '../../components/Modal';
 import TextEditor from '../../components/TextEditor/TextEditor';
-import { addUnit } from '../../actions/units';
+import { updateUnit, addUnit } from '../../actions/units';
 
-class UnitAddModal extends React.Component {
+class ModalUnit extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     modalId: PropTypes.string.isRequired,
+    unit: PropTypes.shape({
+      id: PropTypes.string,
+      title: PropTypes.string,
+      body: PropTypes.string,
+    }).isRequired,
+    edit: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    edit: true,
   };
 
   state = {};
@@ -22,12 +32,19 @@ class UnitAddModal extends React.Component {
   handleChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { title, body } = this.state;
+    const { dispatch, unit = {}, edit } = this.props;
+    const { title = unit.title, body = unit.body } = this.state;
     return (
       <Modal
         modalId={this.props.modalId}
-        defaultFooter="add_close"
-        onSubmit={() => this.props.dispatch(addUnit({ title, body }))}
+        defaultFooter={edit ? 'save_close' : 'add_close'}
+        onSubmit={() =>
+          dispatch(
+            edit
+              ? updateUnit({ title, body, id: unit.id })
+              : addUnit({ title, body }),
+          )
+        }
       >
         <Modal.Body>
           <FormGroup controlId="title">
@@ -55,6 +72,7 @@ class UnitAddModal extends React.Component {
 
 const mapStateToProps = state => ({
   course: state.course,
+  unit: state.unit,
 });
 
-export default connect(mapStateToProps)(UnitAddModal);
+export default connect(mapStateToProps)(ModalUnit);

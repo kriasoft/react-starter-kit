@@ -4,15 +4,17 @@ import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
 import MarksTable from '../../components/MarksTable';
-import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
-import { updateUnit, setAnswer, setAnswerBody } from '../../actions/units';
+import { setAnswer, setAnswerBody } from '../../actions/units';
 import { setSecondMenu } from '../../actions/menu';
 import updateAnswer from '../../gql/updateAnswer.gql';
 import createAnswer from '../../gql/createAnswer.gql';
 import retrieveAnswerQuery from '../../gql/retrieveAnswer.gql';
 import s from './Unit.css';
 import Link from '../../components/Link/Link';
+import ModalUnit from '../../components/ModalUnit';
+import { showModal } from '../../actions/modals';
+import IconButton from '../../components/IconButton';
 
 class Unit extends React.Component {
   static propTypes = {
@@ -174,15 +176,15 @@ class Unit extends React.Component {
     const { answers, answerCur } = this.state;
     return (
       <div className={s.root}>
+        <ModalUnit modalId="modalUnitEdit" />
         <div className={s.container}>
           <h1>
             <Link to={`/courses/${course.id}`}>{course.title}</Link>
             {`/${unit.title}`}
             {role === 'teacher' && (
-              <ModalEditor
-                title={unit.title}
-                body={unit.body}
-                onCreate={u => dispatch(updateUnit({ ...u, id: unit.id }))}
+              <IconButton
+                onClick={() => dispatch(showModal('modalUnitEdit'))}
+                glyph="pencil"
               />
             )}
             {(role === 'teacher' || user.isAdmin) &&

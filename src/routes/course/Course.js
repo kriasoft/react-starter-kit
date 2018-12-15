@@ -7,7 +7,7 @@ import s from './Course.css';
 import { showModal } from '../../actions/modals';
 import IconButton from '../../components/IconButton';
 import CourseEditModal from './CourseEditModal';
-import UnitAddModal from './UnitAddModal';
+import ModalUnit from '../../components/ModalUnit';
 
 function getRole({ users } = { users: [] }, user) {
   return (users.find(u => u.id === user.id) || {}).role;
@@ -19,7 +19,7 @@ function Course({ user, course, dispatch }) {
   return (
     <div className={s.root}>
       <CourseEditModal modalId="modalCourseEdit" />
-      <UnitAddModal modalId="modalUnitAdd" />
+      <ModalUnit modalId="modalUnitAdd" edit={false} />
       <div className={s.container}>
         <h1>
           {title}
