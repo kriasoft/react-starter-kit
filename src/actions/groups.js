@@ -52,7 +52,7 @@ export function setGroups(groups) {
   };
 }
 
-export function updateGroup(id, title) {
+export function updateGroup({ id, title }) {
   return {
     type: UPDATE_GROUP,
     data: { id, title },

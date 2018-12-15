@@ -1,9 +1,9 @@
 import { SHOW_MODAL, HIDE_MODAL } from '../constants';
 
-export function showModal(modalId) {
+export function showModal(modalId, data) {
   return {
     type: SHOW_MODAL,
-    data: modalId,
+    data: { id: modalId, data },
   };
 }
 

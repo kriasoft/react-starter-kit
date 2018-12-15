@@ -4,14 +4,12 @@ import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import User from '../../components/User';
-import ModalAdd from '../../components/ModalAdd';
 import s from './Users.css';
 import {
   addUserToGroup,
   setGroup,
   deleteUserFromGroup,
   addGroup,
-  updateGroup,
 } from '../../actions/groups';
 // import UsersList from '../../components/UsersList';
 import ModalWithUsers from '../../components/ModalWithUsers';
@@ -19,18 +17,20 @@ import IconButton from '../../components/IconButton';
 import groupUsers from '../../gql/groupUsers.gql';
 import deleteUserFromGroupMutation from '../../gql/deleteUserFromGroup.gql';
 import addUserToGroupMutation from '../../gql/addUserToGroup.gql';
-import createGroup from '../../gql/createGroup.gql';
-import updateGroupMutation from '../../gql/updateGroup.gql';
+import ModalGroupEdit from '../../components/ModalGroupEdit';
+import { showModal } from '../../actions/modals';
 
 class Users extends React.Component {
   static propTypes = {
-    addGroup: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     users: PropTypes.arrayOf(PropTypes.object).isRequired,
     groups: PropTypes.arrayOf(PropTypes.object).isRequired,
     group: PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
+    }).isRequired,
+    user: PropTypes.shape({
+      isAdmin: PropTypes.bool,
     }).isRequired,
   };
 
@@ -90,38 +90,14 @@ class Users extends React.Component {
     this.close();
   }
 
-  addGroup = async title => {
-    const resp = await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: createGroup,
-        variables: {
-          title,
-        },
-      }),
-    });
-    const { data } = await resp.json();
-    this.props.addGroup(data.createGroup);
-  };
-
-  updateGroup = async (id, title) => {
-    await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: updateGroupMutation,
-        variables: {
-          id,
-          title,
-        },
-      }),
-    });
-    this.context.store.dispatch(updateGroup(id, title));
-  };
-
   render() {
     const {
       groups,
       users,
       // group
+      user = {},
     } = this.props;
+    const { dispatch } = this.context.store;
     // let usersSub = [];
     // let usersSubId = [];
     // if (Object.keys(group).length !== 0) {
@@ -147,12 +123,19 @@ class Users extends React.Component {
 
     return (
       <div className={s.root}>
+        <ModalGroupEdit modalId="modalGroupAdd" edit={false} />
+        <ModalGroupEdit modalId="modalGroupEdit" />
         <div className={s.container}>
           <Row>
             <Col md={4}>
               <h1>
                 Groups{' '}
-                <ModalAdd buttonText="Add Group" onUpdate={this.addGroup} />
+                {user.isAdmin && (
+                  <IconButton
+                    onClick={() => dispatch(showModal('modalGroupAdd'))}
+                    glyph="plus"
+                  />
+                )}
               </h1>
               <ol>
                 {groups.map(({ id, title }) => (
@@ -163,10 +146,14 @@ class Users extends React.Component {
                         <IconButton onClick={onToggle} glyph="plus" />
                       )}
                     />
-                    <ModalAdd
-                      title={title}
-                      onUpdate={this.updateGroup.bind(this, id)} // eslint-disable-line
-                    />
+                    {user.isAdmin && (
+                      <IconButton
+                        onClick={() =>
+                          dispatch(showModal('modalGroupEdit', { id, title }))
+                        }
+                        glyph="pencil"
+                      />
+                    )}
                   </ul>
                 ))}
               </ol>
@@ -174,9 +161,9 @@ class Users extends React.Component {
             <Col md={8}>
               <h1>{this.props.title}</h1>
               <ol>
-                {users.map(user => (
-                  <li key={user.id}>
-                    <User user={user} />
+                {users.map(u => (
+                  <li key={u.id}>
+                    <User user={u} />
                   </li>
                 ))}
               </ol>
@@ -189,6 +176,7 @@ class Users extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  user: state.user,
   groups: state.groups.groups,
   users: state.users,
   group: state.groups.group,
