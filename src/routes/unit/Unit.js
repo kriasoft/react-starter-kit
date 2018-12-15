@@ -172,8 +172,8 @@ class Unit extends React.Component {
   }
 
   render() {
-    const { user, role, unit, course, dispatch } = this.props;
-    const { answers, answerCur } = this.state;
+    const { user = {}, role, unit, course, dispatch } = this.props;
+    const { answers = [], answerCur } = this.state;
     return (
       <div className={s.root}>
         <ModalUnit modalId="modalUnitEdit" />
@@ -196,9 +196,7 @@ class Unit extends React.Component {
                   }`}
                   onSelect={this.handleAnswerSelect}
                 >
-                  {user &&
-                    user.isAdmin &&
-                    answers &&
+                  {user.isAdmin &&
                     answers.map((ans, i) => (
                       <MenuItem
                         key={ans.id}
