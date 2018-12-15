@@ -56,7 +56,7 @@ class MarksTable extends Component {
   render() {
     const { mark, comment } = this.state;
     const { answer } = this.props;
-    const { marks } = answer;
+    const { marks = [] } = answer;
 
     return (
       <Fragment>
