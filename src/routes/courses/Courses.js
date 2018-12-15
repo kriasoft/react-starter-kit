@@ -1,19 +1,12 @@
 import React, { Fragment } from 'react';
-import {
-  FormControl,
-  ControlLabel,
-  FormGroup,
-  HelpBlock,
-} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
-import Modal from '../../components/Modal';
 import CoursesList from '../../components/CoursesList';
-import { createCourse } from '../../actions/courses';
 import { showModal } from '../../actions/modals';
 import s from './Courses.css';
 import IconButton from '../../components/IconButton';
+import ModalCourse from '../../components/ModalCourse/ModalCourse';
 
 class Courses extends React.Component {
   static propTypes = {
@@ -53,25 +46,7 @@ class Courses extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <Modal
-            modalId="modalAddCourse"
-            defaultFooter="add_close"
-            onSubmit={() => dispatch(createCourse(this.state.courseTitle))}
-          >
-            <Modal.Body>
-              <FormGroup controlId="title">
-                <ControlLabel>Title</ControlLabel>
-                <FormControl
-                  autoFocus
-                  type="text"
-                  name="courseTitle"
-                  value={this.state.courseTitle}
-                  onChange={this.handleChange}
-                />
-                <HelpBlock>Title can not be empty</HelpBlock>
-              </FormGroup>
-            </Modal.Body>
-          </Modal>
+          <ModalCourse modalId="modalAddCourse" edit={false} />
           <h1>
             {title}
             {userId && (

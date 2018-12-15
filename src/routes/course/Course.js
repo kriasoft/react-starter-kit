@@ -6,7 +6,7 @@ import UnitsList from '../../components/UnitsList';
 import s from './Course.css';
 import { showModal } from '../../actions/modals';
 import IconButton from '../../components/IconButton';
-import CourseEditModal from './CourseEditModal';
+import ModalCourse from '../../components/ModalCourse';
 import ModalUnit from '../../components/ModalUnit';
 
 function getRole({ users } = { users: [] }, user) {
@@ -18,7 +18,7 @@ function Course({ user, course, dispatch }) {
   const role = getRole(course, user);
   return (
     <div className={s.root}>
-      <CourseEditModal modalId="modalCourseEdit" />
+      <ModalCourse modalId="modalCourseEdit" />
       <ModalUnit modalId="modalUnitAdd" edit={false} />
       <div className={s.container}>
         <h1>
