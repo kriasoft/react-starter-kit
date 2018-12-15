@@ -9,6 +9,10 @@ import { addUnit } from '../../actions/units';
 import { updateCourse } from '../../actions/courses';
 import ModalAdd from '../../components/ModalAdd';
 
+function getRole({ users } = { users: [] }, user) {
+  return (users.find(u => u.id === user.id) || {}).role;
+}
+
 function Course({ user, course, dispatch }) {
   const { units, id, title } = course;
   return (
@@ -16,15 +20,17 @@ function Course({ user, course, dispatch }) {
       <div className={s.container}>
         <h1>
           {title}
-          {user && (
-            <Fragment>
+          <Fragment>
+            {(user || {}).isAdmin && (
               <ModalAdd
                 title={title}
                 onUpdate={t => dispatch(updateCourse(t))}
               />
+            )}
+            {getRole(course, user) === 'teacher' && (
               <ModalEditor onCreate={unit => dispatch(addUnit(unit))} />
-            </Fragment>
-          )}
+            )}
+          </Fragment>
         </h1>
         <UnitsList units={units} courseId={id} />
       </div>
