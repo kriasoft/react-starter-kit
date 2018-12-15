@@ -6,11 +6,14 @@ import {
   ControlLabel,
   FormGroup,
   HelpBlock,
+  Col,
+  Row,
 } from 'react-bootstrap';
 import Modal from '../../components/Modal';
 import { addGroup, updateGroup } from '../../actions/groups';
 import createGroup from '../../gql/createGroup.gql';
 import updateGroupMutation from '../../gql/updateGroup.gql';
+import UsersList from '../../components/UsersList';
 
 class ModalGroupEdit extends React.Component {
   static propTypes = {
@@ -21,6 +24,7 @@ class ModalGroupEdit extends React.Component {
     }).isRequired,
     edit: PropTypes.bool,
     modals: PropTypes.shape({}).isRequired,
+    users: PropTypes.arrayOf({}).isRequired,
   };
 
   static defaultProps = {
@@ -88,15 +92,35 @@ class ModalGroupEdit extends React.Component {
             />
             <HelpBlock>Title can not be empty</HelpBlock>
           </FormGroup>
+          {edit && (
+            <FormGroup>
+              <Row>
+                <Col md={6}>
+                  <UsersList
+                    users={this.props.users}
+                    onClick={user => alert(user.id)}
+                  />
+                </Col>
+                <Col md={6}>
+                  <UsersList
+                    users={this.props.users}
+                    onClick={user => alert(user.id)}
+                  />
+                </Col>
+              </Row>
+            </FormGroup>
+          )}
         </Modal.Body>
       </Modal>
     );
   }
 }
 
-// TODO: find how to don't use modals value here (it's too internal)
+// TODO: find how not use modals value here (it's too internal)
 const mapStateToProps = state => ({
   modals: state.modals,
+  course: state.course,
+  users: state.users,
 });
 
 export default connect(mapStateToProps)(ModalGroupEdit);
