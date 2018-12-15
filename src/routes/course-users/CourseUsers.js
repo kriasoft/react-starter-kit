@@ -15,7 +15,7 @@ function CourseUsers({ course: { title, users } }) {
           {`Subscribed to ${title}`}
           <ModalWithUsers
             toggleButton={onToggle => (
-              <IconButton onClick={onToggle} glyph="plus" />
+              <IconButton onClick={onToggle} glyph="pencil" />
             )}
           />
         </h1>
