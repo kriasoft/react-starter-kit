@@ -14,13 +14,14 @@ if (navigator.platform) {
 
 class TextEditor extends React.Component {
   static propTypes = {
-    value: PropTypes.string.isRequired,
+    value: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     mode: PropTypes.string,
   };
 
   static defaultProps = {
     mode: 'html',
+    value: '',
   };
 
   constructor() {

@@ -14,12 +14,13 @@ class ModalCourseEdit extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     modalId: PropTypes.string.isRequired,
-    course: PropTypes.shape.isRequired,
+    course: PropTypes.shape({}),
     edit: PropTypes.bool,
   };
 
   static defaultProps = {
     edit: true,
+    course: {},
   };
 
   state = {};

@@ -34,7 +34,7 @@ class Sidebar extends Component {
       <Col sm={3} md={2} className={s.sidebar}>
         {secondMenu &&
           menuSecondOrder.map(key => (
-            <Fragment>
+            <Fragment key={key}>
               <Nav bsStyle="pills" stacked key={key}>
                 {secondMenu[key] &&
                   secondMenu[key].map(item => (

@@ -72,7 +72,7 @@ function Navigation({ user }) {
               {user.email}
             </NavItem>
 
-            <NavItem componentClass={Link} eventKey={2} onClick={logout}>
+            <NavItem eventKey={2} onClick={logout}>
               Log out
             </NavItem>
           </Nav>
