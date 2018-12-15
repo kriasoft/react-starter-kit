@@ -30,16 +30,17 @@ function Navigation({ user }) {
           >
             Courses
           </NavItem>
-          {user && (
-            <NavItem
-              componentClass={Link}
-              eventKey={2}
-              to="/users"
-              href="/users"
-            >
-              Users
-            </NavItem>
-          )}
+          {user &&
+            user.isAdmin && (
+              <NavItem
+                componentClass={Link}
+                eventKey={2}
+                to="/users"
+                href="/users"
+              >
+                Users
+              </NavItem>
+            )}
           {user && (
             <NavItem
               componentClass={Link}
@@ -50,16 +51,17 @@ function Navigation({ user }) {
               Files
             </NavItem>
           )}
-          {user && (
-            <NavItem
-              componentClass={Link}
-              eventKey={4}
-              to="/tests"
-              href="/tests"
-            >
-              Tests
-            </NavItem>
-          )}
+          {user &&
+            user.isAdmin && (
+              <NavItem
+                componentClass={Link}
+                eventKey={4}
+                to="/tests"
+                href="/tests"
+              >
+                Tests
+              </NavItem>
+            )}
         </Nav>
         {user ? (
           <Nav pullRight>
