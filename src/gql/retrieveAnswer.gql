@@ -9,6 +9,10 @@ query retireve($courseIds: [String], $unitIds: [String], $userIds: [String]) {
           mark
           comment
           createdAt
+          author {
+            id
+            email
+          }
         }
         user {
           id

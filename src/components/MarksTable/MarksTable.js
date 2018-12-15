@@ -5,19 +5,24 @@ import { FormControl, FormGroup, Table } from 'react-bootstrap';
 import moment from 'moment';
 import IconButton from '../IconButton/IconButton';
 import { createMark } from '../../actions/units';
+import User from '../User';
 
 class MarksTable extends Component {
   static propTypes = {
     answer: PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.string,
       marks: PropTypes.arrayOf(
         PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          mark: PropTypes.number.isRequired,
-          comment: PropTypes.string.isRequired,
-          createdAt: PropTypes.string.isRequired,
+          id: PropTypes.string,
+          mark: PropTypes.number,
+          comment: PropTypes.string,
+          createdAt: PropTypes.string,
+          author: PropTypes.shape({
+            id: PropTypes.string,
+            email: PropTypes.string,
+          }),
         }),
-      ).isRequired,
+      ),
     }).isRequired,
     createMark: PropTypes.func.isRequired,
   };
@@ -64,6 +69,7 @@ class MarksTable extends Component {
                 <th>Mark</th>
                 <th>Comment</th>
                 <th>Date</th>
+                <th>By</th>
               </tr>
             </thead>
             <tbody>
@@ -77,11 +83,14 @@ class MarksTable extends Component {
                       m.createdAt,
                     ).format('llll')})`}
                   </td>
+                  <td>
+                    <User user={m.author} />
+                  </td>
                 </tr>
               ))}
               {!marks.length && (
                 <tr>
-                  <td colSpan="4">
+                  <td colSpan="5">
                     <span>No marks yet</span>
                   </td>
                 </tr>
@@ -107,7 +116,7 @@ class MarksTable extends Component {
                     <FormControl.Feedback />
                   </FormGroup>
                 </td>
-                <td>
+                <td colSpan="2">
                   <FormControl
                     componentClass="textarea"
                     rows={1}
