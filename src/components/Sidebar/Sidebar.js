@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
@@ -34,23 +34,26 @@ class Sidebar extends Component {
       <Col sm={3} md={2} className={s.sidebar}>
         {secondMenu &&
           menuSecondOrder.map(key => (
-            <Nav bsStyle="pills" stacked key={key}>
-              {secondMenu[key] &&
-                secondMenu[key].map(item => (
-                  <NavItem
-                    componentClass={Link}
-                    href={item.link}
-                    to={item.link}
-                    key={item.id}
-                    active={
-                      history.location &&
-                      history.location.pathname === item.link
-                    }
-                  >
-                    {item.title}
-                  </NavItem>
-                ))}
-            </Nav>
+            <Fragment>
+              <Nav bsStyle="pills" stacked key={key}>
+                {secondMenu[key] &&
+                  secondMenu[key].map(item => (
+                    <NavItem
+                      componentClass={Link}
+                      href={item.link}
+                      to={item.link}
+                      key={item.id}
+                      active={
+                        history.location &&
+                        history.location.pathname === item.link
+                      }
+                    >
+                      {item.title}
+                    </NavItem>
+                  ))}
+              </Nav>
+              {(secondMenu[key] && secondMenu[key].length && <hr />) || null}
+            </Fragment>
           ))}
       </Col>
     );
