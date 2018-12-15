@@ -54,7 +54,7 @@ class Courses extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <Modal
-            modalId="modalAdd"
+            modalId="modalAddCourse"
             defaultFooter="add_close"
             onSubmit={() => dispatch(createCourse(this.state.courseTitle))}
           >
@@ -77,7 +77,7 @@ class Courses extends React.Component {
             {userId && (
               // eslint-disable-next-line react/prop-types
               <IconButton
-                onClick={() => dispatch(showModal('modalAdd'))}
+                onClick={() => dispatch(showModal('modalAddCourse'))}
                 glyph="plus"
               />
             )}

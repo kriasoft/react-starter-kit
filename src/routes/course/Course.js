@@ -2,12 +2,12 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
-import ModalEditor from '../../components/ModalEditor';
 import UnitsList from '../../components/UnitsList';
 import s from './Course.css';
-import { addUnit } from '../../actions/units';
-import { updateCourse } from '../../actions/courses';
-import ModalAdd from '../../components/ModalAdd';
+import { showModal } from '../../actions/modals';
+import IconButton from '../../components/IconButton';
+import CourseEditModal from './CourseEditModal';
+import UnitAddModal from './UnitAddModal';
 
 function getRole({ users } = { users: [] }, user) {
   return (users.find(u => u.id === user.id) || {}).role;
@@ -18,18 +18,23 @@ function Course({ user, course, dispatch }) {
   const role = getRole(course, user);
   return (
     <div className={s.root}>
+      <CourseEditModal modalId="modalCourseEdit" />
+      <UnitAddModal modalId="modalUnitAdd" />
       <div className={s.container}>
         <h1>
           {title}
           <Fragment>
             {(user || {}).isAdmin && (
-              <ModalAdd
-                title={title}
-                onUpdate={t => dispatch(updateCourse(t))}
+              <IconButton
+                onClick={() => dispatch(showModal('modalCourseEdit'))}
+                glyph="pencil"
               />
             )}
             {role === 'teacher' && (
-              <ModalEditor onCreate={unit => dispatch(addUnit(unit))} />
+              <IconButton
+                onClick={() => dispatch(showModal('modalUnitAdd'))}
+                glyph="plus"
+              />
             )}
           </Fragment>
         </h1>
