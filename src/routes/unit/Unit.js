@@ -156,7 +156,7 @@ class Unit extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    const { answers } = data.courses[0].units[0];
+    const { answers = [] } = data.courses[0].units[0];
     if (answers && answers.length) {
       this.setState({
         answers: answers.map(answer => {
@@ -165,8 +165,8 @@ class Unit extends React.Component {
           return ans;
         }),
       });
-      this.props.dispatch(setAnswer(answers[0]));
     }
+    this.props.dispatch(setAnswer(answers[0] || { body: {} }));
   }
 
   render() {
