@@ -12,7 +12,7 @@ import createAnswer from '../../gql/createAnswer.gql';
 import retrieveAnswerQuery from '../../gql/retrieveAnswer.gql';
 import s from './Unit.css';
 import Link from '../../components/Link/Link';
-import ModalUnit from '../../components/ModalUnit';
+import ModalUnitEdit from '../../components/ModalUnitEdit';
 import { showModal } from '../../actions/modals';
 import IconButton from '../../components/IconButton';
 
@@ -176,7 +176,7 @@ class Unit extends React.Component {
     const { answers = [], answerCur } = this.state;
     return (
       <div className={s.root}>
-        <ModalUnit modalId="modalUnitEdit" />
+        <ModalUnitEdit modalId="modalUnitEdit" />
         <div className={s.container}>
           <h1>
             <Link to={`/courses/${course.id}`}>{course.title}</Link>

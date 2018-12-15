@@ -11,7 +11,7 @@ import Modal from '../../components/Modal';
 import TextEditor from '../../components/TextEditor/TextEditor';
 import { updateUnit, addUnit } from '../../actions/units';
 
-class ModalUnit extends React.Component {
+class ModalUnitEdit extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     modalId: PropTypes.string.isRequired,
@@ -75,4 +75,4 @@ const mapStateToProps = state => ({
   unit: state.unit,
 });
 
-export default connect(mapStateToProps)(ModalUnit);
+export default connect(mapStateToProps)(ModalUnitEdit);
