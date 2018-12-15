@@ -3,18 +3,13 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Link from '../Link';
 
-const CoursesList = ({ courses, user }) => (
+const CoursesList = ({ courses }) => (
   <ol>
-    {courses.map(
-      ({ id, title }) =>
-        user.isAdmin ? (
-          <li key={id}>
-            <Link to={`/courses/${id}`}>{title} </Link>
-          </li>
-        ) : (
-          <li key={id}>{title}</li>
-        ),
-    )}
+    {courses.map(({ id, title }) => (
+      <li key={id}>
+        <Link to={`/courses/${id}`}>{title} </Link>
+      </li>
+    ))}
   </ol>
 );
 

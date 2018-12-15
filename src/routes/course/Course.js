@@ -15,6 +15,7 @@ function getRole({ users } = { users: [] }, user) {
 
 function Course({ user, course, dispatch }) {
   const { units, id, title } = course;
+  const role = getRole(course, user);
   return (
     <div className={s.root}>
       <div className={s.container}>
@@ -27,12 +28,12 @@ function Course({ user, course, dispatch }) {
                 onUpdate={t => dispatch(updateCourse(t))}
               />
             )}
-            {getRole(course, user) === 'teacher' && (
+            {role === 'teacher' && (
               <ModalEditor onCreate={unit => dispatch(addUnit(unit))} />
             )}
           </Fragment>
         </h1>
-        <UnitsList units={units} courseId={id} />
+        <UnitsList units={units} courseId={id} role={role} />
       </div>
     </div>
   );

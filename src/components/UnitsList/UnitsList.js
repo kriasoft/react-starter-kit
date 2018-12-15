@@ -2,11 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from '../Link/Link';
 
-const UnitsList = ({ courseId, units }) => (
+const UnitsList = ({ courseId, units, role }) => (
   <ol>
     {units.map(({ id, title }) => (
       <li key={id}>
-        <Link to={`/courses/${courseId}/${id}`}>{title}</Link>
+        {['student', 'teacher'].includes(role) ? (
+          <Link to={`/courses/${courseId}/${id}`}>{title}</Link>
+        ) : (
+          <span>{title}</span>
+        )}
       </li>
     ))}
   </ol>
@@ -19,6 +23,7 @@ UnitsList.propTypes = {
       title: PropTypes.string,
     }),
   ).isRequired,
+  role: PropTypes.string.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
