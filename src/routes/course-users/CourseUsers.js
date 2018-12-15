@@ -12,7 +12,7 @@ function CourseUsers({ course: { title, users } }) {
     <div className={s.root}>
       <div className={s.container}>
         <h1>
-          {`Subscribed to ${title}:`}
+          {`Subscribed to ${title}`}
           <ModalWithUsers
             toggleButton={onToggle => (
               <IconButton onClick={onToggle} glyph="plus" />
