@@ -1,24 +1,26 @@
 import { combineReducers } from 'redux';
-import user from './user';
-import courses from './courses';
-import course from './course';
-import unit from './unit';
-import users from './users';
-import files from './files';
-import groups from './groups';
 import answer from './answer';
-import secondMenu from './menu';
+import course from './course';
+import courses from './courses';
+import files from './files';
+import group from './group';
+import groups from './groups';
 import modals from './modals';
+import secondMenu from './menu';
+import unit from './unit';
+import user from './user';
+import users from './users';
 
 export default combineReducers({
-  user,
-  courses,
-  course,
-  unit,
-  users,
-  files,
-  groups,
   answer,
-  secondMenu,
+  course,
+  courses,
+  files,
+  group,
+  groups,
   modals,
+  secondMenu,
+  unit,
+  user,
+  users,
 });

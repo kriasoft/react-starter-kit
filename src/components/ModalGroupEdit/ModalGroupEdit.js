@@ -10,10 +10,17 @@ import {
   Row,
 } from 'react-bootstrap';
 import Modal from '../../components/Modal';
-import { addGroup, updateGroup } from '../../actions/groups';
+import {
+  addGroup,
+  updateGroup,
+  addUserToGroup,
+  deleteUserFromGroup,
+} from '../../actions/groups';
 import createGroup from '../../gql/createGroup.gql';
 import updateGroupMutation from '../../gql/updateGroup.gql';
 import UsersList from '../../components/UsersList';
+import deleteUserFromGroupMutation from '../../gql/deleteUserFromGroup.gql';
+import addUserToGroupMutation from '../../gql/addUserToGroup.gql';
 
 class ModalGroupEdit extends React.Component {
   static propTypes = {
@@ -23,7 +30,6 @@ class ModalGroupEdit extends React.Component {
       title: PropTypes.string,
     }).isRequired,
     edit: PropTypes.bool,
-    modals: PropTypes.shape({}).isRequired,
     users: PropTypes.arrayOf({}).isRequired,
   };
 
@@ -38,7 +44,12 @@ class ModalGroupEdit extends React.Component {
 
   state = {};
 
-  handleChange = e => this.setState({ [e.target.name]: e.target.value });
+  getUserGroupIds(user) {
+    return {
+      id: user.id,
+      groupId: this.props.group.id,
+    };
+  }
 
   addGroup = async ({ title }) => {
     const resp = await this.context.fetch('/graphql', {
@@ -66,10 +77,32 @@ class ModalGroupEdit extends React.Component {
     this.context.store.dispatch(updateGroup({ id, title }));
   };
 
+  async deleteUserFromGroup(user) {
+    await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: deleteUserFromGroupMutation,
+        variables: this.getUserGroupIds(user),
+      }),
+    });
+    this.context.store.dispatch(deleteUserFromGroup(this.props.group.id, user));
+  }
+
+  async addUserToGroup(user) {
+    await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: addUserToGroupMutation,
+        variables: this.getUserGroupIds(user),
+      }),
+    });
+    this.context.store.dispatch(addUserToGroup(this.props.group.id, user));
+  }
+
+  handleChange = e => this.setState({ [e.target.name]: e.target.value });
+
   render() {
-    const { modalId, modals, edit } = this.props;
-    const group = modals[`${modalId}_data`] || {};
+    const { group, edit, users } = this.props;
     const { title = group.title } = this.state;
+    const groupUsers = group.users || [];
     return (
       <Modal
         modalId={this.props.modalId}
@@ -96,15 +129,19 @@ class ModalGroupEdit extends React.Component {
             <FormGroup>
               <Row>
                 <Col md={6}>
+                  <h2>Users</h2>
                   <UsersList
-                    users={this.props.users}
-                    onClick={user => alert(user.id)}
+                    users={users.filter(
+                      u1 => !groupUsers.find(u2 => u2.id === u1.id),
+                    )}
+                    onClick={user => this.addUserToGroup(user)}
                   />
                 </Col>
                 <Col md={6}>
+                  <h2>Group users</h2>
                   <UsersList
-                    users={this.props.users}
-                    onClick={user => alert(user.id)}
+                    users={groupUsers}
+                    onClick={user => this.deleteUserFromGroup(user)}
                   />
                 </Col>
               </Row>
@@ -116,11 +153,10 @@ class ModalGroupEdit extends React.Component {
   }
 }
 
-// TODO: find how not use modals value here (it's too internal)
 const mapStateToProps = state => ({
-  modals: state.modals,
   course: state.course,
   users: state.users,
+  group: state.group || {},
 });
 
 export default connect(mapStateToProps)(ModalGroupEdit);
