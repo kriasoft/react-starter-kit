@@ -1004,7 +1004,7 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
 
-accepts@^1.3.0, accepts@~1.3.3, accepts@~1.3.4, accepts@~1.3.5:
+accepts@^1.3.5, accepts@~1.3.3, accepts@~1.3.4, accepts@~1.3.5:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/accepts/-/accepts-1.3.5.tgz#eb777df6011723a3b14e8a72c0805c8e86746bd2"
   dependencies:
@@ -2000,6 +2000,10 @@ chalk@^2.0, chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0, chalk@^2.3.0, chalk@^2.3.1
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
+chance@^1.0.16:
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/chance/-/chance-1.0.18.tgz#79788fe6fca4c338bf404321c347eecc80f969ee"
+
 character-entities-html4@^1.0.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/character-entities-html4/-/character-entities-html4-1.1.2.tgz#c44fdde3ce66b52e8d321d6c1bf46101f0150610"
@@ -2891,6 +2895,30 @@ easy-extender@2.3.2:
   dependencies:
     lodash "^3.10.1"
 
+easygraphql-mock@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/easygraphql-mock/-/easygraphql-mock-0.1.5.tgz#7aa758046103d8c6a27958dc6081a274b47a8e6b"
+  dependencies:
+    chance "^1.0.16"
+    easygraphql-parser "^0.0.3"
+
+easygraphql-parser@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/easygraphql-parser/-/easygraphql-parser-0.0.3.tgz#c758e1c371dd1e1abda8455427ef1a6aeea2b585"
+  dependencies:
+    graphql "^14.0.2"
+    lodash.mergewith "^4.6.1"
+
+easygraphql-tester@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/easygraphql-tester/-/easygraphql-tester-2.1.4.tgz#6f1dc5dedff8e0624d92099aa5d1df11a55d7e5f"
+  dependencies:
+    easygraphql-mock "^0.1.5"
+    easygraphql-parser "^0.0.3"
+    graphql-tag "^2.9.2"
+    lodash.isempty "^4.4.0"
+    lodash.isobject "^3.0.2"
+
 eazy-logger@3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/eazy-logger/-/eazy-logger-3.0.2.tgz#a325aa5e53d13a2225889b2ac4113b2b9636f4fc"
@@ -3410,14 +3438,14 @@ expect@^23.1.0:
     jest-message-util "^23.1.0"
     jest-regex-util "^23.0.0"
 
-express-graphql@^0.6.12:
-  version "0.6.12"
-  resolved "https://registry.yarnpkg.com/express-graphql/-/express-graphql-0.6.12.tgz#dfcb2058ca72ed5190b140830ad8cdbf76a9128a"
+express-graphql@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/express-graphql/-/express-graphql-0.7.1.tgz#6c7712ee966c3aba1930e064ea4c8181e56fd3ef"
   dependencies:
-    accepts "^1.3.0"
+    accepts "^1.3.5"
     content-type "^1.0.4"
-    http-errors "^1.3.0"
-    raw-body "^2.3.2"
+    http-errors "^1.7.1"
+    raw-body "^2.3.3"
 
 express-jwt@^5.3.1:
   version "5.3.1"
@@ -3988,11 +4016,15 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
-graphql@^0.13.2:
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.13.2.tgz#4c740ae3c222823e7004096f832e7b93b2108270"
+graphql-tag@^2.9.2:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.10.0.tgz#87da024be863e357551b2b8700e496ee2d4353ae"
+
+graphql@^14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.0.2.tgz#7dded337a4c3fd2d075692323384034b357f5650"
   dependencies:
-    iterall "^1.2.1"
+    iterall "^1.2.2"
 
 growly@^1.3.0:
   version "1.3.0"
@@ -4205,7 +4237,7 @@ http-errors@1.6.2:
     setprototypeof "1.0.3"
     statuses ">= 1.3.1 < 2"
 
-http-errors@1.6.3, http-errors@^1.3.0, http-errors@~1.6.2, http-errors@~1.6.3:
+http-errors@1.6.3, http-errors@~1.6.2, http-errors@~1.6.3:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.6.3.tgz#8b55680bb4be283a0b5bf4ea2e38580be1d9320d"
   dependencies:
@@ -4213,6 +4245,16 @@ http-errors@1.6.3, http-errors@^1.3.0, http-errors@~1.6.2, http-errors@~1.6.3:
     inherits "2.0.3"
     setprototypeof "1.1.0"
     statuses ">= 1.4.0 < 2"
+
+http-errors@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.7.1.tgz#6a4ffe5d35188e1c39f872534690585852e1f027"
+  dependencies:
+    depd "~1.1.2"
+    inherits "2.0.3"
+    setprototypeof "1.1.0"
+    statuses ">= 1.5.0 < 2"
+    toidentifier "1.0.0"
 
 http-errors@~1.5.0:
   version "1.5.1"
@@ -4827,7 +4869,7 @@ istanbul-reports@^1.3.0:
   dependencies:
     handlebars "^4.0.3"
 
-iterall@^1.2.1:
+iterall@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.2.2.tgz#92d70deb8028e0c39ff3164fdbf4d8b088130cd7"
 
@@ -5505,6 +5547,10 @@ lodash.isboolean@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz#6c2e171db2a257cd96802fd43b01b20d5f5870f6"
 
+lodash.isempty@^4.4.0:
+  version "4.4.0"
+  resolved "http://registry.npmjs.org/lodash.isempty/-/lodash.isempty-4.4.0.tgz#6f86cbedd8be4ec987be9aaf33c9684db1b31e7e"
+
 lodash.isfinite@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/lodash.isfinite/-/lodash.isfinite-3.3.2.tgz#fb89b65a9a80281833f0b7478b3a5104f898ebb3"
@@ -5517,6 +5563,10 @@ lodash.isnumber@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
 
+lodash.isobject@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/lodash.isobject/-/lodash.isobject-3.0.2.tgz#3c8fb8d5b5bf4bf90ae06e14f2a530a4ed935e1d"
+
 lodash.isplainobject@^4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
@@ -5528,6 +5578,10 @@ lodash.isstring@^4.0.1:
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
+
+lodash.mergewith@^4.6.1:
+  version "4.6.1"
+  resolved "https://registry.yarnpkg.com/lodash.mergewith/-/lodash.mergewith-4.6.1.tgz#639057e726c3afbdb3e7d42741caa8d6e4335927"
 
 lodash.once@^4.0.0:
   version "4.1.1"
@@ -7390,7 +7444,7 @@ raw-body@2.3.2:
     iconv-lite "0.4.19"
     unpipe "1.0.0"
 
-raw-body@2.3.3, raw-body@^2.3.2:
+raw-body@2.3.3, raw-body@^2.3.2, raw-body@^2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.3.3.tgz#1b324ece6b5706e153855bc1148c65bb7f6ea0c3"
   dependencies:
@@ -8388,7 +8442,7 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-"statuses@>= 1.3.1 < 2", "statuses@>= 1.4.0 < 2":
+"statuses@>= 1.3.1 < 2", "statuses@>= 1.4.0 < 2", "statuses@>= 1.5.0 < 2":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
 
@@ -8814,6 +8868,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     extend-shallow "^3.0.2"
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
+
+toidentifier@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"
 
 toposort-class@^1.0.1:
   version "1.0.1"
