@@ -13,6 +13,8 @@ import webpack from 'webpack';
 import WebpackAssetsManifest from 'webpack-assets-manifest';
 import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
 import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
 
@@ -353,7 +355,40 @@ const clientConfig = {
       : [
           // Webpack Bundle Analyzer
           // https://github.com/th0r/webpack-bundle-analyzer
-          ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
+          ...(isAnalyze
+            ? [
+                new BundleAnalyzerPlugin(),
+                new OptimizeCssAssetsPlugin({
+                  assetNameRegExp: /\.css$/,
+                  cssProcessorOptions: {
+                    safe: true,
+                    autoprefixer: {
+                      disable: true,
+                    },
+                    mergeLonghand: false,
+                    discardComments: {
+                      removeAll: true,
+                    },
+                  },
+                  canPrint: true,
+                }),
+              ]
+            : [
+                new OptimizeCssAssetsPlugin({
+                  assetNameRegExp: /\.css$/,
+                  cssProcessorOptions: {
+                    safe: true,
+                    autoprefixer: {
+                      disable: true,
+                    },
+                    mergeLonghand: false,
+                    discardComments: {
+                      removeAll: true,
+                    },
+                  },
+                  canPrint: true,
+                }),
+              ]),
         ]),
   ],
 
@@ -368,6 +403,22 @@ const clientConfig = {
         },
       },
     },
+    minimizer: !isDebug
+      ? [
+          // replace UglifyJS
+          new TerserPlugin({
+            terserOptions: {
+              ecma: 6,
+              warnings: false,
+              extractComments: false,
+              compress: {
+                drop_console: true, // remove console
+              },
+              ie8: false,
+            },
+          }),
+        ]
+      : [],
   },
 
   // Some libraries import Node modules but don't use them in the browser.
