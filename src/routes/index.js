@@ -2,6 +2,7 @@
 
 import { setSecondMenu } from '../actions/menu';
 import { getCourseSecondMenu } from './menu';
+import { fetchCourse } from '../actions/courses';
 
 // The top-level (parent) route
 const routes = {
@@ -15,8 +16,11 @@ const routes = {
     },
     {
       path: '/courses/:idCourse',
-      async action({ next, store }) {
+      async action({ next, store, params }) {
         const child = await next();
+        if (store.getState().course.id !== params.idCourse) {
+          await store.dispatch(fetchCourse(params.idCourse));
+        }
         store.dispatch(
           setSecondMenu('course', getCourseSecondMenu(store.getState().course)),
         );

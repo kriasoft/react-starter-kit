@@ -65,10 +65,12 @@ class UserMarks extends React.Component {
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       units: PropTypes.arrayOf(UnitPropType),
-      users: PropTypes.arrayOf({
-        id: PropTypes.string,
-        email: PropTypes.string,
-      }),
+      users: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+          email: PropTypes.string,
+        }),
+      ),
     }).isRequired,
   };
 

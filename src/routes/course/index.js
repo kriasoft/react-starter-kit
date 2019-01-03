@@ -1,10 +1,8 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Course from './Course';
-import { fetchCourse } from '../../actions/courses';
 
-async function action({ params, store }) {
-  await store.dispatch(fetchCourse(params.idCourse));
+async function action({ store }) {
   const { course } = store.getState();
   const { title } = course;
   return {
