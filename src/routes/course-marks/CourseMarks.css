@@ -19,3 +19,23 @@
   padding: 0 0 40px;
   max-width: var(--max-content-width);
 }
+
+.container thead th {
+  transform: translateX(-20px) rotate(-30deg);
+  max-width: 100px;
+  height: 200px;
+}
+
+.mark {
+  max-width: 100px;
+  width: 100px;
+  text-align: center;
+}
+
+.noMark {
+  background-color: yellow;
+}
+
+.noAnswer {
+  background-color: #ddd;
+}

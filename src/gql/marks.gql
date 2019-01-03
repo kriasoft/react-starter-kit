@@ -2,11 +2,21 @@ query marks($ids: [String], $userIds: [String]) {
   courses(ids: $ids) {
     id
     title
+    users(ids: $userIds) {
+      id
+      email
+      isAdmin
+      role
+    }
     units {
       id
       title
       answers(userIds: $userIds) {
         id
+        user {
+          id
+          email
+        }
         marks {
           id
           mark

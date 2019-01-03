@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from '../Link';
 
-const User = ({ user, link }) => {
+const User = ({ user, link, hideTags }) => {
   const tags = [];
   if (!user) tags.push('robot');
   if (user && user.isAdmin) tags.push('admin');
@@ -11,18 +11,19 @@ const User = ({ user, link }) => {
   return user && link ? (
     <span>
       <Link to={`/users/${user.id}`}>{user.email}</Link>
-      {tagsView}
+      {!hideTags && tagsView}
     </span>
   ) : (
     <span>
       {(user && user.email) || ''}
-      {tagsView}
+      {!hideTags && tagsView}
     </span>
   );
 };
 
 User.defaultProps = {
   link: true,
+  hideTags: false,
 };
 
 User.propTypes = {
@@ -33,6 +34,7 @@ User.propTypes = {
     role: PropTypes.string,
   }).isRequired,
   link: PropTypes.bool,
+  hideTags: PropTypes.bool,
 };
 
 export default User;

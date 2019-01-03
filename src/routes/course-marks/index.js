@@ -15,7 +15,7 @@ async function action({ fetch, params, store }) {
       query: marksQuery,
       variables: {
         ids: params.idCourse,
-        userIds: store.getState().user.id,
+        // userIds: store.getState().user.id,
       },
     }),
   });
