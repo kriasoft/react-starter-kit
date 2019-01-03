@@ -4,17 +4,18 @@ import Link from '../Link';
 
 const User = ({ user, link }) => {
   const tags = [];
-  if (user.isAdmin) tags.push('admin');
-  if (user.role) tags.push(user.role);
+  if (!user) tags.push('robot');
+  if (user && user.isAdmin) tags.push('admin');
+  if (user && user.role) tags.push(user.role);
   const tagsView = (tags.length && <b>[{tags.join(', ')}]</b>) || null;
-  return link ? (
+  return user && link ? (
     <span>
       <Link to={`/users/${user.id}`}>{user.email}</Link>
       {tagsView}
     </span>
   ) : (
     <span>
-      {user.email}
+      {(user && user.email) || ''}
       {tagsView}
     </span>
   );
