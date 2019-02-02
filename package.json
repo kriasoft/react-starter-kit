@@ -22,6 +22,7 @@
     "classnames": "^2.2.6",
     "connect-session-sequelize": "^5.2.2",
     "cookie-parser": "^1.4.3",
+    "csv": "^5.1.1",
     "express": "^4.16.3",
     "express-graphql": "^0.6.12",
     "express-jwt": "^5.3.1",
@@ -197,6 +198,7 @@
     "start": "babel-node --inspect tools/run start",
     "users": "babel-node tools/users",
     "init:dev": "cp database_orig.sqlite database.sqlite && yarn run db:migrate",
-    "db:migrate": "node node_modules/sequelize-cli/lib/sequelize db:migrate"
+    "db:migrate": "node node_modules/sequelize-cli/lib/sequelize db:migrate",
+    "users:import": "babel-node tools/import_users"
   }
 }
