@@ -102,7 +102,7 @@ User.prototype.getRole = async function userGetRole(courseId) {
       },
     ],
   });
-  return _.get(course, 'users[0].UserCourse.role');
+  return _.get(course, 'users[0].dataValues.userCourse.dataValues.role');
 };
 
 User.prototype.setPassword = async function userNewPassword(pass) {
