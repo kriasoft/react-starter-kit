@@ -59,7 +59,7 @@ class UnitView extends React.Component {
       new PI.InputText(this),
       new PI.InputCheckbox(this),
       new PI.InputRadio(this),
-      new PI.InputFile(this),
+      new PI.InputFile(this, s.inputFile),
       new PI.Headers(this, this.props.onHeadersChange),
       {
         shouldProcessNode: () => true,
