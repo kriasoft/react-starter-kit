@@ -169,14 +169,18 @@ app.use(
 );
 
 app.get('/api/get_file/:id', async (req, res) => {
-  const file = await File.findById(req.params.id);
-  const url = new URL(file.url);
-  const stat = fs.statSync(url);
-  res.writeHead(200, {
-    'Content-Type': 'text/plain',
-    'Content-Length': stat.size,
-  });
-  fs.createReadStream(url).pipe(res);
+  try {
+    const file = await File.findById(req.params.id);
+    const url = new URL(file.url);
+    const stat = fs.statSync(url);
+    res.writeHead(200, {
+      'Content-Type': 'text/plain',
+      'Content-Length': stat.size,
+    });
+    fs.createReadStream(url).pipe(res);
+  } catch (e) {
+    res.send(e);
+  }
 });
 
 //
