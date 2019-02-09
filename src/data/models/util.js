@@ -1,7 +1,7 @@
 export function haveAccess(user, id) {
   if (!user) return false;
   if (user.isAdmin) return true;
-  if (!id) return true;
+  if (!id) return false;
   const ids = Array.isArray(id) ? id : [id];
   return ids.includes(user.id);
 }

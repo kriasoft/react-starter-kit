@@ -200,6 +200,6 @@
     "users": "babel-node tools/users",
     "init:dev": "cp database_orig.sqlite database.sqlite && yarn run db:migrate",
     "db:migrate": "node node_modules/sequelize-cli/lib/sequelize db:migrate",
-    "db:migrate:prod": "node node_modules/sequelize-cli/lib/sequelize db:migrate --url '$DATABASE_URL'"
+    "users:import": "babel-node tools/import_users"
   }
 }

@@ -8,10 +8,7 @@ import { showModal } from '../../actions/modals';
 import IconButton from '../../components/IconButton';
 import ModalCourseEdit from '../../components/ModalCourseEdit';
 import ModalUnitEdit from '../../components/ModalUnitEdit';
-
-function getRole({ users } = { users: [] }, user) {
-  return (users.find(u => u.id === user.id) || {}).role;
-}
+import { getRole } from '../../util/course';
 
 function Course({ user, course, dispatch }) {
   const { units, id, title } = course;

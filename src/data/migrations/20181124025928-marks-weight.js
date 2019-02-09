@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.addColumn('CourseUnit', 'weight', Sequelize.FLOAT),
+    queryInterface.addColumn('courseUnit', 'weight', Sequelize.FLOAT),
 
-  down: queryInterface => queryInterface.removeColumn('CourseUnit', 'weight'),
+  down: queryInterface => queryInterface.removeColumn('courseUnit', 'weight'),
 };

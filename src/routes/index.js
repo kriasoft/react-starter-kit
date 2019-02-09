@@ -29,21 +29,21 @@ const routes = {
       children: [
         {
           path: '',
-          load: () => import(/* webpackChunkName: 'course' */ './course'),
+          load: () => import(/* webpackChunkName: 'courses' */ './course'),
         },
         {
           path: '/users',
           load: () =>
-            import(/* webpackChunkName: 'courseUsers' */ './course-users'),
+            import(/* webpackChunkName: 'courses' */ './course-users'),
         },
         {
           path: '/marks',
           load: () =>
-            import(/* webpackChunkName: 'courseMarks' */ './course-marks'),
+            import(/* webpackChunkName: 'courses' */ './course-marks'),
         },
         {
           path: '/:idUnit',
-          load: () => import(/* webpackChunkName: 'unit' */ './unit'),
+          load: () => import(/* webpackChunkName: 'courses' */ './unit'),
         },
       ],
     },
@@ -53,7 +53,7 @@ const routes = {
     },
     {
       path: '/users/:idUser',
-      load: () => import(/* webpackChunkName: 'user' */ './user'),
+      load: () => import(/* webpackChunkName: 'users' */ './user'),
     },
     {
       path: '',
@@ -61,7 +61,7 @@ const routes = {
     },
     {
       path: '/login',
-      load: () => import(/* webpackChunkName: 'login' */ './login'),
+      load: () => import(/* webpackChunkName: 'home' */ './login'),
     },
     // {
     //   path: '/register',

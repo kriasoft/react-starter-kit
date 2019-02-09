@@ -6,23 +6,28 @@ import s from './CourseUsers.css';
 import User from '../../components/User';
 import ModalWithUsers from '../../components/ModalWithUsers';
 import IconButton from '../../components/IconButton';
+import { getRole } from '../../util/course';
 
-function CourseUsers({ course: { title, users } }) {
+function CourseUsers({ course = {}, user }) {
+  const { title, users } = course;
+  const role = getRole(course, user);
   return (
     <div className={s.root}>
       <div className={s.container}>
         <h1>
           {`Subscribed to ${title}`}
-          <ModalWithUsers
-            toggleButton={onToggle => (
-              <IconButton onClick={onToggle} glyph="pencil" />
-            )}
-          />
+          {((user && user.isAdmin) || role === 'teacher') && (
+            <ModalWithUsers
+              toggleButton={onToggle => (
+                <IconButton onClick={onToggle} glyph="pencil" />
+              )}
+            />
+          )}
         </h1>
         <ol>
-          {users.map(user => (
-            <li key={user.id}>
-              <User user={user} />
+          {users.map(u => (
+            <li key={u.id}>
+              <User user={u} />
             </li>
           ))}
         </ol>
@@ -41,10 +46,14 @@ CourseUsers.propTypes = {
       }),
     ),
   }).isRequired,
+  user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = state => ({
   course: state.course,
+  user: state.user,
 });
 
 export default connect(mapStateToProps)(withStyles(s)(CourseUsers));
