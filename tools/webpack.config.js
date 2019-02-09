@@ -13,6 +13,7 @@ import webpack from 'webpack';
 import WebpackAssetsManifest from 'webpack-assets-manifest';
 import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
 
@@ -370,6 +371,13 @@ const clientConfig = {
         },
       },
     },
+
+    ...(!isDebug
+      ? {
+          minimize: true,
+          minimizer: [new UglifyJsPlugin()],
+        }
+      : {}),
   },
 
   // Some libraries import Node modules but don't use them in the browser.

@@ -12,7 +12,7 @@ async function action({ params, store }) {
   }
   await store.dispatch(fetchCourse(params.idCourse));
   return {
-    chunks: ['courseUsers'],
+    chunks: ['courses'],
     title,
     component: (
       <Layout>

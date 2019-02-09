@@ -23,7 +23,7 @@ async function action({ fetch, params, store }) {
   if (!data && !data.courses)
     throw new Error('Failed to load user of a course.');
   return {
-    chunks: ['courseMarks'],
+    chunks: ['courses'],
     title,
     component: (
       <Layout>

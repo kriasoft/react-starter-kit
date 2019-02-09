@@ -6,7 +6,7 @@ async function action({ store }) {
   const { course } = store.getState();
   const { title } = course;
   return {
-    chunks: ['course'],
+    chunks: ['courses'],
     title,
     component: (
       <Layout>

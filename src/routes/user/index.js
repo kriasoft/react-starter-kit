@@ -21,7 +21,7 @@ async function action({ fetch, params, store }) {
   const { data } = await resp.json();
   if (!data && !data.users) throw new Error('Failed to load user profile.');
   return {
-    chunks: ['user'],
+    chunks: ['users'],
     title,
     component: (
       <Layout>
