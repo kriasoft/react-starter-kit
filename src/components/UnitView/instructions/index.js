@@ -6,6 +6,7 @@ import InputText from './InputText';
 import PreCode from './PreCode';
 import ShowAttr from './ShowAttr';
 import TextareaLanguage from './TextareaLanguage';
+import ScriptD3 from './ScriptD3';
 
 export {
   Headers,
@@ -16,4 +17,5 @@ export {
   PreCode,
   ShowAttr,
   TextareaLanguage,
+  ScriptD3,
 };
