@@ -38,13 +38,14 @@ const uploadFile = {
   type: FileType,
   args: {
     internalName: { type: new NonNull(StringType) },
+    userId: { type: new NonNull(StringType) },
   },
   resolve({ request }, args) {
     if (!request.user) throw new NotLoggedInError();
     return File.uploadFile({
       internalName: args.internalName,
+      userId: args.userId,
       buffer: request.file.buffer,
-      userId: request.user.id,
     });
   },
 };
