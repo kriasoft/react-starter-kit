@@ -7,16 +7,17 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Register.css';
 
-class Register extends React.Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-  };
+type PropTypes = {|
+  title: string,
+|};
 
+class Register extends React.Component<PropTypes> {
   render() {
     return (
       <div className={s.root}>

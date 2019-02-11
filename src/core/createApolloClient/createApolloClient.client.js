@@ -1,5 +1,3 @@
-// @flow
-
 import { ApolloClient } from 'apollo-client';
 import { from } from 'apollo-link';
 import { onError } from 'apollo-link-error';
@@ -7,7 +5,7 @@ import { HttpLink } from 'apollo-link-http';
 import apolloLogger from 'apollo-link-logger';
 import { withClientState } from 'apollo-link-state';
 import createCache from './createCache';
-import { resolvers as clientSideResolvers } from '../../state';
+import { resolvers as clientSideResolvers } from '../../data/graphql/OnMemoryStatus/schema';
 
 export default function createApolloClient() {
   const cache = createCache();

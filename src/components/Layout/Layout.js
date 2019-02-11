@@ -7,8 +7,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
+import type { Node } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 // external-global styles must be imported in your JS.
@@ -18,11 +20,11 @@ import Header from '../Header';
 import Feedback from '../Feedback';
 import Footer from '../Footer';
 
-class Layout extends React.Component {
-  static propTypes = {
-    children: PropTypes.node.isRequired,
-  };
+type PropTypes = {|
+  children: Node,
+|};
 
+class Layout extends React.Component<PropTypes> {
   render() {
     return (
       <div>

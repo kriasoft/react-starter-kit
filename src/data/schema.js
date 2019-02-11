@@ -27,8 +27,15 @@ import {
   resolvers as TimestampResolvers,
 } from './graphql/Scalar/Timestamp';
 
+import {
+  schema as OnMemoryStateSchema,
+  queries as OnMemoryStateQueries,
+  mutations as OnMemoryStateMutations,
+} from './graphql/OnMemoryStatus/schema';
+
 const RootQuery = [
   `
+  
   # # React-Starter-Kit Querying API
   # ### This GraphQL schema was built with [Apollo GraphQL-Tools](https://github.com/apollographql/graphql-tools)
   # _Build, mock, and stitch a GraphQL schema using the schema language_
@@ -41,6 +48,7 @@ const RootQuery = [
   type RootQuery {
     ${NewsQueries}
     ${DatabaseQueries}
+    ${OnMemoryStateQueries}
   }
 `,
 ];
@@ -58,12 +66,14 @@ const Mutation = [
   # 3. Automatically [stitch multiple schemas together](https://www.apollographql.com/docs/graphql-tools/schema-stitching.html) into one larger API
   type Mutation {
     ${DatabaseMutations}
+    ${OnMemoryStateMutations}
   }
 `,
 ];
 
 const SchemaDefinition = [
   `
+  
   schema {
     query: RootQuery
     mutation: Mutation
@@ -83,6 +93,7 @@ const schema = [
 
   ...NewsSchema,
   ...DatabaseSchema,
+  ...OnMemoryStateSchema,
 ];
 
 export default {

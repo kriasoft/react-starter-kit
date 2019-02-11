@@ -1,5 +1,3 @@
-// @flow
-
 import { ApolloClient } from 'apollo-client';
 import { from } from 'apollo-link';
 import { withClientState } from 'apollo-link-state';

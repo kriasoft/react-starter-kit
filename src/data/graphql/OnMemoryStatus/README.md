@@ -15,4 +15,4 @@ Other type could be LocalStorage, SessionStorage or IndexedDB.
 
 # Other Resources
 
-* [apollo-link-state](https://www.apollographql.com/docs/link/links/state.html)
+- [apollo-link-state](https://www.apollographql.com/docs/link/links/state.html)
