@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => (
   <footer>
-    <p>© 2018, Yet Another Domic.</p>
+    <p>© 2019, NDO</p>
   </footer>
 );
 
