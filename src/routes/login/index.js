@@ -10,7 +10,7 @@ function action({ store }) {
     return { redirect: '/login' };
   }
   return {
-    chunks: ['login'],
+    chunks: ['users'],
     title,
     component: (
       <Layout>
