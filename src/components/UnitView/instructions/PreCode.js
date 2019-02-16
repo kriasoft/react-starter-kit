@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
-import { github } from 'react-syntax-highlighter/dist/styles/hljs';
-import SyntaxHighlighter from 'react-syntax-highlighter';
 import Base from './Base';
+import SyntaxHighlighter from '../../SyntaxHighlighter';
 
 /**
  * <pre><code class="javascript">
@@ -24,7 +23,7 @@ export default class PreCode extends Base {
     const value = _.get(node, 'children[0].children[0].data', '').trim();
     const lang = _.get(node, 'children[0].attribs.class');
     return (
-      <SyntaxHighlighter key={index} language={lang} style={github}>
+      <SyntaxHighlighter key={index} language={lang}>
         {value}
       </SyntaxHighlighter>
     );
