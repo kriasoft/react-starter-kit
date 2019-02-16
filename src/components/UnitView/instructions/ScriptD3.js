@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import React from 'react';
 import Base from './Base';
-import D3 from '../../D3/D3';
+import D3 from '../../D3';
 
 export default class ScriptD3 extends Base {
   constructor(root) {
-    super(root, 'script', { type: 'text/d3' });
+    super(root, 'script', { type: 'text/vnd.graphviz' });
   }
 
   /* eslint-disable class-methods-use-this */
