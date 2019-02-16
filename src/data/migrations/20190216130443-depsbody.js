@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.addColumn('Course', 'depsBody', Sequelize.TEXT),
+    queryInterface.addColumn('course', 'depsBody', Sequelize.TEXT),
 
-  down: queryInterface => queryInterface.removeColumn('Course', 'depsBody'),
+  down: queryInterface => queryInterface.removeColumn('course', 'depsBody'),
 };
