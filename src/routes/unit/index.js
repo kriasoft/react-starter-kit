@@ -26,7 +26,7 @@ async function action({ fetch, store }, { idCourse, idUnit }) {
     throw new Error('Failed to load unit.');
   store.dispatch(setUnit(data.units[0]));
   return {
-    chunks: ['courses'],
+    chunks: ['unit'],
     title,
     component: (
       <Layout>

@@ -43,7 +43,7 @@ const routes = {
         },
         {
           path: '/:idUnit',
-          load: () => import(/* webpackChunkName: 'courses' */ './unit'),
+          load: () => import(/* webpackChunkName: 'unit' */ './unit'),
         },
       ],
     },
