@@ -22,6 +22,10 @@ const Course = Model.define('course', {
     type: DataType.STRING(255),
     allowNull: false,
   },
+
+  depsBody: {
+    type: DataType.TEXT,
+  },
 });
 
 Course.prototype.canRead = function canRead(user) {
