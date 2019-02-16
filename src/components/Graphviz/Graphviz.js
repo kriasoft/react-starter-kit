@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import * as d3Graphviz from 'd3-graphviz';
 import PropTypes from 'prop-types';
 
-class D3 extends Component {
+export default class Graphviz extends Component {
   static propTypes = {
     value: PropTypes.string.isRequired,
   };
@@ -30,5 +30,3 @@ class D3 extends Component {
     );
   }
 }
-
-export default D3;

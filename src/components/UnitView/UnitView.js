@@ -61,7 +61,7 @@ class UnitView extends React.Component {
       new PI.InputRadio(this),
       new PI.InputFile(this, s.inputFile),
       new PI.Headers(this, this.props.onHeadersChange),
-      new PI.ScriptD3(this),
+      new PI.ScriptGraphviz(this),
       {
         shouldProcessNode: () => true,
         processNode: processNodeDefinitions.processDefaultNode,

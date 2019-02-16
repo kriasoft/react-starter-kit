@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import React from 'react';
 import Base from './Base';
-import D3 from '../../D3';
+import D3 from '../../Graphviz';
 
-export default class ScriptD3 extends Base {
+export default class ScriptGraphviz extends Base {
   constructor(root) {
     super(root, 'script', { type: 'text/vnd.graphviz' });
   }
