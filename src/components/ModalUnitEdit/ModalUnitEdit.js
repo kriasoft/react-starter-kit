@@ -8,7 +8,7 @@ import {
   HelpBlock,
 } from 'react-bootstrap';
 import Modal from '../../components/Modal';
-import TextEditor from '../../components/TextEditor/TextEditor';
+import TextEditor from '../../components/TextEditor';
 import { updateUnit, addUnit } from '../../actions/units';
 
 class ModalUnitEdit extends React.Component {
