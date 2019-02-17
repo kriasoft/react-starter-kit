@@ -1,4 +1,4 @@
-import { User, UserClaim, UserLogin, UserProfile } from 'data/models';
+import { User, UserClaim, UserLogin, UserProfile } from '../../../models';
 
 export const queries = [
   `

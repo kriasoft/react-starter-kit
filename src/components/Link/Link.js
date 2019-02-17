@@ -25,13 +25,10 @@ type PropTypes = {|
   to: string,
   onClick?: Object => void,
   children?: Node,
+  className?: string,
 |};
 
 class Link extends React.Component<PropTypes> {
-  static defaultProps = {
-    onClick: null,
-  };
-
   handleClick = (event: any) => {
     if (this.props.onClick) {
       this.props.onClick(event);

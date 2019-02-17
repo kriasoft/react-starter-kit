@@ -63,12 +63,6 @@ const config = {
       path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
 
-  resolve: {
-    // Allow absolute paths in imports, e.g. import Button from 'components/Button'
-    // Keep in sync with .flowconfig and .eslintrc
-    modules: ['node_modules', 'src'],
-  },
-
   module: {
     // Make missing exports an error instead of warning
     strictExportPresence: true,

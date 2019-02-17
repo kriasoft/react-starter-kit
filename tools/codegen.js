@@ -12,7 +12,7 @@ const [_, serverConfig] = webpackConfig;
  * Generate Flow declarations from GraphQL. Since it requires
  * a running GraphQL server, it launches a server for the use.
  */
-export default async function codegenStandalone() {
+export default async function codegen() {
   await runWebpack(
     {
       ...serverConfig,
@@ -31,7 +31,7 @@ export default async function codegenStandalone() {
   const server = new ApolloServer(builtSchema);
   const { server: httpServer } = await server.listen({ port: 3000 });
 
-  await spawn('yarn', ['codegen'], {
+  await spawn('yarn', ['codegen:use-dev-server'], {
     stdio: 'inherit',
   });
 

@@ -103,14 +103,4 @@ module.exports = {
     // PropTypes and states are typed by Flow basically, but Flow cannot type defaultProps.
     'react/require-default-props': 'off',
   },
-
-  settings: {
-    // Allow absolute paths in imports, e.g. import Button from 'components/Button'
-    // https://github.com/benmosher/eslint-plugin-import/tree/master/resolvers
-    'import/resolver': {
-      node: {
-        moduleDirectory: ['node_modules', 'src'],
-      },
-    },
-  },
 };

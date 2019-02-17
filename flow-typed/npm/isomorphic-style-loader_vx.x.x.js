@@ -31,7 +31,15 @@ declare module 'isomorphic-style-loader/lib/insertCss' {
 }
 
 declare module 'isomorphic-style-loader/lib/withStyles' {
-  declare module.exports: any;
+  // TODO: Using ComponentType<T> does not work so simply return T.
+  // import type {ComponentType} from 'react';
+  declare module.exports: (
+    s1: string,
+    s2?: string,
+    s3?: string,
+    s4?: string,
+    s5?: string,
+    ) => (<T>(component: T) => T);
 }
 
 // Filename aliases
