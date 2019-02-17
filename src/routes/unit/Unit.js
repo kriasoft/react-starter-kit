@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Alert, Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
 import MarksTable from '../../components/MarksTable';
@@ -52,7 +52,13 @@ class Unit extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { answerCur: 0, answers: [] };
+    this.state = {
+      answerCur: 0,
+      answers: [],
+      isSaving: false,
+      saveStatus: '',
+      saveMassage: '',
+    };
   }
 
   async componentDidMount() {
@@ -98,7 +104,8 @@ class Unit extends React.Component {
     const res = await this.context.fetch('/graphql', {
       body: formData,
     });
-    const { data } = await res.json();
+    const { data, errors } = await res.json();
+    if (errors && errors.length) throw new Error(errors);
     return { key, data: { type: 'file', id: data.uploadFile.id } };
   }
 
@@ -120,28 +127,39 @@ class Unit extends React.Component {
 
   saveAnswer = async () => {
     const { course, unit } = this.props;
+    this.setState({ isSaving: true });
     const answer = await this.postProcessAnswer(this.props.answer.body);
-    if (this.props.answer.id) {
-      await this.context.fetch('/graphql', {
-        body: JSON.stringify({
-          query: updateAnswer,
-          variables: {
-            body: JSON.stringify(answer),
-            id: this.props.answer.id,
-          },
-        }),
+    try {
+      if (this.props.answer.id) {
+        await this.context.fetch('/graphql', {
+          body: JSON.stringify({
+            query: updateAnswer,
+            variables: {
+              body: JSON.stringify(answer),
+              id: this.props.answer.id,
+            },
+          }),
+        });
+      } else {
+        await this.context.fetch('/graphql', {
+          body: JSON.stringify({
+            query: createAnswer,
+            variables: {
+              body: JSON.stringify(answer),
+              courseId: course.id,
+              unitId: unit.id,
+            },
+          }),
+        });
+      }
+      this.setState({
+        saveStatus: 'success',
+        saveMassage: 'save completed successfully',
       });
-    } else {
-      await this.context.fetch('/graphql', {
-        body: JSON.stringify({
-          query: createAnswer,
-          variables: {
-            body: JSON.stringify(answer),
-            courseId: course.id,
-            unitId: unit.id,
-          },
-        }),
-      });
+    } catch (e) {
+      this.setState({ saveStatus: 'danger', saveMassage: 'save error' });
+    } finally {
+      this.setState({ isSaving: false });
     }
   };
 
@@ -173,7 +191,7 @@ class Unit extends React.Component {
 
   render() {
     const { user = {}, role, unit, course, dispatch } = this.props;
-    const { answers = [], answerCur } = this.state;
+    const { answers = [], answerCur, saveStatus, saveMassage } = this.state;
     return (
       <div className={s.root}>
         <ModalUnitEdit modalId="modalUnitEdit" />
@@ -222,7 +240,12 @@ class Unit extends React.Component {
               )
             }
           />
-          {user && <Button onClick={this.saveAnswer}>Save</Button>}
+          {user && (
+            <Button onClick={this.saveAnswer} disabled={this.state.isSaving}>
+              Save
+            </Button>
+          )}
+          {saveStatus && <Alert variant={saveStatus}>{saveMassage}</Alert>}
           {unit.answers[0] ? (
             <MarksTable />
           ) : (
