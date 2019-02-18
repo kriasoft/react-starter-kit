@@ -1,0 +1,76 @@
+div.topbar {
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgb(46, 42, 38);
+  height: 100px;
+  position: fixed;
+}
+
+div.topbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+div.topbar li {
+  color: white;
+  float: left;
+  padding-right: 0;
+  padding-left: 13px;
+  margin-top: 32px;
+  height: 50px;
+}
+
+div.topbar li section {
+  font-size: 25px;
+}
+
+div.topbar li.logo {
+  display: block;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 30px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+div.topbar li.right {
+  padding-right: 70px;
+  float: right;
+  margin-right: 15px;
+}
+
+div.topbar li:last-child {
+  border-right: none;
+}
+
+div.topbar li a {
+  color: rgba(255, 255, 255, 0.5);
+  display: block;
+  text-align: center;
+  padding: 1px 2px;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+div.topbar li a:hover {
+  cursor: pointer;
+  color: white;
+}
+
+img.logo {
+  display: block;
+  max-height: 50px;
+  margin-top: -10px;
+}
+
+.content img {
+  margin-right: 15px;
+  float: left;
+}
