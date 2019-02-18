@@ -83,6 +83,7 @@ const config = {
 
           // https://babeljs.io/docs/usage/options/
           babelrc: false,
+          configFile: false,
           presets: [
             // A Babel preset that can automatically determine the Babel plugins and polyfills
             // https://github.com/babel/babel-preset-env
