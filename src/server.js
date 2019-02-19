@@ -116,6 +116,7 @@ const server = new ApolloServer({
   introspection: __DEV__,
   playground: __DEV__,
   debug: __DEV__,
+  context: ({ req }) => ({ req }),
 });
 server.applyMiddleware({ app });
 
@@ -140,7 +141,8 @@ app.get('*', async (req, res, next) => {
     const apolloClient = createApolloClient(
       {
         schema: makeExecutableSchema(schema),
-        rootValue: { request: req },
+        // This is a context consumed in GraphQL Resolvers
+        context: { req },
       },
       initialState,
     );

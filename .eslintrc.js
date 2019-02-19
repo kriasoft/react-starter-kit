@@ -96,15 +96,11 @@ module.exports = {
     // ESLint plugin for prettier formatting
     // https://github.com/prettier/eslint-plugin-prettier
     'prettier/prettier': 'error',
-  },
 
-  settings: {
-    // Allow absolute paths in imports, e.g. import Button from 'components/Button'
-    // https://github.com/benmosher/eslint-plugin-import/tree/master/resolvers
-    'import/resolver': {
-      node: {
-        moduleDirectory: ['node_modules', 'src'],
-      },
-    },
+    'react/forbid-prop-types': 'off',
+    'react/destructuring-assignment': 'off',
+
+    // PropTypes and states are typed by Flow basically, but Flow cannot type defaultProps.
+    'react/require-default-props': 'off',
   },
 };

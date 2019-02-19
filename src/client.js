@@ -165,12 +165,14 @@ if (module.hot) {
 }
 
 // This is a demonstration of how to mutate the client state of apollo-link-state.
-// If you don't need the networkState, please erase below lines.
+// If you don't need the networkStatus, please erase below lines.
 function onNetworkStatusChange() {
   apolloClient.mutate({
     mutation: gql`
       mutation updateNetworkStatus($isConnected: Boolean) {
-        updateNetworkStatus(isConnected: $isConnected) @client
+        updateNetworkStatus(isConnected: $isConnected) @client {
+          isConnected
+        }
       }
     `,
     variables: {

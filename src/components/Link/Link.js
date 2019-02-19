@@ -7,8 +7,10 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
+import type { Node } from 'react';
 import history from '../../history';
 
 function isLeftClickEvent(event) {
@@ -19,18 +21,15 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-class Link extends React.Component {
-  static propTypes = {
-    to: PropTypes.string.isRequired,
-    children: PropTypes.node.isRequired,
-    onClick: PropTypes.func,
-  };
+type PropTypes = {|
+  to: string,
+  onClick?: Object => void,
+  children?: Node,
+  className?: string,
+|};
 
-  static defaultProps = {
-    onClick: null,
-  };
-
-  handleClick = event => {
+class Link extends React.Component<PropTypes> {
+  handleClick = (event: any) => {
     if (this.props.onClick) {
       this.props.onClick(event);
     }

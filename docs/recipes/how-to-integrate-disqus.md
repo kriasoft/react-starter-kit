@@ -5,8 +5,8 @@ https://disqus.com/admin/create/
 #### `DisqusThread.js`
 
 ```js
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 
 const SHORTNAME = 'example';
 const WEBSITE_URL = 'http://www.example.com';
@@ -22,13 +22,11 @@ function renderDisqus() {
   }
 }
 
-class DisqusThread extends React.Component {
-  static propTypes = {
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    path: PropTypes.string.isRequired,
-  };
-
+class DisqusThread extends React.Component<{|
+  id: string,
+  title: string,
+  path: string,
+|}> {
   shouldComponentUpdate(nextProps) {
     return (
       this.props.id !== nextProps.id ||

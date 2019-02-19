@@ -6,21 +6,21 @@
 
 ### Table of Contents
 
-* [Separate folder per UI component](#separate-folder-per-ui-component)
-* [Prefer using functional components](#prefer-using-functional-components)
-* [Use CSS Modules](#use-css-modules)
-* [Use higher-order components](#use-higher-order-components)
+- [Separate folder per UI component](#separate-folder-per-ui-component)
+- [Prefer using functional components](#prefer-using-functional-components)
+- [Use CSS Modules](#use-css-modules)
+- [Use higher-order components](#use-higher-order-components)
 
 ### Separate folder per UI component
 
-* Place each major UI component along with its resources in a separate folder\
+- Place each major UI component along with its resources in a separate folder\
   This will make it easier to find related resources for any particular UI element
   (CSS, images, unit tests, localization files etc.). Removing such components during
   refactorings should also be easy.
-* Avoid having CSS, images and other resource files shared between multiple
+- Avoid having CSS, images and other resource files shared between multiple
   components.\
   This will make your code more maintainable, easy to refactor.
-* Add `package.json` file into each component's folder.\
+- Add `package.json` file into each component's folder.\
   This will allow to easily reference such components from other places in your code.\
   Use `import Nav from '../Navigation'` instead of `import Nav from '../Navigation/Navigation.js'`
 
@@ -46,7 +46,7 @@ For more information google for
 
 ### Prefer using functional components
 
-* Prefer using stateless functional components whenever possible.\
+- Prefer using stateless functional components whenever possible.\
   Components that don't use state are better to be written as simple pure functions.
 
 ```jsx
@@ -69,16 +69,16 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 
 ### Use CSS Modules
 
-* Use CSS Modules\
+- Use CSS Modules\
   This will allow using short CSS class names and at the same time avoid conflicts.
-* Keep CSS simple and declarative. Avoid loops, mixins etc.
-* Feel free to use variables in CSS via
+- Keep CSS simple and declarative. Avoid loops, mixins etc.
+- Feel free to use variables in CSS via
   [precss](https://github.com/jonathantneal/precss) plugin for
   [PostCSS](https://github.com/postcss/postcss)
-* Prefer CSS class selectors instead of element and `id` selectors (see
+- Prefer CSS class selectors instead of element and `id` selectors (see
   [BEM](https://bem.info/))
-* Avoid nested CSS selectors (see [BEM](https://bem.info/))
-* When in doubt, use `.root { }` class name for the root elements of your
+- Avoid nested CSS selectors (see [BEM](https://bem.info/))
+- When in doubt, use `.root { }` class name for the root elements of your
   components
 
 ```scss
@@ -125,14 +125,18 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 
 ```jsx
 // Navigation.js
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.scss';
 
-function Navigation() {
+type PropTypes = {|
+  className: string,
+|};
+
+function Navigation(props: PropTypes) {
   return (
-    <nav className={`${s.root} ${this.props.className}`}>
+    <nav className={`${s.root} ${props.className}`}>
       <ul className={s.items}>
         <li className={`${s.item} ${s.selected}`}>
           <a className={s.link} href="/products">
@@ -149,14 +153,12 @@ function Navigation() {
   );
 }
 
-Navigation.propTypes = { className: PropTypes.string };
-
 export default withStyles(Navigation, s);
 ```
 
 ### Use higher-order components
 
-* Use higher-order components (HOC) to extend existing React components.\
+- Use higher-order components (HOC) to extend existing React components.\
   Here is an example:
 
 ```js

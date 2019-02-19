@@ -1,4 +1,4 @@
-import { User, UserProfile } from 'data/models';
+import { User, UserProfile } from '../../../models';
 
 export const schema = [
   `

@@ -7,11 +7,29 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+// @flow
+
 import React from 'react';
+import type { Node } from 'react';
 import PropTypes from 'prop-types';
 import { ApolloProvider } from 'react-apollo';
 
-const ContextType = {
+// Since the current React Starter Kit uses older React Context API that cannot be typed,
+// here we declare duplicate type information.
+
+type ContextType = {|
+  insertCss: Function,
+  pathname: string,
+  query: Object,
+  client: Object,
+|};
+
+type Props = {|
+  context: ContextType,
+  children: Node,
+|};
+
+const ContextRuntimeType = {
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
   insertCss: PropTypes.func.isRequired,
@@ -20,6 +38,11 @@ const ContextType = {
   query: PropTypes.object,
   // Apollo Client
   client: PropTypes.object.isRequired,
+};
+
+const PropTypesRuntimeType = {
+  context: PropTypes.shape(ContextRuntimeType).isRequired,
+  children: PropTypes.element.isRequired,
 };
 
 /**
@@ -44,13 +67,10 @@ const ContextType = {
  *     container,
  *   );
  */
-class App extends React.PureComponent {
-  static propTypes = {
-    context: PropTypes.shape(ContextType).isRequired,
-    children: PropTypes.element.isRequired,
-  };
+class App extends React.PureComponent<Props> {
+  static propTypes = PropTypesRuntimeType;
 
-  static childContextTypes = ContextType;
+  static childContextTypes = ContextRuntimeType;
 
   getChildContext() {
     return this.props.context;
