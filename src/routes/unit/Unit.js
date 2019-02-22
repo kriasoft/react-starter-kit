@@ -50,6 +50,20 @@ class Unit extends React.Component {
     }),
   };
 
+  static getAnswersByUser(answers, userId) {
+    const data = {};
+    answers.forEach(answer => {
+      const { id } = answer.user;
+      const ua = data[id] || { user: answer.user, answers: [] };
+      data[id] = ua;
+      ua.answers.push(answer);
+    });
+    return {
+      users: Object.values(data).map(d => d.user),
+      answers: (data[userId] || { answers: [] }).answers,
+    };
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -78,10 +92,17 @@ class Unit extends React.Component {
       [name]: value,
     });
 
-  handleAnswerSelect = eventKey => {
-    const answerCur = parseInt(eventKey, 10);
+  handleUserSelect = id => {
+    const userCur = id;
+    this.setState({ userCur, answerCur: undefined });
+  };
+
+  handleAnswerSelect = id => {
+    const answerCur = id;
     this.setState({ answerCur });
-    this.props.dispatch(setAnswer(this.state.answers[answerCur]));
+    this.props.dispatch(
+      setAnswer(this.state.answers.find(ans => ans.id === answerCur)),
+    );
   };
 
   async uploadFile(key, file) {
@@ -191,7 +212,16 @@ class Unit extends React.Component {
 
   render() {
     const { user = {}, role, unit, course, dispatch } = this.props;
-    const { answers = [], answerCur, saveStatus, saveMassage } = this.state;
+    const {
+      answers = [],
+      userCur,
+      answerCur,
+      saveStatus,
+      saveMassage,
+    } = this.state;
+    const ua = Unit.getAnswersByUser(answers, userCur);
+    const answerUser = ua.users.find(u => u.id === userCur);
+    const answer = answers.find(ans => ans.id === answerCur);
     return (
       <div className={s.root}>
         <ModalUnitEdit modalId="modalUnitEdit" />
@@ -205,29 +235,40 @@ class Unit extends React.Component {
                 glyph="pencil"
               />
             )}
-            {(role === 'teacher' || user.isAdmin) &&
-              answers[answerCur] && (
+            {(role === 'teacher' || user.isAdmin) && (
+              <React.Fragment>
+                <DropdownButton
+                  id="user_chooser"
+                  title={answerUser && answerUser.profile.displayName}
+                  onSelect={this.handleUserSelect}
+                >
+                  {ua.users.map(u => (
+                    <MenuItem
+                      key={u.id}
+                      eventKey={u.id}
+                      active={u.id === userCur}
+                    >
+                      {u.profile.displayName}
+                    </MenuItem>
+                  ))}
+                </DropdownButton>
                 <DropdownButton
                   id="answer_chooser"
-                  title={`${answers[answerCur].user.profile.displayName} ${
-                    answers[answerCur].createdAt
-                  }`}
+                  title={answer && answer.createdAt}
                   onSelect={this.handleAnswerSelect}
                 >
-                  {user.isAdmin &&
-                    answers.map((ans, i) => (
-                      <MenuItem
-                        key={ans.id}
-                        eventKey={i}
-                        active={i === answerCur}
-                      >
-                        {`
-                      ${ans.user.profile.displayName}
-                      ${ans.createdAt}`}
-                      </MenuItem>
-                    ))}
+                  {ua.answers.map(ans => (
+                    <MenuItem
+                      key={ans.id}
+                      eventKey={ans.id}
+                      active={ans.id === answerCur}
+                    >
+                      {ans.createdAt}
+                    </MenuItem>
+                  ))}
                 </DropdownButton>
-              )}
+              </React.Fragment>
+            )}
           </h1>
           <UnitView
             answerId={this.props.answer.id}
