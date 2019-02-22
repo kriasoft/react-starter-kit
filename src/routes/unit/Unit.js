@@ -213,6 +213,7 @@ class Unit extends React.Component {
         }),
       });
     }
+    this.props.dispatch(setAnswer(answers[0] || { body: {} }));
   }
 
   render() {

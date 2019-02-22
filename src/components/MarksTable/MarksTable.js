@@ -6,6 +6,7 @@ import moment from 'moment';
 import IconButton from '../IconButton/IconButton';
 import { createMark } from '../../actions/units';
 import User from '../User';
+import { getRole } from '../../util/course';
 
 class MarksTable extends Component {
   static propTypes = {
@@ -23,6 +24,12 @@ class MarksTable extends Component {
           }),
         }),
       ),
+    }).isRequired,
+    course: PropTypes.shape({
+      id: PropTypes.string,
+    }).isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.string,
     }).isRequired,
     createMark: PropTypes.func.isRequired,
   };
@@ -55,8 +62,10 @@ class MarksTable extends Component {
 
   render() {
     const { mark, comment } = this.state;
-    const { answer } = this.props;
+    const { answer, course, user } = this.props;
     const { marks = [] } = answer;
+
+    const role = getRole(course, user);
 
     return (
       <Fragment>
@@ -65,7 +74,7 @@ class MarksTable extends Component {
           <Table striped bordered responsive hover>
             <thead>
               <tr>
-                <th>№</th>
+                <th>#</th>
                 <th>Mark</th>
                 <th>Comment</th>
                 <th>Date</th>
@@ -95,44 +104,46 @@ class MarksTable extends Component {
                   </td>
                 </tr>
               )}
-              <tr>
-                <td />
-                <td>
-                  <FormGroup
-                    bsClass="mb-0"
-                    controlId="mark"
-                    validationState={this.getValidationState()}
-                  >
+              {(user.isAdmin || role === 'teacher') && (
+                <tr>
+                  <td />
+                  <td>
+                    <FormGroup
+                      bsClass="mb-0"
+                      controlId="mark"
+                      validationState={this.getValidationState()}
+                    >
+                      <FormControl
+                        type="number"
+                        width="100px"
+                        min="0"
+                        max="100"
+                        step="10"
+                        placeholder="Mark from 0 to 100"
+                        value={mark}
+                        onChange={this.handleChange('mark')}
+                      />
+                      <FormControl.Feedback />
+                    </FormGroup>
+                  </td>
+                  <td colSpan="2">
                     <FormControl
-                      type="number"
-                      width="100px"
-                      min="0"
-                      max="100"
-                      step="10"
-                      placeholder="Mark from 0 to 100"
-                      value={mark}
-                      onChange={this.handleChange('mark')}
+                      componentClass="textarea"
+                      rows={1}
+                      placeholder="Comment"
+                      value={comment}
+                      onChange={this.handleChange('comment')}
                     />
-                    <FormControl.Feedback />
-                  </FormGroup>
-                </td>
-                <td colSpan="2">
-                  <FormControl
-                    componentClass="textarea"
-                    rows={1}
-                    placeholder="Comment"
-                    value={comment}
-                    onChange={this.handleChange('comment')}
-                  />
-                </td>
-                <td>
-                  <IconButton
-                    disabled={this.getValidationState() === 'error'}
-                    onClick={this.handleSubmit}
-                    glyph="ok"
-                  />
-                </td>
-              </tr>
+                  </td>
+                  <td>
+                    <IconButton
+                      disabled={this.getValidationState() === 'error'}
+                      onClick={this.handleSubmit}
+                      glyph="ok"
+                    />
+                  </td>
+                </tr>
+              )}
             </tbody>
           </Table>
         </form>
@@ -143,6 +154,8 @@ class MarksTable extends Component {
 
 const mapStateToProps = state => ({
   answer: state.answer,
+  user: state.user,
+  course: state.course,
 });
 
 export default connect(

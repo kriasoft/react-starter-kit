@@ -5,7 +5,9 @@ import {
   GraphQLNonNull as NonNull,
 } from 'graphql';
 import MarkType from '../types/MarkType';
+import Answer from '../models/Answer';
 import Mark from '../models/Mark';
+import { NotLoggedInError, NoAccessError } from '../../errors';
 
 const createMark = {
   type: MarkType,
@@ -23,7 +25,12 @@ const createMark = {
       type: new NonNull(StringType),
     },
   },
-  resolve({ request }, args) {
+  async resolve({ request }, args) {
+    const { user } = request;
+    if (!user) throw new NotLoggedInError();
+    const answer = await Answer.findById(args.answerId);
+    const role = await user.getRole(answer.courseId);
+    if (role !== 'teacher' && !user.isAdmin) throw new NoAccessError();
     return Mark.create({
       ...args,
       authorId: request.user.id,
