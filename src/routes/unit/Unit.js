@@ -59,8 +59,14 @@ class Unit extends React.Component {
       ua.answers.push(answer);
     });
     return {
-      users: Object.values(data).map(d => d.user),
-      answers: (data[userId] || { answers: [] }).answers,
+      users: Object.values(data).map(d => ({
+        ...d.user,
+        needMark: d.answers.some(ans => !ans.marks.length),
+      })),
+      answers: (data[userId] || { answers: [] }).answers.map(ans => ({
+        ...ans,
+        needMark: !ans.marks.length,
+      })),
     };
   }
 
@@ -207,7 +213,6 @@ class Unit extends React.Component {
         }),
       });
     }
-    this.props.dispatch(setAnswer(answers[0] || { body: {} }));
   }
 
   render() {
@@ -239,7 +244,9 @@ class Unit extends React.Component {
               <React.Fragment>
                 <DropdownButton
                   id="user_chooser"
-                  title={answerUser && answerUser.profile.displayName}
+                  title={
+                    (answerUser && answerUser.profile.displayName) || 'User'
+                  }
                   onSelect={this.handleUserSelect}
                 >
                   {ua.users.map(u => (
@@ -247,6 +254,7 @@ class Unit extends React.Component {
                       key={u.id}
                       eventKey={u.id}
                       active={u.id === userCur}
+                      className={u.needMark && s['need-mark']}
                     >
                       {u.profile.displayName}
                     </MenuItem>
@@ -254,7 +262,7 @@ class Unit extends React.Component {
                 </DropdownButton>
                 <DropdownButton
                   id="answer_chooser"
-                  title={answer && answer.createdAt}
+                  title={(answer && answer.createdAt) || 'Answer'}
                   onSelect={this.handleAnswerSelect}
                 >
                   {ua.answers.map(ans => (
@@ -262,6 +270,7 @@ class Unit extends React.Component {
                       key={ans.id}
                       eventKey={ans.id}
                       active={ans.id === answerCur}
+                      className={ans.needMark && s['need-mark']}
                     >
                       {ans.createdAt}
                     </MenuItem>
