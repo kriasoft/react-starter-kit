@@ -19,19 +19,27 @@ const File = Model.define('file', {
   url: {
     type: DataType.STRING,
   },
+  parentType: {
+    type: DataType.STRING,
+  },
+  parentId: {
+    type: DataType.UUID,
+  },
 });
+
+File.prototype.getParentModel = function getParentModel() {
+  return Model.models[this.parentType];
+};
+
+File.prototype.getParent = function getParent() {
+  const model = this.getParentModel();
+  return model.findById(this.parentId);
+};
 
 File.prototype.canRead = async function canRead(user) {
   if (util.haveAccess(user, this.userId)) return true;
-  if (this.answerId) {
-    const answer = await this.getAnswer();
-    return !!user.getRole(answer.courseId);
-  }
-  if (this.unitId) {
-    const answer = await this.getAnswer();
-    return !!user.getRole(answer.courseId);
-  }
-  return false;
+  const obj = await this.getParent();
+  return obj.canRead();
 };
 
 File.prototype.canWrite = function canWrite(user) {
@@ -72,7 +80,7 @@ const storeToFn = {
 };
 
 File.uploadFile = (
-  { buffer, internalName, userId, answerId, unitId },
+  { buffer, internalName, userId, parentType, parentId },
   store = 'fs',
 ) =>
   Model.transaction(t =>
@@ -80,8 +88,8 @@ File.uploadFile = (
       {
         internalName,
         userId,
-        answerId,
-        unitId,
+        parentType,
+        parentId,
       },
       { transaction: t },
     )
