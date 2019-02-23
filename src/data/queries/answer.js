@@ -51,13 +51,16 @@ async function uploadFiles(request, answer, body, t) {
       },
       { transaction: t },
     );
-    body[uploads[i]] = _.pick(file, [
-      'createdAt',
-      'id',
-      'internalName',
-      'updatedAt',
-      'userId',
-    ]);
+    body[uploads[i]] = {
+      ..._.pick(file, [
+        'createdAt',
+        'id',
+        'internalName',
+        'updatedAt',
+        'userId',
+      ]),
+      type: 'file',
+    };
   }
   return body;
 }
