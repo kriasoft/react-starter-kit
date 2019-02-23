@@ -5,6 +5,7 @@ import {
 } from 'graphql';
 import FileType from '../types/FileType';
 import File from '../models/File';
+import Model from '../sequelize';
 import { NotLoggedInError, NoAccessError } from '../../errors';
 
 const files = {
@@ -37,22 +38,25 @@ const files = {
 const uploadFile = {
   type: FileType,
   args: {
-    internalName: { type: new NonNull(StringType) },
-    userId: { type: new NonNull(StringType) },
     parentType: { type: new NonNull(StringType) },
     parentId: { type: new NonNull(StringType) },
     key: { type: new NonNull(StringType) },
   },
   resolve({ request }, args) {
     if (!request.user) throw new NotLoggedInError();
-    return File.uploadFile({
-      internalName: request.files[0].originalname,
-      userId: args.userId,
-      buffer: request.files[0].buffer,
-      parentType: args.parentType,
-      parentId: args.parentId,
-      key: args.key,
-    });
+    return Model.transaction(t =>
+      File.uploadFile(
+        {
+          internalName: request.files[0].originalname,
+          userId: request.user.id,
+          buffer: request.files[0].buffer,
+          parentType: args.parentType,
+          parentId: args.parentId,
+          key: args.key,
+        },
+        { transaction: t },
+      ),
+    );
   },
 };
 

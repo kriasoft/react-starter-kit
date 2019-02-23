@@ -9,6 +9,7 @@ import {
 } from 'react-bootstrap';
 import Modal from '../../components/Modal';
 import TextEditor from '../../components/TextEditor';
+import UploadForm from '../../components/UploadForm';
 import { updateUnit, addUnit } from '../../actions/units';
 
 class ModalUnitEdit extends React.Component {
@@ -27,9 +28,41 @@ class ModalUnitEdit extends React.Component {
     edit: true,
   };
 
+  static contextTypes = {
+    fetch: PropTypes.func.isRequired,
+  };
+
   state = {};
 
   handleChange = e => this.setState({ [e.target.name]: e.target.value });
+
+  handleFileUpload = async files => {
+    const { fetch } = this.context;
+    const formData = new FormData();
+    formData.append('upload', files[0]);
+    formData.append(
+      'query',
+      `mutation uploadFile($parentType: String!, $parentId: String!, $key: String!) {
+        uploadFile(parentType: $parentType, parentId: $parentId, key: $key) { id internalName user { id } }
+      }`,
+    );
+    formData.append(
+      'variables',
+      JSON.stringify({
+        parentType: 'unit',
+        parentId: this.props.unit.id,
+        key: 'material',
+      }),
+    );
+    try {
+      const resp = await fetch('/graphql', {
+        body: formData,
+      });
+      await resp.json();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   render() {
     const { dispatch, unit = {}, edit } = this.props;
@@ -64,6 +97,11 @@ class ModalUnitEdit extends React.Component {
               onChange={value => this.setState({ body: value })}
             />
           </FormGroup>
+          {edit && (
+            <FormGroup>
+              <UploadForm onUpload={this.handleFileUpload} />
+            </FormGroup>
+          )}
         </Modal.Body>
       </Modal>
     );

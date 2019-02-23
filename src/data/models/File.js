@@ -99,7 +99,7 @@ File.uploadFile = async (
     return file;
   } catch (err) {
     console.error(err);
-    if (!transaction) t.rollback();
+    if (!transaction) await t.rollback();
     throw err;
   }
 };
