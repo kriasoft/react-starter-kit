@@ -16,7 +16,7 @@ export default class InputCheckbox extends Base {
     const valueAttrs = {
       checked:
         this.root.state.answers[name] || _.get(node, 'attribs.value', ''),
-      onChange: event => this.root.updateAnswer(name, event.target.checked),
+      onChange: event => this.root.setAnswer(name, event.target.checked),
     };
     return <input {...renderAttrs} {...valueAttrs} />;
   }

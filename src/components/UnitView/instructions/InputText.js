@@ -15,7 +15,7 @@ export default class InputText extends Base {
     const renderAttrs = Base.inputRenderAttrs(node, children, index);
     const valueAttrs = {
       value: this.root.state.answers[name] || _.get(node, 'attribs.value', ''),
-      onChange: event => this.root.updateAnswer(name, event.target.value),
+      onChange: event => this.root.setAnswer(name, event.target.value),
     };
     return <input {...renderAttrs} {...valueAttrs} />;
   }

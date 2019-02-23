@@ -24,7 +24,7 @@ export default class TextareaLanguage extends Base {
     const valueAttrs = {
       value:
         this.root.state.answers[name] || _.get(node, 'children[0].data', ''),
-      onChange: this.root.updateAnswer.bind(this.root, name),
+      onChange: this.root.setAnswer.bind(this.root, name),
     };
     return <TextEditor {...renderAttrs} {...valueAttrs} />;
   }

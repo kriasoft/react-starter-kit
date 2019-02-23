@@ -21,7 +21,7 @@ export default class InputRadio extends Base {
     const valueAttrs = {
       value,
       checked: this.root.state.answers[name] === value,
-      onChange: event => this.root.updateAnswer(name, event.target.value),
+      onChange: event => this.root.setAnswer(name, event.target.value),
     };
     return <input {...renderAttrs} {...valueAttrs} />;
   }

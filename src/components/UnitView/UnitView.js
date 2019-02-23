@@ -42,10 +42,39 @@ class UnitView extends React.Component {
     }
   }
 
-  updateAnswer(name, value) {
+  setAnswer(name, value, state) {
     const answers = { ...this.state.answers, [name]: value };
-    this.setState({ answers });
     if (this.props.onChange) this.props.onChange(answers);
+    if (state) {
+      const answerState = this.prefixedAnswerState(name, state);
+      this.setState({ answers, ...answerState });
+    } else {
+      this.setState({ answers });
+    }
+  }
+
+  setAnswerState(name, value) {
+    const answerState = this.prefixedAnswerState(name, value);
+    this.setState(answerState);
+  }
+
+  getAnswerState(name) {
+    const answerState = {};
+    Object.keys(this.state).forEach(k => {
+      const key = `${name}_`;
+      if (!k.startsWith(key)) return;
+      answerState[k.replace(key, '')] = this.state[k];
+    });
+    return answerState;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  prefixedAnswerState(name, value) {
+    const answerState = {};
+    Object.keys(value).forEach(k => {
+      answerState[`${name}_${k}`] = value[k];
+    });
+    return answerState;
   }
 
   initProcessingInstructions() {
