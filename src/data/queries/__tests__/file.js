@@ -47,16 +47,11 @@ beforeAll(async () => {
         buffer: `test file ${i}`,
         internalName: `test${i}.txt`,
         userId: i < 2 ? u1.id : u2.id,
+        parentType: 'answer',
+        parentId: i < 2 ? a1.id : a2.id,
       },
-      'mem',
+      { store: 'mem' },
     );
-    // eslint-disable-next-line no-await-in-loop
-    const parent = await file.createParent({
-      parentType: 'answer',
-      parentId: i < 2 ? a1.id : a2.id,
-    });
-    // eslint-disable-next-line no-await-in-loop
-    await file.addParent(parent);
     files.push(file);
   }
 });

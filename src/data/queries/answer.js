@@ -1,11 +1,13 @@
 import 'babel-regenerator-runtime';
+import _ from 'lodash';
 import {
   GraphQLString as StringType,
   GraphQLList as List,
   GraphQLNonNull as NonNull,
 } from 'graphql';
-import Answer from '../models/Answer';
+import { Answer, File } from '../models';
 import AnswerType from '../types/AnswerType';
+import Model from '../sequelize';
 import { NoAccessError } from '../../errors';
 
 const createAnswer = {
@@ -70,11 +72,35 @@ const updateAnswer = {
       type: StringType,
     },
   },
-  async resolve({ request }, args) {
-    const answer = await Answer.findById(args.id);
-    if (!answer.canWrite(request.user)) throw new NoAccessError();
-    return answer.update({ body: args.body });
-  },
+  resolve: ({ request }, args) =>
+    Model.transaction(async t => {
+      const answer = await Answer.findById(args.id);
+      if (!answer.canWrite(request.user)) throw new NoAccessError();
+      const uploads = JSON.parse(request.body.upload_order);
+      const body = JSON.parse(args.body);
+      for (let i = 0; i < uploads.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        const file = await File.uploadFile(
+          {
+            buffer: request.files[i].buffer,
+            internalName: request.files[i].originalname,
+            userId: request.user.id,
+            parentType: 'answer',
+            parentId: answer.id,
+            key: uploads[i],
+          },
+          { transaction: t },
+        );
+        body[uploads[i]] = _.pick(file, [
+          'createdAt',
+          'id',
+          'internalName',
+          'updatedAt',
+          'userId',
+        ]);
+      }
+      return answer.update({ body: JSON.stringify(body) }, { transaction: t });
+    }),
 };
 
 export { createAnswer, answers, updateAnswer };

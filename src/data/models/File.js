@@ -71,25 +71,37 @@ const storeToFn = {
   mem: uploadFileToMem,
 };
 
-File.uploadFile = ({ buffer, internalName, userId }, store = 'fs') =>
-  Model.transaction(async t => {
-    try {
-      const file = await File.create(
-        {
-          internalName,
-          userId,
-        },
+File.uploadFile = async (
+  { buffer, internalName, userId, parentType, parentId, key },
+  { store = 'fs', transaction } = {},
+) => {
+  const t = transaction || (await Model.transaction());
+  try {
+    const file = await File.create(
+      {
+        internalName,
+        userId,
+      },
+      { transaction: t },
+    );
+    if (!storeToFn[store])
+      throw new Error(`store '${store}' is not implemented yet`);
+    if (parentType) {
+      const parent = await file.createParent(
+        { parentType, parentId, key },
         { transaction: t },
       );
-      if (!storeToFn[store])
-        throw new Error(`store '${store}' is not implemented yet`);
-      file.url = await storeToFn[store](file, buffer);
-      return file.save({ transaction: t });
-    } catch (err) {
-      console.error(err);
-      t.rollback();
-      throw err;
+      await file.addParent(parent, { transaction: t });
     }
-  });
+    file.url = await storeToFn[store](file, buffer);
+    file.save({ transaction: t });
+    if (!transaction) await t.commit();
+    return file;
+  } catch (err) {
+    console.error(err);
+    if (!transaction) t.rollback();
+    throw err;
+  }
+};
 
 export default File;

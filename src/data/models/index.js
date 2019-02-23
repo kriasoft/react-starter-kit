@@ -118,14 +118,18 @@ function sync(...args) {
 
 export default { sync };
 export {
-  User,
-  UserLogin,
-  UserClaim,
-  UserProfile,
+  Answer,
   Course,
-  Unit,
-  UserCourse,
-  Group,
+  CourseUnit,
   File,
+  FileParent,
+  Group,
+  Mark,
+  Unit,
+  User,
+  UserClaim,
+  UserCourse,
   UserGroup,
+  UserLogin,
+  UserProfile,
 };

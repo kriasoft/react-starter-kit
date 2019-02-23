@@ -9,7 +9,6 @@ import { setAnswer, setAnswerBody } from '../../actions/units';
 import { setSecondMenu } from '../../actions/menu';
 import updateAnswer from '../../gql/updateAnswer.gql';
 import createAnswer from '../../gql/createAnswer.gql';
-import uploadFile from '../../gql/uploadFile.gql';
 import retrieveAnswerQuery from '../../gql/retrieveAnswer.gql';
 import s from './Unit.css';
 import Link from '../../components/Link/Link';
@@ -112,74 +111,61 @@ class Unit extends React.Component {
     );
   };
 
-  async uploadFile(answerId, key, file) {
-    const { user } = this.props;
-    const formData = new FormData();
-    formData.append('query', uploadFile);
-    formData.append(
-      'variables',
-      JSON.stringify({
-        userId: user.id,
-        internalName: file.name,
-        parentType: 'answer',
-        parentId: answerId,
-      }),
-    );
-    formData.append('file', file);
-    const res = await this.context.fetch('/graphql', {
-      body: formData,
-    });
-    const { data, errors } = await res.json();
-    if (errors && errors.length) throw new Error(errors);
-    return { key, data: { type: 'file', id: data.uploadFile.id } };
-  }
-
-  async postProcessAnswer(answerId, answer) {
-    const res = { ...answer };
-    const files = Object.entries(answer).filter(
+  /**
+   * Prepare data for sending
+   * @returns {Object} object with body and data fields, where body - Object
+   * with answer, data - additional FormData to be sent
+   */
+  prepareAnswer() {
+    const { body } = this.props.answer;
+    const files = Object.entries(body).filter(
       ans => ans[1] instanceof window.File,
     );
-    const tasks = [];
-    for (let i = 0; i < files.length; i += 1) {
-      tasks.push(this.uploadFile(answerId, files[i][0], files[i][1]));
-    }
-    const filesData = await Promise.all(tasks);
-    filesData.forEach(fd => {
-      res[fd.key] = fd.data;
+    const uploadOrder = [];
+    const data = [];
+    files.forEach(file => {
+      uploadOrder.push(file[0]);
+      data.push(['upload', file[1]]);
+      delete body[file[0]];
     });
-    return res;
+    data.unshift(['upload_order', JSON.stringify(uploadOrder)]);
+    return { body, data };
   }
 
+  /**
+   * Sends prepared data
+   * @param {string} query - query for GraphQL (create or update)
+   * @param {Object} answer - body of the answer
+   * @param {Object} variables - additional varibales for query
+   */
+  sendAnswer(query, answer, variables) {
+    const formData = new FormData();
+    formData.append('query', query);
+    formData.append(
+      'variables',
+      JSON.stringify({ ...variables, body: JSON.stringify(answer.body) }),
+    );
+    answer.data.forEach(d => formData.append(d[0], d[1]));
+    return this.context.fetch('/graphql', {
+      body: formData,
+    });
+  }
+
+  /**
+   * Generates and sends FormData to the server. Expects that
+   * this.props.answers contains Object with fields, some of them may be File
+   */
   saveAnswer = async () => {
     const { course, unit } = this.props;
     this.setState({ isSaving: true });
-    const answer = await this.postProcessAnswer(
-      this.props.answer.id,
-      this.props.answer.body,
-    );
+    const answerId = this.props.answer.id;
+    const answer = this.prepareAnswer();
     try {
-      if (this.props.answer.id) {
-        await this.context.fetch('/graphql', {
-          body: JSON.stringify({
-            query: updateAnswer,
-            variables: {
-              body: JSON.stringify(answer),
-              id: this.props.answer.id,
-            },
-          }),
-        });
-      } else {
-        await this.context.fetch('/graphql', {
-          body: JSON.stringify({
-            query: createAnswer,
-            variables: {
-              body: JSON.stringify(answer),
-              courseId: course.id,
-              unitId: unit.id,
-            },
-          }),
-        });
-      }
+      await this.sendAnswer(
+        answerId ? updateAnswer : createAnswer,
+        answer,
+        answerId ? { id: answerId } : { courseId: course.id, unitId: unit.id },
+      );
       this.setState({
         saveStatus: 'success',
         saveMassage: 'save completed successfully',

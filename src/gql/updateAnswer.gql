@@ -1,5 +1,6 @@
 mutation update($body: String, $id: String!) {
   updateAnswer(body: $body, id: $id) {
-    id
+    id,
+    body
   }
 }

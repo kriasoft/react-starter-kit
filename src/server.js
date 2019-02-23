@@ -156,7 +156,7 @@ app.get(
 // Register API middleware
 // -----------------------------------------------------------------------------
 const storage = multer.memoryStorage();
-app.use('/graphql', multer({ storage }).single('file'));
+app.use('/graphql', multer({ storage }).array('upload'));
 
 app.use(
   '/graphql',

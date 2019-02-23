@@ -41,15 +41,17 @@ const uploadFile = {
     userId: { type: new NonNull(StringType) },
     parentType: { type: new NonNull(StringType) },
     parentId: { type: new NonNull(StringType) },
+    key: { type: new NonNull(StringType) },
   },
   resolve({ request }, args) {
     if (!request.user) throw new NotLoggedInError();
     return File.uploadFile({
-      internalName: args.internalName,
+      internalName: request.files[0].originalname,
       userId: args.userId,
-      buffer: request.file.buffer,
+      buffer: request.files[0].buffer,
       parentType: args.parentType,
       parentId: args.parentId,
+      key: args.key,
     });
   },
 };
