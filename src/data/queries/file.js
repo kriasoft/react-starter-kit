@@ -39,6 +39,8 @@ const uploadFile = {
   args: {
     internalName: { type: new NonNull(StringType) },
     userId: { type: new NonNull(StringType) },
+    parentType: { type: new NonNull(StringType) },
+    parentId: { type: new NonNull(StringType) },
   },
   resolve({ request }, args) {
     if (!request.user) throw new NotLoggedInError();
@@ -46,6 +48,8 @@ const uploadFile = {
       internalName: args.internalName,
       userId: args.userId,
       buffer: request.file.buffer,
+      parentType: args.parentType,
+      parentId: args.parentId,
     });
   },
 };

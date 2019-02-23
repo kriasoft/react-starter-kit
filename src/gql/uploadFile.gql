@@ -1,0 +1,12 @@
+mutation uploadFile(
+  $internalName: String!,
+  $userId: String!,
+  $parentType: String!,
+  $parentId: String!) {
+  uploadFile(
+    internalName: $internalName,
+    userId: $userId,
+    parentType: $parentType,
+    parentId: $parentId
+  ) { id }
+}

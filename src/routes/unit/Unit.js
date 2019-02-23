@@ -9,6 +9,7 @@ import { setAnswer, setAnswerBody } from '../../actions/units';
 import { setSecondMenu } from '../../actions/menu';
 import updateAnswer from '../../gql/updateAnswer.gql';
 import createAnswer from '../../gql/createAnswer.gql';
+import uploadFile from '../../gql/uploadFile.gql';
 import retrieveAnswerQuery from '../../gql/retrieveAnswer.gql';
 import s from './Unit.css';
 import Link from '../../components/Link/Link';
@@ -111,20 +112,17 @@ class Unit extends React.Component {
     );
   };
 
-  async uploadFile(key, file) {
+  async uploadFile(answerId, key, file) {
     const { user } = this.props;
     const formData = new FormData();
-    formData.append(
-      'query',
-      `mutation uploadFile($internalName: String!, $userId: String!) {
-        uploadFile(internalName: $internalName, userId: $userId) { id }
-      }`,
-    );
+    formData.append('query', uploadFile);
     formData.append(
       'variables',
       JSON.stringify({
         userId: user.id,
         internalName: file.name,
+        parentType: 'answer',
+        parentId: answerId,
       }),
     );
     formData.append('file', file);
@@ -136,14 +134,14 @@ class Unit extends React.Component {
     return { key, data: { type: 'file', id: data.uploadFile.id } };
   }
 
-  async postProcessAnswer(answer) {
+  async postProcessAnswer(answerId, answer) {
     const res = { ...answer };
     const files = Object.entries(answer).filter(
       ans => ans[1] instanceof window.File,
     );
     const tasks = [];
     for (let i = 0; i < files.length; i += 1) {
-      tasks.push(this.uploadFile(files[i][0], files[i][1]));
+      tasks.push(this.uploadFile(answerId, files[i][0], files[i][1]));
     }
     const filesData = await Promise.all(tasks);
     filesData.forEach(fd => {
@@ -155,7 +153,10 @@ class Unit extends React.Component {
   saveAnswer = async () => {
     const { course, unit } = this.props;
     this.setState({ isSaving: true });
-    const answer = await this.postProcessAnswer(this.props.answer.body);
+    const answer = await this.postProcessAnswer(
+      this.props.answer.id,
+      this.props.answer.body,
+    );
     try {
       if (this.props.answer.id) {
         await this.context.fetch('/graphql', {

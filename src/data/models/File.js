@@ -19,27 +19,19 @@ const File = Model.define('file', {
   url: {
     type: DataType.STRING,
   },
-  parentType: {
-    type: DataType.STRING,
-  },
-  parentId: {
-    type: DataType.UUID,
-  },
 });
-
-File.prototype.getParentModel = function getParentModel() {
-  return Model.models[this.parentType];
-};
-
-File.prototype.getParent = function getParent() {
-  const model = this.getParentModel();
-  return model.findById(this.parentId);
-};
 
 File.prototype.canRead = async function canRead(user) {
   if (util.haveAccess(user, this.userId)) return true;
-  const obj = await this.getParent();
-  return obj.canRead(user);
+  const parents = await this.getParents();
+  for (let i = 0; i < parents.length; i += 1) {
+    const parent = parents[i];
+    // eslint-disable-next-line no-await-in-loop
+    const obj = await parent.getEntity();
+    // eslint-disable-next-line no-await-in-loop
+    if (await obj.canRead(user)) return true;
+  }
+  return false;
 };
 
 File.prototype.canWrite = function canWrite(user) {
@@ -79,30 +71,25 @@ const storeToFn = {
   mem: uploadFileToMem,
 };
 
-File.uploadFile = (
-  { buffer, internalName, userId, parentType, parentId },
-  store = 'fs',
-) =>
-  Model.transaction(t =>
-    File.create(
-      {
-        internalName,
-        userId,
-        parentType,
-        parentId,
-      },
-      { transaction: t },
-    )
-      .then(async file => {
-        if (!storeToFn[store])
-          throw new Error(`store '${store}' is not implemented yet`);
-        file.url = await storeToFn[store](file, buffer);
-        return file.save({ transaction: t });
-      })
-      .catch(err => {
-        console.error(err);
-        t.rollback();
-      }),
-  );
+File.uploadFile = ({ buffer, internalName, userId }, store = 'fs') =>
+  Model.transaction(async t => {
+    try {
+      const file = await File.create(
+        {
+          internalName,
+          userId,
+        },
+        { transaction: t },
+      );
+      if (!storeToFn[store])
+        throw new Error(`store '${store}' is not implemented yet`);
+      file.url = await storeToFn[store](file, buffer);
+      return file.save({ transaction: t });
+    } catch (err) {
+      console.error(err);
+      t.rollback();
+      throw err;
+    }
+  });
 
 export default File;
