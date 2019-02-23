@@ -1,5 +1,6 @@
 mutation add($body: String!, $courseId: String!, $unitId: String!) {
   createAnswer(body: $body, courseId: $courseId, unitId: $unitId) {
-    id
+    id,
+    body
   }
 }
