@@ -1,4 +1,5 @@
 #!/bin/sh
+git checkout -- yarn.lock
 git pull origin master
 yarn install
 yarn build --release
