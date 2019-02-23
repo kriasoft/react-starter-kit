@@ -39,7 +39,7 @@ File.prototype.getParent = function getParent() {
 File.prototype.canRead = async function canRead(user) {
   if (util.haveAccess(user, this.userId)) return true;
   const obj = await this.getParent();
-  return obj.canRead();
+  return obj.canRead(user);
 };
 
 File.prototype.canWrite = function canWrite(user) {

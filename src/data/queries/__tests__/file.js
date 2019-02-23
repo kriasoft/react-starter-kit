@@ -37,7 +37,7 @@ beforeAll(async () => {
   a2 = await createMockAnswer({
     courseId: c1.id,
     unitId: unit1.id,
-    userId: u1.id,
+    userId: u2.id,
     body: '',
   });
   for (let i = 0; i < 3; i += 1) {
@@ -80,6 +80,7 @@ async function t({ arExp, user, isAdmin, role, fls, error }) {
 describe('files access', () => {
   test('read my files', () =>
     t({ arExp: [files[0], files[1]], user: u1, isAdmin: false }));
+  // u1 don't have access to f2
   test('read files[no role]', () =>
     t({
       error: new NoAccessError(),
@@ -88,14 +89,25 @@ describe('files access', () => {
       role: '',
       fls: [files[2]],
     }));
+  // u1 don't have access to f2 (even as a student)
   test('read files[as a student]', () =>
     t({
-      arExp: [files[2]],
+      error: new NoAccessError(),
       user: u1,
       isAdmin: false,
       role: 'student',
       fls: [files[2]],
     }));
+  // u2 have access to f2 (as a student)
+  test('read files[as a student]', () =>
+    t({
+      arExp: [files[2]],
+      user: u2,
+      isAdmin: false,
+      role: 'student',
+      fls: [files[2]],
+    }));
+  // u1 have access to f2 (as a teacher)
   test('read files[as a teacher]', () =>
     t({
       arExp: [files[2]],
