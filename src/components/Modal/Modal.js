@@ -66,6 +66,7 @@ class NewModal extends Component {
   render() {
     return (
       <Modal
+        bsSize="large"
         show={this.props.modals[this.props.modalId]}
         onHide={this.handleClose}
       >
