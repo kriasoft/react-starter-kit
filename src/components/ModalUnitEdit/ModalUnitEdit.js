@@ -58,7 +58,12 @@ class ModalUnitEdit extends React.Component {
       const resp = await fetch('/graphql', {
         body: formData,
       });
-      await resp.json();
+      const { data } = await resp.json();
+      if (this.editor)
+        this.editor.session.insert(
+          this.editor.getCursorPosition(),
+          `/api/get_file/${data.uploadFile.id}`,
+        );
     } catch (error) {
       console.error(error);
     }
@@ -95,6 +100,7 @@ class ModalUnitEdit extends React.Component {
             <TextEditor
               value={body}
               onChange={value => this.setState({ body: value })}
+              onLoad={editor => (this.editor = editor)}
             />
           </FormGroup>
           {edit && (

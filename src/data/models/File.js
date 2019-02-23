@@ -73,9 +73,11 @@ const storeToFn = {
 
 File.uploadFile = async (
   { buffer, internalName, userId, parentType, parentId, key },
-  { store = 'fs', transaction } = {},
+  { store = 'fs', transaction, disableTransaction } = {},
 ) => {
-  const t = transaction || (await Model.transaction());
+  // TODO: find out why transaction doensn't work for uploadFile into Unit
+  // and rm disableTransaction
+  const t = !disableTransaction && (transaction || (await Model.transaction()));
   try {
     const file = await File.create(
       {
@@ -95,11 +97,11 @@ File.uploadFile = async (
     }
     file.url = await storeToFn[store](file, buffer);
     file.save({ transaction: t });
-    if (!transaction) await t.commit();
+    if (!transaction && t) await t.commit();
     return file;
   } catch (err) {
     console.error(err);
-    if (!transaction) await t.rollback();
+    if (!transaction && t) await t.rollback();
     throw err;
   }
 };

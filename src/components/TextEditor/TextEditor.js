@@ -16,6 +16,7 @@ class TextEditor extends React.Component {
   static propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired,
+    onLoad: PropTypes.func.isRequired,
     mode: PropTypes.string,
   };
 
@@ -33,6 +34,7 @@ class TextEditor extends React.Component {
     this.editor = editor;
     editor.focus();
     editor.getSession().setUseWrapMode(true);
+    if (this.props.onLoad) this.props.onLoad(editor);
   }
 
   render() {
