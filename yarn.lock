@@ -2154,7 +2154,7 @@ apollo-link-http-common@^0.2.13:
     ts-invariant "^0.3.2"
     tslib "^1.9.3"
 
-apollo-link-http@^1.5.14, apollo-link-http@^1.5.5:
+apollo-link-http@^1.5.14:
   version "1.5.14"
   resolved "https://registry.yarnpkg.com/apollo-link-http/-/apollo-link-http-1.5.14.tgz#ed6292248d1819ccd16523e346d35203a1b31109"
   integrity sha512-XEoPXmGpxFG3wioovgAlPXIarWaW4oWzt8YzjTYZ87R4R7d1A3wKR/KcvkdMV1m5G7YSAHcNkDLe/8hF2nH6cg==
@@ -2162,6 +2162,13 @@ apollo-link-http@^1.5.14, apollo-link-http@^1.5.5:
     apollo-link "^1.2.11"
     apollo-link-http-common "^0.2.13"
     tslib "^1.9.3"
+
+apollo-link-http@^1.5.5:
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/apollo-link-http/-/apollo-link-http-1.5.5.tgz#7dbe851821771ad67fa29e3900c57f38cbd80da8"
+  dependencies:
+    apollo-link "^1.2.3"
+    apollo-link-http-common "^0.2.5"
 
 apollo-link-logger@^1.2.3:
   version "1.2.3"
@@ -2288,10 +2295,14 @@ apollo-server-errors@2.2.0:
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.2.0.tgz#5b452a1d6ff76440eb0f127511dc58031a8f3cb5"
   integrity sha512-gV9EZG2tovFtT1cLuCTavnJu2DaKxnXPRNGSTo+SDI6IAk6cdzyW0Gje5N2+3LybI0Wq5KAbW6VLei31S4MWmg==
 
-apollo-server-errors@2.2.1, apollo-server-errors@^2.0.2:
+apollo-server-errors@2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.2.1.tgz#f68a3f845929768057da7e1c6d30517db5872205"
   integrity sha512-wY/YE3iJVMYC+WYIf8QODBjIP4jhI+oc7kiYo9mrz7LdYPKAgxr/he+NteGcqn/0Ea9K5/ZFTGJDbEstSMeP8g==
+
+apollo-server-errors@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.0.2.tgz#e9cbb1b74d2cd78aed23cd886ca2d0c186323b2b"
 
 apollo-server-express@2.4.8, apollo-server-express@^2.4.8:
   version "2.4.8"
