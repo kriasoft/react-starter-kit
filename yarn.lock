@@ -1770,13 +1770,6 @@ apollo-link-schema@^1.1.6:
   dependencies:
     apollo-link "^1.2.8"
 
-apollo-link-state@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/apollo-link-state/-/apollo-link-state-0.4.2.tgz#ac00e9be9b0ca89eae0be6ba31fe904b80bbe2e8"
-  dependencies:
-    apollo-utilities "^1.0.8"
-    graphql-anywhere "^4.1.0-alpha.0"
-
 apollo-link-ws@^1.0.9:
   version "1.0.14"
   resolved "https://registry.yarnpkg.com/apollo-link-ws/-/apollo-link-ws-1.0.14.tgz#588f898b7f953930a27e283941614d89907adf13"
@@ -1958,7 +1951,7 @@ apollo-utilities@1.2.0, apollo-utilities@^1.2.0:
     ts-invariant "^0.2.1"
     tslib "^1.9.3"
 
-apollo-utilities@^1.0.0, apollo-utilities@^1.0.1, apollo-utilities@^1.0.20, apollo-utilities@^1.0.8:
+apollo-utilities@^1.0.0, apollo-utilities@^1.0.1:
   version "1.0.20"
   resolved "https://registry.yarnpkg.com/apollo-utilities/-/apollo-utilities-1.0.20.tgz#b14318686cb67838279fb5f009cca0ec97a4d140"
   dependencies:
@@ -5951,12 +5944,6 @@ got@^8.3.1:
 graceful-fs@4.1.11, graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
-
-graphql-anywhere@^4.1.0-alpha.0:
-  version "4.1.18"
-  resolved "https://registry.yarnpkg.com/graphql-anywhere/-/graphql-anywhere-4.1.18.tgz#29bfc5d42bf8ee1f5cdc9a9857c98c3eb4b7fab4"
-  dependencies:
-    apollo-utilities "^1.0.20"
 
 graphql-extensions@0.4.2:
   version "0.4.2"
