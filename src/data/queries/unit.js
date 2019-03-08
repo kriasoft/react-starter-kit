@@ -21,15 +21,19 @@ const createUnit = {
       description: 'body of the unit',
       type: StringType,
     },
+    schema: {
+      description: 'schema of an answer',
+      type: StringType,
+    },
   },
-  async resolve({ request }, { title, body, courseId }) {
+  async resolve({ request }, { title, body, schema, courseId }) {
     try {
       if (!request.user) throw new Error('User is not logged in');
       const role = await request.user.getRole(courseId);
       if (!request.user.isAdmin && (!role || role !== 'teacher'))
         throw new Error("User doesn't have rights to edit this course");
       const course = await Course.findById(courseId);
-      return Unit.create({ title, body })
+      return Unit.create({ title, body, schema })
         .then(u => {
           u.setCourses([course]);
           return u;
@@ -92,6 +96,10 @@ const updateUnit = {
     },
     body: {
       description: 'The body of the Unit',
+      type: StringType,
+    },
+    schema: {
+      description: 'schema of an answer',
       type: StringType,
     },
   },

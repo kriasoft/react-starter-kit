@@ -10,6 +10,7 @@ query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) {
     id
     title
     body
+    schema
     answers(userIds: $idUser) {
       createdAt
       user {
