@@ -9,6 +9,7 @@ if (navigator.platform) {
   brace = require('brace');
   AceEditor = require('react-ace').default;
   require('brace/mode/html');
+  require('brace/mode/json');
   require('brace/theme/chrome');
 }
 
@@ -43,6 +44,7 @@ class TextEditor extends React.Component {
       <AceEditor
         mode={this.props.mode}
         theme="chrome"
+        tabSize={2}
         name="code"
         width="100%"
         maxLines={50}

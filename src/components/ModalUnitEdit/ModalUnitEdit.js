@@ -6,6 +6,8 @@ import {
   ControlLabel,
   FormGroup,
   HelpBlock,
+  Tabs,
+  Tab,
 } from 'react-bootstrap';
 import Modal from '../../components/Modal';
 import TextEditor from '../../components/TextEditor';
@@ -71,7 +73,12 @@ class ModalUnitEdit extends React.Component {
 
   render() {
     const { dispatch, unit = {}, edit } = this.props;
-    const { title = unit.title, body = unit.body } = this.state;
+    const {
+      title = unit.title,
+      body = unit.body,
+      schema = unit.schema,
+      tab = 'unit',
+    } = this.state;
     return (
       <Modal
         modalId={this.props.modalId}
@@ -79,35 +86,49 @@ class ModalUnitEdit extends React.Component {
         onSubmit={() =>
           dispatch(
             edit
-              ? updateUnit({ title, body, id: unit.id })
-              : addUnit({ title, body }),
+              ? updateUnit({ title, body, schema, id: unit.id })
+              : addUnit({ title, body, schema }),
           )
         }
       >
         <Modal.Body>
-          <FormGroup controlId="title">
-            <ControlLabel>Title</ControlLabel>
-            <FormControl
-              autoFocus
-              type="text"
-              value={title}
-              name="title"
-              onChange={this.handleChange}
-            />
-            <HelpBlock>Title can not be empty</HelpBlock>
-          </FormGroup>
-          <FormGroup controlId="editor">
-            <TextEditor
-              value={body}
-              onChange={value => this.setState({ body: value })}
-              onLoad={editor => (this.editor = editor)}
-            />
-          </FormGroup>
-          {edit && (
-            <FormGroup>
-              <UploadForm onUpload={this.handleFileUpload} />
-            </FormGroup>
-          )}
+          <Tabs activeKey={tab} onSelect={key => this.setState({ tab: key })}>
+            <Tab eventKey="unit" title="Unit">
+              <FormGroup controlId="title">
+                <ControlLabel>Title</ControlLabel>
+                <FormControl
+                  autoFocus
+                  type="text"
+                  value={title}
+                  name="title"
+                  onChange={this.handleChange}
+                />
+                <HelpBlock>Title can not be empty</HelpBlock>
+              </FormGroup>
+              <FormGroup controlId="editor">
+                <TextEditor
+                  value={body}
+                  onChange={value => this.setState({ body: value })}
+                  onLoad={editor => (this.editor = editor)}
+                />
+              </FormGroup>
+              {edit && (
+                <FormGroup>
+                  <UploadForm onUpload={this.handleFileUpload} />
+                </FormGroup>
+              )}
+            </Tab>
+            <Tab eventKey="schema" title="Schema">
+              <FormGroup controlId="editSchema">
+                <TextEditor
+                  mode="json"
+                  value={schema}
+                  onChange={value => this.setState({ schema: value })}
+                  onLoad={editor => (this.editor = editor)}
+                />
+              </FormGroup>
+            </Tab>
+          </Tabs>
         </Modal.Body>
       </Modal>
     );
