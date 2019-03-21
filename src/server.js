@@ -147,12 +147,9 @@ app.get('*', async (req, res, next) => {
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
-      insertCss,
       // The twins below are wild, be careful!
       pathname: req.path,
       query: req.query,
-      // Apollo Client for use with react-apollo
-      client: apolloClient,
     };
 
     const route = await router.resolve(context);
@@ -163,7 +160,11 @@ app.get('*', async (req, res, next) => {
     }
 
     const data = { ...route };
-    const rootComponent = <App context={context}>{route.component}</App>;
+    const rootComponent = (
+      <App context={context} client={apolloClient} insertCss={insertCss}>
+        {route.component}
+      </App>
+    );
     await getDataFromTree(rootComponent);
     data.children = await ReactDOM.renderToString(rootComponent);
     data.styles = [{ id: 'css', cssText: [...css].join('') }];

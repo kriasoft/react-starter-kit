@@ -18,11 +18,11 @@ import config from '../config';
 type PropTypes = {|
   title: string,
   description: string,
-  styles: Array<{
+  styles?: Array<{
     id: string,
     cssText: string,
   }>,
-  scripts: Array<string>,
+  scripts?: Array<string>,
   app: Object, // eslint-disable-line
   children: string,
 |};
