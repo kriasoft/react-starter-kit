@@ -163,7 +163,6 @@
     "fix": "yarn run fix-js && yarn run fix-css",
     "flow": "flow",
     "flow:check": "flow check",
-    "codegen:use-dev-server": "apollo client:codegen --target flow",
     "codegen": "babel-node tools/run codegen",
     "test": "jest",
     "test-watch": "yarn run test --watch --notify",

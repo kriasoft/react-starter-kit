@@ -1,8 +1,10 @@
+const { codegenPort } = require('./src/config');
+
 module.exports = {
   client: {
     service: {
       name: 'react-starter-kit',
-      url: 'http://localhost:3000/graphql',
+      url: `http://localhost:${codegenPort}/graphql`,
       // optional headers
       headers: {
         // authorization: 'Bearer lkjfalkfjadkfjeopknavadf',
