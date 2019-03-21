@@ -24,17 +24,13 @@ type PropTypes = {|
   children: Node,
 |};
 
-class Layout extends React.Component<PropTypes> {
-  render() {
-    return (
-      <div>
-        <Header />
-        {this.props.children}
-        <Feedback />
-        <Footer />
-      </div>
-    );
-  }
-}
+const Layout = (props: PropTypes) => (
+  <div>
+    <Header />
+    {props.children}
+    <Feedback />
+    <Footer />
+  </div>
+);
 
 export default withStyles(normalizeCss, s)(Layout);

@@ -2,10 +2,12 @@
 
 import { createContext } from 'react';
 
-const AppContext = createContext<{|
+export type AppContextTypes = {|
   pathname: string,
   query: Object,
-|}>({
+|};
+
+const AppContext = createContext<AppContextTypes>({
   pathname: '',
   query: {},
 });
