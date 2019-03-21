@@ -3,21 +3,18 @@ import { from } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { HttpLink } from 'apollo-link-http';
 import apolloLogger from 'apollo-link-logger';
-import { withClientState } from 'apollo-link-state';
+import gql from 'graphql-tag';
 import createCache from './createCache';
-import { resolvers as clientSideResolvers } from '../../data/graphql/OnMemoryState/schema';
+import {
+  resolvers as clientResolvers,
+  schema as clientSchema,
+} from '../../data/graphql/OnMemoryState/schema';
 
 export default function createApolloClient() {
-  const cache = createCache();
-
-  const stateLink = withClientState({
-    cache,
-    defaults: window.App.initialState,
-    resolvers: clientSideResolvers,
-  });
+  // Restore cache defaults to make the same one in server.js
+  const cache = createCache().restore(window.App.cache);
 
   const link = from([
-    stateLink,
     onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors)
         graphQLErrors.map(({ message, locations, path }) =>
@@ -36,7 +33,9 @@ export default function createApolloClient() {
 
   return new ApolloClient({
     link,
-    cache: cache.restore(window.App.cache),
+    cache,
+    typeDefs: gql(clientSchema),
+    resolvers: clientResolvers,
     queryDeduplication: true,
     connectToDevTools: true,
   });

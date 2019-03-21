@@ -30,7 +30,7 @@ declare module 'isomorphic-style-loader/lib/insertCss' {
   declare module.exports: any;
 }
 
-declare module 'isomorphic-style-loader/lib/withStyles' {
+declare module 'isomorphic-style-loader/withStyles' {
   // TODO: Using ComponentType<T> does not work so simply return T.
   // import type {ComponentType} from 'react';
   declare module.exports: (
@@ -42,6 +42,10 @@ declare module 'isomorphic-style-loader/lib/withStyles' {
     ) => (<T>(component: T) => T);
 }
 
+declare module 'isomorphic-style-loader/StyleContext' {
+  declare module.exports: any;
+}
+
 // Filename aliases
 declare module 'isomorphic-style-loader/lib/index.js' {
   declare module.exports: $Exports<'isomorphic-style-loader/lib/index'>;
@@ -49,6 +53,6 @@ declare module 'isomorphic-style-loader/lib/index.js' {
 declare module 'isomorphic-style-loader/lib/insertCss.js' {
   declare module.exports: $Exports<'isomorphic-style-loader/lib/insertCss'>;
 }
-declare module 'isomorphic-style-loader/lib/withStyles.js' {
-  declare module.exports: $Exports<'isomorphic-style-loader/lib/withStyles'>;
+declare module 'isomorphic-style-loader/withStyles.js' {
+  declare module.exports: $Exports<'isomorphic-style-loader/withStyles'>;
 }

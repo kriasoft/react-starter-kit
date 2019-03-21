@@ -30,7 +30,6 @@ import schema from './data/schema';
 // import assets from './asset-manifest.json'; // eslint-disable-line import/no-unresolved
 import chunks from './chunk-manifest.json'; // eslint-disable-line import/no-unresolved
 import config from './config';
-import createInitialState from './core/createInitialState';
 
 process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled Rejection at:', p, 'reason:', reason);
@@ -134,28 +133,23 @@ app.get('*', async (req, res, next) => {
       styles.forEach(style => css.add(style._getCss()));
     };
 
-    const initialState = createInitialState({
-      user: req.user || null,
-    });
-
     const apolloClient = createApolloClient(
       {
         schema: makeExecutableSchema(schema),
         // This is a context consumed in GraphQL Resolvers
         context: { req },
       },
-      initialState,
+      {
+        user: req.user || null,
+      },
     );
 
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
-      insertCss,
       // The twins below are wild, be careful!
       pathname: req.path,
       query: req.query,
-      // Apollo Client for use with react-apollo
-      client: apolloClient,
     };
 
     const route = await router.resolve(context);
@@ -166,7 +160,11 @@ app.get('*', async (req, res, next) => {
     }
 
     const data = { ...route };
-    const rootComponent = <App context={context}>{route.component}</App>;
+    const rootComponent = (
+      <App context={context} client={apolloClient} insertCss={insertCss}>
+        {route.component}
+      </App>
+    );
     await getDataFromTree(rootComponent);
     data.children = await ReactDOM.renderToString(rootComponent);
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
@@ -186,10 +184,9 @@ app.get('*', async (req, res, next) => {
     data.scripts = Array.from(scripts);
     data.app = {
       apiUrl: config.api.clientUrl,
-      // Cache for client-side apolloClient
-      cache: context.client.extract(),
-      // Initial state for client-side stateLink
-      initialState,
+
+      // To restore apollo cache in client.js
+      cache: apolloClient.extract(),
     };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);

@@ -21,39 +21,36 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-type PropTypes = {|
+type PropTypes = {
   to: string,
   onClick?: Object => void,
   children?: Node,
   className?: string,
-|};
+};
 
-class Link extends React.Component<PropTypes> {
-  handleClick = (event: any) => {
-    if (this.props.onClick) {
-      this.props.onClick(event);
-    }
+const Link = ({ to, children, onClick, ...restProps }: PropTypes) => (
+  <a
+    href={to}
+    {...restProps}
+    onClick={(event: any) => {
+      if (onClick) {
+        onClick(event);
+      }
 
-    if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
-      return;
-    }
+      if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
+        return;
+      }
 
-    if (event.defaultPrevented === true) {
-      return;
-    }
+      if (event.defaultPrevented === true) {
+        return;
+      }
 
-    event.preventDefault();
-    history.push(this.props.to);
-  };
-
-  render() {
-    const { to, children, ...props } = this.props;
-    return (
-      <a href={to} {...props} onClick={this.handleClick}>
-        {children}
-      </a>
-    );
-  }
-}
+      event.preventDefault();
+      history.push(to);
+    }}
+  >
+    {children}
+  </a>
+);
 
 export default Link;

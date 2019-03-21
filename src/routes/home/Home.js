@@ -12,7 +12,7 @@
 import React from 'react';
 import { graphql } from 'react-apollo';
 import type { OperationComponent } from 'react-apollo';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 // $FlowExpectError
 import newsQuery from './news.graphql';
 import s from './Home.css';

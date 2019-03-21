@@ -11,7 +11,7 @@
 
 import React from 'react';
 import type { Node } from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 
 // external-global styles must be imported in your JS.
 import normalizeCss from 'normalize.css';
@@ -24,17 +24,13 @@ type PropTypes = {|
   children: Node,
 |};
 
-class Layout extends React.Component<PropTypes> {
-  render() {
-    return (
-      <div>
-        <Header />
-        {this.props.children}
-        <Feedback />
-        <Footer />
-      </div>
-    );
-  }
-}
+const Layout = (props: PropTypes) => (
+  <div>
+    <Header />
+    {props.children}
+    <Feedback />
+    <Footer />
+  </div>
+);
 
 export default withStyles(normalizeCss, s)(Layout);

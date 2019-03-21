@@ -8,12 +8,16 @@ import {
   mutations as networkStatusMutation,
 } from './networkStatus';
 
-// Below are used for apollo-link-state and not used in GraphQL server.
+import { schema as userSchema, queries as userQueries } from './user';
+
+// Used by both GraphQL Server and Apollo Client
+export const schema = [...userSchema, ...networkStatusSchema];
+
+// Below are only used by Apollo Client
 export const defaults = merge(networkStatusDefaults);
 export const resolvers = merge(networkStatusResolvers);
 
-// Below are used for GraphQL introspection that generates Flow types by apollo:codegen.
-// These are not used in runtime.
-export const schema = merge(networkStatusSchema);
-export const queries = merge(networkStatusQuery);
-export const mutations = merge(networkStatusMutation);
+// Below are used by GraphQL Server for Introspection
+// that generates Flow types by apollo:codegen.
+export const queries = [...networkStatusQuery, ...userQueries];
+export const mutations = [...networkStatusMutation];

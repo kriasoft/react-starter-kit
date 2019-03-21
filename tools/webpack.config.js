@@ -12,6 +12,7 @@ import path from 'path';
 import webpack from 'webpack';
 import WebpackAssetsManifest from 'webpack-assets-manifest';
 import nodeExternals from 'webpack-node-externals';
+import cssnano from 'cssnano';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
@@ -34,11 +35,6 @@ const reImage = /\.(bmp|gif|jpg|jpeg|png|svg)$/;
 const staticAssetName = isDebug
   ? '[path][name].[ext]?[hash:8]'
   : '[hash:8].[ext]';
-
-// CSS Nano options http://cssnano.co/
-const minimizeCssOptions = {
-  discardComments: { removeAll: true },
-};
 
 //
 // Common configuration chunk to be used for both
@@ -79,6 +75,7 @@ const config = {
 
           // https://babeljs.io/docs/usage/options/
           babelrc: false,
+          configFile: false,
           presets: [
             // A Babel preset that can automatically determine the Babel plugins and polyfills
             // https://github.com/babel/babel-preset-env
@@ -141,7 +138,22 @@ const config = {
             loader: 'css-loader',
             options: {
               sourceMap: isDebug,
-              minimize: isDebug ? false : minimizeCssOptions,
+            },
+          },
+          {
+            exclude: SRC_DIR,
+            loader: 'postcss-loader',
+            options: {
+              plugins: [
+                // CSS Nano options http://cssnano.co/
+                cssnano(
+                  isDebug
+                    ? false
+                    : {
+                        discardComments: { removeAll: true },
+                      },
+                ),
+              ],
             },
           },
 
@@ -158,8 +170,6 @@ const config = {
               localIdentName: isDebug
                 ? '[name]-[local]-[hash:base64:5]'
                 : '[hash:base64:5]',
-              // CSS Nano http://cssnano.co/
-              minimize: isDebug ? false : minimizeCssOptions,
             },
           },
 
@@ -430,21 +440,20 @@ const serverConfig = {
           ...rule,
           options: {
             ...rule.options,
-            presets: rule.options.presets.map(
-              preset =>
-                preset[0] !== '@babel/preset-env'
-                  ? preset
-                  : [
-                      '@babel/preset-env',
-                      {
-                        targets: {
-                          node: pkg.engines.node.match(/(\d+\.?)+/)[0],
-                        },
-                        modules: false,
-                        useBuiltIns: false,
-                        debug: false,
+            presets: rule.options.presets.map(preset =>
+              preset[0] !== '@babel/preset-env'
+                ? preset
+                : [
+                    '@babel/preset-env',
+                    {
+                      targets: {
+                        node: pkg.engines.node.match(/(\d+\.?)+/)[0],
                       },
-                    ],
+                      modules: false,
+                      useBuiltIns: false,
+                      debug: false,
+                    },
+                  ],
             ),
           },
         };
