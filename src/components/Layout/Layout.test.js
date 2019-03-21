@@ -7,6 +7,8 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+// @flow
+
 /* eslint-env jest */
 /* eslint-disable padded-blocks, no-unused-expressions */
 
@@ -24,11 +26,11 @@ describe('Layout', () => {
       .create(
         <App
           context={{
-            insertCss: () => {},
-            // fetch: () => {},
             pathname: '',
-            client,
+            query: {},
           }}
+          insertCss={() => {}}
+          client={client}
         >
           <Layout>
             <div className="child" />

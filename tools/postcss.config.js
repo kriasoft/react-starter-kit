@@ -9,6 +9,7 @@
 
 /* eslint-disable global-require */
 
+const isDebug = !process.argv.includes('--release');
 const pkg = require('../package.json');
 
 module.exports = () => ({
@@ -63,5 +64,13 @@ module.exports = () => ({
       browsers: pkg.browserslist,
       flexbox: 'no-2009',
     }),
+    // CSS Nano options http://cssnano.co/
+    require('cssnano')(
+      isDebug
+        ? false
+        : {
+            discardComments: { removeAll: true },
+          },
+    ),
   ],
 });
