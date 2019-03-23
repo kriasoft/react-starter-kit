@@ -13,7 +13,7 @@ import ReactDOM from 'react-dom';
 import deepForceUpdate from 'react-deep-force-update';
 import queryString from 'query-string';
 import gql from 'graphql-tag';
-import { createPath } from 'history/PathUtils';
+import { createPath } from 'history';
 import App from './components/App';
 import history from './history';
 import { updateMeta } from './DOMUtils';
