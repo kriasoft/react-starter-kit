@@ -1,16 +1,24 @@
-FROM node:8.10.0-alpine
+FROM node:8.10.0-alpine as builder
 
 # Set a working directory
 WORKDIR /usr/src/app
 
-COPY ./build/package.json .
-COPY ./build/yarn.lock .
+COPY . .
 
-# Install Node.js dependencies
+RUN yarn
+RUN yarn build
+
+FROM node:8.10.0-alpine
+
+WORKDIR /usr/src/app
+
+# Copy build dir, package.json from builder
+COPY --from=builder /usr/src/app/build /usr/src/app/build
+COPY --from=builder /usr/src/app/package.json /usr/src/app/package.json
+COPY --from=builder /usr/src/app/yarn.lock /usr/src/app/yarn.lock
+
+# Install Node.js production dependencies (for server)
 RUN yarn install --production --no-progress
-
-# Copy application files
-COPY ./build .
 
 # Run the container under "node" user by default
 USER node
@@ -18,4 +26,10 @@ USER node
 # Set NODE_ENV env variable to "production" for faster expressjs
 ENV NODE_ENV production
 
-CMD [ "node", "server.js" ]
+CMD ["node","./build/server.js"]
+
+# This is docker build command:
+# docker build -t react-starter-kit .
+
+# This is docker run command:
+# docker run -d --name react-starter-kit -p 3000:3000 react-starter-kit:latest
