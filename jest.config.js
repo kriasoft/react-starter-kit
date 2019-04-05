@@ -34,7 +34,7 @@ module.exports = {
 
   // https://facebook.github.io/jest/docs/en/configuration.html#collectcoveragefrom-array
   collectCoverageFrom: [
-    'src/**/*.{js,jsx}',
+    'src/**/*.{ts,tsx,js,jsx}',
     '!**/node_modules/**',
     '!**/vendor/**',
   ],
@@ -55,7 +55,7 @@ module.exports = {
 
   // The default extensions Jest will look for.
   // https://facebook.github.io/jest/docs/en/configuration.html#modulefileextensions-array-string
-  moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 
   // moduleDirectories: // [array<string>]
 
@@ -90,8 +90,8 @@ module.exports = {
   // timers: // [string]
 
   transform: {
-    '\\.(js|jsx)$': '<rootDir>/node_modules/babel-jest',
-    '\\.(gql|graphql)$': '<rootDir>/node_modules/jest-transform-graphql',
+    '\\.(ts|tsx|js|jsx)$': 'babel-jest',
+    '\\.(gql|graphql)$': 'jest-transform-graphql',
     '^(?!.*\\.(js|jsx|json|css|less|styl|scss|sass|sss)$)':
       '<rootDir>/tools/lib/fileTransformer.js',
   },

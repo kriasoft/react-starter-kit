@@ -125,14 +125,13 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 
 ```jsx
 // Navigation.js
-// @flow
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.scss';
 
-type PropTypes = {|
+type PropTypes = {
   className: string,
-|};
+};
 
 function Navigation(props: PropTypes) {
   return (

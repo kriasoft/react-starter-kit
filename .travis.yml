@@ -13,7 +13,6 @@ addons:
       - g++-4.8
 cache: yarn
 script:
-  - yarn codegen
   - yarn lint
   - yarn test
   - yarn build --release
