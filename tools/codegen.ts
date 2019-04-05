@@ -1,4 +1,5 @@
 import { ApolloServer } from 'apollo-server';
+import getPort from 'get-port';
 import { spawn } from './lib/cp';
 import webpackConfig from './webpack.config';
 import runWebpack from './lib/runWebpack';
@@ -26,15 +27,17 @@ export default async function codegen() {
     serverConfig.stats,
   );
 
+  const port = await getPort();
+
   // eslint-disable-next-line global-require, import/no-dynamic-require, import/no-unresolved
   const builtSchema = require('../build/schema').default;
   const server = new ApolloServer(builtSchema);
-  const { server: httpServer } = await server.listen({ port: 3900 });
+  const { server: httpServer } = await server.listen({ port });
 
   await spawn('yarn', [
     'apollo', 'client:codegen',
     '--target', 'typescript',
-    '--endpoint', 'http://localhost:3900/graphql',
+    '--endpoint', `http://localhost:${port}/graphql`,
   ], {
     stdio: 'inherit',
   });
