@@ -1,4 +1,4 @@
-import 'universal-router'
+import {Context} from "universal-router";
 
 declare module 'universal-router' {
   interface Route<C extends Context = any, R = any> {
