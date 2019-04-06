@@ -10,7 +10,15 @@
 import DataType, {Model} from 'sequelize';
 import sequelize from '../sequelize';
 
-class UserProfile extends Model {}
+class UserProfile extends Model {
+  public userId!: string;
+  public displayName!: string;
+  public picture!: string;
+  public gender!: string;
+  public location!: string;
+  public website!: string;
+}
+
 UserProfile.init({
   userId: {
     type: DataType.UUID,

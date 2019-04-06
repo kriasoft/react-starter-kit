@@ -10,7 +10,14 @@
 import DataType, {Model} from 'sequelize';
 import sequelize from '../sequelize';
 
-class User extends Model {}
+class User extends Model {
+  public id!: string;
+  public email!: string;
+  public emailConfirmed!: boolean;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
 User.init(
   {
     id: {

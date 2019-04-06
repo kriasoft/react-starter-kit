@@ -1524,11 +1524,6 @@
   dependencies:
     "@types/babel-types" "*"
 
-"@types/bluebird@*":
-  version "3.5.26"
-  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.26.tgz#a38c438ae84fa02431d6892edf86e46edcbca291"
-  integrity sha512-aj2mrBLn5ky0GmAg6IPXrQjnN0iB/ulozuJ+oZdrHRAzRbXjGmu4UXsNCjFvPbSaaPZmniocdOzsM392qLOlmQ==
-
 "@types/body-parser@*", "@types/body-parser@1.17.0", "@types/body-parser@^1.17.0":
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.17.0.tgz#9f5c9d9bd04bb54be32d5eb9fc0d8c974e6cf58c"
@@ -1575,13 +1570,6 @@
 "@types/connect@*":
   version "3.4.32"
   resolved "https://registry.yarnpkg.com/@types/connect/-/connect-3.4.32.tgz#aa0e9616b9435ccad02bc52b5b454ffc2c70ba28"
-  dependencies:
-    "@types/node" "*"
-
-"@types/continuation-local-storage@*":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@types/continuation-local-storage/-/continuation-local-storage-3.2.1.tgz#a33e0df9dce9b424d1c98fc4fdebd8578dceec7e"
-  integrity sha1-oz4N+dzptCTRyY/E/evYV43O7H4=
   dependencies:
     "@types/node" "*"
 
@@ -1959,16 +1947,6 @@
     "@types/glob" "*"
     "@types/node" "*"
 
-"@types/sequelize@^4.27.46":
-  version "4.27.46"
-  resolved "https://registry.yarnpkg.com/@types/sequelize/-/sequelize-4.27.46.tgz#f4bc7aafa45f264837200364b31172ad8aff4a33"
-  integrity sha512-hqosowwLJsLrR+A8IOVgGQaToaBAZE54WLJmjxARaoHC4hl4lmfzXPNY/JGn3hmxNIhb6klHs7skQ2uJPrlXSA==
-  dependencies:
-    "@types/bluebird" "*"
-    "@types/continuation-local-storage" "*"
-    "@types/lodash" "*"
-    "@types/validator" "*"
-
 "@types/serialize-javascript@^1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@types/serialize-javascript/-/serialize-javascript-1.5.0.tgz#bdd334cfbb4fc0eca1fc608da37ad733c86381eb"
@@ -2037,11 +2015,6 @@
   integrity sha512-K8eB29YyeB+VarYFUZd/kAN3kdhf4vjrHAnW6JQUO5VWyqcFHGIzVh9whZMU8Ym4MAVEExLUOle6bk7cuutdJA==
   dependencies:
     universal-router "*"
-
-"@types/validator@*":
-  version "10.11.0"
-  resolved "https://registry.yarnpkg.com/@types/validator/-/validator-10.11.0.tgz#aae9009ce28cc4f878e32c34d3900a81193c98d5"
-  integrity sha512-i1aY7RKb6HmQIEnK0cBmUZUp1URx0riIHw/GYNoZ46Su0GWfLiDmMI8zMRmaauMnOTg2bQag0qfwcyUFC9Tn+A==
 
 "@types/vfile-message@*":
   version "1.0.1"
