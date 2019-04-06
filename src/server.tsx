@@ -228,7 +228,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 // Launch the server
 // -----------------------------------------------------------------------------
 const promise = models.sync().catch((err: Error) => console.error(err.stack));
-// @ts-ignore
 if (!module.hot) {
   promise.then(() => {
     app.listen(config.port, () => {
@@ -240,12 +239,10 @@ if (!module.hot) {
 //
 // Hot Module Replacement
 // -----------------------------------------------------------------------------
-// @ts-ignore
 if (module.hot) {
-  // @ts-ignore
-  app.hot = module.hot;
-  // @ts-ignore
   module.hot.accept('./router');
 }
 
+export const hot = module.hot;
 export default app;
+

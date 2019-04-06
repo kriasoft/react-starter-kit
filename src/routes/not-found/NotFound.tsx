@@ -7,8 +7,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-// @flow
-
 import React, {FunctionComponent} from 'react';
 import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './NotFound.css';

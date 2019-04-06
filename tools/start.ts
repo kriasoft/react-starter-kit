@@ -8,16 +8,15 @@
  */
 
 import path from 'path';
-import express, {Request, Response, Express} from 'express';
+import express, {Request, Response, Application} from 'express';
 import browserSync from 'browser-sync';
-import webpack, {Compiler, Configuration, ICompiler} from 'webpack';
+import webpack, {Compiler, Configuration} from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import errorOverlayMiddleware from 'react-dev-utils/errorOverlayMiddleware';
 import webpackConfig from './webpack.config';
 import run, { format } from './run';
 import clean from './clean';
-import {Func} from "continuation-local-storage";
 
 const isDebug = !process.argv.includes('--release');
 
@@ -59,7 +58,7 @@ function createCompilationPromise(name: string, compiler: Compiler, config: Conf
   });
 }
 
-let server: Express;
+let server: Application;
 
 /**
  * Launches a development web server with "live reload" functionality -
@@ -131,6 +130,15 @@ async function start() {
   // https://github.com/glenjamin/webpack-hot-middleware
   server.use(webpackHotMiddleware(clientCompiler, { log: false }));
 
+  let app: Application;
+  let hot: any;
+  function reloadApp() {
+    delete require.cache[require.resolve('../build/server')];
+    const compiled = require('../build/server');
+    app = compiled.default;
+    hot = compiled.hot;
+  }
+
   let appPromise: Promise<void>;
   let appPromiseResolve: Function;
   let appPromiseIsResolved = true;
@@ -141,26 +149,21 @@ async function start() {
     appPromise = new Promise(resolve => (appPromiseResolve = resolve));
   });
 
-  let app: Express;
   server.use((req: Request, res: Response) => {
     appPromise
-      // @ts-ignore Use not documented method "handle"
       .then(() => app.handle(req, res))
       .catch(error => console.error(error));
   });
 
   function checkForUpdate(fromUpdate?: boolean) {
     const hmrPrefix = '[\x1b[35mHMR\x1b[0m] ';
-    // @ts-ignore
-    if (!app.hot) {
+    if (!hot) {
       throw new Error(`${hmrPrefix}Hot Module Replacement is disabled.`);
     }
-    // @ts-ignore
-    if (app.hot.status() !== 'idle') {
+    if (hot.status() !== 'idle') {
       return Promise.resolve();
     }
-    // @ts-ignore
-    return app.hot
+    return hot
       .check(true)
       .then((updatedModules: string[]) => {
         if (!updatedModules) {
@@ -180,12 +183,10 @@ async function start() {
         }
       })
       .catch((error: Error) => {
-        // @ts-ignore
-        if (['abort', 'fail'].includes(app.hot.status())) {
+        if (['abort', 'fail'].includes(hot.status())) {
           console.warn(`${hmrPrefix}Cannot apply update.`);
-          delete require.cache[require.resolve('../build/server')];
           // eslint-disable-next-line global-require, import/no-unresolved
-          app = require('../build/server').default;
+          reloadApp();
           console.warn(`${hmrPrefix}App has been reloaded.`);
         } else {
           console.warn(
@@ -213,8 +214,7 @@ async function start() {
 
   // Load compiled src/server.js as a middleware
   // eslint-disable-next-line global-require, import/no-unresolved
-  const compiled = require('../build/server.js');
-  app = compiled.default;
+  reloadApp();
   appPromiseIsResolved = true;
   appPromiseResolve!();
 

@@ -7,8 +7,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-// @flow
-
 import React from 'react';
 import {ChildDataProps, graphql} from 'react-apollo';
 import withStyles from 'isomorphic-style-loader/withStyles';
