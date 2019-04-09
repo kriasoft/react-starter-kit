@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import {Sequelize} from 'sequelize';
+import { Sequelize } from 'sequelize';
 import config from '../config';
 
 const sequelize = new Sequelize(config.databaseUrl, {

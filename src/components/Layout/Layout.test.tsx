@@ -13,8 +13,8 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import createApolloClient from '../../core/createApolloClient/createApolloClient.server';
-import App  from '../App';
-import Layout  from './Layout';
+import App from '../App';
+import Layout from './Layout';
 
 describe('Layout', () => {
   test('renders children correctly', () => {

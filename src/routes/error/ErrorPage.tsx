@@ -13,10 +13,10 @@ import s from './ErrorPage.css';
 
 type PropTypes = {
   error?: {
-    name: string,
-    message: string,
-    stack: string,
-  },
+    name: string;
+    message: string;
+    stack: string;
+  };
 };
 
 const ErrorPage = ({ error }: PropTypes) => {

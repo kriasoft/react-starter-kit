@@ -7,11 +7,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, {ComponentType, FunctionComponent, ReactComponentElement} from 'react';
+import React, { ComponentType } from 'react';
 import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Navigation.css';
-import Link  from '../Link';
+import Link from '../Link';
 
 const Navigation: ComponentType<{}> = () => (
   <div className={s.root} role="navigation">
@@ -31,7 +31,5 @@ const Navigation: ComponentType<{}> = () => (
     </Link>
   </div>
 );
-
-const n = <Navigation/>;
 
 export default withStyles(s)(Navigation);

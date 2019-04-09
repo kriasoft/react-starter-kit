@@ -7,7 +7,13 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-export function updateTag(tagName: string, keyName: string, keyValue: string, attrName: string, attrValue: string) {
+export function updateTag(
+  tagName: string,
+  keyName: string,
+  keyValue: string,
+  attrName: string,
+  attrValue: string,
+) {
   const node = document.head.querySelector(
     `${tagName}[${keyName}="${keyValue}"]`,
   );

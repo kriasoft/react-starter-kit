@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import {ChildDataProps, graphql} from 'react-apollo';
+import { ChildDataProps, graphql } from 'react-apollo';
 import withStyles from 'isomorphic-style-loader/withStyles';
 import newsQuery from './news.graphql';
 import s from './Home.css';
@@ -16,7 +16,7 @@ import { HomeNews } from './__generated__/HomeNews';
 
 // Note: There is a regression from flow-bin@0.89.0
 // which spoils OperationComponent declaration. Be careful.
-type ChildProps = ChildDataProps<{}, HomeNews>
+type ChildProps = ChildDataProps<{}, HomeNews>;
 const withNews = graphql<{}, HomeNews, {}, ChildProps>(newsQuery);
 
 const Home = withNews(props => {

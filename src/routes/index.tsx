@@ -10,7 +10,7 @@
 /* eslint-disable global-require */
 
 // The top-level (parent) route
-import {Route} from "universal-router";
+import { Route } from 'universal-router';
 
 const routes: Route = {
   path: '',

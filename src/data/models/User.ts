@@ -7,14 +7,18 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import DataType, {Model} from 'sequelize';
+import DataType, { Model } from 'sequelize';
 import sequelize from '../sequelize';
 
 class User extends Model {
   public id!: string;
+
   public email!: string;
+
   public emailConfirmed!: boolean;
+
   public readonly createdAt!: Date;
+
   public readonly updatedAt!: Date;
 }
 

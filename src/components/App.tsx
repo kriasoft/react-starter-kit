@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 import { ApolloProvider } from 'react-apollo';
 import StyleContext from 'isomorphic-style-loader/StyleContext';
 import AppContext, { AppContextTypes } from '../context';
@@ -24,7 +24,9 @@ const App = ({ client, insertCss, context, children }: Props) => (
   // please do that inside the Layout component.
   <ApolloProvider client={client}>
     <AppContext.Provider value={context}>
-      <StyleContext.Provider value={{ insertCss }}>{children}</StyleContext.Provider>
+      <StyleContext.Provider value={{ insertCss }}>
+        {children}
+      </StyleContext.Provider>
     </AppContext.Provider>
   </ApolloProvider>
 );

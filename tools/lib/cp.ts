@@ -7,9 +7,13 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import cp, {ExecOptions, SpawnOptions} from 'child_process';
+import cp, { ExecOptions, SpawnOptions } from 'child_process';
 
-export const spawn = (command: string, args: string[], options?: SpawnOptions) =>
+export const spawn = (
+  command: string,
+  args: string[],
+  options?: SpawnOptions,
+) =>
   new Promise((resolve, reject) => {
     cp.spawn(command, args, options).on('close', code => {
       if (code === 0) {

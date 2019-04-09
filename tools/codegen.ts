@@ -6,7 +6,7 @@ import runWebpack from './lib/runWebpack';
 import run from './run';
 import clean from './clean';
 
-/* eslint-disable-next-line no-unused-vars */
+/* eslint @typescript-eslint/no-unused-vars:0 */
 const [_, serverConfig] = webpackConfig;
 
 /**
@@ -34,13 +34,20 @@ export default async function codegen() {
   const server = new ApolloServer(builtSchema);
   const { server: httpServer } = await server.listen({ port });
 
-  await spawn('yarn', [
-    'apollo', 'client:codegen',
-    '--target', 'typescript',
-    '--endpoint', `http://localhost:${port}/graphql`,
-  ], {
-    stdio: 'inherit',
-  });
+  await spawn(
+    'yarn',
+    [
+      'apollo',
+      'client:codegen',
+      '--target',
+      'typescript',
+      '--endpoint',
+      `http://localhost:${port}/graphql`,
+    ],
+    {
+      stdio: 'inherit',
+    },
+  );
 
   await new Promise(resolve => {
     httpServer.close(() => {

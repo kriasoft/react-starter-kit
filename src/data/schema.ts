@@ -98,7 +98,7 @@ const schema = [
 ];
 
 export default {
-  typeDefs: ((schema as any) as DocumentNode[]),
+  typeDefs: (schema as any) as DocumentNode[],
   resolvers,
   // ...(__DEV__ ? { log: e => console.error(e.stack) } : {}),
 };

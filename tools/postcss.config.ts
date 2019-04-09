@@ -69,8 +69,8 @@ const config = {
       isDebug
         ? false
         : {
-          discardComments: {removeAll: true},
-        },
+            discardComments: { removeAll: true },
+          },
     ),
   ],
 };

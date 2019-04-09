@@ -7,7 +7,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, {FunctionComponent} from 'react';
+import React, { FunctionComponent } from 'react';
 import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Footer.css';
 import Link from '../Link';

@@ -9,9 +9,9 @@
 
 import fs from 'fs';
 import path from 'path';
-import glob, {IOptions} from 'glob';
+import glob, { IOptions } from 'glob';
 import mkdirp from 'mkdirp';
-import rimraf, {Options as RimrafOptions} from 'rimraf';
+import rimraf from 'rimraf';
 
 export const readFile = (file: string) =>
   new Promise((resolve, reject) => {
@@ -35,6 +35,7 @@ export const renameFile = (source: string, target: string) =>
 export const copyFile = (source: string, target: string) =>
   new Promise((resolve, reject) => {
     let cbCalled = false;
+
     function done(err?: Error) {
       if (!cbCalled) {
         cbCalled = true;
@@ -54,7 +55,10 @@ export const copyFile = (source: string, target: string) =>
     rd.pipe(wr);
   });
 
-export const readDir = (pattern: string, options: IOptions): Promise<string[]> => {
+export const readDir = (
+  pattern: string,
+  options: IOptions,
+): Promise<string[]> => {
   return new Promise((resolve, reject) =>
     glob(pattern, options, (err, result) =>
       err ? reject(err) : resolve(result),
@@ -101,9 +105,7 @@ export const copyDir = async (source: string, target: string) => {
 
 export const cleanDir = (pattern: string, options: IOptions) =>
   new Promise((resolve, reject) =>
-    rimraf(pattern, { glob: options }, (err) =>
-      err ? reject(err) : resolve(),
-    ),
+    rimraf(pattern, { glob: options }, err => (err ? reject(err) : resolve())),
   );
 
 export default {

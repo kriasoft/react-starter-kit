@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 
+import { HomeNews_reactjsGetAllNews } from '../../../../routes/home/__generated__/HomeNews';
+
 export const schema = [
   `
   # A single news article from [https://reactjsnews.com/](https://reactjsnews.com/)
@@ -33,8 +35,6 @@ export const queries = [
 const url =
   'https://api.rss2json.com/v1/api.json' +
   '?rss_url=https%3A%2F%2Freactjsnews.com%2Ffeed.xml';
-
-import {HomeNews_reactjsGetAllNews} from '../../../../routes/home/__generated__/HomeNews';
 
 let items: HomeNews_reactjsGetAllNews[] = [];
 let lastFetchTask: Promise<HomeNews_reactjsGetAllNews[]> | null;

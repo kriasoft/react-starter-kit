@@ -8,7 +8,7 @@
  */
 
 import path from 'path';
-import cp, {ChildProcess} from 'child_process';
+import cp, { ChildProcess } from 'child_process';
 import webpackConfig from './webpack.config';
 
 // Should match the text string used in `src/server.js/server.listen(...)`

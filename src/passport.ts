@@ -52,7 +52,7 @@ passport.use(
             // Sign in with that account or delete it, then link it with your current account.
             done(null);
           } else {
-            const user = await User.create(
+            const user = (await User.create(
               {
                 id: req.user.id,
                 email: profile._json.email,
@@ -73,7 +73,7 @@ passport.use(
                   { model: UserProfile, as: 'profile' },
                 ],
               },
-            ) as any;
+            )) as any;
             done(null, {
               id: user.id,
               email: user.email,
@@ -96,9 +96,9 @@ passport.use(
             const user = users[0].get({ plain: true });
             done(null, user);
           } else {
-            let user = await User.findOne({
+            let user = (await User.findOne({
               where: { email: profile._json.email },
-            }) as any;
+            })) as any;
             if (user) {
               // There is already an account using this email address. Sign in to
               // that account and link it with Facebook manually from Account Settings.

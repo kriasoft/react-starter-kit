@@ -7,24 +7,28 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import DataType, {Model} from 'sequelize';
+import DataType, { Model } from 'sequelize';
 import sequelize from '../sequelize';
 
 class UserClaim extends Model {
   public type!: string;
+
   public value!: string;
 }
 
-UserClaim.init({
-  type: {
-    type: DataType.STRING,
-  },
+UserClaim.init(
+  {
+    type: {
+      type: DataType.STRING,
+    },
 
-  value: {
-    type: DataType.STRING,
+    value: {
+      type: DataType.STRING,
+    },
   },
-}, {
-  sequelize,
-});
+  {
+    sequelize,
+  },
+);
 
 export default UserClaim;

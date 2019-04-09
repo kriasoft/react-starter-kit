@@ -334,7 +334,7 @@ const clientConfig = {
       output: `${BUILD_DIR}/asset-manifest.json`,
       publicPath: true,
       writeToDisk: true,
-      customize: ({ key, value }: { key: string, value: string}) => {
+      customize: ({ key, value }: { key: string; value: string }) => {
         // You can prevent adding items to the manifest by returning false.
         if (key.toLowerCase().endsWith('.map')) return false;
         return { key, value };
@@ -345,19 +345,22 @@ const clientConfig = {
         try {
           const fileFilter = (file: string) => !file.endsWith('.map');
           const addPath = (file: string) => manifest.getPublicPath(file);
-          const chunkFiles = stats.compilation.chunkGroups.reduce((acc: any[], c: any) => {
-            acc[c.name] = [
-              ...(acc[c.name] || []),
-              ...c.chunks.reduce(
-                (files: any[], cc: any) => [
-                  ...files,
-                  ...cc.files.filter(fileFilter).map(addPath),
-                ],
-                [],
-              ),
-            ];
-            return acc;
-          }, Object.create(null));
+          const chunkFiles = stats.compilation.chunkGroups.reduce(
+            (acc: any[], c: any) => {
+              acc[c.name] = [
+                ...(acc[c.name] || []),
+                ...c.chunks.reduce(
+                  (files: any[], cc: any) => [
+                    ...files,
+                    ...cc.files.filter(fileFilter).map(addPath),
+                  ],
+                  [],
+                ),
+              ];
+              return acc;
+            },
+            Object.create(null),
+          );
           fs.writeFileSync(chunkFileName, JSON.stringify(chunkFiles, null, 2));
         } catch (err) {
           console.error(`ERROR: Cannot write ${chunkFileName}: `, err);

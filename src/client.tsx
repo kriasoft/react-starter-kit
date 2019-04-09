@@ -8,19 +8,18 @@
  */
 
 import 'whatwg-fetch';
-import React, {ComponentElement, ReactComponentElement, ReactElement} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import deepForceUpdate from 'react-deep-force-update';
 import queryString from 'query-string';
 import gql from 'graphql-tag';
-import { createPath } from 'history';
+import { createPath, Location } from 'history';
 import App from './components/App';
-import {Location} from "history";
 import history from './history';
 import { updateMeta } from './DOMUtils';
 import createApolloClient from './core/createApolloClient/createApolloClient.client';
 import router from './router';
-import {AppContextTypes} from "./context";
+import { AppContextTypes } from './context';
 
 const apolloClient = createApolloClient();
 
@@ -42,7 +41,9 @@ const container = document.getElementById('app');
 let currentLocation = history.location;
 let appInstance: typeof App | void;
 
-const scrollPositionsHistory: {[key: string]: {scrollX: number, scrollY: number}} = {};
+const scrollPositionsHistory: {
+  [key: string]: { scrollX: number; scrollY: number };
+} = {};
 
 // Re-render the app when window.location changes
 async function onLocationChange(location: Location, action?: any) {

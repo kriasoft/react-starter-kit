@@ -7,10 +7,12 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+/* eslint-disable global-require, import/no-unresolved */
+
 import path from 'path';
-import express, {Request, Response, Application} from 'express';
+import express, { Request, Response, Application } from 'express';
 import browserSync from 'browser-sync';
-import webpack, {Compiler, Configuration} from 'webpack';
+import webpack, { Compiler, Configuration } from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import errorOverlayMiddleware from 'react-dev-utils/errorOverlayMiddleware';
@@ -29,7 +31,11 @@ const watchOptions = {
   // ignored: /node_modules/,
 };
 
-function createCompilationPromise(name: string, compiler: Compiler, config: Configuration) {
+function createCompilationPromise(
+  name: string,
+  compiler: Compiler,
+  config: Configuration,
+) {
   return new Promise((resolve, reject) => {
     let timeStart = new Date();
     compiler.hooks.compile.tap(name, () => {
@@ -71,10 +77,15 @@ async function start() {
   server.use(express.static(path.resolve(__dirname, '../public')));
 
   // Configure client-side hot module replacement
-  const clientConfig = webpackConfig.find(config => config.name === 'client') as any;
+  const clientConfig = webpackConfig.find(
+    config => config.name === 'client',
+  ) as any;
   clientConfig.entry.client = ['./tools/lib/webpackHotDevClient']
     .concat(clientConfig.entry.client)
-    .sort((a: string, b: string) => Number(b.includes('polyfill')) - Number(a.includes('polyfill')));
+    .sort(
+      (a: string, b: string) =>
+        Number(b.includes('polyfill')) - Number(a.includes('polyfill')),
+    );
   clientConfig.output.filename = clientConfig.output.filename.replace(
     'chunkhash',
     'hash',
@@ -89,7 +100,9 @@ async function start() {
   clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   // Configure server-side hot module replacement
-  const serverConfig = webpackConfig.find(config => config.name === 'server') as any;
+  const serverConfig = webpackConfig.find(
+    config => config.name === 'server',
+  ) as any;
   serverConfig.output.hotUpdateMainFilename = 'updates/[hash].hot-update.json';
   serverConfig.output.hotUpdateChunkFilename =
     'updates/[id].[hash].hot-update.js';
@@ -185,7 +198,6 @@ async function start() {
       .catch((error: Error) => {
         if (['abort', 'fail'].includes(hot.status())) {
           console.warn(`${hmrPrefix}Cannot apply update.`);
-          // eslint-disable-next-line global-require, import/no-unresolved
           reloadApp();
           console.warn(`${hmrPrefix}App has been reloaded.`);
         } else {

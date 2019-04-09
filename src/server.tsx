@@ -8,7 +8,7 @@
  */
 
 import path from 'path';
-import express, {NextFunction, Request, Response} from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
@@ -208,7 +208,7 @@ pe.skipNodeFiles();
 pe.skipPackage('express');
 
 // eslint-disable-next-line no-unused-vars
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   console.error(pe.render(err));
   const html = ReactDOM.renderToStaticMarkup(
     <Html
@@ -243,6 +243,5 @@ if (module.hot) {
   module.hot.accept('./router');
 }
 
-export const hot = module.hot;
+export const { hot } = module;
 export default app;
-

@@ -7,24 +7,28 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import DataType, {Model} from 'sequelize';
+import DataType, { Model } from 'sequelize';
 import sequelize from '../sequelize';
 
 class UserLogin extends Model {
   public name!: string;
+
   public key!: string;
 }
 
-UserLogin.init({
-  name: {
-    type: DataType.STRING(50),
-    primaryKey: true,
-  },
+UserLogin.init(
+  {
+    name: {
+      type: DataType.STRING(50),
+      primaryKey: true,
+    },
 
-  key: {
-    type: DataType.STRING(100),
-    primaryKey: true,
+    key: {
+      type: DataType.STRING(100),
+      primaryKey: true,
+    },
   },
-}, {sequelize});
+  { sequelize },
+);
 
 export default UserLogin;

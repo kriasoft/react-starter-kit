@@ -200,7 +200,7 @@
   },
   "scripts": {
     "precommit": "lint-staged",
-    "lint-js": "eslint --ignore-path .gitignore --ignore-pattern \"!**/.*\" .",
+    "lint-js": "eslint --ext .ts --ext .tsx --ignore-path .gitignore --ignore-pattern \"!**/.*\" .",
     "lint-css": "stylelint \"src/**/*.{css,less,styl,scss,sass,sss}\"",
     "lint": "yarn codegen && yarn tsc && yarn run lint-js && yarn run lint-css",
     "fix-js": "yarn run lint-js --fix",

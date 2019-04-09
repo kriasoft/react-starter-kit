@@ -12,7 +12,7 @@ import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Contact.css';
 
 type PropTypes = {
-  title: string,
+  title: string;
 };
 
 const Contact = (props: PropTypes) => (

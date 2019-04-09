@@ -12,7 +12,7 @@ import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Login.css';
 
 type PropTypes = {
-  title: string,
+  title: string;
 };
 
 const Login = (props: PropTypes) => (

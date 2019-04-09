@@ -7,7 +7,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-
 import React, { ReactNode } from 'react';
 import history from '../../history';
 
@@ -20,10 +19,10 @@ function isModifiedEvent(event: MouseEvent) {
 }
 
 type PropTypes = {
-  to: string,
-  onClick?: Function,
-  children?: ReactNode,
-  className?: string,
+  to: string;
+  onClick?: Function;
+  children?: ReactNode;
+  className?: string;
 };
 
 const Link = ({ to, children, onClick, ...restProps }: PropTypes) => (
