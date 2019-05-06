@@ -1,20 +1,22 @@
 import { ApolloServer } from 'apollo-server';
 import getPort from 'get-port';
+import rimraf from 'rimraf';
 import { spawn } from './lib/cp';
-import webpackConfig from './webpack.config';
 import runWebpack from './lib/runWebpack';
-import run from './run';
-import clean from './clean';
+import webpackConfig from './webpack.config';
 
-/* eslint @typescript-eslint/no-unused-vars:0 */
-const [_, serverConfig] = webpackConfig;
+const [, serverConfig] = webpackConfig;
 
 /**
  * Generate Flow declarations from GraphQL. Since it requires
  * a running GraphQL server, it launches a server for the use.
  */
 export default async function codegen() {
-  await runWebpack(
+  const promiseRemoveOldTypes = new Promise(resolve =>
+    rimraf('{./,src/**/}__generated__', resolve),
+  );
+
+  const promiseCompileSchemaJs = await runWebpack(
     {
       ...serverConfig,
       entry: './src/data/schema',
@@ -27,7 +29,13 @@ export default async function codegen() {
     serverConfig.stats,
   );
 
-  const port = await getPort();
+  const promisePort = getPort();
+
+  const [port] = await Promise.all([
+    promisePort,
+    promiseRemoveOldTypes,
+    promiseCompileSchemaJs,
+  ]);
 
   // eslint-disable-next-line global-require, import/no-dynamic-require, import/no-unresolved
   const builtSchema = require('../build/schema').default;
@@ -49,12 +57,5 @@ export default async function codegen() {
     },
   );
 
-  await new Promise(resolve => {
-    httpServer.close(() => {
-      console.info('Server closed');
-      resolve();
-    });
-  });
-
-  await run(clean);
+  await new Promise(resolve => httpServer.close(resolve));
 }
