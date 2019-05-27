@@ -10,18 +10,21 @@
 // ESLint configuration
 // http://eslint.org/docs/user-guide/configuring
 module.exports = {
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
 
   extends: [
     'airbnb',
-    'plugin:flowtype/recommended',
     'plugin:css-modules/recommended',
     'prettier',
-    'prettier/flowtype',
     'prettier/react',
   ],
 
-  plugins: ['flowtype', 'css-modules', 'prettier'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'css-modules', 'prettier'],
+
+  parserOptions: {
+    sourceType: 'module',
+    project: './tsconfig.json',
+  },
 
   globals: {
     __DEV__: true,
@@ -51,7 +54,7 @@ module.exports = {
     'no-underscore-dangle': [
       'error',
       {
-        allow: ['__typename'],
+        allow: ['__typename', '__DEV__'],
       },
     ],
 
@@ -87,7 +90,7 @@ module.exports = {
 
     // Allow .js files to use JSX syntax
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
-    'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
+    'react/jsx-filename-extension': [1, { extensions: ['.ts', '.tsx'] }],
 
     // Functional and class components are equivalent from React’s point of view
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md
@@ -99,8 +102,29 @@ module.exports = {
 
     'react/forbid-prop-types': 'off',
     'react/destructuring-assignment': 'off',
+    // TypeScript types checks prop-types
+    'react/prop-types': 'off',
 
     // PropTypes and states are typed by Flow basically, but Flow cannot type defaultProps.
     'react/require-default-props': 'off',
+
+    // Cannot config .ts, .tsx resolution
+    'import/no-unresolved': 'off',
+
+    'import/no-webpack-loader-syntax': 'off',
+
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        vars: 'local',
+        args: 'after-used',
+        ignoreRestSiblings: false,
+        argsIgnorePattern: '^_',
+      },
+    ],
+
+    // Type variables by Codegen can not be camelcase.
+    camelcase: 'off',
   },
 };

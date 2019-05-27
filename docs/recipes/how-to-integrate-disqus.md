@@ -5,7 +5,6 @@ https://disqus.com/admin/create/
 #### `DisqusThread.js`
 
 ```js
-// @flow
 import React from 'react';
 
 const SHORTNAME = 'example';
@@ -22,11 +21,11 @@ function renderDisqus() {
   }
 }
 
-class DisqusThread extends React.Component<{|
+class DisqusThread extends React.Component<{
   id: string,
   title: string,
   path: string,
-|}> {
+}> {
   shouldComponentUpdate(nextProps) {
     return (
       this.props.id !== nextProps.id ||
