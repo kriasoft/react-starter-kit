@@ -58,7 +58,7 @@ class App extends React.PureComponent {
     // please do that inside the Layout component.
     return (
       <StyleContext.Provider value={{ insertCss }}>
-        <ApplicationContext.Provider value={{ context }}>
+        <ApplicationContext.Provider value={context}>
           {React.Children.only(this.props.children)}
         </ApplicationContext.Provider>
       </StyleContext.Provider>

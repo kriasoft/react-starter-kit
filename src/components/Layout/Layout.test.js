@@ -19,7 +19,7 @@ describe('Layout', () => {
   test('renders children correctly', () => {
     const wrapper = renderer
       .create(
-        <App context={{ insertCss: () => {}, fetch: () => {}, pathname: '' }}>
+        <App insertCss={() => {}} context={{ fetch: () => {}, pathname: '' }}>
           <Layout>
             <div className="child" />
           </Layout>
