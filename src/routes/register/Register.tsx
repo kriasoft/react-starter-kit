@@ -8,20 +8,23 @@
  */
 
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import s from './Register.css';
 
 type PropTypes = {
   title: string;
 };
 
-const Register = (props: PropTypes) => (
-  <div className={s.root}>
-    <div className={s.container}>
-      <h1>{props.title}</h1>
-      <p>...</p>
+const Register = (props: PropTypes) => {
+  useStyles(s);
+  return (
+    <div className={s.root}>
+      <div className={s.container}>
+        <h1>{props.title}</h1>
+        <p>...</p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-export default withStyles(s)(Register);
+export default Register;

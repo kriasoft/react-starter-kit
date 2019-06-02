@@ -8,7 +8,7 @@
  */
 
 import React, { FunctionComponent } from 'react';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import useStyles from 'isomorphic-style-loader/useStyles';
 
 // external-global styles must be imported in your JS.
 import normalizeCss from 'normalize.css';
@@ -19,13 +19,16 @@ import Footer from '../Footer';
 
 interface PropTypes {}
 
-const Layout: FunctionComponent<PropTypes> = ({ children }) => (
-  <div>
-    <Header />
-    {children}
-    <Feedback />
-    <Footer />
-  </div>
-);
+const Layout: FunctionComponent<PropTypes> = ({ children }) => {
+  useStyles(normalizeCss, s);
+  return (
+    <div>
+      <Header />
+      {children}
+      <Feedback />
+      <Footer />
+    </div>
+  );
+};
 
-export default withStyles(normalizeCss, s)(Layout);
+export default Layout;

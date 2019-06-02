@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { ChildDataProps, graphql } from 'react-apollo';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import newsQuery from './news.graphql';
 import s from './Home.css';
 import { HomeNews } from './__generated__/HomeNews';
@@ -18,6 +18,8 @@ type ChildProps = ChildDataProps<{}, HomeNews>;
 const withNews = graphql<{}, HomeNews, {}, ChildProps>(newsQuery);
 
 const Home = withNews(props => {
+  useStyles(s);
+
   const {
     data: {
       loading,
@@ -52,4 +54,4 @@ const Home = withNews(props => {
   );
 });
 
-export default withStyles(s)(Home);
+export default Home;
