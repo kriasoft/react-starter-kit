@@ -13,8 +13,16 @@ import { spawn } from './lib/cp';
 import { makeDir, moveDir, cleanDir } from './lib/fs';
 import run from './run';
 
+type RemoteDefs = {
+  name: string;
+  url: string;
+  branch: string;
+  website: string;
+  static?: boolean;
+};
+
 // GitHub Pages
-const remote = {
+const remote: RemoteDefs = {
   name: 'github',
   url: 'https://github.com/<user>/<repo>.git',
   branch: 'gh-pages',
@@ -23,7 +31,7 @@ const remote = {
 };
 
 // Heroku
-// const remote = {
+// const remote: RemoteDefs = {
 //   name: 'heroku',
 //   url: 'https://git.heroku.com/<app>.git',
 //   branch: 'master',
@@ -31,7 +39,7 @@ const remote = {
 // };
 
 // Azure Web Apps
-// const remote = {
+// const remote: RemoteDefs = {
 //   name: 'azure',
 //   url: 'https://<user>@<app>.scm.azurewebsites.net:443/<app>.git',
 //   branch: 'master',
