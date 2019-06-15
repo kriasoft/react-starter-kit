@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server';
 import getPort from 'get-port';
 import rimraf from 'rimraf';
-import { spawn } from './lib/cp';
+import execa from 'execa';
 import runWebpack from './lib/runWebpack';
 import webpackConfig from './webpack.config';
 
@@ -42,7 +42,7 @@ export default async function codegen() {
   const server = new ApolloServer(builtSchema);
   const { server: httpServer } = await server.listen({ port });
 
-  await spawn(
+  await execa(
     'yarn',
     [
       'apollo',
