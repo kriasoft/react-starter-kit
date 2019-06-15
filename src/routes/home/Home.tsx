@@ -8,25 +8,20 @@
  */
 
 import React from 'react';
-import { ChildDataProps, graphql } from 'react-apollo';
 import useStyles from 'isomorphic-style-loader/useStyles';
-import newsQuery from './news.graphql';
 import s from './Home.css';
-import { HomeNews } from './__generated__/HomeNews';
+import { withHomeNews } from '../../__generated__/dataBinders';
 
-type ChildProps = ChildDataProps<{}, HomeNews>;
-const withNews = graphql<{}, HomeNews, {}, ChildProps>(newsQuery);
+type Props = {};
 
-const Home = withNews(props => {
+const Home = withHomeNews<Props>()(props => {
   useStyles(s);
 
   const {
-    data: {
-      loading,
-      reactjsGetAllNews,
-      networkStatus: { isConnected },
-    },
-  } = props;
+    loading,
+    reactjsGetAllNews,
+    networkStatus: { isConnected },
+  } = props.data!;
 
   return (
     <div className={s.root}>
