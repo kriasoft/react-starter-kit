@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server';
 import getPort from 'get-port';
-import rimraf from 'rimraf';
 import execa from 'execa';
+import { cleanDir } from "./lib/fs";
 import runWebpack from './lib/runWebpack';
 import webpackConfig from './webpack.config';
 
@@ -12,9 +12,7 @@ const [, serverConfig] = webpackConfig;
  * a running GraphQL server, it launches a server for the use.
  */
 export default async function codegen() {
-  const promiseRemoveOldTypes = new Promise(resolve =>
-    rimraf('{./,src/**/}__generated__', resolve),
-  );
+  const promiseRemoveOldTypes = cleanDir('{./,src/**/}__generated__');
 
   const promiseCompileSchemaJs = await runWebpack(
     {

@@ -57,7 +57,7 @@ export const copyFile = (source: string, target: string) =>
 
 export const readDir = (
   pattern: string,
-  options: IOptions,
+  options: IOptions = {},
 ): Promise<string[]> => {
   return new Promise((resolve, reject) =>
     glob(pattern, options, (err, result) =>
@@ -103,7 +103,7 @@ export const copyDir = async (source: string, target: string) => {
   );
 };
 
-export const cleanDir = (pattern: string, options: IOptions) =>
+export const cleanDir = (pattern: string, options?: IOptions) =>
   new Promise((resolve, reject) =>
     rimraf(pattern, { glob: options }, err => (err ? reject(err) : resolve())),
   );
