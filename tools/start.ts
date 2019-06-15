@@ -234,10 +234,10 @@ async function start() {
     browserSync.create().init(
       {
         // https://www.browsersync.io/docs/options
-        server: 'src/server.js',
+        server: { baseDir: '../public' },
         middleware: [server],
-        open: !process.argv.includes('--silent'),
-        ...(isDebug ? {} : { notify: false, ui: false }),
+        open: process.argv.includes('--silent') ? false : 'local',
+        ...(isDebug ? {} : { notify: false, ui: {} }),
       },
       (error, bs) => (error ? reject(error) : resolve(bs)),
     ),
