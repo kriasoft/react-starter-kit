@@ -210,7 +210,7 @@
     "fix-css": "yarn run lint-css --fix",
     "fix": "yarn run fix-js && yarn run fix-css",
     "codegen": "babel-node --extensions '.ts' tools/run codegen",
-    "test": "tsc --noEmit && jest",
+    "test": "tsc && jest",
     "test-watch": "yarn run test --watch --notify",
     "test-cover": "yarn run test --coverage",
     "coverage": "yarn run test-cover && opn coverage/lcov-report/index.html",
