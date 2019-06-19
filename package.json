@@ -172,7 +172,7 @@
       "package.json"
     ],
     "linters": {
-      "*.{js,jsx}": [
+      "*.{ts,tsx}": [
         "npm run fix-js",
         "git add --force"
       ],
