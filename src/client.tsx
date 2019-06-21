@@ -68,6 +68,8 @@ async function onLocationChange(location: Location, action?: any) {
     // and whose action method returns anything other than `undefined`.
     const route = await router.resolve(context);
 
+    context.params = route.params;
+
     // Prevent multiple page renders during the routing process
     if (currentLocation.key !== location.key) {
       return;

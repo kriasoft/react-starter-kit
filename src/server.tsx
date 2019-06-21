@@ -18,6 +18,7 @@ import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
 import { ApolloServer, makeExecutableSchema } from 'apollo-server-express';
 import { getDataFromTree } from 'react-apollo';
+import { AppContextTypes } from './context';
 import createApolloClient from './core/createApolloClient/createApolloClient.server';
 import App from './components/App';
 import Html from './components/Html';
@@ -149,13 +150,15 @@ app.get('*', async (req, res, next) => {
 
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
-    const context = {
+    const context: AppContextTypes = {
       // The twins below are wild, be careful!
       pathname: req.path,
       query: req.query,
     };
 
     const route = await router.resolve(context);
+
+    context.params = route.params;
 
     if (route.redirect) {
       res.redirect(route.status || 302, route.redirect);
