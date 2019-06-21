@@ -42,6 +42,19 @@ declare module 'isomorphic-style-loader/withStyles' {
   /* eslint import/export:0 */
   export default _default;
 }
+declare module 'isomorphic-style-loader/useStyles' {
+  /* eslint no-underscore-dangle:0 */
+  /* eslint no-undef:0 */
+  const _default: (
+    s1: string,
+    s2?: string,
+    s3?: string,
+    s4?: string,
+    s5?: string,
+  ) => void;
+  /* eslint import/export:0 */
+  export default _default;
+}
 
 // Declare non-ts modules to be loaded by webpack loaders
 declare module '*.css';

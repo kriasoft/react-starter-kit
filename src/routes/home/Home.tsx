@@ -8,25 +8,20 @@
  */
 
 import React from 'react';
-import { ChildDataProps, graphql } from 'react-apollo';
-import withStyles from 'isomorphic-style-loader/withStyles';
-import newsQuery from './news.graphql';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import s from './Home.css';
-import { HomeNews } from './__generated__/HomeNews';
+import { withHomeNews } from '../../__generated__/dataBinders';
 
-// Note: There is a regression from flow-bin@0.89.0
-// which spoils OperationComponent declaration. Be careful.
-type ChildProps = ChildDataProps<{}, HomeNews>;
-const withNews = graphql<{}, HomeNews, {}, ChildProps>(newsQuery);
+type Props = {};
 
-const Home = withNews(props => {
+const Home = withHomeNews<Props>()(props => {
+  useStyles(s);
+
   const {
-    data: {
-      loading,
-      reactjsGetAllNews,
-      networkStatus: { isConnected },
-    },
-  } = props;
+    loading,
+    reactjsGetAllNews,
+    networkStatus: { isConnected },
+  } = props.data!;
 
   return (
     <div className={s.root}>
@@ -54,4 +49,4 @@ const Home = withNews(props => {
   );
 });
 
-export default withStyles(s)(Home);
+export default Home;

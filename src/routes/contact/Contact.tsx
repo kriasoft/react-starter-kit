@@ -8,20 +8,23 @@
  */
 
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import s from './Contact.css';
 
 type PropTypes = {
   title: string;
 };
 
-const Contact = (props: PropTypes) => (
-  <div className={s.root}>
-    <div className={s.container}>
-      <h1>{props.title}</h1>
-      <p>...</p>
+const Contact = (props: PropTypes) => {
+  useStyles(s);
+  return (
+    <div className={s.root}>
+      <div className={s.container}>
+        <h1>{props.title}</h1>
+        <p>...</p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-export default withStyles(s)(Contact);
+export default Contact;

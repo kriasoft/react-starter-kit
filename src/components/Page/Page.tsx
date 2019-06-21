@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import s from './Page.css';
 
 interface PropTypes {
@@ -16,16 +16,19 @@ interface PropTypes {
   html: string;
 }
 
-const Page = ({ title, html }: PropTypes) => (
-  <div className={s.root}>
-    <div className={s.container}>
-      <h1>{title}</h1>
-      <div
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+const Page = ({ title, html }: PropTypes) => {
+  useStyles(s);
+  return (
+    <div className={s.root}>
+      <div className={s.container}>
+        <h1>{title}</h1>
+        <div
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-export default withStyles(s)(Page);
+export default Page;

@@ -9,12 +9,20 @@
 
 import path from 'path';
 import fetch from 'node-fetch';
-import { spawn } from './lib/cp';
+import execa, { Options } from 'execa';
 import { makeDir, moveDir, cleanDir } from './lib/fs';
 import run from './run';
 
+type RemoteDefs = {
+  name: string;
+  url: string;
+  branch: string;
+  website: string;
+  static?: boolean;
+};
+
 // GitHub Pages
-const remote = {
+const remote: RemoteDefs = {
   name: 'github',
   url: 'https://github.com/<user>/<repo>.git',
   branch: 'gh-pages',
@@ -23,7 +31,7 @@ const remote = {
 };
 
 // Heroku
-// const remote = {
+// const remote: RemoteDefs = {
 //   name: 'heroku',
 //   url: 'https://git.heroku.com/<app>.git',
 //   branch: 'master',
@@ -31,14 +39,14 @@ const remote = {
 // };
 
 // Azure Web Apps
-// const remote = {
+// const remote: RemoteDefs = {
 //   name: 'azure',
 //   url: 'https://<user>@<app>.scm.azurewebsites.net:443/<app>.git',
 //   branch: 'master',
 //   website: `http://<app>.azurewebsites.net`,
 // };
 
-const options = {
+const options: Options = {
   cwd: path.resolve(__dirname, '../build'),
   stdio: ['ignore', 'inherit', 'inherit'],
 };
@@ -49,12 +57,12 @@ const options = {
 async function deploy() {
   // Initialize a new repository
   await makeDir('build');
-  await spawn('git', ['init', '--quiet'], options);
+  await execa('git', ['init', '--quiet'], options);
 
   // Changing a remote's URL
   let isRemoteExists = false;
   try {
-    await spawn(
+    await execa(
       'git',
       ['config', '--get', `remote.${remote.name}.url`],
       options,
@@ -63,7 +71,7 @@ async function deploy() {
   } catch (error) {
     /* skip */
   }
-  await spawn(
+  await execa(
     'git',
     ['remote', isRemoteExists ? 'set-url' : 'add', remote.name, remote.url],
     options,
@@ -72,23 +80,23 @@ async function deploy() {
   // Fetch the remote repository if it exists
   let isRefExists = false;
   try {
-    await spawn(
+    await execa(
       'git',
       ['ls-remote', '--quiet', '--exit-code', remote.url, remote.branch],
       options,
     );
     isRefExists = true;
   } catch (error) {
-    await spawn('git', ['update-ref', '-d', 'HEAD'], options);
+    await execa('git', ['update-ref', '-d', 'HEAD'], options);
   }
   if (isRefExists) {
-    await spawn('git', ['fetch', remote.name], options);
-    await spawn(
+    await execa('git', ['fetch', remote.name], options);
+    await execa(
       'git',
       ['reset', `${remote.name}/${remote.branch}`, '--hard'],
       options,
     );
-    await spawn('git', ['clean', '--force'], options);
+    await execa('git', ['clean', '--force'], options);
   }
 
   // Build the project in RELEASE mode which
@@ -106,17 +114,17 @@ async function deploy() {
   }
 
   // Push the contents of the build folder to the remote server via Git
-  await spawn('git', ['add', '.', '--all'], options);
+  await execa('git', ['add', '.', '--all'], options);
   try {
-    await spawn('git', ['diff', '--cached', '--exit-code', '--quiet'], options);
+    await execa('git', ['diff', '--cached', '--exit-code', '--quiet'], options);
   } catch (error) {
-    await spawn(
+    await execa(
       'git',
       ['commit', '--message', `Update ${new Date().toISOString()}`],
       options,
     );
   }
-  await spawn(
+  await execa(
     'git',
     ['push', remote.name, `master:${remote.branch}`, '--set-upstream'],
     options,

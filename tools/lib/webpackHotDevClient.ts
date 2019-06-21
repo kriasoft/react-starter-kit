@@ -29,6 +29,7 @@ setEditorHandler((errorLocation: any) => {
 
 hotClient.useCustomOverlay({
   showProblems(type: any, errors: any) {
+    // @ts-ignore
     const formatted = formatWebpackMessages({
       errors,
       warnings: [],
