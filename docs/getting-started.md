@@ -22,23 +22,23 @@ Before you start, take a moment to see how the project structure looks like:
 │   ├── /components/            # React components
 │   ├── /data/                  # GraphQL server schema and data models
 │   ├── /routes/                # Page/screen components along with the routing information
-│   ├── /client.js              # Client-side startup script
-│   ├── /config.js              # Global application settings
-│   ├── /server.js              # Server-side startup script
+│   ├── /client.ts              # Client-side startup script
+│   ├── /config.ts              # Global application settings
+│   ├── /server.ts              # Server-side startup script
 │   └── ...                     # Other core framework modules
 ├── /test/                      # Unit and end-to-end tests
 ├── /tools/                     # Build automation scripts and utilities
 │   ├── /lib/                   # Library for utility snippets
-│   ├── /build.js               # Builds the project from source to output (build) folder
-│   ├── /bundle.js              # Bundles the web resources into package(s) through Webpack
-│   ├── /clean.js               # Cleans up the output (build) folder
-│   ├── /copy.js                # Copies static files to output (build) folder
-│   ├── /deploy.js              # Deploys your web application
-│   ├── /postcss.config.js      # Configuration for transforming styles with PostCSS plugins
-│   ├── /run.js                 # Helper function for running build automation tasks
-│   ├── /runServer.js           # Launches (or restarts) Node.js server
-│   ├── /start.js               # Launches the development web server with "live reload"
-│   └── /webpack.config.js      # Configurations for client-side and server-side bundles
+│   ├── /build.ts               # Builds the project from source to output (build) folder
+│   ├── /bundle.ts              # Bundles the web resources into package(s) through Webpack
+│   ├── /clean.ts               # Cleans up the output (build) folder
+│   ├── /copy.ts                # Copies static files to output (build) folder
+│   ├── /deploy.ts              # Deploys your web application
+│   ├── /postcss.config.ts      # Configuration for transforming styles with PostCSS plugins
+│   ├── /run.ts                 # Helper function for running build automation tasks
+│   ├── /runServer.ts           # Launches (or restarts) Node.js server
+│   ├── /start.ts               # Launches the development web server with "live reload"
+│   └── /webpack.config.ts      # Configurations for client-side and server-side bundles
 ├── Dockerfile                  # Commands for building a Docker image for production
 ├── package.json                # The list of 3rd party libraries and utilities
 └── yarn.lock                   # Fixed versions of all the dependencies
@@ -66,16 +66,21 @@ or by using
 This will install both run-time project dependencies and developer tools listed
 in [package.json](../package.json) file.
 
+#### 3. Run `yarn codegen`
+
+`feature/apollo-pure` branch TypeScript code generation by [GraphQL Codegen](https://github.com/dotansimha/graphql-code-generator).
+Every time you change GraphQL Schema, you need to run `yarn codegen` to make use of the types and data binding functions.
+
 #### 3. Run `yarn start`
 
 This command will build the app from the source files (`/src`) into the output
 `/build` folder. As soon as the initial build completes, it will start the
-Node.js server (`node build/server.js`) and
+Node.js server (`node build/server.ts`) and
 [Browsersync](https://browsersync.io/) with
 [HMR](https://webpack.github.io/docs/hot-module-replacement) on top of it.
 
 > [http://localhost:3000/](http://localhost:3000/) — Node.js server
-> (`build/server.js`) with Browsersync and HMR enabled\
+> (`build/server.ts`) with Browsersync and HMR enabled\
 > [http://localhost:3000/graphql](http://localhost:3000/graphql) — GraphQL server
 > and IDE\
 > [http://localhost:3001/](http://localhost:3001/) — Browsersync control panel
@@ -123,7 +128,7 @@ _NOTE: double dashes are required_
 
 After running this command, the `/build` folder will contain the compiled
 version of the app. For example, you can launch Node.js server normally by
-running `node build/server.js`.
+running `node build/server.ts`.
 
 To check the source code for syntax errors and potential issues run:
 
@@ -139,8 +144,8 @@ $ yarn run test:watch    # Launch unit test runner and start watching for change
 ```
 
 By default, [Jest](https://jestjs.io/) test runner is looking for test files
-matching the `src/**/*.test.js` pattern. Take a look at
-`src/components/Layout/Layout.test.js` as an example.
+matching the `src/**/*.test.ts` pattern. Take a look at
+`src/components/Layout/Layout.test.ts` as an example.
 
 To deploy the app, run:
 
@@ -148,7 +153,7 @@ To deploy the app, run:
 $ yarn run deploy
 ```
 
-The deployment script `tools/deploy.js` is configured to push the contents of
+The deployment script `tools/deploy.ts` is configured to push the contents of
 the `/build` folder to a remote server via Git. You can easily deploy your app
 to
 [Azure Web Apps](https://azure.microsoft.com/en-us/services/app-service/web/),
