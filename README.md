@@ -97,10 +97,12 @@ We love your feedback!
     <td align="center">
       <a href="https://github.com/facebook/react">React</a>,
       <a href="https://github.com/ReactJSTraining/history">History</a>,
+      <a href="https://github.com/reactjs/redux">Redux</a>
     </td>
     <td align="center">
       <a href="https://github.com/facebook/react">React</a>,
       <a href="https://github.com/ReactJSTraining/history">History</a>,
+      <a href="https://github.com/reactjs/redux">Redux</a>
     </td>
   </tr>
   <tr>
