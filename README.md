@@ -43,7 +43,7 @@ branches that you can use either as a reference or merge into your project:
   — isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
   (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/apollo`)
 - [feature/apollo-pure](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo-pure) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1664))
-  — bare Apollo codebase by [piglovesyou](https://github.com/piglovesyou) (based on `master`)
+  — Apollo devtools and TypeScript integration by [piglovesyou](https://github.com/piglovesyou) (based on `master`)
 
 You can see status of most reasonable merge combination as [PRs labeled as `TRACKING`](https://github.com/kriasoft/react-starter-kit/labels/TRACKING)
 
