@@ -102,11 +102,11 @@ module.exports = {
 
     'react/forbid-prop-types': 'off',
     'react/destructuring-assignment': 'off',
-    // TypeScript types checks prop-types
-    'react/prop-types': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/static-property-placement': 'off',
 
-    // PropTypes and states are typed by Flow basically, but Flow cannot type defaultProps.
-    'react/require-default-props': 'off',
+    // TypeScript checks prop-types
+    'react/prop-types': 'off',
 
     // Cannot config .ts, .tsx resolution
     'import/no-unresolved': 'off',
