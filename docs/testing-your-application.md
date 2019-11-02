@@ -4,13 +4,13 @@
 
 RSK comes with the following libraries for testing purposes:
 
-* [Jest](https://facebook.github.io/jest/) - JavaScript testing library
-* [Enzyme](https://github.com/airbnb/enzyme) - Testing utilities for React
+- [Jest](https://facebook.github.io/jest/) - JavaScript testing library
+- [Enzyme](https://github.com/airbnb/enzyme) - Testing utilities for React
 
 You may also want to take a look at the following related packages:
 
-* [jsdom](https://github.com/tmpvar/jsdom)
-* [react-addons-test-utils](https://www.npmjs.com/package/react-addons-test-utils)
+- [jsdom](https://github.com/tmpvar/jsdom)
+- [react-addons-test-utils](https://www.npmjs.com/package/react-addons-test-utils)
 
 ### Running tests
 
@@ -18,7 +18,7 @@ To test your application simply run the
 [`yarn test`](https://github.com/kriasoft/react-starter-kit/blob/9014614edcb2f44b23298ca3287b9af3a14b6076/package.json#L152)
 command which will:
 
-* recursively find all files ending with `.test.js` in your `src/` directory
+- recursively find all files ending with `.test.js` in your `src/` directory
 
 ```bash
 yarn test
@@ -26,9 +26,9 @@ yarn test
 
 ### Conventions
 
-* test filenames MUST end with `test.js` or `yarn test` will not be able to
+- test filenames MUST end with `test.js` or `yarn test` will not be able to
   detect them
-* test filenames SHOULD be named after the related component (e.g. create
+- test filenames SHOULD be named after the related component (e.g. create
   `Login.test.js` for `Login.js` component)
 
 ### Basic example
