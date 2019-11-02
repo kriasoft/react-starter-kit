@@ -25,12 +25,12 @@ branch instead as it also includes Redux.
 
     You can copy [`src/reducers/runtime.js`](https://github.com/kriasoft/react-starter-kit/tree/feature/redux/src/reducers/runtime.js) as a template.
 
-    * Do not forget to always return `state`.
-    * Never mutate provided `state`.
+    - Do not forget to always return `state`.
+    - Never mutate provided `state`.
       If you mutate state, rendering of connected component will not be triggered because of `===` equality.
       Always return new value if you perform state update.
       You can use this construct: `{ ...state, updatedKey: action.payload.value, }`
-    * Keep in mind that store state _must_ be repeatable by replaying actions on it.
+    - Keep in mind that store state _must_ be repeatable by replaying actions on it.
       For example, when you store timestamp, pass it into _action payload_.
       If you call REST API, do it in action. _Never do this in reducer!_
 

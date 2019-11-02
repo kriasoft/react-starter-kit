@@ -21,38 +21,35 @@ and newcomers to the industry.
   <sup><a href="https://x-team.com/join/?utm_source=reactstarterkit&utm_medium=github-link&utm_campaign=reactstarterkit-june">Hiring</a></sup>
 </p>
 
-
 ### Getting Started
 
-  * Follow the [getting started guide](./docs/getting-started.md) to download and run the project
-    ([Node.js](https://nodejs.org/) >= 6.9)
-  * Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
-
+- Follow the [getting started guide](./docs/getting-started.md) to download and run the project
+  ([Node.js](https://nodejs.org/) >= 6.9)
+- Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
 
 ### Customization
 
 The `master` branch of React Starter Kit doesn't include a Flux implementation or any other
-advanced integrations. Nevertheless, we have some integrations available to you in *feature*
+advanced integrations. Nevertheless, we have some integrations available to you in _feature_
 branches that you can use either as a reference or merge into your project:
 
-  * [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1084))
-    — isomorphic Redux by [Pavel Lang](https://github.com/langpavel)
-    (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
-  * [feature/apollo](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1147))
-    — isomorphic Apollo Client by [Pavel Lang](https://github.com/langpavel)
-    (see [Tracking PR #1147](https://github.com/kriasoft/react-starter-kit/pull/1147)) (based on `feature/redux`)
-  * [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1135))
-    — isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
-    (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/apollo`)
-  * [feature/apollo-pure](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo-pure) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1666))
-    — Apollo devtools and TypeScript integration by [piglovesyou](https://github.com/piglovesyou) (based on `master`)
+- [feature/redux](https://github.com/kriasoft/react-starter-kit/tree/feature/redux) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1084))
+  — isomorphic Redux by [Pavel Lang](https://github.com/langpavel)
+  (see [how to integrate Redux](./docs/recipes/how-to-integrate-redux.md)) (based on `master`)
+- [feature/apollo](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1147))
+  — isomorphic Apollo Client by [Pavel Lang](https://github.com/langpavel)
+  (see [Tracking PR #1147](https://github.com/kriasoft/react-starter-kit/pull/1147)) (based on `feature/redux`)
+- [feature/react-intl](https://github.com/kriasoft/react-starter-kit/tree/feature/react-intl) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1135))
+  — isomorphic Redux and React Intl by [Pavel Lang](https://github.com/langpavel)
+  (see [how to integrate React Intl](./docs/recipes/how-to-integrate-react-intl.md)) (based on `feature/apollo`)
+- [feature/apollo-pure](https://github.com/kriasoft/react-starter-kit/tree/feature/apollo-pure) ([PR](https://github.com/kriasoft/react-starter-kit/pull/1666))
+  — Apollo devtools and TypeScript integration by [piglovesyou](https://github.com/piglovesyou) (based on `master`)
 
 You can see status of most reasonable merge combination as [PRs labeled as `TRACKING`](https://github.com/kriasoft/react-starter-kit/labels/TRACKING)
 
 If you think that any of these features should be on `master`, or vice versa, some features should
 removed from the `master` branch, please [let us know](https://gitter.im/kriasoft/react-starter-kit).
 We love your feedback!
-
 
 ### Comparison
 
@@ -151,7 +148,6 @@ We love your feedback!
   </tr>
 </table>
 
-
 ### Backers
 
 ♥ React Starter Kit? Help us keep it alive by donating funds to cover project
@@ -180,7 +176,6 @@ expenses via [OpenCollective](https://opencollective.com/react-starter-kit) or
   <img src="https://opencollective.com/static/images/become_backer.svg" width="64" height="64" alt="">
 </a>
 
-
 ### How to Contribute
 
 Anyone and everyone is welcome to [contribute](CONTRIBUTING.md) to this project. The best way to
@@ -190,35 +185,31 @@ start is by checking our [open issues](https://github.com/kriasoft/react-starter
 participate in discussions, upvote or downvote the issues you like or dislike, send [pull
 requests](CONTRIBUTING.md#pull-requests).
 
-
 ### Learn More
 
-  * [Getting Started with React.js](http://facebook.github.io/react/)
-  * [Getting Started with GraphQL and Relay](https://quip.com/oLxzA1gTsJsE)
-  * [React.js Questions on StackOverflow](http://stackoverflow.com/questions/tagged/reactjs)
-  * [React.js Discussion Board](https://discuss.reactjs.org/)
-  * [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
-  * [Enzyme — JavaScript Testing utilities for React](http://airbnb.io/enzyme/)
-  * [Flow — A static type checker for JavaScript](http://flowtype.org/)
-  * [The Future of React](https://github.com/reactjs/react-future)
-  * [Learn ES6](https://babeljs.io/docs/learn-es6/), [ES6 Features](https://github.com/lukehoban/es6features#readme)
-
+- [Getting Started with React.js](http://facebook.github.io/react/)
+- [Getting Started with GraphQL and Relay](https://quip.com/oLxzA1gTsJsE)
+- [React.js Questions on StackOverflow](http://stackoverflow.com/questions/tagged/reactjs)
+- [React.js Discussion Board](https://discuss.reactjs.org/)
+- [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
+- [Enzyme — JavaScript Testing utilities for React](http://airbnb.io/enzyme/)
+- [Flow — A static type checker for JavaScript](http://flowtype.org/)
+- [The Future of React](https://github.com/reactjs/react-future)
+- [Learn ES6](https://babeljs.io/docs/learn-es6/), [ES6 Features](https://github.com/lukehoban/es6features#readme)
 
 ### Related Projects
 
-  * [GraphQL Starter Kit](https://github.com/kriasoft/graphql-starter-kit) — Boilerplate for building data APIs with Node.js, JavaScript (via Babel) and GraphQL
-  * [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
-  * [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
-
+- [GraphQL Starter Kit](https://github.com/kriasoft/graphql-starter-kit) — Boilerplate for building data APIs with Node.js, JavaScript (via Babel) and GraphQL
+- [Membership Database](https://github.com/membership/membership.db) — SQL schema boilerplate for user accounts, profiles, roles, and auth claims
+- [Babel Starter Kit](https://github.com/kriasoft/babel-starter-kit) — Boilerplate for authoring JavaScript/React.js libraries
 
 ### Support
 
-  * [#react-starter-kit](http://stackoverflow.com/questions/tagged/react-starter-kit) on Stack Overflow — Questions and answers
-  * [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) on Gitter — Watch announcements, share ideas and feedback
-  * [GitHub issues](https://github.com/kriasoft/react-starter-kit/issues), or [Scrum board](https://waffle.io/kriasoft/react-starter-kit) — File issues, send feature requests
-  * [appear.in/react](https://appear.in/react) — Open hours! Exchange ideas and experiences (React, GraphQL, startups and pet projects)
-  * [@koistya](https://twitter.com/koistya) on [Codementor](https://www.codementor.io/koistya), or [Skype](http://hatscripts.com/addskype?koistya) — Private consulting
-
+- [#react-starter-kit](http://stackoverflow.com/questions/tagged/react-starter-kit) on Stack Overflow — Questions and answers
+- [#react-starter-kit](https://gitter.im/kriasoft/react-starter-kit) on Gitter — Watch announcements, share ideas and feedback
+- [GitHub issues](https://github.com/kriasoft/react-starter-kit/issues), or [Scrum board](https://waffle.io/kriasoft/react-starter-kit) — File issues, send feature requests
+- [appear.in/react](https://appear.in/react) — Open hours! Exchange ideas and experiences (React, GraphQL, startups and pet projects)
+- [@koistya](https://twitter.com/koistya) on [Codementor](https://www.codementor.io/koistya), or [Skype](http://hatscripts.com/addskype?koistya) — Private consulting
 
 ### License
 
@@ -228,6 +219,7 @@ file. The documentation to the project is licensed under the
 [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license.
 
 ---
+
 Made with ♥ by Konstantin Tarkus ([@koistya](https://twitter.com/koistya)) and [contributors](https://github.com/kriasoft/react-starter-kit/graphs/contributors)
 
 [rsk]: https://www.reactstarterkit.com
