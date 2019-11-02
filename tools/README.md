@@ -2,24 +2,24 @@
 
 ### `yarn start` (`start.js`)
 
-* Cleans up the output `/build` directory (`clean.js`)
-* Copies static files to the output folder (`copy.js`)
-* Launches [Webpack](https://webpack.github.io/) compiler in a watch mode (via
+- Cleans up the output `/build` directory (`clean.js`)
+- Copies static files to the output folder (`copy.js`)
+- Launches [Webpack](https://webpack.github.io/) compiler in a watch mode (via
   [webpack-middleware](https://github.com/kriasoft/webpack-middleware))
-* Launches Node.js server from the compiled output folder (`runServer.js`)
-* Launches [Browsersync](https://browsersync.io/) and
+- Launches Node.js server from the compiled output folder (`runServer.js`)
+- Launches [Browsersync](https://browsersync.io/) and
   [Hot Module Replacement](https://webpack.github.io/docs/hot-module-replacement)
 
 ### `yarn run build` (`build.js`)
 
-* Cleans up the output `/build` folder (`clean.js`)
-* Copies static files to the output folder (`copy.js`)
-* Creates application bundles with Webpack (`bundle.js`, `webpack.config.js`)
+- Cleans up the output `/build` folder (`clean.js`)
+- Copies static files to the output folder (`copy.js`)
+- Creates application bundles with Webpack (`bundle.js`, `webpack.config.js`)
 
 ### `yarn run deploy` (`deploy.js`)
 
-* Builds the project from source files (`build.js`)
-* Pushes the contents of the `/build` folder to a remote server with Git
+- Builds the project from source files (`build.js`)
+- Pushes the contents of the `/build` folder to a remote server with Git
 
 ## Options
 
@@ -46,9 +46,9 @@ $ yarn start --release                    # Launch dev server in production mode
 
 ## Misc
 
-* `webpack.config.js` - Webpack configuration for both client-side and
+- `webpack.config.js` - Webpack configuration for both client-side and
   server-side bundles
-* `postcss.config.js` - PostCSS configuration for transforming styles with JS
+- `postcss.config.js` - PostCSS configuration for transforming styles with JS
   plugins
-* `run.js` - Helps to launch other scripts with `babel-node` (e.g. `babel-node tools/run build`)
-* `.eslintrc` - ESLint overrides for built automation scripts
+- `run.js` - Helps to launch other scripts with `babel-node` (e.g. `babel-node tools/run build`)
+- `.eslintrc` - ESLint overrides for built automation scripts

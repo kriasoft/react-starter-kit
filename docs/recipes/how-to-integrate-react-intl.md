@@ -44,24 +44,24 @@
 
 Just import the appropriate [component](https://github.com/yahoo/react-intl/wiki#the-react-intl-module) from `react-intl`
 
-* For localizable text use
+- For localizable text use
   [`<FormattedMessage>`](https://github.com/yahoo/react-intl/wiki/Components#formattedmessage).
-* You can also use it with
+- You can also use it with
   the [`defineMessages()`](https://github.com/yahoo/react-intl/wiki/API#definemessages) helper.
 
-* For date and time:
+- For date and time:
   [`<FormattedDate>`](https://github.com/yahoo/react-intl/wiki/Components#formatteddate)
   [`<FormattedTime>`](https://github.com/yahoo/react-intl/wiki/Components#formattedtime)
   [`<FormattedRelative>`](https://github.com/yahoo/react-intl/wiki/Components#formattedrelative)
 
-* For numbers and currencies:
+- For numbers and currencies:
   [`<FormattedNumber>`](https://github.com/yahoo/react-intl/wiki/Components#formattednumber)
   [`<FormattedPlural>`](https://github.com/yahoo/react-intl/wiki/Components#formattedplural)
 
-* If possible, do not use `<FormattedHTMLMessage>`, see how to use _Rich Text Formatting_ with
+- If possible, do not use `<FormattedHTMLMessage>`, see how to use _Rich Text Formatting_ with
   [`<FormattedMessage>`](https://github.com/yahoo/react-intl/wiki/Components#formattedmessage)
 
-* When you need an imperative formatting API, use the [`injectIntl`](https://github.com/yahoo/react-intl/wiki/API#injectintl) High-Order Component.
+- When you need an imperative formatting API, use the [`injectIntl`](https://github.com/yahoo/react-intl/wiki/API#injectintl) High-Order Component.
 
 #### Example
 
@@ -128,6 +128,6 @@ When editing a translation file, it should be copied to `build/messages/` direct
 
 ### Other References
 
-* [`Intl documentation on MDN`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Intl)
-* [express-request-language](https://github.com/tinganho/express-request-language#readme)
+- [`Intl documentation on MDN`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Intl)
+- [express-request-language](https://github.com/tinganho/express-request-language#readme)
   – for more details how initial language negotiation works.

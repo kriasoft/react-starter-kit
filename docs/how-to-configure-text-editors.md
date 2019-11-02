@@ -32,10 +32,10 @@ Enable **CSSComb** by following the instructions
 
 Install atom packages
 
-* [linter](https://atom.io/packages/linter)
-* [linter-eslint](https://atom.io/packages/linter-eslint)
-* [linter-stylelint](https://atom.io/packages/linter-stylelint)
-* [react](https://atom.io/packages/react)
+- [linter](https://atom.io/packages/linter)
+- [linter-eslint](https://atom.io/packages/linter-eslint)
+- [linter-stylelint](https://atom.io/packages/linter-stylelint)
+- [react](https://atom.io/packages/react)
 
 ```shell
 apm install linter linter-eslint react linter-stylelint
@@ -43,10 +43,10 @@ apm install linter linter-eslint react linter-stylelint
 
 Install local npm packages
 
-* [eslint](https://www.npmjs.com/package/eslint)
-* [babel-eslint](https://www.npmjs.com/package/babel-eslint)
-* [eslint-plugin-react](https://www.npmjs.com/package/eslint-plugin-react)
-* [stylelint](https://www.npmjs.com/package/stylelint)
+- [eslint](https://www.npmjs.com/package/eslint)
+- [babel-eslint](https://www.npmjs.com/package/babel-eslint)
+- [eslint-plugin-react](https://www.npmjs.com/package/eslint-plugin-react)
+- [stylelint](https://www.npmjs.com/package/stylelint)
 
 ```shell
 yarn add --dev eslint babel-eslint eslint-plugin-react stylelint
@@ -60,10 +60,10 @@ Install SublimeText packages\
 Easiest with [Package Control](https://packagecontrol.io/) and then "Package Control:
 Install Package" (Ctrl+Shift+P)
 
-* [Babel](https://packagecontrol.io/packages/Babel)
-* [Sublime-linter](http://www.sublimelinter.com/en/latest/)
-* [SublimeLinter-contrib-eslint](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint)
-* [SublimeLinter-contrib-stylelint](https://packagecontrol.io/packages/SublimeLinter-contrib-stylelint)
+- [Babel](https://packagecontrol.io/packages/Babel)
+- [Sublime-linter](http://www.sublimelinter.com/en/latest/)
+- [SublimeLinter-contrib-eslint](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint)
+- [SublimeLinter-contrib-stylelint](https://packagecontrol.io/packages/SublimeLinter-contrib-stylelint)
 
 You can also use
 [SublimeLinter-contrib-eslint_d](https://packagecontrol.io/packages/SublimeLinter-contrib-eslint_d)
@@ -71,11 +71,11 @@ for faster linting.
 
 Set Babel as default syntax for a particular extension:
 
-* Open a file with that extension,
-* Select `View` from the menu,
-* Then `Syntax` `->` `Open all with current extension as...` `->` `Babel` `->`
+- Open a file with that extension,
+- Select `View` from the menu,
+- Then `Syntax` `->` `Open all with current extension as...` `->` `Babel` `->`
   `JavaScript (Babel)`.
-* Repeat this for each extension (e.g.: .js and .jsx).
+- Repeat this for each extension (e.g.: .js and .jsx).
 
 Install local npm packages
 
