@@ -77,7 +77,7 @@
     "husky": "^1.0.0-rc.15",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.9.0",
-    "lint-staged": "^7.3.0",
+    "lint-staged": "^9.4.2",
     "markdown-it": "^8.4.2",
     "mkdirp": "^0.5.1",
     "null-loader": "^0.1.1",
@@ -111,23 +111,18 @@
     "webpack-node-externals": "^1.7.2"
   },
   "lint-staged": {
-    "ignore": [
-      "package.json"
+    "*.{js,jsx}": [
+      "eslint --no-ignore --fix",
+      "git add --force"
     ],
-    "linters": {
-      "*.{js,jsx}": [
-        "eslint --no-ignore --fix",
-        "git add --force"
-      ],
-      "*.{json,md,graphql}": [
-        "prettier --write",
-        "git add --force"
-      ],
-      "*.{css,less,styl,scss,sass,sss}": [
-        "stylelint --fix",
-        "git add --force"
-      ]
-    }
+    "*.{json,md,graphql}": [
+      "prettier --write",
+      "git add --force"
+    ],
+    "*.{css,less,styl,scss,sass,sss}": [
+      "stylelint --fix",
+      "git add --force"
+    ]
   },
   "scripts": {
     "precommit": "lint-staged",
