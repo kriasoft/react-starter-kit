@@ -70,9 +70,7 @@ class Html extends React.Component {
               dangerouslySetInnerHTML={{
                 __html:
                   'window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;' +
-                  `ga('create','${
-                    config.analytics.googleTrackingId
-                  }','auto');ga('send','pageview')`,
+                  `ga('create','${config.analytics.googleTrackingId}','auto');ga('send','pageview')`,
               }}
             />
           )}
