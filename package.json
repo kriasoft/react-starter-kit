@@ -33,7 +33,7 @@
     "query-string": "^6.1.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
-    "sequelize": "^5.15.1",
+    "sequelize": "^5.21.2",
     "serialize-javascript": "^1.5.0",
     "source-map-support": "^0.5.9",
     "sqlite3": "^4.0.8",
@@ -63,7 +63,7 @@
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^3.0.1",
     "eslint-import-resolver-node": "^0.3.2",
-    "eslint-loader": "^2.1.1",
+    "eslint-loader": "^3.0.2",
     "eslint-plugin-css-modules": "^2.9.1",
     "eslint-plugin-flowtype": "^2.50.1",
     "eslint-plugin-import": "^2.14.0",
@@ -111,23 +111,18 @@
     "webpack-node-externals": "^1.7.2"
   },
   "lint-staged": {
-    "ignore": [
-      "package.json"
+    "*.{js,jsx}": [
+      "eslint --no-ignore --fix",
+      "git add --force"
     ],
-    "linters": {
-      "*.{js,jsx}": [
-        "eslint --no-ignore --fix",
-        "git add --force"
-      ],
-      "*.{json,md,graphql}": [
-        "prettier --write",
-        "git add --force"
-      ],
-      "*.{css,less,styl,scss,sass,sss}": [
-        "stylelint --fix",
-        "git add --force"
-      ]
-    }
+    "*.{json,md,graphql}": [
+      "prettier --write",
+      "git add --force"
+    ],
+    "*.{css,less,styl,scss,sass,sss}": [
+      "stylelint --fix",
+      "git add --force"
+    ]
   },
   "scripts": {
     "precommit": "lint-staged",
