@@ -3,7 +3,7 @@
 ### Requirements
 
 - Mac OS X, Windows, or Linux
-- [Yarn](https://yarnpkg.com/) package + [Node.js](https://nodejs.org/) v6.9 or
+- [Yarn](https://yarnpkg.com/) package + [Node.js](https://nodejs.org/) v8.16.2 or
   newer
 - Text editor or IDE pre-configured with React/JSX/Flow/ESlint
   ([learn more](./how-to-configure-text-editors.md))

@@ -24,7 +24,7 @@ and newcomers to the industry.
 ### Getting Started
 
 - Follow the [getting started guide](./docs/getting-started.md) to download and run the project
-  ([Node.js](https://nodejs.org/) >= 6.9)
+  ([Node.js](https://nodejs.org/) >= 8.16.2)
 - Check the [code recipes](./docs/recipes) used in this boilerplate, or share yours
 
 ### Customization
