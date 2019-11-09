@@ -127,10 +127,11 @@ Navigation.propTypes = { items: PropTypes.array.isRequired };
 // Navigation.js
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import useStyles from 'isomorphic-style-loader/useStyles';
 import s from './Navigation.scss';
 
-function Navigation() {
+export default function Navigation() {
+  useStyles(s);
   return (
     <nav className={`${s.root} ${this.props.className}`}>
       <ul className={s.items}>
@@ -150,8 +151,6 @@ function Navigation() {
 }
 
 Navigation.propTypes = { className: PropTypes.string };
-
-export default withStyles(Navigation, s);
 ```
 
 ### Use higher-order components
@@ -205,14 +204,11 @@ export default withViewport;
 
 ```js
 // MyComponent.js
-import React from 'react';
 import withViewport from './withViewport';
 
-class MyComponent {
-  render() {
-    let { width, height } = this.props.viewport;
-    return <div>{`Viewport: ${width}x${height}`}</div>;
-  }
+function MyComponent(props) {
+  const { width, height } = props.viewport;
+  return <div>{`Viewport: ${width}x${height}`}</div>;
 }
 
 export default withViewport(MyComponent);
