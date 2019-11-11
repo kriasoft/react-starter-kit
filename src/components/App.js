@@ -13,13 +13,6 @@ import PropTypes from 'prop-types';
 import StyleContext from 'isomorphic-style-loader/StyleContext';
 import ApplicationContext from './ApplicationContext';
 
-const ContextType = {
-  // Universal HTTP client
-  fetch: PropTypes.func.isRequired,
-  pathname: PropTypes.string.isRequired,
-  query: PropTypes.object,
-};
-
 /**
  * The top-level React component setting context (global) variables
  * that can be accessed from all the child components.
@@ -34,7 +27,7 @@ const ContextType = {
  *   };
  *
  *   ReactDOM.render(
- *     <App context={context}>
+ *     <App context={context} insertCss={() => {}}>
  *       <Layout>
  *         <LandingPage />
  *       </Layout>
@@ -42,28 +35,28 @@ const ContextType = {
  *     container,
  *   );
  */
-class App extends React.PureComponent {
-  static propTypes = {
-    // Enables critical path CSS rendering
-    // https://github.com/kriasoft/isomorphic-style-loader
-    insertCss: PropTypes.func.isRequired,
-    context: PropTypes.shape(ContextType).isRequired,
-    children: PropTypes.element.isRequired,
-  };
 
-  render() {
-    const { context, insertCss } = this.props;
-
-    // NOTE: If you need to add or modify header, footer etc. of the app,
-    // please do that inside the Layout component.
-    return (
-      <StyleContext.Provider value={{ insertCss }}>
-        <ApplicationContext.Provider value={{ context }}>
-          {React.Children.only(this.props.children)}
-        </ApplicationContext.Provider>
-      </StyleContext.Provider>
-    );
-  }
+export default function App({ context, insertCss, children }) {
+  // NOTE: If you need to add or modify header, footer etc. of the app,
+  // please do that inside the Layout component.
+  return (
+    <StyleContext.Provider value={{ insertCss }}>
+      <ApplicationContext.Provider value={{ context }}>
+        {React.Children.only(children)}
+      </ApplicationContext.Provider>
+    </StyleContext.Provider>
+  );
 }
 
-export default App;
+App.propTypes = {
+  // Enables critical path CSS rendering
+  // https://github.com/kriasoft/isomorphic-style-loader
+  insertCss: PropTypes.func.isRequired,
+  context: PropTypes.shape({
+    // Universal HTTP client
+    fetch: PropTypes.func.isRequired,
+    pathname: PropTypes.string.isRequired,
+    query: PropTypes.object,
+  }).isRequired,
+  children: PropTypes.element.isRequired,
+};
