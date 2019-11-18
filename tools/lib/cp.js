@@ -11,14 +11,10 @@ import cp from 'child_process';
 import execa from 'execa';
 
 export const spawn = (command, args, options) =>
-  execa(
-    command,
-    {
-      stdio: ['ignore', 'inherit', 'inherit'],
-      ...args,
-    },
-    options,
-  );
+  execa(command, args, {
+    stdio: ['ignore', 'inherit', 'inherit'],
+    ...options,
+  });
 
 export const exec = (command, options) =>
   new Promise((resolve, reject) => {
