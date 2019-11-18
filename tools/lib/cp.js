@@ -10,18 +10,33 @@
 import cp from 'child_process';
 import execa from 'execa';
 
-export const spawn = (command, args, options) => execa(command, args, options);
+export const spawn = (command, args, options) =>
+  execa(
+    command,
+    {
+      stdio: ['ignore', 'inherit', 'inherit'],
+      ...args,
+    },
+    options,
+  );
 
 export const exec = (command, options) =>
   new Promise((resolve, reject) => {
-    cp.exec(command, options, (err, stdout, stderr) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+    cp.exec(
+      command,
+      {
+        stdio: ['ignore', 'inherit', 'inherit'],
+        ...options,
+      },
+      (err, stdout, stderr) => {
+        if (err) {
+          reject(err);
+          return;
+        }
 
-      resolve({ stdout, stderr });
-    });
+        resolve({ stdout, stderr });
+      },
+    );
   });
 
 export default { spawn, exec };
