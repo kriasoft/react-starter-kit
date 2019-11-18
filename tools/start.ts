@@ -229,6 +229,8 @@ async function start() {
   appPromiseIsResolved = true;
   appPromiseResolve!();
 
+  const port = process.env.PORT ? Number(process.env.PORT) : undefined;
+
   // Launch the development server with Browsersync and HMR
   await new Promise((resolve, reject) =>
     browserSync.create().init(
@@ -238,6 +240,7 @@ async function start() {
         middleware: [server],
         open: process.argv.includes('--silent') ? false : 'local',
         ...(isDebug ? {} : { notify: false, ui: {} }),
+        ...(port ? { port } : null),
       },
       (error, bs) => (error ? reject(error) : resolve(bs)),
     ),

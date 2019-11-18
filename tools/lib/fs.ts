@@ -13,7 +13,7 @@ import glob, { IOptions } from 'glob';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
 
-export const readFile = (file: string) =>
+export const readFile = (file: string): Promise<string> =>
   new Promise((resolve, reject) => {
     fs.readFile(file, 'utf8', (err, data) =>
       err ? reject(err) : resolve(data),

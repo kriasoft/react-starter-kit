@@ -19,7 +19,7 @@ module.exports = {
     'prettier/react',
   ],
 
-  plugins: ['@typescript-eslint/eslint-plugin', 'css-modules', 'prettier'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'css-modules', 'prettier', 'jest'],
 
   parserOptions: {
     sourceType: 'module',
@@ -32,6 +32,7 @@ module.exports = {
 
   env: {
     browser: true,
+    jest: true,
   },
 
   rules: {

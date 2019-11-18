@@ -28,6 +28,7 @@ declare module 'react-dev-utils/errorOverlayMiddleware';
 declare module 'react-notifications-component';
 declare module 'react-error-overlay';
 declare module 'react-test-renderer';
+declare module 'terminate';
 declare module 'isomorphic-style-loader/withStyles' {
   /* eslint no-underscore-dangle:0 */
   /* eslint no-undef:0 */
