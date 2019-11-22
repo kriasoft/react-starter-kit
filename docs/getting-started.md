@@ -99,7 +99,7 @@ compiled output files are not optimized and minimized in this case. You can use
 (production) mode:
 
 ```shell
-$ yarn start -- --release
+$ yarn start --release
 ```
 
 _NOTE: double dashes are required_
@@ -115,13 +115,13 @@ $ yarn run build
 or, for a production build:
 
 ```shell
-$ yarn run build -- --release
+$ yarn run build --release
 ```
 
 or, for a production docker build:
 
 ```shell
-$ yarn run build -- --release --docker
+$ yarn run build --release --docker
 ```
 
 _NOTE: double dashes are required_
