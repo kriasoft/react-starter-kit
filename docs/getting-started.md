@@ -140,7 +140,7 @@ To launch unit tests:
 
 ```shell
 $ yarn run test          # Run unit tests with Jest
-$ yarn run test:watch    # Launch unit test runner and start watching for changes
+$ yarn run test-watch    # Launch unit test runner and start watching for changes
 ```
 
 By default, [Jest](https://jestjs.io/) test runner is looking for test files
