@@ -1,4 +1,4 @@
-FROM node:8.10.0-alpine
+FROM node:8.16.2-alpine
 
 # Set a working directory
 WORKDIR /usr/src/app
@@ -11,6 +11,10 @@ RUN yarn install --production --no-progress
 
 # Copy application files
 COPY ./build .
+
+# Set permissions for "node" user
+RUN chown -R node:node /usr/src/app
+RUN chmod 755 /usr/src/app
 
 # Run the container under "node" user by default
 USER node
