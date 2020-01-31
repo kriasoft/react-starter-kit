@@ -68,10 +68,7 @@ export const readDir = (pattern, options) =>
     ),
   );
 
-export const makeDir = name =>
-  new Promise((resolve, reject) => {
-    mkdirp(name, err => (err ? reject(err) : resolve()));
-  });
+export const makeDir = name => mkdirp.sync(name);
 
 export const moveDir = async (source, target) => {
   const dirs = await readDir('**/*.*', {
