@@ -33,10 +33,10 @@ files right from GitHub website as described [here](https://help.github.com/arti
 
 Before opening an issue, please:
 
-* Check the [Getting Started](https://github.com/kriasoft/react-starter-kit/blob/master/docs/getting-started.md) guide.
-* Search the [issue tracker](https://github.com/kriasoft/react-starter-kit/issues) to make sure
+- Check the [Getting Started](https://github.com/kriasoft/react-starter-kit/blob/master/docs/getting-started.md) guide.
+- Search the [issue tracker](https://github.com/kriasoft/react-starter-kit/issues) to make sure
   your issue hasn’t already been reported.
-* If your issue sounds more like a question, please post it on StackOverflow.com instead with the
+- If your issue sounds more like a question, please post it on StackOverflow.com instead with the
   tag [react-starter-kit](http://stackoverflow.com/questions/tagged/react-starter-kit).
 
 ### Pull Requests
@@ -44,12 +44,12 @@ Before opening an issue, please:
 Before you submit a [pull request](https://help.github.com/articles/using-pull-requests/) from your
 forked repo, check that it meets these guidelines:
 
-* If the pull request adds functionality, the docs should be updated as part of the same PR.
-* Create a separate PR for each small feature or bug fix.
-* [Squash](http://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)
+- If the pull request adds functionality, the docs should be updated as part of the same PR.
+- Create a separate PR for each small feature or bug fix.
+- [Squash](http://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)
   your commits into one for each PR.
-* Run `yarn test` to make sure that your code style is OK and there are no any regression bugs.
-* When contributing to an opt-in feature, apply the `[feature/...]` tag as a prefix to your PR title
+- Run `yarn test` to make sure that your code style is OK and there are no any regression bugs.
+- When contributing to an opt-in feature, apply the `[feature/...]` tag as a prefix to your PR title
 
 #### Style Guide
 

@@ -41,20 +41,28 @@ React components as follows:
 #### React Component
 
 ```js
-class Post extends React.Component {
-  static contextTypes = { fetch: PropTypes.func.isRequired };
-  handleDelete = (event) => {
-    event.preventDefault();
-    const id = event.target.dataset['id'];
-    this.context.fetch(`/api/posts/${id}`, { method: 'DELETE' }).then(...);
-  };
-  render() { ... }
+import {useContext} from 'react';
+import ApplicationContext from '../ApplicationContext';
+
+function Post() {
+  const {context} = useContext(ApplicationContext);
+  return (
+    <div>
+      ...
+      <a onClick={(event) => {
+        event.preventDefault();
+        const id = event.target.dataset['id'];
+        // Use context.fetch to make it work in both server-side and client-side
+        context.fetch(`/api/posts/${id}`, { method: 'DELETE' }).then(...);
+      }}>Delete</a>
+    </div>
+  );
 }
 ```
 
 #### Related articles
 
-* [That's so fetch!](https://jakearchibald.com/2015/thats-so-fetch/) by
+- [That's so fetch!](https://jakearchibald.com/2015/thats-so-fetch/) by
   [Jake Archibald](https://twitter.com/jaffathecake)
 
 [fetch]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
