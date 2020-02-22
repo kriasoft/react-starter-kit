@@ -2,10 +2,10 @@
 
 ### Requirements
 
-* Mac OS X, Windows, or Linux
-* [Yarn](https://yarnpkg.com/) package + [Node.js](https://nodejs.org/) v6.5 or
+- Mac OS X, Windows, or Linux
+- [Yarn](https://yarnpkg.com/) package + [Node.js](https://nodejs.org/) v8.16.2 or
   newer
-* Text editor or IDE pre-configured with React/JSX/Flow/ESlint
+- Text editor or IDE pre-configured with React/JSX/Flow/ESlint
   ([learn more](./how-to-configure-text-editors.md))
 
 ### Directory Layout
@@ -99,7 +99,7 @@ compiled output files are not optimized and minimized in this case. You can use
 (production) mode:
 
 ```shell
-$ yarn start -- --release
+$ yarn start --release
 ```
 
 _NOTE: double dashes are required_
@@ -115,13 +115,13 @@ $ yarn run build
 or, for a production build:
 
 ```shell
-$ yarn run build -- --release
+$ yarn run build --release
 ```
 
 or, for a production docker build:
 
 ```shell
-$ yarn run build -- --release --docker
+$ yarn run build --release --docker
 ```
 
 _NOTE: double dashes are required_
@@ -139,11 +139,11 @@ $ yarn run lint
 To launch unit tests:
 
 ```shell
-$ yarn run test          # Run unit tests with Mocha
-$ yarn run test:watch    # Launch unit test runner and start watching for changes
+$ yarn run test          # Run unit tests with Jest
+$ yarn run test-watch    # Launch unit test runner and start watching for changes
 ```
 
-By default, [Mocha](https://mochajs.org/) test runner is looking for test files
+By default, [Jest](https://jestjs.io/) test runner is looking for test files
 matching the `src/**/*.test.js` pattern. Take a look at
 `src/components/Layout/Layout.test.js` as an example.
 
