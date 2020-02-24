@@ -38,10 +38,7 @@ const remote = {
 //   website: `http://<app>.azurewebsites.net`,
 // };
 
-const options = {
-  cwd: path.resolve(__dirname, '../build'),
-  stdio: ['ignore', 'inherit', 'inherit'],
-};
+const options = { cwd: path.resolve(__dirname, '../build') };
 
 /**
  * Deploy the contents of the `/build` folder to a remote server via Git.

@@ -61,9 +61,7 @@ passport.use(
                 profile: {
                   displayName: profile.displayName,
                   gender: profile._json.gender,
-                  picture: `https://graph.facebook.com/${
-                    profile.id
-                  }/picture?type=large`,
+                  picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
                 },
               },
               {
@@ -113,9 +111,7 @@ passport.use(
                   profile: {
                     displayName: profile.displayName,
                     gender: profile._json.gender,
-                    picture: `https://graph.facebook.com/${
-                      profile.id
-                    }/picture?type=large`,
+                    picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
                   },
                 },
                 {

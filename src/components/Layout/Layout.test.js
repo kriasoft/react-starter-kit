@@ -28,11 +28,11 @@ describe('Layout', () => {
       .create(
         <App
           context={{
-            insertCss: () => {},
             fetch: () => {},
             pathname: '',
             store,
           }}
+          insertCss={() => {}}
         >
           <Layout>
             <div className="child" />

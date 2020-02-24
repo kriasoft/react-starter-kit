@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Layout renders children correctly 1`] = `
-<div>
+Array [
   <div
     className="root"
   >
@@ -84,10 +84,10 @@ exports[`Layout renders children correctly 1`] = `
         </p>
       </div>
     </div>
-  </div>
+  </div>,
   <div
     className="child"
-  />
+  />,
   <div
     className="root"
   >
@@ -112,7 +112,7 @@ exports[`Layout renders children correctly 1`] = `
         Report an issue
       </a>
     </div>
-  </div>
+  </div>,
   <div
     className="root"
   >
@@ -173,6 +173,6 @@ exports[`Layout renders children correctly 1`] = `
         Not Found
       </a>
     </div>
-  </div>
-</div>
+  </div>,
+]
 `;
