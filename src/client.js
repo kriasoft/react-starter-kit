@@ -12,7 +12,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import deepForceUpdate from 'react-deep-force-update';
 import queryString from 'query-string';
-import { createPath } from 'history/PathUtils';
+import { createPath } from 'history';
 import App from './components/App';
 import createFetch from './createFetch';
 import configureStore from './store/configureStore';
@@ -21,31 +21,30 @@ import history from './history';
 import createApolloClient from './core/createApolloClient';
 import router from './router';
 
-// Universal HTTP client
-const fetch = createFetch(window.fetch, {
-  baseUrl: window.App.apiUrl,
-});
-
 const apolloClient = createApolloClient();
+
+// Enables critical path CSS rendering
+// https://github.com/kriasoft/isomorphic-style-loader
+const insertCss = (...styles) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const removeCss = styles.map(x => x._insertCss());
+  return () => {
+    removeCss.forEach(f => f());
+  };
+};
 
 // Global (context) variables that can be easily accessed from any React component
 // https://facebook.github.io/react/docs/context.html
 const context = {
-  // Enables critical path CSS rendering
-  // https://github.com/kriasoft/isomorphic-style-loader
-  insertCss: (...styles) => {
-    // eslint-disable-next-line no-underscore-dangle
-    const removeCss = styles.map(x => x._insertCss());
-    return () => {
-      removeCss.forEach(f => f());
-    };
-  },
   // For react-apollo
   client: apolloClient,
+  // Universal HTTP client
+  fetch: createFetch(fetch, {
+    baseUrl: window.App.apiUrl,
+  }),
   // Initialize a new Redux store
   // http://redux.js.org/docs/basics/UsageWithReact.html
   store: configureStore(window.App.state, { fetch, history }),
-  fetch,
   storeSubscription: null,
 };
 
@@ -90,7 +89,9 @@ async function onLocationChange(location, action) {
 
     const renderReactApp = isInitialRender ? ReactDOM.hydrate : ReactDOM.render;
     appInstance = renderReactApp(
-      <App context={context}>{route.component}</App>,
+      <App context={context} insertCss={insertCss}>
+        {route.component}
+      </App>,
       container,
       () => {
         if (isInitialRender) {
