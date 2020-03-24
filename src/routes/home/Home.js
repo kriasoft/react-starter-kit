@@ -10,21 +10,17 @@
 import useStyles from 'isomorphic-style-loader/useStyles';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { graphql, compose } from 'react-apollo';
-import newsQuery from './news.graphql';
 import s from './Home.css';
 
-function Home({ data: { loading } }) {
+function Home({ loading, news }) {
   useStyles(s);
   return (
     <div className={s.root}>
       <div className={s.container}>
         <h1>React.js News</h1>
-        {loading
+        {loading !== false
           ? 'Loading...'
-          : {
-              /*
-      reactjsGetAllNews.map(item => (
+          : news.map(item => (
               <article key={item.link} className={s.newsItem}>
                 <h1 className={s.newsTitle}>
                   <a href={item.link}>{item.title}</a>
@@ -35,24 +31,25 @@ function Home({ data: { loading } }) {
                   dangerouslySetInnerHTML={{ __html: item.content }}
                 />
               </article>
-            )) */
-            }}
+            ))}
       </div>
     </div>
   );
 }
 
 Home.propTypes = {
-  data: PropTypes.shape({
-    loading: PropTypes.bool.isRequired,
-    news: PropTypes.arrayOf(
-      PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        link: PropTypes.string.isRequired,
-        content: PropTypes.string,
-      }),
-    ),
-  }).isRequired,
+  loading: PropTypes.bool.isRequired,
+  news: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      link: PropTypes.string.isRequired,
+      content: PropTypes.string,
+    }),
+  ),
 };
 
-export default compose(graphql(newsQuery))(Home);
+Home.defaultProps = {
+  news: [],
+};
+
+export default Home;

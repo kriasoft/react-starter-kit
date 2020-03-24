@@ -21,7 +21,7 @@ async function action({ client }) {
     chunks: ['home'],
     component: (
       <Layout>
-        <Home news={data.reactjsGetAllNews} />
+        <Home loading={data.loading} news={data.data.reactjsGetAllNews} />
       </Layout>
     ),
   };
