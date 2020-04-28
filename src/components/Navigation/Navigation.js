@@ -7,30 +7,20 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import useStyles from 'isomorphic-style-loader/useStyles';
 import React from 'react';
-import cx from 'classnames';
-import s from './Navigation.css';
-import Link from '../Link';
+import { Root, Link, Spacer } from './styled';
 
 export default function Navigation() {
-  useStyles(s);
   return (
-    <div className={s.root} role="navigation">
-      <Link className={s.link} to="/about">
-        About
-      </Link>
-      <Link className={s.link} to="/contact">
-        Contact
-      </Link>
-      <span className={s.spacer}> | </span>
-      <Link className={s.link} to="/login">
-        Log in
-      </Link>
-      <span className={s.spacer}>or</span>
-      <Link className={cx(s.link, s.highlight)} to="/register">
+    <Root role="navigation">
+      <Link to="/about">About</Link>
+      <Link to="/contact">Contact</Link>
+      <Spacer> | </Spacer>
+      <Link to="/login">Log in</Link>
+      <Spacer>or</Spacer>
+      <Link highlight to="/register">
         Sign up
       </Link>
-    </div>
+    </Root>
   );
 }

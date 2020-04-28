@@ -7,35 +7,23 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import useStyles from 'isomorphic-style-loader/useStyles';
 import React from 'react';
-import s from './Footer.css';
-import Link from '../Link';
+import { Root, Container, Text, Spacer, Link } from './styled';
 
 export default function Footer() {
-  useStyles(s);
-
   return (
-    <div className={s.root}>
-      <div className={s.container}>
-        <span className={s.text}>© Your Company</span>
-        <span className={s.spacer}>·</span>
-        <Link className={s.link} to="/">
-          Home
-        </Link>
-        <span className={s.spacer}>·</span>
-        <Link className={s.link} to="/admin">
-          Admin
-        </Link>
-        <span className={s.spacer}>·</span>
-        <Link className={s.link} to="/privacy">
-          Privacy
-        </Link>
-        <span className={s.spacer}>·</span>
-        <Link className={s.link} to="/not-found">
-          Not Found
-        </Link>
-      </div>
-    </div>
+    <Root>
+      <Container>
+        <Text>© Your Company</Text>
+        <Spacer />
+        <Link to="/">Home</Link>
+        <Spacer />
+        <Link to="/admin">Admin</Link>
+        <Spacer />
+        <Link to="/privacy">Privacy</Link>
+        <Spacer />
+        <Link to="/not-found">Not Found</Link>
+      </Container>
+    </Root>
   );
 }

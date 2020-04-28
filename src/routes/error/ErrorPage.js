@@ -7,12 +7,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import useStyles from 'isomorphic-style-loader/useStyles';
 import React from 'react';
 import PropTypes from 'prop-types';
-import s from './ErrorPage.css';
+import ErrorGlobalStyle from './styled';
 
-export function ErrorPageWithoutStyle({ error }) {
+export default function ErrorPage({ error }) {
   if (__DEV__ && error) {
     return (
       <>
@@ -24,13 +23,14 @@ export function ErrorPageWithoutStyle({ error }) {
 
   return (
     <>
+      <ErrorGlobalStyle />
       <h1>Error</h1>
       <p>Sorry, a critical error occurred on this page.</p>
     </>
   );
 }
 
-ErrorPageWithoutStyle.propTypes = {
+ErrorPage.propTypes = {
   error: PropTypes.shape({
     name: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
@@ -38,11 +38,6 @@ ErrorPageWithoutStyle.propTypes = {
   }),
 };
 
-ErrorPageWithoutStyle.defaultProps = {
+ErrorPage.defaultProps = {
   error: null,
 };
-
-export default function ErrorPage(props) {
-  useStyles(s);
-  return ErrorPageWithoutStyle(props);
-}

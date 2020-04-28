@@ -7,20 +7,19 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import useStyles from 'isomorphic-style-loader/useStyles';
 import React from 'react';
 import PropTypes from 'prop-types';
-import s from './Contact.css';
+import Root from '../../components/Root';
+import Container from '../../components/Container';
 
 export default function Contact({ title }) {
-  useStyles(s);
   return (
-    <div className={s.root}>
-      <div className={s.container}>
+    <Root>
+      <Container>
         <h1>{title}</h1>
         <p>...</p>
-      </div>
-    </div>
+      </Container>
+    </Root>
   );
 }
 
