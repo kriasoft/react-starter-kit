@@ -51,6 +51,12 @@ forked repo, check that it meets these guidelines:
 - Run `yarn test` to make sure that your code style is OK and there are no any regression bugs.
 - When contributing to an opt-in feature, apply the `[feature/...]` tag as a prefix to your PR title
 
+### Online one-click setup for contributing
+
+You can use Gitpod(an online IDE which is free for Open Source) for working on issues and making Prs to this project. With a single click it will launch a workspace and automatically: clone the `react-starter-kit`, install the dependencies, run `yarn build` and `yarn start`.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
+
 #### Style Guide
 
 Our linter will catch most styling issues that may exist in your code. You can check the status
