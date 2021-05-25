@@ -1,0 +1,62 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "eslint.nodePath": ".yarn/sdks",
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "jest.pathToJest": "yarn jest",
+  "files.associations": {
+    ".env.**": "dotenv"
+  },
+  "files.exclude": {
+    "**/.cache": true,
+    "**/.DS_Store": true,
+    "**/.editorconfig": true,
+    "**/.eslintcache": true,
+    "**/.git": true,
+    "**/.gitattributes": true,
+    "**/.gitignore": true,
+    "**/.husky": true,
+    "**/.pnp.js": true,
+    "**/.prettierignore": true,
+    "**/.yarn": true,
+    "**/.yarnrc.yml": true,
+    "**/yarn.lock": true
+  },
+  "search.exclude": {
+    "yarn-error.log": true,
+    "yarn.lock": true,
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "cSpell.ignoreWords": [
+    "browserslist",
+    "cloudfunctions",
+    "corejs",
+    "entrypoint",
+    "envalid",
+    "eslintcache",
+    "esmodules",
+    "esnext",
+    "firestore",
+    "globby",
+    "kriasoft",
+    "pathinfo",
+    "pnpify",
+    "reactstarter",
+    "refetch",
+    "refetchable",
+    "sourcemap",
+    "spdx",
+    "tslib",
+    "typechecking",
+    "webflow",
+    "yarnpkg",
+    "yarnrc"
+  ]
+}

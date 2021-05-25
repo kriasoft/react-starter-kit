@@ -1,0 +1,28 @@
+{
+  "React": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "react",
+    "body": [
+      "import { ${1:import}, ${1:import}Props } from \"@material-ui/core\";",
+      "import * as React from \"react\";",
+      "",
+      "type ${TM_FILENAME_BASE}Props = Omit<${1:import}Props, \"children\">;",
+      "",
+      "export function ${TM_FILENAME_BASE}(props: ${TM_FILENAME_BASE}Props): JSX.Element {",
+      "  const { ...other } = props;",
+      "",
+      "  return (",
+      "    <${1:import} {...other}>$0</${1:import}>",
+      "  );",
+      "}",
+      ""
+    ],
+    "description": "React Component"
+  },
+  "Import": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "imp",
+    "body": ["import { ${0} } from \"${1:@material-ui/icons}\";"],
+    "description": "Import"
+  }
+}

@@ -1,0 +1,43 @@
+# Include your project-specific ignores in this file
+# Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
+
+# Compiled output
+/.build
+
+# Yarn without Zero-install
+# https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+# Logs
+yarn-debug.log*
+yarn-error.log*
+
+# Cache
+/.cache
+.eslintcache
+
+# Testing
+/coverage
+*.lcov
+
+# Environment variables
+.env
+
+# Visual Studio Code
+# https://github.com/github/gitignore/blob/master/Global/VisualStudioCode.gitignore
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/react.code-snippets
+
+# macOS
+# https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
+.DS_Store
