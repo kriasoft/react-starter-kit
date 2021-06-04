@@ -18,6 +18,9 @@ The web's most popular front-end template for building web applications with
 - Pre-configured with CSS-in-JS styling using Emotion.js
 - Pre-configured with code quality tools: ESLint, Prettier, TypeScript, Jest, etc.
 - Pre-configured with VSCode code snippets and other VSCode settings
+- The ongoing design and development is supported by these wonderful companies:
+
+<a href="https://reactstarter.com/s/1"><img src="https://reactstarter.com/s/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/2"><img src="https://reactstarter.com/s/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/3"><img src="https://reactstarter.com/s/3.png" height="60" /></a>
 
 ---
 
@@ -108,6 +111,10 @@ Where `--env` argument is the target environment, e.g. `yarn deploy --env=prod`.
 - `yarn set version latest` — Bump Yarn to the latest version
 - `yarn upgrade-interactive` — Update Node.js modules (dependencies)
 - `yarn pnpify --sdk vscode` — Update TypeScript, ESLint, and Prettier settings in VSCode
+
+## Backers
+
+<a href="https://reactstarter.com/b/1"><img src="https://reactstarter.com/b/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/2"><img src="https://reactstarter.com/b/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/3"><img src="https://reactstarter.com/b/3.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/4"><img src="https://reactstarter.com/b/4.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/5"><img src="https://reactstarter.com/b/5.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/6"><img src="https://reactstarter.com/b/6.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/7"><img src="https://reactstarter.com/b/7.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/8"><img src="https://reactstarter.com/b/8.png" height="60" /></a>
 
 ## Related Projects
 
