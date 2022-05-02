@@ -34,6 +34,7 @@ export async function resolveRoute(
   try {
     // Find the first route matching the provided URL path string
     for (let i = 0, route; i < routes.length, (route = routes[i]); i++) {
+      console.log(routes);
       const match = matchUrlPath(route.path, ctx.path);
 
       if (!match) continue;
@@ -52,7 +53,9 @@ export async function resolveRoute(
 
       // Fetch GraphQL query response and load React component in parallel
       const [component, data] = await Promise.all([
-        route.component?.().then((x) => x.default),
+        route.component?.().then((x) => {
+          return x.default;
+        }),
         route.query &&
           fetchQuery(ctx.relay, route.query, variables, {
             fetchPolicy: "store-or-network",

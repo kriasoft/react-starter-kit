@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
+import { Brightness4, Settings } from "@mui/icons-material";
 import {
   Link,
   ListItemIcon,
@@ -9,9 +10,8 @@ import {
   MenuItem,
   MenuProps,
   Switch,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/core/styles";
-import { Brightness4, Settings } from "@material-ui/icons";
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import * as React from "react";
 import { useNavigate, useSignOut } from "../hooks";
 import { Logout } from "../icons";

@@ -1,8 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import { PaletteMode } from "@material-ui/core";
-import { createTheme, Theme } from "@material-ui/core/styles";
+import { PaletteMode } from "@mui/material";
+import { createTheme, Theme } from "@mui/material/styles";
 import { components } from "./components";
 
 /**
