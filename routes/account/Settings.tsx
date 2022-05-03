@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import { css } from "@emotion/react";
-import { Button, Container, TextField, Typography } from "@material-ui/core";
+import { Button, Container, TextField, Typography } from "@mui/material";
 import * as React from "react";
 import { graphql, useMutation } from "react-relay";
 import { useErrors } from "../../hooks";

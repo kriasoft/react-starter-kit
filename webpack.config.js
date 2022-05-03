@@ -139,7 +139,7 @@ module.exports = function config(env, options) {
                   [
                     "babel-plugin-import",
                     {
-                      libraryName: "@material-ui/core",
+                      libraryName: "@mui/material",
                       libraryDirectory: "",
                       camel2DashComponentName: false,
                     },
@@ -148,7 +148,7 @@ module.exports = function config(env, options) {
                   [
                     "babel-plugin-import",
                     {
-                      libraryName: "@material-ui/icons",
+                      libraryName: "@mui/icons-material",
                       libraryDirectory: "",
                       camel2DashComponentName: false,
                     },

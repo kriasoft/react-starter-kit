@@ -1,8 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import { Box, Button, Container, Typography } from "@material-ui/core";
-import { Api, GitHub } from "@material-ui/icons";
+import { Api, GitHub } from "@mui/icons-material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import * as React from "react";
 import { config } from "../../core";
 import { useLoginDialog, useNavigate } from "../../hooks";

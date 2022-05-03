@@ -34,6 +34,7 @@ export async function resolveRoute(
   try {
     // Find the first route matching the provided URL path string
     for (let i = 0, route; i < routes.length, (route = routes[i]); i++) {
+      console.log(routes);
       const match = matchUrlPath(route.path, ctx.path);
 
       if (!match) continue;

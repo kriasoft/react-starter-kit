@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
+import { ArrowDropDown, NotificationsNone } from "@mui/icons-material";
 import {
   AppBar,
   AppBarProps,
@@ -11,9 +12,8 @@ import {
   Link,
   Toolbar,
   Typography,
-} from "@material-ui/core";
-import { useTheme } from "@material-ui/core/styles";
-import { ArrowDropDown, NotificationsNone } from "@material-ui/icons";
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import * as React from "react";
 import { config } from "../core";
 import { useCurrentUser, useLoginDialog, useNavigate } from "../hooks";

@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
+import { Close, Facebook, Google } from "@mui/icons-material";
 import {
   Alert,
   Button,
@@ -9,8 +10,7 @@ import {
   DialogContent,
   IconButton,
   Typography,
-} from "@material-ui/core";
-import { Close, Facebook, Google } from "@material-ui/icons";
+} from "@mui/material";
 import * as React from "react";
 import { graphql, useRelayEnvironment } from "react-relay";
 import { createOperationDescriptor, getRequest } from "relay-runtime";

@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import type { ThemeOptions } from "@material-ui/core/styles";
+import type { ThemeOptions } from "@mui/material/styles";
 
 /**
  * Style overrides for Material UI components.

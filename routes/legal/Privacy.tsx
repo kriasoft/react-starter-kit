@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import { Container, Link, Typography } from "@material-ui/core";
+import { Container, Link, Typography } from "@mui/material";
 import * as React from "react";
 import { config } from "../../core";
 
