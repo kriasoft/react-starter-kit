@@ -207,7 +207,10 @@ module.exports = function config(env, options) {
       isDevServer && new webpack.HotModuleReplacementPlugin(),
       isDevServer && new ReactRefreshWebpackPlugin(),
       new WebpackManifestPlugin({ fileName: "assets.json", publicPath: "/" }),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
     ].filter(Boolean),
   };
 
@@ -242,7 +245,10 @@ module.exports = function config(env, options) {
           dev: process.env.GOOGLE_CLOUD_PROJECT,
         }),
       }),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
       options.analyze && new BundleAnalyzerPlugin(),
     ].filter(Boolean),
     optimization: {
@@ -260,7 +266,7 @@ module.exports = function config(env, options) {
    * @type {import("webpack-dev-server").Configuration}
    */
   const devServer = {
-    contentBase: "./public",
+    static: "./public",
     compress: true,
     historyApiFallback: { disableDotRule: true },
     port: 3000,
