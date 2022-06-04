@@ -110,7 +110,7 @@ Where `--env` argument is the target environment, e.g. `yarn deploy --env=prod`.
 
 - `yarn set version latest` — Bump Yarn to the latest version
 - `yarn upgrade-interactive` — Update Node.js modules (dependencies)
-- `yarn pnpify --sdk vscode` — Update TypeScript, ESLint, and Prettier settings in VSCode
+- `yarn dlx @yarnpkg/sdks vscode` — Update TypeScript, ESLint, and Prettier settings in VSCode
 
 ## Contributors 👨‍💻
 

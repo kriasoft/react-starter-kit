@@ -2,6 +2,7 @@
   "name": "app",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "yarn@4.0.0-rc.6",
   "main": "index.js",
   "scripts": {
     "update-schema": "node ./scripts/update-schema",
@@ -61,7 +62,6 @@
     "@types/webpack-manifest-plugin": "^3.0.4",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
-    "@yarnpkg/pnpify": "^3.0.0-rc.3",
     "babel-jest": "^27.0.1",
     "babel-loader": "^8.2.2",
     "babel-plugin-import": "^1.13.3",
