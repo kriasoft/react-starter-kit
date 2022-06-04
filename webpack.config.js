@@ -143,7 +143,7 @@ module.exports = function config(env, options) {
                       libraryDirectory: "",
                       camel2DashComponentName: false,
                     },
-                    "core",
+                    "material",
                   ],
                   [
                     "babel-plugin-import",
@@ -152,7 +152,16 @@ module.exports = function config(env, options) {
                       libraryDirectory: "",
                       camel2DashComponentName: false,
                     },
-                    "icons",
+                    "icons-material",
+                  ],
+                  [
+                    "babel-plugin-import",
+                    {
+                      libraryName: "@mui/lab",
+                      libraryDirectory: "",
+                      camel2DashComponentName: false,
+                    },
+                    "lab",
                   ],
                   "relay",
                   isDevServer && "react-refresh/babel",
