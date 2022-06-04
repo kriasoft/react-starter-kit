@@ -6,8 +6,8 @@ import { Button, Container, TextField, Typography } from "@mui/material";
 import * as React from "react";
 import { graphql, useMutation } from "react-relay";
 import { useErrors } from "../../hooks";
-import type { accountSettingsQueryResponse as Props } from "./__generated__/accountSettingsQuery.graphql";
-import type { SettingsUpdateMutation } from "./__generated__/SettingsUpdateMutation.graphql";
+import type { accountSettingsQuery$data as Props } from "../../queries/accountSettingsQuery.graphql";
+import type { SettingsUpdateMutation } from "../../queries/SettingsUpdateMutation.graphql";
 
 const updateUserMutation = graphql`
   mutation SettingsUpdateMutation($input: UpdateUserInput!) {

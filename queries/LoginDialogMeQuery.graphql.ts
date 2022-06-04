@@ -1,50 +1,31 @@
+/**
+ * @generated SignedSource<<72c7967436f04e41de7eaf0ee94d1a1b>>
+ * @lightSyntaxTransform
+ * @nogrep
+ */
+
 /* tslint:disable */
 /* eslint-disable */
 // @ts-nocheck
 
-import { ConcreteRequest } from "relay-runtime";
+import { ConcreteRequest, Query } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type LoginDialogMeQueryVariables = {};
-export type LoginDialogMeQueryResponse = {
-    readonly me: {
-        readonly id: string;
-        readonly email: string | null;
-        readonly name: string | null;
-        readonly picture: {
-            readonly url: string | null;
-        } | null;
-        readonly " $fragmentRefs": FragmentRefs<"CurrentUser_me">;
+export type LoginDialogMeQuery$variables = {};
+export type LoginDialogMeQuery$data = {
+  readonly me: {
+    readonly id: string;
+    readonly email: string | null;
+    readonly name: string | null;
+    readonly picture: {
+      readonly url: string | null;
     } | null;
+    readonly " $fragmentSpreads": FragmentRefs<"CurrentUser_me">;
+  } | null;
 };
 export type LoginDialogMeQuery = {
-    readonly response: LoginDialogMeQueryResponse;
-    readonly variables: LoginDialogMeQueryVariables;
+  variables: LoginDialogMeQuery$variables;
+  response: LoginDialogMeQuery$data;
 };
-
-
-
-/*
-query LoginDialogMeQuery {
-  me {
-    ...CurrentUser_me
-    id
-    email
-    name
-    picture {
-      url
-    }
-  }
-}
-
-fragment CurrentUser_me on User {
-  id
-  email
-  name
-  picture {
-    url
-  }
-}
-*/
 
 const node: ConcreteRequest = (function(){
 var v0 = {
@@ -101,15 +82,15 @@ return {
         "name": "me",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
-          (v1/*: any*/),
-          (v2/*: any*/),
-          (v3/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
             "name": "CurrentUser_me"
-          }
+          },
+          (v0/*: any*/),
+          (v1/*: any*/),
+          (v2/*: any*/),
+          (v3/*: any*/)
         ],
         "storageKey": null
       }
@@ -150,5 +131,7 @@ return {
   }
 };
 })();
-(node as any).hash = '177ca4cfc1139e42da8a026405b8d66d';
+
+(node as any).hash = "177ca4cfc1139e42da8a026405b8d66d";
+
 export default node;

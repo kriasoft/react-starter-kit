@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { graphql, useMutation } from "react-relay";
-import { useSignOutMutation } from "./__generated__/useSignOutMutation.graphql";
+import { useSignOutMutation } from "../queries/useSignOutMutation.graphql";
 
 const signOutMutation = graphql`
   mutation useSignOutMutation {

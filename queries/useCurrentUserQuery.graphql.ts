@@ -1,73 +1,32 @@
+/**
+ * @generated SignedSource<<d7b1573c1e477cc531c71f92a2cc360d>>
+ * @lightSyntaxTransform
+ * @nogrep
+ */
+
 /* tslint:disable */
 /* eslint-disable */
 // @ts-nocheck
 
-import { ConcreteRequest } from "relay-runtime";
+import { ConcreteRequest, Query } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type homeQueryVariables = {};
-export type homeQueryResponse = {
-    readonly me: {
-        readonly id: string;
-        readonly name: string | null;
-        readonly email: string | null;
-        readonly " $fragmentRefs": FragmentRefs<"CurrentUser_me">;
-    } | null;
+export type useCurrentUserQuery$variables = {};
+export type useCurrentUserQuery$data = {
+  readonly me: {
+    readonly " $fragmentSpreads": FragmentRefs<"CurrentUser_me">;
+  } | null;
 };
-export type homeQuery = {
-    readonly response: homeQueryResponse;
-    readonly variables: homeQueryVariables;
+export type useCurrentUserQuery = {
+  variables: useCurrentUserQuery$variables;
+  response: useCurrentUserQuery$data;
 };
 
-
-
-/*
-query homeQuery {
-  me {
-    ...CurrentUser_me
-    id
-    name
-    email
-  }
-}
-
-fragment CurrentUser_me on User {
-  id
-  email
-  name
-  picture {
-    url
-  }
-}
-*/
-
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "email",
-  "storageKey": null
-};
-return {
+const node: ConcreteRequest = {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "homeQuery",
+    "name": "useCurrentUserQuery",
     "selections": [
       {
         "alias": null,
@@ -77,9 +36,6 @@ return {
         "name": "me",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
-          (v1/*: any*/),
-          (v2/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -96,7 +52,7 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "homeQuery",
+    "name": "useCurrentUserQuery",
     "selections": [
       {
         "alias": null,
@@ -106,9 +62,27 @@ return {
         "name": "me",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
-          (v2/*: any*/),
-          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "email",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -133,14 +107,15 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c2ba8e376258be03fc0181dfe336cb07",
+    "cacheID": "e3e4e6170c793ed443eadf8a87a81c12",
     "id": null,
     "metadata": {},
-    "name": "homeQuery",
+    "name": "useCurrentUserQuery",
     "operationKind": "query",
-    "text": "query homeQuery {\n  me {\n    ...CurrentUser_me\n    id\n    name\n    email\n  }\n}\n\nfragment CurrentUser_me on User {\n  id\n  email\n  name\n  picture {\n    url\n  }\n}\n"
+    "text": "query useCurrentUserQuery {\n  me {\n    ...CurrentUser_me\n    id\n  }\n}\n\nfragment CurrentUser_me on User {\n  id\n  email\n  name\n  picture {\n    url\n  }\n}\n"
   }
 };
-})();
-(node as any).hash = 'b1deae71bd069034e5cb3f0fc415723c';
+
+(node as any).hash = "1341f45f2e71aba1f68c0cb80c915a13";
+
 export default node;

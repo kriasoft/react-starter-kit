@@ -1,49 +1,39 @@
+/**
+ * @generated SignedSource<<47e65d58668ea69ae46c055b0a82a33d>>
+ * @lightSyntaxTransform
+ * @nogrep
+ */
+
 /* tslint:disable */
 /* eslint-disable */
 // @ts-nocheck
 
-import { ConcreteRequest } from "relay-runtime";
+import { ConcreteRequest, Mutation } from 'relay-runtime';
 export type UpdateUserInput = {
-    id: string;
-    username?: string | null;
-    email?: string | null;
-    name?: string | null;
-    picture?: string | null;
-    timeZone?: string | null;
-    locale?: string | null;
+  id: string;
+  username?: string | null;
+  email?: string | null;
+  name?: string | null;
+  picture?: string | null;
+  timeZone?: string | null;
+  locale?: string | null;
 };
-export type SettingsUpdateMutationVariables = {
-    input: UpdateUserInput;
+export type SettingsUpdateMutation$variables = {
+  input: UpdateUserInput;
 };
-export type SettingsUpdateMutationResponse = {
-    readonly updateUser: {
-        readonly user: {
-            readonly id: string;
-            readonly email: string | null;
-            readonly name: string | null;
-        } | null;
+export type SettingsUpdateMutation$data = {
+  readonly updateUser: {
+    readonly user: {
+      readonly id: string;
+      readonly email: string | null;
+      readonly name: string | null;
     } | null;
+  } | null;
 };
 export type SettingsUpdateMutation = {
-    readonly response: SettingsUpdateMutationResponse;
-    readonly variables: SettingsUpdateMutationVariables;
+  variables: SettingsUpdateMutation$variables;
+  response: SettingsUpdateMutation$data;
 };
-
-
-
-/*
-mutation SettingsUpdateMutation(
-  $input: UpdateUserInput!
-) {
-  updateUser(input: $input) {
-    user {
-      id
-      email
-      name
-    }
-  }
-}
-*/
 
 const node: ConcreteRequest = (function(){
 var v0 = [
@@ -131,5 +121,7 @@ return {
   }
 };
 })();
-(node as any).hash = 'df71ecae8cc68fe748f65642ef185c6d';
+
+(node as any).hash = "df71ecae8cc68fe748f65642ef185c6d";
+
 export default node;

@@ -14,7 +14,7 @@ import {
   CurrentUser_me$data,
   CurrentUser_me$key,
 } from "../fragments";
-import type { useCurrentUserQuery as Query } from "./__generated__/useCurrentUserQuery.graphql";
+import type { useCurrentUserQuery as Query } from "../queries/useCurrentUserQuery.graphql";
 
 const variables = {};
 const query = graphql`

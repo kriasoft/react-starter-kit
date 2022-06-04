@@ -1,24 +1,22 @@
+/**
+ * @generated SignedSource<<2971868627cbf91a3b4f124e52919c96>>
+ * @lightSyntaxTransform
+ * @nogrep
+ */
+
 /* tslint:disable */
 /* eslint-disable */
 // @ts-nocheck
 
-import { ConcreteRequest } from "relay-runtime";
-export type useSignOutMutationVariables = {};
-export type useSignOutMutationResponse = {
-    readonly signOut: string | null;
+import { ConcreteRequest, Mutation } from 'relay-runtime';
+export type useSignOutMutation$variables = {};
+export type useSignOutMutation$data = {
+  readonly signOut: string | null;
 };
 export type useSignOutMutation = {
-    readonly response: useSignOutMutationResponse;
-    readonly variables: useSignOutMutationVariables;
+  variables: useSignOutMutation$variables;
+  response: useSignOutMutation$data;
 };
-
-
-
-/*
-mutation useSignOutMutation {
-  signOut
-}
-*/
 
 const node: ConcreteRequest = (function(){
 var v0 = [
@@ -57,5 +55,7 @@ return {
   }
 };
 })();
-(node as any).hash = 'e09800d725e76ecd661060cd1beba32a';
+
+(node as any).hash = "e09800d725e76ecd661060cd1beba32a";
+
 export default node;
