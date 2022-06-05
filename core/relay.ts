@@ -2,7 +2,6 @@
 /* SPDX-License-Identifier: MIT */
 
 import { Environment, Network, RecordSource, Store } from "relay-runtime";
-import { config as appConfig } from ".";
 
 type Config = {
   baseUrl?: string;
@@ -19,7 +18,7 @@ export function createRelay(config: Config = {}): Environment {
 
   const network = Network.create((operation, variables): Promise<any> => {
     const cookie = config.request?.headers.get("cookie");
-    return fetch(`${baseUrl}${appConfig.api.path}`, {
+    return fetch(`${baseUrl}/api`, {
       method: "POST",
       headers: {
         ...(cookie && { cookie }),

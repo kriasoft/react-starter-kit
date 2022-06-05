@@ -1,39 +1,39 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-const path = require("path");
-const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const InlineChunkHtmlPlugin = require("inline-chunk-html-plugin");
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
-const { IgnoreAsyncImportsPlugin } = require("ignore-webpack-plugin");
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import CopyWebpackPlugin from "copy-webpack-plugin";
+import envars from "envars";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import { IgnoreAsyncImportsPlugin } from "ignore-webpack-plugin";
+import InlineChunkHtmlPlugin from "inline-chunk-html-plugin";
+import { createRequire } from "module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import TerserPlugin from "terser-webpack-plugin";
+import webpack from "webpack";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+import { WebpackManifestPlugin } from "webpack-manifest-plugin";
 
-require("@babel/register")({ extensions: [".ts"], cache: false });
-const configs = require("./config");
+const require = createRequire(import.meta.url);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Webpack configuration.
  *
  * @see https://webpack.js.org/configuration/
- * @param {Record<string, boolean> | undefined} envName
+ * @param {Record<string, boolean>} args
  * @param {{ mode: "production" | "development" }} options
  * @returns {import("webpack").Configuration}
  */
-module.exports = function config(env, options) {
-  const isEnvProduction = options.mode === "production";
-  const isEnvDevelopment = options.mode === "development";
-  const isDevServer = isEnvDevelopment && process.argv.includes("serve");
-  const isEnvProductionProfile =
-    isEnvProduction && process.argv.includes("--profile");
-  const config = env.prod
-    ? configs.prod
-    : env.test
-    ? configs.test
-    : configs.local;
+export default function config(args, options) {
+  // Load environment variables for the target environment
+  const envName = args.prod === true ? "prod" : args.test === true ? "test" : "local"; // prettier-ignore
+  const env = envars.config({ env: envName });
+
+  const isProduction = options.mode === "production";
+  const isDevServer = process.argv.includes("serve");
+  const isProfile = process.argv.includes("--profile");
 
   process.env.BABEL_ENV = options.mode;
   process.env.BROWSERSLIST_ENV = options.mode;
@@ -46,29 +46,29 @@ module.exports = function config(env, options) {
    */
   const appConfig = {
     name: "app",
-    mode: isEnvProduction ? "production" : "development",
+    mode: isProduction ? "production" : "development",
     target: isDevServer ? "web" : "browserslist",
-    bail: isEnvProduction,
+    bail: isProduction,
 
     entry: "./index",
 
     output: {
-      path: path.resolve(__dirname, ".build/web"),
-      pathinfo: isEnvDevelopment,
-      filename: isEnvProduction
+      path: path.resolve(__dirname, "dist"),
+      pathinfo: !isProduction,
+      filename: isProduction
         ? "static/js/[name].[contenthash:8].js"
         : "static/js/[name].js",
-      chunkFilename: isEnvProduction
+      chunkFilename: isProduction
         ? "static/js/[name].[contenthash:8].js"
         : "static/js/[name].js",
       publicPath: "/",
       uniqueName: "app",
     },
 
-    devtool: isEnvProduction ? "source-map" : "cheap-module-source-map",
+    devtool: isProduction ? "source-map" : "cheap-module-source-map",
 
     optimization: {
-      minimize: isEnvProduction,
+      minimize: isProduction,
       minimizer: [
         new TerserPlugin({
           terserOptions: {
@@ -80,8 +80,8 @@ module.exports = function config(env, options) {
               inline: 2,
             },
             mangle: { safari10: true },
-            keep_classnames: isEnvProductionProfile,
-            keep_fnames: isEnvProductionProfile,
+            keep_classnames: isProduction && isProfile,
+            keep_fnames: isProduction && isProfile,
             output: { ecma: 5, comments: false, ascii_only: true },
           },
         }),
@@ -109,10 +109,11 @@ module.exports = function config(env, options) {
     resolve: {
       extensions: [".wasm", ".mjs", ".js", ".ts", ".d.ts", ".tsx", ".json"],
       alias: {
-        ...(isEnvProductionProfile && {
-          "react-dom$": "react-dom/profiling",
-          "scheduler/tracing": "scheduler/tracing-profiling",
-        }),
+        ...(isProduction &&
+          isProfile && {
+            "react-dom$": "react-dom/profiling",
+            "scheduler/tracing": "scheduler/tracing-profiling",
+          }),
       },
     },
 
@@ -168,7 +169,7 @@ module.exports = function config(env, options) {
                 ].filter(Boolean),
                 cacheDirectory: ".cache/babel-loader",
                 cacheCompression: false,
-                compact: false, // isEnvProduction,
+                compact: false, // isProduction,
                 sourceType: "unambiguous",
               },
             },
@@ -178,11 +179,19 @@ module.exports = function config(env, options) {
     },
 
     plugins: [
+      new webpack.DefinePlugin(
+        Object.fromEntries(
+          Object.keys(env).map((key) => [
+            `process.env.${key}`,
+            isProduction ? `window.env.${key}` : JSON.stringify(env[key]),
+          ])
+        )
+      ),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin({
         inject: true,
         template: path.resolve(__dirname, "public/index.html"),
-        ...(isEnvProduction && {
+        ...(isProduction && {
           minify: {
             removeComments: true,
             collapseWhitespace: true,
@@ -197,7 +206,7 @@ module.exports = function config(env, options) {
           },
         }),
       }),
-      isEnvProduction &&
+      isProduction &&
         new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime-.+[.]js/]),
       !isDevServer &&
         new CopyWebpackPlugin({
@@ -209,10 +218,6 @@ module.exports = function config(env, options) {
             },
           ],
         }),
-      new webpack.DefinePlugin({
-        "process.env.APP_NAME": JSON.stringify("React App"),
-        "process.env.APP_ORIGIN": JSON.stringify("http://localhost:3000"),
-      }),
       isDevServer && new webpack.HotModuleReplacementPlugin(),
       isDevServer && new ReactRefreshWebpackPlugin(),
       new WebpackManifestPlugin({ fileName: "assets.json", publicPath: "/" }),
@@ -234,7 +239,7 @@ module.exports = function config(env, options) {
     name: "workers",
     entry: "./workers/proxy",
     output: {
-      path: path.resolve(__dirname, ".build/workers"),
+      path: path.resolve(__dirname, "dist"),
       filename: "proxy.js",
       uniqueName: "proxy",
     },
@@ -246,14 +251,11 @@ module.exports = function config(env, options) {
     target: "browserslist:last 2 Chrome versions",
     plugins: [
       new IgnoreAsyncImportsPlugin(),
-      new webpack.DefinePlugin({
-        GOOGLE_CLOUD_REGION: JSON.stringify(process.env.GOOGLE_CLOUD_REGION),
-        GOOGLE_CLOUD_PROJECT: JSON.stringify({
-          prod: process.env.GOOGLE_CLOUD_PROJECT,
-          test: process.env.GOOGLE_CLOUD_PROJECT,
-          dev: process.env.GOOGLE_CLOUD_PROJECT,
-        }),
-      }),
+      new webpack.DefinePlugin(
+        Object.fromEntries(
+          Object.keys(env).map((key) => [`process.env.${key}`, key])
+        )
+      ),
       new webpack.IgnorePlugin({
         resourceRegExp: /^\.\/locale$/,
         contextRegExp: /moment$/,
@@ -282,10 +284,9 @@ module.exports = function config(env, options) {
     hot: true,
     proxy: [
       {
-        context: [config.api.path, "/auth"],
-        target: config.api.origin,
+        context: ["/api", "/auth"],
+        target: process.env.API_ORIGIN,
         changeOrigin: true,
-        pathRewrite: config.api.prefix ? { "^/": `${config.api.prefix}/` } : {},
         onProxyReq(proxyReq, req) {
           const origin = `${req.protocol}://${req.hostname}:3000`;
           proxyReq.setHeader("origin", origin);
@@ -295,4 +296,4 @@ module.exports = function config(env, options) {
   };
 
   return isDevServer ? { ...appConfig, devServer } : [appConfig, proxyConfig];
-};
+}

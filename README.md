@@ -84,27 +84,20 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 ## How to Deploy
 
-Ensure that client-side application settings for `test` (QA) and `prod`
-(production) environments are up-to-date found in the [`config.ts`](./config.ts)
-file, as well as Cloudflare account credentials found in the `.env` file:
+Ensure that all the environment variables for the target deployment environment
+(`test`, `prod`) found in [`/core/*.env`](./core/) files are up-to-date.
 
-```bash
-# Cloudflare
-# https://dash.cloudflare.com/
-# https://developers.cloudflare.com/api/tokens/create
-CLOUDFLARE_ACCOUNT_ID=
-CLOUDFLARE_ZONE_ID=
-CLOUDFLARE_API_TOKEN=
-```
+If you haven't done it already, push any secret values you may need to CF Workers
+environment by running `yarn cf secret put <NAME> [--env #0]`.
 
-Compile and deploy the app by running:
+Finally build and deploy the app by running:
 
 ```
 $ yarn build
-$ yarn deploy [--env #0]
+$ yarn deploy [--env #0] [--version #0]
 ```
 
-Where `--env` argument is the target environment, e.g. `yarn deploy --env=prod`.
+Where `--env` argument is the target deployment area, e.g. `yarn deploy --env=prod`.
 
 ## How to Update
 

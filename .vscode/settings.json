@@ -12,11 +12,7 @@
   "jest.jestCommandLine": "yarn jest",
   "jestrunner.enableYarnPnpSupport": true,
   "jestrunner.yarnPnpCommand": "yarn-4.0.0-rc.6.cjs",
-  "files.associations": {
-    ".env.**": "dotenv"
-  },
   "files.exclude": {
-    "**/.build": true,
     "**/.cache": true,
     "**/.DS_Store": true,
     "**/.editorconfig": true,
@@ -40,9 +36,11 @@
     "corejs",
     "entrypoint",
     "envalid",
+    "envars",
     "eslintcache",
     "esmodules",
     "esnext",
+    "execa",
     "firestore",
     "globby",
     "kriasoft",

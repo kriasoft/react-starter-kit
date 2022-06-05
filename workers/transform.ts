@@ -1,9 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import type { Environment } from "relay-runtime";
-import type { Config } from "../config";
-import type { RouterResponse } from "../core/router";
+import { type Environment } from "relay-runtime";
+import { type RouterResponse } from "../core/router";
 
 /**
  * Injects HTML page metadata (title, description, etc.) as well as
@@ -12,16 +11,9 @@ import type { RouterResponse } from "../core/router";
 export function transform(
   res: Response,
   route: RouterResponse,
-  relay: Environment,
-  env: Config["app"]["env"]
+  relay: Environment
 ): Response {
   return new HTMLRewriter()
-    .on("body:first-of-type", {
-      // <body data-env="...">
-      element(el) {
-        el.setAttribute("data-env", env);
-      },
-    })
     .on("title:first-of-type", {
       // <title>...</title>
       element(el) {
@@ -48,6 +40,26 @@ export function transform(
           "</\\u0073cript"
         );
         el.setInnerContent(json, { html: true });
+      },
+    })
+    .on("script#env", {
+      element(el) {
+        // <script id="env"></script>
+        // https://developer.mozilla.org/docs/Web/HTML/Element/script#embedding_data_in_html
+        el.setInnerContent(
+          [
+            `Object.defineProperty(window,"env",{value:Object.freeze({`,
+            `APP_ENV:${JSON.stringify(APP_ENV)},`,
+            `APP_ORIGIN:${JSON.stringify(APP_ORIGIN)},`,
+            `API_ORIGIN:${JSON.stringify(API_ORIGIN)},`,
+            `GOOGLE_CLOUD_PROJECT:${JSON.stringify(GOOGLE_CLOUD_PROJECT)},`,
+            `GOOGLE_CLOUD_REGION:${JSON.stringify(GOOGLE_CLOUD_REGION)},`,
+            `FIREBASE_AUTH_KEY:${JSON.stringify(FIREBASE_AUTH_KEY)},`,
+            `GA_MEASUREMENT_ID:${JSON.stringify(GA_MEASUREMENT_ID)}`,
+            `})});`,
+          ].join(""),
+          { html: true }
+        );
       },
     })
     .transform(res);

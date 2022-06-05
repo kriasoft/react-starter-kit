@@ -40,7 +40,7 @@ function Home(props: Props): JSX.Element {
           <Button
             variant="outlined"
             size="large"
-            href={config.api.path}
+            href={`${config.api.origin}/api`}
             children="Explorer API"
             startIcon={<Api />}
           />

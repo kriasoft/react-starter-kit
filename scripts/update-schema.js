@@ -1,26 +1,20 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-const fs = require("fs");
-const path = require("path");
-const got = require("got");
-const { format } = require("prettier");
-const {
-  getIntrospectionQuery,
-  buildClientSchema,
-  printSchema,
-} = require("graphql");
+import envars from "envars";
+import got from "got";
+import { buildClientSchema, getIntrospectionQuery, printSchema } from "graphql";
+import path from "node:path";
+import { format } from "prettier";
+import { argv, fs } from "zx";
 
-// Get GraphQL API URL for the the selected environment.
-// Example: `yarn update-schema --env=test`
-require("@babel/register")({ extensions: [".ts"], cache: false });
-const { env } = require("minimist")(process.argv.slice(2));
-const { api } = require("../config")[env || "local"];
-const url = `${api.origin}${api.prefix}${api.path}`;
+// Load the environment variables (API_ORIGIN, etc.)
+envars.config({ env: argv.env ?? "test" });
+const schemaURL = `${process.env.API_ORIGIN}/api`;
 
 // Download and save GraphQL API schema
 got
-  .post(url, { json: { query: getIntrospectionQuery() } })
+  .post(schemaURL, { json: { query: getIntrospectionQuery() } })
   .json()
   .then((res) => {
     const schema = buildClientSchema(res.data);
@@ -28,7 +22,7 @@ got
     let output = printSchema(schema, { commentDescriptions: true });
     output = format(output, { parser: "graphql" });
     fs.writeFileSync(filename, output, { encoding: "utf-8" });
-    console.log(`Saved ${url} to ${path.basename(filename)}`);
+    console.log(`Saved ${schemaURL} to ${path.basename(filename)}`);
   })
   .catch((err) => {
     console.error(err.stack);
