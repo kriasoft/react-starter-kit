@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d95dc6dc3c9e140d416b9ad0056822e6>>
+ * @generated SignedSource<<396cb1859abd475292003cd7947d630a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Query } from 'relay-runtime';
-export type accountSettingsQuery$variables = {};
-export type accountSettingsQuery$data = {
+export type SettingsQuery$variables = {};
+export type SettingsQuery$data = {
   readonly me: {
     readonly id: string;
     readonly email: string | null;
     readonly name: string | null;
   } | null;
 };
-export type accountSettingsQuery = {
-  variables: accountSettingsQuery$variables;
-  response: accountSettingsQuery$data;
+export type SettingsQuery = {
+  variables: SettingsQuery$variables;
+  response: SettingsQuery$data;
 };
 
 const node: ConcreteRequest = (function(){
@@ -62,7 +62,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "accountSettingsQuery",
+    "name": "SettingsQuery",
     "selections": (v0/*: any*/),
     "type": "Root",
     "abstractKey": null
@@ -71,20 +71,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "accountSettingsQuery",
+    "name": "SettingsQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "19fa40167cdff4b3b5bf10bbddd7df6f",
+    "cacheID": "5081bcca3cb5df2c0af9ccb6acab0083",
     "id": null,
     "metadata": {},
-    "name": "accountSettingsQuery",
+    "name": "SettingsQuery",
     "operationKind": "query",
-    "text": "query accountSettingsQuery {\n  me {\n    id\n    email\n    name\n  }\n}\n"
+    "text": "query SettingsQuery {\n  me {\n    id\n    email\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6fe8891a11bf2429aa255fc4739d1cfd";
+(node as any).hash = "220e9f58c86f3703bfb11ffc03362a23";
 
 export default node;
