@@ -71,7 +71,7 @@ async function handleEvent(event: FetchEvent) {
   // Find application route matching the URL pathname
   const apiBaseUrl = `${apiUrl.origin}${apiUrl.pathname}`;
   const relay = createRelay({ baseUrl: apiBaseUrl, request });
-  const route = await resolveRoute({ path, relay });
+  const route = await resolveRoute({ path, query: url.searchParams, relay });
 
   if (route.redirect) {
     return Response.redirect(route.redirect, route.status);

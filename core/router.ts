@@ -3,10 +3,11 @@
 
 import type { Match, MatchFunction } from "path-to-regexp";
 import { match as createMatchFn } from "path-to-regexp";
+import type { ComponentClass, ComponentProps, FunctionComponent } from "react";
+import type { Environment, GraphQLTaggedNode, Variables } from "react-relay";
 import { fetchQuery } from "react-relay";
 import routes from "../routes";
 import { NotFoundError } from "./errors";
-import type { Route, RouterContext, RouterResponse } from "./router.types";
 
 /**
  * Converts the URL path string to a RegExp matching function.
@@ -28,9 +29,7 @@ const matchUrlPath: (
   };
 })();
 
-export async function resolveRoute(
-  ctx: RouterContext
-): Promise<RouterResponse> {
+async function resolveRoute(ctx: RouterContext): Promise<RouterResponse> {
   try {
     // Find the first route matching the provided URL path string
     for (let i = 0, route; i < routes.length, (route = routes[i]); i++) {
@@ -47,12 +46,13 @@ export async function resolveRoute(
           : route.variables
           ? route.variables
           : Object.keys(match.params).length === 0
-          ? undefined
+          ? {}
           : match.params;
 
       // Fetch GraphQL query response and load React component in parallel
       const [component, data] = await Promise.all([
-        route.component?.().then((x) => x.default),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        route.component?.().then((x: any) => x.default),
         route.query &&
           fetchQuery(ctx.relay, route.query, variables, {
             fetchPolicy: "store-or-network",
@@ -66,13 +66,75 @@ export async function resolveRoute(
     }
 
     throw new NotFoundError();
-  } catch (error) {
+  } catch (err) {
     return {
       title:
-        error instanceof NotFoundError ? "Page not found" : "Application error",
-      error: error as Error,
+        err instanceof NotFoundError ? "Page not found" : "Application error",
+      error: err as Error,
     };
   }
 }
 
-export type { RouterContext, RouterResponse as RouteResponse, Route };
+/* -------------------------------------------------------------------------- */
+/* TypeScript definitions                                                     */
+/* -------------------------------------------------------------------------- */
+
+type RouterContext = {
+  path: string;
+  query: URLSearchParams;
+  params?: Record<string, string>;
+  relay: Environment;
+};
+
+type RouterResponse<
+  Component extends
+    | FunctionComponent<any>
+    | ComponentClass<any> = FunctionComponent<any>
+> = {
+  title?: string;
+  description?: string;
+  component?: Component;
+  props?: ComponentProps<Component>;
+  error?: Error;
+  redirect?: string;
+  status?: number;
+};
+
+type Route<
+  Component extends FunctionComponent<any> | ComponentClass<any>,
+  Query extends { variables: Variables; response: unknown } = {
+    variables: Variables;
+    response: any;
+  }
+> = {
+  /**
+   * URL path pattern.
+   */
+  path: string[] | string;
+  /**
+   * GraphQL query expression.
+   */
+  query?: GraphQLTaggedNode;
+  /**
+   * GraphQL query variables.
+   */
+  variables?: ((ctx: RouterContext) => Query["variables"]) | Query["variables"];
+  /**
+   * Authorization rule(s) / permissions.
+   */
+  authorize?: ((ctx: RouterContext) => boolean) | boolean;
+  /**
+   * React component (loader).
+   */
+  component?: () => Promise<{ default: Component }>;
+  /**
+   * React component props and metadata that needs to be rendered
+   * once the route was successfully resolved.
+   */
+  response: (
+    queryResponse: Query["response"],
+    context: RouterContext
+  ) => RouterResponse<Component>;
+};
+
+export { resolveRoute, type RouterContext, type RouterResponse, type Route };

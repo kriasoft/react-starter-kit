@@ -3,7 +3,7 @@
 
 import type { Environment } from "relay-runtime";
 import type { Config } from "../config";
-import type { RouteResponse } from "../core/router";
+import type { RouterResponse } from "../core/router";
 
 /**
  * Injects HTML page metadata (title, description, etc.) as well as
@@ -11,7 +11,7 @@ import type { RouteResponse } from "../core/router";
  */
 export function transform(
   res: Response,
-  route: RouteResponse,
+  route: RouterResponse,
   relay: Environment,
   env: Config["app"]["env"]
 ): Response {

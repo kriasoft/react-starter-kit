@@ -3,8 +3,8 @@
 
 import { graphql } from "relay-runtime";
 import type { Route } from "../../core";
-import type { homeQuery$data } from "../../queries/homeQuery.graphql";
-import type Home from "./Home";
+import type { homeQuery } from "../../queries/homeQuery.graphql";
+import type { Home } from "./Home";
 
 /**
  * Homepage route.
@@ -27,4 +27,4 @@ export default {
     description: "Web application built with React and Relay",
     props: data,
   }),
-} as Route<typeof Home, homeQuery$data>;
+} as Route<Home, homeQuery>;

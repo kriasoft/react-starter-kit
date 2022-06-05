@@ -3,8 +3,8 @@
 
 import { graphql } from "relay-runtime";
 import type { Route } from "../../core";
-import type { accountSettingsQuery$data } from "../../queries/accountSettingsQuery.graphql";
-import type Settings from "./Settings";
+import type { accountSettingsQuery } from "../../queries/accountSettingsQuery.graphql";
+import type { Settings } from "./Settings";
 
 /**
  * User account settings route.
@@ -25,4 +25,4 @@ export default {
     title: "Account Settings",
     props: data,
   }),
-} as Route<typeof Settings, accountSettingsQuery$data>;
+} as Route<Settings, accountSettingsQuery>;

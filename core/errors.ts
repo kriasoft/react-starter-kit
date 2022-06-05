@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-export class NotFoundError extends Error {
+class NotFoundError extends Error {
   status = 404;
 
   constructor(message = "Page not found") {
@@ -9,3 +9,14 @@ export class NotFoundError extends Error {
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }
+
+class ForbiddenError extends Error {
+  status = 403;
+
+  constructor(message = "Access denied") {
+    super(message);
+    Object.setPrototypeOf(this, ForbiddenError.prototype);
+  }
+}
+
+export { NotFoundError, ForbiddenError };

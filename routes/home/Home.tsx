@@ -8,7 +8,7 @@ import { config } from "../../core";
 import { useLoginDialog, useNavigate } from "../../hooks";
 import type { homeQuery$data as Props } from "../../queries/homeQuery.graphql";
 
-export default function Home(props: Props): JSX.Element {
+function Home(props: Props): JSX.Element {
   const { me } = props;
   const loginDialog = useLoginDialog();
   const navigate = useNavigate();
@@ -56,3 +56,6 @@ export default function Home(props: Props): JSX.Element {
     </Box>
   );
 }
+
+export default Home;
+export type Home = typeof Home;

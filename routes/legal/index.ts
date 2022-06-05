@@ -2,8 +2,8 @@
 /* SPDX-License-Identifier: MIT */
 
 import type { Route } from "../../core";
-import type Privacy from "./Privacy";
-import type Terms from "./Terms";
+import type { Privacy } from "./Privacy";
+import type { Terms } from "./Terms";
 
 export default [
   {
@@ -12,7 +12,7 @@ export default [
     response: () => ({
       title: "Privacy Policy",
     }),
-  } as Route<typeof Privacy>,
+  } as Route<Privacy>,
 
   {
     path: "/terms",
@@ -20,5 +20,5 @@ export default [
     response: () => ({
       title: "Privacy Policy",
     }),
-  } as Route<typeof Terms>,
+  } as Route<Terms>,
 ];
