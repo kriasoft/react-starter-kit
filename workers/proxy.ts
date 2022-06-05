@@ -34,9 +34,10 @@ async function handleEvent(event: FetchEvent) {
   }
 
   // Fetch index.html page from KV storage
-  const resPromise = getAssetFromKV({
-    request: new Request(new URL("/index.html", url), req),
-    waitUntil: event.waitUntil,
+  const resPromise = getAssetFromKV(event, {
+    mapRequestToAsset(req) {
+      return new Request(new URL("/index.html", url), req);
+    },
   });
 
   // Find application route matching the URL pathname
