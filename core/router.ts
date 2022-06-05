@@ -79,6 +79,8 @@ async function resolveRoute(ctx: RouterContext): Promise<RouterResponse> {
 /* TypeScript definitions                                                     */
 /* -------------------------------------------------------------------------- */
 
+type Props = any; /* eslint-disable-line @typescript-eslint/no-explicit-any */
+
 type RouterContext = {
   path: string;
   query: URLSearchParams;
@@ -88,8 +90,8 @@ type RouterContext = {
 
 type RouterResponse<
   Component extends
-    | FunctionComponent<any>
-    | ComponentClass<any> = FunctionComponent<any>
+    | FunctionComponent<Props>
+    | ComponentClass<Props> = FunctionComponent<Props>
 > = {
   title?: string;
   description?: string;
@@ -101,10 +103,10 @@ type RouterResponse<
 };
 
 type Route<
-  Component extends FunctionComponent<any> | ComponentClass<any>,
+  Component extends FunctionComponent<Props> | ComponentClass<Props>,
   Query extends { variables: Variables; response: unknown } = {
     variables: Variables;
-    response: any;
+    response: Record<string, unknown>;
   }
 > = {
   /**
