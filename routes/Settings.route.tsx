@@ -2,17 +2,14 @@
 /* SPDX-License-Identifier: MIT */
 
 import { graphql } from "relay-runtime";
-import type { Route } from "../../core";
-import type { accountSettingsQuery } from "../../queries/accountSettingsQuery.graphql";
-import type { Settings } from "./Settings";
+import { type Route } from "../core";
+import { type SettingsQuery } from "../queries/SettingsQuery.graphql";
+import { type Settings } from "./Settings";
 
-/**
- * User account settings route.
- */
 export default {
   path: "/settings",
   query: graphql`
-    query accountSettingsQuery {
+    query SettingsQuery {
       me {
         id
         email
@@ -25,4 +22,4 @@ export default {
     title: "Account Settings",
     props: data,
   }),
-} as Route<Settings, accountSettingsQuery>;
+} as Route<Settings, SettingsQuery>;

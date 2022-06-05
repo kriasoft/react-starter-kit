@@ -1,14 +1,14 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import type { Route } from "../../core";
-import type { Privacy } from "./Privacy";
-import type { Terms } from "./Terms";
+import { type Route } from "../core";
+import { type Privacy } from "./LegalPrivacy";
+import { type Terms } from "./LegalTerms";
 
 export default [
   {
     path: "/privacy",
-    component: () => import(/* webpackChunkName: "legal" */ "./Privacy"),
+    component: () => import(/* webpackChunkName: "legal" */ "./LegalPrivacy"),
     response: () => ({
       title: "Privacy Policy",
     }),
@@ -16,9 +16,9 @@ export default [
 
   {
     path: "/terms",
-    component: () => import(/* webpackChunkName: "legal" */ "./Terms"),
+    component: () => import(/* webpackChunkName: "legal" */ "./LegalTerms"),
     response: () => ({
-      title: "Privacy Policy",
+      title: "Terms of Use",
     }),
   } as Route<Terms>,
 ];

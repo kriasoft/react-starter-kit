@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import { Container, Link, Typography } from "@mui/material";
-import { config } from "../../core";
+import { config } from "../core";
 
 const appName = config.app.name;
 const appOrigin = config.app.origin;

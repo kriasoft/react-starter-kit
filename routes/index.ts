@@ -1,11 +1,11 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import account from "./account";
-import home from "./home";
-import legal from "./legal";
+import home from "./Home.route";
+import legal from "./Legal.route";
+import settings from "./Settings.route";
 
 /**
- * The list of application routes (pages).
+ * Exports the list of application routes
  */
-export default [home, account, ...legal] as const;
+export default [home, settings, ...legal] as const;

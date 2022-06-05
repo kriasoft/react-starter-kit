@@ -4,9 +4,9 @@
 import { Api, GitHub } from "@mui/icons-material";
 import { Box, Button, Container, Typography } from "@mui/material";
 import * as React from "react";
-import { config } from "../../core";
-import { useLoginDialog, useNavigate } from "../../hooks";
-import type { homeQuery$data as Props } from "../../queries/homeQuery.graphql";
+import { config } from "../core";
+import { useLoginDialog, useNavigate } from "../hooks";
+import { type HomeQuery$data as Props } from "../queries/HomeQuery.graphql";
 
 function Home(props: Props): JSX.Element {
   const { me } = props;
