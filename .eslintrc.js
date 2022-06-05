@@ -35,7 +35,6 @@ module.exports = {
       files: [
         ".eslintrc.js",
         "babel.config.js",
-        "relay.config.js",
         "scripts/**/*.js",
         "webpack.config.js",
       ],
@@ -49,6 +48,6 @@ module.exports = {
     "/.git",
     "/.husky",
     "/.yarn",
-    "/**/__snapshots__",
+    "/queries",
   ],
 };

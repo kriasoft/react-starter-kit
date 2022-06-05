@@ -61,7 +61,10 @@ async function handleEvent(event: FetchEvent) {
   // Fetch index.html page from KV storage
   url.pathname = "/index.html";
   const resPromise = getAssetFromKV(
-    { ...event, request: new Request(url.toString(), request) },
+    {
+      request: new Request(url.toString(), request),
+      waitUntil: event.waitUntil,
+    },
     { cacheControl: { bypassCache: config.app.env !== "prod" } }
   );
 

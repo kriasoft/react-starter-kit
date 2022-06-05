@@ -3,7 +3,7 @@
     "scope": "javascriptreact,typescriptreact",
     "prefix": "react",
     "body": [
-      "import { ${1:import}, ${1:import}Props } from \"@material-ui/core\";",
+      "import { ${1:import}, ${1:import}Props } from \"@mui/material\";",
       "import * as React from \"react\";",
       "",
       "type ${TM_FILENAME_BASE}Props = Omit<${1:import}Props, \"children\">;",

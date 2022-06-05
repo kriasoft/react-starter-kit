@@ -4,15 +4,15 @@
 # Compiled output
 /.build
 
-# Yarn without Zero-install
+# Yarn package manager with PnP
 # https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
+.pnp.*
 .yarn/*
 !.yarn/patches
-!.yarn/releases
 !.yarn/plugins
+!.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-.pnp.*
 
 # Logs
 yarn-debug.log*

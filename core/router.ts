@@ -70,7 +70,7 @@ export async function resolveRoute(
     return {
       title:
         error instanceof NotFoundError ? "Page not found" : "Application error",
-      error,
+      error: error as Error,
     };
   }
 }
