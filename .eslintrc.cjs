@@ -10,11 +10,16 @@
 module.exports = {
   root: true,
 
-  env: { es6: true },
+  env: {
+    es6: true,
+  },
 
   extends: ["eslint:recommended", "prettier"],
 
-  parserOptions: { ecmaVersion: 2020 },
+  parserOptions: {
+    ecmaVersion: 2022,
+    sourceType: "module",
+  },
 
   overrides: [
     {
@@ -23,7 +28,6 @@ module.exports = {
       extends: ["plugin:@typescript-eslint/recommended"],
       plugins: ["@typescript-eslint"],
       parserOptions: {
-        sourceType: "module",
         warnOnUnsupportedTypeScriptVersion: true,
       },
     },
@@ -33,21 +37,25 @@ module.exports = {
     },
     {
       files: [
-        ".eslintrc.js",
-        "babel.config.js",
+        ".eslintrc.cjs",
+        "babel.config.cjs",
         "scripts/**/*.js",
         "webpack.config.js",
       ],
       env: { node: true },
     },
+    {
+      files: ["*.cjs"],
+      parserOptions: { sourceType: "script" },
+    },
   ],
 
   ignorePatterns: [
-    "/.build",
     "/.cache",
     "/.git",
     "/.husky",
     "/.yarn",
+    "/dist",
     "/queries",
   ],
 };

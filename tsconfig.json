@@ -106,8 +106,8 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "exclude": [
-    ".build/**/*",
     ".cache/**/*",
-    ".yarn/**/*"
+    ".yarn/**/*",
+    "dist/**/*",
   ]
 }

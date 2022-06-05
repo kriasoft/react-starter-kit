@@ -2,7 +2,7 @@
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
 
 # Compiled output
-/.build
+/dist/
 
 # Yarn package manager with PnP
 # https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
@@ -27,7 +27,7 @@ yarn-error.log*
 *.lcov
 
 # Environment variables
-.env
+*.override.env
 
 # Visual Studio Code
 # https://github.com/github/gitignore/blob/master/Global/VisualStudioCode.gitignore
