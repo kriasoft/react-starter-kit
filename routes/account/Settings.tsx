@@ -21,7 +21,7 @@ const updateUserMutation = graphql`
   }
 `;
 
-export default function Settings(props: Props): JSX.Element {
+function Settings(props: Props): JSX.Element {
   const { me } = props;
   const [input, setInput] = React.useState({
     id: me?.id || "",
@@ -94,3 +94,6 @@ export default function Settings(props: Props): JSX.Element {
     </Container>
   );
 }
+
+export default Settings;
+export type Settings = typeof Settings;

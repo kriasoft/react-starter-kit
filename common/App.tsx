@@ -7,7 +7,7 @@ import { Action, Update } from "history";
 import * as React from "react";
 import { Environment, RelayEnvironmentProvider } from "react-relay";
 import { History, HistoryContext, LocationContext } from "../core/history";
-import type { RouteResponse } from "../core/router";
+import type { RouterResponse } from "../core/router";
 import { resolveRoute } from "../core/router";
 import { LoginDialog } from "../dialogs";
 import theme from "../theme";
@@ -21,8 +21,9 @@ type AppProps = {
 
 export class App extends React.Component<AppProps> {
   state = {
-    route: undefined as RouteResponse | undefined,
+    route: undefined as RouterResponse | undefined,
     location: this.props.history.location,
+    action: Action.Pop,
     error: undefined as Error | undefined,
     theme: (window?.localStorage?.getItem("theme") === "dark"
       ? "dark"
@@ -45,6 +46,10 @@ export class App extends React.Component<AppProps> {
     if (this.state.route?.title) {
       self.document.title = this.state.route.title;
     }
+
+    if (this.state.action === Action.Push) {
+      window.scrollTo(0, 0);
+    }
   }
 
   componentWillUnmount(): void {
@@ -59,10 +64,16 @@ export class App extends React.Component<AppProps> {
   renderPath = async (ctx: Update): Promise<void> => {
     resolveRoute({
       path: ctx.location.pathname,
+      query: new URLSearchParams(ctx.location.search),
       relay: this.props.relay,
     }).then((route) => {
       if (route.error) console.error(route.error);
-      this.setState({ route, location: ctx.location, error: route.error });
+      this.setState({
+        route,
+        location: ctx.location,
+        action: ctx.action,
+        error: route.error,
+      });
     });
   };
 
