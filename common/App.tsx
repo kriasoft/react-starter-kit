@@ -2,7 +2,6 @@
 /* SPDX-License-Identifier: MIT */
 
 import { CssBaseline, PaletteMode, Toolbar } from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
 import { Action, Update } from "history";
 import * as React from "react";
 import { Environment, RelayEnvironmentProvider } from "react-relay";
@@ -10,9 +9,9 @@ import { History, HistoryContext, LocationContext } from "../core/history";
 import type { RouterResponse } from "../core/router";
 import { resolveRoute } from "../core/router";
 import { LoginDialog } from "../dialogs";
-import theme from "../theme";
 import { AppToolbar } from "./AppToolbar";
 import { ErrorPage } from "./ErrorPage";
+import { ThemeProvider } from "./ThemeProvider";
 
 type AppProps = {
   history: History;
@@ -25,9 +24,6 @@ export class App extends React.Component<AppProps> {
     location: this.props.history.location,
     action: Action.Pop,
     error: undefined as Error | undefined,
-    theme: (window?.localStorage?.getItem("theme") === "dark"
-      ? "dark"
-      : "light") as PaletteMode,
   };
 
   static getDerivedStateFromError(error: Error): { error: Error } {
@@ -77,33 +73,25 @@ export class App extends React.Component<AppProps> {
     });
   };
 
-  handleChangeTheme = (): void => {
-    this.setState((x: { theme: PaletteMode }) => {
-      const theme = x.theme === "light" ? "dark" : "light";
-      window.localStorage?.setItem("theme", theme);
-      return { ...x, theme };
-    });
-  };
-
   render(): JSX.Element {
     const { history } = this.props;
     const { route, location, error } = this.state;
 
     if (error) {
       return (
-        <ThemeProvider theme={theme[this.state.theme]}>
+        <ThemeProvider>
           <ErrorPage error={error} history={history} />;
         </ThemeProvider>
       );
     }
 
     return (
-      <ThemeProvider theme={theme[this.state.theme]}>
+      <ThemeProvider>
         <RelayEnvironmentProvider environment={this.props.relay}>
           <HistoryContext.Provider value={history}>
             <LocationContext.Provider value={location}>
               <CssBaseline />
-              <AppToolbar onChangeTheme={this.handleChangeTheme} />
+              <AppToolbar />
               <Toolbar />
               {route?.component
                 ? React.createElement(route.component, route.props)

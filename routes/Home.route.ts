@@ -20,7 +20,7 @@ export default {
   `,
   component: () => import(/* webpackChunkName: "home" */ "./Home"),
   response: (data) => ({
-    title: "Boilerplate • Online scaffolding tool for software projects",
+    title: "React App",
     description: "Web application built with React and Relay",
     props: data,
   }),

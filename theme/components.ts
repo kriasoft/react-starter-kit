@@ -1,13 +1,13 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import type { ThemeOptions } from "@mui/material/styles";
+import { type Palette, type ThemeOptions } from "@mui/material/styles";
 
 /**
  * Style overrides for Material UI components.
  */
-export const components: ThemeOptions["components"] = {
-  // https://github.com/mui-org/material-ui/tree/next/packages/material-ui/src/Button
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+export const components = (palette: Palette): ThemeOptions["components"] => ({
   MuiButton: {
     styleOverrides: {
       contained: {
@@ -18,7 +18,7 @@ export const components: ThemeOptions["components"] = {
       },
     },
   },
-  // https://github.com/mui-org/material-ui/tree/next/packages/material-ui/src/ButtonGroup
+
   MuiButtonGroup: {
     styleOverrides: {
       root: {
@@ -26,4 +26,4 @@ export const components: ThemeOptions["components"] = {
       },
     },
   },
-};
+});
