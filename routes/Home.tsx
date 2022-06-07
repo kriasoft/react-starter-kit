@@ -4,12 +4,9 @@
 import { Api, GitHub } from "@mui/icons-material";
 import { Box, Button, Container, Typography } from "@mui/material";
 import * as React from "react";
-import { config } from "../core";
 import { useLoginDialog, useNavigate } from "../hooks";
-import { type HomeQuery$data as Props } from "../queries/HomeQuery.graphql";
 
-function Home(props: Props): JSX.Element {
-  const { me } = props;
+function Home(): JSX.Element {
   const loginDialog = useLoginDialog();
   const navigate = useNavigate();
 
@@ -26,8 +23,7 @@ function Home(props: Props): JSX.Element {
         </Typography>
 
         <Typography sx={{ mb: 4 }} variant="h3" align="center">
-          The web's most popular front-end template for building web
-          applications with React, Relay, and GraphQL.
+          The web's most popular Jamstack React template.
         </Typography>
 
         <Box
@@ -40,7 +36,7 @@ function Home(props: Props): JSX.Element {
           <Button
             variant="outlined"
             size="large"
-            href={`${config.api.origin}/api`}
+            href={`/api`}
             children="Explorer API"
             startIcon={<Api />}
           />

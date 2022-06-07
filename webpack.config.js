@@ -164,7 +164,6 @@ export default function config(args, options) {
                     },
                     "lab",
                   ],
-                  "relay",
                   isDevServer && "react-refresh/babel",
                 ].filter(Boolean),
                 cacheDirectory: ".cache/babel-loader",

@@ -7,8 +7,7 @@
   "scripts": {
     "postinstall": "husky install && yarn node ./scripts/postinstall.js",
     "start": "webpack serve --mode=development",
-    "update-schema": "node ./scripts/update-schema",
-    "relay": "relay-compiler",
+    "update-schema": "zx ./scripts/update-schema.js",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "jest",
     "build": "webpack --mode=production",
@@ -28,9 +27,7 @@
     "js-cookie": "^3.0.1",
     "path-to-regexp": "^6.2.1",
     "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "react-relay": "^13.2.0",
-    "relay-runtime": "^13.2.0"
+    "react-dom": "^18.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.10",
@@ -55,8 +52,6 @@
     "@types/prettier": "^2.6.3",
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
-    "@types/react-relay": "^13.0.2",
-    "@types/relay-runtime": "^13.0.3",
     "@types/webpack-bundle-analyzer": "^4.4.1",
     "@types/webpack-env": "^1.17.0",
     "@types/webpack-manifest-plugin": "^3.0.5",
@@ -65,7 +60,6 @@
     "babel-jest": "^28.1.1",
     "babel-loader": "^8.2.5",
     "babel-plugin-import": "^1.13.5",
-    "babel-plugin-relay": "^13.2.0",
     "copy-webpack-plugin": "^11.0.0",
     "cross-spawn": "^7.0.3",
     "del-cli": "^4.0.1",
@@ -86,7 +80,6 @@
     "jest": "^28.1.1",
     "prettier": "^2.6.2",
     "react-refresh": "^0.13.0",
-    "relay-compiler": "^13.2.0",
     "relay-config": "^12.0.1",
     "terser-webpack-plugin": "^5.3.3",
     "type-fest": "^2.13.0",

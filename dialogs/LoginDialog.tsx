@@ -12,31 +12,14 @@ import {
   Typography,
 } from "@mui/material";
 import * as React from "react";
-import { graphql, useRelayEnvironment } from "react-relay";
-import { createOperationDescriptor, getRequest } from "relay-runtime";
 import { useLoginDialog } from "../hooks";
 
 // Pop-up window for Google/Facebook authentication
 let loginWindow: WindowProxy | null = null;
 
-const meQuery = graphql`
-  query LoginDialogMeQuery {
-    me {
-      ...CurrentUser_me
-      id
-      email
-      name
-      picture {
-        url
-      }
-    }
-  }
-`;
-
 export function LoginDialog(): JSX.Element {
   const [error, setError] = React.useState<string | undefined>();
   const loginDialog = useLoginDialog(true);
-  const relay = useRelayEnvironment();
 
   // Start listening for notifications from the pop-up login window
   React.useEffect(() => {
@@ -48,17 +31,13 @@ export function LoginDialog(): JSX.Element {
         if (event.data.error) {
           setError(event.data.error);
         } else if (event.data) {
-          // Save user into the local store and close dialog
-          const request = getRequest(meQuery);
-          const operation = createOperationDescriptor(request, {});
-          relay.commitPayload(operation, event.data.data);
-          loginDialog.hide();
+          // TODO: Handle sign in
         }
       }
     }
     window.addEventListener("message", handleMessage, false);
     return () => window.removeEventListener("message", handleMessage);
-  }, [relay]);
+  }, []);
 
   return (
     <Dialog

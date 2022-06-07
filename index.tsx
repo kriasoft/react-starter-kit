@@ -2,19 +2,15 @@
 /* SPDX-License-Identifier: MIT */
 
 import history from "history/browser";
-import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { App } from "./common";
-import { createRelay } from "./core/relay";
 
-// Dehydrate the initial API response and initialize a Relay store
+// Dehydrate the initial API response
 // https://developer.mozilla.org/docs/Web/HTML/Element/script#embedding_data_in_html
 const data = (document.getElementById("data") as HTMLScriptElement).text;
-const records = data ? JSON.parse(data) : undefined;
-const relay = createRelay({ records });
+
+// TODO: Initialize local store (Relay, Apollo, Redux, etc.)
+// const store = createRelay(data);
 
 // Render the top-level React component
-ReactDOM.render(
-  <App history={history} relay={relay} />,
-  document.getElementById("root")
-);
+ReactDOM.render(<App history={history} />, document.getElementById("root"));

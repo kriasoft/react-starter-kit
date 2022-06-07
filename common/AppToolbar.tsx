@@ -16,8 +16,8 @@ import {
 import { useTheme } from "@mui/material/styles";
 import * as React from "react";
 import { config, useToggleTheme } from "../core";
-import { useCurrentUser, useLoginDialog, useNavigate } from "../hooks";
-import { NotificationsMenu, UserMenu } from "../menu";
+import { useLoginDialog, useNavigate } from "../hooks";
+import { NotificationsMenu, UserMenu } from "../menus";
 import { ThemeButton } from "./ThemeButton";
 
 type AppToolbarProps = AppBarProps;
@@ -35,7 +35,9 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 
   const loginDialog = useLoginDialog();
   const navigate = useNavigate();
-  const user = useCurrentUser();
+
+  // const me = useCurrentUser();
+  const me = null as User | null;
 
   function openNotificationsMenu() {
     setAnchorEl((x) => ({ ...x, notifications: menuAnchorRef.current }));
@@ -80,7 +82,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 
         <ThemeButton sx={{ mr: 1 }} />
 
-        {user && (
+        {me && (
           <Chip
             sx={{
               height: 40,
@@ -95,15 +97,15 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             component="a"
             avatar={
               <Avatar
-                alt={user.name || ""}
-                src={user?.picture?.url || undefined}
+                alt={me?.name ?? ""}
+                src={me?.picture?.url || undefined}
               />
             }
-            label={getFirstName(user.name || "")}
+            label={getFirstName(me?.name ?? "")}
             onClick={navigate}
           />
         )}
-        {user && (
+        {me && (
           <IconButton
             sx={{
               marginLeft: (x) => x.spacing(1),
@@ -118,7 +120,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             onClick={openNotificationsMenu}
           />
         )}
-        {user && (
+        {me && (
           <IconButton
             ref={menuAnchorRef}
             sx={{
@@ -134,7 +136,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             onClick={openUserMenu}
           />
         )}
-        {!user && (
+        {!me && (
           <Button
             variant="outlined"
             href="/auth/google"
@@ -165,3 +167,11 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 function getFirstName(displayName: string): string {
   return displayName && displayName.split(" ")[0];
 }
+
+type User = {
+  name: string;
+  email?: string;
+  picture?: {
+    url?: string;
+  };
+};
