@@ -1,36 +1,22 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import { css } from "@emotion/react";
-import { Button, Container, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import * as React from "react";
-import { graphql, useMutation } from "react-relay";
-import { useErrors } from "../hooks";
-import { type SettingsQuery$data as Props } from "../queries/SettingsQuery.graphql";
-import { type SettingsUpdateMutation } from "../queries/SettingsUpdateMutation.graphql";
 
-const updateUserMutation = graphql`
-  mutation SettingsUpdateMutation($input: UpdateUserInput!) {
-    updateUser(input: $input) {
-      user {
-        id
-        email
-        name
-      }
-    }
-  }
-`;
-
-function Settings(props: Props): JSX.Element {
-  const { me } = props;
+function Settings(): JSX.Element {
+  // TODO: Get data from the API
   const [input, setInput] = React.useState({
-    id: me?.id || "",
-    name: me?.name || "",
-    email: me?.email || "",
+    id: "",
+    name: "",
+    email: "",
   });
 
-  const [updateUser] = useMutation<SettingsUpdateMutation>(updateUserMutation);
-  const [errors, setErrors] = useErrors();
+  const [errors, setErrors] = React.useState({
+    id: undefined as string[] | undefined,
+    name: undefined as string[] | undefined,
+    email: undefined as string[] | undefined,
+  });
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -44,13 +30,7 @@ function Settings(props: Props): JSX.Element {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!me) return;
-    updateUser({
-      variables: { input },
-      onCompleted(_, errors) {
-        setErrors(errors?.[0]);
-      },
-    });
+    // TODO: Send data to the API
   }
 
   return (
@@ -60,17 +40,18 @@ function Settings(props: Props): JSX.Element {
     >
       <Typography
         sx={{ marginBottom: (theme) => theme.spacing(2) }}
+        children="Account Settings"
         variant="h2"
-      >
-        Account Settings
-      </Typography>
-      <form
+      />
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+        }}
+        component="form"
         onSubmit={handleSubmit}
-        css={css`
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-        `}
       >
         {fields.map((x) => (
           <TextField
@@ -90,7 +71,7 @@ function Settings(props: Props): JSX.Element {
         <Button variant="contained" type="submit">
           Save
         </Button>
-      </form>
+      </Box>
     </Container>
   );
 }

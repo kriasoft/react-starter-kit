@@ -2,7 +2,6 @@
 /* SPDX-License-Identifier: MIT */
 
 import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
-import { createRelay } from "../core/relay";
 import { resolveRoute } from "../core/router";
 import { transform } from "./transform";
 
@@ -38,29 +37,21 @@ async function handleEvent(event: FetchEvent) {
     mapRequestToAsset(req) {
       return new Request(new URL("/index.html", url), req);
     },
+    cacheControl: { bypassCache: true },
   });
 
   // Find application route matching the URL pathname
-  const relay = createRelay({ baseUrl: API_ORIGIN, request: req });
-  const route = await resolveRoute({ path, query: url.searchParams, relay });
+  const route = await resolveRoute({ path, query: url.searchParams });
 
   // Handle redirects
   if (route.redirect) {
     return Response.redirect(new URL(route.redirect, url), route.status ?? 302);
   }
 
-  // In case of an error, save it to Relay store as a way to pass to the client
-  if (route.error) {
-    relay.commitUpdate(function (store) {
-      const root = store.getRoot();
-      root.setValue(route.error?.stack, "error");
-    });
-  }
-
   // Inject page metadata such as <title>, <meta name="description" contents="..." />, etc.
   // and serialized API response <script id="data" type="application/json">...</script>
   // https://developer.mozilla.org/docs/Web/HTML/Element/script#embedding_data_in_html
-  const res = transform(await resPromise, route, relay);
+  const res = transform(await resPromise, route);
   return new Response(res.body, {
     status: (route.error as unknown as { status: number })?.status || 200,
     headers: res.headers,

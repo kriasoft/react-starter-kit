@@ -6,9 +6,8 @@
 <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a>
 <a href="https://twitter.com/koistya"><img src="https://img.shields.io/twitter/follow/koistya.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
-The web's most popular front-end template for building web applications with
-[React](https://reactjs.org/), [Relay](https://relay.dev/), and
-[GraphQL](https://graphql.org/).
+The web's most popular Jamstack front-end template for building web applications with
+[React](https://reactjs.org/).
 
 ## Features
 
@@ -32,9 +31,8 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 `├──`[`.github`](.github) — GitHub configuration including CI/CD workflows<br>
 `├──`[`.vscode`](.vscode) — VSCode settings including code snippets, recommended extensions etc.<br>
 `├──`[`common`](./common) — common (shared) React components<br>
-`├──`[`core`](./core) — core modules and utility functions<br>
+`├──`[`core`](./core) — core modules, utility functions, and environment variables<br>
 `├──`[`dialogs`](./dialogs) — React components implementing modal dialogs<br>
-`├──`[`fragments`](./fragments) — common (shared) Relay fragments<br>
 `├──`[`hooks`](./hooks) — React hooks such as `useLocation()`, `useCurrentUser()`, etc.<br>
 `├──`[`icons`](./icons) — custom icon React components<br>
 `├──`[`menu`](./menu) — React components implementing popup menus<br>
@@ -43,29 +41,36 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 `├──`[`scripts`](./scripts) — automation scripts such as `yarn deploy`<br>
 `├──`[`theme`](./theme) — application theme - colors, fonts, paddings, etc.<br>
 `├──`[`workers`](./workers) — Cloudflare Worker scripts (reverse proxy, SSR)<br>
-`├──`[`config`](./config.ts) — client-side application settings per environment<br>
 `└──`[`index.ts`](./index.ts) — application entry point<br>
 
 ## Tech Stack
 
-- [React](https://reactjs.org/), [Relay](https://relay.dev/),
-  [Emotion](https://emotion.sh/), [Material UI v5](https://next.material-ui.com/)
+- [React](https://reactjs.org/), [Emotion](https://emotion.sh/),
+  [Material UI v5](https://next.material-ui.com/)
 - [TypeScript](https://www.typescriptlang.org/), [Babel](https://babeljs.io/),
   [ESLint](https://eslint.org/), [Prettier](https://prettier.io/),
-  [Jest](https://jestjs.io/), [Yarn](https://yarnpkg.com/) v2 with PnP,
+  [Jest](https://jestjs.io/), [Yarn](https://yarnpkg.com/) with PnP,
   [Webpack v5](https://webpack.js.org/)
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/) v14 or newer, [Yarn](https://yarnpkg.com/) package manager
+- [Node.js](https://nodejs.org/) v16 or newer, [Yarn](https://yarnpkg.com/) package manager
 - [VS Code](https://code.visualstudio.com/) editor with [recommended extensions](.vscode/extensions.json)
 
 ## Getting Started
 
-- Clone the repo<br />
-  `git clone -o seed -b main --single-branch https://github.com/kriasoft/react-starter-kit.git`
-- Install project dependencies — `yarn install`
-- Launch the app — `yarn start`, it will become available at [http://localhost:3000](http://localhost:3000/)
+[Generate](https://github.com/kriasoft/react-starter-kit/generate) a new project
+from this template, clone it, install project dependencies, update the
+environment variables found in [`core/*.env`](./core/), and start hacking:
+
+```
+$ git clone https://github.com/kriasoft/react-starter-kit.git
+$ cd ./react-starter-kit
+$ yarn install
+$ yarn start
+```
+
+The app will become available at [http://localhost:3000](http://localhost:3000/).
 
 **IMPORTANT**: Ensure that VSCode is using the workspace versions of TypeScript and ESLint.
 
@@ -74,13 +79,11 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 ## Scripts
 
 - `yarn start` — Launches the app in development mode on [`http://localhost:3000`](http://localhost:3000/)
-- `yarn update-schema` — Update GraphQL API schema by running an introspection query
-- `yarn relay` — Updates GraphQL fragments used in the code
 - `yarn build` — Compiles and bundles the app for deployment
 - `yarn lint` — Validate code using ESLint
 - `yarn tsc` — Validate code using TypeScript compiler
 - `yarn test` — Run unit tests with Jest, Supertest
-- `yarn deploy` — Deploys the app to Cloudflare
+- `yarn cf publish` — Deploys the app to Cloudflare
 
 ## How to Deploy
 
@@ -116,6 +119,7 @@ Where `--env` argument is the target deployment area, e.g. `yarn deploy --env=pr
 ## Related Projects
 
 - [GraphQL API and Relay Starter Kit](https://github.com/kriasoft/graphql-starter) — monorepo template, pre-configured with GraphQL API, React, and Relay
+- [Cloudflare Workers Starter Kit](https://github.com/kriasoft/cloudflare-starter-kit) — TypeScript project template for Cloudflare Workers
 - [Node.js API Starter Kit](https://github.com/kriasoft/node-starter-kit) — project template, pre-configured with Node.js, GraphQL, and PostgreSQL
 
 ## How to Contribute

@@ -1,10 +1,9 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import { CssBaseline, PaletteMode, Toolbar } from "@mui/material";
+import { CssBaseline, Toolbar } from "@mui/material";
 import { Action, Update } from "history";
 import * as React from "react";
-import { Environment, RelayEnvironmentProvider } from "react-relay";
 import { History, HistoryContext, LocationContext } from "../core/history";
 import type { RouterResponse } from "../core/router";
 import { resolveRoute } from "../core/router";
@@ -13,12 +12,7 @@ import { AppToolbar } from "./AppToolbar";
 import { ErrorPage } from "./ErrorPage";
 import { ThemeProvider } from "./ThemeProvider";
 
-type AppProps = {
-  history: History;
-  relay: Environment;
-};
-
-export class App extends React.Component<AppProps> {
+class App extends React.Component<AppProps> {
   state = {
     route: undefined as RouterResponse | undefined,
     location: this.props.history.location,
@@ -61,7 +55,6 @@ export class App extends React.Component<AppProps> {
     resolveRoute({
       path: ctx.location.pathname,
       query: new URLSearchParams(ctx.location.search),
-      relay: this.props.relay,
     }).then((route) => {
       if (route.error) console.error(route.error);
       this.setState({
@@ -87,20 +80,24 @@ export class App extends React.Component<AppProps> {
 
     return (
       <ThemeProvider>
-        <RelayEnvironmentProvider environment={this.props.relay}>
-          <HistoryContext.Provider value={history}>
-            <LocationContext.Provider value={location}>
-              <CssBaseline />
-              <AppToolbar />
-              <Toolbar />
-              {route?.component
-                ? React.createElement(route.component, route.props)
-                : null}
-              <LoginDialog />
-            </LocationContext.Provider>
-          </HistoryContext.Provider>
-        </RelayEnvironmentProvider>
+        <HistoryContext.Provider value={history}>
+          <LocationContext.Provider value={location}>
+            <CssBaseline />
+            <AppToolbar />
+            <Toolbar />
+            {route?.component
+              ? React.createElement(route.component, route.props)
+              : null}
+            <LoginDialog />
+          </LocationContext.Provider>
+        </HistoryContext.Provider>
       </ThemeProvider>
     );
   }
 }
+
+type AppProps = {
+  history: History;
+};
+
+export { App };

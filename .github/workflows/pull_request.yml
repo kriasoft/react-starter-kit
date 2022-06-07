@@ -1,23 +1,33 @@
-# Compile, bundle, and upload application bundles
-# to a cloud storage on each pull request to "main".
+# GitHub Actions workflow
 # https://help.github.com/actions
 
 name: PR
 
-on:
-  pull_request:
-    branches: [main]
+on: [pull_request]
 
 env:
-  CI: true
+  HUSKY: 0
   VERSION: ${{ github.event.pull_request.number }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: yarn install
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ${{ github.workspace }}/.yarn/cache
+            ${{ github.workspace }}/.yarn/unplugged
+            ${{ github.workspace }}/.yarn/install-state.gz
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
+
+      # Install dependencies
+      - name: yarn install
+        run: |
+          yarn config set enableGlobalCache false
+          yarn install
 
       # Analyze code for potential problems
       - run: yarn prettier --check .
