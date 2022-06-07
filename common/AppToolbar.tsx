@@ -15,17 +15,17 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import * as React from "react";
-import { config } from "../core";
+import { config, useToggleTheme } from "../core";
 import { useCurrentUser, useLoginDialog, useNavigate } from "../hooks";
 import { NotificationsMenu, UserMenu } from "../menu";
+import { ThemeButton } from "./ThemeButton";
 
-type AppToolbarProps = AppBarProps & {
-  onChangeTheme: () => void;
-};
+type AppToolbarProps = AppBarProps;
 
 export function AppToolbar(props: AppToolbarProps): JSX.Element {
-  const { sx, onChangeTheme, ...other } = props;
+  const { sx, ...other } = props;
   const menuAnchorRef = React.createRef<HTMLButtonElement>();
+  const toggleTheme = useToggleTheme();
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState({
@@ -77,6 +77,8 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
         <span style={{ flexGrow: 1 }} />
 
         {/* Account related controls (icon buttons) */}
+
+        <ThemeButton sx={{ mr: 1 }} />
 
         {user && (
           <Chip
@@ -154,7 +156,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
         anchorEl={anchorEl.userMenu}
         onClose={closeUserMenu}
         PaperProps={{ sx: { marginTop: "8px" } }}
-        onChangeTheme={onChangeTheme}
+        onChangeTheme={toggleTheme}
       />
     </AppBar>
   );

@@ -3,3 +3,4 @@
 
 export { default as config, type Config } from "./config";
 export type { Route } from "./router";
+export * from "./theme";
