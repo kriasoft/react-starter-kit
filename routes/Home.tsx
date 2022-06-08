@@ -3,17 +3,10 @@
 
 import { Api, GitHub } from "@mui/icons-material";
 import { Box, Button, Container, Typography } from "@mui/material";
-import * as React from "react";
-import { useLoginDialog, useNavigate } from "../hooks";
+import { useNavigate } from "../core";
 
 function Home(): JSX.Element {
-  const loginDialog = useLoginDialog();
   const navigate = useNavigate();
-
-  function signIn(event: React.MouseEvent<HTMLElement>) {
-    event.preventDefault();
-    loginDialog.show();
-  }
 
   return (
     <Box>

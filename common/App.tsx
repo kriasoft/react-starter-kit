@@ -7,8 +7,8 @@ import * as React from "react";
 import { History, HistoryContext, LocationContext } from "../core/history";
 import type { RouterResponse } from "../core/router";
 import { resolveRoute } from "../core/router";
-import { LoginDialog } from "../dialogs";
 import { AppToolbar } from "./AppToolbar";
+import { AuthProvider } from "./AuthProvider";
 import { ErrorPage } from "./ErrorPage";
 import { ThemeProvider } from "./ThemeProvider";
 
@@ -80,17 +80,18 @@ class App extends React.Component<AppProps> {
 
     return (
       <ThemeProvider>
-        <HistoryContext.Provider value={history}>
-          <LocationContext.Provider value={location}>
-            <CssBaseline />
-            <AppToolbar />
-            <Toolbar />
-            {route?.component
-              ? React.createElement(route.component, route.props)
-              : null}
-            <LoginDialog />
-          </LocationContext.Provider>
-        </HistoryContext.Provider>
+        <AuthProvider>
+          <HistoryContext.Provider value={history}>
+            <LocationContext.Provider value={location}>
+              <CssBaseline />
+              <AppToolbar />
+              <Toolbar />
+              {route?.component
+                ? React.createElement(route.component, route.props)
+                : null}
+            </LocationContext.Provider>
+          </HistoryContext.Provider>
+        </AuthProvider>
       </ThemeProvider>
     );
   }

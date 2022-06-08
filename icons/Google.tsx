@@ -2,17 +2,10 @@
 /* SPDX-License-Identifier: MIT */
 
 import { SvgIcon, SvgIconProps } from "@mui/material";
-import * as React from "react";
 
 export function Google(props: SvgIconProps): JSX.Element {
   return (
-    <SvgIcon
-      className="abcRioButtonSvg"
-      version="1.1"
-      role="img"
-      viewBox="0 0 48 48"
-      {...props}
-    >
+    <SvgIcon role="img" viewBox="0 0 48 48" {...props}>
       <g>
         <path
           fill="#EA4335"

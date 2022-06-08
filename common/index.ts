@@ -2,3 +2,4 @@
 /* SPDX-License-Identifier: MIT */
 
 export { App } from "./App";
+export { LoginButton } from "./LoginButton";
