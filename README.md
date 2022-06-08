@@ -30,18 +30,17 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 `├──`[`.github`](.github) — GitHub configuration including CI/CD workflows<br>
 `├──`[`.vscode`](.vscode) — VSCode settings including code snippets, recommended extensions etc.<br>
-`├──`[`common`](./common) — common (shared) React components<br>
-`├──`[`core`](./core) — core modules, utility functions, and environment variables<br>
+`├──`[`common`](./common) — Common (shared) React components<br>
+`├──`[`core`](./core) — Core modules, React hooks, environment variables, etc.<br>
 `├──`[`dialogs`](./dialogs) — React components implementing modal dialogs<br>
-`├──`[`hooks`](./hooks) — React hooks such as `useLocation()`, `useCurrentUser()`, etc.<br>
-`├──`[`icons`](./icons) — custom icon React components<br>
-`├──`[`menu`](./menu) — React components implementing popup menus<br>
-`├──`[`public`](./public) — static assets such as robots.txt, index.html etc.<br>
-`├──`[`routes`](./routes) — application routes and page (screen) components<br>
-`├──`[`scripts`](./scripts) — automation scripts such as `yarn deploy`<br>
-`├──`[`theme`](./theme) — application theme - colors, fonts, paddings, etc.<br>
+`├──`[`icons`](./icons) — Custom icon React components<br>
+`├──`[`menus`](./menus) — React components implementing popup menus<br>
+`├──`[`public`](./public) — Static assets such as robots.txt, index.html etc.<br>
+`├──`[`routes`](./routes) — Application routes and page (screen) components<br>
+`├──`[`scripts`](./scripts) — Automation scripts such as `yarn deploy`<br>
+`├──`[`theme`](./theme) — Application theme - colors, fonts, paddings, etc.<br>
 `├──`[`workers`](./workers) — Cloudflare Worker scripts (reverse proxy, SSR)<br>
-`└──`[`index.ts`](./index.ts) — application entry point<br>
+`└──`[`index.ts`](./index.ts) — Application entry point<br>
 
 ## Tech Stack
 
@@ -72,7 +71,8 @@ $ yarn start
 
 The app will become available at [http://localhost:3000](http://localhost:3000/).
 
-**IMPORTANT**: Ensure that VSCode is using the workspace versions of TypeScript and ESLint.
+**IMPORTANT**: Ensure that VSCode is using the workspace [version of TypeScript](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-newer-typescript-versions)
+and ESLint.
 
 ![](https://files.tarkus.me/typescript-workspace.png)
 
@@ -80,8 +80,8 @@ The app will become available at [http://localhost:3000](http://localhost:3000/)
 
 - `yarn start` — Launches the app in development mode on [`http://localhost:3000`](http://localhost:3000/)
 - `yarn build` — Compiles and bundles the app for deployment
-- `yarn lint` — Validate code using ESLint
-- `yarn tsc` — Validate code using TypeScript compiler
+- `yarn lint` — Validate the code using ESLint
+- `yarn tsc` — Validate the code using TypeScript compiler
 - `yarn test` — Run unit tests with Jest, Supertest
 - `yarn cf publish` — Deploys the app to Cloudflare
 

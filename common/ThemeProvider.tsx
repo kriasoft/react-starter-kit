@@ -3,7 +3,7 @@
 
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import * as React from "react";
-import { detectTheme, saveTheme, ToggleThemeContext } from "../core";
+import { detectTheme, saveTheme, ToggleThemeContext } from "../core/theme";
 import * as theme from "../theme";
 
 function ThemeProvider(props: ThemeProviderProps): JSX.Element {

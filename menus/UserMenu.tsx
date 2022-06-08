@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import * as React from "react";
-import { useNavigate, useSignOut } from "../hooks";
+import { useAuth, useHistory, useNavigate } from "../core";
 import { Logout } from "../icons";
 
 type UserMenuProps = Omit<
@@ -27,12 +27,19 @@ export function UserMenu(props: UserMenuProps): JSX.Element {
   const { onChangeTheme, PaperProps, MenuListProps, ...other } = props;
 
   const navigate = useNavigate();
-  const signOut = useSignOut();
+  const history = useHistory();
   const theme = useTheme();
+  const auth = useAuth();
 
   function handleClick(event: React.MouseEvent<HTMLAnchorElement>): void {
     props.onClose?.(event, "backdropClick");
     navigate(event);
+  }
+
+  function signOut(event: React.MouseEvent) {
+    event.preventDefault();
+    props.onClose?.(event, "backdropClick");
+    auth.signOut().then(() => history.push("/"));
   }
 
   return (

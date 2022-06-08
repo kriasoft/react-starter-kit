@@ -10,6 +10,9 @@ import { type Palette, type ThemeOptions } from "@mui/material/styles";
 export const components = (palette: Palette): ThemeOptions["components"] => ({
   MuiButton: {
     styleOverrides: {
+      root: {
+        textTransform: "unset",
+      },
       contained: {
         boxShadow: "none",
         "&:hover": {

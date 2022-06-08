@@ -13,10 +13,8 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import * as React from "react";
-import { config, useToggleTheme } from "../core";
-import { useLoginDialog, useNavigate } from "../hooks";
+import { config, useAuth, useNavigate, useToggleTheme } from "../core";
 import { NotificationsMenu, UserMenu } from "../menus";
 import { ThemeButton } from "./ThemeButton";
 
@@ -26,18 +24,13 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
   const { sx, ...other } = props;
   const menuAnchorRef = React.createRef<HTMLButtonElement>();
   const toggleTheme = useToggleTheme();
-  const theme = useTheme();
+  const { me, ...auth } = useAuth();
+  const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = React.useState({
     userMenu: null as HTMLElement | null,
     notifications: null as HTMLElement | null,
   });
-
-  const loginDialog = useLoginDialog();
-  const navigate = useNavigate();
-
-  // const me = useCurrentUser();
-  const me = null as User | null;
 
   function openNotificationsMenu() {
     setAnchorEl((x) => ({ ...x, notifications: menuAnchorRef.current }));
@@ -57,7 +50,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 
   function signIn(event: React.MouseEvent): void {
     event.preventDefault();
-    loginDialog.show();
+    auth.signIn();
   }
 
   return (
@@ -139,7 +132,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
         {!me && (
           <Button
             variant="outlined"
-            href="/auth/google"
+            href="/login"
             color="primary"
             onClick={signIn}
             children="Log in / Register"
