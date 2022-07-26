@@ -4088,7 +4088,7 @@ __metadata:
     webpack-dev-server: "npm:^4.9.2"
     webpack-manifest-plugin: "npm:^5.0.0"
     wrangler: "npm:^2.0.8"
-    zx: "npm:^6.2.3"
+    zx: "npm:^7.0.7"
   languageName: unknown
   linkType: soft
 
@@ -6731,6 +6731,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"globby@npm:^13.1.2":
+  version: 13.1.2
+  resolution: "globby@npm:13.1.2"
+  dependencies:
+    dir-glob: "npm:^3.0.1"
+    fast-glob: "npm:^3.2.11"
+    ignore: "npm:^5.2.0"
+    merge2: "npm:^1.4.1"
+    slash: "npm:^4.0.0"
+  checksum: 9b418983d4b2dab9599cf9b2d1535c547d206e96796a699086e7a6b0e5d8ba63ee7653b1e3e3afa1747e1accf70fdc58fcb246dec282b3235a23a0b03fe14a7c
+  languageName: node
+  linkType: hard
+
 "got@npm:^12.1.0":
   version: 12.1.0
   resolution: "got@npm:12.1.0"
@@ -8867,14 +8880,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^3.2.5":
-  version: 3.2.5
-  resolution: "node-fetch@npm:3.2.5"
+"node-fetch@npm:^3.2.6":
+  version: 3.2.9
+  resolution: "node-fetch@npm:3.2.9"
   dependencies:
     data-uri-to-buffer: "npm:^4.0.0"
     fetch-blob: "npm:^3.1.4"
     formdata-polyfill: "npm:^4.0.10"
-  checksum: 2dab2f5401a1514bc6932ede5bf2f0d5f870861e600f38998ef18e96bdf4c1d0aa9ae7c24aed2bfcb008ca136c86b252503fab6999e3237bb063e11e718b2036
+  checksum: 52842860711a6c5fee7d13ae999b0540221f11d1b122634a4093e152e9c24485dec9a45bacd39e8ec80a6c236a24cd929b431874527014def2e9a6c625071176
   languageName: node
   linkType: hard
 
@@ -11700,9 +11713,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zx@npm:^6.2.3":
-  version: 6.2.3
-  resolution: "zx@npm:6.2.3"
+"zx@npm:^7.0.7":
+  version: 7.0.7
+  resolution: "zx@npm:7.0.7"
   dependencies:
     "@types/fs-extra": "npm:^9.0.13"
     "@types/minimist": "npm:^1.2.2"
@@ -11711,15 +11724,14 @@ __metadata:
     "@types/which": "npm:^2.0.1"
     chalk: "npm:^5.0.1"
     fs-extra: "npm:^10.1.0"
-    globby: "npm:^13.1.1"
-    ignore: "npm:^5.2.0"
+    globby: "npm:^13.1.2"
     minimist: "npm:^1.2.6"
-    node-fetch: "npm:^3.2.5"
+    node-fetch: "npm:^3.2.6"
     ps-tree: "npm:^1.2.0"
     which: "npm:^2.0.2"
     yaml: "npm:^2.1.1"
   bin:
     zx: build/cli.js
-  checksum: 925d2b4fd87adcf1a773d3aef92f6d4331f217d45fca8e5d7a1f4ee5f4243f87567f2be22fb71048e07562452d6a34dd5b1a2f92e3be8856f9feee747a2b338c
+  checksum: 400009f1075082a278e66949a48c73fc3d0215a81824f7f28b34847bb10c680a7e859e6824f71bd150672f27cabd7b25b923d3b81244be6ecf77686987fd81b4
   languageName: node
   linkType: hard
