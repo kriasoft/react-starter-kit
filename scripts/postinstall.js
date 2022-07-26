@@ -12,7 +12,7 @@ const environments = [
 
 // Create Git-ignored files for environment variable overrides
 for (const env of environments) {
-  const filename = `./core/.${env.name}.override.env`;
+  const filename = `./env/.${env.name}.override.env`;
 
   if (!fs.existsSync(filename)) {
     await fs.writeFile(
