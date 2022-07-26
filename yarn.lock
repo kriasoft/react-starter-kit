@@ -1894,6 +1894,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/cache@npm:^11.9.3":
+  version: 11.9.3
+  resolution: "@emotion/cache@npm:11.9.3"
+  dependencies:
+    "@emotion/memoize": "npm:^0.7.4"
+    "@emotion/sheet": "npm:^1.1.1"
+    "@emotion/utils": "npm:^1.0.0"
+    "@emotion/weak-memoize": "npm:^0.2.5"
+    stylis: "npm:4.0.13"
+  checksum: 80ae11bc89fc104528dbaf62aceb6e98870f0eda67634a6694f2d87e40510093acce23c7c8aaab2a32eb9871e9a6fd49f619ed107ccee3be871bb35f26cb89b0
+  languageName: node
+  linkType: hard
+
 "@emotion/core@npm:^11.0.0":
   version: 11.0.0
   resolution: "@emotion/core@npm:11.0.0"
@@ -1944,6 +1957,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/is-prop-valid@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@emotion/is-prop-valid@npm:1.1.3"
+  dependencies:
+    "@emotion/memoize": "npm:^0.7.4"
+  checksum: 4bfc33b7e0dae657226e7cc40d6e759a046666acab2def08aa975c250b1a52aadd500913ba66dc3d4b7ae33b47032721cf14bc5ae920ce8e3174715dde77fb7a
+  languageName: node
+  linkType: hard
+
 "@emotion/memoize@npm:^0.7.4, @emotion/memoize@npm:^0.7.5":
   version: 0.7.5
   resolution: "@emotion/memoize@npm:0.7.5"
@@ -1951,14 +1973,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.9.0":
-  version: 11.9.0
-  resolution: "@emotion/react@npm:11.9.0"
+"@emotion/react@npm:^11.9.3":
+  version: 11.9.3
+  resolution: "@emotion/react@npm:11.9.3"
   dependencies:
     "@babel/runtime": "npm:^7.13.10"
     "@emotion/babel-plugin": "npm:^11.7.1"
-    "@emotion/cache": "npm:^11.7.1"
-    "@emotion/serialize": "npm:^1.0.3"
+    "@emotion/cache": "npm:^11.9.3"
+    "@emotion/serialize": "npm:^1.0.4"
     "@emotion/utils": "npm:^1.1.0"
     "@emotion/weak-memoize": "npm:^0.2.5"
     hoist-non-react-statics: "npm:^3.3.1"
@@ -1970,7 +1992,7 @@ __metadata:
       optional: true
     "@types/react":
       optional: true
-  checksum: 3f3579f2aafe652c4e0551f3b3c15129e703ccdcb44ddebd2b03701b604ff07f6834ac43c5a2d80e1b58a64cd4ae663f99fc768cf2b581ce5c1c9ca75b9e0beb
+  checksum: 6bd367b6066c657b816a055433308369875b4f36af7db2dc8c87c897dd7876939ba57294a66e614e78929f69ea7b656f795ba6c85abe6796607498a9416bc6dd
   languageName: node
   linkType: hard
 
@@ -1987,6 +2009,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/serialize@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@emotion/serialize@npm:1.0.4"
+  dependencies:
+    "@emotion/hash": "npm:^0.8.0"
+    "@emotion/memoize": "npm:^0.7.4"
+    "@emotion/unitless": "npm:^0.7.5"
+    "@emotion/utils": "npm:^1.0.0"
+    csstype: "npm:^3.0.2"
+  checksum: 5a3479836d3f8a3a5d54ae60d0e448cee0742093225374a4771c0712468b7b9ed91cbc44a9f6db9ca7d726c6cfdf94e3d4cb581abd579b12680a4a76c4eeaba6
+  languageName: node
+  linkType: hard
+
 "@emotion/sheet@npm:^1.0.3, @emotion/sheet@npm:^1.1.0":
   version: 1.1.0
   resolution: "@emotion/sheet@npm:1.1.0"
@@ -1994,14 +2029,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/styled@npm:^11.8.1":
-  version: 11.8.1
-  resolution: "@emotion/styled@npm:11.8.1"
+"@emotion/sheet@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@emotion/sheet@npm:1.1.1"
+  checksum: f42afb91f6cd106427a2245d5cfa63abcfa001fa947fc2b38ed095bca3ab3aca5e1a913fc95c3905e30d46bd61bf235d24c209255d0371a2df94bd41650b96e5
+  languageName: node
+  linkType: hard
+
+"@emotion/styled@npm:^11.9.3":
+  version: 11.9.3
+  resolution: "@emotion/styled@npm:11.9.3"
   dependencies:
     "@babel/runtime": "npm:^7.13.10"
     "@emotion/babel-plugin": "npm:^11.7.1"
-    "@emotion/is-prop-valid": "npm:^1.1.2"
-    "@emotion/serialize": "npm:^1.0.2"
+    "@emotion/is-prop-valid": "npm:^1.1.3"
+    "@emotion/serialize": "npm:^1.0.4"
     "@emotion/utils": "npm:^1.1.0"
   peerDependencies:
     "@babel/core": ^7.0.0
@@ -2012,7 +2054,7 @@ __metadata:
       optional: true
     "@types/react":
       optional: true
-  checksum: eecea9b8d22ac47437eb9ef7efca764b4045c9ebe3f3af46681481d6216edd33ca8ccc8716a3c5fd9eca50a93f02ed6ab2a1bf98ccff8c7ee6999aaf0b2ab743
+  checksum: 29e5b42e362dcc30e4fbbb5be90a12b73698578ba2b0e54930e23048c7b35845cfeced0ad6dfe26216418ade683e8f234bb21a4e97fcd123a08eae3d3dbe4759
   languageName: node
   linkType: hard
 
@@ -4109,8 +4151,8 @@ __metadata:
     "@emotion/core": "npm:^11.0.0"
     "@emotion/css": "npm:^11.9.0"
     "@emotion/eslint-plugin": "npm:^11.7.0"
-    "@emotion/react": "npm:^11.9.0"
-    "@emotion/styled": "npm:^11.8.1"
+    "@emotion/react": "npm:^11.9.3"
+    "@emotion/styled": "npm:^11.9.3"
     "@jest/types": "npm:^28.1.3"
     "@mui/icons-material": "npm:^5.8.2"
     "@mui/lab": "npm:^5.0.0-alpha.84"
