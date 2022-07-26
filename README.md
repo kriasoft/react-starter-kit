@@ -30,17 +30,12 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 `├──`[`.github`](.github) — GitHub configuration including CI/CD workflows<br>
 `├──`[`.vscode`](.vscode) — VSCode settings including code snippets, recommended extensions etc.<br>
-`├──`[`common`](./common) — Common (shared) React components<br>
-`├──`[`core`](./core) — Core modules, React hooks, environment variables, etc.<br>
-`├──`[`dialogs`](./dialogs) — React components implementing modal dialogs<br>
-`├──`[`icons`](./icons) — Custom icon React components<br>
-`├──`[`menus`](./menus) — React components implementing popup menus<br>
-`├──`[`public`](./public) — Static assets such as robots.txt, index.html etc.<br>
-`├──`[`routes`](./routes) — Application routes and page (screen) components<br>
+`├──`[`app`](./app) — Web application front-end built with [Vite](https://vitejs.dev/) and [React](https://reactjs.org/)<br>
+`├──`[`edge`](./edge) — Cloudflare Workers (CDN) edge endpoint<br>
+`├──`[`env`](./env) — Application settings, API keys, etc.<br>
 `├──`[`scripts`](./scripts) — Automation scripts such as `yarn deploy`<br>
-`├──`[`theme`](./theme) — Application theme - colors, fonts, paddings, etc.<br>
-`├──`[`workers`](./workers) — Cloudflare Worker scripts (reverse proxy, SSR)<br>
-`└──`[`index.ts`](./index.ts) — Application entry point<br>
+`├──`[`tsconfig.base.json`](./tsconfig.base.json) — The common/shared TypeScript configuration<br>
+`└──`[`tsconfig.json`](./tsconfig.json) — The root TypeScript configuration<br>
 
 ## Tech Stack
 
@@ -49,22 +44,22 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 - [TypeScript](https://www.typescriptlang.org/), [Babel](https://babeljs.io/),
   [ESLint](https://eslint.org/), [Prettier](https://prettier.io/),
   [Jest](https://jestjs.io/), [Yarn](https://yarnpkg.com/) with PnP,
-  [Webpack v5](https://webpack.js.org/)
+  [Vite](https://vitejs.dev/)
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/) v16 or newer, [Yarn](https://yarnpkg.com/) package manager
+- [Node.js](https://nodejs.org/) v18 or newer, [Yarn](https://yarnpkg.com/) package manager
 - [VS Code](https://code.visualstudio.com/) editor with [recommended extensions](.vscode/extensions.json)
 
 ## Getting Started
 
 [Generate](https://github.com/kriasoft/react-starter-kit/generate) a new project
 from this template, clone it, install project dependencies, update the
-environment variables found in [`core/*.env`](./core/), and start hacking:
+environment variables found in [`env/*.env`](./env/), and start hacking:
 
 ```
-$ git clone https://github.com/kriasoft/react-starter-kit.git
-$ cd ./react-starter-kit
+$ git clone https://github.com/kriasoft/react-starter-kit.git example
+$ cd ./example
 $ yarn install
 $ yarn start
 ```
@@ -83,15 +78,15 @@ and ESLint.
 - `yarn lint` — Validate the code using ESLint
 - `yarn tsc` — Validate the code using TypeScript compiler
 - `yarn test` — Run unit tests with Jest, Supertest
-- `yarn cf publish` — Deploys the app to Cloudflare
+- `yarn edge deploy` — Deploys the app to Cloudflare
 
 ## How to Deploy
 
 Ensure that all the environment variables for the target deployment environment
-(`test`, `prod`) found in [`/core/*.env`](./core/) files are up-to-date.
+(`test`, `prod`) found in [`/env/*.env`](./env/) files are up-to-date.
 
 If you haven't done it already, push any secret values you may need to CF Workers
-environment by running `yarn cf secret put <NAME> [--env #0]`.
+environment by running `yarn edge cf secret put <NAME> [--env #0]`.
 
 Finally build and deploy the app by running:
 

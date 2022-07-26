@@ -1,41 +1,49 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { type PaletteMode, type Theme } from "@mui/material";
-import cookies from "js-cookie";
+import { type Theme } from "@mui/material";
 import * as React from "react";
-import * as theme from "../theme";
+import * as themes from "../theme/index.js";
 
-const themeCookieKey = "th";
+const $ = {
+  theme:
+    localStorage?.getItem("theme") === "dark"
+      ? themes.dark
+      : localStorage?.getItem("theme") === "light"
+      ? themes.light
+      : matchMedia?.("(prefers-color-scheme: dark)").matches
+      ? themes.dark
+      : themes.light,
+  callbacks: new Set<React.Dispatch<React.SetStateAction<Theme>>>(),
+};
 
-/* eslint-disable-next-line @typescript-eslint/no-empty-function */
-const ToggleThemeContext = React.createContext(() => {});
+/**
+ * The auto-detected OR user selected Material UI theme.
+ */
+export function useTheme() {
+  const [theme, setTheme] = React.useState($.theme);
 
-function detectTheme(): Theme {
-  const cookie = cookies.get(themeCookieKey);
-  return cookie === "d"
-    ? theme.dark
-    : cookie === "l"
-    ? theme.light
-    : window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? theme.dark
-    : theme.light /* default */;
+  React.useEffect(() => {
+    $.callbacks.add(setTheme);
+    return () => {
+      $.callbacks.delete(setTheme);
+    };
+  }, []);
+
+  return theme;
 }
 
-function saveTheme(mode: PaletteMode): void {
-  cookies.set(
-    themeCookieKey,
-    mode === theme.dark.palette.mode
-      ? "d"
-      : mode === theme.light.palette.mode
-      ? "l"
-      : ""
-  );
+/**
+ * Switches between "light" and "dark" themes.
+ */
+export function useToggleTheme() {
+  return React.useCallback(() => {
+    $.callbacks.forEach((setTheme) => {
+      setTheme((prev) => {
+        $.theme = prev.palette.mode === "dark" ? themes.light : themes.dark;
+        localStorage?.setItem("theme", $.theme.palette.mode);
+        return $.theme;
+      });
+    });
+  }, []);
 }
-
-function useToggleTheme(): () => void {
-  return React.useContext(ToggleThemeContext);
-}
-
-export { ToggleThemeContext, useToggleTheme, detectTheme, saveTheme };

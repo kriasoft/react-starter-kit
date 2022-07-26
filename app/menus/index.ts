@@ -1,5 +1,5 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-export { NotificationsMenu } from "./NotificationsMenu";
-export { UserMenu } from "./UserMenu";
+export { NotificationsMenu } from "./NotificationsMenu.js";
+export { UserMenu } from "./UserMenu.js";

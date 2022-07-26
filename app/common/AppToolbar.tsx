@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import { ArrowDropDown, NotificationsNone } from "@mui/icons-material";
@@ -14,18 +14,18 @@ import {
   Typography,
 } from "@mui/material";
 import * as React from "react";
-import { config, useAuth, useNavigate, useToggleTheme } from "../core";
-import { NotificationsMenu, UserMenu } from "../menus";
-import { ThemeButton } from "./ThemeButton";
+import { Link as NavLink } from "react-router-dom";
+import { useAuth, useCurrentUser } from "../core/auth.js";
+import { NotificationsMenu, UserMenu } from "../menus/index.js";
+import { ThemeButton } from "./ThemeButton.js";
 
 type AppToolbarProps = AppBarProps;
 
 export function AppToolbar(props: AppToolbarProps): JSX.Element {
   const { sx, ...other } = props;
   const menuAnchorRef = React.createRef<HTMLButtonElement>();
-  const toggleTheme = useToggleTheme();
-  const { me, ...auth } = useAuth();
-  const navigate = useNavigate();
+  const me = useCurrentUser();
+  const auth = useAuth();
 
   const [anchorEl, setAnchorEl] = React.useState({
     userMenu: null as HTMLElement | null,
@@ -64,8 +64,8 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
         {/* App name / logo */}
 
         <Typography variant="h1" sx={{ fontSize: "1.5rem", fontWeight: 500 }}>
-          <Link color="inherit" underline="none" href="/" onClick={navigate}>
-            {config.app.name}
+          <Link color="inherit" underline="none" to="/" component={NavLink}>
+            {APP_NAME}
           </Link>
         </Typography>
 
@@ -87,15 +87,15 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
                   : x.palette.grey[700],
               ".MuiChip-avatar": { width: 32, height: 32 },
             }}
-            component="a"
+            component={NavLink}
+            to="/"
             avatar={
               <Avatar
-                alt={me?.name ?? ""}
-                src={me?.picture?.url || undefined}
+                alt={me?.displayName ?? ""}
+                src={me?.photoURL || undefined}
               />
             }
-            label={getFirstName(me?.name ?? "")}
-            onClick={navigate}
+            label={getFirstName(me?.displayName ?? "")}
           />
         )}
         {me && (
@@ -151,7 +151,6 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
         anchorEl={anchorEl.userMenu}
         onClose={closeUserMenu}
         PaperProps={{ sx: { marginTop: "8px" } }}
-        onChangeTheme={toggleTheme}
       />
     </AppBar>
   );
@@ -160,11 +159,3 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 function getFirstName(displayName: string): string {
   return displayName && displayName.split(" ")[0];
 }
-
-type User = {
-  name: string;
-  email?: string;
-  picture?: {
-    url?: string;
-  };
-};

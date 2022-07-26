@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import envars from "envars";
@@ -9,7 +9,7 @@ import { format } from "prettier";
 import { argv, fs } from "zx";
 
 // Load the environment variables (API_ORIGIN, etc.)
-envars.config({ env: argv.env ?? "test" });
+envars.config({ env: argv.env ?? "local" });
 const schemaURL = `${process.env.API_ORIGIN}/api`;
 
 // Download and save GraphQL API schema

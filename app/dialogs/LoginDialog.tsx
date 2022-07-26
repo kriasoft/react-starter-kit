@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import { Close } from "@mui/icons-material";
@@ -11,32 +11,27 @@ import {
   Typography,
 } from "@mui/material";
 import * as React from "react";
-import { LoginButton } from "../common";
-import { LoginMethod, type User } from "../core";
+import { LoginButton, type LoginCallback } from "../common/LoginButton.js";
+import { type UserCredential } from "../core/auth.js";
 
-function LoginDialog(props: LoginDialogProps): JSX.Element {
-  const [error, setError] = React.useState<string | undefined>();
+export type CloseCallback = (user: UserCredential | null) => void;
+export type LoginDialogProps = Omit<DialogProps, "children" | "onClose"> & {
+  onClose?: CloseCallback;
+};
 
-  const handleClose = React.useCallback<React.MouseEventHandler>(
-    (event) => {
-      props.onClose?.(event, "backdropClick");
-    },
-    [props.onClose]
-  );
-
-  const handleSignIn = React.useCallback<SignInCallback>(
-    (event, promise) => {
-      promise
-        // Close the dialog upon successful sign in
-        .then((user) => user && props.onClose?.(event, "backdropClick"))
-        // Otherwise, show an error message
-        .catch((err) => setError(err.message));
-    },
-    [props.onClose]
-  );
+export function LoginDialog(props: LoginDialogProps): JSX.Element {
+  const { onClose, ...other } = props;
+  const [handleLogin, error] = useHandleLogin(onClose);
+  const handleClose = useHandleClose(onClose);
 
   return (
-    <Dialog scroll="body" maxWidth="xs" fullWidth {...props}>
+    <Dialog
+      scroll="body"
+      maxWidth="xs"
+      fullWidth
+      onClose={handleClose}
+      {...other}
+    >
       <DialogContent
         sx={{
           py: 4,
@@ -62,32 +57,37 @@ function LoginDialog(props: LoginDialogProps): JSX.Element {
 
         {error && (
           <Alert
-            sx={{ marginBottom: "1rem" }}
+            sx={{ marginBottom: "1rem", width: "100%" }}
             severity="error"
             children={error}
           />
         )}
 
-        <LoginButton
-          sx={{ mb: 2 }}
-          method={LoginMethod.Google}
-          onClick={handleSignIn}
-        />
-        <LoginButton
-          sx={{ mb: 0 }}
-          method={LoginMethod.Facebook}
-          onClick={handleSignIn}
-        />
+        <LoginButton sx={{ mb: 2 }} method="google" onClick={handleLogin} />
+        <LoginButton sx={{ mb: 0 }} method="facebook" onClick={handleLogin} />
       </DialogContent>
     </Dialog>
   );
 }
 
-type LoginDialogProps = Omit<DialogProps, "children">;
+function useHandleLogin(onClose?: CloseCallback) {
+  const [error, setError] = React.useState<string>();
 
-type SignInCallback = (
-  event: React.MouseEvent,
-  promise: Promise<User | null | void>
-) => void;
+  const handleLogin = React.useCallback<LoginCallback>(
+    (event, result) => {
+      setError(undefined);
+      result
+        .then(onClose)
+        .catch((err) => setError(err?.message ?? "Login failed."));
+    },
+    [onClose]
+  );
 
-export { LoginDialog };
+  return [handleLogin, error] as const;
+}
+
+function useHandleClose(onClose?: CloseCallback) {
+  return React.useCallback(() => {
+    onClose?.(null);
+  }, [onClose]);
+}

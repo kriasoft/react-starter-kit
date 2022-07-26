@@ -1,39 +1,24 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import { Button, ButtonProps } from "@mui/material";
 import * as React from "react";
-import { LoginMethod, useAuth, User } from "../core";
-import { Apple, Facebook, Google } from "../icons";
+import { type LoginMethod, type UserCredential } from "../core/auth.js";
+import { AuthIcon } from "../icons/AuthIcon.js";
 
-const icons = {
-  [LoginMethod.Apple]: <Apple />,
-  [LoginMethod.Google]: <Google />,
-  [LoginMethod.Facebook]: <Facebook />,
-};
-
-function LoginButton(props: LoginButtonProps): JSX.Element {
+export function LoginButton(props: LoginButtonProps): JSX.Element {
   const { method, onClick, ...other } = props;
-  const { signIn } = useAuth();
-
-  const handleClick = React.useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
-      event.preventDefault();
-      const promise = signIn({ method });
-      onClick?.(event, promise);
-    },
-    [method, signIn, onClick]
-  );
+  const handleClick = useHandleClick(method, onClick);
 
   return (
     <Button
       variant="outlined"
       size="large"
-      href={`/auth/${method.toLowerCase()}`}
-      startIcon={icons[method]}
-      onClick={handleClick}
+      href="/login"
+      startIcon={<AuthIcon variant={method} />}
       fullWidth
       {...other}
+      onClick={handleClick}
     >
       <span style={{ flexGrow: 1, textAlign: "center" }}>
         Continue with {method}
@@ -42,18 +27,30 @@ function LoginButton(props: LoginButtonProps): JSX.Element {
   );
 }
 
-type LoginButtonProps = Omit<
-  ButtonProps<
-    "a",
-    {
-      method: LoginMethod;
-      onClick?: (
-        event: React.MouseEvent<HTMLAnchorElement>,
-        promise: Promise<User | null | void>
-      ) => void;
-    }
-  >,
-  "children"
->;
+function useHandleClick(method: LoginMethod, onClick?: LoginCallback) {
+  return React.useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      onClick?.(
+        event,
+        import("../core/firebase.js").then((fb) =>
+          fb.signIn({ method: method })
+        )
+      );
+    },
+    [method, onClick]
+  );
+}
 
-export { LoginButton };
+export type LoginCallback = (
+  event: React.MouseEvent,
+  result: Promise<UserCredential>
+) => void;
+
+type LoginButtonProps = ButtonProps<
+  "a",
+  {
+    method: LoginMethod;
+    onClick?: LoginCallback;
+  }
+>;

@@ -10,10 +10,13 @@ envars.config();
 
 // The list of environment variables required by the app
 const defineVars = [
+  "APP_ENV",
+  "APP_NAME",
   "APP_HOSTNAME",
   "GOOGLE_CLOUD_PROJECT",
   "FIREBASE_APP_ID",
   "FIREBASE_API_KEY",
+  "FIREBASE_AUTH_DOMAIN",
   "GA_MEASUREMENT_ID",
 ];
 
@@ -36,10 +39,20 @@ export default defineConfig({
   plugins: [
     // https://github.com/vitejs/vite/tree/main/packages/plugin-react
     react({
+      jsxRuntime: "classic",
       jsxImportSource: "@emotion/react",
       babel: {
         plugins: ["@emotion/babel-plugin"],
       },
     }),
   ],
+
+  server: {
+    proxy: {
+      "/api": {
+        target: process.env.API_ORIGIN,
+        changeOrigin: true,
+      },
+    },
+  },
 });

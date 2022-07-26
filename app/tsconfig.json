@@ -4,11 +4,11 @@
     "lib": ["DOM", "ESNext"],
     "jsx": "react-jsx",
     // https://github.com/emotion-js/emotion/issues/2742
-    // "jsxImportSource": "@emotion/react",
-    "types": ["jest"],
-    "outDir": "./dist"
+    "jsxImportSource": "@emotion/react",
+    "types": ["vite/client", "jest"],
+    "outDir": "./dist",
+    "moduleResolution": "Node"
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["dist/**/*"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "exclude": ["dist/**/*"]
 }

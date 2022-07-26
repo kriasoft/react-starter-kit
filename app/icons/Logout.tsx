@@ -1,8 +1,7 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import { SvgIcon, SvgIconProps } from "@mui/material";
-import * as React from "react";
 
 export function Logout(props: SvgIconProps): JSX.Element {
   return (

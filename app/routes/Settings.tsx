@@ -1,10 +1,10 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import * as React from "react";
 
-function Settings(): JSX.Element {
+export default function Settings(): JSX.Element {
   // TODO: Get data from the API
   const [input, setInput] = React.useState({
     id: "",
@@ -12,7 +12,7 @@ function Settings(): JSX.Element {
     email: "",
   });
 
-  const [errors, setErrors] = React.useState({
+  const [errors] = React.useState({
     id: undefined as string[] | undefined,
     name: undefined as string[] | undefined,
     email: undefined as string[] | undefined,
@@ -75,6 +75,3 @@ function Settings(): JSX.Element {
     </Container>
   );
 }
-
-export default Settings;
-export type Settings = typeof Settings;

@@ -1,8 +1,7 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import { ListItemText, Menu, MenuItem, MenuProps } from "@mui/material";
-import * as React from "react";
 
 type NotificationsMenuProps = Omit<
   MenuProps,

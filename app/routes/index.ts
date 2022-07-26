@@ -1,11 +1,9 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import home from "./Home.route";
-import legal from "./Legal.route";
-import settings from "./Settings.route";
+import * as React from "react";
 
-/**
- * Exports the list of application routes
- */
-export default [home, settings, ...legal] as const;
+export const Home = React.lazy(() => import("./Home"));
+export const Privacy = React.lazy(() => import("./LegalPrivacy"));
+export const Terms = React.lazy(() => import("./LegalTerms"));
+export const Settings = React.lazy(() => import("./Settings"));

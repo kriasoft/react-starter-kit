@@ -1,82 +1,72 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
-/* SPDX-License-Identifier: MIT */
-
 import * as React from "react";
-import { AuthContext, LoginMethod, type Auth, type User } from "../core";
-import { LoginDialog } from "../dialogs/LoginDialog";
-import { LoginWindow } from "./LoginWindow";
+import {
+  AuthContext,
+  UserContext,
+  type LoginOptions,
+  type User,
+  type UserCredential,
+} from "../core/auth.js";
+import { LoginDialog, type LoginDialogProps } from "../dialogs/LoginDialog.js";
 
-function AuthProvider(props: AuthProviderProps): JSX.Element {
-  const [me, setMe] = React.useState<User | null | undefined>();
-  const [state, setState] = React.useState<State>({ open: false });
+export interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export function AuthProvider(props: AuthProviderProps): JSX.Element {
+  const [user, setUser] = React.useState<User | null | undefined>();
+  const [login, setLogin] = React.useState<LoginDialogProps>({ open: false });
+  const auth = React.useMemo(
+    () => ({
+      async signIn(options?: LoginOptions): Promise<UserCredential> {
+        if (options) {
+          const fb = await importFirebase();
+          return await fb.signIn(options);
+        } else {
+          return new Promise((resolve, reject) => {
+            setLogin({
+              open: true,
+              onClose(user: UserCredential | null) {
+                setLogin({ open: false });
+                if (user) {
+                  resolve(user);
+                } else {
+                  reject();
+                }
+              },
+            });
+          });
+        }
+      },
+      async signOut() {
+        const fb = await importFirebase();
+        return await fb.auth.signOut();
+      },
+    }),
+    []
+  );
 
   React.useEffect(() => {
-    fetch("/api", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: "query { me { id name email picture { url } } }",
-      }),
-    })
-      .then((res) => res.json<{ data?: { me?: User | null } }>())
-      .then((res) => setMe(res.data?.me));
-  }, []);
+    const promise = importFirebase().then((fb) =>
+      fb.auth.onAuthStateChanged((value) => {
+        setUser(value);
+      })
+    );
 
-  const signIn = React.useCallback<SignIn>((options) => {
-    return new Promise<User | null>((onSuccess, onError) => {
-      setState({ open: true, method: options?.method, onSuccess, onError });
-    }).then((user) => {
-      setMe(user);
-      return user;
-    });
+    return () => {
+      promise.then((unsubscribe) => unsubscribe());
+    };
   }, []);
-
-  const signOut = React.useCallback<SignOut>(() => {
-    return fetch("/api", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: "mutation { signOut }",
-      }),
-    })
-      .then((res) => res.json<{ errors?: [{ message: string }] }>())
-      .then((res) => {
-        if (!res.errors) setMe(null);
-      });
-  }, []);
-
-  const closeLogin = React.useCallback(() => {
-    setState({ open: false });
-  }, []);
-
-  const auth = React.useMemo(() => ({ me, signIn, signOut }), [me]);
 
   return (
-    <AuthContext.Provider value={auth}>
-      {props.children}
-      <LoginDialog open={state.open} onClose={closeLogin} />
-      <LoginWindow
-        open={state.open}
-        method={state.method}
-        onSuccess={state.onSuccess}
-        onError={state.onError}
-      />
-    </AuthContext.Provider>
+    <UserContext.Provider value={user}>
+      <AuthContext.Provider value={auth}>
+        {props.children}
+        <LoginDialog {...login} />
+      </AuthContext.Provider>
+    </UserContext.Provider>
   );
 }
 
-type State = {
-  open: boolean;
-  method?: LoginMethod;
-  onSuccess?: (user: User | null) => void;
-  onError?: (err: Error | string) => void;
-};
-
-type AuthProviderProps = {
-  children?: React.ReactNode;
-};
-
-type SignIn = Auth["signIn"];
-type SignOut = Auth["signOut"];
-
-export { AuthProvider };
+function importFirebase() {
+  return import("../core/firebase.js");
+}

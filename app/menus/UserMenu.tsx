@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import { Brightness4, Settings } from "@mui/icons-material";
@@ -11,36 +11,20 @@ import {
   MenuProps,
   Switch,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import * as React from "react";
-import { useAuth, useHistory, useNavigate } from "../core";
-import { Logout } from "../icons";
+import { Link as NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../core/auth.js";
+import { useTheme, useToggleTheme } from "../core/theme.js";
+import { Logout } from "../icons/Logout.js";
 
-type UserMenuProps = Omit<
-  MenuProps,
-  "id" | "role" | "open" | "anchorOrigin" | "transformOrigin"
-> & {
-  onChangeTheme: () => void;
-};
+export type UserMenuProps = Omit<MenuProps, "open">;
 
 export function UserMenu(props: UserMenuProps): JSX.Element {
-  const { onChangeTheme, PaperProps, MenuListProps, ...other } = props;
-
-  const navigate = useNavigate();
-  const history = useHistory();
+  const { PaperProps, MenuListProps, ...other } = props;
+  const close = useClose(props.onClose);
+  const signOut = useSignOut(props.onClose);
+  const toggleTheme = useToggleTheme();
   const theme = useTheme();
-  const auth = useAuth();
-
-  function handleClick(event: React.MouseEvent<HTMLAnchorElement>): void {
-    props.onClose?.(event, "backdropClick");
-    navigate(event);
-  }
-
-  function signOut(event: React.MouseEvent) {
-    event.preventDefault();
-    props.onClose?.(event, "backdropClick");
-    auth.signOut().then(() => history.push("/"));
-  }
 
   return (
     <Menu
@@ -53,7 +37,7 @@ export function UserMenu(props: UserMenuProps): JSX.Element {
       MenuListProps={{ ...MenuListProps, dense: true }}
       {...other}
     >
-      <MenuItem component={Link} href="/settings" onClick={handleClick}>
+      <MenuItem component={NavLink} to="/settings" onClick={close}>
         <ListItemIcon sx={{ minWidth: 40 }} children={<Settings />} />
         <ListItemText primary="Account Settings" />
       </MenuItem>
@@ -64,7 +48,7 @@ export function UserMenu(props: UserMenuProps): JSX.Element {
         <Switch
           name="theme"
           checked={theme?.palette?.mode === "dark"}
-          onChange={onChangeTheme}
+          onChange={toggleTheme}
         />
       </MenuItem>
 
@@ -86,14 +70,45 @@ export function UserMenu(props: UserMenuProps): JSX.Element {
       >
         <span>&copy; 2021 Company Name</span>
         <span style={{ padding: "0 4px" }}>•</span>
-        <Link sx={{ color: "inherit" }} href="/privacy">
-          Privacy
-        </Link>
+        <Link
+          sx={{ color: "inherit" }}
+          to="/privacy"
+          component={NavLink}
+          onClick={close}
+          children="Privacy"
+        />
         <span style={{ padding: "0 4px" }}>•</span>
-        <Link sx={{ color: "inherit" }} href="/terms">
-          Terms
-        </Link>
+        <Link
+          sx={{ color: "inherit" }}
+          to="/terms"
+          component={NavLink}
+          onClick={close}
+          children="Terms"
+        />
       </MenuItem>
     </Menu>
+  );
+}
+
+function useClose(onClose?: MenuProps["onClose"]) {
+  return React.useCallback(
+    (event: React.MouseEvent) => {
+      onClose?.(event, "backdropClick");
+    },
+    [onClose]
+  );
+}
+
+function useSignOut(onClose?: MenuProps["onClose"]) {
+  const navigate = useNavigate();
+  const auth = useAuth();
+
+  return React.useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      onClose?.(event, "backdropClick");
+      auth.signOut().then(() => navigate("/"));
+    },
+    [onClose, auth.signOut]
   );
 }

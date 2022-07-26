@@ -1,12 +1,14 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 import { PaletteMode } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
+/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+/* @ts-ignore */
 import createPalette from "@mui/material/styles/createPalette";
-import { components } from "./components";
-import * as palettes from "./palettes";
-import * as typography from "./typography";
+import { components } from "./components.js";
+import * as palettes from "./palettes.js";
+import * as typography from "./typography.js";
 
 /**
  * Creates a customized Material UI theme

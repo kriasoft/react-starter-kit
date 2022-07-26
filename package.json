@@ -5,16 +5,16 @@
   "packageManager": "yarn@4.0.0-rc.14",
   "type": "module",
   "workspaces": [
-    "app"
+    "app",
+    "edge"
   ],
   "scripts": {
     "postinstall": "husky install && yarn node ./scripts/postinstall.js",
-    "start": "webpack serve --mode=development",
     "update-schema": "zx ./scripts/update-schema.js",
+    "start": "zx ./scripts/start.js",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "jest",
-    "build": "webpack --mode=production",
-    "cf": "zx ./scripts/cf.js"
+    "build": "yarn workspaces foreach -ti run build"
   },
   "devDependencies": {
     "@babel/cli": "^7.18.9",
@@ -28,6 +28,10 @@
     "@babel/register": "^7.18.9",
     "@emotion/eslint-plugin": "^11.7.0",
     "@jest/types": "^28.1.3",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@types/babel__core": "^7.1.19",
     "@types/babel__plugin-transform-runtime": "^7.9.2",
     "@types/babel__preset-env": "^7.9.2",
@@ -51,7 +55,9 @@
     "husky": "^8.0.1",
     "jest": "^28.1.3",
     "prettier": "^2.7.1",
+    "pretty-bytes": "^6.0.0",
     "relay-config": "^12.0.1",
+    "rollup": "^2.77.2",
     "typescript": "^4.7.4",
     "wrangler": "^2.0.23",
     "zx": "^7.0.7"
@@ -95,6 +101,6 @@
     "eagerEsModules": true
   },
   "envars": {
-    "cwd": "./core"
+    "cwd": "./env"
   }
 }

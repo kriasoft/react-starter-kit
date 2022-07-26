@@ -1,12 +1,13 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import history from "history/browser";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-import { App } from "./common";
+import { BrowserRouter } from "react-router-dom";
+import { App } from "./common/App.js";
 
 const container = document.getElementById("root") as HTMLElement;
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 const data = (document.getElementById("data") as HTMLScriptElement).text;
 
 // TODO: Initialize local store (Relay, Apollo, Redux, etc.)
@@ -15,6 +16,8 @@ const data = (document.getElementById("data") as HTMLScriptElement).text;
 // Render the top-level React component
 ReactDOM.createRoot(container).render(
   <React.StrictMode>
-    <App history={history} />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );
