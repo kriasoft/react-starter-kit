@@ -11,7 +11,7 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "jest.jestCommandLine": "yarn jest",
   "jestrunner.enableYarnPnpSupport": true,
-  "jestrunner.yarnPnpCommand": "yarn-4.0.0-rc.6.cjs",
+  "jestrunner.yarnPnpCommand": "yarn-4.0.0-rc.14.cjs",
   "files.exclude": {
     "**/.cache": true,
     "**/.DS_Store": true,
@@ -22,6 +22,7 @@
     "**/.husky": true,
     "**/.pnp.*": true,
     "**/.prettierignore": true,
+    "**/node_modules": true,
     "**/yarn.lock": true
   },
   "search.exclude": {
@@ -44,6 +45,7 @@
     "firestore",
     "globby",
     "kriasoft",
+    "miniflare",
     "pathinfo",
     "pnpify",
     "reactstarter",

@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
 /**
@@ -38,9 +38,9 @@ module.exports = {
     {
       files: [
         ".eslintrc.cjs",
+        "app/vite.config.ts",
         "babel.config.cjs",
         "scripts/**/*.js",
-        "webpack.config.js",
       ],
       env: { node: true },
     },
@@ -55,7 +55,7 @@ module.exports = {
     "/.git",
     "/.husky",
     "/.yarn",
-    "/dist",
-    "/queries",
+    "/*/dist",
+    "/app/queries",
   ],
 };
