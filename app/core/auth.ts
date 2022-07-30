@@ -58,6 +58,39 @@ export function useAuth() {
   return React.useContext(AuthContext);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useAuthCallback<T extends (...args: any) => Promise<any>>(
+  callback: T,
+  deps?: React.DependencyList
+) {
+  const auth = useAuth();
+  return React.useCallback<(...args: Parameters<T>) => Promise<void>>(
+    async (...args) => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await callback(...(args as any));
+      } catch (err) {
+        const code = (err as { code?: string })?.code;
+        if (
+          code &&
+          [
+            "permission-denied",
+            "auth/requires-recent-login",
+            "auth/user-token-expired",
+          ].includes(code)
+        ) {
+          const user = await auth.signIn({ method: "google" });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if (user) await callback(...(args as any));
+        } else {
+          throw err;
+        }
+      }
+    },
+    [auth.signIn, ...(deps ?? [])]
+  );
+}
+
 export async function getIdToken(
   forceRefresh?: boolean
 ): Promise<string | null> {
