@@ -1,8 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { Api, GitHub } from "@mui/icons-material";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
+import { ButtonOne, ButtonTwo } from "core";
 
 export default function Home(): JSX.Element {
   return (
@@ -15,27 +15,9 @@ export default function Home(): JSX.Element {
         The web's most popular Jamstack React template.
       </Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gridGap: "1rem",
-        }}
-      >
-        <Button
-          variant="outlined"
-          size="large"
-          href={`/api`}
-          children="Explorer API"
-          startIcon={<Api />}
-        />
-        <Button
-          variant="outlined"
-          size="large"
-          href="https://github.com/kriasoft/react-starter-kit"
-          children="View on GitHub"
-          startIcon={<GitHub />}
-        />
+      <Box sx={{ display: "flex", gridGap: "1rem", justifyContent: "center" }}>
+        <ButtonOne />
+        <ButtonTwo />
       </Box>
     </Container>
   );
