@@ -14,11 +14,6 @@ import * as React from "react";
 import { LoginButton, type LoginCallback } from "../common/LoginButton.js";
 import { type UserCredential } from "../core/auth.js";
 
-export type CloseCallback = (user: UserCredential | null) => void;
-export type LoginDialogProps = Omit<DialogProps, "children" | "onClose"> & {
-  onClose?: CloseCallback;
-};
-
 export function LoginDialog(props: LoginDialogProps): JSX.Element {
   const { onClose, ...other } = props;
   const [handleLogin, error] = useHandleLogin(onClose);
@@ -91,3 +86,12 @@ function useHandleClose(onClose?: CloseCallback) {
     onClose?.(null);
   }, [onClose]);
 }
+
+// #region TypeScript declarations
+
+export type CloseCallback = (user: UserCredential | null) => void;
+export type LoginDialogProps = Omit<DialogProps, "children" | "onClose"> & {
+  onClose?: CloseCallback;
+};
+
+// #endregion

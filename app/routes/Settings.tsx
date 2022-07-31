@@ -11,12 +11,12 @@ import {
 } from "@mui/material";
 import { updateEmail, updateProfile } from "firebase/auth";
 import * as React from "react";
-import { useAuthCallback, useCurrentUser } from "../core/auth";
+import { useAuthCallback, useCurrentUser } from "../core/auth.js";
 
 export default function Settings(): JSX.Element {
   const [state, setState] = useState();
   const handleChange = useHandleChange(setState);
-  const handleSubmit = useHandleSubmit(setState);
+  const handleSubmit = useHandleSubmit(state, setState);
 
   return (
     <Container sx={{ my: 4 }} maxWidth="sm">
@@ -36,6 +36,7 @@ export default function Settings(): JSX.Element {
           disabled={state.loading}
           InputLabelProps={{ shrink: true }}
           fullWidth
+          required
         />
 
         <TextField
@@ -48,6 +49,7 @@ export default function Settings(): JSX.Element {
           disabled={state.loading}
           InputLabelProps={{ shrink: true }}
           fullWidth
+          required
         />
 
         <Button
@@ -94,7 +96,7 @@ function useHandleChange(setState: SetState) {
   );
 }
 
-function useHandleSubmit(setState: SetState) {
+function useHandleSubmit(state: State, setState: SetState) {
   const me = useCurrentUser();
   return useAuthCallback(
     async (event: React.FormEvent) => {
@@ -102,25 +104,22 @@ function useHandleSubmit(setState: SetState) {
       setState((prev) => ({ ...prev, loading: true }));
       try {
         if (!me) throw new Error("Not authenticated.");
-        await new Promise((resolve, reject) => {
-          setState((prev) => {
-            updateProfile(me, { displayName: prev.displayName })
-              .then(() => updateEmail(me, prev.email))
-              .then(resolve, reject);
-            return prev;
-          });
-        });
+        await updateProfile(me, { displayName: state.displayName });
+        await updateEmail(me, state.email);
         setState((prev) => ({ ...prev, loading: false, error: undefined }));
       } catch (err) {
-        const code = (err as { code?: string }).code;
-        if (code?.startsWith?.("auth/")) throw err;
+        const code = (err as { code?: string })?.code;
         if (code === "permission-denied") throw err;
-        const error = (err as Error)?.message ?? err;
-        setState((prev) => ({ ...prev, loading: false, error }));
+        if (code?.startsWith("auth/")) throw err;
+        const error = (err as Error)?.message ?? "Failed.";
+        setState((prev) => ({ ...prev, error }));
+      } finally {
+        setState((prev) => ({ ...prev, loading: false }));
       }
     },
-    [me]
+    [me, state.displayName, state.email]
   );
 }
 
+type State = ReturnType<typeof useState>[0];
 type SetState = ReturnType<typeof useState>[1];

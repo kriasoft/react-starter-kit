@@ -14,7 +14,7 @@ module.exports = {
     es6: true,
   },
 
-  extends: ["eslint:recommended", "prettier"],
+  extends: ["eslint:recommended", "plugin:import/recommended", "prettier"],
 
   parserOptions: {
     ecmaVersion: 2022,
@@ -25,7 +25,10 @@ module.exports = {
     {
       files: ["*.ts", "*.tsx"],
       parser: "@typescript-eslint/parser",
-      extends: ["plugin:@typescript-eslint/recommended"],
+      extends: [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript",
+      ],
       plugins: ["@typescript-eslint"],
       parserOptions: {
         warnOnUnsupportedTypeScriptVersion: true,
@@ -58,4 +61,10 @@ module.exports = {
     "/*/dist",
     "/app/queries",
   ],
+
+  settings: {
+    "import/resolver": {
+      typescript: {},
+    },
+  },
 };

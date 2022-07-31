@@ -3,7 +3,7 @@
 
 import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
-import { type LoginMethod, type LoginOptions } from "../core/firebase.js";
+import { type LoginMethod, type LoginOptions } from "./firebase.js";
 
 export const UserContext = React.createContext(
   undefined as User | null | undefined
@@ -89,14 +89,6 @@ export function useAuthCallback<T extends (...args: any) => Promise<any>>(
     },
     [auth.signIn, ...(deps ?? [])]
   );
-}
-
-export async function getIdToken(
-  forceRefresh?: boolean
-): Promise<string | null> {
-  const fb = await import("../core/firebase.js");
-  const idToken = await fb.auth.currentUser?.getIdToken(forceRefresh);
-  return idToken ?? null;
 }
 
 export { type LoginMethod, type LoginOptions, type User, type UserCredential };

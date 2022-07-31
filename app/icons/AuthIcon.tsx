@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import { SvgIcon, SvgIconProps } from "@mui/material";
-import { LoginMethod } from "../core/auth.js";
+import { type LoginMethod } from "../core/auth.js";
 
 type AuthIconProps = Omit<
   SvgIconProps<"svg", { variant: LoginMethod }>,

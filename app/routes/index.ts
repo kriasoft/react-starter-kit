@@ -3,7 +3,7 @@
 
 import * as React from "react";
 
-export const Home = React.lazy(() => import("./Home"));
-export const Privacy = React.lazy(() => import("./LegalPrivacy"));
-export const Terms = React.lazy(() => import("./LegalTerms"));
-export const Settings = React.lazy(() => import("./Settings"));
+export const Home = React.lazy(() => import("./Home.js"));
+export const Privacy = React.lazy(() => import("./Privacy.js"));
+export const Terms = React.lazy(() => import("./Terms.js"));
+export const Settings = React.lazy(() => import("./Settings.js"));
