@@ -1,11 +1,6 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-// -----------------------------------------------------------------------------
-// NOTE: This file is intended to be loaded using dynamic imports, e.g.
-//       import("../core/firebase.js").then(fb => fb.auth.currentUser)
-// -----------------------------------------------------------------------------
-
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import {
   FacebookAuthProvider,
@@ -39,7 +34,9 @@ export function signIn(options: LoginOptions): Promise<UserCredential> {
   throw new Error(`Not supported: ${options.method}`);
 }
 
-export type LoginMethod = "apple" | "google" | "facebook";
+// #region TypeScript declarations
+
+export type LoginMethod = "apple" | "google" | "facebook" | "anonymous";
 
 export type LoginOptions = {
   method: LoginMethod;
@@ -50,3 +47,5 @@ export type Firebase = {
   auth: Auth;
   signIn: typeof signIn;
 };
+
+// #endregion

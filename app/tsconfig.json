@@ -3,12 +3,12 @@
   "compilerOptions": {
     "lib": ["DOM", "ESNext"],
     "jsx": "react-jsx",
-    // https://github.com/emotion-js/emotion/issues/2742
     "jsxImportSource": "@emotion/react",
     "types": ["vite/client", "jest"],
     "outDir": "./dist",
-    "moduleResolution": "Node"
+    "moduleResolution": "NodeNext"
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["dist/**/*"]
+  "exclude": ["dist/**/*", "vite.config.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

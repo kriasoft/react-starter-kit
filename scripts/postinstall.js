@@ -19,10 +19,10 @@ for (const env of environments) {
       filename,
       [
         `# Overrides for the "${env.name}" (${env.description}) environment`,
-        `#`,
-        `# CLOUDFLARE_API_TOKEN=xxxxx`,
-        `#`,
-        ``,
+        "#",
+        "# CLOUDFLARE_API_TOKEN=xxxxx",
+        "#",
+        "",
       ].join(EOL),
       "utf-8"
     );

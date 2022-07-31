@@ -1,11 +1,10 @@
+/* SPDX-FileCopyrightText: 2014-present Kriasoft */
+/* SPDX-License-Identifier: MIT */
+
+import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
-import {
-  AuthContext,
-  UserContext,
-  type LoginOptions,
-  type User,
-  type UserCredential,
-} from "../core/auth.js";
+import { AuthContext, UserContext, type LoginOptions } from "../core/auth.js";
+import * as fb from "../core/firebase.js";
 import { LoginDialog, type LoginDialogProps } from "../dialogs/LoginDialog.js";
 
 export interface AuthProviderProps {
@@ -15,12 +14,12 @@ export interface AuthProviderProps {
 export function AuthProvider(props: AuthProviderProps): JSX.Element {
   const [user, setUser] = React.useState<User | null | undefined>();
   const [login, setLogin] = React.useState<LoginDialogProps>({ open: false });
+
   const auth = React.useMemo(
     () => ({
       async signIn(options?: LoginOptions): Promise<UserCredential> {
         if (options) {
-          const fb = await importFirebase();
-          return await fb.signIn(options);
+          return fb.signIn(options);
         } else {
           return new Promise((resolve, reject) => {
             setLogin({
@@ -37,24 +36,17 @@ export function AuthProvider(props: AuthProviderProps): JSX.Element {
           });
         }
       },
-      async signOut() {
-        const fb = await importFirebase();
-        return await fb.auth.signOut();
+      signOut() {
+        return fb.auth.signOut();
       },
     }),
     []
   );
 
   React.useEffect(() => {
-    const promise = importFirebase().then((fb) =>
-      fb.auth.onAuthStateChanged((value) => {
-        setUser(value);
-      })
-    );
-
-    return () => {
-      promise.then((unsubscribe) => unsubscribe());
-    };
+    return fb.auth.onAuthStateChanged((value) => {
+      setUser(value);
+    });
   }, []);
 
   return (
@@ -65,8 +57,4 @@ export function AuthProvider(props: AuthProviderProps): JSX.Element {
       </AuthContext.Provider>
     </UserContext.Provider>
   );
-}
-
-function importFirebase() {
-  return import("../core/firebase.js");
 }

@@ -14,7 +14,7 @@ envars.config({ env: envName, cwd: `${$.env.PROJECT_CWD}/env` });
 // Inject environment variables into the `wrangler.toml` file
 let [, , , worker, ...args] = process.argv;
 const configFile = `${worker}/dist/wrangler.toml`;
-const configTemplate = `wrangler.toml`;
+const configTemplate = "wrangler.toml";
 const config = await fs.readFile(configTemplate, "utf-8");
 await fs.writeFile(`../${configFile}`, replaceEnvVars(config), "utf-8");
 

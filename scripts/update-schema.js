@@ -2,11 +2,10 @@
 /* SPDX-License-Identifier: MIT */
 
 import envars from "envars";
-import got from "got";
+import { got } from "got";
 import { buildClientSchema, getIntrospectionQuery, printSchema } from "graphql";
-import path from "node:path";
 import { format } from "prettier";
-import { argv, fs } from "zx";
+import { argv, fs, path } from "zx";
 
 // Load the environment variables (API_ORIGIN, etc.)
 envars.config({ env: argv.env ?? "local" });

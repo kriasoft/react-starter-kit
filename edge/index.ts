@@ -1,5 +1,6 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
+/* eslint import/no-unresolved: [2, { ignore: ["__STATIC_CONTENT_MANIFEST"] }] */
 
 import {
   getAssetFromKV,
