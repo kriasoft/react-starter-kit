@@ -87,7 +87,8 @@ export function useAuthCallback<T extends (...args: any) => Promise<any>>(
         }
       }
     },
-    [auth.signIn, ...(deps ?? [])]
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    [auth, callback, ...(deps ?? [])]
   );
 }
 

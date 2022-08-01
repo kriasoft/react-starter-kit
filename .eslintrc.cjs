@@ -14,7 +14,12 @@ module.exports = {
     es6: true,
   },
 
-  extends: ["eslint:recommended", "plugin:import/recommended", "prettier"],
+  extends: [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier",
+  ],
 
   parserOptions: {
     ecmaVersion: 2022,

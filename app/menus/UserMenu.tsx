@@ -109,6 +109,6 @@ function useSignOut(onClose?: MenuProps["onClose"]) {
       onClose?.(event, "backdropClick");
       auth.signOut().then(() => navigate("/"));
     },
-    [onClose, auth.signOut]
+    [onClose, auth, navigate]
   );
 }
