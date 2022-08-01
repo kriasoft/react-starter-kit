@@ -65,7 +65,7 @@ export default function Settings(): JSX.Element {
 
 function useState() {
   const me = useCurrentUser();
-  const state = React.useState({
+  const [state, setState] = React.useState({
     displayName: me?.displayName ?? "",
     email: me?.email ?? "",
     loading: me === undefined,
@@ -74,16 +74,16 @@ function useState() {
 
   React.useEffect(() => {
     if (me) {
-      state[1 /* setState */]((prev) => ({
+      setState((prev) => ({
         ...prev,
         displayName: me.displayName ?? "",
         email: me.email ?? "",
         loading: false,
       }));
     }
-  }, [me?.email, me?.displayName]);
+  }, [setState, me, me?.email, me?.displayName]);
 
-  return state;
+  return [state, setState] as const;
 }
 
 function useHandleChange(setState: SetState) {
