@@ -16,10 +16,12 @@ module.exports = {
 
   extends: [
     "eslint:recommended",
-    "plugin:import/recommended",
+    // https://github.com/microsoft/vscode-eslint/issues/1494
+    process.env.NODE_ENV !== "EDITOR" && "plugin:import/recommended",
+    process.env.NODE_ENV !== "EDITOR" && "plugin:import/typescript",
     "plugin:react-hooks/recommended",
     "prettier",
-  ],
+  ].filter(Boolean),
 
   parserOptions: {
     ecmaVersion: 2022,
@@ -30,10 +32,7 @@ module.exports = {
     {
       files: ["*.ts", "*.tsx"],
       parser: "@typescript-eslint/parser",
-      extends: [
-        "plugin:@typescript-eslint/recommended",
-        "plugin:import/typescript",
-      ],
+      extends: ["plugin:@typescript-eslint/recommended"],
       plugins: ["@typescript-eslint"],
       parserOptions: {
         warnOnUnsupportedTypeScriptVersion: true,
@@ -69,7 +68,10 @@ module.exports = {
 
   settings: {
     "import/resolver": {
-      typescript: {},
+      typescript: {
+        project: ["app/tsconfig.json", "edge/tsconfig.json"],
+      },
     },
+    "import/core-modules": ["__STATIC_CONTENT_MANIFEST"],
   },
 };
