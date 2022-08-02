@@ -3859,6 +3859,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-router-dom: "npm:^6.3.0"
+    recoil: "npm:^0.7.4"
     typescript: "npm:^4.7.4"
     vite: "npm:^3.0.4"
   languageName: unknown
@@ -6201,6 +6202,13 @@ __metadata:
   version: 16.5.0
   resolution: "graphql@npm:16.5.0"
   checksum: 6fca73c872bb4e5ffe9417f4e4bb53baa5c8a5f1fc9ac190e7eb211f55d6b505088e4efb5b10ffce75421ada42b49a49dacf82be6cc39128bee8f1b6cba434b3
+  languageName: node
+  linkType: hard
+
+"hamt_plus@npm:1.0.2":
+  version: 1.0.2
+  resolution: "hamt_plus@npm:1.0.2"
+  checksum: 61f3b3405cdbb76c0ada226379ae69ee4cd57fd3ad439236764b8d92edd4627cc0520e1dbf3e5658680485449f7bf14b9d4bcc36874ac0f2c42c015e465ba7b4
   languageName: node
   linkType: hard
 
@@ -8916,6 +8924,22 @@ __metadata:
   dependencies:
     picomatch: "npm:^2.2.1"
   checksum: 9dea77bef6b47b7c7553da4b5f30606449b49cf2aa043de23e22bee909c2d26c97630b8f8fa43775e318731c5a208d2063a10d3c788a3b0e1a9e32c5ab5fe790
+  languageName: node
+  linkType: hard
+
+"recoil@npm:^0.7.4":
+  version: 0.7.4
+  resolution: "recoil@npm:0.7.4"
+  dependencies:
+    hamt_plus: "npm:1.0.2"
+  peerDependencies:
+    react: ">=16.13.1"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 0da1da4da951f582b5c452d5471939895800b45dda27dfb062e3a9a38076ae037b4962cad6090bddffe25bcb690f05f5525c424b2bac3423adb41241827ebf12
   languageName: node
   linkType: hard
 
