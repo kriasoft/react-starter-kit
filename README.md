@@ -30,7 +30,7 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 `├──`[`.github`](.github) — GitHub configuration including CI/CD workflows<br>
 `├──`[`.vscode`](.vscode) — VSCode settings including code snippets, recommended extensions etc.<br>
-`├──`[`app`](./app) — Web application front-end built with [Vite](https://vitejs.dev/) and [React](https://reactjs.org/)<br>
+`├──`[`app`](./app) — Web application front-end built with [React](https://reactjs.org/) and [Material UI](https://mui.com/core/)<br>
 `├──`[`edge`](./edge) — Cloudflare Workers (CDN) edge endpoint<br>
 `├──`[`env`](./env) — Application settings, API keys, etc.<br>
 `├──`[`scripts`](./scripts) — Automation scripts such as `yarn deploy`<br>
@@ -39,12 +39,13 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 ## Tech Stack
 
-- [React](https://reactjs.org/), [Emotion](https://emotion.sh/),
-  [Material UI v5](https://next.material-ui.com/)
-- [TypeScript](https://www.typescriptlang.org/), [Babel](https://babeljs.io/),
-  [ESLint](https://eslint.org/), [Prettier](https://prettier.io/),
-  [Jest](https://jestjs.io/), [Yarn](https://yarnpkg.com/) with PnP,
-  [Vite](https://vitejs.dev/)
+- [React](https://reactjs.org/), [Recoil](https://recoiljs.org/),
+  [Emotion](https://emotion.sh/), [Material UI](https://next.material-ui.com/),
+  [Firebase Authentication](https://firebase.google.com/docs/auth)
+- [Vite](https://vitejs.dev/), [Rollup](https://rollupjs.org/),
+  [TypeScript](https://www.typescriptlang.org/), [ESLint](https://eslint.org/),
+  [Prettier](https://prettier.io/), [Jest](https://jestjs.io/),
+  [Yarn](https://yarnpkg.com/) with PnP
 
 ## Requirements
 
@@ -64,7 +65,7 @@ $ yarn install
 $ yarn start
 ```
 
-The app will become available at [http://localhost:3000](http://localhost:3000/).
+The app will become available at [http://localhost:5173](http://localhost:5173/).
 
 **IMPORTANT**: Ensure that VSCode is using the workspace [version of TypeScript](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-newer-typescript-versions)
 and ESLint.
@@ -73,7 +74,7 @@ and ESLint.
 
 ## Scripts
 
-- `yarn start` — Launches the app in development mode on [`http://localhost:3000`](http://localhost:3000/)
+- `yarn start` — Launches the app in development mode on [`http://localhost:5173`](http://localhost:5173/)
 - `yarn build` — Compiles and bundles the app for deployment
 - `yarn lint` — Validate the code using ESLint
 - `yarn tsc` — Validate the code using TypeScript compiler

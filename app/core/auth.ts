@@ -3,20 +3,27 @@
 
 import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
+import { atom, useRecoilValue } from "recoil";
+import { useOpenLoginDialog } from "../dialogs/LoginDialog.js";
 import { type LoginMethod, type LoginOptions } from "./firebase.js";
 
-export const UserContext = React.createContext(
-  undefined as User | null | undefined
-);
+export const CurrentUser = atom<User | null>({
+  key: "CurrentUser",
+  dangerouslyAllowMutability: true,
+  default: undefined,
+  effects: [
+    (ctx) => {
+      if (ctx.trigger === "get") {
+        const promise = import("./firebase.js").then((fb) =>
+          fb.auth.onAuthStateChanged((user) => {
+            ctx.setSelf(user);
+          })
+        );
 
-export const AuthContext = React.createContext({
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  signIn(options?: LoginOptions): Promise<UserCredential> {
-    return Promise.reject(new Error());
-  },
-  signOut(): Promise<void> {
-    return Promise.resolve();
-  },
+        return () => promise.then((unsubscribe) => unsubscribe());
+      }
+    },
+  ],
 });
 
 /**
@@ -32,9 +39,8 @@ export const AuthContext = React.createContext({
  *     // => Or, `undefined` when not initialized
  *   }
  */
-
 export function useCurrentUser() {
-  return React.useContext(UserContext);
+  return useRecoilValue(CurrentUser);
 }
 
 /**
@@ -55,7 +61,24 @@ export function useCurrentUser() {
  *   }
  */
 export function useAuth() {
-  return React.useContext(AuthContext);
+  const openLoginDialog = useOpenLoginDialog();
+  return React.useMemo(
+    () => ({
+      async signIn(options?: LoginOptions) {
+        const fb = await import("./firebase.js");
+        if (options) {
+          return fb.signIn(options);
+        } else {
+          return openLoginDialog();
+        }
+      },
+      async signOut() {
+        const fb = await import("./firebase.js");
+        await fb.auth.signOut();
+      },
+    }),
+    [openLoginDialog]
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

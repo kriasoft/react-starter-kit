@@ -10,23 +10,21 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import { type UserCredential } from "firebase/auth";
 import * as React from "react";
-import { LoginButton, type LoginCallback } from "../common/LoginButton.js";
-import { type UserCredential } from "../core/auth.js";
+import { atom, useRecoilCallback, useRecoilValue } from "recoil";
+import { LoginButton } from "../common/LoginButton.js";
+
+export const LoginDialogState = atom<LoginDialogAtom>({
+  key: "LoginDialogState",
+  default: { open: false },
+});
 
 export function LoginDialog(props: LoginDialogProps): JSX.Element {
-  const { onClose, ...other } = props;
-  const [handleLogin, error] = useHandleLogin(onClose);
-  const handleClose = useHandleClose(onClose);
+  const { error, handleLogin, ...state } = useRecoilValue(LoginDialogState);
 
   return (
-    <Dialog
-      scroll="body"
-      maxWidth="xs"
-      fullWidth
-      onClose={handleClose}
-      {...other}
-    >
+    <Dialog scroll="body" maxWidth="xs" fullWidth {...props} {...state}>
       <DialogContent
         sx={{
           py: 4,
@@ -39,7 +37,7 @@ export function LoginDialog(props: LoginDialogProps): JSX.Element {
       >
         <IconButton
           sx={{ position: "absolute", top: 8, right: 8 }}
-          onClick={handleClose}
+          onClick={(event) => state.onClose?.(event, "backdropClick")}
           children={<Close />}
         />
 
@@ -58,40 +56,51 @@ export function LoginDialog(props: LoginDialogProps): JSX.Element {
           />
         )}
 
-        <LoginButton sx={{ mb: 2 }} method="google" onClick={handleLogin} />
-        <LoginButton sx={{ mb: 0 }} method="facebook" onClick={handleLogin} />
+        <LoginButton sx={{ mb: 2 }} method="google" onLogin={handleLogin} />
+        <LoginButton sx={{ mb: 0 }} method="facebook" onLogin={handleLogin} />
       </DialogContent>
     </Dialog>
   );
 }
 
-function useHandleLogin(onClose?: CloseCallback) {
-  const [error, setError] = React.useState<string>();
-
-  const handleLogin = React.useCallback<LoginCallback>(
-    (event, result) => {
-      setError(undefined);
-      result
-        .then(onClose)
-        .catch((err) => setError(err?.message ?? "Login failed."));
+export function useOpenLoginDialog() {
+  return useRecoilCallback(
+    (ctx) => (params?: LoginDialogProps) => {
+      return new Promise<UserCredential | undefined>((resolve) => {
+        ctx.set(LoginDialogState, {
+          ...params,
+          open: true,
+          error: undefined,
+          onClose(event: React.MouseEvent, reason) {
+            params?.onClose?.(event, reason);
+            if (!event.isDefaultPrevented()) {
+              ctx.set(LoginDialogState, (prev) => ({ ...prev, open: false }));
+              resolve(undefined);
+            }
+          },
+          handleLogin(err: Error | null, user: UserCredential | undefined) {
+            if (err) {
+              const error = err.message;
+              ctx.set(LoginDialogState, (prev) => ({ ...prev, error }));
+            } else {
+              ctx.set(LoginDialogState, (prev) => ({ ...prev, open: false }));
+              resolve(user);
+            }
+          },
+        });
+      });
     },
-    [onClose]
+    []
   );
-
-  return [handleLogin, error] as const;
-}
-
-function useHandleClose(onClose?: CloseCallback) {
-  return React.useCallback(() => {
-    onClose?.(null);
-  }, [onClose]);
 }
 
 // #region TypeScript declarations
 
-export type CloseCallback = (user: UserCredential | null) => void;
-export type LoginDialogProps = Omit<DialogProps, "children" | "onClose"> & {
-  onClose?: CloseCallback;
+export type LoginDialogProps = Omit<DialogProps, "open" | "children">;
+export type LoginDialogAtom = LoginDialogProps & {
+  open: boolean;
+  error?: string;
+  handleLogin?: (err: Error | null, user: UserCredential | undefined) => void;
 };
 
 // #endregion

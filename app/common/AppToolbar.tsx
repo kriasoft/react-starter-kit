@@ -73,7 +73,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 
         {/* Account related controls (icon buttons) */}
 
-        <ThemeButton sx={{ mr: 1 }} />
+        {me !== undefined && <ThemeButton sx={{ mr: 1 }} />}
 
         {me && (
           <Chip
@@ -129,7 +129,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             onClick={openUserMenu}
           />
         )}
-        {!me && (
+        {me === null && (
           <Button
             variant="outlined"
             href="/login"

@@ -26,5 +26,5 @@ function createCustomTheme(paletteOptions: PaletteOptions) {
   );
 }
 
-export const light = createCustomTheme(palettes.dark);
-export const dark = createCustomTheme(palettes.light);
+export const light = createCustomTheme(palettes.light);
+export const dark = createCustomTheme(palettes.dark);
