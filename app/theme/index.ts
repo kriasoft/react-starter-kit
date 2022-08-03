@@ -1,30 +1,79 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { PaletteOptions } from "@mui/material";
+import { type PaletteMode } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
+import { atom, selector, useRecoilCallback, useRecoilValue } from "recoil";
 import { components } from "./components.js";
-import * as palettes from "./palettes.js";
+import palettes from "./palettes.js";
 import * as typography from "./typography.js";
 
 /**
- * Creates a customized Material UI theme
- * https://next.material-ui.com/customization/default-theme/
+ * The name of the selected UI theme.
  */
-function createCustomTheme(paletteOptions: PaletteOptions) {
-  const { palette } = createTheme({ palette: paletteOptions });
+export const ThemeName = atom<PaletteMode>({
+  key: "ThemeName",
+  effects: [
+    (ctx) => {
+      const storageKey = "theme";
 
-  return createTheme(
-    {
-      palette,
-      typography: typography.options,
-      components: components(palette),
+      if (ctx.trigger === "get") {
+        const name: PaletteMode =
+          localStorage?.getItem(storageKey) === "dark"
+            ? "dark"
+            : localStorage?.getItem(storageKey) === "light"
+            ? "light"
+            : matchMedia?.("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+        ctx.setSelf(name);
+      }
+
+      ctx.onSet((value) => {
+        localStorage?.setItem(storageKey, value);
+      });
     },
-    {
-      typography: typography.overrides,
-    }
-  );
+  ],
+});
+
+/**
+ * The customized Material UI theme.
+ * @see https://next.material-ui.com/customization/default-theme/
+ */
+export const Theme = selector({
+  key: "Theme",
+  dangerouslyAllowMutability: true,
+  get(ctx) {
+    const name = ctx.get(ThemeName);
+    const { palette } = createTheme({ palette: palettes[name] });
+    return createTheme(
+      {
+        palette,
+        typography: typography.options,
+        components: components(palette),
+      },
+      {
+        typography: typography.overrides,
+      }
+    );
+  },
+});
+
+/**
+ * The auto-detected OR user selected Material UI theme.
+ */
+export function useTheme() {
+  return useRecoilValue(Theme);
 }
 
-export const light = createCustomTheme(palettes.light);
-export const dark = createCustomTheme(palettes.dark);
+/**
+ * Switches between "light" and "dark" themes.
+ */
+export function useToggleTheme() {
+  return useRecoilCallback(
+    (ctx) => () => {
+      ctx.set(ThemeName, (prev) => (prev === "dark" ? "light" : "dark"));
+    },
+    []
+  );
+}

@@ -37,6 +37,8 @@ export const dark: PaletteOptions = {
   },
 };
 
+export default { light, dark };
+
 /**
  * Append custom variables to the palette object.
  * https://mui.com/material-ui/customization/theming/#custom-variables
