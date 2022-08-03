@@ -14,8 +14,8 @@ import {
 import * as React from "react";
 import { Link as NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../core/auth.js";
-import { useTheme, useToggleTheme } from "../core/theme.js";
 import { Logout } from "../icons/Logout.js";
+import { useTheme, useToggleTheme } from "../theme/index.js";
 
 export type UserMenuProps = Omit<MenuProps, "open">;
 
