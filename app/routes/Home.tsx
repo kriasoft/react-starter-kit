@@ -12,7 +12,7 @@ export default function Home(): JSX.Element {
       </Typography>
 
       <Typography sx={{ mb: 4 }} variant="h3" align="center">
-        The web's most popular Jamstack React template.
+        The web&apos;s most popular Jamstack React template.
       </Typography>
 
       <Box
