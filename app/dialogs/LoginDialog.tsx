@@ -4,6 +4,7 @@
 import { Close } from "@mui/icons-material";
 import {
   Alert,
+  Box,
   Dialog,
   DialogContent,
   DialogProps,
@@ -56,8 +57,18 @@ export function LoginDialog(props: LoginDialogProps): JSX.Element {
           />
         )}
 
-        <LoginButton sx={{ mb: 2 }} method="google" onLogin={handleLogin} />
-        <LoginButton sx={{ mb: 0 }} method="facebook" onLogin={handleLogin} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gridGap: "1rem",
+            width: "100%",
+          }}
+        >
+          <LoginButton method="google.com" onLogin={handleLogin} fullWidth />
+          <LoginButton method="facebook.com" onLogin={handleLogin} fullWidth />
+          <LoginButton method="anonymous" onLogin={handleLogin} fullWidth />
+        </Box>
       </DialogContent>
     </Dialog>
   );

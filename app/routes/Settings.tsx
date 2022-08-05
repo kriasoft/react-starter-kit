@@ -9,7 +9,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { updateEmail, updateProfile } from "firebase/auth";
 import * as React from "react";
 import { useAuthCallback, useCurrentUser } from "../core/auth.js";
 
@@ -97,15 +96,15 @@ function useHandleChange(setState: SetState) {
 }
 
 function useHandleSubmit(state: State, setState: SetState) {
-  const me = useCurrentUser();
   return useAuthCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
       setState((prev) => ({ ...prev, loading: true }));
       try {
-        if (!me) throw new Error("Not authenticated.");
-        await updateProfile(me, { displayName: state.displayName });
-        await updateEmail(me, state.email);
+        const fb = await import("../core/firebase.js");
+        const me = fb.getCurrentUser();
+        await fb.updateProfile(me, { displayName: state.displayName });
+        await fb.updateEmail(me, state.email);
         setState((prev) => ({ ...prev, loading: false, error: undefined }));
       } catch (err) {
         const code = (err as { code?: string })?.code;
@@ -117,7 +116,7 @@ function useHandleSubmit(state: State, setState: SetState) {
         setState((prev) => ({ ...prev, loading: false }));
       }
     },
-    [me, state.displayName, state.email]
+    [state.displayName, state.email]
   );
 }
 

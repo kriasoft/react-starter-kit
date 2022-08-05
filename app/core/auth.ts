@@ -5,7 +5,7 @@ import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
 import { atom, useRecoilValue } from "recoil";
 import { useOpenLoginDialog } from "../dialogs/LoginDialog.js";
-import { type LoginMethod, type LoginOptions } from "./firebase.js";
+import { type LoginOptions, type SignInMethod } from "./firebase.js";
 
 export const CurrentUser = atom<User | null>({
   key: "CurrentUser",
@@ -100,9 +100,10 @@ export function useAuthCallback<T extends (...args: any) => Promise<any>>(
             "permission-denied",
             "auth/requires-recent-login",
             "auth/user-token-expired",
+            "auth/null-user",
           ].includes(code)
         ) {
-          const user = await auth.signIn({ method: "google" });
+          const user = await auth.signIn();
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if (user) await callback(...(args as any));
         } else {
@@ -115,4 +116,4 @@ export function useAuthCallback<T extends (...args: any) => Promise<any>>(
   );
 }
 
-export { type LoginMethod, type LoginOptions, type User, type UserCredential };
+export { type SignInMethod, type LoginOptions, type User, type UserCredential };

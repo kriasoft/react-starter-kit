@@ -2,29 +2,29 @@
 /* SPDX-License-Identifier: MIT */
 
 import { SvgIcon, SvgIconProps } from "@mui/material";
-import { type LoginMethod } from "../core/auth.js";
+import { type SignInMethod } from "../core/auth.js";
 
 type AuthIconProps = Omit<
-  SvgIconProps<"svg", { variant: LoginMethod }>,
+  SvgIconProps<"svg", { variant: SignInMethod }>,
   "children" | "viewBox"
 >;
 
 export function AuthIcon(props: AuthIconProps): JSX.Element {
   const { variant, ...other } = props;
 
-  if (variant === "apple") {
-    return (
-      <SvgIcon role="img" viewBox="0 0 24 24" {...other}>
-        <title>Apple</title>
-        <path
-          fill="#000"
-          d="M14.94,5.19A4.38,4.38,0,0,0,16,2,4.44,4.44,0,0,0,13,3.52,4.17,4.17,0,0,0,12,6.61,3.69,3.69,0,0,0,14.94,5.19Zm2.52,7.44a4.51,4.51,0,0,1,2.16-3.81,4.66,4.66,0,0,0-3.66-2c-1.56-.16-3,.91-3.83.91s-2-.89-3.3-.87A4.92,4.92,0,0,0,4.69,9.39C2.93,12.45,4.24,17,6,19.47,6.8,20.68,7.8,22.05,9.12,22s1.75-.82,3.28-.82,2,.82,3.3.79,2.22-1.24,3.06-2.45a11,11,0,0,0,1.38-2.85A4.41,4.41,0,0,1,17.46,12.63Z"
-        />
-      </SvgIcon>
-    );
-  }
+  // if (variant === "apple.com") {
+  //   return (
+  //     <SvgIcon role="img" viewBox="0 0 24 24" {...other}>
+  //       <title>Apple</title>
+  //       <path
+  //         fill="#000"
+  //         d="M14.94,5.19A4.38,4.38,0,0,0,16,2,4.44,4.44,0,0,0,13,3.52,4.17,4.17,0,0,0,12,6.61,3.69,3.69,0,0,0,14.94,5.19Zm2.52,7.44a4.51,4.51,0,0,1,2.16-3.81,4.66,4.66,0,0,0-3.66-2c-1.56-.16-3,.91-3.83.91s-2-.89-3.3-.87A4.92,4.92,0,0,0,4.69,9.39C2.93,12.45,4.24,17,6,19.47,6.8,20.68,7.8,22.05,9.12,22s1.75-.82,3.28-.82,2,.82,3.3.79,2.22-1.24,3.06-2.45a11,11,0,0,0,1.38-2.85A4.41,4.41,0,0,1,17.46,12.63Z"
+  //       />
+  //     </SvgIcon>
+  //   );
+  // }
 
-  if (variant === "google") {
+  if (variant === "google.com") {
     return (
       <SvgIcon role="img" viewBox="0 0 48 48" {...other}>
         <title>Google</title>
@@ -51,7 +51,7 @@ export function AuthIcon(props: AuthIconProps): JSX.Element {
     );
   }
 
-  if (variant === "facebook") {
+  if (variant === "facebook.com") {
     return (
       <SvgIcon role="img" viewBox="0 0 24 24" {...other}>
         <title>Facebook</title>
@@ -59,6 +59,43 @@ export function AuthIcon(props: AuthIconProps): JSX.Element {
       </SvgIcon>
     );
   }
+
+  return (
+    <SvgIcon role="img" viewBox="0 0 32 32" {...other}>
+      <title>Anonymous</title>
+      <circle
+        fill="none"
+        stroke="#999"
+        cx="16"
+        cy="16"
+        r="14"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+      />
+      <circle
+        fill="none"
+        stroke="#999"
+        cx="16"
+        cy="13"
+        r="5"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+      />
+      <path
+        fill="none"
+        stroke="#999"
+        d="M5.4 25.1c1.8-4.1 5.8-7 10.6-7s8.9 2.9 10.6 7"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+      />
+    </SvgIcon>
+  );
 
   throw new TypeError(`variant: ${variant}`);
 }
