@@ -19,7 +19,6 @@ module.exports = {
     // https://github.com/microsoft/vscode-eslint/issues/1494
     process.env.NODE_ENV !== "EDITOR" && "plugin:import/recommended",
     process.env.NODE_ENV !== "EDITOR" && "plugin:import/typescript",
-    "plugin:react-hooks/recommended",
     "prettier",
   ].filter(Boolean),
 
@@ -32,7 +31,15 @@ module.exports = {
     {
       files: ["*.ts", "*.tsx"],
       parser: "@typescript-eslint/parser",
-      extends: ["plugin:@typescript-eslint/recommended"],
+      extends: [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+      ],
+      rules: {
+        "react/no-children-prop": "off",
+        "react/react-in-jsx-scope": "off",
+      },
       plugins: ["@typescript-eslint"],
       parserOptions: {
         warnOnUnsupportedTypeScriptVersion: true,
@@ -73,5 +80,8 @@ module.exports = {
       },
     },
     "import/core-modules": ["__STATIC_CONTENT_MANIFEST"],
+    react: {
+      version: "detect",
+    },
   },
 };
