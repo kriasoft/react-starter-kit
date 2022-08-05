@@ -91,11 +91,13 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             to="/"
             avatar={
               <Avatar
-                alt={me?.displayName ?? ""}
+                alt={me?.displayName || (me?.isAnonymous ? "Anonymous" : "")}
                 src={me?.photoURL || undefined}
               />
             }
-            label={getFirstName(me?.displayName ?? "")}
+            label={getFirstName(
+              me?.displayName || (me?.isAnonymous ? "Anonymous" : "")
+            )}
           />
         )}
         {me && (

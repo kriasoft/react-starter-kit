@@ -4,7 +4,7 @@
 import { Button, ButtonProps } from "@mui/material";
 import { type UserCredential } from "firebase/auth";
 import * as React from "react";
-import { type LoginMethod } from "../core/auth.js";
+import { type SignInMethod } from "../core/auth.js";
 import { AuthIcon } from "../icons/AuthIcon.js";
 
 export function LoginButton(props: LoginButtonProps): JSX.Element {
@@ -22,14 +22,20 @@ export function LoginButton(props: LoginButtonProps): JSX.Element {
       onClick={handleClick}
     >
       <span style={{ flexGrow: 1, textAlign: "center" }}>
-        Continue with {method}
+        {method === "google.com"
+          ? "Continue with Google"
+          : method === "facebook.com"
+          ? "Continue with Facebook"
+          : method === "anonymous"
+          ? "Continue as Anonymous"
+          : `Continue with ${method}`}
       </span>
     </Button>
   );
 }
 
 function useHandleClick(
-  method: LoginMethod,
+  method: SignInMethod,
   onClick?: LoginButtonProps["onClick"],
   onLogin?: LoginButtonProps["onLogin"]
 ) {
@@ -58,7 +64,7 @@ export type LoginCallback = (
 type LoginButtonProps = ButtonProps<
   "a",
   {
-    method: LoginMethod;
+    method: SignInMethod;
     onLogin?: (err: Error | null, user: UserCredential | undefined) => void;
   }
 >;
