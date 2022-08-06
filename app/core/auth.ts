@@ -81,39 +81,65 @@ export function useAuth() {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useAuthCallback<T extends (...args: any) => Promise<any>>(
+/**
+ * Returns a memoized version of the callback that triggers opening a login
+ * dialog in case the user is not authenticated.
+ *
+ * @example
+ *    const saveProfile = useAuthCallback(async (me) => {
+ *      await updateProfile(me, input);
+ *    }, [input])
+ */
+export function useAuthCallback<T extends AuthCallback>(
   callback: T,
   deps?: React.DependencyList
-) {
-  const auth = useAuth();
-  return React.useCallback<(...args: Parameters<T>) => Promise<void>>(
-    async (...args) => {
+): (...args: AuthCallbackParameters<T>) => Promise<Awaited<ReturnType<T>>> {
+  const openLoginDialog = useOpenLoginDialog();
+  return React.useCallback(
+    async (...args: AuthCallbackParameters<T>) => {
+      const fb = await import("../core/firebase.js");
+
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await callback(...(args as any));
+        if (!fb.auth.currentUser) {
+          await openLoginDialog();
+        }
+
+        if (!fb.auth.currentUser) {
+          return Promise.reject(new Error("Not authenticated."));
+        }
+
+        return await callback(fb.auth.currentUser, ...args);
       } catch (err) {
         const code = (err as { code?: string })?.code;
-        if (
-          code &&
-          [
-            "permission-denied",
-            "auth/requires-recent-login",
-            "auth/user-token-expired",
-            "auth/null-user",
-          ].includes(code)
-        ) {
-          const user = await auth.signIn();
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if (user) await callback(...(args as any));
+
+        // https://firebase.google.com/docs/reference/js/auth
+        if (code?.startsWith?.("/auth") || code === "permission-denied") {
+          await openLoginDialog();
+
+          if (!fb.auth.currentUser) {
+            throw new Error("Not authenticated.");
+          }
+
+          return await callback(fb.auth.currentUser, ...args);
         } else {
           throw err;
         }
       }
     },
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    [auth, callback, ...(deps ?? [])]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [openLoginDialog, ...(deps ?? [])]
   );
 }
+
+type AuthCallbackParameters<T extends AuthCallback> = Parameters<T> extends [
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  infer _,
+  ...infer Tail
+]
+  ? Tail
+  : never;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AuthCallback = (user: User, ...args: any) => any;
 
 export { type SignInMethod, type LoginOptions, type User, type UserCredential };
