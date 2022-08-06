@@ -1,9 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { FirebaseError, initializeApp, type FirebaseApp } from "firebase/app";
+import { initializeApp, type FirebaseApp } from "firebase/app";
 import {
-  AuthErrorCodes,
   FacebookAuthProvider,
   getAuth,
   GoogleAuthProvider,
@@ -11,14 +10,7 @@ import {
   SignInMethod,
   signInWithPopup,
   type Auth,
-  type User,
   type UserCredential,
-} from "firebase/auth";
-export {
-  updateCurrentUser,
-  updateEmail,
-  updatePassword,
-  updateProfile,
 } from "firebase/auth";
 
 export const app = initializeApp({
@@ -50,17 +42,6 @@ export function signIn(options: LoginOptions): Promise<UserCredential> {
   }
 
   throw new Error(`Not supported: ${options.method}`);
-}
-
-/**
- * Returns the currently signed-in user or throws an error.
- * @throws {FirebaseError}
- */
-export function getCurrentUser(): User {
-  if (!auth.currentUser) {
-    throw new FirebaseError(AuthErrorCodes.NULL_USER, "Not authenticated.");
-  }
-  return auth.currentUser;
 }
 
 export const SignInMethods = [

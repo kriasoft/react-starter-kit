@@ -9,13 +9,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { updateEmail, updateProfile } from "firebase/auth";
 import * as React from "react";
 import { useAuthCallback, useCurrentUser } from "../core/auth.js";
 
 export default function Settings(): JSX.Element {
-  const [state, setState] = useState();
+  const [{ input, ...state }, setState] = useState();
   const handleChange = useHandleChange(setState);
-  const handleSubmit = useHandleSubmit(state, setState);
+  const handleSubmit = useHandleSubmit(input, setState);
 
   return (
     <Container sx={{ my: 4 }} maxWidth="sm">
@@ -29,7 +30,7 @@ export default function Settings(): JSX.Element {
         <TextField
           name="displayName"
           label="Display Name"
-          value={state.displayName}
+          value={input.displayName}
           helperText={" "}
           onChange={handleChange}
           disabled={state.loading}
@@ -42,7 +43,7 @@ export default function Settings(): JSX.Element {
           name="email"
           type="email"
           label="Email"
-          value={state.email}
+          value={input.email}
           helperText={" "}
           onChange={handleChange}
           disabled={state.loading}
@@ -65,8 +66,10 @@ export default function Settings(): JSX.Element {
 function useState() {
   const me = useCurrentUser();
   const [state, setState] = React.useState({
-    displayName: me?.displayName ?? "",
-    email: me?.email ?? "",
+    input: {
+      displayName: me?.displayName ?? "",
+      email: me?.email ?? "",
+    },
     loading: me === undefined,
     error: undefined as string | undefined,
   });
@@ -75,12 +78,16 @@ function useState() {
     if (me) {
       setState((prev) => ({
         ...prev,
-        displayName: me.displayName ?? "",
-        email: me.email ?? "",
+        input: {
+          ...prev.input,
+          displayName: me.displayName ?? "",
+          email: me.email ?? "",
+        },
         loading: false,
       }));
     }
-  }, [setState, me, me?.email, me?.displayName]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setState, me?.email, me?.displayName]);
 
   return [state, setState] as const;
 }
@@ -89,36 +96,39 @@ function useHandleChange(setState: SetState) {
   return React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = event.target;
-      setState((prev) => ({ ...prev, [name]: value }));
+      setState((prev) => ({
+        ...prev,
+        input: { ...prev.input, [name]: value },
+      }));
     },
     [setState]
   );
 }
 
-function useHandleSubmit(state: State, setState: SetState) {
-  return useAuthCallback(
+function useHandleSubmit(input: Input, setState: SetState) {
+  const saveProfile = useAuthCallback(
+    async (me) => {
+      await updateProfile(me, { displayName: input.displayName });
+      await updateEmail(me, input.email);
+    },
+    [input.displayName, input.email]
+  );
+
+  return React.useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
       setState((prev) => ({ ...prev, loading: true }));
       try {
-        const fb = await import("../core/firebase.js");
-        const me = fb.getCurrentUser();
-        await fb.updateProfile(me, { displayName: state.displayName });
-        await fb.updateEmail(me, state.email);
+        await saveProfile();
         setState((prev) => ({ ...prev, loading: false, error: undefined }));
       } catch (err) {
-        const code = (err as { code?: string })?.code;
-        if (code === "permission-denied") throw err;
-        if (code?.startsWith("auth/")) throw err;
         const error = (err as Error)?.message ?? "Failed.";
-        setState((prev) => ({ ...prev, error }));
-      } finally {
-        setState((prev) => ({ ...prev, loading: false }));
+        setState((prev) => ({ ...prev, loading: false, error }));
       }
     },
-    [state.displayName, state.email]
+    [setState, saveProfile]
   );
 }
 
-type State = ReturnType<typeof useState>[0];
+type Input = ReturnType<typeof useState>[0]["input"];
 type SetState = ReturnType<typeof useState>[1];
