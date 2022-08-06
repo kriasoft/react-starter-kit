@@ -4094,6 +4094,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-plugin-replace-import-extension@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "babel-plugin-replace-import-extension@npm:1.1.3"
+  checksum: 8ff35bacad0291816cd8abcb44f0ce474b86f1482c698e4692e2698bab66c4002267bf2ccbde31a201aca9d3ec8b0bfb2f9a30c4ea6c4edd8b2172ded6eb6d5f
+  languageName: node
+  linkType: hard
+
 "babel-preset-current-node-syntax@npm:^1.0.0":
   version: 1.0.1
   resolution: "babel-preset-current-node-syntax@npm:1.0.1"
@@ -4250,9 +4257,9 @@ __metadata:
   linkType: hard
 
 "cacheable-lookup@npm:^6.0.4":
-  version: 6.0.4
-  resolution: "cacheable-lookup@npm:6.0.4"
-  checksum: e4cf06105ebb2ff7607d068caebc2c4ce756091caa808706940e38e421205d8698ce65e0dfb4a3772065e5a72b71d1a26dd24087f71abf4cfc6eaa20bb643719
+  version: 6.1.0
+  resolution: "cacheable-lookup@npm:6.1.0"
+  checksum: 4ad5e273ffb94cfd084e491548578baeb6af1072adb9444288e09218d5278cc93c1e4aa302f0fa7b60555dba936fa64b2d93b70b019403603031836f95517a8d
   languageName: node
   linkType: hard
 
@@ -6384,9 +6391,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"got@npm:^12.3.0":
-  version: 12.3.0
-  resolution: "got@npm:12.3.0"
+"got@npm:^12.3.1":
+  version: 12.3.1
+  resolution: "got@npm:12.3.1"
   dependencies:
     "@sindresorhus/is": "npm:^5.2.0"
     "@szmarczak/http-timer": "npm:^5.0.1"
@@ -6401,7 +6408,7 @@ __metadata:
     lowercase-keys: "npm:^3.0.0"
     p-cancelable: "npm:^3.0.0"
     responselike: "npm:^2.0.0"
-  checksum: af3dc1efd3cdbbb897b5aec8a8606bd9dcf35ff3a80ac5376b37b8df88bd4f8667fbfb1058ad57002af10534b0c772e4a6c26571ccc996b40ec738db071461f5
+  checksum: e551bbea3bc1885774b4959c1635d9d815c8b55927e171b5b170ba06eb9910284d74083cc13bf850b43c53f51abaaad2f3f4f19db0f90b165d86abdfefaf4342
   languageName: node
   linkType: hard
 
@@ -6470,7 +6477,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"has-symbols@npm:^1.0.1, has-symbols@npm:^1.0.2, has-symbols@npm:^1.0.3":
+"has-symbols@npm:^1.0.2, has-symbols@npm:^1.0.3":
   version: 1.0.3
   resolution: "has-symbols@npm:1.0.3"
   checksum: 2d0abb3382da2945b1b8d9a4afebc8a0770fe07198e727b4fbd7f616c70796f040bf2bd8d6db47e0c590507812a2680594fc77f871238289f6c7870318cf62c9
@@ -8437,14 +8444,14 @@ __metadata:
   linkType: hard
 
 "object.assign@npm:^4.1.0, object.assign@npm:^4.1.2":
-  version: 4.1.2
-  resolution: "object.assign@npm:4.1.2"
+  version: 4.1.3
+  resolution: "object.assign@npm:4.1.3"
   dependencies:
-    call-bind: "npm:^1.0.0"
-    define-properties: "npm:^1.1.3"
-    has-symbols: "npm:^1.0.1"
+    call-bind: "npm:^1.0.2"
+    define-properties: "npm:^1.1.4"
+    has-symbols: "npm:^1.0.3"
     object-keys: "npm:^1.1.1"
-  checksum: e33de12dd0a3afa108ef089cbc0744625eddce4a9c0978d004e463fb1c70f3bebfd5fcd5459ee85abe95cd5066df7b4937b50c3fb4ff3439e225b9216d08f33f
+  checksum: 8bfa17d6f14be42b674bfaaef21f906f89a2eb8a0541d5069a6d55c68c3665513e40bc7c2739b487c6a6b108079600a2004c4fef0f2a8823e41647922eae6930
   languageName: node
   linkType: hard
 
@@ -8795,13 +8802,13 @@ __metadata:
   linkType: hard
 
 "postcss@npm:^8.4.14":
-  version: 8.4.14
-  resolution: "postcss@npm:8.4.14"
+  version: 8.4.16
+  resolution: "postcss@npm:8.4.16"
   dependencies:
     nanoid: "npm:^3.3.4"
     picocolors: "npm:^1.0.0"
     source-map-js: "npm:^1.0.2"
-  checksum: 1e1e4a4cc235674bea79da18dd3e02ea8ffcd51546c7ddf1fc7ba4de5e89154a83988bb8c1b30bd9566df56fc0077dce6e620d8f9ce6ababf60f659ffc53f72c
+  checksum: 474b2c445150bbbf75c67e4a539de41210ddb16d008f2f632820625a880c8c4d7b38361513c0e857e254ac921aac984256fcf1e4cce45a5d9f533b35d1c6bdaa
   languageName: node
   linkType: hard
 
@@ -9483,6 +9490,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^5.32.0"
     babel-jest: "npm:^28.1.3"
     babel-plugin-import: "npm:^1.13.5"
+    babel-plugin-replace-import-extension: "npm:^1.1.3"
     cross-spawn: "npm:^7.0.3"
     del-cli: "npm:^5.0.0"
     envars: "npm:^0.4.0"
@@ -9494,7 +9502,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.30.1"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     execa: "npm:^6.1.0"
-    got: "npm:^12.3.0"
+    got: "npm:^12.3.1"
     graphql: "npm:^16.5.0"
     husky: "npm:^8.0.1"
     jest: "npm:^28.1.3"

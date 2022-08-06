@@ -21,6 +21,12 @@ module.exports = function config(api) {
       {
         test: /\.tsx?$/,
         presets: ["@babel/preset-typescript"],
+        plugins: [
+          api.env("test") && [
+            "replace-import-extension",
+            { extMapping: { ".js": ".ts" } },
+          ],
+        ].filter(Boolean),
       },
       {
         test: /\.tsx$/,
