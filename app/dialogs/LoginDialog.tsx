@@ -14,7 +14,9 @@ import {
 import { type UserCredential } from "firebase/auth";
 import * as React from "react";
 import { atom, useRecoilCallback, useRecoilValue } from "recoil";
-import { LoginButton } from "../common/LoginButton.js";
+import { LoginButton, LoginButtonProps } from "../common/LoginButton.js";
+import { SignInMethods } from "../core/auth.js";
+import { type ExistingAccount, type FirebaseError } from "../core/firebase.js";
 
 export const LoginDialogState = atom<LoginDialogAtom>({
   key: "LoginDialogState",
@@ -22,7 +24,11 @@ export const LoginDialogState = atom<LoginDialogAtom>({
 });
 
 export function LoginDialog(props: LoginDialogProps): JSX.Element {
-  const { error, handleLogin, ...state } = useRecoilValue(LoginDialogState);
+  const { error, signIn, linkTo, ...state } = useRecoilValue(LoginDialogState);
+
+  const signInMethods = linkTo
+    ? SignInMethods.filter((method) => linkTo.signInMethods.includes(method))
+    : SignInMethods;
 
   return (
     <Dialog scroll="body" maxWidth="xs" fullWidth {...props} {...state}>
@@ -52,9 +58,12 @@ export function LoginDialog(props: LoginDialogProps): JSX.Element {
         {error && (
           <Alert
             sx={{ marginBottom: "1rem", width: "100%" }}
-            severity="error"
-            children={error}
-          />
+            severity={linkTo ? "warning" : "error"}
+          >
+            {linkTo
+              ? `There is an existing account with the same email (${linkTo.email}). Would you like to link it?`
+              : error.message}
+          </Alert>
         )}
 
         <Box
@@ -65,9 +74,15 @@ export function LoginDialog(props: LoginDialogProps): JSX.Element {
             width: "100%",
           }}
         >
-          <LoginButton method="google.com" onLogin={handleLogin} fullWidth />
-          <LoginButton method="facebook.com" onLogin={handleLogin} fullWidth />
-          <LoginButton method="anonymous" onLogin={handleLogin} fullWidth />
+          {signInMethods.map((method) => (
+            <LoginButton
+              key={method}
+              method={method}
+              linkTo={linkTo}
+              onClick={signIn}
+              fullWidth
+            />
+          ))}
         </Box>
       </DialogContent>
     </Dialog>
@@ -77,25 +92,44 @@ export function LoginDialog(props: LoginDialogProps): JSX.Element {
 export function useOpenLoginDialog() {
   return useRecoilCallback(
     (ctx) => (params?: LoginDialogProps) => {
-      return new Promise<UserCredential | undefined>((resolve) => {
+      return new Promise<UserCredential>((resolve) => {
         ctx.set(LoginDialogState, {
           ...params,
           open: true,
-          error: undefined,
-          onClose(event: React.MouseEvent, reason) {
+          error: params?.error,
+          async onClose(event: React.MouseEvent, reason) {
             params?.onClose?.(event, reason);
             if (!event.isDefaultPrevented()) {
               ctx.set(LoginDialogState, (prev) => ({ ...prev, open: false }));
-              resolve(undefined);
+              const fb = await import("../core/firebase.js");
+              throw new fb.FirebaseError(
+                fb.AuthErrorCodes.USER_CANCELLED,
+                "Login canceled."
+              );
             }
           },
-          handleLogin(err: Error | null, user: UserCredential | undefined) {
-            if (err) {
-              const error = err.message;
-              ctx.set(LoginDialogState, (prev) => ({ ...prev, error }));
-            } else {
-              ctx.set(LoginDialogState, (prev) => ({ ...prev, open: false }));
+          async signIn(event, method, linkTo) {
+            event.preventDefault();
+            const fb = await import("../core/firebase.js");
+            try {
+              const user = await fb.signIn({ method, email: linkTo?.email });
+
+              if (linkTo) {
+                await fb.linkWithCredential(user.user, linkTo.credential);
+              }
+
+              ctx.set(LoginDialogState, (prev) => ({
+                ...prev,
+                open: false,
+                error: undefined,
+                linkTo: undefined,
+              }));
+
               resolve(user);
+            } catch (err) {
+              const linkTo = await fb.getExistingAccountFromError(err, method);
+              const error = err ? (err as Error) : new Error("Login failed");
+              ctx.set(LoginDialogState, (prev) => ({ ...prev, error, linkTo }));
             }
           },
         });
@@ -107,11 +141,15 @@ export function useOpenLoginDialog() {
 
 // #region TypeScript declarations
 
-export type LoginDialogProps = Omit<DialogProps, "open" | "children">;
-export type LoginDialogAtom = LoginDialogProps & {
+export interface LoginDialogProps
+  extends Omit<DialogProps, "open" | "children"> {
+  error?: FirebaseError | Error;
+  linkTo?: ExistingAccount;
+}
+
+export interface LoginDialogAtom extends LoginDialogProps {
   open: boolean;
-  error?: string;
-  handleLogin?: (err: Error | null, user: UserCredential | undefined) => void;
-};
+  signIn?: LoginButtonProps["onClick"];
+}
 
 // #endregion

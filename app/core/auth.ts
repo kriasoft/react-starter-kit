@@ -5,7 +5,13 @@ import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
 import { atom, useRecoilValue } from "recoil";
 import { useOpenLoginDialog } from "../dialogs/LoginDialog.js";
-import { type LoginOptions, type SignInMethod } from "./firebase.js";
+import { type SignInMethod, type SignInOptions } from "./firebase.js";
+
+export const SignInMethods: SignInMethod[] = [
+  "google.com",
+  "facebook.com",
+  "anonymous",
+];
 
 export const CurrentUser = atom<User | null>({
   key: "CurrentUser",
@@ -64,12 +70,17 @@ export function useAuth() {
   const openLoginDialog = useOpenLoginDialog();
   return React.useMemo(
     () => ({
-      async signIn(options?: LoginOptions) {
+      async signIn(options?: SignInOptions) {
         const fb = await import("./firebase.js");
-        if (options) {
-          return fb.signIn(options);
+
+        if (options?.method) {
+          try {
+            return await fb.signIn(options);
+          } catch (err) {
+            return await openLoginDialog({ error: err as Error });
+          }
         } else {
-          return openLoginDialog();
+          return await openLoginDialog();
         }
       },
       async signOut() {
@@ -142,4 +153,9 @@ type AuthCallbackParameters<T extends AuthCallback> = Parameters<T> extends [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AuthCallback = (user: User, ...args: any) => any;
 
-export { type SignInMethod, type LoginOptions, type User, type UserCredential };
+export {
+  type SignInMethod,
+  type SignInOptions,
+  type User,
+  type UserCredential,
+};

@@ -2,14 +2,14 @@
 /* SPDX-License-Identifier: MIT */
 
 import { Button, ButtonProps } from "@mui/material";
-import { type UserCredential } from "firebase/auth";
 import * as React from "react";
 import { type SignInMethod } from "../core/auth.js";
+import { type ExistingAccount } from "../core/firebase.js";
 import { AuthIcon } from "../icons/AuthIcon.js";
 
 export function LoginButton(props: LoginButtonProps): JSX.Element {
-  const { method, onClick, onLogin, ...other } = props;
-  const handleClick = useHandleClick(method, onClick, onLogin);
+  const { method, onClick, linkTo, ...other } = props;
+  const handleClick = useHandleClick(method, onClick, linkTo);
 
   return (
     <Button
@@ -37,34 +37,25 @@ export function LoginButton(props: LoginButtonProps): JSX.Element {
 function useHandleClick(
   method: SignInMethod,
   onClick?: LoginButtonProps["onClick"],
-  onLogin?: LoginButtonProps["onLogin"]
+  linkTo?: ExistingAccount
 ) {
   return React.useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
-      onClick?.(event);
-      if (!onClick || !event.isDefaultPrevented()) {
-        event.preventDefault();
-        import("../core/firebase.js")
-          .then((fb) => fb.signIn({ method: method }))
-          .then(
-            (user) => onLogin?.(null, user),
-            (err) => onLogin?.(err, undefined)
-          );
-      }
+      onClick?.(event, method, linkTo);
     },
-    [method, onClick, onLogin]
+    [method, onClick, linkTo]
   );
 }
 
-export type LoginCallback = (
-  event: React.MouseEvent,
-  result: Promise<UserCredential>
-) => void;
-
-type LoginButtonProps = ButtonProps<
+export type LoginButtonProps = ButtonProps<
   "a",
   {
     method: SignInMethod;
-    onLogin?: (err: Error | null, user: UserCredential | undefined) => void;
+    linkTo?: ExistingAccount;
+    onClick?: (
+      event: React.MouseEvent<HTMLAnchorElement>,
+      method: SignInMethod,
+      linkTo?: ExistingAccount
+    ) => void;
   }
 >;
