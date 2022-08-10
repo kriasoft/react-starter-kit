@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { Link as NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../core/auth.js";
+import { useSignOut } from "../core/auth.js";
 import { Logout } from "../icons/Logout.js";
 import { useTheme, useToggleTheme } from "../theme/index.js";
 
@@ -22,7 +22,7 @@ export type UserMenuProps = Omit<MenuProps, "open">;
 export function UserMenu(props: UserMenuProps): JSX.Element {
   const { PaperProps, MenuListProps, ...other } = props;
   const close = useClose(props.onClose);
-  const signOut = useSignOut(props.onClose);
+  const signOut = useHandleSignOut(props.onClose);
   const toggleTheme = useToggleTheme();
   const theme = useTheme();
 
@@ -99,16 +99,16 @@ function useClose(onClose?: MenuProps["onClose"]) {
   );
 }
 
-function useSignOut(onClose?: MenuProps["onClose"]) {
+function useHandleSignOut(onClose?: MenuProps["onClose"]) {
   const navigate = useNavigate();
-  const auth = useAuth();
+  const signOut = useSignOut();
 
   return React.useCallback(
     (event: React.MouseEvent) => {
       event.preventDefault();
       onClose?.(event, "backdropClick");
-      auth.signOut().then(() => navigate("/"));
+      signOut().then(() => navigate("/"));
     },
-    [onClose, auth, navigate]
+    [onClose, signOut, navigate]
   );
 }

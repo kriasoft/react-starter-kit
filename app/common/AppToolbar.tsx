@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { Link as NavLink } from "react-router-dom";
-import { useAuth, useCurrentUser } from "../core/auth.js";
+import { useCurrentUser, useSignIn } from "../core/auth.js";
 import { NotificationsMenu, UserMenu } from "../menus/index.js";
 import { ThemeButton } from "./ThemeButton.js";
 
@@ -25,7 +25,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
   const { sx, ...other } = props;
   const menuAnchorRef = React.createRef<HTMLButtonElement>();
   const me = useCurrentUser();
-  const auth = useAuth();
+  const signIn = useSignIn();
 
   const [anchorEl, setAnchorEl] = React.useState({
     userMenu: null as HTMLElement | null,
@@ -48,9 +48,9 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
     setAnchorEl((x) => ({ ...x, userMenu: null }));
   }
 
-  function signIn(event: React.MouseEvent): void {
+  function handleSignIn(event: React.MouseEvent): void {
     event.preventDefault();
-    auth.signIn();
+    signIn();
   }
 
   return (
@@ -136,7 +136,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             variant="outlined"
             href="/login"
             color="primary"
-            onClick={signIn}
+            onClick={handleSignIn}
             children="Log in / Register"
           />
         )}
