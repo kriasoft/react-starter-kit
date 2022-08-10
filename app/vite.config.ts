@@ -25,7 +25,7 @@ const defineVars = [
  * https://vitejs.dev/config/
  */
 export default defineConfig({
-  cacheDir: "../.cache/app/vite",
+  cacheDir: `../.cache/vite-${process.env.npm_package_name}`,
 
   build: {
     outDir: "./dist",
