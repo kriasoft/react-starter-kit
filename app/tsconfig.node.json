@@ -1,8 +1,11 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
-    "moduleResolution": "Node"
+    "emitDeclarationOnly": true
   },
   "include": ["vite.config.ts"]
 }
