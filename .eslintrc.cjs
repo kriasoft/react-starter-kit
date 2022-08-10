@@ -54,6 +54,7 @@ module.exports = {
         ".eslintrc.cjs",
         "app/vite.config.ts",
         "babel.config.cjs",
+        "rollup.config.mjs",
         "scripts/**/*.js",
       ],
       env: { node: true },

@@ -3,9 +3,14 @@
 
 import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
-import { atom, useRecoilValue } from "recoil";
+import { atom, useRecoilValueLoadable } from "recoil";
 import { useOpenLoginDialog } from "../dialogs/LoginDialog.js";
-import { type SignInMethod, type SignInOptions } from "./firebase.js";
+import {
+  auth,
+  signIn,
+  type SignInMethod,
+  type SignInOptions,
+} from "./firebase.js";
 
 export const SignInMethods: SignInMethod[] = [
   "google.com",
@@ -16,17 +21,12 @@ export const SignInMethods: SignInMethod[] = [
 export const CurrentUser = atom<User | null>({
   key: "CurrentUser",
   dangerouslyAllowMutability: true,
-  default: undefined,
   effects: [
     (ctx) => {
       if (ctx.trigger === "get") {
-        const promise = import("./firebase.js").then((fb) =>
-          fb.auth.onAuthStateChanged((user) => {
-            ctx.setSelf(user);
-          })
-        );
-
-        return () => promise.then((unsubscribe) => unsubscribe());
+        return auth.onAuthStateChanged((user) => {
+          ctx.setSelf(user);
+        });
       }
     },
   ],
@@ -46,50 +46,30 @@ export const CurrentUser = atom<User | null>({
  *   }
  */
 export function useCurrentUser() {
-  return useRecoilValue(CurrentUser);
+  const value = useRecoilValueLoadable(CurrentUser);
+  return value.state === "loading" ? undefined : value.valueOrThrow();
 }
 
-/**
- * Authentication manager.
- *
- * @example
- *   import { useAuth } from "../core/auth.js";
- *
- *   function Example(): JSX.Element {
- *     const auth = useAuth();
- *
- *     return (
- *       <Box>
- *         <Button onClick={auth.signIn}>Sign In</Button>
- *         <Button onClick={auth.signOut}>Sign Out</Button>
- *       </Box>
- *     );
- *   }
- */
-export function useAuth() {
+export function useSignIn() {
   const openLoginDialog = useOpenLoginDialog();
-  return React.useMemo(
-    () => ({
-      async signIn(options?: SignInOptions) {
-        const fb = await import("./firebase.js");
-
-        if (options?.method) {
-          try {
-            return await fb.signIn(options);
-          } catch (err) {
-            return await openLoginDialog({ error: err as Error });
-          }
-        } else {
-          return await openLoginDialog();
+  return React.useCallback(
+    async function (options?: SignInOptions) {
+      if (options?.method) {
+        try {
+          return await signIn(options);
+        } catch (err) {
+          return await openLoginDialog({ error: err as Error });
         }
-      },
-      async signOut() {
-        const fb = await import("./firebase.js");
-        await fb.auth.signOut();
-      },
-    }),
+      } else {
+        return await openLoginDialog();
+      }
+    },
     [openLoginDialog]
   );
+}
+
+export function useSignOut() {
+  return React.useCallback(() => auth.signOut(), []);
 }
 
 /**

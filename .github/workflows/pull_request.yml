@@ -6,7 +6,6 @@ name: PR
 on: [pull_request]
 
 env:
-  HUSKY: 0
   VERSION: ${{ github.event.pull_request.number }}
 
 jobs:
@@ -31,8 +30,8 @@ jobs:
 
       # Analyze code for potential problems
       - run: yarn prettier --check .
-      - run: yarn lint --no-cache
-      - run: yarn tsc
+      - run: yarn lint
+      - run: yarn tsc --build
 
       # Test
       # - run: yarn test

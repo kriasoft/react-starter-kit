@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import { execa } from "execa";
 import fs from "node:fs";
 import { EOL } from "node:os";
 
@@ -27,4 +28,10 @@ for (const env of environments) {
       "utf-8"
     );
   }
+}
+
+try {
+  await execa("yarn", ["tsc", "--build"], { stdin: "inherit" });
+} catch (err) {
+  console.error(err);
 }
