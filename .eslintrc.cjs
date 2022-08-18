@@ -16,11 +16,10 @@ module.exports = {
 
   extends: [
     "eslint:recommended",
-    // https://github.com/microsoft/vscode-eslint/issues/1494
-    process.env.NODE_ENV !== "EDITOR" && "plugin:import/recommended",
-    process.env.NODE_ENV !== "EDITOR" && "plugin:import/typescript",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
     "prettier",
-  ].filter(Boolean),
+  ],
 
   parserOptions: {
     ecmaVersion: 2022,
