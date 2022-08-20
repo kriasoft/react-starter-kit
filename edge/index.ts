@@ -5,33 +5,39 @@ import {
   getAssetFromKV,
   serveSinglePageApp,
 } from "@cloudflare/kv-asset-handler";
+import { Hono } from "hono";
 import manifest from "__STATIC_CONTENT_MANIFEST";
 
-export default {
-  async fetch(req, env, ctx) {
-    const url = new URL(req.url);
+/**
+ * Application router for Cloudflare Workers
+ * @see https://honojs.dev/
+ */
+const app = new Hono();
 
-    if (url.pathname === "/echo") {
-      return Response.json({
-        headers: Object.fromEntries(req.headers.entries()),
-        cf: req.cf,
-      });
-    }
+app.get("/echo", (ctx) => {
+  return ctx.json({
+    headers: Object.fromEntries(ctx.req.headers.entries()),
+    cf: ctx.req.cf,
+  });
+});
 
-    // Serve web application assets bundled into
-    // the worker script from the `dist/app` folder
-    return await getAssetFromKV(
-      {
-        request: req,
-        waitUntil(promise) {
-          return ctx.waitUntil(promise);
-        },
+// Serve web application assets bundled into
+// the worker script from the `dist/app` folder
+// https://github.com/cloudflare/kv-asset-handler#readme
+app.get("*", async ({ req, executionCtx, env }) => {
+  return await getAssetFromKV(
+    {
+      request: req,
+      waitUntil(promise) {
+        return executionCtx.waitUntil(promise);
       },
-      {
-        ASSET_NAMESPACE: env.__STATIC_CONTENT,
-        ASSET_MANIFEST: JSON.parse(manifest),
-        mapRequestToAsset: serveSinglePageApp,
-      }
-    );
-  },
-} as Required<Pick<ExportedHandler<Env>, "fetch">>;
+    },
+    {
+      ASSET_NAMESPACE: env.__STATIC_CONTENT,
+      ASSET_MANIFEST: JSON.parse(manifest),
+      mapRequestToAsset: serveSinglePageApp,
+    }
+  );
+});
+
+export default app;
