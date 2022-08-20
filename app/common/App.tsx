@@ -4,9 +4,9 @@
 import { CssBaseline, ThemeProvider, Toolbar } from "@mui/material";
 import * as React from "react";
 import { Route, Routes } from "react-router-dom";
+import { useTheme } from "../core/theme.js";
 import { LoginDialog } from "../dialogs/LoginDialog.js";
 import { Home, Privacy, Settings, Terms } from "../routes/index.js";
-import { useTheme } from "../theme/index.js";
 import { AppToolbar } from "./AppToolbar.js";
 import { ErrorBoundary } from "./ErrorBoundary.js";
 
