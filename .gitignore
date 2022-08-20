@@ -13,6 +13,7 @@
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+node_modules
 
 # Logs
 yarn-debug.log*
@@ -37,6 +38,9 @@ yarn-error.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/react.code-snippets
+
+# WebStorm
+.idea
 
 # macOS
 # https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
