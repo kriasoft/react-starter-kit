@@ -9,7 +9,8 @@
     "deploy": "yarn cf publish"
   },
   "dependencies": {
-    "@cloudflare/kv-asset-handler": "^0.2.0"
+    "@cloudflare/kv-asset-handler": "^0.2.0",
+    "hono": "^2.0.9"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
