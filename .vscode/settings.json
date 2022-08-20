@@ -34,10 +34,11 @@
     "**/yarn.lock": true
   },
   "search.exclude": {
-    "yarn-error.log": true,
-    "yarn.lock": true,
+    "**/dist/": true,
+    "**/.pnp.*": true,
     "**/.yarn": true,
-    "**/.pnp.*": true
+    "**/yarn-error.log": true,
+    "**/yarn.lock": true
   },
   "cSpell.ignoreWords": [
     "browserslist",
@@ -51,8 +52,10 @@
     "esmodules",
     "esnext",
     "execa",
+    "firebaseapp",
     "firestore",
     "globby",
+    "hono",
     "kriasoft",
     "miniflare",
     "oidc",
