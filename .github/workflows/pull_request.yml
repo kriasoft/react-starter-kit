@@ -13,20 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: actions/setup-node@v3
         with:
-          path: |
-            ${{ github.workspace }}/.yarn/cache
-            ${{ github.workspace }}/.yarn/unplugged
-            ${{ github.workspace }}/.yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-yarn-
+          node-version: 18
+          cache: "yarn"
 
       # Install dependencies
-      - name: yarn install
-        run: |
-          yarn config set enableGlobalCache false
-          yarn install
+      - run: yarn install
 
       # Analyze code for potential problems
       - run: yarn prettier --check .
