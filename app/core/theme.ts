@@ -3,7 +3,12 @@
 
 import { type PaletteMode } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
-import { atom, selector, useRecoilCallback, useRecoilValue } from "recoil";
+import {
+  atom,
+  selectorFamily,
+  useRecoilCallback,
+  useRecoilValue,
+} from "recoil";
 import { components } from "./components.js";
 import palettes from "./palettes.js";
 import * as typography from "./typography.js";
@@ -40,39 +45,47 @@ export const ThemeName = atom<PaletteMode>({
  * The customized Material UI theme.
  * @see https://next.material-ui.com/customization/default-theme/
  */
-export const Theme = selector({
+export const Theme = selectorFamily({
   key: "Theme",
   dangerouslyAllowMutability: true,
-  get(ctx) {
-    const name = ctx.get(ThemeName);
-    const { palette } = createTheme({ palette: palettes[name] });
-    return createTheme(
-      {
-        palette,
-        typography: typography.options,
-        components: components(palette),
-      },
-      {
-        typography: typography.overrides,
-      }
-    );
+  get(name: PaletteMode) {
+    return function () {
+      const { palette } = createTheme({ palette: palettes[name] });
+      return createTheme(
+        {
+          palette,
+          typography: typography.options,
+          components: components(palette),
+        },
+        {
+          typography: typography.overrides,
+        }
+      );
+    };
   },
 });
 
 /**
- * The auto-detected OR user selected Material UI theme.
+ * Returns a customized Material UI theme.
+ *
+ * @param name - The name of the requested theme. Defaults to the
+ *               auto-detected or user selected value.
  */
-export function useTheme() {
-  return useRecoilValue(Theme);
+export function useTheme(name?: PaletteMode) {
+  const selected = useRecoilValue(ThemeName);
+  return useRecoilValue(Theme(name ?? selected));
 }
 
 /**
  * Switches between "light" and "dark" themes.
  */
-export function useToggleTheme() {
+export function useToggleTheme(name?: PaletteMode) {
   return useRecoilCallback(
     (ctx) => () => {
-      ctx.set(ThemeName, (prev) => (prev === "dark" ? "light" : "dark"));
+      ctx.set(
+        ThemeName,
+        name ?? ((prev) => (prev === "dark" ? "light" : "dark"))
+      );
     },
     []
   );
