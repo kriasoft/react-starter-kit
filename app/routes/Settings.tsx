@@ -12,11 +12,14 @@ import {
 import { updateEmail, updateProfile } from "firebase/auth";
 import * as React from "react";
 import { useAuthCallback, useCurrentUser } from "../core/auth.js";
+import { usePageEffect } from "../core/page.js";
 
 export default function Settings(): JSX.Element {
   const [{ input, ...state }, setState] = useState();
   const handleChange = useHandleChange(setState);
   const handleSubmit = useHandleSubmit(input, setState);
+
+  usePageEffect({ title: "Account Settings" });
 
   return (
     <Container sx={{ my: 4 }} maxWidth="sm">

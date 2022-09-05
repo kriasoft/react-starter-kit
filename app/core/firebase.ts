@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import { getAnalytics } from "firebase/analytics";
 import { FirebaseError, initializeApp, type FirebaseApp } from "firebase/app";
 import {
   FacebookAuthProvider,
@@ -21,9 +22,11 @@ export const app = initializeApp({
   appId: FIREBASE_APP_ID,
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
+  measurementId: GA_MEASUREMENT_ID,
 });
 
 export const auth = getAuth(app);
+export const analytics = getAnalytics(app);
 
 export function signIn(options: SignInOptions): Promise<UserCredential> {
   if (options.method === GoogleAuthProvider.PROVIDER_ID) {
