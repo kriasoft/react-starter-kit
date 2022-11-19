@@ -3334,12 +3334,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-babel@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@rollup/plugin-babel@npm:6.0.0"
+"@rollup/plugin-babel@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "@rollup/plugin-babel@npm:6.0.2"
   dependencies:
     "@babel/helper-module-imports": "npm:^7.18.6"
-    "@rollup/pluginutils": "npm:^4.2.1"
+    "@rollup/pluginutils": "npm:^5.0.1"
   peerDependencies:
     "@babel/core": ^7.0.0
     "@types/babel__core": ^7.1.9
@@ -3349,13 +3349,13 @@ __metadata:
       optional: true
     rollup:
       optional: true
-  checksum: 3ae9499f3f0bb0c8cca145d7c20029fae5b585df53f1abd6a06ddae8e43b82038ecfef7f1cff4954aa2b4ffbf9384abf0e1edc612bcd7f2fe100ad2c85b2ea05
+  checksum: f6e12a5e9c579337e9eee8126f501261d6bbe85ecc5ef11b34bd95489ac2630bb1ee634b87514c1885cf23ad708492def095be01cbdda04bd881f67a8e8437c9
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^23.0.1":
-  version: 23.0.1
-  resolution: "@rollup/plugin-commonjs@npm:23.0.1"
+"@rollup/plugin-commonjs@npm:^23.0.2":
+  version: 23.0.2
+  resolution: "@rollup/plugin-commonjs@npm:23.0.2"
   dependencies:
     "@rollup/pluginutils": "npm:^5.0.1"
     commondir: "npm:^1.0.1"
@@ -3368,29 +3368,29 @@ __metadata:
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: e4bbd162fff2cbf1d9e0d5334053a31c97647c78a4c0039d9b9722bc4204f4130c064eeb35620f02bf595564274e691d1cb6995b7c64e8f1716919de7deb2d50
+  checksum: 528b494c6f051840191fbb3b540a514bc08fb2d86b550d598ba5b4b01a7bb6fcaf00f5ec57f48224fec1aeacd16318094194f9abb7400eead12e65bf26aa9dc4
   languageName: node
   linkType: hard
 
-"@rollup/plugin-json@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@rollup/plugin-json@npm:5.0.0"
+"@rollup/plugin-json@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@rollup/plugin-json@npm:5.0.1"
   dependencies:
-    "@rollup/pluginutils": "npm:^4.2.1"
+    "@rollup/pluginutils": "npm:^5.0.1"
   peerDependencies:
     rollup: ^1.20.0||^2.0.0||^3.0.0
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 3ce95a9c604c1c4901abd0af2d79a28a5653e47c6c2623d66b2d4db3d5c130d8e5602f0259df1c2cf0af2cb4ee26f24d54673745cf7665e72ee8a93875828bbb
+  checksum: 85f6e91b16cc52f37cbfb0fde6e5149b412c80283b0589df78538f531878d9a6c23e15611abef88086803ff6ab995db610abc2bafee576ce8bd46c8f09ebc4b5
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^15.0.0":
-  version: 15.0.0
-  resolution: "@rollup/plugin-node-resolve@npm:15.0.0"
+"@rollup/plugin-node-resolve@npm:^15.0.1":
+  version: 15.0.1
+  resolution: "@rollup/plugin-node-resolve@npm:15.0.1"
   dependencies:
-    "@rollup/pluginutils": "npm:^4.2.1"
+    "@rollup/pluginutils": "npm:^5.0.1"
     "@types/resolve": "npm:1.20.2"
     deepmerge: "npm:^4.2.2"
     is-builtin-module: "npm:^3.2.0"
@@ -3401,17 +3401,7 @@ __metadata:
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 2c186399e6cde8c1cc1bf0453c82255f5cfa626e0a4516c214ff1ee0bf5a9c9894b5346df643d23bf11150a1786023dfcc0f28e8f1193358077610b2b23cfc98
-  languageName: node
-  linkType: hard
-
-"@rollup/pluginutils@npm:^4.2.1":
-  version: 4.2.1
-  resolution: "@rollup/pluginutils@npm:4.2.1"
-  dependencies:
-    estree-walker: "npm:^2.0.1"
-    picomatch: "npm:^2.2.2"
-  checksum: 96f7c2ec2ca7f20178c65a6634a1d612fc3ff6d4a70ff18468d1a909218d491f0164c320dbf195fbbf932059e71c21cfa31b64813d7922f14c83e773527f8b8e
+  checksum: 5f709d14dfd1f22af02d087098f2c2136ebb7f5d57a34fb91978168e4cce7852a4f0338ec951f7f96b47d0da1d443c024fdbaf99093ffb8107ac18369e65bc5c
   languageName: node
   linkType: hard
 
@@ -5985,7 +5975,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"estree-walker@npm:^2.0.1, estree-walker@npm:^2.0.2":
+"estree-walker@npm:^2.0.2":
   version: 2.0.2
   resolution: "estree-walker@npm:2.0.2"
   checksum: 6fd7656e20b3c8f1fa74cd3d922e09d2cc9815ba5ea2d4cc0d5f16870b00e4c40d9aaae5efeb26299ea684a89b8e64868f42ecdddd45e8d18283f47098c9943a
@@ -8929,7 +8919,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.2, picomatch@npm:^2.2.3, picomatch@npm:^2.3.1":
+"picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.3, picomatch@npm:^2.3.1":
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
   checksum: 6ba5938c24af2c5918e94b39aa0ad48d71f2c30634de69d46e0bd32feb666de4e909406db6ffb78f98d39ef450d6a41b6fa3954dc3659d7b2b750766c1261e5e
@@ -9581,9 +9571,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^3.2.3":
-  version: 3.2.3
-  resolution: "rollup@npm:3.2.3"
+"rollup@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "rollup@npm:3.3.0"
   dependencies:
     fsevents: "npm:~2.3.2"
   dependenciesMeta:
@@ -9591,7 +9581,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 490a804886cfc434a25c8ce6a5ec338f7e345a985325fdf8aba2d39a33a059ef6200b0c5076ac4f9ae6fc984cee6c8ca7687d753c9f84819a256e8ea123780d3
+  checksum: 2a0b1c1aaaa6c2f837d63682e944c354399b51acd461e85f18b2d911ec67e5eacf76f514ee27eabbac0a08641cff190d0209cdc14a3de81e0f0b118389ae3bb9
   languageName: node
   linkType: hard
 
@@ -9624,10 +9614,10 @@ __metadata:
     "@babel/register": "npm:^7.18.9"
     "@emotion/eslint-plugin": "npm:^11.10.0"
     "@jest/types": "npm:^29.3.1"
-    "@rollup/plugin-babel": "npm:^6.0.0"
-    "@rollup/plugin-commonjs": "npm:^23.0.1"
-    "@rollup/plugin-json": "npm:^5.0.0"
-    "@rollup/plugin-node-resolve": "npm:^15.0.0"
+    "@rollup/plugin-babel": "npm:^6.0.2"
+    "@rollup/plugin-commonjs": "npm:^23.0.2"
+    "@rollup/plugin-json": "npm:^5.0.1"
+    "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@types/babel__core": "npm:^7.1.20"
     "@types/babel__plugin-transform-runtime": "npm:^7.9.2"
     "@types/babel__preset-env": "npm:^7.9.2"
@@ -9655,7 +9645,7 @@ __metadata:
     pretty-bytes: "npm:^6.0.0"
     react: "npm:^18.2.0"
     relay-config: "npm:^12.0.1"
-    rollup: "npm:^3.2.3"
+    rollup: "npm:^3.3.0"
     typescript: "npm:^4.8.4"
     wrangler: "npm:^2.1.13"
     zx: "npm:^7.1.1"
