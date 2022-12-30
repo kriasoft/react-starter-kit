@@ -2758,7 +2758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:1.4.14, @jridgewell/sourcemap-codec@npm:^1.4.10":
+"@jridgewell/sourcemap-codec@npm:1.4.14, @jridgewell/sourcemap-codec@npm:^1.4.10, @jridgewell/sourcemap-codec@npm:^1.4.13":
   version: 1.4.14
   resolution: "@jridgewell/sourcemap-codec@npm:1.4.14"
   checksum: 2147ea75c966fed8a7d9ed6679b7e8c380fa790a9bea5a64f4ec1c26d24e44b461aa60fc3b228cea03a46708d9d1bcf19508035bf27ad5e8f63d0998ed1d1117
@@ -3333,9 +3333,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-babel@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "@rollup/plugin-babel@npm:6.0.2"
+"@rollup/plugin-babel@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "@rollup/plugin-babel@npm:6.0.3"
   dependencies:
     "@babel/helper-module-imports": "npm:^7.18.6"
     "@rollup/pluginutils": "npm:^5.0.1"
@@ -3348,32 +3348,32 @@ __metadata:
       optional: true
     rollup:
       optional: true
-  checksum: f6e12a5e9c579337e9eee8126f501261d6bbe85ecc5ef11b34bd95489ac2630bb1ee634b87514c1885cf23ad708492def095be01cbdda04bd881f67a8e8437c9
+  checksum: 3ccf11c0320e6f1923ce2a8cfb53f47fb352683bfdd8400ec0b070faaba25efb2c9cb4cee8e6af7ad61227c02e7408288db3ca0d516e2da4348fbe06cd88c018
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^23.0.2":
-  version: 23.0.2
-  resolution: "@rollup/plugin-commonjs@npm:23.0.2"
+"@rollup/plugin-commonjs@npm:^24.0.0":
+  version: 24.0.0
+  resolution: "@rollup/plugin-commonjs@npm:24.0.0"
   dependencies:
     "@rollup/pluginutils": "npm:^5.0.1"
     commondir: "npm:^1.0.1"
     estree-walker: "npm:^2.0.2"
     glob: "npm:^8.0.3"
     is-reference: "npm:1.2.1"
-    magic-string: "npm:^0.26.4"
+    magic-string: "npm:^0.27.0"
   peerDependencies:
     rollup: ^2.68.0||^3.0.0
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 528b494c6f051840191fbb3b540a514bc08fb2d86b550d598ba5b4b01a7bb6fcaf00f5ec57f48224fec1aeacd16318094194f9abb7400eead12e65bf26aa9dc4
+  checksum: d63fc075d084ac2207f5d79c177b3e6b430a90f091527ba2ab1c36976d5cf56ad38a9ea47cfb95b433e93bc5c0eb95dc6cb39d5623d82701648fb5298c2e65ff
   languageName: node
   linkType: hard
 
-"@rollup/plugin-json@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@rollup/plugin-json@npm:5.0.1"
+"@rollup/plugin-json@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@rollup/plugin-json@npm:6.0.0"
   dependencies:
     "@rollup/pluginutils": "npm:^5.0.1"
   peerDependencies:
@@ -3381,7 +3381,7 @@ __metadata:
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 85f6e91b16cc52f37cbfb0fde6e5149b412c80283b0589df78538f531878d9a6c23e15611abef88086803ff6ab995db610abc2bafee576ce8bd46c8f09ebc4b5
+  checksum: beba433c3388f53a0726a7838000a95993fc8c131819a5211730dd156777315f42d68fc92c1d92522803dfb5bdcbd33f8c646bb4cf45714d8908af000c852b60
   languageName: node
   linkType: hard
 
@@ -7969,12 +7969,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.26.4, magic-string@npm:^0.26.7":
+"magic-string@npm:^0.26.7":
   version: 0.26.7
   resolution: "magic-string@npm:0.26.7"
   dependencies:
     sourcemap-codec: "npm:^1.4.8"
   checksum: c32d85ae488a66f9dd604199d41f7f4335c9db2adc3c5e24555a3f75551de9a81cb1ba9ce16941e4fa9af9908e832a25a796b27d744a707a4343cecf20d75e54
+  languageName: node
+  linkType: hard
+
+"magic-string@npm:^0.27.0":
+  version: 0.27.0
+  resolution: "magic-string@npm:0.27.0"
+  dependencies:
+    "@jridgewell/sourcemap-codec": "npm:^1.4.13"
+  checksum: 3b7ea05374ce06a1f4726a752959af578d5cd864b00321f2ffa131b5256776d47b87fbcf569b42abe6e70f53708dec91996776ce942bc68c21f91b205356cd57
   languageName: node
   linkType: hard
 
@@ -9481,9 +9490,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "rollup@npm:3.3.0"
+"rollup@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "rollup@npm:3.9.0"
   dependencies:
     fsevents: "npm:~2.3.2"
   dependenciesMeta:
@@ -9491,7 +9500,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 2a0b1c1aaaa6c2f837d63682e944c354399b51acd461e85f18b2d911ec67e5eacf76f514ee27eabbac0a08641cff190d0209cdc14a3de81e0f0b118389ae3bb9
+  checksum: 99588b6d2b3c31dcf26df4841c3335e7b57911707b3c7dfbdb31b27d55f350204b5245242fc43cce86c60e671fa47cbd408a9a47c237dc909e9af06dc234202a
   languageName: node
   linkType: hard
 
@@ -9510,9 +9519,9 @@ __metadata:
     "@babel/register": "npm:^7.18.9"
     "@emotion/eslint-plugin": "npm:^11.10.0"
     "@jest/types": "npm:^29.3.1"
-    "@rollup/plugin-babel": "npm:^6.0.2"
-    "@rollup/plugin-commonjs": "npm:^23.0.2"
-    "@rollup/plugin-json": "npm:^5.0.1"
+    "@rollup/plugin-babel": "npm:^6.0.3"
+    "@rollup/plugin-commonjs": "npm:^24.0.0"
+    "@rollup/plugin-json": "npm:^6.0.0"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@types/babel__core": "npm:^7.1.20"
     "@types/babel__plugin-transform-runtime": "npm:^7.9.2"
@@ -9541,7 +9550,7 @@ __metadata:
     pretty-bytes: "npm:^6.0.0"
     react: "npm:^18.2.0"
     relay-config: "npm:^12.0.1"
-    rollup: "npm:^3.3.0"
+    rollup: "npm:^3.9.0"
     typescript: "npm:^4.9.4"
     wrangler: "npm:^2.4.2"
     zx: "npm:^7.1.1"
