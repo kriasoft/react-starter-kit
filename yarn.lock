@@ -1659,6 +1659,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/kv-asset-handler@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@cloudflare/kv-asset-handler@npm:0.3.0"
+  dependencies:
+    mime: "npm:^3.0.0"
+  checksum: 8c3ea4783849c3ba5f612f7d9059b7c51cad06ce749e66ac2d8ea5b24539e7ac6d5f682b012fa9eb0384fca1ba395885be9700f7d6eb3208b64cbbd6d47bce2e
+  languageName: node
+  linkType: hard
+
 "@cloudflare/workers-types@npm:^3.18.0":
   version: 3.18.0
   resolution: "@cloudflare/workers-types@npm:3.18.0"
@@ -5201,12 +5210,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "edge@workspace:edge"
   dependencies:
-    "@cloudflare/kv-asset-handler": "npm:^0.2.0"
+    "@cloudflare/kv-asset-handler": "npm:^0.3.0"
     "@cloudflare/workers-types": "npm:^3.18.0"
     "@types/jest": "npm:^29.2.4"
     "@types/node": "npm:^18.11.18"
     envars: "npm:^0.4.0"
-    hono: "npm:^2.3.2"
+    hono: "npm:^2.7.1"
     typescript: "npm:^4.9.4"
   languageName: unknown
   linkType: soft
@@ -6619,10 +6628,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "hono@npm:2.3.2"
-  checksum: 99ba96ecf26afed77d7e0718225f10fe850bc5579b6feb6f5e5a245c7142b21b45aa9926d85d74d3faefaefbee6f9974b0067ee8c343c7c183f686df8a3f9d2e
+"hono@npm:^2.7.1":
+  version: 2.7.1
+  resolution: "hono@npm:2.7.1"
+  checksum: c651cd9e86f1f4a2f721561bceda9fb0852c90e643fd333d6bed4750529e08cc91e98caa50c983e0eb32abe64ba239c63d932fa13486198d2afb736f4c68c65b
   languageName: node
   linkType: hard
 
