@@ -3,11 +3,6 @@
 
 import { SvgIcon, SvgIconProps } from "@mui/material";
 
-type SocialIconProps = Omit<
-  SvgIconProps<"svg", { variant: "twitter" | "instagram" | "discord" }>,
-  "children" | "viewBox"
->;
-
 /**
  * Social icons
  * @see https://simpleicons.org/
@@ -44,3 +39,8 @@ export function SocialIcon(props: SocialIconProps): JSX.Element {
 
   throw new TypeError(`variant: ${variant}`);
 }
+
+type SocialIconProps = Omit<
+  SvgIconProps<"svg", { variant: "twitter" | "instagram" | "discord" }>,
+  "children" | "viewBox"
+>;

@@ -3,11 +3,6 @@
 
 import { ListItemText, Menu, MenuItem, MenuProps } from "@mui/material";
 
-type NotificationsMenuProps = Omit<
-  MenuProps,
-  "id" | "role" | "open" | "anchorOrigin" | "transformOrigin"
->;
-
 export function NotificationsMenu(props: NotificationsMenuProps): JSX.Element {
   const { PaperProps, ...other } = props;
 
@@ -27,3 +22,8 @@ export function NotificationsMenu(props: NotificationsMenuProps): JSX.Element {
     </Menu>
   );
 }
+
+type NotificationsMenuProps = Omit<
+  MenuProps,
+  "id" | "role" | "open" | "anchorOrigin" | "transformOrigin"
+>;

@@ -53,7 +53,7 @@ function replaceEnvVars(/** @type {string} */ config) {
   // Replace placeholders with the actual values for the target environment
   config = config.replace(
     /(\$[[A-Z0-9_]+)/gm,
-    (match, p1) => $.env[p1.substring(1)] ?? ""
+    (match, p1) => $.env[p1.substring(1)] ?? "",
   );
 
   // Optionally, append the target environment name to the worker's name

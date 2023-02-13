@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { Brightness4, Settings } from "@mui/icons-material";
+import { Brightness4, Logout, Settings } from "@mui/icons-material";
 import {
   Link,
   ListItemIcon,
@@ -14,10 +14,7 @@ import {
 import * as React from "react";
 import { Link as NavLink, useNavigate } from "react-router-dom";
 import { useSignOut } from "../core/auth.js";
-import { useTheme, useToggleTheme } from "../core/theme.js";
-import { Logout } from "../icons/Logout.js";
-
-export type UserMenuProps = Omit<MenuProps, "open">;
+import { useTheme, useToggleTheme } from "../theme/index.js";
 
 export function UserMenu(props: UserMenuProps): JSX.Element {
   const { PaperProps, MenuListProps, ...other } = props;
@@ -37,9 +34,9 @@ export function UserMenu(props: UserMenuProps): JSX.Element {
       MenuListProps={{ ...MenuListProps, dense: true }}
       {...other}
     >
-      <MenuItem component={NavLink} to="/settings" onClick={close}>
+      <MenuItem component={NavLink} to="/account" onClick={close}>
         <ListItemIcon sx={{ minWidth: 40 }} children={<Settings />} />
-        <ListItemText primary="Account Settings" />
+        <ListItemText primary="Account Details" />
       </MenuItem>
 
       <MenuItem>
@@ -95,7 +92,7 @@ function useClose(onClose?: MenuProps["onClose"]) {
     (event: React.MouseEvent) => {
       onClose?.(event, "backdropClick");
     },
-    [onClose]
+    [onClose],
   );
 }
 
@@ -109,6 +106,8 @@ function useHandleSignOut(onClose?: MenuProps["onClose"]) {
       onClose?.(event, "backdropClick");
       signOut().then(() => navigate("/"));
     },
-    [onClose, signOut, navigate]
+    [onClose, signOut, navigate],
   );
 }
+
+export type UserMenuProps = Omit<MenuProps, "open">;

@@ -104,7 +104,7 @@ export function useOpenLoginDialog() {
               const fb = await import("../core/firebase.js");
               throw new fb.FirebaseError(
                 fb.AuthErrorCodes.USER_CANCELLED,
-                "Login canceled."
+                "Login canceled.",
               );
             }
           },
@@ -135,7 +135,7 @@ export function useOpenLoginDialog() {
         });
       });
     },
-    []
+    [],
   );
 }
 

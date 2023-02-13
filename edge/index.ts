@@ -36,7 +36,7 @@ app.get("*", async ({ req, executionCtx, env }) => {
       ASSET_NAMESPACE: env.__STATIC_CONTENT,
       ASSET_MANIFEST: JSON.parse(manifest),
       mapRequestToAsset: serveSinglePageApp,
-    }
+    },
   );
 });
 
