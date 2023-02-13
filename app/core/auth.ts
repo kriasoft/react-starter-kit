@@ -14,7 +14,7 @@ import {
 
 export const SignInMethods: SignInMethod[] = [
   "google.com",
-  "facebook.com",
+  "apple.com",
   "anonymous",
 ];
 
@@ -64,7 +64,7 @@ export function useSignIn() {
         return await openLoginDialog();
       }
     },
-    [openLoginDialog]
+    [openLoginDialog],
   );
 }
 
@@ -83,7 +83,7 @@ export function useSignOut() {
  */
 export function useAuthCallback<T extends AuthCallback>(
   callback: T,
-  deps?: React.DependencyList
+  deps?: React.DependencyList,
 ): (...args: AuthCallbackParameters<T>) => Promise<Awaited<ReturnType<T>>> {
   const openLoginDialog = useOpenLoginDialog();
   return React.useCallback(
@@ -117,15 +117,14 @@ export function useAuthCallback<T extends AuthCallback>(
         }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [openLoginDialog, ...(deps ?? [])]
+    [openLoginDialog, ...(deps ?? [])],
   );
 }
 
 type AuthCallbackParameters<T extends AuthCallback> = Parameters<T> extends [
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   infer _,
-  ...infer Tail
+  ...infer Tail,
 ]
   ? Tail
   : never;

@@ -14,18 +14,15 @@ import {
   Typography,
 } from "@mui/material";
 import * as React from "react";
-import { Link as NavLink } from "react-router-dom";
-import { useCurrentUser, useSignIn } from "../core/auth.js";
-import { NotificationsMenu, UserMenu } from "../menus/index.js";
-import { ThemeButton } from "./ThemeButton.js";
-
-type AppToolbarProps = AppBarProps;
+import { Link as NavLink } from "../../common/Link.js";
+import { ThemeButton } from "../../common/ThemeButton.js";
+import { useCurrentUser } from "../../core/auth.js";
+import { NotificationsMenu, UserMenu } from "../../menus/index.js";
 
 export function AppToolbar(props: AppToolbarProps): JSX.Element {
   const { sx, ...other } = props;
   const menuAnchorRef = React.createRef<HTMLButtonElement>();
   const me = useCurrentUser();
-  const signIn = useSignIn();
 
   const [anchorEl, setAnchorEl] = React.useState({
     userMenu: null as HTMLElement | null,
@@ -48,11 +45,6 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
     setAnchorEl((x) => ({ ...x, userMenu: null }));
   }
 
-  function handleSignIn(event: React.MouseEvent): void {
-    event.preventDefault();
-    signIn();
-  }
-
   return (
     <AppBar
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, ...sx }}
@@ -64,8 +56,8 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
         {/* App name / logo */}
 
         <Typography variant="h1" sx={{ fontSize: "1.5rem", fontWeight: 500 }}>
-          <Link color="inherit" underline="none" to="/" component={NavLink}>
-            {APP_NAME}
+          <Link color="inherit" underline="none" href="/" component={NavLink}>
+            {import.meta.env.VITE_APP_NAME}
           </Link>
         </Typography>
 
@@ -88,7 +80,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
               ".MuiChip-avatar": { width: 32, height: 32 },
             }}
             component={NavLink}
-            to="/"
+            href="/"
             avatar={
               <Avatar
                 alt={me?.displayName || (me?.isAnonymous ? "Anonymous" : "")}
@@ -96,7 +88,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
               />
             }
             label={getFirstName(
-              me?.displayName || (me?.isAnonymous ? "Anonymous" : "")
+              me?.displayName || (me?.isAnonymous ? "Anonymous" : ""),
             )}
           />
         )}
@@ -133,11 +125,20 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
         )}
         {me === null && (
           <Button
-            variant="outlined"
+            component={NavLink}
+            variant="text"
             href="/login"
             color="primary"
-            onClick={handleSignIn}
-            children="Log in / Register"
+            children="Log in"
+          />
+        )}
+        {me === null && (
+          <Button
+            component={NavLink}
+            variant="outlined"
+            href="/signup"
+            color="primary"
+            children="Create an account"
           />
         )}
       </Toolbar>
@@ -161,3 +162,5 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 function getFirstName(displayName: string): string {
   return displayName && displayName.split(" ")[0];
 }
+
+type AppToolbarProps = Omit<AppBarProps, "children">;

@@ -4,9 +4,9 @@
 import { DarkMode, LightMode } from "@mui/icons-material";
 import { IconButton, IconButtonProps } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useToggleTheme } from "../core/theme.js";
+import { useToggleTheme } from "../theme/index.js";
 
-function ThemeButton(props: ThemeButtonProps): JSX.Element {
+export function ThemeButton(props: ThemeButtonProps): JSX.Element {
   const { ...other } = props;
   const toggleTheme = useToggleTheme();
   const theme = useTheme();
@@ -18,6 +18,4 @@ function ThemeButton(props: ThemeButtonProps): JSX.Element {
   );
 }
 
-type ThemeButtonProps = Omit<IconButtonProps, "children">;
-
-export { ThemeButton };
+export type ThemeButtonProps = Omit<IconButtonProps, "children">;

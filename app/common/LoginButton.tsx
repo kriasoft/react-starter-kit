@@ -37,13 +37,13 @@ export function LoginButton(props: LoginButtonProps): JSX.Element {
 function useHandleClick(
   method: SignInMethod,
   onClick?: LoginButtonProps["onClick"],
-  linkTo?: ExistingAccount
+  linkTo?: ExistingAccount,
 ) {
   return React.useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       onClick?.(event, method, linkTo);
     },
-    [method, onClick, linkTo]
+    [method, onClick, linkTo],
   );
 }
 
@@ -55,7 +55,7 @@ export type LoginButtonProps = ButtonProps<
     onClick?: (
       event: React.MouseEvent<HTMLAnchorElement>,
       method: SignInMethod,
-      linkTo?: ExistingAccount
+      linkTo?: ExistingAccount,
     ) => void;
   }
 >;

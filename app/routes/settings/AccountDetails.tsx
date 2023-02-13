@@ -11,19 +11,19 @@ import {
 } from "@mui/material";
 import { updateEmail, updateProfile } from "firebase/auth";
 import * as React from "react";
-import { useAuthCallback, useCurrentUser } from "../core/auth.js";
-import { usePageEffect } from "../core/page.js";
+import { useAuthCallback, useCurrentUser } from "../../core/auth.js";
+import { usePageEffect } from "../../core/page.js";
 
-export default function Settings(): JSX.Element {
+export default function AccountDetails(): JSX.Element {
   const [{ input, ...state }, setState] = useState();
   const handleChange = useHandleChange(setState);
   const handleSubmit = useHandleSubmit(input, setState);
 
-  usePageEffect({ title: "Account Settings" });
+  usePageEffect({ title: "Account Details" });
 
   return (
     <Container sx={{ my: 4 }} maxWidth="sm">
-      <Typography sx={{ mb: 4 }} variant="h2" children="Account Settings" />
+      <Typography sx={{ mb: 4 }} variant="h2" children="Account Details" />
 
       {state.error && (
         <Alert sx={{ mb: 3 }} severity={"error"} children={state.error} />
@@ -89,7 +89,6 @@ function useState() {
         loading: false,
       }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setState, me?.email, me?.displayName]);
 
   return [state, setState] as const;
@@ -104,7 +103,7 @@ function useHandleChange(setState: SetState) {
         input: { ...prev.input, [name]: value },
       }));
     },
-    [setState]
+    [setState],
   );
 }
 
@@ -114,7 +113,7 @@ function useHandleSubmit(input: Input, setState: SetState) {
       await updateProfile(me, { displayName: input.displayName });
       await updateEmail(me, input.email);
     },
-    [input.displayName, input.email]
+    [input.displayName, input.email],
   );
 
   return React.useCallback(
@@ -129,7 +128,7 @@ function useHandleSubmit(input: Input, setState: SetState) {
         setState((prev) => ({ ...prev, loading: false, error }));
       }
     },
-    [setState, saveProfile]
+    [setState, saveProfile],
   );
 }
 

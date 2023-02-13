@@ -25,7 +25,7 @@ for (const env of environments) {
         "#",
         "",
       ].join(EOL),
-      "utf-8"
+      "utf-8",
     );
   }
 }

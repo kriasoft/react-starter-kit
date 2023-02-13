@@ -18,11 +18,11 @@ export { AuthErrorCodes, linkWithCredential } from "firebase/auth";
 export { FirebaseError };
 
 export const app = initializeApp({
-  projectId: GOOGLE_CLOUD_PROJECT,
-  appId: FIREBASE_APP_ID,
-  apiKey: FIREBASE_API_KEY,
-  authDomain: FIREBASE_AUTH_DOMAIN,
-  measurementId: GA_MEASUREMENT_ID,
+  projectId: import.meta.env.VITE_GOOGLE_CLOUD_PROJECT,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  measurementId: import.meta.env.VITE_GA_MEASUREMENT_ID,
 });
 
 export const auth = getAuth(app);
@@ -59,7 +59,7 @@ export function signIn(options: SignInOptions): Promise<UserCredential> {
 
 export async function getExistingAccountFromError(
   error: FirebaseError | Error | unknown,
-  method: SignInMethod
+  method: SignInMethod,
 ): Promise<ExistingAccount | undefined> {
   if (
     !(error instanceof FirebaseError) ||
@@ -72,7 +72,7 @@ export async function getExistingAccountFromError(
   const email = error.customData?.email as string;
   const signInMethods = (await fetchSignInMethodsForEmail(
     auth,
-    email
+    email,
   )) as SignInMethod[];
 
   if (signInMethods.length === 0) {
@@ -97,6 +97,7 @@ export async function getExistingAccountFromError(
 export type SignInMethod =
   | typeof GoogleAuthProvider.PROVIDER_ID
   | typeof FacebookAuthProvider.PROVIDER_ID
+  | "apple.com"
   | "anonymous";
 
 export type SignInOptions = {
