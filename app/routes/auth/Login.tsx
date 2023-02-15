@@ -32,7 +32,7 @@ export default function Login(props: Props): JSX.Element {
   const [state, setState] = useState(props);
   const handleChange = useHandleChange(setState);
   const handleSignIn = useHandleSignIn(setState);
-  const [handleSubmit, submitInFlight] = useHandleSubmit(state, setState);
+  const [handleSubmit, submitInFlight] = useHandleSubmit(state);
   const switchSAML = useSwitchSAML(setState);
   const { pathname, search } = useLocation();
   const isSignUp = props.mode === "signup";

@@ -78,7 +78,7 @@ function useState() {
   });
 
   React.useEffect(() => {
-    if (me) {
+    if (me?.uid) {
       setState((prev) => ({
         ...prev,
         input: {
@@ -89,7 +89,7 @@ function useState() {
         loading: false,
       }));
     }
-  }, [setState, me?.email, me?.displayName]);
+  }, [setState, me?.uid, me?.email, me?.displayName]);
 
   return [state, setState] as const;
 }

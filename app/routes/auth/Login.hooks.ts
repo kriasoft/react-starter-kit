@@ -10,14 +10,25 @@ import { signIn, SignInMethod } from "../../core/firebase.js";
  */
 export function useHandleSubmit(
   state: State,
-  setState: SetState,
 ): [submit: React.FormEventHandler, inFlight: boolean] {
+  const [inFlight, setInFlight] = React.useState(false);
+
   return [
-    React.useCallback((event) => {
-      event.preventDefault();
-      throw new Error("Not implemented");
-    }, []),
-    false,
+    React.useCallback(
+      async (event) => {
+        event.preventDefault();
+        try {
+          setInFlight(true);
+          console.log(state.email);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          throw new Error("Not implemented");
+        } finally {
+          setInFlight(false);
+        }
+      },
+      [state.email],
+    ),
+    inFlight,
   ];
 }
 
