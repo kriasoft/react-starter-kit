@@ -83,7 +83,7 @@ export function useSignOut() {
  */
 export function useAuthCallback<T extends AuthCallback>(
   callback: T,
-  deps?: React.DependencyList,
+  deps: React.DependencyList = [],
 ): (...args: AuthCallbackParameters<T>) => Promise<Awaited<ReturnType<T>>> {
   const openLoginDialog = useOpenLoginDialog();
   return React.useCallback(
@@ -117,7 +117,8 @@ export function useAuthCallback<T extends AuthCallback>(
         }
       }
     },
-    [openLoginDialog, ...(deps ?? [])],
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    [openLoginDialog, ...deps],
   );
 }
 

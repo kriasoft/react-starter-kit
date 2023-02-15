@@ -5,7 +5,10 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 import * as React from "react";
 import { useLocation } from "react-router-dom";
 
-export function usePageEffect(options?: Options, deps?: React.DependencyList) {
+export function usePageEffect(
+  options?: Options,
+  deps: React.DependencyList = [],
+) {
   const location = useLocation();
 
   // Once the page component was rendered, update the HTML document's title
@@ -22,7 +25,11 @@ export function usePageEffect(options?: Options, deps?: React.DependencyList) {
     return function () {
       document.title = previousTitle;
     };
-  }, deps ?? []);
+  }, [
+    ...deps /* eslint-disable-line react-hooks/exhaustive-deps */,
+    location,
+    options?.title,
+  ]);
 
   // Send "page view" event to Google Analytics
   // https://support.google.com/analytics/answer/11403294?hl=en
@@ -33,7 +40,7 @@ export function usePageEffect(options?: Options, deps?: React.DependencyList) {
         page_path: `${location.pathname}${location.search}`,
       });
     }
-  }, [location]);
+  }, [location, options?.title, options?.trackPageView]);
 }
 
 type Options = {
