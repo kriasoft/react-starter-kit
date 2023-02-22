@@ -45,12 +45,7 @@ module.exports = {
       },
     },
     {
-      files: [
-        ".eslintrc.cjs",
-        "*/vite.config.ts",
-        "babel.config.cjs",
-        "scripts/**/*.js",
-      ],
+      files: [".eslintrc.cjs", "*/vite.config.ts", "scripts/**/*.js"],
       env: { node: true },
     },
     {
