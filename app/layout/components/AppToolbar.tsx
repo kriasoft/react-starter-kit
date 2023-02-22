@@ -15,9 +15,9 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { Link as NavLink } from "../../common/Link.js";
-import { ThemeButton } from "../../common/ThemeButton.js";
 import { useCurrentUser } from "../../core/auth.js";
 import { NotificationsMenu, UserMenu } from "../../menus/index.js";
+import { ThemeButton } from "./ThemeButton.js";
 
 export function AppToolbar(props: AppToolbarProps): JSX.Element {
   const { sx, ...other } = props;

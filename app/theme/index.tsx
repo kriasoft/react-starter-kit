@@ -1,7 +1,10 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { type PaletteMode } from "@mui/material";
+import {
+  ThemeProvider as MuiThemeProvider,
+  type PaletteMode,
+} from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import {
   atom,
@@ -89,4 +92,10 @@ export function useToggleTheme(name?: PaletteMode) {
     },
     [],
   );
+}
+
+export function ThemeProvider(props: {
+  children: React.ReactNode;
+}): JSX.Element {
+  return <MuiThemeProvider theme={useTheme()} {...props} />;
 }
