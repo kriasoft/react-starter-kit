@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 19
           cache: "yarn"
 
       # Install dependencies
@@ -27,7 +27,8 @@ jobs:
       - run: yarn tsc --build
 
       # Test
-      # - run: yarn test
+      - run: yarn workspace app test
+      - run: yarn workspace edge test
 
       # Compile
       - run: yarn build

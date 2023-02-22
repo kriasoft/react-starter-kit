@@ -4,20 +4,23 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "cf": "yarn run --top-level zx ../scripts/cf.js ${npm_package_name}",
-    "build": "yarn run --top-level rollup --config ../rollup.config.mjs --environment TARGET:${npm_package_name},BABEL_ENV:production",
-    "deploy": "yarn cf publish"
+    "build": "vite build",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "deploy": "node ../scripts/wrangler.js publish",
+    "wrangler": "node ../scripts/wrangler.js"
   },
   "dependencies": {
-    "@cloudflare/kv-asset-handler": "^0.3.0",
-    "hono": "^2.7.8"
+    "hono": "^3.0.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.19.0",
-    "@types/jest": "^29.4.0",
-    "@types/node": "^18.13.0",
+    "@cloudflare/workers-types": "^4.20230221.0",
+    "@types/node": "^18.14.0",
     "envars": "^0.4.0",
-    "typescript": "^4.9.5"
+    "toml": "^3.0.0",
+    "typescript": "^4.9.5",
+    "vite": "^4.1.2",
+    "vitest": "^0.28.5"
   },
   "envars": {
     "cwd": "../env"

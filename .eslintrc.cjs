@@ -45,15 +45,10 @@ module.exports = {
       },
     },
     {
-      files: ["*.test.js"],
-      env: { jest: true },
-    },
-    {
       files: [
         ".eslintrc.cjs",
-        "app/vite.config.ts",
+        "*/vite.config.ts",
         "babel.config.cjs",
-        "rollup.config.mjs",
         "scripts/**/*.js",
       ],
       env: { node: true },
@@ -76,7 +71,11 @@ module.exports = {
   settings: {
     "import/resolver": {
       typescript: {
-        project: ["app/tsconfig.json", "edge/tsconfig.json"],
+        project: [
+          "app/tsconfig.json",
+          "edge/tsconfig.json",
+          "scripts/tsconfig.json",
+        ],
       },
     },
     "import/core-modules": ["__STATIC_CONTENT_MANIFEST"],

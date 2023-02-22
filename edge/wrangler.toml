@@ -1,27 +1,30 @@
 # Cloudflare Workers configuration
 # https://developers.cloudflare.com/workers/wrangler/configuration/
 
-name = "$APP_NAME"
+name = "examlpe"
 main = "index.js"
 
 # https://developers.cloudflare.com/workers/platform/compatibility-dates/
-compatibility_date = "2022-04-18"
+compatibility_date = "2022-11-30"
 
-account_id = "$CLOUDFLARE_ACCOUNT_ID"
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
 
-route = "$APP_HOSTNAME/*"
+routes = [
+  { pattern = "${APP_HOSTNAME}/*", zone_id = "${CLOUDFLARE_ZONE_ID}" }
+]
+
+rules = [
+  { type = "ESModule", globs = ["dist/*.js"] },
+  { type = "Text", globs = ["dist/*.md"], fallthrough = true }
+]
 
 [vars]
-APP_ENV = "$APP_ENV"
-APP_NAME = "$APP_NAME"
-APP_HOSTNAME = "$APP_HOSTNAME"
+APP_ENV = "${APP_ENV}"
+APP_NAME = "${APP_NAME}"
+APP_HOSTNAME = "${APP_HOSTNAME}"
 
 # [secrets]
 # GOOGLE_CLOUD_CREDENTIALS
 
-[[rules]]
-type = "ESModule"
-globs = ["**/*.js"]
-
 [site]
-bucket = "../app/dist"
+bucket = "../../app/dist"
