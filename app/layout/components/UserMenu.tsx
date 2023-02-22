@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { Link as NavLink, useNavigate } from "react-router-dom";
-import { useSignOut } from "../core/auth.js";
-import { useTheme, useToggleTheme } from "../theme/index.js";
+import { useSignOut } from "../../core/auth.js";
+import { useTheme, useToggleTheme } from "../../theme/index.js";
 
 export function UserMenu(props: UserMenuProps): JSX.Element {
   const { PaperProps, MenuListProps, ...other } = props;
