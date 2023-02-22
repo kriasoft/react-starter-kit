@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import { AuthIcon } from "../../icons/AuthIcon.js";
+import { useTheme } from "../../theme/index.js";
 import {
   Props,
   useHandleChange,
@@ -29,6 +30,7 @@ import { Notice } from "./Notice.js";
  *    https://www.notion.so/signup
  */
 export default function Login(props: Props): JSX.Element {
+  const lightTheme = useTheme("light");
   const [state, setState] = useState(props);
   const handleChange = useHandleChange(setState);
   const handleSignIn = useHandleSignIn(setState);
@@ -141,7 +143,11 @@ export default function Login(props: Props): JSX.Element {
       />
 
       <Button
-        sx={{ backgroundColor: "white", order: isSignUp ? undefined : -2 }}
+        sx={{
+          color: lightTheme.palette.text.primary,
+          backgroundColor: "white",
+          order: isSignUp ? undefined : -2,
+        }}
         color="inherit"
         type="submit"
         variant="outlined"
@@ -154,7 +160,11 @@ export default function Login(props: Props): JSX.Element {
       />
 
       <Button
-        sx={{ backgroundColor: "white", order: isSignUp ? undefined : -2 }}
+        sx={{
+          color: lightTheme.palette.text.primary,
+          backgroundColor: "white",
+          order: isSignUp ? undefined : -2,
+        }}
         color="inherit"
         type="submit"
         variant="outlined"
@@ -167,7 +177,11 @@ export default function Login(props: Props): JSX.Element {
       />
 
       <Button
-        sx={{ backgroundColor: "white", order: isSignUp ? undefined : -2 }}
+        sx={{
+          color: lightTheme.palette.text.primary,
+          backgroundColor: "white",
+          order: isSignUp ? undefined : -2,
+        }}
         color="inherit"
         type="submit"
         variant="outlined"
