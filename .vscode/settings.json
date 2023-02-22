@@ -10,16 +10,6 @@
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "jest.jestCommandLine": "yarn node --experimental-vm-modules $(yarn bin jest)",
-  "jestrunner.jestCommand": "yarn node --experimental-vm-modules $(yarn bin jest)",
-  "jestrunner.enableYarnPnpSupport": true,
-  "jestrunner.yarnPnpCommand": "yarn-4.0.0-rc.39.cjs",
-  "jestrunner.debugOptions": {
-    "program": "yarn node $(yarn bin jest)",
-    "env": {
-      "NODE_OPTIONS": "--experimental-vm-modules"
-    }
-  },
   "files.exclude": {
     "**/.cache": true,
     "**/.DS_Store": true,
@@ -39,6 +29,15 @@
     "**/.yarn": true,
     "**/yarn-error.log": true,
     "**/yarn.lock": true
+  },
+  "terminal.integrated.env.linux": {
+    "CACHE_DIR": "${workspaceFolder}/.cache"
+  },
+  "terminal.integrated.env.osx": {
+    "CACHE_DIR": "${workspaceFolder}/.cache"
+  },
+  "terminal.integrated.env.windows": {
+    "CACHE_DIR": "${workspaceFolder}\\.cache"
   },
   "cSpell.ignoreWords": [
     "browserslist",
