@@ -27,6 +27,7 @@ jobs:
       - run: yarn tsc --build
 
       # Test
+      - run: yarn workspace api test
       - run: yarn workspace app test
       - run: yarn workspace edge test
 

@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "coverage": "vitest --coverage",
-    "deploy": "echo \"Not implemented\"; exit 1",
+    "deploy": "yarn workspace edge deploy",
     "app:start": "yarn workspace app start",
     "app:build": "yarn workspace app build",
     "app:preview": "yarn workspace app preview",
@@ -31,6 +31,7 @@
     "recoil": "^0.7.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.21.0",
     "@emotion/babel-plugin": "^11.10.6",
     "@types/node": "^18.14.0",
     "@types/react": "^18.0.28",

@@ -8,7 +8,13 @@ export function Logo(props: TypographyProps): JSX.Element {
 
   return (
     <Typography
-      sx={{ ...sx, fontSize: "1.5rem", fontWeight: 500 }}
+      sx={{
+        ...sx,
+        display: "flex",
+        alignItems: "center",
+        fontSize: "1.5rem",
+        fontWeight: 500,
+      }}
       variant="h1"
       {...other}
     >

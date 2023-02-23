@@ -20,6 +20,12 @@ app.get("/echo", ({ json, req }) => {
   });
 });
 
+app.all("/__/*", ({ req }) => {
+  const url = new URL(req.url);
+  const origin = "https://caia-app.web.app";
+  return fetch(`${origin}${url.pathname}${url.search}`, req);
+});
+
 // Rewrite HTTP requests starting with "/api/"
 // to the Star Wars API as an example
 app.use("/api/*", ({ req }) => {
@@ -37,7 +43,17 @@ const fallback = serveStatic({ path: "/index.html", manifest });
 app.use("*", async (ctx, next) => {
   const url = new URL(ctx.req.url);
 
-  const isKnownRoute = ["", "/", "/privacy", "/terms"].includes(url.pathname);
+  // Alternatively, import the list of routes from the `app` package
+  const isKnownRoute = [
+    "",
+    "/",
+    "/dashboard",
+    "/settings",
+    "/login",
+    "/signup",
+    "/privacy",
+    "/terms",
+  ].includes(url.pathname);
 
   // Serve index.html for known URL routes
   if (isKnownRoute) {
@@ -48,7 +64,7 @@ app.use("*", async (ctx, next) => {
   const res = await asset(ctx, next);
 
   // Serve index.html for unknown URL routes with 404 status code
-  if (res?.status === 404 && !getMimeType(url.pathname)) {
+  if (!res && !getMimeType(url.pathname)) {
     const res = await fallback(ctx, next);
 
     if (res) {

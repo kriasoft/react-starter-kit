@@ -36,6 +36,9 @@ export default defineConfig({
   // Unit testing configuration
   // https://vitest.dev/config/
   test: {
+    cache: {
+      dir: "../.cache/vitest-edge",
+    },
     deps: {
       registerNodeLoader: true,
       external: ["__STATIC_CONTENT_MANIFEST"],

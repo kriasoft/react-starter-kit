@@ -16,10 +16,6 @@ const [args, envName = "test"] = getArgs();
 // Load environment variables from `env/*.env` file(s)
 envars.config({ cwd: path.resolve(__dirname, "../env"), env: envName });
 
-if (!$.env.APP_HOSTNAME && $.env.APP_ORIGIN) {
-  $.env.APP_HOSTNAME = new URL($.env.APP_ORIGIN).hostname;
-}
-
 // Load Wrangler CLI configuration file
 let config = toml.parse(await fs.readFile("./wrangler.toml", "utf-8"));
 
@@ -55,9 +51,9 @@ const p = execa(
     "--experimental-json-config",
     "-c",
     "./dist/wrangler.json",
+    envName === "prod" ? undefined : `--env=${envName}`,
     ...args,
-    ...[envName === "prod" ? [] : [`--env=${envName}`]],
-  ],
+  ].filter(Boolean),
   {
     stdio: secret && $.env[secret] ? ["pipe", "inherit", "inherit"] : "inherit",
   },

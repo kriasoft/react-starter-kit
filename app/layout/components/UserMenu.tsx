@@ -34,7 +34,7 @@ export function UserMenu(props: UserMenuProps): JSX.Element {
       MenuListProps={{ ...MenuListProps, dense: true }}
       {...other}
     >
-      <MenuItem component={NavLink} to="/account" onClick={close}>
+      <MenuItem component={NavLink} to="/settings" onClick={close}>
         <ListItemIcon sx={{ minWidth: 40 }} children={<Settings />} />
         <ListItemText primary="Account Details" />
       </MenuItem>

@@ -30,6 +30,7 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 `├──`[`.github`](.github) — GitHub configuration including CI/CD workflows<br>
 `├──`[`.vscode`](.vscode) — VSCode settings including code snippets, recommended extensions etc.<br>
+`├──`[`api`](./api) — The API edge endpoint<br>
 `├──`[`app`](./app) — Web application front-end built with [React](https://reactjs.org/) and [Material UI](https://mui.com/core/)<br>
 `├──`[`edge`](./edge) — Cloudflare Workers (CDN) edge endpoint<br>
 `├──`[`env`](./env) — Application settings, API keys, etc.<br>
@@ -39,12 +40,9 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 ## Tech Stack
 
-- [React](https://reactjs.org/), [React Router](https://reactrouter.com/), [Recoil](https://recoiljs.org/),
-  [Emotion](https://emotion.sh/), [Material UI](https://next.material-ui.com/),
-  [Firebase Authentication](https://firebase.google.com/docs/auth)
-- [Vite](https://vitejs.dev/), [Vitest](https://vitejs.dev/),
-  [TypeScript](https://www.typescriptlang.org/), [ESLint](https://eslint.org/),
-  [Prettier](https://prettier.io/), [Yarn](https://yarnpkg.com/) with PnP
+- [React](https://reactjs.org/), [React Router](https://reactrouter.com/), [Recoil](https://recoiljs.org/), [Emotion](https://emotion.sh/), [Material UI](https://next.material-ui.com/), [Firebase Authentication](https://firebase.google.com/docs/auth)
+- [Cloudflare Workers](https://workers.cloudflare.com/), [Vite](https://vitejs.dev/), [Vitest](https://vitejs.dev/),
+  [TypeScript](https://www.typescriptlang.org/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [Yarn](https://yarnpkg.com/) with PnP
 
 ## Requirements
 
