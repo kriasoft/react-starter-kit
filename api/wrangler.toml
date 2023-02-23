@@ -1,0 +1,31 @@
+# Cloudflare Workers configuration
+# https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "caia-api"
+main = "index.js"
+
+# https://developers.cloudflare.com/workers/platform/compatibility-dates/
+compatibility_date = "2022-11-30"
+
+account_id = "3334c6b5a421ca85aea19d886d81b333"
+
+routes = [
+  { pattern = "caia.com/api/*", zone_id = "b660e5a49031a2482c473690204734d7" },
+  { pattern = "caia.com/auth/*", zone_id = "b660e5a49031a2482c473690204734d7" },
+]
+
+rules = [
+  { type = "ESModule", globs = ["dist/*.js"] },
+  { type = "Text", globs = ["dist/*.md"], fallthrough = true }
+]
+
+[vars]
+APP_ENV = "prod"
+APP_NAME = "caia"
+APP_HOSTNAME = "caia.app"
+
+# [secrets]
+# GOOGLE_CLOUD_CREDENTIALS
+
+[env.test]
+name = "caia-api-test"

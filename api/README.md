@@ -1,6 +1,6 @@
-# CDN edge endpoint
+# API Endpoint
 
-CDN edge endpoint powered by [Cloudflare Workers](https://workers.cloudflare.com/) that serves the front-end app.
+GraphQL or RESTful API endpoint to be used by the front-end app.
 
 ## Directory Structure
 
@@ -15,9 +15,8 @@ CDN edge endpoint powered by [Cloudflare Workers](https://workers.cloudflare.com
 ## Getting Started
 
 ```
-$ yarn workspace app build
-$ yarn workspace edge build
-$ yarn workspace edge deploy [--env #0]
+$ yarn workspace api build
+$ yarn workspace api deploy [--env #0]
 ```
 
 ## Scripts

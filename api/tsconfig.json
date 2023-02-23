@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "types": ["@cloudflare/workers-types", "vite/client"],
+    "outDir": "../.cache/typescript-api"
+  },
+  "include": ["**/*.ts", "**/*.json"],
+  "exclude": ["dist/**/*"]
+}

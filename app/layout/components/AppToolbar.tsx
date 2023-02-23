@@ -11,11 +11,11 @@ import {
   IconButton,
   Link,
   Toolbar,
-  Typography,
 } from "@mui/material";
 import * as React from "react";
 import { Link as NavLink } from "../../common/Link.js";
 import { useCurrentUser } from "../../core/auth.js";
+import { Logo } from "./Logo.js";
 import { NotificationsMenu } from "./NotificationsMenu.js";
 import { ThemeButton } from "./ThemeButton.js";
 import { UserMenu } from "./UserMenu.js";
@@ -56,11 +56,9 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
       <Toolbar>
         {/* App name / logo */}
 
-        <Typography variant="h1" sx={{ fontSize: "1.5rem", fontWeight: 500 }}>
-          <Link color="inherit" underline="none" href="/" component={NavLink}>
-            {import.meta.env.VITE_APP_NAME}
-          </Link>
-        </Typography>
+        <Link color="inherit" underline="none" href="/" component={NavLink}>
+          <Logo />
+        </Link>
 
         <span style={{ flexGrow: 1 }} />
 
@@ -129,7 +127,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             component={NavLink}
             variant="text"
             href="/login"
-            color="primary"
+            color="inherit"
             children="Log in"
           />
         )}
@@ -138,7 +136,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             component={NavLink}
             variant="outlined"
             href="/signup"
-            color="primary"
+            color="inherit"
             children="Create an account"
           />
         )}

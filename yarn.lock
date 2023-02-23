@@ -31,7 +31,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.20.12":
+"@babel/core@npm:^7.20.12, @babel/core@npm:^7.21.0":
   version: 7.21.0
   resolution: "@babel/core@npm:7.21.0"
   dependencies:
@@ -2506,10 +2506,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"api@workspace:api":
+  version: 0.0.0-use.local
+  resolution: "api@workspace:api"
+  dependencies:
+    "@cloudflare/workers-types": "npm:^4.20230221.0"
+    dotenv: "npm:^16.0.3"
+    hono: "npm:^3.0.1"
+    toml: "npm:^3.0.0"
+    typescript: "npm:^4.9.5"
+    vite: "npm:^4.1.4"
+    vitest: "npm:^0.28.5"
+  languageName: unknown
+  linkType: soft
+
 "app@workspace:app":
   version: 0.0.0-use.local
   resolution: "app@workspace:app"
   dependencies:
+    "@babel/core": "npm:^7.21.0"
     "@babel/runtime": "npm:^7.21.0"
     "@emotion/babel-plugin": "npm:^11.10.6"
     "@emotion/react": "npm:^11.10.6"
@@ -3320,7 +3335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0":
+"dotenv@npm:^16.0.0, dotenv@npm:^16.0.3":
   version: 16.0.3
   resolution: "dotenv@npm:16.0.3"
   checksum: abce82d99b45e2ebbd42625a78cadbfafe03072c15e6538b6a3a7ed204b6e091c0de929dd09231edc61f78afbdcd5b8a2f21b9e933e8ab27d75bee865a0e58c9

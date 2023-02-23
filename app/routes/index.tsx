@@ -42,7 +42,10 @@ export const router = createBrowserRouter([
       {
         path: "settings",
         element: <SettingsLayout />,
-        children: [{ path: "account", element: <AccountDetails /> }],
+        children: [
+          { index: true, element: <Navigate to="/settings/account" /> },
+          { path: "account", element: <AccountDetails /> },
+        ],
       },
     ],
   },

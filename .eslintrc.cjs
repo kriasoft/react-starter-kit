@@ -67,6 +67,7 @@ module.exports = {
     "import/resolver": {
       typescript: {
         project: [
+          "api/tsconfig.json",
           "app/tsconfig.json",
           "edge/tsconfig.json",
           "scripts/tsconfig.json",
