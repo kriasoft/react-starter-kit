@@ -3,6 +3,10 @@
 
 import { Hono } from "hono";
 
+/**
+ * Application router for Cloudflare Workers
+ * @see https://honojs.dev/
+ */
 const app = new Hono<Env>();
 
 // An example of forwarding HTTP requests to a 3rd party API
