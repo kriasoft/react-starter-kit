@@ -13,6 +13,7 @@ declare type Bindings = {
   FIREBASE_APP_ID: string;
   FIREBASE_API_KEY: string;
   FIREBASE_AUTH_DOMAIN: string;
+  GOOGLE_CLOUD_PROJECT: string;
   GOOGLE_CLOUD_CREDENTIALS: string;
   __STATIC_CONTENT: KVNamespace;
 };

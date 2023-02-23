@@ -1,17 +1,16 @@
 # Cloudflare Workers configuration
 # https://developers.cloudflare.com/workers/wrangler/configuration/
 
-name = "caia-api"
+name = "example-api"
 main = "index.js"
 
 # https://developers.cloudflare.com/workers/platform/compatibility-dates/
 compatibility_date = "2022-11-30"
 
-account_id = "3334c6b5a421ca85aea19d886d81b333"
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
 
 routes = [
-  { pattern = "caia.com/api/*", zone_id = "b660e5a49031a2482c473690204734d7" },
-  { pattern = "caia.com/auth/*", zone_id = "b660e5a49031a2482c473690204734d7" },
+  { pattern = "${APP_HOSTNAME}/api/*", zone_id = "${CLOUDFLARE_ZONE_ID}" }
 ]
 
 rules = [
@@ -20,12 +19,12 @@ rules = [
 ]
 
 [vars]
-APP_ENV = "prod"
-APP_NAME = "caia"
-APP_HOSTNAME = "caia.app"
+APP_ENV = "${APP_ENV}"
+APP_NAME = "${APP_NAME}"
+APP_HOSTNAME = "${APP_HOSTNAME}"
 
 # [secrets]
 # GOOGLE_CLOUD_CREDENTIALS
 
 [env.test]
-name = "caia-api-test"
+name = "example-api-test"
