@@ -10,7 +10,7 @@ import manifestJson from "__STATIC_CONTENT_MANIFEST";
  * Application router for Cloudflare Workers
  * @see https://honojs.dev/
  */
-const app = new Hono();
+const app = new Hono<Env>();
 const manifest = JSON.parse(manifestJson);
 
 app.get("/echo", ({ json, req }) => {
@@ -20,9 +20,9 @@ app.get("/echo", ({ json, req }) => {
   });
 });
 
-app.all("/__/*", ({ req }) => {
+app.all("/__/*", ({ req, env }) => {
   const url = new URL(req.url);
-  const origin = "https://caia-app.web.app";
+  const origin = `https://${env.GOOGLE_CLOUD_PROJECT}.web.app`;
   return fetch(`${origin}${url.pathname}${url.search}`, req);
 });
 
