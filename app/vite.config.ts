@@ -3,24 +3,39 @@
 
 import react from "@vitejs/plugin-react";
 import envars from "envars";
+import { URL } from "node:url";
 import { defineConfig } from "vitest/config";
+import { Config, EnvName } from "./core/config.js";
 
-// Load environment variables for the target environment
-envars.config();
+// The list of supported environments
+const envNames: EnvName[] = ["prod", "test", "local"];
 
-// Tells Vite which environment variables need to be injected into the app
+// Bootstrap client-side configuration from environment variables
+const configs = envNames.map((envName): [EnvName, Config] => {
+  const env = envars.config({ env: envName, cwd: "../env" });
+  return [
+    envName,
+    {
+      app: {
+        env: envName,
+        name: env.APP_NAME,
+        origin: env.APP_ORIGIN,
+        hostname: new URL(env.APP_ORIGIN).hostname,
+      },
+      firebase: {
+        projectId: env.GOOGLE_CLOUD_PROJECT,
+        appId: env.FIREBASE_APP_ID,
+        apiKey: env.FIREBASE_API_KEY,
+        authDomain: env.FIREBASE_AUTH_DOMAIN,
+        measurementId: env.GA_MEASUREMENT_ID,
+      },
+    },
+  ];
+});
+
+// Pass client-side configuration to the web app
 // https://vitejs.dev/guide/env-and-mode.html#env-variables-and-modes
-[
-  "APP_ENV",
-  "APP_NAME",
-  "APP_ORIGIN",
-  "APP_HOSTNAME",
-  "GOOGLE_CLOUD_PROJECT",
-  "FIREBASE_APP_ID",
-  "FIREBASE_API_KEY",
-  "FIREBASE_AUTH_DOMAIN",
-  "GA_MEASUREMENT_ID",
-].forEach((key) => (process.env[`VITE_${key}`] = process.env[key]));
+process.env.VITE_CONFIG = JSON.stringify(Object.fromEntries(configs));
 
 /**
  * Vite configuration
