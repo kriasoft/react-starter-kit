@@ -3,9 +3,10 @@
   "compilerOptions": {
     "composite": true,
     "moduleResolution": "Node",
+    "types": ["vite/client"],
     "allowSyntheticDefaultImports": true,
     "outDir": "../.cache/typescript-app",
     "emitDeclarationOnly": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "core/config.ts"]
 }

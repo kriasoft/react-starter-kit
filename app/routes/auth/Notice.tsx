@@ -2,6 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import { Link, Typography, TypographyProps } from "@mui/material";
+import { config } from "../../core/config.js";
 
 export function Notice(props: NoticeProps): JSX.Element {
   const { sx, ...other } = props;
@@ -20,7 +21,7 @@ export function Notice(props: NoticeProps): JSX.Element {
     >
       <span>
         By clicking Continue above, your acknowledge that your have read and
-        understood, and agree to {import.meta.env.VITE_APP_NAME}&apos;s
+        understood, and agree to {config.app.name}&apos;s
       </span>{" "}
       <Link color="inherit" href="/terms">
         Terms & Conditions

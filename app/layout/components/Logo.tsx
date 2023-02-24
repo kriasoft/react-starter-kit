@@ -2,6 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import { Typography, TypographyProps } from "@mui/material";
+import { config } from "../../core/config.js";
 
 export function Logo(props: TypographyProps): JSX.Element {
   const { sx, ...other } = props;
@@ -18,7 +19,7 @@ export function Logo(props: TypographyProps): JSX.Element {
       variant="h1"
       {...other}
     >
-      {import.meta.env.VITE_APP_NAME}
+      {config.app.name}
     </Typography>
   );
 }
