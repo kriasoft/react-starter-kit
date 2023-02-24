@@ -1,6 +1,15 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import envars from "envars";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { parse as parseToml } from "toml";
+
+export const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
+export const envDir = resolve(rootDir, "env");
+
 /**
  * Get the arguments passed to the script.
  *
@@ -26,4 +35,18 @@ export function getArgs() {
   }
 
   return [args, envName];
+}
+
+/**
+ * Load environment variables used in the Cloudflare Worker.
+ */
+export function getCloudflareBindings() {
+  const env = envars.config({ cwd: envDir });
+  let config = parseToml(readFileSync("./wrangler.toml", "utf-8"));
+
+  return JSON.parse(JSON.stringify(config.vars), (key, value) => {
+    return typeof value === "string"
+      ? value.replace(/\$\{?([\w]+)\}?/g, (_, key) => env[key])
+      : value;
+  });
 }
