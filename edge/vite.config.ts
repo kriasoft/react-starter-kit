@@ -1,11 +1,8 @@
 /* SPDX-FileCopyrightText: 2020-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { readFileSync } from "node:fs";
-import { parse } from "toml";
 import { defineConfig } from "vitest/config";
-
-const config = parse(readFileSync("./wrangler.toml", "utf8"));
+import { getCloudflareBindings } from "../scripts/utils.js";
 
 export default defineConfig({
   cacheDir: "../.cache/vite-edge",
@@ -30,7 +27,7 @@ export default defineConfig({
   },
 
   define: {
-    bindings: JSON.stringify(config.vars),
+    bindings: JSON.stringify(getCloudflareBindings()),
   },
 
   // Unit testing configuration

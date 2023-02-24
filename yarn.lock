@@ -1351,6 +1351,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hono/zod-validator@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "@hono/zod-validator@npm:0.0.6"
+  peerDependencies:
+    hono: 3.*
+    zod: ^3.19.1
+  checksum: b806751713410a90ee454ffeca684b0974f93f96a1125107771491e8f1b4287cb91a463a7fccd4c053657a74deefe9402655ac9f12690dd465cb6e4757afeec1
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.11.8":
   version: 0.11.8
   resolution: "@humanwhocodes/config-array@npm:0.11.8"
@@ -2511,12 +2521,13 @@ __metadata:
   resolution: "api@workspace:api"
   dependencies:
     "@cloudflare/workers-types": "npm:^4.20230221.0"
-    dotenv: "npm:^16.0.3"
+    "@hono/zod-validator": "npm:^0.0.6"
+    "@types/node": "npm:^18.14.1"
     hono: "npm:^3.0.1"
-    toml: "npm:^3.0.0"
     typescript: "npm:^4.9.5"
     vite: "npm:^4.1.4"
     vitest: "npm:^0.28.5"
+    zod: "npm:^3.20.6"
   languageName: unknown
   linkType: soft
 
@@ -3335,7 +3346,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0, dotenv@npm:^16.0.3":
+"dotenv@npm:^16.0.0":
   version: 16.0.3
   resolution: "dotenv@npm:16.0.3"
   checksum: abce82d99b45e2ebbd42625a78cadbfafe03072c15e6538b6a3a7ed204b6e091c0de929dd09231edc61f78afbdcd5b8a2f21b9e933e8ab27d75bee865a0e58c9
@@ -8100,6 +8111,13 @@ __metadata:
     mustache: "npm:^4.2.0"
     stack-trace: "npm:0.0.10"
   checksum: 534b1ae2266ed3976cc0fa9c32af5b78f7522cfbe214f5184547821c20447bb98a0f20e6d9c534f656d1e555a8dd927e0d3f0ea4f717a688005c326ced8ad2e6
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.20.6":
+  version: 3.20.6
+  resolution: "zod@npm:3.20.6"
+  checksum: 27120c04343f4843cd1a5fe18b9505aaf4618d3583e23a30ee80bcba77cb75f8c0fd71565d783d3a79e199722a0f7a30372f6b622256f1e2a3ab403ebfb60164
   languageName: node
   linkType: hard
 

@@ -4,9 +4,10 @@ GraphQL or RESTful API endpoint to be used by the front-end app.
 
 ## Directory Structure
 
-`├──`[`dist`](./dist) — The compiled output<br>
+`├──`[`core`](./core) — Core application modules<br>
+`├──`[`routes`](./routes) — API routes (endpoints)<br>
 `├──`[`global.d.ts`](./global.d.ts) — Global TypeScript declarations<br>
-`├──`[`index.ts`](./index.tsx) — API entry point<br>
+`├──`[`index.ts`](./index.tsx) — Cloudflare Worker entry point<br>
 `├──`[`package.json`](./package.json) — The list of dependencies<br>
 `├──`[`tsconfig.ts`](./tsconfig.json) — TypeScript configuration ([docs](https://www.typescriptlang.org/tsconfig))<br>
 `├──`[`vite.config.ts`](./vite.config.ts) — JavaScript bundler configuration ([docs](https://vitejs.dev/config/))<br>
@@ -14,10 +15,26 @@ GraphQL or RESTful API endpoint to be used by the front-end app.
 
 ## Getting Started
 
+Test the app locally using [Vitest](https://vitejs.dev/):
+
+```
+$ yarn workspace api test
+```
+
+Build and deploy the app by running:
+
 ```
 $ yarn workspace api build
 $ yarn workspace api deploy [--env #0]
 ```
+
+Start a session to livestream logs from a deployed Worker:
+
+```
+$ yarn workspace api wrangler tail [--env #0]
+```
+
+Where `--env` is one of the supported environments, such as `--env=prod`, `--env=test` (default).
 
 ## Scripts
 
@@ -25,6 +42,7 @@ $ yarn workspace api deploy [--env #0]
 - `test` — Run unit tests
 - `coverage` — Run unit tests with enabled coverage report
 - `deploy [--env #0]` — Deploy the app to Cloudflare (CDN)
+- `wrangler [--env #0]` — Wrangler CLI (wrapper)
 
 ## References
 

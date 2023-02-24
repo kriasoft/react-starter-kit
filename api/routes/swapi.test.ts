@@ -2,11 +2,11 @@
 /* SPDX-License-Identifier: MIT */
 
 import { expect, test } from "vitest";
-import app from "./index.js";
+import { handler } from "./swapi.js";
 
 test("GET /api/people/1", async () => {
-  const req = new Request("http://0.0.0.0/api/people/1");
-  const res = await app.fetch(req, bindings);
+  const req = new Request(`https://${bindings.APP_HOSTNAME}/api/people/1`);
+  const res = await handler.fetch(req, bindings);
   const body = await res.json();
 
   expect({ status: res.status, body }).toEqual({

@@ -1,23 +1,24 @@
 /* SPDX-FileCopyrightText: 2020-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { readFileSync } from "node:fs";
-import { parse } from "toml";
 import { defineConfig } from "vitest/config";
-
-const config = parse(readFileSync("./wrangler.toml", "utf8"));
+import { getCloudflareBindings } from "../scripts/utils.js";
 
 export default defineConfig({
   cacheDir: "../.cache/vite-api",
   build: {
     lib: {
-      name: "api",
       entry: "index.ts",
       fileName: "index",
       formats: ["es"],
     },
   },
   define: {
-    bindings: JSON.stringify(config.vars),
+    bindings: JSON.stringify(getCloudflareBindings()),
+  },
+  test: {
+    cache: {
+      dir: "../.cache/vitest-api",
+    },
   },
 });

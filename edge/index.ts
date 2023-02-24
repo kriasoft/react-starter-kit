@@ -49,6 +49,7 @@ app.use("*", async (ctx, next) => {
     "/",
     "/dashboard",
     "/settings",
+    "/settings/account",
     "/login",
     "/signup",
     "/privacy",

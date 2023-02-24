@@ -14,11 +14,27 @@ CDN edge endpoint powered by [Cloudflare Workers](https://workers.cloudflare.com
 
 ## Getting Started
 
+Test the app locally using [Vitest](https://vitejs.dev/):
+
+```
+$ yarn workspace edge test
+```
+
+Build and deploy the app by running:
+
 ```
 $ yarn workspace app build
 $ yarn workspace edge build
 $ yarn workspace edge deploy [--env #0]
 ```
+
+Start a session to livestream logs from a deployed Worker:
+
+```
+$ yarn workspace edge wrangler tail [--env #0]
+```
+
+Where `--env` is one of the supported environments, such as `--env=prod`, `--env=test` (default).
 
 ## Scripts
 
@@ -26,6 +42,7 @@ $ yarn workspace edge deploy [--env #0]
 - `test` — Run unit tests
 - `coverage` — Run unit tests with enabled coverage report
 - `deploy [--env #0]` — Deploy the app to Cloudflare (CDN)
+- `wrangler [--env #0]` — Wrangler CLI (wrapper)
 
 ## References
 
