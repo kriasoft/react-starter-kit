@@ -30,7 +30,6 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 `├──`[`.github`](.github) — GitHub configuration including CI/CD workflows<br>
 `├──`[`.vscode`](.vscode) — VSCode settings including code snippets, recommended extensions etc.<br>
-`├──`[`api`](./api) — The API edge endpoint<br>
 `├──`[`app`](./app) — Web application front-end built with [React](https://reactjs.org/) and [Material UI](https://mui.com/core/)<br>
 `├──`[`edge`](./edge) — Cloudflare Workers (CDN) edge endpoint<br>
 `├──`[`env`](./env) — Application settings, API keys, etc.<br>

@@ -44,9 +44,13 @@ export function getCloudflareBindings() {
   const env = envars.config({ cwd: envDir });
   let config = parseToml(readFileSync("./wrangler.toml", "utf-8"));
 
-  return JSON.parse(JSON.stringify(config.vars), (key, value) => {
-    return typeof value === "string"
-      ? value.replace(/\$\{?([\w]+)\}?/g, (_, key) => env[key])
-      : value;
-  });
+  return {
+    SENDGRID_API_KEY: env.SENDGRID_API_KEY,
+    GOOGLE_CLOUD_CREDENTIALS: env.GOOGLE_CLOUD_CREDENTIALS,
+    ...JSON.parse(JSON.stringify(config.vars), (key, value) => {
+      return typeof value === "string"
+        ? value.replace(/\$\{?([\w]+)\}?/g, (_, key) => env[key])
+        : value;
+    }),
+  };
 }

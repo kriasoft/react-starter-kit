@@ -4,9 +4,10 @@ CDN edge endpoint powered by [Cloudflare Workers](https://workers.cloudflare.com
 
 ## Directory Structure
 
-`├──`[`dist`](./dist) — The compiled output<br>
+`├──`[`core`](./core) — Core application modules<br>
+`├──`[`routes`](./routes) — API routes (endpoints)<br>
 `├──`[`global.d.ts`](./global.d.ts) — Global TypeScript declarations<br>
-`├──`[`index.ts`](./index.tsx) — API entry point<br>
+`├──`[`index.ts`](./index.tsx) — Cloudflare Worker entry point<br>
 `├──`[`package.json`](./package.json) — The list of dependencies<br>
 `├──`[`tsconfig.ts`](./tsconfig.json) — TypeScript configuration ([docs](https://www.typescriptlang.org/tsconfig))<br>
 `├──`[`vite.config.ts`](./vite.config.ts) — JavaScript bundler configuration ([docs](https://vitejs.dev/config/))<br>
