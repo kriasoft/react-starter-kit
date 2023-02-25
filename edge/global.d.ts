@@ -15,13 +15,13 @@ declare type Bindings = {
   FIREBASE_AUTH_DOMAIN: string;
   GOOGLE_CLOUD_PROJECT: string;
   GOOGLE_CLOUD_CREDENTIALS: string;
+  SENDGRID_API_KEY: string;
+  FROM_EMAIL: string;
   __STATIC_CONTENT: KVNamespace;
 };
 
 declare type Env = {
   Bindings: Bindings;
 };
-
-declare const bindings: Bindings;
 
 declare function getMiniflareBindings<T = Bindings>(): T;

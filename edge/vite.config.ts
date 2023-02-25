@@ -22,12 +22,8 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      ["__STATIC_CONTENT_MANIFEST"]: "./manifest.ts",
+      ["__STATIC_CONTENT_MANIFEST"]: "./core/manifest.ts",
     },
-  },
-
-  define: {
-    bindings: JSON.stringify(getCloudflareBindings()),
   },
 
   // Unit testing configuration
@@ -39,6 +35,10 @@ export default defineConfig({
     deps: {
       registerNodeLoader: true,
       external: ["__STATIC_CONTENT_MANIFEST"],
+    },
+    environment: "miniflare",
+    environmentOptions: {
+      bindings: getCloudflareBindings(),
     },
   },
 });

@@ -23,9 +23,13 @@ APP_ENV = "${APP_ENV}"
 APP_NAME = "${APP_NAME}"
 APP_HOSTNAME = "${APP_HOSTNAME}"
 GOOGLE_CLOUD_PROJECT = "${GOOGLE_CLOUD_PROJECT}"
+FROM_EMAIL = "${FROM_EMAIL}"
 
 # [secrets]
 # GOOGLE_CLOUD_CREDENTIALS
 
 [site]
 bucket = "../../app/dist"
+
+[env.test]
+name = "example-test"

@@ -22,6 +22,8 @@ for (const env of environments) {
         `# Overrides for the "${env.name}" (${env.description}) environment`,
         "#",
         "# CLOUDFLARE_API_TOKEN=xxxxx",
+        "# GOOGLE_CLOUD_CREDENTIALS=xxxxx",
+        "# SENDGRID_API_KEY=xxxxx",
         "#",
         "",
       ].join(EOL),
