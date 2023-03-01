@@ -1,35 +1,18 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import envars from "envars";
 import { execa } from "execa";
-import { template } from "lodash-es";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import * as toml from "toml";
 import { $, fs } from "zx";
-import { getArgs } from "./utils.js";
+import { getArgs, readWranglerConfig } from "./utils.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const [args, envName = "test"] = getArgs();
 
-// Load environment variables from `env/*.env` file(s)
-envars.config({ cwd: path.resolve(__dirname, "../env"), env: envName });
-
-// Load Wrangler CLI configuration file
-let config = toml.parse(await fs.readFile("./wrangler.toml", "utf-8"));
-
-// Interpolate environment variables
-config = JSON.parse(JSON.stringify(config), (key, value) => {
-  return typeof value === "string"
-    ? template(value, {
-        interpolate: /\$\{?([\w]+)\}?/,
-      })($.env)
-    : value;
-});
-
-// Serialize and save Wrangler configuration to ./dist/wrangler.json
-config = JSON.stringify(config, null, 2);
+// Interpolate and save Wrangler configuration to ./dist/wrangler.json
+let config = await readWranglerConfig("./wrangler.toml", envName);
+config = JSON.stringify(config, null, "  ");
 await fs.writeFile("./dist/wrangler.json", config, "utf-8");
 
 const wranglerBin = await execa("yarn", ["bin", "wrangler"], {

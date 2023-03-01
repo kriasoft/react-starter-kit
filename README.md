@@ -63,7 +63,7 @@ $ yarn install
 $ yarn start
 ```
 
-The app will become available at [http://localhost:5173/](http://localhost:5173/).
+The app will become available at [http://localhost:5173/](http://localhost:5173/) (press `q` key to exit).
 
 **IMPORTANT**: Ensure that VSCode is using the workspace [version of TypeScript](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-newer-typescript-versions)
 and ESLint.

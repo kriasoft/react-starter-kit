@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "postinstall": "husky install && node ./scripts/postinstall.js",
-    "update-schema": "zx ./scripts/update-schema.js",
-    "start": "zx ./scripts/start.js",
+    "update-schema": "node ./scripts/update-schema.js",
+    "start": "node --experimental-vm-modules ./scripts/start.js",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "yarn workspaces foreach -ti run test",
     "build": "yarn workspaces foreach -ti run build",
@@ -21,9 +21,9 @@
   "devDependencies": {
     "@emotion/eslint-plugin": "^11.10.0",
     "@types/eslint": "^8.21.1",
-    "@typescript-eslint/eslint-plugin": "^5.53.0",
-    "@typescript-eslint/parser": "^5.53.0",
-    "eslint": "^8.34.0",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint": "^8.35.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-import-resolver-typescript": "^3.5.3",
     "eslint-plugin-import": "^2.27.5",

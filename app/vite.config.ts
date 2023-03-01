@@ -69,7 +69,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: process.env.API_ORIGIN,
+        target: process.env.LOCAL_API_ORIGIN ?? process.env.API_ORIGIN,
         changeOrigin: true,
       },
     },
