@@ -5,10 +5,10 @@ import { execa } from "execa";
 import getPort, { portNumbers } from "get-port";
 import { debounce } from "lodash-es";
 import { Log, LogLevel, Miniflare } from "miniflare";
-import { getArgs, readWranglerConfig } from "./utils.js";
+import { getArgs, getCloudflareBindings, readWranglerConfig } from "./utils.js";
 
 const [args, envName = "local"] = getArgs();
-const edgeConfig = readWranglerConfig("edge/wrangler.toml", envName);
+const edgeConfig = await readWranglerConfig("edge/wrangler.toml", envName);
 
 // Build the "edge" (CDN edge endpoint) package in "watch" mode using Vite
 const edge = execa(
@@ -48,7 +48,7 @@ mf = new Miniflare({
   upstream: process.env.APP_ORIGIN,
   routes: ["*/*"],
   logUnhandledRejections: true,
-  bindings: edgeConfig.vars,
+  bindings: getCloudflareBindings("edge/wrangler.toml", envName),
   port,
 });
 

@@ -48,8 +48,8 @@ export function getCloudflareBindings(file = "wrangler.toml", envName) {
   let config = parseToml(readFileSync(file, "utf-8"));
 
   return {
-    SENDGRID_API_KEY: env.SENDGRID_API_KEY,
-    GOOGLE_CLOUD_CREDENTIALS: env.GOOGLE_CLOUD_CREDENTIALS,
+    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+    GOOGLE_CLOUD_CREDENTIALS: process.env.GOOGLE_CLOUD_CREDENTIALS,
     ...JSON.parse(JSON.stringify(config.vars), (key, value) => {
       return typeof value === "string"
         ? value.replace(/\$\{?([\w]+)\}?/g, (_, key) => env[key])

@@ -2591,7 +2591,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-router-dom: "npm:^6.8.2"
-    recoil: "npm:^0.7.6"
+    recoil: "npm:^0.7.7"
     typescript: "npm:^4.9.5"
     vite: "npm:^4.1.4"
     vitest: "npm:^0.29.2"
@@ -3418,6 +3418,7 @@ __metadata:
     vite: "npm:^4.1.4"
     vitest: "npm:^0.29.2"
     vitest-environment-miniflare: "npm:^2.12.1"
+    web-auth-library: "npm:^1.0.1"
     zod: "npm:^3.20.6"
   languageName: unknown
   linkType: soft
@@ -5208,7 +5209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jose@npm:^4.13.0":
+"jose@npm:>= 4.12.0 < 5.0.0, jose@npm:^4.13.0":
   version: 4.13.0
   resolution: "jose@npm:4.13.0"
   checksum: b50849fac40ba42fe0a95e39c316627877122bab7cade7cf7d34ffe115d100f07f46428c4335b716fbcc1ee9c331acecea2c7e14894c159202cd0a3349543546
@@ -6695,9 +6696,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.7.6":
-  version: 0.7.6
-  resolution: "recoil@npm:0.7.6"
+"recoil@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "recoil@npm:0.7.7"
   dependencies:
     hamt_plus: "npm:1.0.2"
   peerDependencies:
@@ -6707,7 +6708,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 42fd256e35e03dcce4dfa94089ef718cb2b6983c1e6802d6373a523ecc5d7f28deede6ede1aa2a441e1ee547a38acd96dd1a9890f658835b77dd7635d1ed21fe
+  checksum: 62b45949c0e47a6df2365f52cca67cb953173fef630ec3e2bfedb78f25212f4420c58d583a3aad68651d2301163ef869eeb738779e17687007f2842391d70479
   languageName: node
   linkType: hard
 
@@ -6855,6 +6856,13 @@ __metadata:
   version: 1.0.4
   resolution: "reusify@npm:1.0.4"
   checksum: 3d0f10293851d5a50453257bb837ad973b046fc51fa489c46f3a480e0e3a9cf249babb30a493ad5f802a71510b2ee4e65a4609a644f98b3413575ab707f841d7
+  languageName: node
+  linkType: hard
+
+"rfc4648@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "rfc4648@npm:1.5.2"
+  checksum: 96ef88d246ea65f1b268c388801b2c7fc5d7d0d75875e949bfb692476fc4c94b6edf50606b245ddc1a25b2e0ef2c83261b56267e47f29401ba91da24cb9ca1f9
   languageName: node
   linkType: hard
 
@@ -7909,6 +7917,16 @@ __metadata:
   bin:
     vitest: vitest.mjs
   checksum: 9029f904e98b4d7797a984e5f551d1b8d5b06b44d31bbe1e2b43ec26b34276522663db33c90286b7495daa767af0dc8f7d99505870984f318315557643071299
+  languageName: node
+  linkType: hard
+
+"web-auth-library@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "web-auth-library@npm:1.0.1"
+  dependencies:
+    jose: "npm:>= 4.12.0 < 5.0.0"
+    rfc4648: "npm:^1.5.2"
+  checksum: 71edf7627a1c47efec7eabfa6fd557f1886b17a72850bf0715b850cfe21251cf96c9d054bed8ee81728e4baf106ca35e40516b2e314aa0bd164107ae3f512dea
   languageName: node
   linkType: hard
 
