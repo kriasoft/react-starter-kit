@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 2020-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 import { getCloudflareBindings } from "../scripts/utils.js";
 
@@ -22,7 +23,7 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      ["__STATIC_CONTENT_MANIFEST"]: "./core/manifest.ts",
+      ["__STATIC_CONTENT_MANIFEST"]: resolve("./core/manifest.ts"),
     },
   },
 

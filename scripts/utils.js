@@ -2,10 +2,13 @@
 /* SPDX-License-Identifier: MIT */
 
 import envars from "envars";
+import { template } from "lodash-es";
 import { readFileSync } from "node:fs";
+import fs from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseToml } from "toml";
+import { $ } from "zx";
 
 export const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
 export const envDir = resolve(rootDir, "env");
@@ -40,9 +43,9 @@ export function getArgs() {
 /**
  * Load environment variables used in the Cloudflare Worker.
  */
-export function getCloudflareBindings() {
-  const env = envars.config({ cwd: envDir });
-  let config = parseToml(readFileSync("./wrangler.toml", "utf-8"));
+export function getCloudflareBindings(file = "wrangler.toml", envName) {
+  const env = envars.config({ cwd: envDir, env: envName });
+  let config = parseToml(readFileSync(file, "utf-8"));
 
   return {
     SENDGRID_API_KEY: env.SENDGRID_API_KEY,
@@ -53,4 +56,21 @@ export function getCloudflareBindings() {
         : value;
     }),
   };
+}
+
+export async function readWranglerConfig(file, envName = "test") {
+  // Load environment variables from `env/*.env` file(s)
+  envars.config({ cwd: resolve(rootDir, "env"), env: envName });
+
+  // Load Wrangler CLI configuration file
+  let config = parseToml(await fs.readFile(file, "utf-8"));
+
+  // Interpolate environment variables
+  return JSON.parse(JSON.stringify(config), (key, value) => {
+    return typeof value === "string"
+      ? template(value, {
+          interpolate: /\$\{?([\w]+)\}?/,
+        })($.env)
+      : value;
+  });
 }
