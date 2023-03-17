@@ -9,7 +9,7 @@
     "moduleResolution": "NodeNext",
     "noEmit": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.json"],
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.json"],
   "exclude": ["dist/**/*", "vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
