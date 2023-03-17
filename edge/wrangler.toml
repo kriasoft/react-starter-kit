@@ -5,7 +5,8 @@ name = "example"
 main = "index.js"
 
 # https://developers.cloudflare.com/workers/platform/compatibility-dates/
-compatibility_date = "2022-11-30"
+compatibility_date = "2023-03-14"
+send_metrics       = false
 
 account_id = "${CLOUDFLARE_ACCOUNT_ID}"
 
@@ -19,12 +20,12 @@ rules = [
 ]
 
 [vars]
-APP_ENV = "${APP_ENV}"
-APP_NAME = "${APP_NAME}"
-APP_HOSTNAME = "${APP_HOSTNAME}"
+APP_ENV              = "${APP_ENV}"
+APP_NAME             = "${APP_NAME}"
+APP_HOSTNAME         = "${APP_HOSTNAME}"
 GOOGLE_CLOUD_PROJECT = "${GOOGLE_CLOUD_PROJECT}"
-FIREBASE_API_KEY = "${FIREBASE_API_KEY}"
-FROM_EMAIL = "${FROM_EMAIL}"
+FIREBASE_API_KEY     = "${FIREBASE_API_KEY}"
+FROM_EMAIL           = "${FROM_EMAIL}"
 
 # [secrets]
 # GOOGLE_CLOUD_CREDENTIALS
@@ -34,3 +35,11 @@ bucket = "../../app/dist"
 
 [env.test]
 name = "example-test"
+
+[env.test.vars]
+APP_ENV              = "${APP_ENV}"
+APP_NAME             = "${APP_NAME}"
+APP_HOSTNAME         = "${APP_HOSTNAME}"
+GOOGLE_CLOUD_PROJECT = "${GOOGLE_CLOUD_PROJECT}"
+FIREBASE_API_KEY     = "${FIREBASE_API_KEY}"
+FROM_EMAIL           = "${FROM_EMAIL}"
