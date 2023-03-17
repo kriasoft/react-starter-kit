@@ -1,6 +1,9 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import * as React from "react";
+import "vite/client";
+
 interface Window {
   dataLayer: unknown[];
 }
@@ -20,3 +23,8 @@ declare module "relay-runtime" {
 }
 
 declare module "*.css";
+
+declare module "*.svg" {
+  const content: React.FC<React.SVGProps<SVGElement>>;
+  export default content;
+}

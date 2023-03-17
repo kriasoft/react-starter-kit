@@ -11,19 +11,19 @@
     "wrangler": "node ../scripts/wrangler.js"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.0.6",
-    "hono": "^3.0.2",
-    "jose": "^4.13.0",
-    "web-auth-library": "^1.0.1",
-    "zod": "^3.20.6"
+    "@hono/zod-validator": "^0.1.0",
+    "hono": "^3.1.0",
+    "jose": "^4.13.1",
+    "web-auth-library": "^1.0.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20230228.0",
-    "@types/node": "^18.14.2",
+    "@cloudflare/workers-types": "^4.20230307.0",
+    "@types/node": "^18.15.3",
     "toml": "^3.0.0",
-    "typescript": "^4.9.5",
-    "vite": "^4.1.4",
-    "vitest": "^0.29.2",
+    "typescript": "^5.0.2",
+    "vite": "^4.2.0",
+    "vitest": "^0.29.3",
     "vitest-environment-miniflare": "^2.12.1"
   }
 }

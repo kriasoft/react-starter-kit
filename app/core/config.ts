@@ -20,8 +20,8 @@ export type Config = {
 
 export const configs = JSON.parse(import.meta.env.VITE_CONFIG);
 export const config: Config =
-  location.hostname === configs.prod.hostname
+  location.hostname === configs.prod.app.hostname
     ? configs.prod
-    : location.hostname === configs.test.hostname
+    : location.hostname === configs.test.app.hostname
     ? configs.test
     : configs.local;
