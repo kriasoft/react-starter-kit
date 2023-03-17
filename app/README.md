@@ -34,7 +34,7 @@ $ yarn workspace app start
 
 ## References
 
-- https://beta.reactjs.org/ — React.js documentation
+- https://react.dev/ — React.js documentation
 - https://mui.com/core/ — Material UI library documentation
 - https://www.typescriptlang.org/ — TypeScript reference
 - https://vitejs.dev/ — Front-end tooling (bundler)
