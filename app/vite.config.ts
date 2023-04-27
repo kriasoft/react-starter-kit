@@ -58,7 +58,6 @@ export default defineConfig({
   plugins: [
     // https://github.com/vitejs/vite/tree/main/packages/plugin-react
     react({
-      jsxRuntime: "classic",
       jsxImportSource: "@emotion/react",
       babel: {
         plugins: ["@emotion/babel-plugin"],
