@@ -1618,16 +1618,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@miniflare/cli-parser@npm:2.12.1":
-  version: 2.12.1
-  resolution: "@miniflare/cli-parser@npm:2.12.1"
-  dependencies:
-    "@miniflare/shared": "npm:2.12.1"
-    kleur: "npm:^4.1.4"
-  checksum: b86210cbf16cb59b156abb2981c729ad94ead585060f8b074aa2dfdd33f0f582370727ca6fd7136542e0ec8242181d796faa7b5a3088d998a75ba4773bd5fe57
-  languageName: node
-  linkType: hard
-
 "@miniflare/cli-parser@npm:2.13.0":
   version: 2.13.0
   resolution: "@miniflare/cli-parser@npm:2.13.0"
@@ -1742,22 +1732,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@miniflare/http-server@npm:2.12.1":
-  version: 2.12.1
-  resolution: "@miniflare/http-server@npm:2.12.1"
-  dependencies:
-    "@miniflare/core": "npm:2.12.1"
-    "@miniflare/shared": "npm:2.12.1"
-    "@miniflare/web-sockets": "npm:2.12.1"
-    kleur: "npm:^4.1.4"
-    selfsigned: "npm:^2.0.0"
-    undici: "npm:5.20.0"
-    ws: "npm:^8.2.2"
-    youch: "npm:^2.2.2"
-  checksum: f3e6d38b0da753b6e8631ea9b18db233387c1104d569dafae3777ae23a7adfb559bb36efba42673ddaf6d2268ef0c99ac0e59111f66aab7b486fa7e2d031bbc0
-  languageName: node
-  linkType: hard
-
 "@miniflare/http-server@npm:2.13.0":
   version: 2.13.0
   resolution: "@miniflare/http-server@npm:2.13.0"
@@ -1845,17 +1819,6 @@ __metadata:
   dependencies:
     "@miniflare/shared": "npm:2.13.0"
   checksum: bf2b64b534166e3a76ae1f960c280137a366eaf95f33917f94f67c60971f8e2644d7c1e3e9257f4cdb91e6ad085fa20ac81dedabb7e42ea59b859d96f82fa948
-  languageName: node
-  linkType: hard
-
-"@miniflare/scheduler@npm:2.12.1":
-  version: 2.12.1
-  resolution: "@miniflare/scheduler@npm:2.12.1"
-  dependencies:
-    "@miniflare/core": "npm:2.12.1"
-    "@miniflare/shared": "npm:2.12.1"
-    cron-schedule: "npm:^3.0.4"
-  checksum: 2255eca5460aa215219831edb114b99e48518bfb22f538f317d53fddd8c05a8a3bd699ec3e202ef2963cf4628fd8e67ade2ba2d3301bd66e038c5ffd781a49e2
   languageName: node
   linkType: hard
 
@@ -6056,49 +6019,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:2.12.1":
-  version: 2.12.1
-  resolution: "miniflare@npm:2.12.1"
-  dependencies:
-    "@miniflare/cache": "npm:2.12.1"
-    "@miniflare/cli-parser": "npm:2.12.1"
-    "@miniflare/core": "npm:2.12.1"
-    "@miniflare/d1": "npm:2.12.1"
-    "@miniflare/durable-objects": "npm:2.12.1"
-    "@miniflare/html-rewriter": "npm:2.12.1"
-    "@miniflare/http-server": "npm:2.12.1"
-    "@miniflare/kv": "npm:2.12.1"
-    "@miniflare/queues": "npm:2.12.1"
-    "@miniflare/r2": "npm:2.12.1"
-    "@miniflare/runner-vm": "npm:2.12.1"
-    "@miniflare/scheduler": "npm:2.12.1"
-    "@miniflare/shared": "npm:2.12.1"
-    "@miniflare/sites": "npm:2.12.1"
-    "@miniflare/storage-file": "npm:2.12.1"
-    "@miniflare/storage-memory": "npm:2.12.1"
-    "@miniflare/web-sockets": "npm:2.12.1"
-    kleur: "npm:^4.1.4"
-    semiver: "npm:^1.1.0"
-    source-map-support: "npm:^0.5.20"
-    undici: "npm:5.20.0"
-  peerDependencies:
-    "@miniflare/storage-redis": 2.12.1
-    cron-schedule: ^3.0.4
-    ioredis: ^4.27.9
-  peerDependenciesMeta:
-    "@miniflare/storage-redis":
-      optional: true
-    cron-schedule:
-      optional: true
-    ioredis:
-      optional: true
-  bin:
-    miniflare: bootstrap.js
-  checksum: cf85ba4679e15910d3798105e3d64b838c86f468d9cc6758a1afbc9f3107d86946fca35d71298c5fa504ae2df014fdfc0713f07e7bf33ec77b414f67c0999789
-  languageName: node
-  linkType: hard
-
-"miniflare@npm:^2.13.0":
+"miniflare@npm:2.13.0, miniflare@npm:^2.13.0":
   version: 2.13.0
   resolution: "miniflare@npm:2.13.0"
   dependencies:
@@ -7398,7 +7319,7 @@ __metadata:
     prettier: "npm:^2.8.8"
     toml: "npm:^3.0.0"
     vite: "npm:^4.2.0"
-    wrangler: "npm:^2.12.3"
+    wrangler: "npm:^2.17.0"
     zx: "npm:^7.2.1"
   languageName: unknown
   linkType: soft
@@ -8478,21 +8399,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:^2.12.3":
-  version: 2.12.3
-  resolution: "wrangler@npm:2.12.3"
+"wrangler@npm:^2.17.0":
+  version: 2.17.0
+  resolution: "wrangler@npm:2.17.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:^0.2.0"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.1.1"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.1.4"
-    "@miniflare/core": "npm:2.12.1"
-    "@miniflare/d1": "npm:2.12.1"
-    "@miniflare/durable-objects": "npm:2.12.1"
+    "@miniflare/core": "npm:2.13.0"
+    "@miniflare/d1": "npm:2.13.0"
+    "@miniflare/durable-objects": "npm:2.13.0"
     blake3-wasm: "npm:^2.1.5"
     chokidar: "npm:^3.5.3"
     esbuild: "npm:0.16.3"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:2.12.1"
+    miniflare: "npm:2.13.0"
     nanoid: "npm:^3.3.3"
     path-to-regexp: "npm:^6.2.0"
     selfsigned: "npm:^2.0.1"
@@ -8504,7 +8425,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 22f0495cbcefe5a0029906cb0d33de66ecdb68612e9b331fda4a31bb7121758640d474f7c9f03c1f0ca3506f2bb1c98e3e8449977ba92d65321a2e7aa1e96f6f
+  checksum: 7924dfaac7538cbd38023a4b71e94989a6b94b31b2b9d67daa94d0e1a01f90efbd32f8ed9c2d7b85cc4b66e92c49cc8be2981190224daced78366556de2049fb
   languageName: node
   linkType: hard
 
