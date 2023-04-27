@@ -1487,13 +1487,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/zod-validator@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@hono/zod-validator@npm:0.1.0"
+"@hono/zod-validator@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@hono/zod-validator@npm:0.1.2"
   peerDependencies:
     hono: 3.*
     zod: ^3.19.1
-  checksum: 0bddd0a7abcc3527cac24c0b0ca1e349a87559945ef2acde0f5f1a4c085c480c7ea7a6c1edfad2e1314ad9bf15943f4d6aa326d11d21bd58293decd66cada812
+  checksum: da15537f27d308f7660f0ed2f40b46603c47fbe6039016e08622dc1b060329e75c698a5a1c5dcb7ca2b358a74c47ea7254b14c13f6206666bd5834150974b8a3
   languageName: node
   linkType: hard
 
@@ -3551,10 +3551,10 @@ __metadata:
   resolution: "edge@workspace:edge"
   dependencies:
     "@cloudflare/workers-types": "npm:^4.20230404.0"
-    "@hono/zod-validator": "npm:^0.1.0"
+    "@hono/zod-validator": "npm:^0.1.2"
     "@types/node": "npm:^18.16.1"
-    hono: "npm:^3.1.0"
-    jose: "npm:^4.13.1"
+    hono: "npm:^3.1.6"
+    jose: "npm:^4.14.3"
     toml: "npm:^3.0.0"
     typescript: "npm:^5.0.4"
     vite: "npm:^4.2.0"
@@ -4847,10 +4847,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "hono@npm:3.1.0"
-  checksum: 23dbe0b57a160b69f690bdc5cacd4d21dc114736e80f1094cec3e40e6b4e60e5722dd2405ebed601f2a3e5bfdaa2e2396864595f50a9ebe27b735aa0a8709090
+"hono@npm:^3.1.6":
+  version: 3.1.6
+  resolution: "hono@npm:3.1.6"
+  checksum: 9c4bd0a71fe33cbecaa986b0ecb579d483940442ec6f2e831d73f21527f313dc9bb839bb19e120ba3f8fc85d1774b1d0255d73221937847465b90bd0e9868d6e
   languageName: node
   linkType: hard
 
@@ -5351,10 +5351,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jose@npm:>= 4.12.0 < 5.0.0, jose@npm:^4.13.1":
+"jose@npm:>= 4.12.0 < 5.0.0":
   version: 4.13.1
   resolution: "jose@npm:4.13.1"
   checksum: 9f71534baee6f0159074b02a4116529e500e8bcd66b33ba4596e914ad85e5a51101cfe5df0aa8d5a9e466db40eaefc6d93f50d373a73b78a62c2df93ba801c82
+  languageName: node
+  linkType: hard
+
+"jose@npm:^4.14.3":
+  version: 4.14.3
+  resolution: "jose@npm:4.14.3"
+  checksum: 907fceb7e044ced9b682181eac5036957fb9bc561b24f74272270ec5c11daaa05334be0a78f73032d7d9f95b604a4c8e2bdc3bf7a6a20e9dd3025edfbcd0529d
   languageName: node
   linkType: hard
 
