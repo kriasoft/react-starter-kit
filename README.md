@@ -5,6 +5,7 @@
 <a href="https://discord.gg/2nKEnKq"><img src="https://img.shields.io/discord/643523529131950086?label=Chat" height="20"></a>
 <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a>
 <a href="https://twitter.com/koistya"><img src="https://img.shields.io/twitter/follow/koistya.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
+<a href="https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fkriasoft%2Freact-starter-kit.git&fileToOpen=README.md"><img src="https://badgen.net/badge/Run%20this%20/README/5B3ADF?icon=https://runme.dev/img/logo.svg" height="20"></a>
 
 The web's most popular Jamstack front-end template for building web applications with
 [React](https://react.dev/).
@@ -52,18 +53,25 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 ## Getting Started
 
-[Generate](https://github.com/kriasoft/react-starter-kit/generate) a new project
-from this template, clone it, install project dependencies, update the
-environment variables found in [`env/*.env`](./env/), and start hacking:
+[Generate](https://github.com/kriasoft/react-starter-kit/generate) a new project from this template by clicking [this link](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fkriasoft%2Freact-starter-kit.git&fileToOpen=README.md) if you are a VS Code user or manually clone it via: 
 
-```
+```bash
 $ git clone https://github.com/kriasoft/react-starter-kit.git example
 $ cd ./example
+```
+
+Then install project dependencies, update the environment variables found in [`env/*.env`](./env/), and start hacking:
+
+```bash
 $ yarn install
 $ yarn start
 ```
 
 The app will become available at [http://localhost:5173/](http://localhost:5173/) (press `q` key to exit).
+
+```bash
+open http://localhost:5173/
+```
 
 **IMPORTANT**: Ensure that VSCode is using the workspace [version of TypeScript](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-newer-typescript-versions)
 and ESLint.
