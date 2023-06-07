@@ -3,8 +3,9 @@
 
 import react from "@vitejs/plugin-react";
 import envars from "envars";
+import { resolve } from "node:path";
 import { URL } from "node:url";
-import { defineConfig } from "vitest/config";
+import { defineProject } from "vitest/config";
 import { Config, EnvName } from "./core/config.js";
 
 // The list of supported environments
@@ -12,7 +13,8 @@ const envNames: EnvName[] = ["prod", "test", "local"];
 
 // Bootstrap client-side configuration from environment variables
 const configs = envNames.map((envName): [EnvName, Config] => {
-  const env = envars.config({ env: envName, cwd: "../env" });
+  const envDir = resolve(__dirname, "../env");
+  const env = envars.config({ env: envName, cwd: envDir });
   return [
     envName,
     {
@@ -41,7 +43,7 @@ process.env.VITE_CONFIG = JSON.stringify(Object.fromEntries(configs));
  * Vite configuration
  * https://vitejs.dev/config/
  */
-export default defineConfig({
+export default defineProject({
   cacheDir: `../.cache/vite-app`,
 
   build: {
@@ -75,8 +77,7 @@ export default defineConfig({
   },
 
   test: {
-    cache: {
-      dir: "../.cache/vitest-app",
-    },
+    ...{ cache: { dir: "../.cache/vitest" } },
+    environment: "happy-dom",
   },
 });

@@ -2,7 +2,7 @@
   "name": "root",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "yarn@4.0.0-rc.42",
+  "packageManager": "yarn@4.0.0-rc.45",
   "type": "module",
   "workspaces": [
     "app",
@@ -14,16 +14,17 @@
     "update-schema": "node ./scripts/update-schema.js",
     "start": "node --experimental-vm-modules ./scripts/start.js",
     "lint": "eslint --cache --report-unused-disable-directives .",
-    "test": "yarn workspaces foreach -ti run test",
+    "test": "vitest",
     "build": "yarn workspaces foreach -ti run build",
     "deploy": "yarn workspace edge deploy"
   },
   "devDependencies": {
-    "@emotion/eslint-plugin": "^11.10.0",
-    "@types/eslint": "^8.37.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.1",
-    "@typescript-eslint/parser": "^5.59.1",
-    "eslint": "^8.39.0",
+    "@emotion/babel-plugin": "^11.11.0",
+    "@emotion/eslint-plugin": "^11.11.0",
+    "@types/eslint": "^8.40.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.9",
+    "@typescript-eslint/parser": "^5.59.9",
+    "eslint": "^8.42.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-import": "^2.27.5",
@@ -31,11 +32,14 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "graphql": "^16.6.0",
+    "happy-dom": "^9.20.3",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "react": "^18.2.0",
     "relay-config": "^12.0.1",
-    "typescript": "^5.0.4"
+    "typescript": "~5.0.4",
+    "vite": "^4.3.9",
+    "vitest": "^0.32.0"
   },
   "prettier": {
     "printWidth": 80,

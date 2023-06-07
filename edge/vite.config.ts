@@ -2,10 +2,10 @@
 /* SPDX-License-Identifier: MIT */
 
 import { resolve } from "node:path";
-import { defineConfig } from "vitest/config";
+import { defineProject } from "vitest/config";
 import { getCloudflareBindings } from "../scripts/utils.js";
 
-export default defineConfig({
+export default defineProject({
   cacheDir: "../.cache/vite-edge",
 
   // Production build configuration
@@ -30,16 +30,14 @@ export default defineConfig({
   // Unit testing configuration
   // https://vitest.dev/config/
   test: {
-    cache: {
-      dir: "../.cache/vitest-edge",
-    },
+    ...{ cache: { dir: resolve(__dirname, "../.cache/vitest") } },
     deps: {
-      registerNodeLoader: true,
+      // ...{ registerNodeLoader: true },
       external: ["__STATIC_CONTENT_MANIFEST"],
     },
     environment: "miniflare",
     environmentOptions: {
-      bindings: getCloudflareBindings(),
+      bindings: getCloudflareBindings(resolve(__dirname, "wrangler.toml")),
     },
   },
 });

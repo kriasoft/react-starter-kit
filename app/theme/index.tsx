@@ -94,6 +94,9 @@ export function useToggleTheme(name?: PaletteMode) {
   );
 }
 
+/**
+ * This component makes the `theme` available down the React tree.
+ */
 export function ThemeProvider(props: {
   children: React.ReactNode;
 }): JSX.Element {
