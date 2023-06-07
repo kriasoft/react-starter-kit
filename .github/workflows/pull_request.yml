@@ -26,10 +26,7 @@ jobs:
       - run: yarn prettier --check .
       - run: yarn lint
       - run: yarn tsc --build
-
-      # Test
-      - run: yarn workspace app test
-      - run: yarn workspace edge test
+      - run: yarn test
 
       # Compile
       - run: yarn build

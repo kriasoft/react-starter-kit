@@ -12,6 +12,48 @@ import {
   type SignInOptions,
 } from "./firebase.js";
 
+let idTokenPromise: Promise<string | null> | undefined;
+let idTokenPromiseResolve:
+  | ((value: Promise<string> | null) => void)
+  | undefined;
+
+const unsubscribeIdTokenChanged = auth.onIdTokenChanged((user) => {
+  if (user) {
+    idTokenPromise = user.getIdToken();
+    idTokenPromiseResolve?.(idTokenPromise as Promise<string>);
+  } else {
+    idTokenPromise = Promise.resolve(null);
+    idTokenPromiseResolve?.(null);
+  }
+});
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(unsubscribeIdTokenChanged);
+}
+
+/**
+ * Returns a JSON Web Token (JWT) used to identify the user. If the user is not
+ * authenticated, returns `null`. If the token is expired or will expire in the
+ * next five minutes, refreshes the token and returns a new one.
+ */
+export async function getIdToken() {
+  if (!idTokenPromise) {
+    idTokenPromise = new Promise<string | null>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error("getIdToken() timeout"));
+      }, 5000);
+
+      idTokenPromiseResolve = (value: PromiseLike<string> | null) => {
+        resolve(value);
+        clearTimeout(timeout);
+        idTokenPromiseResolve = undefined;
+      };
+    });
+  }
+
+  return await idTokenPromise;
+}
+
 export const SignInMethods: SignInMethod[] = [
   "google.com",
   "apple.com",
