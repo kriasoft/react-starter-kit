@@ -58,7 +58,8 @@ export default defineProject({
   },
 
   plugins: [
-    // https://github.com/vitejs/vite/tree/main/packages/plugin-react
+    // The default Vite plugin for React projects
+    // https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md
     react({
       jsxImportSource: "@emotion/react",
       babel: {
