@@ -1,0 +1,69 @@
+# GitHub Actions workflow
+# https://help.github.com/actions
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        type: environment
+        default: "test"
+        required: true
+
+env:
+  NODE_VERSION: 20.4.x
+  VERSION: ${{ github.event.pull_request.number }}
+  HUSKY: 0
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Configure Node.js and install NPM dependencies
+      - uses: actions/setup-node@v3
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: "yarn" }
+      - run: yarn install
+
+      # Analyze code for potential problems
+      - run: yarn prettier --check .
+        if: ${{ github.event_name == 'pull_request' }}
+      - run: yarn lint
+        if: ${{ github.event_name == 'pull_request' }}
+      - run: yarn tsc --build
+      - run: yarn test
+        if: ${{ github.event_name == 'pull_request' }}
+
+      # Compile and save build artifacts
+      - run: yarn build
+      - uses: actions/upload-artifact@v3
+        with: { name: "build", path: "app/dist\nedge/dist\n" }
+
+  deploy:
+    name: "Deploy"
+    runs-on: ubuntu-latest
+    needs: [build]
+    environment:
+      name: ${{ inputs.environment || 'test' }}
+      url: ${{ inputs.environment == 'prod' && 'https://example.com' || format('https://{0}.example.com', inputs.environment || 'test') }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: "yarn" }
+      - run: yarn install
+      - uses: actions/download-artifact@v3
+        with: { name: "build" }
+      - run: yarn workspace edge deploy --env=${{ inputs.environment || 'test' }}
+        if: ${{ false }}
