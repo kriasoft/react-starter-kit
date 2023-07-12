@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { signIn, SignInMethod } from "../../core/firebase.js";
+import { SignInMethod, signIn } from "../../core/firebase.js";
 
 /**
  * Handles login / signup via Email
@@ -35,9 +35,8 @@ export function useHandleSubmit(
 /**
  * The initial state of the Login component
  */
-export function useState(props: Props) {
+export function useState() {
   return React.useState({
-    mode: props.mode,
     email: "",
     code: "",
     saml: false,
@@ -94,10 +93,7 @@ export function useHandleSignIn(setState: SetState) {
   );
 }
 
-export type Props = {
-  mode: "login" | "signup";
-};
-
+export type Mode = "login" | "signup";
 export type State = ReturnType<typeof useState>[0];
 export type SetState = ReturnType<typeof useState>[1];
 export type Input = { name: keyof State; value: string };

@@ -1,20 +1,10 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AppLayout } from "../layout/AppLayout.js";
 import { BaseLayout } from "../layout/BaseLayout.js";
 import { RootError } from "../layout/RootError.js";
-
-const Login = lazy(() => import("./auth/Login.js"));
-const Privacy = lazy(() => import("./legal/Privacy.js"));
-const Terms = lazy(() => import("./legal/Terms.js"));
-
-const Dashboard = lazy(() => import("./dashboard/Dashboard.js"));
-
-const SettingsLayout = lazy(() => import("./settings/SettingsLayout.js"));
-const AccountDetails = lazy(() => import("./settings/AccountDetails.js"));
 
 /**
  * Application routes
@@ -26,10 +16,10 @@ export const router = createBrowserRouter([
     element: <BaseLayout />,
     errorElement: <RootError />,
     children: [
-      { path: "login", element: <Login mode="login" /> },
-      { path: "signup", element: <Login mode="signup" /> },
-      { path: "privacy", element: <Privacy /> },
-      { path: "terms", element: <Terms /> },
+      { path: "login", lazy: () => import("./auth/Login.js") },
+      { path: "signup", lazy: () => import("./auth/Login.js") },
+      { path: "privacy", lazy: () => import("./legal/Privacy.js") },
+      { path: "terms", lazy: () => import("./legal/Terms.js") },
     ],
   },
   {
@@ -38,13 +28,16 @@ export const router = createBrowserRouter([
     errorElement: <RootError />,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: "dashboard", element: <Dashboard /> },
+      { path: "dashboard", lazy: () => import("./dashboard/Dashboard.js") },
       {
         path: "settings",
-        element: <SettingsLayout />,
+        lazy: () => import("./settings/SettingsLayout.js"),
         children: [
           { index: true, element: <Navigate to="/settings/account" /> },
-          { path: "account", element: <AccountDetails /> },
+          {
+            path: "account",
+            lazy: () => import("./settings/AccountDetails.js"),
+          },
         ],
       },
     ],
