@@ -13,7 +13,6 @@ import {
 import { useLocation } from "react-router-dom";
 import { AuthIcon } from "../../icons/AuthIcon.js";
 import {
-  Props,
   useHandleChange,
   useHandleSignIn,
   useHandleSubmit,
@@ -28,14 +27,14 @@ import { Notice } from "./Notice.js";
  *    https://www.notion.so/login
  *    https://www.notion.so/signup
  */
-export default function Login(props: Props): JSX.Element {
-  const [state, setState] = useState(props);
+export function Component(): JSX.Element {
+  const [state, setState] = useState();
   const handleChange = useHandleChange(setState);
   const handleSignIn = useHandleSignIn(setState);
   const [handleSubmit, submitInFlight] = useHandleSubmit(state);
   const switchSAML = useSwitchSAML(setState);
   const { pathname, search } = useLocation();
-  const isSignUp = props.mode === "signup";
+  const isSignUp = pathname === "/signup";
 
   return (
     <Container
@@ -195,3 +194,5 @@ export default function Login(props: Props): JSX.Element {
     </Container>
   );
 }
+
+Component.displayName = "Login";

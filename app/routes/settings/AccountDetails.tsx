@@ -14,7 +14,7 @@ import * as React from "react";
 import { useAuthCallback, useCurrentUser } from "../../core/auth.js";
 import { usePageEffect } from "../../core/page.js";
 
-export default function AccountDetails(): JSX.Element {
+export function Component(): JSX.Element {
   const [{ input, ...state }, setState] = useState();
   const handleChange = useHandleChange(setState);
   const handleSubmit = useHandleSubmit(input, setState);
@@ -131,6 +131,8 @@ function useHandleSubmit(input: Input, setState: SetState) {
     [setState, saveProfile],
   );
 }
+
+Component.displayName = "AccountDetails";
 
 type Input = ReturnType<typeof useState>[0]["input"];
 type SetState = ReturnType<typeof useState>[1];
