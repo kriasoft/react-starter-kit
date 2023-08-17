@@ -15,7 +15,7 @@
     "start": "yarn workspace app start",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "vitest",
-    "build": "yarn workspaces foreach -ti run build",
+    "build": "yarn workspaces foreach -tiA run build",
     "deploy": "yarn workspace edge deploy"
   },
   "devDependencies": {
