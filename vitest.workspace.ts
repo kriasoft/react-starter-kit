@@ -1,11 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { readFileSync } from "node:fs";
 import { defineWorkspace } from "vitest/config";
-// import { workspaces } from "./package.json";
-
-const { workspaces } = JSON.parse(readFileSync("./package.json", "utf-8"));
+import { workspaces } from "./package.json";
 
 /**
  * Inline Vitest configuration for all workspaces.
