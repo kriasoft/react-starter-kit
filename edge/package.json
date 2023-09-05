@@ -18,20 +18,20 @@
     "edge:logs": "node ../scripts/wrangler.js tail"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.1.5",
-    "hono": "^3.4.3",
-    "jose": "^4.14.4",
+    "@hono/zod-validator": "^0.1.8",
+    "hono": "^3.5.8",
+    "jose": "^4.14.6",
     "web-auth-library": "^1.0.3",
-    "zod": "^3.22.1"
+    "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20230814.0",
-    "@types/node": "^20.5.0",
-    "happy-dom": "^10.10.2",
+    "@cloudflare/workers-types": "^4.20230904.0",
+    "@types/node": "^20.5.9",
+    "happy-dom": "^10.11.2",
     "toml": "^3.0.0",
-    "typescript": "~5.1.6",
+    "typescript": "~5.2.2",
     "vite": "~4.4.9",
     "vitest": "~0.33.0",
-    "vitest-environment-miniflare": "^2.14.0"
+    "vitest-environment-miniflare": "^2.14.1"
   }
 }
