@@ -23,5 +23,5 @@ export const config: Config =
   location.hostname === configs.prod.app.hostname
     ? configs.prod
     : location.hostname === configs.test.app.hostname
-    ? configs.test
-    : configs.local;
+      ? configs.test
+      : configs.local;

@@ -30,10 +30,10 @@ export const ThemeName = atom<PaletteMode>({
           localStorage?.getItem(storageKey) === "dark"
             ? "dark"
             : localStorage?.getItem(storageKey) === "light"
-            ? "light"
-            : matchMedia?.("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
+              ? "light"
+              : matchMedia?.("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
         ctx.setSelf(name);
       }
 

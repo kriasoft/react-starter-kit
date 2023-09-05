@@ -20,8 +20,8 @@ export function usePageEffect(
       location.pathname === "/"
         ? options?.title ?? config.app.name
         : options?.title
-        ? `${options.title} - ${config.app.name}`
-        : config.app.name;
+          ? `${options.title} - ${config.app.name}`
+          : config.app.name;
 
     return function () {
       document.title = previousTitle;
