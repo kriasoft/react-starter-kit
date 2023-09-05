@@ -18,11 +18,11 @@
     "edge:logs": "node ../scripts/wrangler.js tail"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.1.5",
-    "hono": "^3.4.3",
+    "@hono/zod-validator": "^0.1.8",
+    "hono": "^3.5.8",
     "jose": "^4.14.4",
     "web-auth-library": "^1.0.3",
-    "zod": "^3.22.1"
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230904.0",

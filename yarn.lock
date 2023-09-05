@@ -1668,13 +1668,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/zod-validator@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "@hono/zod-validator@npm:0.1.5"
+"@hono/zod-validator@npm:^0.1.8":
+  version: 0.1.8
+  resolution: "@hono/zod-validator@npm:0.1.8"
   peerDependencies:
     hono: 3.*
     zod: ^3.19.1
-  checksum: e1b31c86b85d1a4d376769c6f4cfcb09cd30fa18b20583cb4e4c51ac9b4ed95dfc955deae4b7e4042978849ebe4763fc7976f9cbb876e4a8bd88b26553dd3cd3
+  checksum: 04b8dd95caf95efd50612617c62c04426a45fd7e8447108a57eecbf3282a82d7bd5449eb2c59c8ce98e94252804639f0e37eab7ad9e099fa734292566dce5d73
   languageName: node
   linkType: hard
 
@@ -3791,10 +3791,10 @@ __metadata:
   resolution: "edge@workspace:edge"
   dependencies:
     "@cloudflare/workers-types": "npm:^4.20230904.0"
-    "@hono/zod-validator": "npm:^0.1.5"
+    "@hono/zod-validator": "npm:^0.1.8"
     "@types/node": "npm:^20.5.0"
     happy-dom: "npm:^10.11.2"
-    hono: "npm:^3.4.3"
+    hono: "npm:^3.5.8"
     jose: "npm:^4.14.4"
     toml: "npm:^3.0.0"
     typescript: "npm:~5.1.6"
@@ -3802,7 +3802,7 @@ __metadata:
     vitest: "npm:~0.33.0"
     vitest-environment-miniflare: "npm:^2.14.0"
     web-auth-library: "npm:^1.0.3"
-    zod: "npm:^3.22.1"
+    zod: "npm:^3.22.2"
   languageName: unknown
   linkType: soft
 
@@ -5181,10 +5181,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^3.4.3":
-  version: 3.4.3
-  resolution: "hono@npm:3.4.3"
-  checksum: 731b2075108a86ad25bb54ba71302595d9e8cdf15c9a4ad2044a92f9bf5c4921931e6a6edc04442d2bb9b0d4aa34f0998fb7410dc6e588293673787fccb02ac0
+"hono@npm:^3.5.8":
+  version: 3.5.8
+  resolution: "hono@npm:3.5.8"
+  checksum: c5f66af053ed4f4d6767160da475b428d6ce6f5f024667dd16ba55db343ddb3cb54e45fffedb3514d5d4cd7729077ef8334ade38ab851bee0e12920fc43b4bdc
   languageName: node
   linkType: hard
 
@@ -8984,10 +8984,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.6, zod@npm:^3.22.1":
+"zod@npm:^3.20.6":
   version: 3.22.1
   resolution: "zod@npm:3.22.1"
   checksum: f88c23901da740dac3e38f346cb0a001d81bb2172672f65d9e3e69bd17582e41bc1495bc5c4cc226df6bff3280a5a528b661698edc39c0943b0f1c48ea1e8455
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.22.2":
+  version: 3.22.2
+  resolution: "zod@npm:3.22.2"
+  checksum: bb39da97974b78c975bd1cbeb1a04ddc8ce69ac3100151e6ad1ee4763a8b3322fdbbcd98cd4b6bc2b40fb4d5bb86920f7c33515f430ca6aa439ce524a9c315c2
   languageName: node
   linkType: hard
 
