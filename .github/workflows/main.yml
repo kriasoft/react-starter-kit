@@ -21,7 +21,7 @@ on:
         required: true
 
 env:
-  NODE_VERSION: 20.4.x
+  NODE_VERSION: 20.5.x
   VERSION: ${{ github.event.pull_request.number }}
   HUSKY: 0
 
@@ -30,7 +30,7 @@ jobs:
     name: "Build"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # Configure Node.js and install NPM dependencies
       - uses: actions/setup-node@v3
@@ -59,7 +59,7 @@ jobs:
       name: ${{ inputs.environment || 'test' }}
       url: ${{ inputs.environment == 'prod' && 'https://example.com' || format('https://{0}.example.com', inputs.environment || 'test') }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with: { node-version: "${{ env.NODE_VERSION }}", cache: "yarn" }
       - run: yarn install
