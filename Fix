@@ -1,0 +1,39 @@
+
+~/tmp
+$ git clone git clone https://github.com/kriasoft/react-firebase-starter.git example
+
+~/tmp
+$ git clone https://github.com/kriasoft/react-firebase-starter.git example
+Cloning into 'example'...
+remote: Enumerating objects: 3792, done.
+remote: Counting objects: 100% (148/148), done.
+remote: Compressing objects: 100% (98/98), done.
+remote: Total 3792 (delta 102), reused 90 (delta 50), pack-reused 3644
+Receiving objects: 100% (3792/3792), 3.03 MiB | 7.93 MiB/s, done.
+Resolving deltas: 100% (2316/2316), done.
+
+~/tmp
+$ cd example/
+
+~/tmp/example on master
+$ yarn setup
+yarn run v1.22.19
+warning ../../package.json: No license field
+error app@0.0.0: The engine "node" is incompatible with this module. Expected version "10". Got "18.7.0"
+error Commands cannot run with an incompatible environment.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+~/tmp/example on master
+$ yarn start
+yarn run v1.22.19
+warning ../../package.json: No license field
+error app@0.0.0: The engine "node" is incompatible with this module. Expected version "10". Got "18.7.0"
+error Commands cannot run with an incompatible environment.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+~/tmp/example on master
+$ node --version
+v18.7.0
+
+~/tmp/example on master
+$ 
