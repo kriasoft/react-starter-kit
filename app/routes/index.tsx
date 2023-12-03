@@ -1,10 +1,13 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import { AppLayout } from "../layout/AppLayout.js";
-import { BaseLayout } from "../layout/BaseLayout.js";
-import { RootError } from "../layout/RootError.js";
+import { createElement } from "react";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+import { BaseLayout, MainLayout, RootError } from "../components";
 
 /**
  * Application routes
@@ -16,33 +19,27 @@ export const router = createBrowserRouter([
     element: <BaseLayout />,
     errorElement: <RootError />,
     children: [
-      { path: "login", lazy: () => import("./auth/Login.js") },
-      { path: "signup", lazy: () => import("./auth/Login.js") },
-      { path: "privacy", lazy: () => import("./legal/Privacy.js") },
-      { path: "terms", lazy: () => import("./legal/Terms.js") },
+      { path: "login", lazy: () => import("./login") },
+      { path: "privacy", lazy: () => import("./privacy") },
+      { path: "terms", lazy: () => import("./terms") },
     ],
   },
   {
     path: "",
-    element: <AppLayout />,
+    element: <MainLayout />,
     errorElement: <RootError />,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: "dashboard", lazy: () => import("./dashboard/Dashboard.js") },
-      {
-        path: "settings",
-        lazy: () => import("./settings/SettingsLayout.js"),
-        children: [
-          { index: true, element: <Navigate to="/settings/account" /> },
-          {
-            path: "account",
-            lazy: () => import("./settings/AccountDetails.js"),
-          },
-        ],
-      },
+      { path: "dashboard", lazy: () => import("./dashboard") },
+      { path: "tasks", lazy: () => import("./tasks") },
+      { path: "messages", lazy: () => import("./messages") },
     ],
   },
 ]);
+
+export function Router(): JSX.Element {
+  return createElement(RouterProvider, { router });
+}
 
 // Clean up on module reload (HMR)
 // https://vitejs.dev/guide/api-hmr

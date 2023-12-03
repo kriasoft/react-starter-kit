@@ -7,10 +7,14 @@
   "editor.tabSize": 2,
   "eslint.nodePath": ".yarn/sdks",
   "eslint.runtime": "node",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "vitest.commandLine": "yarn vitest",
+  "files.associations": {
+    ".env.*.local": "properties",
+    ".env.*": "properties"
+  },
   "files.exclude": {
     "**/.cache": true,
     "**/.DS_Store": true,
@@ -44,6 +48,7 @@
     "browserslist",
     "cloudfunctions",
     "corejs",
+    "corepack",
     "endregion",
     "entrypoint",
     "envalid",

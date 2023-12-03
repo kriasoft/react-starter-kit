@@ -4,7 +4,8 @@
 import { getAnalytics, logEvent } from "firebase/analytics";
 import * as React from "react";
 import { useLocation } from "react-router-dom";
-import { config } from "./config.js";
+
+const appName = import.meta.env.VITE_APP_NAME;
 
 export function usePageEffect(
   options?: Options,
@@ -18,10 +19,10 @@ export function usePageEffect(
 
     document.title =
       location.pathname === "/"
-        ? options?.title ?? config.app.name
+        ? options?.title ?? appName
         : options?.title
-        ? `${options.title} - ${config.app.name}`
-        : config.app.name;
+          ? `${options.title} - ${appName}`
+          : appName;
 
     return function () {
       document.title = previousTitle;
@@ -37,7 +38,7 @@ export function usePageEffect(
   React.useEffect(() => {
     if (!(options?.trackPageView === false)) {
       logEvent(getAnalytics(), "page_view", {
-        page_title: options?.title ?? config.app.name,
+        page_title: options?.title ?? appName,
         page_path: `${location.pathname}${location.search}`,
       });
     }
