@@ -1,12 +1,12 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import envars from "envars";
+import { configDotenv } from "dotenv";
 import { template } from "lodash-es";
 import { readFileSync } from "node:fs";
 import fs from "node:fs/promises";
 import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { URL, fileURLToPath } from "node:url";
 import { parse as parseToml } from "toml";
 import { $ } from "zx";
 
@@ -44,7 +44,12 @@ export function getArgs() {
  * Load environment variables used in the Cloudflare Worker.
  */
 export function getCloudflareBindings(file = "wrangler.toml", envName) {
-  const env = envars.config({ cwd: envDir, env: envName });
+  const envDir = fileURLToPath(new URL("..", import.meta.url));
+
+  configDotenv({ path: resolve(envDir, `.env.${envName}.local`) });
+  configDotenv({ path: resolve(envDir, `.env.local`) });
+  configDotenv({ path: resolve(envDir, `.env`) });
+
   let config = parseToml(readFileSync(file, "utf-8"));
 
   return {
@@ -52,15 +57,18 @@ export function getCloudflareBindings(file = "wrangler.toml", envName) {
     GOOGLE_CLOUD_CREDENTIALS: process.env.GOOGLE_CLOUD_CREDENTIALS,
     ...JSON.parse(JSON.stringify(config.vars), (key, value) => {
       return typeof value === "string"
-        ? value.replace(/\$\{?([\w]+)\}?/g, (_, key) => env[key])
+        ? value.replace(/\$\{?([\w]+)\}?/g, (_, key) => process.env[key])
         : value;
     }),
   };
 }
 
 export async function readWranglerConfig(file, envName = "test") {
-  // Load environment variables from `env/*.env` file(s)
-  envars.config({ cwd: resolve(rootDir, "env"), env: envName });
+  const envDir = fileURLToPath(new URL("..", import.meta.url));
+
+  configDotenv({ path: resolve(envDir, `.env.${envName}.local`) });
+  configDotenv({ path: resolve(envDir, `.env.local`) });
+  configDotenv({ path: resolve(envDir, `.env`) });
 
   // Load Wrangler CLI configuration file
   let config = parseToml(await fs.readFile(file, "utf-8"));

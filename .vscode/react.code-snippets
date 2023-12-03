@@ -3,28 +3,34 @@
     "scope": "javascriptreact,typescriptreact",
     "prefix": "react",
     "body": [
-      "import { ${1:import}, ${1:import}Props } from \"@mui/material\";",
-      "import * as React from \"react\";",
+      "import { ${2:Box}, ${2}Props } from \"@mui/joy\";",
       "",
-      "function ${TM_FILENAME_BASE}(props: ${TM_FILENAME_BASE}Props): JSX.Element {",
-      "  const { ...other } = props;",
+      "export function ${1:${TM_FILENAME_BASE/(^|-)(.)/${2:/upcase}/g}}(props: ${1}Props): JSX.Element {",
+      "  const { sx, ...other } = props;",
       "",
       "  return (",
-      "    <${1:import} {...other}>$0</${1:import}>",
+      "    <${2} sx={{ ...sx }} {...other}>$0</${2}>",
       "  );",
       "}",
       "",
-      "type ${TM_FILENAME_BASE}Props = Omit<${1:import}Props, \"children\">;",
-      "",
-      "export { ${TM_FILENAME_BASE} };",
+      "export type ${1}Props = Omit<${2}Props, \"children\">;",
       ""
     ],
     "description": "React Component"
   },
-  "Import": {
+  "ReactRoute": {
     "scope": "javascriptreact,typescriptreact",
-    "prefix": "imp",
-    "body": ["import { ${0} } from \"${1:@material-ui/icons}\";"],
-    "description": "Import"
+    "prefix": "route",
+    "body": [
+      "import { ${2:Box}, ${2}Props } from \"@mui/joy\";",
+      "",
+      "export const Component = function ${1:${TM_FILENAME_BASE/(^|-)(.)/${2:/upcase}/g}}(): JSX.Element {",
+      "  return (",
+      "    <${2}>$0</${2}>",
+      "  );",
+      "}",
+      ""
+    ],
+    "description": "React Route Component"
   }
 }

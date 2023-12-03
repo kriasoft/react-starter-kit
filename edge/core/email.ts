@@ -39,13 +39,13 @@ export function sendEmail(options: Options) {
     const res = await fetch(req, options.req);
 
     if (!res.ok) {
-      const body = await res.json<ErrorResponse>().catch(() => undefined);
+      const body = await res.json().catch(() => undefined);
       console.error({
         req: { url: req.url, method: req.method },
         res: {
           status: res.status,
           statusText: res.statusText,
-          errors: body?.errors,
+          errors: (body as ErrorResponse)?.errors,
         },
       });
 

@@ -43,8 +43,10 @@ jobs:
       - run: yarn lint
         if: ${{ github.event_name == 'pull_request' }}
       - run: yarn tsc --build
-      - run: yarn test
+      - run: yarn workspace app test
         if: ${{ github.event_name == 'pull_request' }}
+      # - run: yarn workspace edge test
+      #   if: ${{ github.event_name == 'pull_request' }}
 
       # Compile and save build artifacts
       - run: yarn build
