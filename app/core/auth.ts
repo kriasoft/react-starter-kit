@@ -10,38 +10,31 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { atom, useAtomValue } from "jotai";
-import { atomEffect } from "jotai-effect";
 import { loadable } from "jotai/utils";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { app } from "./firebase";
+import { app, auth } from "./firebase";
+import { store } from "./store";
 
-export const currentUserValue = atom<User | null | undefined>(undefined);
+export const currentUser = atom<Promise<User | null> | User | null>(
+  new Promise<User | null>(() => {}),
+);
 
-export const currentUserListener = atomEffect((get, set) => {
-  return getAuth(app).onAuthStateChanged((user) => {
-    set(currentUserValue, user);
-  });
+currentUser.debugLabel = "currentUser";
+
+const unsubscribe = auth.onAuthStateChanged((user) => {
+  store.set(currentUser, user);
 });
 
-export const currentUserAsync = atom(async (get) => {
-  get(currentUserListener);
-  const user = get(currentUserValue);
-
-  if (user === undefined) {
-    const auth = getAuth(app);
-    await auth.authStateReady();
-    return auth.currentUser;
-  } else {
-    return user;
-  }
-});
-
-export const currentUserLoadable = loadable(currentUserAsync);
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => unsubscribe());
+}
 
 export function useCurrentUser() {
-  return useAtomValue(currentUserAsync);
+  return useAtomValue(currentUser);
 }
+
+export const currentUserLoadable = loadable(currentUser);
 
 export function useCurrentUserLoadable() {
   return useAtomValue(currentUserLoadable);
