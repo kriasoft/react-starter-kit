@@ -1,16 +1,18 @@
 {
   "name": "root",
   "version": "0.0.0",
-  "private": true,
   "packageManager": "yarn@4.0.2",
+  "private": true,
   "type": "module",
   "workspaces": [
     "app",
+    "db",
     "edge",
-    "scripts"
+    "scripts",
+    "server"
   ],
   "scripts": {
-    "postinstall": "husky install && node ./scripts/postinstall.js",
+    "postinstall": "husky install && node ./scripts/post-install.js",
     "start": "yarn workspace app start",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "vitest",
@@ -21,8 +23,8 @@
     "@emotion/babel-plugin": "^11.11.0",
     "@emotion/eslint-plugin": "^11.11.0",
     "@types/eslint": "^8.56.1",
-    "@typescript-eslint/eslint-plugin": "^6.17.0",
-    "@typescript-eslint/parser": "^6.17.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",

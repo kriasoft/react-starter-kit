@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "workspace",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ownerId", "order": "ASCENDING" },
+        { "fieldPath": "archived", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
