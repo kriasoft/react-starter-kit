@@ -31,9 +31,11 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 `├──`[`.github`](.github) — GitHub configuration including CI/CD workflows<br>
 `├──`[`.vscode`](.vscode) — VSCode settings including code snippets, recommended extensions etc.<br>
 `├──`[`app`](./app) — Web application front-end built with [React](https://react.dev/) and [Joy UI](https://mui.com/joy-ui/getting-started/)<br>
+`├──`[`db`](./db) — Firestore database schema, seed data, and admin tools<br>
 `├──`[`edge`](./edge) — Cloudflare Workers (CDN) edge endpoint<br>
 `├──`[`env`](./env) — Application settings, API keys, etc.<br>
 `├──`[`scripts`](./scripts) — Automation scripts such as `yarn deploy`<br>
+`├──`[`server`](./server) — Node.js application server built with [tRPC](https://trpc.io/)<br>
 `├──`[`tsconfig.base.json`](./tsconfig.base.json) — The common/shared TypeScript configuration<br>
 `└──`[`tsconfig.json`](./tsconfig.json) — The root TypeScript configuration<br>
 
