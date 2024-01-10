@@ -9,7 +9,7 @@
 
 # Use the official lightweight Node.js image.
 # https://hub.docker.com/_/node
-FROM node:20.10.0-slim
+FROM node:20.11.0-slim
 
 # Upgrade OS packages.
 RUN apt-get update && apt-get upgrade -y
