@@ -5,7 +5,7 @@ import { app } from "../core/app.js";
 
 export const handler = app.get("/echo", ({ json, req }) => {
   return json({
-    headers: Object.fromEntries(req.headers.entries()),
+    headers: Object.fromEntries(req.raw.headers.entries()),
     cf: req.raw.cf,
   });
 });
