@@ -23,10 +23,10 @@ export const handler = app.post(
   ),
 
   // Handle the request
-  ({ req, jsonT }) => {
+  ({ req, json }) => {
     const input = req.valid("json");
     // TODO: Implement the login logic
-    return jsonT<LoginResponse>({ email: input.email });
+    return json<LoginResponse>({ email: input.email });
   },
 );
 
