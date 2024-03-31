@@ -22,6 +22,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@archibara/react-rewraper@npm:latest":
+  version: 0.0.6
+  resolution: "@archibara/react-rewraper@npm:0.0.6"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0  || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10/0fe00ae6d8fdefd7d79cae9758486731813d95b4c4aff38bedfce05a44f0722d4adcb4f0ddf0ad2d203877874f6e99f78e0b183714fbaf4673ee503f188b440a
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.21.4, @babel/code-frame@npm:^7.23.5":
   version: 7.23.5
   resolution: "@babel/code-frame@npm:7.23.5"
@@ -3092,6 +3101,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:app"
   dependencies:
+    "@archibara/react-rewraper": "npm:latest"
     "@babel/core": "npm:^7.23.9"
     "@babel/runtime": "npm:^7.23.9"
     "@emotion/babel-plugin": "npm:^11.11.0"
