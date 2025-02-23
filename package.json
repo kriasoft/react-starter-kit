@@ -1,7 +1,7 @@
 {
   "name": "root",
   "version": "0.0.0",
-  "packageManager": "yarn@4.1.0",
+  "packageManager": "yarn@4.6.0",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -20,8 +20,8 @@
     "deploy": "yarn workspace edge deploy"
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "^11.11.0",
-    "@emotion/eslint-plugin": "^11.11.0",
+    "@emotion/babel-plugin": "^11.13.5",
+    "@emotion/eslint-plugin": "^11.12.0",
     "@types/eslint": "^8.56.2",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
@@ -35,12 +35,12 @@
     "graphql": "^16.8.1",
     "happy-dom": "^13.3.8",
     "husky": "^9.0.11",
-    "prettier": "^3.2.5",
+    "prettier": "^3.5.2",
     "react": "^18.2.0",
     "relay-config": "^12.0.1",
-    "typescript": "~5.3.3",
-    "vite": "~5.1.2",
-    "vitest": "~1.2.2"
+    "typescript": "~5.7.3",
+    "vite": "~6.1.1",
+    "vitest": "~3.0.6"
   },
   "prettier": {
     "printWidth": 80,

@@ -5,7 +5,7 @@ import { ExpandMoreRounded, NotificationsRounded } from "@mui/icons-material";
 import { Box, BoxProps, Button, IconButton } from "@mui/joy";
 import { Fragment, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { useCurrentUser } from "../core/auth";
+import { useCurrentUser } from "../modules/auth";
 import { ColorSchemeButton } from "./button-color-scheme";
 import { UserAvatarButton } from "./button-user-avatar";
 

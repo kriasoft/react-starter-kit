@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import { Container, Typography } from "@mui/joy";
-import { usePageEffect } from "../core/page";
+import { usePageEffect } from "../modules/page";
 
 export const Component = function Messages(): JSX.Element {
   usePageEffect({ title: "Messages" });

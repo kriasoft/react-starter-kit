@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from "@vitejs/plugin-react";
 import { URL, fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
@@ -45,6 +46,7 @@ export default defineProject(async ({ mode }) => {
     },
 
     plugins: [
+      TanStackRouterVite({ autoCodeSplitting: true }),
       // The default Vite plugin for React projects
       // https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md
       react({

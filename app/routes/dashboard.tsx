@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import { Box, Card, CardContent, Container, Typography } from "@mui/joy";
-import { usePageEffect } from "../core/page";
+import { usePageEffect } from "../modules/page";
 
 export const Component = function Dashboard(): JSX.Element {
   usePageEffect({ title: "Dashboard" });

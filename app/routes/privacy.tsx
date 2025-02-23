@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import { Container, Link, Typography } from "@mui/joy";
-import { usePageEffect } from "../core/page";
+import { usePageEffect } from "../modules/page";
 
 const appName = import.meta.env.VITE_APP_NAME;
 const appOrigin = import.meta.env.VITE_APP_ORIGIN;

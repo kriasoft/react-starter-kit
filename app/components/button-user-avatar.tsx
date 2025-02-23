@@ -3,18 +3,18 @@
 
 import { LogoutRounded, SettingsRounded } from "@mui/icons-material";
 import {
-  Avatar,
-  Dropdown,
-  IconButton,
-  IconButtonProps,
-  ListItemContent,
-  ListItemDecorator,
-  Menu,
-  MenuButton,
-  MenuItem,
+    Avatar,
+    Dropdown,
+    IconButton,
+    IconButtonProps,
+    ListItemContent,
+    ListItemDecorator,
+    Menu,
+    MenuButton,
+    MenuItem,
 } from "@mui/joy";
 import { getAuth, signOut } from "firebase/auth";
-import { useCurrentUser } from "../core/auth";
+import { useCurrentUser } from "../modules/auth";
 
 export function UserAvatarButton(props: UserAvatarButtonProps): JSX.Element {
   const { sx, ...other } = props;

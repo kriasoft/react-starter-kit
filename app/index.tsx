@@ -5,8 +5,8 @@ import { CssBaseline, CssVarsProvider } from "@mui/joy";
 import { SnackbarProvider } from "notistack";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { StoreProvider } from "./core/store";
-import { theme } from "./core/theme";
+import { StoreProvider } from "./modules/store";
+import { theme } from "./modules/theme";
 import { Router } from "./routes/index";
 
 const container = document.getElementById("root");
