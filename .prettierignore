@@ -1,13 +1,14 @@
 # Compiled & generated output
-/*/dist/
 /app/queries/
+/*/dist/
+/**/*.generated.ts
 
 # Cache
 /.cache
 
-# Yarn
-/.yarn
-/.pnp.*
+# Bun and Node.js modules
+/node_modules
+/bun.lock
 
 # TypeScript
 /tsconfig.base.json

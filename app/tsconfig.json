@@ -11,6 +11,5 @@
     "noEmit": true
   },
   "include": ["**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.json"],
-  "exclude": ["dist/**/*", "vite.config.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "exclude": ["dist/**/*"]
 }

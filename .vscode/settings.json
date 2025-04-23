@@ -5,12 +5,12 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
-  "eslint.nodePath": ".yarn/sdks",
+  "eslint.nodePath": "./node_modules",
   "eslint.runtime": "node",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
-  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "prettier.prettierPath": "./node_modules/prettier",
+  "typescript.tsdk": "./node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "vitest.commandLine": "yarn vitest",
+  "vitest.commandLine": "bun run vitest",
   "files.associations": {
     ".env.*.local": "properties",
     ".env.*": "properties"
@@ -26,14 +26,12 @@
     "**/.pnp.*": true,
     "**/.prettierignore": true,
     "**/node_modules": true,
-    "**/yarn.lock": true
+    "**/bun.lock": true
   },
   "search.exclude": {
     "**/dist/": true,
-    "**/.pnp.*": true,
-    "**/.yarn": true,
-    "**/yarn-error.log": true,
-    "**/yarn.lock": true
+    "**/node_modules/": true,
+    "**/bun.lock": true
   },
   "terminal.integrated.env.linux": {
     "CACHE_DIR": "${workspaceFolder}/.cache"
@@ -87,8 +85,6 @@
     "typechecking",
     "vite",
     "vitest",
-    "webflow",
-    "yarnpkg",
-    "yarnrc"
+    "webflow"
   ]
 }

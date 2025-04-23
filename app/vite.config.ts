@@ -1,8 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
-import react from "@vitejs/plugin-react";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import react from "@vitejs/plugin-react-swc";
 import { URL, fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
 import { defineProject } from "vitest/config";
@@ -39,21 +39,27 @@ export default defineProject(async ({ mode }) => {
         output: {
           manualChunks: {
             firebase: ["firebase/analytics", "firebase/app", "firebase/auth"],
-            react: ["react", "react-dom", "react-router-dom"],
+            react: ["react", "react-dom"],
           },
         },
       },
     },
 
+    resolve: {
+      conditions: ["mui-modern", "module", "browser", "development|production"],
+    },
+
     plugins: [
-      TanStackRouterVite({ autoCodeSplitting: true }),
-      // The default Vite plugin for React projects
-      // https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md
+      TanStackRouterVite({
+        autoCodeSplitting: true,
+        routesDirectory: "routes",
+        generatedRouteTree: "modules/router.generated.ts",
+      }),
+      // Rust-based React compiler
+      // https://github.com/vitejs/vite-plugin-react-swc#readme
       react({
         jsxImportSource: "@emotion/react",
-        babel: {
-          plugins: ["@emotion/babel-plugin"],
-        },
+        plugins: [["@swc/plugin-emotion", {}]],
       }),
     ],
 
