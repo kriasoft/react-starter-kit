@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { t } from "../core/trpc";
+import { t } from "../modules/trpc";
 import { workspace } from "./workspace";
 
 /**

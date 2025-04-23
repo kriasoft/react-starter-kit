@@ -3,11 +3,12 @@
 
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import express from "express";
+import { expressifyBun } from "expressify-bun";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import { sessionMiddleware } from "./core/auth";
-import { env } from "./core/env";
-import { loggerMiddleware } from "./core/logging";
-import { createContext } from "./core/trpc";
+import { sessionMiddleware } from "./modules/auth";
+import { env } from "./modules/env";
+import { loggerMiddleware } from "./modules/logging";
+import { createContext } from "./modules/trpc";
 import { router } from "./routes/index";
 
 export const app = express();
@@ -52,3 +53,6 @@ app.use(
     },
   }),
 );
+
+// Create a fetch handler for Bun compatibility
+export default expressifyBun(app);

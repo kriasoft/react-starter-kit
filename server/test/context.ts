@@ -10,11 +10,11 @@ import {
 } from "@trpc/server";
 import { testUsers } from "db";
 import { IdTokenClient } from "google-auth-library";
-import { auth } from "../core/auth";
-import { env } from "../core/env";
-import { getFirestore } from "../core/firestore";
-import { logger } from "../core/logging";
-import { Context } from "../core/trpc";
+import { auth } from "../modules/auth";
+import { env } from "../modules/env";
+import { getFirestore } from "../modules/firestore";
+import { logger } from "../modules/logging";
+import { Context } from "../modules/trpc";
 
 let idTokenClient: IdTokenClient | undefined;
 

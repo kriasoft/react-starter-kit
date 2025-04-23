@@ -1,65 +1,80 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { applyWSSHandler } from "@trpc/server/adapters/ws";
-import { WebSocketServer } from "ws";
-import { app } from "./app";
-import { logger } from "./core/logging";
-import { createWsContext as createContext } from "./core/trpc";
-import { router } from "./routes";
+const server = Bun.serve({
+  port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
+  hostname: process.env.HOST || "localhost",
 
-// Detect if running in Google Cloud environment
-const isCloudRun = !!process.env.K_SERVICE;
+  fetch(req, server) {
+    if (req.url === "/") {
+      return new Response("Bun WebSocket Server is running!");
+    }
 
-/**
- * Starts the HTTP and WebSocket servers.
- */
-export function listen(port: number) {
-  const server = app.listen(port, () => {
-    logger.info(`API listening on ${port}`);
-  });
+    if (new URL(req.url).pathname === "/ws") {
+      const clientId = crypto.randomUUID();
+      const success = server.upgrade(req, { data: { clientId } });
+      return success
+        ? undefined
+        : new Response("WebSocket upgrade failed", { status: 400 });
+    }
 
-  const wss = new WebSocketServer({ server, path: "/trpc" });
-  const handler = applyWSSHandler({ wss, router, createContext });
+    return new Response("Not Found", { status: 404 });
+  },
 
-  wss.on("connection", (ws) => {
-    logger.info({ clients: wss.clients.size }, "wss:connection");
-    ws.once("close", () => {
-      logger.info({ clients: wss.clients.size }, "wss:close");
-    });
-  });
+  // WebSocket handlers
+  websocket: {
+    open(ws) {
+      const { clientId } = ws.data;
+      console.log(`Client connected: ${clientId}`);
+      ws.send(
+        JSON.stringify({
+          type: "welcome",
+          message: "Connected to WebSocket server",
+          clientId,
+        }),
+      );
+    },
 
-  return function dispose(cb?: () => void) {
-    handler.broadcastReconnectNotification();
-    wss.close((err) => {
-      if (err) logger.error(err);
-      if (isCloudRun) logger.info("WebSocket server closed");
-      server.close((err) => {
-        if (err) logger.error(err);
-        if (isCloudRun) logger.info("HTTP server closed");
-        logger.flush((err) => {
-          if (err) console.error(err);
-          if (isCloudRun) {
-            process.exit(0);
-          } else {
-            cb?.();
-          }
-        });
-      });
-    });
-  };
-}
+    message(ws, message) {
+      const { clientId } = ws.data;
+      console.log(`Message from ${clientId}: ${message}`);
 
-if (process.env.PORT && process.env.K_SERVICE?.startsWith("server")) {
-  const port = parseInt(process.env.PORT);
-  const dispose = listen(port);
+      try {
+        // Try to parse the message as JSON
+        const data = JSON.parse(message as string);
 
-  /* eslint-disable-next-line no-inner-declarations */
-  function handleClose(code: NodeJS.Signals) {
-    logger.info(`${code} signal received`);
-    dispose();
-  }
+        // Echo the message back
+        ws.send(
+          JSON.stringify({
+            type: "echo",
+            message: data,
+            clientId,
+          }),
+        );
+      } catch (e) {
+        // If it's not JSON, just echo it back as text
+        ws.send(
+          JSON.stringify({
+            type: "echo",
+            message: message.toString(),
+            clientId,
+          }),
+        );
+      }
+    },
 
-  process.on("SIGINT", handleClose);
-  process.on("SIGTERM", handleClose);
-}
+    close(ws, code, reason) {
+      const { clientId } = ws.data;
+      console.log(
+        `Client disconnected: ${clientId}. Code: ${code}, Reason: ${reason}`,
+      );
+    },
+
+    drain(ws) {
+      // Called when the buffer is drained (all messages sent)
+      console.log(`Buffer drained for client: ${ws.data.clientId}`);
+    },
+  },
+});
+
+export default server;

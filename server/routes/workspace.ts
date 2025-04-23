@@ -4,7 +4,7 @@
 import { Timestamp } from "@google-cloud/firestore";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { authorize, t } from "../core/trpc";
+import { authorize, t } from "../modules/trpc";
 
 /**
  * Workspace API.

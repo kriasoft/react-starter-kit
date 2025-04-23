@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT */
 
 import "express";
-import { DecodedIdToken } from "./core/auth";
+import { DecodedIdToken } from "./modules/auth";
 
 declare global {
   namespace Express {
