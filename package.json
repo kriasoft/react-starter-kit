@@ -4,6 +4,9 @@
   "packageManager": "bun@1.2.10",
   "private": true,
   "type": "module",
+  "engines": {
+    "bun": ">=1.2.0"
+  },
   "workspaces": [
     "app",
     "db",
