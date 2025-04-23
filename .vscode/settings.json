@@ -28,10 +28,17 @@
     "**/node_modules": true,
     "**/bun.lock": true
   },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  },
   "search.exclude": {
     "**/dist/": true,
     "**/node_modules/": true,
-    "**/bun.lock": true
+    "**/bun.lock": true,
+    "**/routeTree.gen.ts": true
   },
   "terminal.integrated.env.linux": {
     "CACHE_DIR": "${workspaceFolder}/.cache"
@@ -55,7 +62,6 @@
     "esmodules",
     "esnext",
     "execa",
-    "firebaseapp",
     "firestore",
     "globby",
     "hono",

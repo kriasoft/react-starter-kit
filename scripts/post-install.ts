@@ -2,8 +2,8 @@
 /* SPDX-License-Identifier: MIT */
 
 import { execa } from "execa";
-import { writeFile} from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { writeFile } from "node:fs/promises";
 import { EOL } from "node:os";
 
 // Create Git-ignored files for environment variable overrides
@@ -27,6 +27,7 @@ if (!existsSync("./.env.local")) {
 
 try {
   await execa("bun", ["run", "tsc", "--build"], { stdin: "inherit" });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 } catch (err) {
   // console.error(err);
 }

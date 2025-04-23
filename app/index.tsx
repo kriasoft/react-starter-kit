@@ -4,7 +4,8 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { routeTree } from "./modules/router.generated";
+import { routeTree } from "./lib/routeTree.gen";
+import "./styles/globals.css";
 
 const container = document.getElementById("root");
 const root = createRoot(container!);

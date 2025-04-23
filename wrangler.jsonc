@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  "name": "example",
+  "account_id": "abcdef1234567890abcdef1234567890",
+  "main": "./edge/dist/index.js",
+
+  "assets": {
+    "directory": "./app/dist",
+    "binding": "ASSETS",
+  },
+
+  "upload_source_maps": true,
+
+  "d1_databases": [
+    {
+      "binding": "db",
+      "database_name": "example",
+      "database_id": "12345678-1234-1234-1234-123456789abc",
+      "migrations_dir": "./db/migrations",
+    },
+  ],
+
+  "compatibility_date": "2025-05-05",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "kv_namespaces": [],
+
+  "routes": [
+    {
+      "pattern": "example.com",
+      "custom_domain": true,
+    },
+  ],
+
+  "vars": {
+    "ENV": "production",
+  },
+}

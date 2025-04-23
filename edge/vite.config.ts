@@ -2,42 +2,40 @@
 /* SPDX-License-Identifier: MIT */
 
 import { resolve } from "node:path";
-import { defineProject } from "vitest/config";
-import { getCloudflareBindings } from "../scripts/utils.js";
+import { defineConfig } from "vite";
 
-export default defineProject({
-  cacheDir: "../.cache/vite-edge",
-
-  // Production build configuration
-  // https://vitejs.dev/guide/build
-  build: {
-    lib: {
-      entry: "index.ts",
-      fileName: "index",
-      formats: ["es"],
-    },
-    rollupOptions: {
-      external: ["__STATIC_CONTENT_MANIFEST"],
-    },
-  },
-
+/**
+ * Vite configuration.
+ * https://vitejs.dev/config/
+ */
+export default defineConfig({
   resolve: {
     alias: {
-      ["__STATIC_CONTENT_MANIFEST"]: resolve("./core/manifest.ts"),
+      "@root/api": resolve(__dirname, "../api"),
+      "@root/core": resolve(__dirname, "../core"),
+      "@root/db": resolve(__dirname, "../db"),
     },
   },
 
-  // Unit testing configuration
-  // https://vitest.dev/config/
-  test: {
-    ...{ cache: { dir: resolve(__dirname, "../.cache/vitest") } },
-    deps: {
-      // ...{ registerNodeLoader: true },
-      external: ["__STATIC_CONTENT_MANIFEST"],
+  build: {
+    lib: {
+      entry: "./index.ts",
+      name: "example",
+      formats: ["es"],
+      fileName: "index",
     },
-    environment: "miniflare",
-    environmentOptions: {
-      bindings: getCloudflareBindings(resolve(__dirname, "wrangler.toml")),
-    },
+    sourcemap: true,
   },
+
+  assetsInclude: ["**/*.wasm"],
+
+  // test: {
+  //   poolOptions: {
+  //     workers: {
+  //       wrangler: {
+  //         configPath: "../wrangler.jsonc",
+  //       },
+  //     },
+  //   },
+  // },
 });

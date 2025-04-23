@@ -21,7 +21,7 @@ on:
         required: true
 
 env:
-  NODE_VERSION: 20.5.x
+  BUN_VERSION: latest
   VERSION: ${{ github.event.pull_request.number }}
   HUSKY: 0
 
@@ -32,24 +32,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Configure Node.js and install NPM dependencies
-      - uses: actions/setup-node@v4
-        with: { node-version: "${{ env.NODE_VERSION }}", cache: "yarn" }
-      - run: yarn install
+      # Configure Bun and install dependencies
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install
 
       # Analyze code for potential problems
-      - run: yarn prettier --check .
+      - run: bun prettier --check .
         if: ${{ github.event_name == 'pull_request' }}
-      - run: yarn lint
+      - run: bun lint
         if: ${{ github.event_name == 'pull_request' }}
-      - run: yarn tsc --build
-      - run: yarn workspace app test
+      - run: bun tsc --build
+      - run: bun --filter app test
         if: ${{ github.event_name == 'pull_request' }}
-      # - run: yarn workspace edge test
+      # - run: bun --filter edge test
       #   if: ${{ github.event_name == 'pull_request' }}
 
       # Compile and save build artifacts
-      - run: yarn build
+      - run: bun build
       - uses: actions/upload-artifact@v4
         with: { name: "build", path: "app/dist\nedge/dist\n" }
 
@@ -62,10 +63,11 @@ jobs:
       url: ${{ inputs.environment == 'prod' && 'https://example.com' || format('https://{0}.example.com', inputs.environment || 'test') }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: "${{ env.NODE_VERSION }}", cache: "yarn" }
-      - run: yarn install
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install
       - uses: actions/download-artifact@v4
         with: { name: "build" }
-      - run: yarn workspace edge deploy --env=${{ inputs.environment || 'test' }}
+      - run: bun --filter edge deploy --env=${{ inputs.environment || 'test' }}
         if: ${{ false }}

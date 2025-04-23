@@ -4,20 +4,13 @@
 # Compiled output
 /*/dist/
 
-# Yarn package manager with PnP
-# https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+# Bun package manager
+# https://bun.sh/docs/install/lockfile
 node_modules
+bun.lockb
 
 # Logs
-yarn-debug.log*
-yarn-error.log*
+*.log
 
 # Cache
 /.cache
@@ -35,15 +28,26 @@ yarn-error.log*
 # Visual Studio Code
 # https://github.com/github/gitignore/blob/master/Global/VisualStudioCode.gitignore
 .vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/mcp.json
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/react.code-snippets
 
 # WebStorm
 .idea
 
+# Wrangler CLI
+# https://developers.cloudflare.com/workers/wrangler/
+.wrangler/
+wrangler.toml.backup
+
+# TanStack Router
+# Generated route tree files should not be committed
+*/lib/routeTree.gen.ts
+*/.tanstack/
+
 # macOS
 # https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
 .DS_Store
+

@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
 import { URL, fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
@@ -12,9 +12,6 @@ const publicEnvVars = [
   "APP_NAME",
   "APP_ORIGIN",
   "GOOGLE_CLOUD_PROJECT",
-  "FIREBASE_APP_ID",
-  "FIREBASE_API_KEY",
-  "FIREBASE_AUTH_DOMAIN",
   "GA_MEASUREMENT_ID",
 ];
 
@@ -38,35 +35,51 @@ export default defineProject(async ({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            firebase: ["firebase/analytics", "firebase/app", "firebase/auth"],
             react: ["react", "react-dom"],
+            tanstack: ["@tanstack/react-router"],
+            ui: [
+              "@radix-ui/react-slot",
+              "class-variance-authority",
+              "clsx",
+              "tailwind-merge",
+            ],
           },
         },
       },
     },
 
     resolve: {
-      conditions: ["mui-modern", "module", "browser", "development|production"],
+      conditions: ["module", "browser", "development|production"],
+      alias: {
+        "@": fileURLToPath(new URL(".", import.meta.url)),
+      },
+    },
+
+    css: {
+      postcss: "./postcss.config.js",
     },
 
     plugins: [
-      TanStackRouterVite({
+      tanstackRouter({
+        routesDirectory: "./routes",
+        generatedRouteTree: "./lib/routeTree.gen.ts",
+        routeFileIgnorePrefix: "-",
+        quoteStyle: "single",
+        semicolons: false,
         autoCodeSplitting: true,
-        routesDirectory: "routes",
-        generatedRouteTree: "modules/router.generated.ts",
       }),
       // Rust-based React compiler
       // https://github.com/vitejs/vite-plugin-react-swc#readme
-      react({
-        jsxImportSource: "@emotion/react",
-        plugins: [["@swc/plugin-emotion", {}]],
-      }),
+      react(),
     ],
 
     server: {
       proxy: {
         "/api": {
-          target: process.env.LOCAL_API_ORIGIN ?? process.env.API_ORIGIN,
+          target:
+            process.env.API === "remote"
+              ? "https://example.com"
+              : env.API_ORIGIN,
           changeOrigin: true,
         },
       },
