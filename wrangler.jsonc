@@ -26,14 +26,35 @@
 
   "kv_namespaces": [],
 
-  "routes": [
-    {
-      "pattern": "example.com",
-      "custom_domain": true,
-    },
-  ],
-
   "vars": {
-    "ENV": "production",
+    "ENVIRONMENT": "development",
+    "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173",
+  },
+
+  "env": {
+    "production": {
+      "vars": {
+        "ENVIRONMENT": "production",
+        "ALLOWED_ORIGINS": "https://example.com",
+      },
+      "routes": [
+        {
+          "pattern": "example.com/*",
+          "custom_domain": true,
+        },
+      ],
+    },
+    "preview": {
+      "vars": {
+        "ENVIRONMENT": "preview",
+        "ALLOWED_ORIGINS": "https://preview.example.com",
+      },
+      "routes": [
+        {
+          "pattern": "preview.example.com/*",
+          "custom_domain": true,
+        },
+      ],
+    },
   },
 }
