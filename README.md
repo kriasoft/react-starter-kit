@@ -5,18 +5,18 @@
 <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a>
 <a href="https://twitter.com/koistya"><img src="https://img.shields.io/twitter/follow/koistya.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
-So, you want to build a modern web app but don't want to spend the next two weeks configuring everything? You've come to the right place. This React Starter Kit is a batteries-included, production-ready boilerplate that lets you skip the boring parts and get straight to building.
+Building modern web applications shouldn't require weeks of configuration hell. This React Starter Kit eliminates the tedious setup work so you can focus on what matters: shipping great products.
 
-It's built on a modern, edge-first stack that's fast, type-safe, and frankly, a joy to work with. Whether you're building a weekend project or the next big thing, we've got your back.
+Designed for developers who value both speed and quality, this template provides a complete foundation for full-stack applications. From solo projects to team collaborations, it scales with your ambitions while maintaining the developer experience you deserve.
 
-## Features
+## What You Get
 
-- **Blazing Fast Everything**: Powered by [Bun](https://bun.sh/), from the backend server to the scripts. It's fast. Like, "go get a coffee and it's already done" fast.
-- **Full-Stack Type Safety**: With [TypeScript](https://www.typescriptlang.org/) and [tRPC](https://trpc.io/), you can say goodbye to runtime errors. If it compiles, it works (usually).
-- **Modern Frontend**: Built with [React 19](https://react.dev/), [TanStack Router](https://tanstack.com/router) for type-safe routing, and [Tailwind CSS v4](https://tailwindcss.com/) for styling. Your UI will be snappy and look good doing it.
-- **Edge-First Architecture**: Deploy to [Cloudflare Workers](https://workers.cloudflare.com/) for incredible performance and scalability. Your app will be everywhere, all at once.
-- **Database Included**: Comes with [Drizzle ORM](https://orm.drizzle.team/) and a pre-configured schema for multi-tenant applications. No more writing SQL by hand unless you really, really want to.
-- **Top-Notch DX**: Pre-configured with ESLint, Prettier, and VSCode settings to keep your code clean and your team happy. Less arguing about tabs vs. spaces, more building cool stuff.
+- **Performance by Default**: Bun runtime delivers exceptional speed across development and production. Your build times will thank you.
+- **Type Safety Throughout**: TypeScript and tRPC create an unbreakable contract between frontend and backend. Catch errors at compile time, not in production.
+- **Modern React Stack**: React 19 with TanStack Router provides type-safe navigation and powerful data fetching patterns. Tailwind CSS v4 handles styling with zero configuration.
+- **Edge-Native Deployment**: Cloudflare Workers ensure your app runs close to users worldwide. Experience sub-100ms response times globally.
+- **Database Ready**: Drizzle ORM with Cloudflare D1 provides a complete data layer. Multi-tenant support included out of the box.
+- **Developer Experience**: ESLint, Prettier, and VSCode configurations eliminate bikeshedding. Focus on features, not formatting.
 
 <a href="https://reactstarter.com/s/1"><img src="https://reactstarter.com/s/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/2"><img src="https://reactstarter.com/s/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/3"><img src="https://reactstarter.com/s/3.png" height="60" /></a>
 
@@ -25,74 +25,141 @@ It's built on a modern, edge-first stack that's fast, type-safe, and frankly, a 
 This project was bootstrapped with [React Starter Kit](https://github.com/kriasoft/react-starter-kit).
 Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for assistance.
 
-## Directory Structure
+## Monorepo Architecture
 
-`├──`[`api`](./api) — tRPC API server built with [Hono](https://hono.dev/)<br>
-`├──`[`app`](./app) — Web application front-end built with [React](https://react.dev/) and [Tailwind CSS](https://tailwindcss.com/)<br>
-`├──`[`core`](./core) — Shared code, types, and WebSocket logic used across the stack<br>
-`├──`[`db`](./db) — Database schema, migrations, and seeds using [Drizzle ORM](https://orm.drizzle.team/)<br>
-`├──`[`edge`](./edge) — Cloudflare Worker entry point for handling requests at the edge<br>
-`├──`[`scripts`](./scripts) — Various build and automation scripts<br>
-`├──`[`tsconfig.base.json`](./tsconfig.base.json) — The common/shared TypeScript configuration for the monorepo<br>
-`└──`[`wrangler.jsonc`](./wrangler.jsonc) — Configuration file for Cloudflare Workers<br>
+This starter kit uses a thoughtfully organized monorepo structure that promotes code reuse and maintainability:
 
-## Tech Stack
+`├──`[`app/`](./app) — React frontend with Vite, TanStack Router, and Tailwind CSS<br>
+`├──`[`api/`](./api) — tRPC API server powered by Hono framework<br>
+`├──`[`edge/`](./edge) — Cloudflare Workers entry point and edge logic<br>
+`├──`[`core/`](./core) — Shared TypeScript types and utilities<br>
+`├──`[`db/`](./db) — Database schemas, migrations, and seed data<br>
+`├──`[`scripts/`](./scripts) — Build automation and development tools<br>
 
-- **Runtime**: [Bun](https://bun.sh/)
-- **Platform**: [Cloudflare Workers](https://workers.cloudflare.com/)
-- **Frameworks**: [React 19](https://react.dev/), [Hono](https://hono.dev/)
-- **API**: [tRPC](https://trpc.io/)
-- **Routing**: [TanStack Router](https://tanstack.com/router)
-- **Database**: [Drizzle ORM](https://orm.drizzle.team/) with [Cloudflare D1](https://developers.cloudflare.com/d1/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/)
-- **State Management**: [Jotai](https://jotai.org/)
-- **Authentication**: [Better Auth](https://www.better-auth.com/)
-- **Tooling**: [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [TypeScript](https://www.typescriptlang.org/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)
+**Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
 
-## Requirements
+## Perfect For
 
-- [Bun](https://bun.sh/) (v1.0 or newer)
-- [VS Code](https://code.visualstudio.com/) editor with our [recommended extensions](.vscode/extensions.json)
-- Optionally, the [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) for your browser.
+- **SaaS Applications**: Multi-tenant architecture with user management built-in
+- **API-First Products**: tRPC provides excellent developer experience for API development
+- **Global Applications**: Edge deployment ensures fast loading times worldwide
+- **Team Projects**: Monorepo structure scales well with multiple developers
+- **Rapid Prototyping**: Skip configuration and start building features immediately
 
-## Getting Started
+## Technology Stack
 
-[Generate](https://github.com/kriasoft/react-starter-kit/generate) a new project
-from this template, clone it, install project dependencies, update the
-environment variables found in [`.env`](./.env) / [`.env.local`](./.env.local), and start hacking:
+**Core Runtime & Platform**
+
+- [Bun](https://bun.sh/) — Lightning-fast JavaScript runtime and package manager
+- [Cloudflare Workers](https://workers.cloudflare.com/) — Edge computing platform
+
+**Frontend & UI**
+
+- [React 19](https://react.dev/) — Latest React with concurrent features
+- [TanStack Router](https://tanstack.com/router) — Type-safe routing with data loading
+- [Tailwind CSS v4](https://tailwindcss.com/) — Utility-first CSS framework
+- [ShadCN UI](https://ui.shadcn.com/) — Beautiful, accessible components
+- [Jotai](https://jotai.org/) — Atomic state management
+
+**Backend & API**
+
+- [Hono](https://hono.dev/) — Ultrafast web framework for the edge
+- [tRPC](https://trpc.io/) — End-to-end type safety for APIs
+- [Better Auth](https://www.better-auth.com/) — Modern authentication solution
+
+**Database & ORM**
+
+- [Drizzle ORM](https://orm.drizzle.team/) — TypeScript ORM with excellent DX
+- [Cloudflare D1](https://developers.cloudflare.com/d1/) — Serverless SQLite database
+
+**Development Tools**
+
+- [Vite](https://vitejs.dev/) — Next-generation frontend tooling
+- [Vitest](https://vitest.dev/) — Blazing fast unit testing
+- [TypeScript](https://www.typescriptlang.org/) — Static type checking
+- [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/) — Code quality and formatting
+
+## Prerequisites
+
+- [Bun](https://bun.sh/) v1.2+ (replaces Node.js and npm)
+- [VS Code](https://code.visualstudio.com/) with our [recommended extensions](.vscode/extensions.json)
+- [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) browser extension (recommended)
+- [Cloudflare account](https://dash.cloudflare.com/sign-up) for deployment
+
+## Quick Start
+
+### 1. Create Your Project
+
+[Generate a new repository](https://github.com/kriasoft/react-starter-kit/generate) from this template, then clone it locally:
 
 ```bash
-# Clone the repository
-git clone https://github.com/kriasoft/react-starter-kit.git example
-cd ./example
+git clone https://github.com/your-username/your-project-name.git
+cd your-project-name
+```
 
-# Launch the front-end app
+### 2. Install Dependencies
+
+```bash
+bun install
+```
+
+### 3. Configure Environment
+
+Update environment variables in [`.env`](./.env) and `.env.local` files as well as Wrangler configuration in [`wrangler.jsonc`](./wrangler.jsonc).
+
+### 4. Start Development
+
+Open two terminals and run these commands:
+
+**Terminal 1 - Frontend:**
+
+```bash
 bun --cwd app start
+```
 
-# Launch the backend API server
+**Terminal 2 - Backend:**
+
+```bash
 bun --cwd edge build --watch
 bun wrangler dev
+```
 
-# Migrate the database
+### 5. Initialize Database
+
+```bash
+# Let Wrangler create the D1 database locally
+bun wrangler d1 execute db --local --command "SELECT 1"
+# Apply database schema and migrations
 bun --cwd db migrate
+bun --cwd db seed  # Optional: add sample data
 ```
 
-Your frontend will be running at <http://localhost:5173/>, and the backend API will be on the port from `wrangler dev` (usually 8787). Open the frontend URL in your browser to see the app in action.
+Open <http://localhost:5173> to see your app running. The backend API will be available at the port shown by `wrangler dev` (typically 8787).
 
-## How to Deploy
+## Production Deployment
 
-Ensure that all the environment variables in `.env`/`.env.local` files and Wrangler configuration in `wrangler.json` file are up-to-date.
+### 1. Environment Setup
 
-If you haven't done it already, push any secret values you may need to CF Workers
-environment by running `bun wrangler secret put <NAME> [--env #0]`.
+Ensure your production environment variables are configured:
 
-Finally build and deploy the app by running:
-
+```bash
+# Set secrets in Cloudflare Workers
+bun wrangler secret put BETTER_AUTH_SECRET --env=production
+bun wrangler secret put OPENAI_API_KEY --env=production
 ```
+
+### 2. Build and Deploy
+
+```bash
+# Build all packages
 bun --cwd app build
 bun --cwd edge build
-bun wrangler deploy
+
+# Deploy to Cloudflare Workers
+bun wrangler deploy --env=production
 ```
+
+Your application will be live on your Cloudflare Workers domain within seconds. The edge-first architecture ensures optimal performance regardless of user location.
 
 ## Contributors 👨‍💻
 

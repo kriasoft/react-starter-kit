@@ -69,5 +69,5 @@ jobs:
       - run: bun install
       - uses: actions/download-artifact@v4
         with: { name: "build" }
-      - run: bun --filter edge deploy --env=${{ inputs.environment || 'test' }}
+      - run: bun wrangler deploy --env=${{ inputs.environment || 'test' }}
         if: ${{ false }}

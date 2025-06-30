@@ -39,7 +39,7 @@ bun --cwd db studio       # Open DB GUI
 bun --cwd db seed         # Seed sample data
 
 # Deployment
-bun --cwd edge deploy     # Deploy to Cloudflare
+bun wrangler deploy --env=production
 ```
 
 ## Code Conventions
