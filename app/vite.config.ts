@@ -1,7 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import react from "@vitejs/plugin-react";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import react from "@vitejs/plugin-react-swc";
 import { URL, fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
 import { defineProject } from "vitest/config";
@@ -11,9 +12,6 @@ const publicEnvVars = [
   "APP_NAME",
   "APP_ORIGIN",
   "GOOGLE_CLOUD_PROJECT",
-  "FIREBASE_APP_ID",
-  "FIREBASE_API_KEY",
-  "FIREBASE_AUTH_DOMAIN",
   "GA_MEASUREMENT_ID",
 ];
 
@@ -37,28 +35,51 @@ export default defineProject(async ({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            firebase: ["firebase/analytics", "firebase/app", "firebase/auth"],
-            react: ["react", "react-dom", "react-router-dom"],
+            react: ["react", "react-dom"],
+            tanstack: ["@tanstack/react-router"],
+            ui: [
+              "@radix-ui/react-slot",
+              "class-variance-authority",
+              "clsx",
+              "tailwind-merge",
+            ],
           },
         },
       },
     },
 
+    resolve: {
+      conditions: ["module", "browser", "development|production"],
+      alias: {
+        "@": fileURLToPath(new URL(".", import.meta.url)),
+      },
+    },
+
+    css: {
+      postcss: "./postcss.config.js",
+    },
+
     plugins: [
-      // The default Vite plugin for React projects
-      // https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md
-      react({
-        jsxImportSource: "@emotion/react",
-        babel: {
-          plugins: ["@emotion/babel-plugin"],
-        },
+      tanstackRouter({
+        routesDirectory: "./routes",
+        generatedRouteTree: "./lib/routeTree.gen.ts",
+        routeFileIgnorePrefix: "-",
+        quoteStyle: "single",
+        semicolons: false,
+        autoCodeSplitting: true,
       }),
+      // Rust-based React compiler
+      // https://github.com/vitejs/vite-plugin-react-swc#readme
+      react(),
     ],
 
     server: {
       proxy: {
         "/api": {
-          target: process.env.LOCAL_API_ORIGIN ?? process.env.API_ORIGIN,
+          target:
+            process.env.API === "remote"
+              ? "https://example.com"
+              : env.API_ORIGIN,
           changeOrigin: true,
         },
       },

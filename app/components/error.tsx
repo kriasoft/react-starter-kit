@@ -1,27 +1,35 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { Container, Typography } from "@mui/joy";
-import { useRouteError } from "react-router-dom";
+import { useRouter } from "@tanstack/react-router";
 
 export function RootError(): JSX.Element {
-  const err = useRouteError() as RouteError;
+  const router = useRouter();
+  const err = router.state.error as RouteError | null;
 
   return (
-    <Container sx={{ marginTop: "43vh" }} maxWidth="sm">
-      <Typography
-        sx={{
+    <div
+      style={{
+        marginTop: "43vh",
+        maxWidth: "600px",
+        margin: "0 auto",
+        padding: "0 20px",
+      }}
+    >
+      <h1
+        style={{
           fontSize: "2em",
           fontWeight: 300,
           textAlign: "center",
-          "& strong": { fontWeight: 400 },
+          color: "#333",
         }}
-        level="h1"
       >
-        <strong>Error {err.status || 500}</strong>:{" "}
-        {err.statusText ?? err.message}
-      </Typography>
-    </Container>
+        <strong style={{ fontWeight: 400 }}>
+          Error {(err as any)?.status || 500}
+        </strong>
+        : {(err as any)?.statusText ?? err?.message ?? "Unknown error"}
+      </h1>
+    </div>
   );
 }
 

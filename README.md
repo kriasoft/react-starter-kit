@@ -1,23 +1,22 @@
 # React Starter Kit
 
 <a href="https://github.com/kriasoft/react-starter-kit?sponsor=1"><img src="https://img.shields.io/badge/-GitHub-%23555.svg?logo=github-sponsors" height="20"></a>
-<a href="http://patreon.com/koistya"><img src="https://img.shields.io/badge/dynamic/json?color=%23ff424d&label=Patreon&&query=data.attributes.patron_count&suffix=%20patrons&url=https%3A%2F%2Fwww.patreon.com%2Fapi%2Fcampaigns%2F233228" height="20"></a>
 <a href="https://discord.gg/2nKEnKq"><img src="https://img.shields.io/discord/643523529131950086?label=Chat" height="20"></a>
 <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a>
 <a href="https://twitter.com/koistya"><img src="https://img.shields.io/twitter/follow/koistya.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
-The web's most popular Jamstack front-end template for building web applications with
-[React](https://react.dev/).
+So, you want to build a modern web app but don't want to spend the next two weeks configuring everything? You've come to the right place. This React Starter Kit is a batteries-included, production-ready boilerplate that lets you skip the boring parts and get straight to building.
+
+It's built on a modern, edge-first stack that's fast, type-safe, and frankly, a joy to work with. Whether you're building a weekend project or the next big thing, we've got your back.
 
 ## Features
 
-- Optimized for serverless deployment to CDN edge locations (Cloudflare Workers)
-- HTML page rendering (SSR) at CDN edge locations, all ~100 points on Lighthouse
-- Hot module replacement during local development using React Refetch
-- Pre-configured with CSS-in-JS styling using Emotion.js
-- Pre-configured with code quality tools: ESLint, Prettier, TypeScript, Vitest, etc.
-- Pre-configured with VSCode code snippets and other VSCode settings
-- The ongoing design and development is supported by these wonderful companies:
+- **Blazing Fast Everything**: Powered by [Bun](https://bun.sh/), from the backend server to the scripts. It's fast. Like, "go get a coffee and it's already done" fast.
+- **Full-Stack Type Safety**: With [TypeScript](https://www.typescriptlang.org/) and [tRPC](https://trpc.io/), you can say goodbye to runtime errors. If it compiles, it works (usually).
+- **Modern Frontend**: Built with [React 19](https://react.dev/), [TanStack Router](https://tanstack.com/router) for type-safe routing, and [Tailwind CSS v4](https://tailwindcss.com/) for styling. Your UI will be snappy and look good doing it.
+- **Edge-First Architecture**: Deploy to [Cloudflare Workers](https://workers.cloudflare.com/) for incredible performance and scalability. Your app will be everywhere, all at once.
+- **Database Included**: Comes with [Drizzle ORM](https://orm.drizzle.team/) and a pre-configured schema for multi-tenant applications. No more writing SQL by hand unless you really, really want to.
+- **Top-Notch DX**: Pre-configured with ESLint, Prettier, and VSCode settings to keep your code clean and your team happy. Less arguing about tabs vs. spaces, more building cool stuff.
 
 <a href="https://reactstarter.com/s/1"><img src="https://reactstarter.com/s/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/2"><img src="https://reactstarter.com/s/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/3"><img src="https://reactstarter.com/s/3.png" height="60" /></a>
 
@@ -28,82 +27,72 @@ Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for as
 
 ## Directory Structure
 
-`├──`[`.github`](.github) — GitHub configuration including CI/CD workflows<br>
-`├──`[`.vscode`](.vscode) — VSCode settings including code snippets, recommended extensions etc.<br>
-`├──`[`app`](./app) — Web application front-end built with [React](https://react.dev/) and [Joy UI](https://mui.com/joy-ui/getting-started/)<br>
-`├──`[`db`](./db) — Firestore database schema, seed data, and admin tools<br>
-`├──`[`edge`](./edge) — Cloudflare Workers (CDN) edge endpoint<br>
-`├──`[`env`](./env) — Application settings, API keys, etc.<br>
-`├──`[`scripts`](./scripts) — Automation scripts such as `yarn deploy`<br>
-`├──`[`server`](./server) — Node.js application server built with [tRPC](https://trpc.io/)<br>
-`├──`[`tsconfig.base.json`](./tsconfig.base.json) — The common/shared TypeScript configuration<br>
-`└──`[`tsconfig.json`](./tsconfig.json) — The root TypeScript configuration<br>
+`├──`[`api`](./api) — tRPC API server built with [Hono](https://hono.dev/)<br>
+`├──`[`app`](./app) — Web application front-end built with [React](https://react.dev/) and [Tailwind CSS](https://tailwindcss.com/)<br>
+`├──`[`core`](./core) — Shared code, types, and WebSocket logic used across the stack<br>
+`├──`[`db`](./db) — Database schema, migrations, and seeds using [Drizzle ORM](https://orm.drizzle.team/)<br>
+`├──`[`edge`](./edge) — Cloudflare Worker entry point for handling requests at the edge<br>
+`├──`[`scripts`](./scripts) — Various build and automation scripts<br>
+`├──`[`tsconfig.base.json`](./tsconfig.base.json) — The common/shared TypeScript configuration for the monorepo<br>
+`└──`[`wrangler.jsonc`](./wrangler.jsonc) — Configuration file for Cloudflare Workers<br>
 
 ## Tech Stack
 
-- [React](https://react.dev/), [React Router](https://reactrouter.com/), [Jotai](https://jotai.org/), [Emotion](https://emotion.sh/), [Joy UI](https://mui.com/joy-ui/getting-started/), [Firebase Authentication](https://firebase.google.com/docs/auth)
-- [Cloudflare Workers](https://workers.cloudflare.com/), [Vite](https://vitejs.dev/), [Vitest](https://vitejs.dev/),
-  [TypeScript](https://www.typescriptlang.org/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [Yarn](https://yarnpkg.com/) with PnP
+- **Runtime**: [Bun](https://bun.sh/)
+- **Platform**: [Cloudflare Workers](https://workers.cloudflare.com/)
+- **Frameworks**: [React 19](https://react.dev/), [Hono](https://hono.dev/)
+- **API**: [tRPC](https://trpc.io/)
+- **Routing**: [TanStack Router](https://tanstack.com/router)
+- **Database**: [Drizzle ORM](https://orm.drizzle.team/) with [Cloudflare D1](https://developers.cloudflare.com/d1/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/)
+- **State Management**: [Jotai](https://jotai.org/)
+- **Authentication**: [Better Auth](https://www.better-auth.com/)
+- **Tooling**: [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [TypeScript](https://www.typescriptlang.org/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/) v18+ with [Corepack](https://nodejs.org/api/corepack.html) (`$ corepack enable`)
-- [VS Code](https://code.visualstudio.com/) editor with [recommended extensions](.vscode/extensions.json)
-- Optionally [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
-  and [Reactime](https://chrome.google.com/webstore/detail/reactime/cgibknllccemdnfhfpmjhffpjfeidjga?hl=en) browser extensions
+- [Bun](https://bun.sh/) (v1.0 or newer)
+- [VS Code](https://code.visualstudio.com/) editor with our [recommended extensions](.vscode/extensions.json)
+- Optionally, the [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) for your browser.
 
 ## Getting Started
 
 [Generate](https://github.com/kriasoft/react-starter-kit/generate) a new project
 from this template, clone it, install project dependencies, update the
-environment variables found in [`env/*.env`](./env/), and start hacking:
+environment variables found in [`.env`](./.env) / [`.env.local`](./.env.local), and start hacking:
 
+```bash
+# Clone the repository
+git clone https://github.com/kriasoft/react-starter-kit.git example
+cd ./example
+
+# Launch the front-end app
+bun --cwd app start
+
+# Launch the backend API server
+bun --cwd edge build --watch
+bun wrangler dev
+
+# Migrate the database
+bun --cwd db migrate
 ```
-$ git clone https://github.com/kriasoft/react-starter-kit.git example
-$ cd ./example
-$ corepack enable
-$ yarn install
-$ yarn workspace app start
-```
 
-The app will become available at [http://localhost:5173/](http://localhost:5173/) (press `q` + `Enter` to exit).
-
-**IMPORTANT**: Ensure that VSCode is using the workspace [version of TypeScript](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-newer-typescript-versions)
-and ESLint.
-
-![](https://files.tarkus.me/typescript-workspace.png)
-
-## Scripts
-
-- `yarn start` — Launches the app in development mode on [`http://localhost:5173/`](http://localhost:5173/)
-- `yarn build` — Compiles and bundles the app for deployment
-- `yarn lint` — Validate the code using ESLint
-- `yarn tsc` — Validate the code using TypeScript compiler
-- `yarn test` — Run unit tests with Vitest, Supertest
-- `yarn edge deploy` — Deploys the app to Cloudflare
+Your frontend will be running at <http://localhost:5173/>, and the backend API will be on the port from `wrangler dev` (usually 8787). Open the frontend URL in your browser to see the app in action.
 
 ## How to Deploy
 
-Ensure that all the environment variables for the target deployment environment
-(`test`, `prod`) found in [`/env/*.env`](./env/) files are up-to-date.
+Ensure that all the environment variables in `.env`/`.env.local` files and Wrangler configuration in `wrangler.json` file are up-to-date.
 
 If you haven't done it already, push any secret values you may need to CF Workers
-environment by running `yarn workspace edge wrangler secret put <NAME> [--env #0]`.
+environment by running `bun wrangler secret put <NAME> [--env #0]`.
 
 Finally build and deploy the app by running:
 
 ```
-$ yarn build
-$ yarn deploy [--env #0] [--version #0]
+bun --cwd app build
+bun --cwd edge build
+bun wrangler deploy
 ```
-
-Where `--env` argument is the target deployment area, e.g. `yarn deploy --env=prod`.
-
-## How to Update
-
-- `yarn set version latest` — Bump Yarn to the latest version
-- `yarn upgrade-interactive` — Update Node.js modules (dependencies)
-- `yarn dlx @yarnpkg/sdks vscode` — Update TypeScript, ESLint, and Prettier settings in VSCode
 
 ## Contributors 👨‍💻
 

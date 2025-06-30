@@ -2,9 +2,10 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "lib": ["ESNext"],
-    "types": ["@cloudflare/workers-types", "vite/client"],
-    "outDir": "../.cache/typescript-edge"
+    "outDir": "./dist",
+    "types": ["@cloudflare/workers-types", "vite/client"]
   },
-  "include": ["**/*.ts", "**/*.d.ts", "**/*.json"],
-  "exclude": ["dist/**/*"]
+  "include": ["**/*.ts", "**/*.json", "./types/cloudflare-env.d.ts"],
+  "exclude": ["dist", "node_modules"],
+  "references": [{ "path": "../api" }, { "path": "../db" }]
 }

@@ -4,34 +4,28 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "vite serve",
     "build": "vite build",
     "test": "vitest",
-    "coverage": "vitest run --coverage",
-    "deploy": "node ../scripts/wrangler.js deploy",
-    "logs": "node ../scripts/wrangler.js tail",
-    "wrangler": "node ../scripts/wrangler.js",
-    "edge:cf": "node ../scripts/wrangler.js",
-    "edge:tsc": "tsc",
-    "edge:test": "vitest",
-    "edge:build": "vite build",
-    "edge:deploy": "node ../scripts/wrangler.js deploy",
-    "edge:logs": "node ../scripts/wrangler.js tail"
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.1.11",
-    "hono": "^4.0.2",
-    "jose": "^5.2.2",
-    "web-auth-library": "^1.0.3",
-    "zod": "^3.22.4"
+    "@hono/zod-validator": "^0.7.0",
+    "@trpc/server": "^11.4.3",
+    "api": "workspace:*",
+    "better-auth": "^1.2.12",
+    "db": "workspace:*",
+    "hono": "^4.8.3",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240208.0",
-    "@types/node": "^20.11.18",
-    "happy-dom": "^13.3.8",
-    "toml": "^3.0.0",
-    "typescript": "~5.3.3",
-    "vite": "~5.1.2",
-    "vitest": "~1.2.2",
-    "vitest-environment-miniflare": "^2.14.2"
+    "@cloudflare/vite-plugin": "^1.7.5",
+    "@cloudflare/vitest-pool-workers": "^0.8.47",
+    "@cloudflare/workers-types": "^4.20250628.0",
+    "@hono/vite-build": "^1.6.2",
+    "@types/bun": "^1.2.17",
+    "typescript": "~5.8.3",
+    "vite": "~7.0.0",
+    "vitest": "~3.2.4"
   }
 }

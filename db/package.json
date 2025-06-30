@@ -4,27 +4,30 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": {
-      "default": "./index.ts"
-    },
-    "./package.json": "./package.json"
+    "./schema": "./schema/index.ts",
+    "./schema/*": "./schema/*"
   },
   "scripts": {
-    "seed": "vite-node ./scripts/seed.ts",
-    "test": "vitest"
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "migrate:remote": "drizzle-kit migrate",
+    "push": "drizzle-kit push",
+    "push:remote": "drizzle-kit push",
+    "studio": "drizzle-kit studio",
+    "studio:remote": "drizzle-kit studio",
+    "introspect": "drizzle-kit introspect",
+    "up": "drizzle-kit up",
+    "check": "drizzle-kit check",
+    "drop": "drizzle-kit drop",
+    "export": "drizzle-kit export"
   },
-  "dependencies": {
-    "@google-cloud/firestore": "^7.3.0",
-    "@googleapis/identitytoolkit": "^8.0.1",
-    "zod": "^3.22.4"
+  "peerDependencies": {
+    "drizzle-orm": "^0.44.2"
   },
   "devDependencies": {
-    "@types/node": "^20.11.18",
-    "dotenv": "^16.4.4",
-    "ora": "^8.0.1",
-    "typescript": "~5.3.3",
-    "vite": "~5.1.2",
-    "vite-node": "~1.2.2",
-    "vitest": "~1.2.2"
+    "@types/bun": "^1.2.17",
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.2",
+    "typescript": "~5.8.3"
   }
 }
