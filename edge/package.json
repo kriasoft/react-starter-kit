@@ -10,23 +10,23 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.7.0",
+    "@hono/zod-validator": "^0.7.1",
     "@trpc/server": "^11.4.3",
     "api": "workspace:*",
     "better-auth": "^1.2.12",
     "core": "workspace:*",
     "db": "workspace:*",
-    "hono": "^4.8.3",
-    "zod": "^3.25.67"
+    "hono": "^4.8.5",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.7.5",
-    "@cloudflare/vitest-pool-workers": "^0.8.47",
-    "@cloudflare/workers-types": "^4.20250628.0",
+    "@cloudflare/vite-plugin": "^1.9.6",
+    "@cloudflare/vitest-pool-workers": "^0.8.55",
+    "@cloudflare/workers-types": "^4.20250715.0",
     "@hono/vite-build": "^1.6.2",
-    "@types/bun": "^1.2.17",
+    "@types/bun": "^1.2.18",
     "typescript": "~5.8.3",
-    "vite": "~7.0.0",
+    "vite": "~7.0.5",
     "vitest": "~3.2.4"
   }
 }

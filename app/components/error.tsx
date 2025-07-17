@@ -1,11 +1,12 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { useRouter } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
 
-export function RootError(): JSX.Element {
-  const router = useRouter();
-  const err = router.state.error as RouteError | null;
+export function RootError() {
+  const routerState = useRouterState();
+  const err = routerState.matches.find((match) => match.error)
+    ?.error as RouteError | null;
 
   return (
     <div
@@ -24,10 +25,8 @@ export function RootError(): JSX.Element {
           color: "#333",
         }}
       >
-        <strong style={{ fontWeight: 400 }}>
-          Error {(err as any)?.status || 500}
-        </strong>
-        : {(err as any)?.statusText ?? err?.message ?? "Unknown error"}
+        <strong style={{ fontWeight: 400 }}>Error {err?.status || 500}</strong>:{" "}
+        {err?.statusText ?? err?.message ?? "Unknown error"}
       </h1>
     </div>
   );
