@@ -26,8 +26,8 @@ Full-stack React application template optimized for Cloudflare Workers deploymen
 
 ```bash
 # Development
-bun start                    # Start app dev server
-bun --cwd app start          # Start app workspace
+bun dev                      # Start app dev server
+bun --cwd app dev            # Start app workspace
 bun --cwd api build          # Build API types
 bun --cwd db push            # Apply DB schema changes
 bun test                     # Run all tests

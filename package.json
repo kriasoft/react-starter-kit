@@ -13,13 +13,14 @@
     "core",
     "db",
     "edge",
-    "scripts"
+    "scripts",
+    "server"
   ],
   "scripts": {
-    "start": "bun --cwd app start",
+    "dev": "bun --cwd app dev",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "vitest",
-    "build": "bun --filter app build && bun --filter edge build",
+    "build": "bun --filter app --filter edge --filter server build",
     "deploy": "bun wrangler deploy",
     "prepare": "husky"
   },

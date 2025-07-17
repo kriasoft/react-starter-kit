@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": false,
+    "outDir": "./dist"
+  },
+  "include": ["**/*.ts", "../core/types/cloudflare-env.d.ts"],
+  "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
+  "references": [
+    { "path": "../api" },
+    { "path": "../core" },
+    { "path": "../db" }
+  ]
+}

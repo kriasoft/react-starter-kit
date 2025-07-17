@@ -4,7 +4,7 @@ React 19, TypeScript, Vite, TanStack Router, ShadCN UI, Tailwind CSS v4, Jotai, 
 
 ## Commands
 
-- `bun --cwd app start` - Dev server
+- `bun --cwd app dev` - Dev server
 - `bun --cwd app test` - Run tests
 - `bun --cwd app lint` - Lint code
 

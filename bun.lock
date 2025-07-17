@@ -179,6 +179,21 @@
         "zx": "^8.7.1",
       },
     },
+    "server": {
+      "name": "server",
+      "version": "0.0.0",
+      "dependencies": {
+        "@trpc/server": "^11.4.3",
+        "api": "workspace:*",
+        "core": "workspace:*",
+        "db": "workspace:*",
+        "hono": "^4.8.5",
+      },
+      "devDependencies": {
+        "@types/bun": "^1.2.18",
+        "typescript": "~5.8.3",
+      },
+    },
   },
   "packages": {
     "@ai-sdk/openai": ["@ai-sdk/openai@1.3.23", "", { "dependencies": { "@ai-sdk/provider": "1.1.3", "@ai-sdk/provider-utils": "2.2.8" }, "peerDependencies": { "zod": "^3.0.0" } }, "sha512-86U7rFp8yacUAOE/Jz8WbGcwMCqWvjK33wk5DXkfnAOEn3mx2r7tNSJdjukQFZbAK97VMXGPPHxF+aEARDXRXQ=="],
@@ -2022,6 +2037,8 @@
     "seroval-plugins": ["seroval-plugins@1.3.2", "", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-0QvCV2lM3aj/U3YozDiVwx9zpH0q8A60CTWIv4Jszj/givcudPb48B+rkU5D51NJ0pTpweGMttHjboPa9/zoIQ=="],
 
     "serve-static": ["serve-static@2.2.0", "", { "dependencies": { "encodeurl": "^2.0.0", "escape-html": "^1.0.3", "parseurl": "^1.3.3", "send": "^1.2.0" } }, "sha512-61g9pCh0Vnh7IutZjtLGGpTA355+OPn2TyDv/6ivP2h/AdAVX9azsoxmg2/M6nZeQZNYBEwIcsne1mJd9oQItQ=="],
+
+    "server": ["server@workspace:server"],
 
     "set-cookie-parser": ["set-cookie-parser@2.7.1", "", {}, "sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ=="],
 
