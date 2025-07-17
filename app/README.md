@@ -150,7 +150,7 @@ Domain-specific components that combine UI primitives:
 
 ```bash
 # Start development server
-bun --cwd app start
+bun --cwd app dev
 
 # Run type checking
 bun --cwd app typecheck
