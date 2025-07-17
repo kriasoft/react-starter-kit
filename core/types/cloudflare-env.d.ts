@@ -7,6 +7,7 @@ declare namespace Cloudflare {
       | "http://localhost:5173,http://127.0.0.1:5173"
       | "https://example.com"
       | "https://preview.example.com";
+    OPENAI_API_KEY: string;
     db: D1Database;
     ASSETS: Fetcher;
   }

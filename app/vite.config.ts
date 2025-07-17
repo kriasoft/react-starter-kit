@@ -19,7 +19,7 @@ const publicEnvVars = [
  * Vite configuration.
  * https://vitejs.dev/config/
  */
-export default defineProject(async ({ mode }) => {
+export default defineProject(({ mode }) => {
   const envDir = fileURLToPath(new URL("..", import.meta.url));
   const env = loadEnv(mode, envDir, "");
 
@@ -67,9 +67,9 @@ export default defineProject(async ({ mode }) => {
         quoteStyle: "single",
         semicolons: false,
         autoCodeSplitting: true,
-      }),
-      // Rust-based React compiler
-      // https://github.com/vitejs/vite-plugin-react-swc#readme
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) as any,
+      // https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react-swc
       react(),
     ],
 

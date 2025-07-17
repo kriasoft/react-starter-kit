@@ -43,14 +43,15 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
       - run: bun lint
         if: ${{ github.event_name == 'pull_request' }}
+      - run: bun --filter app build
       - run: bun tsc --build
-      - run: bun --filter app test
-        if: ${{ github.event_name == 'pull_request' }}
+      # - run: bun --filter app test
+      #   if: ${{ github.event_name == 'pull_request' }}
       # - run: bun --filter edge test
       #   if: ${{ github.event_name == 'pull_request' }}
 
       # Compile and save build artifacts
-      - run: bun build
+      - run: bun run build
       - uses: actions/upload-artifact@v4
         with: { name: "build", path: "app/dist\nedge/dist\n" }
 

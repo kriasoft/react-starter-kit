@@ -14,13 +14,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@cloudflare/workers-types": "^4.20250628.0"
+    "@cloudflare/workers-types": "^4.20250715.0"
   },
   "peerDependencies": {
     "better-auth": "^1.2.12",
-    "hono": "^4.8.3",
+    "hono": "^4.8.5",
     "uuid": "^11.1.0",
-    "zod": "^3.25.67"
+    "zod": "^3.25.76"
   },
   "peerDependenciesMeta": {
     "zod": {
@@ -31,11 +31,11 @@
     }
   },
   "devDependencies": {
-    "@types/bun": "^1.2.17",
+    "@types/bun": "^1.2.18",
     "better-auth": "^1.2.12",
-    "hono": "^4.8.3",
+    "hono": "^4.8.5",
     "typescript": "~5.8.3",
     "uuid": "^11.1.0",
-    "zod": "^3.25.67"
+    "zod": "^4.0.5"
   }
 }

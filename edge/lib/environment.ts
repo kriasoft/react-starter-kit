@@ -12,7 +12,9 @@ import type { CloudflareEnv } from "@root/core/types";
  * Gets the current environment with proper defaults.
  * Defaults to "development" when ENVIRONMENT is not set (local dev).
  */
-export function getEnvironment(env: CloudflareEnv): "development" | "production" | "preview" {
+export function getEnvironment(
+  env: CloudflareEnv,
+): "development" | "production" | "preview" {
   return env.ENVIRONMENT ?? "development";
 }
 
@@ -42,7 +44,7 @@ export function isPreview(env: CloudflareEnv): boolean {
  */
 export function isLocalDevelopment(origin?: string): boolean {
   if (!origin) return false;
-  
+
   return (
     origin === "http://localhost:5173" ||
     origin === "http://127.0.0.1:5173" ||
@@ -56,15 +58,16 @@ export function isLocalDevelopment(origin?: string): boolean {
 export function getEnvironmentInfo(env: CloudflareEnv, origin?: string) {
   const environment = getEnvironment(env);
   const isLocal = isLocalDevelopment(origin);
-  
+
   return {
     environment,
     isDevelopment: environment === "development",
     isProduction: environment === "production",
     isPreview: environment === "preview",
     isLocalOrigin: isLocal,
-    allowedOrigins: environment === "development" && isLocal
-      ? ["localhost", "127.0.0.1"] 
-      : env.ALLOWED_ORIGINS?.split(",").map(o => o.trim()) || [],
+    allowedOrigins:
+      environment === "development" && isLocal
+        ? ["localhost", "127.0.0.1"]
+        : env.ALLOWED_ORIGINS?.split(",").map((o) => o.trim()) || [],
   };
 }

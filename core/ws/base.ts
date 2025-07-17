@@ -40,33 +40,25 @@ export function createMessageSchema<
 >(
   type: Type,
   payloadSchema: PayloadSchema, // Payload schema is required here
-): z.ZodObject<
-  // Define the exact shape expected as the return type
-  {
-    id: typeof BaseSchema.shape.id;
-    type: Type; // Use the specific literal type
-    payload: PayloadSchema; // Use the specific payload schema
-    meta: typeof BaseSchema.shape.meta;
-  },
-  z.UnknownKeysParam,
-  z.ZodTypeAny
->;
+): z.ZodObject<// Define the exact shape expected as the return type
+{
+  id: typeof BaseSchema.shape.id;
+  type: Type; // Use the specific literal type
+  payload: PayloadSchema; // Use the specific payload schema
+  meta: typeof BaseSchema.shape.meta;
+}>;
 
 /**
  * Factory function to create a message schema with a specific type and no payload.
  */
 export function createMessageSchema<Type extends z.ZodLiteral<string>>(
   type: Type,
-): z.ZodObject<
-  {
-    id: typeof BaseSchema.shape.id;
-    type: Type;
-    payload: z.ZodUndefined;
-    meta: typeof BaseSchema.shape.meta;
-  },
-  z.UnknownKeysParam,
-  z.ZodTypeAny
->;
+): z.ZodObject<{
+  id: typeof BaseSchema.shape.id;
+  type: Type;
+  payload: z.ZodUndefined;
+  meta: typeof BaseSchema.shape.meta;
+}>;
 
 /**
  * Implementation (covers both overloads)
@@ -106,17 +98,13 @@ export type MessageResult<T> =
 export function createMessage<
   // Adjust TSchema constraint to reflect that payload might not always exist
   // It will exist if the specific schema returned by createMessageSchema has it.
-  TSchema extends z.ZodObject<
-    {
-      id: z.ZodOptional<z.ZodString>;
-      type: z.ZodLiteral<string>;
-      // Payload might be z.ZodUndefined or the specific PayloadSchema
-      payload: z.ZodTypeAny;
-      meta: z.ZodOptional<typeof MessageMetadataSchema>;
-    },
-    z.UnknownKeysParam,
-    z.ZodTypeAny
-  >,
+  TSchema extends z.ZodObject<{
+    id: z.ZodOptional<z.ZodString>;
+    type: z.ZodLiteral<string>;
+    // Payload might be z.ZodUndefined or the specific PayloadSchema
+    payload: z.ZodTypeAny;
+    meta: z.ZodOptional<typeof MessageMetadataSchema>;
+  }>,
 >(
   schema: TSchema,
   // Use z.input on the specific payload shape from the final schema
