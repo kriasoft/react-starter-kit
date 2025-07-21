@@ -7,19 +7,26 @@
 
   "assets": {
     "directory": "./app/dist",
-    "binding": "ASSETS",
+    "binding": "ASSETS"
   },
 
   "upload_source_maps": true,
 
   "d1_databases": [
     {
-      "binding": "db",
+      "binding": "DB",
       "database_name": "example",
       "database_id": "12345678-1234-1234-1234-123456789abc",
-      "migrations_dir": "./db/migrations",
-    },
+      "migrations_dir": "./db/migrations"
+    }
   ],
+
+  // "hyperdrive": [
+  //   {
+  //     "binding": "HYPERDRIVE",
+  //     "id": "your-hyperdrive-id-here"
+  //   }
+  // ],
 
   "compatibility_date": "2025-05-05",
   "compatibility_flags": ["nodejs_compat"],
@@ -28,33 +35,54 @@
 
   "vars": {
     "ENVIRONMENT": "development",
-    "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173",
+    "DATABASE_URL": "postgres://root@localhost:5432/example",
+    "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173"
   },
 
   "env": {
     "production": {
       "vars": {
         "ENVIRONMENT": "production",
-        "ALLOWED_ORIGINS": "https://example.com",
+        "DATABASE_URL": "postgres://root@localhost:5432/example",
+        "ALLOWED_ORIGINS": "https://example.com"
       },
       "routes": [
         {
           "pattern": "example.com/*",
-          "custom_domain": true,
-        },
+          "custom_domain": true
+        }
       ],
+      "kv_namespaces": [],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "example",
+          "database_id": "12345678-1234-1234-1234-123456789abc",
+          "migrations_dir": "./db/migrations"
+        }
+      ]
     },
     "preview": {
       "vars": {
         "ENVIRONMENT": "preview",
-        "ALLOWED_ORIGINS": "https://preview.example.com",
+        "DATABASE_URL": "postgres://root@localhost:5432/example",
+        "ALLOWED_ORIGINS": "https://preview.example.com"
       },
       "routes": [
         {
           "pattern": "preview.example.com/*",
-          "custom_domain": true,
-        },
+          "custom_domain": true
+        }
       ],
-    },
-  },
+      "kv_namespaces": [],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "example",
+          "database_id": "12345678-1234-1234-1234-123456789abc",
+          "migrations_dir": "./db/migrations"
+        }
+      ]
+    }
+  }
 }

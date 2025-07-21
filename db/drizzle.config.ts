@@ -1,14 +1,14 @@
 /**
- * @fileoverview Drizzle ORM configuration supporting dual-mode database connections.
+ * Drizzle ORM configuration supporting dual-mode database connections.
  *
  * Local: Uses Wrangler-generated SQLite file from .wrangler/state/v3/d1/ directory.
  * Remote: Connects to Cloudflare D1 production database via HTTPS using account credentials.
  *
  * Environment detection based on npm lifecycle events or DB environment variable.
+ *
+ * SPDX-FileCopyrightText: 2014-present Kriasoft
+ * SPDX-License-Identifier: MIT
  */
-
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
 
 import { defineConfig } from "drizzle-kit";
 import { existsSync, readdirSync } from "node:fs";
@@ -78,7 +78,7 @@ function requireEnv(key: string): string {
  */
 export default defineConfig({
   out: "./migrations",
-  schema: "./schema/index.ts",
+  schema: "./schema",
   dialect: "sqlite",
   casing: "snake_case",
 

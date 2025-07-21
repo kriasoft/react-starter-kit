@@ -1,11 +1,26 @@
 /**
- * @fileoverview Database schema for user accounts, sessions, identities,
- * and verification tokens. Defines tables: user, session, identity,
- * verification.
+ * Database schema for Better Auth authentication system.
+ *
+ * This schema is designed to be fully compatible with Better Auth's database
+ * requirements as documented at https://www.better-auth.com/docs/concepts/database
+ *
+ * Tables defined:
+ * - `user`: Core user accounts with profile information
+ * - `session`: Active user sessions for authentication state
+ * - `identity`: OAuth provider accounts (renamed from Better Auth's `account`)
+ * - `verification`: Tokens for email verification and password resets
+ *
+ * @remarks
+ * - All tables include required Better Auth fields
+ * - Uses SQLite with Drizzle ORM for Cloudflare D1 compatibility
+ * - Timestamps use integer mode for SQLite compatibility
+ *
+ * @see https://www.better-auth.com/docs/concepts/database - Better Auth database schema
+ * @see https://www.better-auth.com/docs/adapters/drizzle - Drizzle adapter configuration
+ *
+ * SPDX-FileCopyrightText: 2014-present Kriasoft
+ * SPDX-License-Identifier: MIT
  */
-
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
 
 import { relations } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
@@ -22,9 +37,7 @@ export const user = sqliteTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  // GitHub-specific fields
-  ghUsername: text("gh_username"),
-  ghUserId: text("gh_user_id"),
+  isAnonymous: int("is_anonymous", { mode: "boolean" }),
   // Timestamps
   createdAt: int("created_at", { mode: "timestamp" })
     .$default(() => new Date())

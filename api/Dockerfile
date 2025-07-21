@@ -1,5 +1,5 @@
 # Dockerfile for the tRPC API Server
-# docker build --tag server:latest -f ./server/Dockerfile .
+# docker build --tag api:latest -f ./api/Dockerfile .
 # https://bun.com/guides/ecosystem/docker
 # https://docs.docker.com/guides/bun/containerize/
 
@@ -9,14 +9,20 @@ FROM oven/bun:slim
 RUN apt-get update && apt-get install -y --no-install-recommends dumb-init jq && \
     rm -rf /var/lib/apt/lists/*
 
+# Set environment variables
+ENV NODE_ENV=production
+
 # Set working directory
 WORKDIR /usr/src/app
 
 # Copy package files for better layer caching
-COPY ./server/package.json ./package.json
+COPY ./api/package.json ./package.json
 
 # Remove workspace dependencies from package.json
-# This allows bun install to work without the workspace packages
+# Workspace dependencies like "workspace:*" or "workspace:^1.0.0" cannot be resolved
+# inside Docker since the workspace packages aren't available in the container context.
+# This jq command filters out any dependency where the version starts with "workspace:"
+# Example: "core": "workspace:*" gets removed, "zod": "4.0.5" remains
 RUN jq '.dependencies |= with_entries(select(.value | startswith("workspace:") | not))' \
     package.json > package.tmp.json && \
     mv package.tmp.json package.json
@@ -27,7 +33,10 @@ RUN bun install --production
 
 # Copy pre-built server files from dist directory
 # The build process should be done outside of Docker
-COPY --chown=bun:bun ./server/dist ./dist
+COPY --chown=bun:bun ./api/dist ./dist
+
+# Verify dist directory exists and has content
+RUN test -f ./dist/index.js || (echo "Error: dist/index.js not found" && exit 1)
 
 # Switch to non-root user
 USER bun

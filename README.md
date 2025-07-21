@@ -32,14 +32,13 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 `├──`[`app/`](./app) — React frontend with Vite, TanStack Router, and Tailwind CSS<br>
 `├──`[`api/`](./api) — tRPC API server powered by Hono framework<br>
 `├──`[`edge/`](./edge) — Cloudflare Workers entry point for edge deployment<br>
-`├──`[`server/`](./server) — Node.js/Bun server for Google Cloud Run deployment<br>
 `├──`[`core/`](./core) — Shared TypeScript types and utilities<br>
 `├──`[`db/`](./db) — Database schemas, migrations, and seed data<br>
 `├──`[`scripts/`](./scripts) — Build automation and development tools<br>
 
 **Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
 
-**Deployment Flexibility:** The API can be deployed to either Cloudflare Workers (via `edge/`) for global edge computing or Google Cloud Run (via `server/`) for traditional container-based hosting, giving you the flexibility to choose based on your needs.
+**Deployment Flexibility:** The API is deployed to Cloudflare Workers (via `edge/`) for global edge computing, ensuring optimal performance worldwide.
 
 ## Perfect For
 

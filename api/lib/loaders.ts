@@ -1,5 +1,5 @@
 /**
- * @fileoverview Data loaders. Usage example:
+ * Data loaders. Usage example:
  *
  * ```ts
  * protectedProcedure

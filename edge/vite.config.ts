@@ -25,6 +25,19 @@ export default defineConfig({
       fileName: "index",
     },
     sourcemap: true,
+    rollupOptions: {
+      external: [
+        "postgres",
+        "drizzle-orm/postgres-js",
+        "os",
+        "fs",
+        "net",
+        "tls",
+        "crypto",
+        "stream",
+        "perf_hooks",
+      ],
+    },
   },
 
   assetsInclude: ["**/*.wasm"],

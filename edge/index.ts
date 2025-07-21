@@ -1,60 +1,50 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { getOpenAI } from "@root/api/lib/ai";
-import { createTRPCHandler } from "@root/api/lib/hono";
-import type { CloudflareEnv, CloudflareVariables } from "@root/core/types";
+import api, {
+  createAuth,
+  createD1Db,
+  getOpenAI,
+  type AppContext,
+} from "@root/api/edge";
+import type { CloudflareEnv } from "@root/core/types";
 import { streamText } from "ai";
 import { Hono } from "hono";
-import { createAuth } from "./lib/auth";
-import { authCors, chatCors, trpcCors } from "./lib/cors";
+import { authCors, chatCors } from "./lib/cors";
 import { getEnvironment } from "./lib/environment";
 
 const app = new Hono<{
   Bindings: CloudflareEnv;
-  Variables: CloudflareVariables;
+  Variables: AppContext["Variables"];
 }>();
+
+// Initialize shared context for all /api routes
+app.use("/api/*", async (c, next) => {
+  // Initialize database using Cloudflare D1
+  const db = createD1Db(c.env.DB);
+
+  // Initialize auth
+  const auth = createAuth(db, c.env);
+
+  // Get session info
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+
+  // Set context variables
+  c.set("db", db);
+  c.set("auth", auth);
+  c.set("session", session?.session ?? null);
+  c.set("user", session?.user ?? null);
+
+  await next();
+});
 
 // Better Auth handlers with CORS
 // https://www.better-auth.com/docs/integrations/hono
 // https://hono.dev/examples/better-auth-on-cloudflare
 app.use("/api/auth/*", authCors());
 
-app.on(["GET", "POST"], "/api/auth/*", (c) => {
-  return createAuth(c.env).handler(c.req.raw);
-});
-
-// CORS and authentication middleware for tRPC routes
-app.use("/api/trpc/*", trpcCors(), async function authenticate(c, next) {
-  try {
-    // Get session using Better Auth API
-    const session = await createAuth(c.env).api.getSession({
-      headers: c.req.raw.headers,
-    });
-
-    // Set user and session context for downstream handlers
-    c.set("user", session?.user ?? null);
-    c.set("session", session?.session ?? null);
-  } catch (error) {
-    console.error("Authentication error:", error);
-    // Set null values on authentication failure
-    c.set("user", null);
-    c.set("session", null);
-  }
-
-  await next();
-});
-
-// Mount tRPC handler
-app.all("/api/trpc/*", (c) => {
-  return createTRPCHandler(c, {
-    endpoint: "/api/trpc",
-    onError({ error, path }) {
-      console.error("tRPC error on path", path, ":", error);
-    },
-    batching: { enabled: true },
-  });
-});
+// tRPC API and authentication
+app.route("/", api);
 
 // CORS for chat endpoint
 app.use("/api/chat", chatCors());

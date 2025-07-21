@@ -123,7 +123,7 @@ export default {
   async fetch(request: Request, env: CloudflareEnv, ctx: ExecutionContext) {
     // Fully typed environment and context
     const authSecret = env.BETTER_AUTH_SECRET; //  Type-safe
-    const db = env.db; //  D1Database type
+    const db = env.DB; //  D1Database type
   },
 };
 ```

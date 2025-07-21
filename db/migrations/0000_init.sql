@@ -85,8 +85,7 @@ CREATE TABLE `user` (
 	`email` text NOT NULL,
 	`email_verified` integer NOT NULL,
 	`image` text,
-	`gh_username` text,
-	`gh_user_id` text,
+	`is_anonymous` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL
 );
