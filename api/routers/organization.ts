@@ -25,7 +25,7 @@ export const organizationRouter = router({
         id: "org_" + Date.now(),
         name: input.name,
         description: input.description,
-        ownerId: ctx.session.userId,
+        ownerId: ctx.user.id,
       };
     }),
 
@@ -64,7 +64,7 @@ export const organizationRouter = router({
     .input(
       z.object({
         organizationId: z.string(),
-        email: z.string().email(),
+        email: z.email({ message: "Invalid email address" }),
         role: z.enum(["admin", "member"]).default("member"),
       }),
     )

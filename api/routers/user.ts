@@ -1,26 +1,16 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { userById } from "../lib/loaders.js";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 export const userRouter = router({
   me: protectedProcedure.query(async ({ ctx }) => {
-    const user = await userById(ctx).load(ctx.session.userId);
-
-    if (!user) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "User not found",
-      });
-    }
-
+    // User is now directly available in context from Better Auth
     return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
+      id: ctx.user.id,
+      email: ctx.user.email,
+      name: ctx.user.name,
     };
   }),
 
@@ -28,13 +18,13 @@ export const userRouter = router({
     .input(
       z.object({
         name: z.string().min(1).optional(),
-        email: z.string().email().optional(),
+        email: z.email({ message: "Invalid email address" }).optional(),
       }),
     )
     .mutation(({ input, ctx }) => {
       // TODO: Implement user profile update logic
       return {
-        id: ctx.session.userId,
+        id: ctx.user.id,
         ...input,
       };
     }),

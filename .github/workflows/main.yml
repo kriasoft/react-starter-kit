@@ -53,21 +53,19 @@ jobs:
       #   if: ${{ github.event_name == 'pull_request' }}
       # - run: bun --filter edge test
       #   if: ${{ github.event_name == 'pull_request' }}
-      # - run: bun --filter server test
-      #   if: ${{ github.event_name == 'pull_request' }}
 
       # Compile
       - run: bun run build
 
       # Build Docker image (only on main branch pushes or manual triggers)
-      - run: docker build --tag server:${{ github.sha }} -f ./server/Dockerfile .
-      - run: docker save server:${{ github.sha }} | gzip > server-image.tar.gz
+      - run: docker build --tag api:${{ github.sha }} -f ./api/Dockerfile .
+      - run: docker save api:${{ github.sha }} | gzip > api-image.tar.gz
 
       # Upload build artifacts
       - uses: actions/upload-artifact@v4
         with:
           name: "build"
-          path: "app/dist\nedge/dist\nserver/dist\nserver-image.tar.gz\n"
+          path: "app/dist\nedge/dist\napi/dist\napi-image.tar.gz\n"
 
   deploy:
     name: "Deploy"
