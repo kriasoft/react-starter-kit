@@ -6,8 +6,7 @@
 
 # Bun package manager
 # https://bun.sh/docs/install/lockfile
-node_modules
-bun.lockb
+node_modules/
 
 # Logs
 *.log
@@ -40,12 +39,18 @@ bun.lockb
 # Wrangler CLI
 # https://developers.cloudflare.com/workers/wrangler/
 .wrangler/
-wrangler.toml.backup
 
 # TanStack Router
 # Generated route tree files should not be committed
 */lib/routeTree.gen.ts
 */.tanstack/
+
+# VitePress
+docs/.vitepress/cache
+docs/.vitepress/dist
+
+# Local development files
+*.local.md
 
 # macOS
 # https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
