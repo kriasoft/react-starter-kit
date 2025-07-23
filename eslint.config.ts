@@ -14,7 +14,14 @@ import ts from "typescript-eslint";
  */
 export default ts.config(
   {
-    ignores: [".cache", ".venv", "**/dist", "**/node_modules"],
+    ignores: [
+      ".cache",
+      ".venv",
+      "**/dist",
+      "**/node_modules",
+      "docs/.vitepress/cache",
+      "docs/.vitepress/dist",
+    ],
   },
   {
     ignores: ["app/**/*"],
