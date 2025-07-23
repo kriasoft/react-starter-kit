@@ -1,1 +1,0 @@
-import{_ as e,c as t,o}from"./chunks/framework.MV65KqtU.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"deployment.md","filePath":"deployment.md"}'),a={name:"deployment.md"};function n(r,s,c,p,d,m){return o(),t("div")}const i=e(a,[["render",n]]);export{_ as __pageData,i as default};
