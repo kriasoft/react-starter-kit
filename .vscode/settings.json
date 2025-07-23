@@ -1,0 +1,100 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "eslint.nodePath": "./node_modules",
+  "eslint.runtime": "node",
+  "prettier.prettierPath": "./node_modules/prettier",
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "vitest.commandLine": "bun run vitest",
+  "files.associations": {
+    ".env.*.local": "properties",
+    ".env.*": "properties"
+  },
+  "files.exclude": {
+    "**/.cache": true,
+    "**/.DS_Store": true,
+    "**/.editorconfig": true,
+    "**/.eslintcache": true,
+    "**/.git": true,
+    "**/.gitattributes": true,
+    "**/.husky": true,
+    "**/.pnp.*": true,
+    "**/.prettierignore": true,
+    "**/node_modules": true,
+    "**/bun.lock": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/dist/": true,
+    "**/node_modules/": true,
+    "**/bun.lock": true,
+    "**/routeTree.gen.ts": true
+  },
+  "terminal.integrated.env.linux": {
+    "CACHE_DIR": "${workspaceFolder}/.cache"
+  },
+  "terminal.integrated.env.osx": {
+    "CACHE_DIR": "${workspaceFolder}/.cache"
+  },
+  "terminal.integrated.env.windows": {
+    "CACHE_DIR": "${workspaceFolder}\\.cache"
+  },
+  "cSpell.ignoreWords": [
+    "browserslist",
+    "cloudfunctions",
+    "corejs",
+    "corepack",
+    "endregion",
+    "entrypoint",
+    "envalid",
+    "envars",
+    "eslintcache",
+    "esmodules",
+    "esnext",
+    "execa",
+    "firestore",
+    "globby",
+    "hono",
+    "identitytoolkit",
+    "jamstack",
+    "koistya",
+    "konstantin",
+    "kriasoft",
+    "localforage",
+    "miniflare",
+    "neondatabase",
+    "nodenext",
+    "notistack",
+    "oidc",
+    "openai",
+    "pathinfo",
+    "pino",
+    "pnpify",
+    "reactstarter",
+    "refetch",
+    "refetchable",
+    "relyingparty",
+    "sendgrid",
+    "signup",
+    "sourcemap",
+    "spdx",
+    "swapi",
+    "tarkus",
+    "trpc",
+    "tslib",
+    "typechecking",
+    "vite",
+    "vitest",
+    "webflow"
+  ]
+}

@@ -1,0 +1,86 @@
+# GitHub Actions workflow
+# https://help.github.com/actions
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        type: environment
+        default: "test"
+        required: true
+
+env:
+  BUN_VERSION: latest
+  VERSION: ${{ github.event.pull_request.number }}
+  HUSKY: 0
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Configure Bun and install dependencies
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install
+
+      # Analyze code for potential problems
+      - run: bun prettier --check .
+        if: ${{ github.event_name == 'pull_request' }}
+      - run: bun lint
+        if: ${{ github.event_name == 'pull_request' }}
+      - run: bun --filter app build
+      - run: bun tsc --build
+      # - run: bun --filter app test
+      #   if: ${{ github.event_name == 'pull_request' }}
+      # - run: bun --filter edge test
+      #   if: ${{ github.event_name == 'pull_request' }}
+
+      # Compile
+      - run: bun run build
+
+      # Build Docker image (only on main branch pushes or manual triggers)
+      - run: docker build --tag api:${{ github.sha }} -f ./api/Dockerfile .
+      - run: docker save api:${{ github.sha }} | gzip > api-image.tar.gz
+
+      # Upload build artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "build"
+          path: "app/dist\nedge/dist\napi/dist\napi-image.tar.gz\n"
+
+  deploy:
+    name: "Deploy"
+    runs-on: ubuntu-latest
+    needs: [build]
+    environment:
+      name: ${{ inputs.environment || 'test' }}
+      url: ${{ inputs.environment == 'prod' && 'https://example.com' || format('https://{0}.example.com', inputs.environment || 'test') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install
+      - uses: actions/download-artifact@v4
+        with: { name: "build" }
+      - run: bun wrangler deploy --env=${{ inputs.environment || 'test' }}
+        if: ${{ false }}
