@@ -1,0 +1,25 @@
+name: Deploy Preview (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: ${{ inputs.environment == 'production' && 'Production' || inputs.environment == 'staging' && 'Staging' || inputs.environment == 'preview' && 'Preview' || inputs.environment }}
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.pr.outputs.formatted }}
+    steps:
+      - uses: kriasoft/pr-codename@v1
+        id: pr
+        with:
+          template: ${{ inputs.environment == 'preview' && 'https://{codename}.example.com' || 'https://{codename}.example.com' }}
+      - run: echo "https://${{ steps.pr.outputs.codename }}.example.com"
+      - run: echo "${{ steps.pr.outputs.formatted }}"

@@ -35,6 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: echo "${{ secrets.CLOUDFLARE_API_TOKEN }}"
 
       # Configure Bun and install dependencies
       - uses: oven-sh/setup-bun@v2
@@ -72,6 +73,16 @@ jobs:
         with:
           name: "build"
           path: "app/dist\nedge/dist\napi/dist\napi-image.tar.gz\n"
+
+  deploy-preview:
+    name: "Deploy"
+    # needs: [build]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: preview
+    secrets: inherit
+    permissions:
+      deployments: write
 
   deploy:
     name: "Deploy"
