@@ -47,12 +47,18 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
       - run: bun lint
         if: ${{ github.event_name == 'pull_request' }}
+
       - run: bun --filter app build
       - run: bun tsc --build
       # - run: bun --filter app test
       #   if: ${{ github.event_name == 'pull_request' }}
       # - run: bun --filter edge test
       #   if: ${{ github.event_name == 'pull_request' }}
+
+      # Validate Terraform configuration and formatting
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive infra/
+      # - run: terraform validate infra/environments/preview/
 
       # Compile
       - run: bun run build

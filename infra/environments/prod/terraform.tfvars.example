@@ -1,0 +1,11 @@
+# Production Environment Variables
+# Copy this file to terraform.tfvars and fill in your actual values
+# terraform.tfvars is automatically loaded by Terraform
+
+# Project name - used as prefix for all resources
+project_name = "example"
+
+# Cloudflare credentials
+# cloudflare_api_token = "your-cloudflare-api-token"
+# cloudflare_account_id = "your-cloudflare-account-id"
+# cloudflare_zone_id   = "your-cloudflare-zone-id"  # Optional, for DNS management
