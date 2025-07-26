@@ -23,18 +23,21 @@ Designed for developers who value both speed and quality, this template provides
 ---
 
 This project was bootstrapped with [React Starter Kit](https://github.com/kriasoft/react-starter-kit).
-Be sure to join our [Discord channel](https://discord.com/invite/2nKEnKq) for assistance.
+Be sure to join our [Discord channel](https://discord.gg/2nKEnKq) for assistance.
 
 ## Monorepo Architecture
 
 This starter kit uses a thoughtfully organized monorepo structure that promotes code reuse and maintainability:
 
-`├──`[`app/`](./app) — React frontend with Vite, TanStack Router, and Tailwind CSS<br>
-`├──`[`api/`](./api) — tRPC API server powered by Hono framework<br>
-`├──`[`edge/`](./edge) — Cloudflare Workers entry point for edge deployment<br>
-`├──`[`core/`](./core) — Shared TypeScript types and utilities<br>
-`├──`[`db/`](./db) — Database schemas, migrations, and seed data<br>
-`├──`[`scripts/`](./scripts) — Build automation and development tools<br>
+- [`app/`](./app) — React frontend with Vite, TanStack Router, and Tailwind CSS
+- [`api/`](./api) — tRPC API server powered by Hono framework
+- [`edge/`](./edge) — Cloudflare Workers entry point for edge deployment
+- [`core/`](./core) — Shared TypeScript types, utilities, and WebSocket communication
+- [`db/`](./db) — Database schemas, migrations, and seed data
+- [`docs/`](./docs) — VitePress documentation site
+- [`infra/`](./infra) — Terraform infrastructure configurations for multi-environment deployment
+- [`scripts/`](./scripts) — Build automation and development tools
+- [`app/scripts/`](./app/scripts) — ShadCN UI component management utilities
 
 **Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
 
