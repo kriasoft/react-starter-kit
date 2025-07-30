@@ -37,13 +37,16 @@ export const user = sqliteTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  isAnonymous: int("is_anonymous", { mode: "boolean" }),
+  isAnonymous: int("is_anonymous", { mode: "boolean" })
+    .$default(() => false)
+    .notNull(),
   // Timestamps
   createdAt: int("created_at", { mode: "timestamp" })
     .$default(() => new Date())
     .notNull(),
   updatedAt: int("updated_at", { mode: "timestamp" })
     .$default(() => new Date())
+    .$onUpdate(() => new Date())
     .notNull(),
 });
 
@@ -60,12 +63,15 @@ export const session = sqliteTable("session", {
     .notNull(),
   updatedAt: int("updated_at", { mode: "timestamp" })
     .$default(() => new Date())
+    .$onUpdate(() => new Date())
     .notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  activeOrganizationId: text("active_organization_id"),
+  activeTeamId: text("active_team_id"),
 });
 
 /**
@@ -95,6 +101,7 @@ export const identity = sqliteTable("identity", {
     .notNull(),
   updatedAt: int("updated_at", { mode: "timestamp" })
     .$default(() => new Date())
+    .$onUpdate(() => new Date())
     .notNull(),
 });
 
@@ -112,6 +119,7 @@ export const verification = sqliteTable("verification", {
     .notNull(),
   updatedAt: int("updated_at", { mode: "timestamp" })
     .$default(() => new Date())
+    .$onUpdate(() => new Date())
     .notNull(),
 });
 

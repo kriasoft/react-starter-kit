@@ -1,54 +1,56 @@
-CREATE TABLE `invite` (
+CREATE TABLE `invitation` (
 	`id` text PRIMARY KEY NOT NULL,
-	`token` text NOT NULL,
 	`email` text NOT NULL,
+	`inviter_id` text NOT NULL,
 	`organization_id` text NOT NULL,
 	`role` text NOT NULL,
 	`status` text NOT NULL,
-	`invited_by` text NOT NULL,
-	`accepted_by` text,
+	`team_id` text,
 	`expires_at` integer NOT NULL,
 	`created_at` integer NOT NULL,
-	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`inviter_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`invited_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`accepted_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`team_id`) REFERENCES `team`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `invite_token_unique` ON `invite` (`token`);--> statement-breakpoint
 CREATE TABLE `member` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`organization_id` text NOT NULL,
 	`role` text NOT NULL,
-	`status` text NOT NULL,
-	`invited_by` text,
-	`invited_at` integer,
-	`joined_at` integer,
 	`created_at` integer NOT NULL,
-	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`invited_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `organization` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`slug` text NOT NULL,
-	`description` text,
-	`logo_url` text,
-	`website` text,
-	`plan_type` text NOT NULL,
-	`subscription_status` text,
-	`subscription_id` text,
-	`trial_ends_at` integer,
-	`settings` text,
-	`created_at` integer NOT NULL,
-	`updated_at` integer NOT NULL
+	`logo` text,
+	`metadata` text,
+	`created_at` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `organization_slug_unique` ON `organization` (`slug`);--> statement-breakpoint
+CREATE TABLE `team` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`organization_id` text NOT NULL,
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `team_member` (
+	`id` text PRIMARY KEY NOT NULL,
+	`team_id` text NOT NULL,
+	`user_id` text NOT NULL,
+	`created_at` integer NOT NULL,
+	FOREIGN KEY (`team_id`) REFERENCES `team`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `identity` (
 	`id` text PRIMARY KEY NOT NULL,
 	`account_id` text NOT NULL,
@@ -75,6 +77,8 @@ CREATE TABLE `session` (
 	`ip_address` text,
 	`user_agent` text,
 	`user_id` text NOT NULL,
+	`active_organization_id` text,
+	`active_team_id` text,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint

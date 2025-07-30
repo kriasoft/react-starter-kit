@@ -35,8 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "${{ secrets.CLOUDFLARE_API_TOKEN }}"
-
       # Configure Bun and install dependencies
       - uses: oven-sh/setup-bun@v2
         with:
@@ -76,28 +74,39 @@ jobs:
 
   deploy-preview:
     name: "Deploy"
-    # needs: [build]
+    needs: [build]
+    if: github.event_name == 'pull_request'
     uses: ./.github/workflows/deploy.yml
     with:
+      name: Preview
       environment: preview
+      url: https://{codename}.example.com
     secrets: inherit
     permissions:
       deployments: write
 
-  deploy:
+  deploy-staging:
     name: "Deploy"
-    runs-on: ubuntu-latest
     needs: [build]
-    environment:
-      name: ${{ inputs.environment || 'test' }}
-      url: ${{ inputs.environment == 'prod' && 'https://example.com' || format('https://{0}.example.com', inputs.environment || 'test') }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-      - run: bun install
-      - uses: actions/download-artifact@v4
-        with: { name: "build" }
-      - run: bun wrangler deploy --env=${{ inputs.environment || 'test' }}
-        if: ${{ false }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      name: Staging
+      environment: staging
+      url: https://staging.example.com
+    secrets: inherit
+    permissions:
+      deployments: write
+
+  deploy-prod:
+    name: "Deploy"
+    needs: [build]
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      name: Production
+      environment: production
+      url: https://example.com
+    secrets: inherit
+    permissions:
+      deployments: write
