@@ -1,0 +1,33 @@
+name: Deploy Preview (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: "Name of the deployment"
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      url:
+        description: "URL of the deployment"
+        required: true
+        type: string
+
+jobs:
+  environment:
+    name: ${{ inputs.name }}
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.pr.outputs.formatted }}
+    steps:
+      - uses: kriasoft/pr-codename@v1
+        id: pr
+        with:
+          template: ${{ inputs.url }}
+      # TODO: Add deployment steps
+      # - run: bun wrangler deploy --env=${{ inputs.environment }}

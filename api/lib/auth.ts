@@ -5,7 +5,7 @@ import { schema as Db } from "@root/db";
 import { betterAuth } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { anonymous } from "better-auth/plugins";
+import { anonymous, organization } from "better-auth/plugins";
 import type { Env } from "./env";
 
 /**
@@ -18,15 +18,19 @@ import type { Env } from "./env";
  * @param env The environment variables.
  * @returns An instance of the Better Auth service.
  */
-export function createAuth(db: DB, env: Env) {
+export function createAuth(db: DB, env: Env): ReturnType<typeof betterAuth> {
   return betterAuth({
     secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
-      provider: "pg", // Use "pg" for PostgreSQL via Hyperdrive
+      provider: "sqlite", // Or, use "pg" for PostgreSQL via Cloudflare Hyperdrive
+
       schema: {
-        user: Db.user,
-        session: Db.session,
         identity: Db.identity,
+        invitation: Db.invitation,
+        member: Db.member,
+        organization: Db.organization,
+        session: Db.session,
+        user: Db.user,
         verification: Db.verification,
       },
     }),
@@ -48,8 +52,15 @@ export function createAuth(db: DB, env: Env) {
       },
     },
 
-    plugins: [anonymous()],
+    plugins: [
+      anonymous(),
+      organization({
+        allowUserToCreateOrganization: true,
+        organizationLimit: 5,
+        creatorRole: "owner",
+      }),
+    ],
   });
 }
 
-export type Auth = ReturnType<typeof createAuth>;
+export type Auth = ReturnType<typeof betterAuth>;
