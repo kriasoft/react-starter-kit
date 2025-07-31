@@ -5,16 +5,12 @@
   "type": "module",
   "exports": {
     ".": "./index.ts",
-    "./types": "./types/index.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsc",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@cloudflare/workers-types": "^4.20250730.0"
   },
   "peerDependencies": {
     "better-auth": "^1.3.4",

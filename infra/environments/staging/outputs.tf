@@ -1,13 +1,3 @@
-output "database_id" {
-  description = "The ID of the D1 database"
-  value       = module.db.database_id
-}
-
-output "database_name" {
-  description = "The name of the D1 database"
-  value       = module.db.database_name
-}
-
 output "main_bucket_name" {
   description = "The name of the main R2 bucket"
   value       = module.storage.main_bucket_name
@@ -16,4 +6,14 @@ output "main_bucket_name" {
 output "uploads_bucket_name" {
   description = "The name of the uploads R2 bucket"
   value       = module.storage.uploads_bucket_name
+}
+
+output "hyperdrive_direct_id" {
+  description = "ID of the direct (no-cache) Hyperdrive configuration"
+  value       = module.hyperdrive.hyperdrive_direct_id
+}
+
+output "hyperdrive_cached_id" {
+  description = "ID of the cached (60s) Hyperdrive configuration"
+  value       = module.hyperdrive.hyperdrive_cached_id
 }

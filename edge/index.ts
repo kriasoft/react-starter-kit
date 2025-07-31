@@ -3,25 +3,24 @@
 
 import api, {
   createAuth,
-  createD1Db,
+  createDb,
   getOpenAI,
   type AppContext,
 } from "@root/api/edge";
-import type { CloudflareEnv } from "@root/core/types";
 import { streamText } from "ai";
 import { Hono } from "hono";
 import { authCors, chatCors } from "./lib/cors";
 import { getEnvironment } from "./lib/environment";
 
 const app = new Hono<{
-  Bindings: CloudflareEnv;
+  Bindings: Cloudflare.Env;
   Variables: AppContext["Variables"];
 }>();
 
 // Initialize shared context for all /api routes
 app.use("/api/*", async (c, next) => {
-  // Initialize database using Cloudflare D1
-  const db = createD1Db(c.env.DB);
+  // Initialize database using Neon via Hyperdrive
+  const db = createDb(c.env.HYPERDRIVE);
 
   // Initialize auth
   const auth = createAuth(db, c.env);
@@ -54,18 +53,20 @@ app.post("/api/chat", async (c) => {
   try {
     const { messages } = await c.req.json();
 
-    const openAI = getOpenAI(c.env);
+    const openAI = getOpenAI({
+      ENVIRONMENT: c.env.ENVIRONMENT,
+      DATABASE_URL: "", // Not used in Cloudflare Workers context
+      BETTER_AUTH_SECRET: c.env.BETTER_AUTH_SECRET,
+      GOOGLE_CLIENT_ID: c.env.GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET: c.env.GOOGLE_CLIENT_SECRET,
+      OPENAI_API_KEY: c.env.OPENAI_API_KEY,
+    });
     const result = streamText({
       model: openAI("gpt-4.1-mini"),
       messages,
     });
 
-    return result.toDataStreamResponse({
-      getErrorMessage(err) {
-        console.error(err);
-        return (err as Error).message ?? "Unknown error";
-      },
-    });
+    return result.toTextStreamResponse();
   } catch (err) {
     console.error("Chat API error:", err);
     return c.json(

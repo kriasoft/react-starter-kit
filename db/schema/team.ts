@@ -7,7 +7,7 @@
  */
 
 import { relations } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { organization } from "./organization";
 import { user } from "./user";
 
@@ -15,17 +15,17 @@ import { user } from "./user";
  * Teams table for Better Auth teams plugin.
  * Teams belong to organizations and contain members.
  */
-export const team = sqliteTable("team", {
+export const team = pgTable("team", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   organizationId: text("organization_id")
     .notNull()
     .references(() => organization.id, { onDelete: "cascade" }),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
 });
@@ -34,7 +34,7 @@ export const team = sqliteTable("team", {
  * Team membership table for Better Auth teams plugin.
  * Links users to teams within organizations.
  */
-export const teamMember = sqliteTable("team_member", {
+export const teamMember = pgTable("team_member", {
   id: text("id").primaryKey(),
   teamId: text("team_id")
     .notNull()
@@ -42,8 +42,8 @@ export const teamMember = sqliteTable("team_member", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
 });
 

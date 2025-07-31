@@ -14,7 +14,6 @@ if (!existsSync("./.env.local")) {
       `# Overrides for the \`.env\` file in the root folder.`,
       "#",
       "# CLOUDFLARE_API_TOKEN=xxxxx",
-      "# GOOGLE_CLOUD_CREDENTIALS=xxxxx",
       "# SENDGRID_API_KEY=xxxxx",
       "#",
       "",

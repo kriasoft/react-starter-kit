@@ -1,15 +1,15 @@
 /**
- * Local development server for the API with Cloudflare D1 database support.
+ * Local development server for the API with Neon database support via Hyperdrive.
  *
  * @remarks
  * This file bootstraps a local Cloudflare Workers environment using Wrangler's
- * getPlatformProxy, allowing you to develop against a real D1 database instance
- * locally without deploying to Cloudflare.
+ * getPlatformProxy, allowing you to develop against a Neon database instance
+ * locally with Hyperdrive bindings.
  *
  * Features:
  * - Emulates Cloudflare Workers runtime environment
- * - Provides access to D1 database bindings
- * - Persists database state between restarts
+ * - Provides access to Hyperdrive bindings for Neon PostgreSQL
+ * - Connection pooling via Hyperdrive
  * - Hot reloading support for rapid development
  *
  * @example
@@ -22,13 +22,18 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { CloudflareEnv } from "@root/core/types/index.js";
 import { Hono } from "hono";
 import { getPlatformProxy } from "wrangler";
 import api from "./index.js";
 import { createAuth } from "./lib/auth.js";
 import type { AppContext } from "./lib/context.js";
-import { createD1Db } from "./lib/d1.js";
+import { createDb } from "./lib/db.js";
+import type { Env } from "./lib/env.js";
+
+type CloudflareEnv = {
+  HYPERDRIVE: Hyperdrive;
+  HYPERDRIVE_DIRECT: Hyperdrive;
+} & Env;
 
 /**
  * Initialize the local development server with Cloudflare bindings.
@@ -52,11 +57,11 @@ const cf = await getPlatformProxy<CloudflareEnv>({
  * Middleware to inject database binding into request context.
  *
  * @remarks
- * For local development, this uses a direct PostgreSQL connection.
- * In production, the edge deployment uses Hyperdrive for acceleration.
+ * Uses Neon PostgreSQL via Hyperdrive for both local development
+ * and production deployment with connection pooling and caching.
  */
 app.use("*", async (c, next) => {
-  const db = createD1Db(cf.env.DB);
+  const db = createDb(cf.env.HYPERDRIVE);
   c.set("db", db);
   c.set("auth", createAuth(db, cf.env));
   await next();

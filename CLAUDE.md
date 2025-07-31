@@ -18,7 +18,7 @@ Full-stack React application template optimized for Cloudflare Workers deploymen
 - **Runtime:** Bun (>=1.2.0), TypeScript 5.8
 - **Frontend:** React 19, TanStack Router, Jotai, ShadCN UI, Tailwind CSS v4, Better Auth
 - **Backend:** Hono framework, tRPC
-- **Database:** Cloudflare D1 (SQLite), Drizzle ORM
+- **Database:** Neon PostgreSQL, Drizzle ORM
 - **Testing:** Vitest, Happy DOM
 - **Deployment:** Cloudflare Workers, Wrangler
 

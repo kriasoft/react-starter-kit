@@ -8,9 +8,9 @@
 
 export { getOpenAI } from "./lib/ai.js";
 export { createAuth } from "./lib/auth.js";
-export { createD1Db } from "./lib/d1.js";
+export { createDb } from "./lib/db.js";
 export type { AppContext } from "./lib/context.js";
 
-// Re-export the main app but not the Neon database utilities
+// Re-export the main app
 export { default, appRouter } from "./index.js";
 export type { AppRouter } from "./index.js";

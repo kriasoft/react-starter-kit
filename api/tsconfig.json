@@ -7,14 +7,10 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": false,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "types": ["@cloudflare/workers-types", "bun"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "../core/types/cloudflare-env.d.ts",
-    "../core/types/cloudflare-env-overrides.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
   "references": [{ "path": "../core" }, { "path": "../db" }]
 }

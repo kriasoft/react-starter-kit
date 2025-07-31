@@ -20,10 +20,18 @@
     "hono": "^4.8.10",
     "zod": "^4.0.14"
   },
+  "peerDependencies": {
+    "@cloudflare/workers-types": "^4.20250731.0"
+  },
+  "peerDependenciesMeta": {
+    "@cloudflare/workers-types": {
+      "optional": true
+    }
+  },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.10.2",
-    "@cloudflare/vitest-pool-workers": "^0.8.58",
-    "@cloudflare/workers-types": "^4.20250730.0",
+    "@cloudflare/vite-plugin": "^1.11.0",
+    "@cloudflare/vitest-pool-workers": "^0.8.59",
+    "@cloudflare/workers-types": "^4.20250731.0",
     "@hono/vite-build": "^1.6.2",
     "@types/bun": "^1.2.19",
     "typescript": "~5.8.3",

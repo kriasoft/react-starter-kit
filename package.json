@@ -22,6 +22,7 @@
     "build": "bun --filter app --filter api --filter edge build",
     "build:api": "docker build --tag api:latest -f ./api/Dockerfile .",
     "deploy": "bun wrangler deploy",
+    "generate:types": "bun wrangler types --include-runtime=false edge/types/cloudflare-env.d.ts --env-file wrangler.jsonc && bun prettier --write edge/types/*-env.d.ts",
     "prepare": "husky",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
@@ -61,7 +62,7 @@
     "vitepress": "^1.6.3",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitest": "~3.2.4",
-    "wrangler": "^4.26.1"
+    "wrangler": "^4.27.0"
   },
   "prettier": {
     "printWidth": 80,

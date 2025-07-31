@@ -12,8 +12,7 @@
  *
  * @remarks
  * - All tables include required Better Auth fields
- * - Uses SQLite with Drizzle ORM for Cloudflare D1 compatibility
- * - Timestamps use integer mode for SQLite compatibility
+ * - Uses PostgreSQL with Drizzle ORM for Neon compatibility
  *
  * @see https://www.better-auth.com/docs/concepts/database - Better Auth database schema
  * @see https://www.better-auth.com/docs/adapters/drizzle - Drizzle adapter configuration
@@ -23,29 +22,29 @@
  */
 
 import { relations } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 /**
  * User accounts table.
  * Matches to the `user` table in Better Auth.
  */
-export const user = sqliteTable("user", {
+export const user = pgTable("user", {
   id: text().primaryKey(), // User ID from identity provider
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: int("email_verified", { mode: "boolean" })
+  emailVerified: boolean("email_verified")
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  isAnonymous: int("is_anonymous", { mode: "boolean" })
+  isAnonymous: boolean("is_anonymous")
     .$default(() => false)
     .notNull(),
   // Timestamps
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
 });
@@ -54,15 +53,18 @@ export const user = sqliteTable("user", {
  * Stores user session data for authentication.
  * Matches to the `session` table in Better Auth.
  */
-export const session = sqliteTable("session", {
+export const session = pgTable("session", {
   id: text("id").primaryKey(),
-  expiresAt: int("expires_at", { mode: "timestamp" }).notNull(),
+  expiresAt: timestamp("expires_at", {
+    withTimezone: true,
+    mode: "date",
+  }).notNull(),
   token: text("token").notNull().unique(),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
   ipAddress: text("ip_address"),
@@ -78,7 +80,7 @@ export const session = sqliteTable("session", {
  * Stores OAuth provider account information.
  * Matches to the `account` table in Better Auth.
  */
-export const identity = sqliteTable("identity", {
+export const identity = pgTable("identity", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -88,19 +90,21 @@ export const identity = sqliteTable("identity", {
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
-  accessTokenExpiresAt: int("access_token_expires_at", {
-    mode: "timestamp",
+  accessTokenExpiresAt: timestamp("access_token_expires_at", {
+    withTimezone: true,
+    mode: "date",
   }),
-  refreshTokenExpiresAt: int("refresh_token_expires_at", {
-    mode: "timestamp",
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
+    withTimezone: true,
+    mode: "date",
   }),
   scope: text("scope"),
   password: text("password"),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
 });
@@ -109,16 +113,19 @@ export const identity = sqliteTable("identity", {
  * Stores verification tokens (email verification, password reset, etc.)
  * Matches to the `verification` table in Better Auth.
  */
-export const verification = sqliteTable("verification", {
+export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
-  expiresAt: int("expires_at", { mode: "timestamp" }).notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  expiresAt: timestamp("expires_at", {
+    withTimezone: true,
+    mode: "date",
+  }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
 });

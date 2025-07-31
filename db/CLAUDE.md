@@ -2,17 +2,17 @@
 
 ## Tech Stack
 
-- **Database:** Cloudflare D1 (SQLite)
+- **Database:** Neon PostgreSQL
 - **ORM:** Drizzle ORM with TypeScript
 - **Auth:** Better Auth integration
-- **Migration:** Drizzle Kit with dual-mode support (local/remote)
+- **Migration:** Drizzle Kit with environment support
 
 ## Architecture
 
-**Dual-Mode Configuration:**
+**Environment Configuration:**
 
-- **Local:** Uses Wrangler-generated SQLite in `.wrangler/state/v3/d1/`
-- **Remote:** Connects to Cloudflare D1 via HTTPS API
+- **Local/Development** Connects to local PostgreSQL or Neon development database
+- **Staging/Production:** Connects to Neon PostgreSQL via DATABASE_URL
 
 **Schema Structure:**
 
@@ -26,15 +26,15 @@
 
 ## Common Commands
 
-- `bun --filter db generate --name <name>` - Generate migrations
-- `bun --filter db migrate` - Apply migrations to local database
-- `bun --filter db migrate:remote` - Apply migrations to remote database
-- `bun --filter db studio` - Open Drizzle Studio
-- `bun --filter db push` - Push schema to local database
+- `bun --cwd db generate --name <name>` - Generate migrations
+- `bun --cwd db migrate` - Apply migrations to database
+- `bun --cwd db studio` - Open Drizzle Studio
+- `bun --cwd db push` - Push schema to database
 
 ## Conventions
 
 - Singular table names: `user`, `organization`
 - Snake case columns: `email_verified`, `created_at`
 - Camel case TypeScript exports: `user`, `userRelations`
-- Timestamp fields use integer mode with `Date()` defaults
+- Timestamps with timezone
+- Default values and `$onUpdate()` where applicable

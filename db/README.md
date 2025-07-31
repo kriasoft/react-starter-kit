@@ -4,7 +4,7 @@ Welcome to the database layer of our React Starter Kit! This is where the magic 
 
 ## Architecture Overview
 
-We're using [Drizzle ORM](https://orm.drizzle.team/) with SQLite for local development and [Cloudflare D1](https://developers.cloudflare.com/d1/) for production. You can easily customize it, e.g. switch to PostgreSQL or MySQL if you prefer with a single LLM prompt.
+We're using [Drizzle ORM](https://orm.drizzle.team/) with [Neon PostgreSQL](https://neon.tech/) for both local development and production. The database is accessed via Cloudflare Hyperdrive for connection pooling and edge optimization.
 
 ### Why Drizzle?
 
@@ -58,13 +58,10 @@ Built for SaaS applications where multiple organizations share the same infrastr
 
 ### Local Development
 
-Your local database is managed by Wrangler and lives in `.wrangler/state/v3/d1/`.
+Your local database connects to Neon PostgreSQL via the DATABASE_URL.
 
 ```bash
-# Initialize local D1 database
-bun run wrangler d1 execute db --local --command "SELECT 1"
-
-# Push schema to local database
+# Push schema to database
 bun --filter db push
 
 # Open database explorer
@@ -73,12 +70,10 @@ bun --filter db studio
 
 ### Remote/Production
 
-For production, you'll need these environment variables in your `.env` or `.env.local` file:
+For production, you'll need the DATABASE_URL environment variable in your `.env` or `.env.local` file:
 
 ```bash
-CLOUDFLARE_ACCOUNT_ID=your-account-id
-CLOUDFLARE_DATABASE_ID=your-database-id
-CLOUDFLARE_D1_TOKEN=your-api-token
+DATABASE_URL=postgresql://user:password@host/database
 ```
 
 ## Common Workflows
@@ -189,13 +184,9 @@ import { member, invite } from "@/db/schema/organization";
 
 ## Troubleshooting
 
-### Local Database Not Found
+### Database Connection Issues
 
-Run this command first to initialize the local D1 database:
-
-```bash
-bun run wrangler d1 execute db --local --command "SELECT 1"
-```
+Verify your DATABASE_URL is correctly configured and the Neon database is accessible.
 
 ### Migration Conflicts
 
@@ -203,7 +194,7 @@ If you're getting migration conflicts, check the `migrations/` directory. Someti
 
 ### Remote Connection Issues
 
-Verify your Cloudflare credentials and that your D1 database exists in the dashboard.
+Verify your DATABASE_URL is correct and the Neon database exists in your Neon dashboard.
 
 ## Database Seeding
 
@@ -219,10 +210,10 @@ bun --filter db seed
 
 ## Performance Considerations
 
-- **Indexes**: SQLite automatically indexes primary keys and unique constraints
+- **Indexes**: PostgreSQL provides robust indexing capabilities
 - **Queries**: Use Drizzle's query builder for optimal performance
 - **Batch operations**: Use transactions for multiple related operations
-- **Edge deployment**: D1 has some limitations vs traditional databases
+- **Edge deployment**: Hyperdrive provides connection pooling and caching at the edge
 
 ## Contributing
 
@@ -240,9 +231,9 @@ Remember: databases are like fine wine or questionable leftovers 🍷 they get b
 ## Resources
 
 - [Drizzle ORM Documentation](https://orm.drizzle.team/docs/overview)
-- [Cloudflare D1 Documentation](https://developers.cloudflare.com/d1/)
+- [Neon PostgreSQL Documentation](https://neon.tech/docs)
+- [Cloudflare Hyperdrive Documentation](https://developers.cloudflare.com/hyperdrive/)
 - [Better Auth Database Guide](https://www.better-auth.com/docs/concepts/database)
-- [SQLite Documentation](https://sqlite.org/docs.html)
 
 ---
 
