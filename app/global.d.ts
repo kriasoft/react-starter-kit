@@ -9,7 +9,6 @@ interface Window {
 }
 
 interface ImportMetaEnv {
-  readonly VITE_APP_ENV: string;
   readonly VITE_APP_NAME: string;
   readonly VITE_APP_ORIGIN: string;
   readonly VITE_GOOGLE_CLOUD_PROJECT: string;

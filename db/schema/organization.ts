@@ -7,21 +7,21 @@
  */
 
 import { relations } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
 /**
  * Organizations table for Better Auth organization plugin.
  * Each organization represents a separate tenant with isolated data.
  */
-export const organization = sqliteTable("organization", {
+export const organization = pgTable("organization", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   logo: text("logo"),
   metadata: text("metadata"),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
 });
 
@@ -29,7 +29,7 @@ export const organization = sqliteTable("organization", {
  * Organization membership table for Better Auth organization plugin.
  * Links users to organizations with specific roles.
  */
-export const member = sqliteTable("member", {
+export const member = pgTable("member", {
   id: text("id").primaryKey(),
   userId: text("user_id")
     .notNull()
@@ -38,8 +38,8 @@ export const member = sqliteTable("member", {
     .notNull()
     .references(() => organization.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
 });
 

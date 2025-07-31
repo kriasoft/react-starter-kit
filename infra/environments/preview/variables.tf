@@ -32,3 +32,26 @@ variable "cloudflare_zone_id" {
     error_message = "Zone ID must be a 32-character hexadecimal string or empty."
   }
 }
+
+variable "database_host" {
+  description = "External database host (e.g., Neon, Supabase, PlanetScale)"
+  type        = string
+}
+
+variable "database_name" {
+  description = "External database name"
+  type        = string
+  default     = "example"
+}
+
+variable "database_user" {
+  description = "External database user"
+  type        = string
+  default     = "neondb_owner"
+}
+
+variable "database_password" {
+  description = "External database password"
+  type        = string
+  sensitive   = true
+}

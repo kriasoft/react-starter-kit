@@ -8,11 +8,6 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "types": ["@cloudflare/workers-types", "bun"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.json",
-    "./types/cloudflare-env.d.ts",
-    "./types/cloudflare-env-overrides.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.json"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*"]
 }

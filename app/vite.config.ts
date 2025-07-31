@@ -8,7 +8,6 @@ import { loadEnv } from "vite";
 import { defineProject } from "vitest/config";
 
 const publicEnvVars = [
-  "APP_ENV",
   "APP_NAME",
   "APP_ORIGIN",
   "GOOGLE_CLOUD_PROJECT",

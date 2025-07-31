@@ -10,10 +10,12 @@ import { z } from "zod";
  * @throws {ZodError} When environment variables don't match the schema
  */
 export const envSchema = z.object({
+  ENVIRONMENT: z.enum(["production", "staging", "preview", "development"]),
   DATABASE_URL: z.url(),
   BETTER_AUTH_SECRET: z.string().min(32),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  OPENAI_API_KEY: z.string(),
 });
 
 /**

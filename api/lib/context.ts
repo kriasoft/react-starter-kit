@@ -4,7 +4,7 @@
 import type { DbSchema } from "@root/db";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { Session, User } from "better-auth/types";
-import type { DrizzleD1Database } from "drizzle-orm/d1";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { Auth } from "./auth.js";
 import type { Env } from "./env.js";
 
@@ -37,8 +37,8 @@ export type TRPCContext = {
   /** tRPC request metadata (headers, connection info) */
   info: CreateHTTPContextOptions["info"];
 
-  /** Drizzle ORM database instance (PostgreSQL via Hyperdrive or Cloudflare D1) */
-  db: DrizzleD1Database<DbSchema>; // Or, PostgresJsDatabase<DbSchema> for Neon
+  /** Drizzle ORM database instance (PostgreSQL via Hyperdrive) */
+  db: PostgresJsDatabase<DbSchema>;
 
   /** Authenticated user session (null if not authenticated) */
   session: Session | null;
@@ -74,7 +74,7 @@ export type TRPCContext = {
 export type AppContext = {
   Bindings: Env;
   Variables: {
-    db: DrizzleD1Database<DbSchema>; // Or, PostgresJsDatabase<DbSchema> for Neon
+    db: PostgresJsDatabase<DbSchema>;
     auth: Auth;
     session: Session | null;
     user: User | null;

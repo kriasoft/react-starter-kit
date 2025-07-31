@@ -6,9 +6,10 @@ This document describes the database schema for your application. The schema pro
 
 The database uses:
 
-- **Database Engine:** Cloudflare D1 (SQLite) for edge computing compatibility
+- **Database Engine:** Neon PostgreSQL with Cloudflare Hyperdrive for edge optimization
 - **ORM:** Drizzle ORM for type-safe database operations
 - **Authentication:** Built on [Better Auth](https://www.better-auth.com/) specification
+- **Connection Pooling:** Cloudflare Hyperdrive provides connection pooling and caching at the edge
 
 The schema is divided into two main sections:
 
@@ -28,19 +29,19 @@ erDiagram
         text id PK "User ID from identity provider"
         text name "Full name"
         text email UK "Email address"
-        integer email_verified "Email verification status"
+        boolean email_verified "Email verification status"
         text image "Profile image URL"
-        integer is_anonymous "Anonymous user flag"
-        integer created_at "Account creation timestamp"
-        integer updated_at "Last update timestamp"
+        boolean is_anonymous "Anonymous user flag"
+        timestamp created_at "Account creation timestamp"
+        timestamp updated_at "Last update timestamp"
     }
 
     session {
         text id PK "Session ID"
-        integer expires_at "Session expiration"
+        timestamp expires_at "Session expiration"
         text token UK "Session token"
-        integer created_at "Creation timestamp"
-        integer updated_at "Last update timestamp"
+        timestamp created_at "Creation timestamp"
+        timestamp updated_at "Last update timestamp"
         text ip_address "Client IP address"
         text user_agent "Client user agent"
         text user_id FK "User reference"
@@ -56,21 +57,21 @@ erDiagram
         text access_token "OAuth access token"
         text refresh_token "OAuth refresh token"
         text id_token "OAuth ID token"
-        integer access_token_expires_at "Access token expiry"
-        integer refresh_token_expires_at "Refresh token expiry"
+        timestamp access_token_expires_at "Access token expiry"
+        timestamp refresh_token_expires_at "Refresh token expiry"
         text scope "OAuth scopes"
         text password "Hashed password for email auth"
-        integer created_at "Creation timestamp"
-        integer updated_at "Last update timestamp"
+        timestamp created_at "Creation timestamp"
+        timestamp updated_at "Last update timestamp"
     }
 
     verification {
         text id PK "Verification ID"
         text identifier "Email or other identifier"
         text value "Verification code/token"
-        integer expires_at "Expiration timestamp"
-        integer created_at "Creation timestamp"
-        integer updated_at "Last update timestamp"
+        timestamp expires_at "Expiration timestamp"
+        timestamp created_at "Creation timestamp"
+        timestamp updated_at "Last update timestamp"
     }
 
     %% Multi-tenancy Tables
@@ -80,7 +81,7 @@ erDiagram
         text slug UK "URL-friendly identifier"
         text logo "Logo URL"
         text metadata "JSON metadata"
-        integer created_at "Creation timestamp"
+        timestamp created_at "Creation timestamp"
     }
 
     member {
@@ -88,22 +89,22 @@ erDiagram
         text user_id FK "User reference"
         text organization_id FK "Organization reference"
         text role "Member role (owner, admin, member)"
-        integer created_at "Join timestamp"
+        timestamp created_at "Join timestamp"
     }
 
     team {
         text id PK "Team ID"
         text name "Team name"
         text organization_id FK "Parent organization"
-        integer created_at "Creation timestamp"
-        integer updated_at "Last update timestamp"
+        timestamp created_at "Creation timestamp"
+        timestamp updated_at "Last update timestamp"
     }
 
     team_member {
         text id PK "Team membership ID"
         text team_id FK "Team reference"
         text user_id FK "User reference"
-        integer created_at "Join timestamp"
+        timestamp created_at "Join timestamp"
     }
 
     invitation {
@@ -114,8 +115,8 @@ erDiagram
         text role "Invited role"
         text status "Invitation status"
         text team_id FK "Target team (optional)"
-        integer expires_at "Expiration timestamp"
-        integer created_at "Creation timestamp"
+        timestamp expires_at "Expiration timestamp"
+        timestamp created_at "Creation timestamp"
     }
 
     %% Relationships
@@ -157,22 +158,22 @@ Central table for all user accounts in your application.
 ::: details TypeScript Schema Definition
 
 ```typescript
-export const user = sqliteTable("user", {
+export const user = pgTable("user", {
   id: text().primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: int("email_verified", { mode: "boolean" })
+  emailVerified: boolean("email_verified")
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  isAnonymous: int("is_anonymous", { mode: "boolean" })
+  isAnonymous: boolean("is_anonymous")
     .$default(() => false)
     .notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
-  updatedAt: int("updated_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
 });
@@ -285,20 +286,21 @@ As you build your application, you'll add tables specific to your domain. Here's
 
 ```typescript {7-12}
 // db/schema/product.ts
-export const product = sqliteTable("product", {
+export const product = pgTable("product", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
-  price: int("price").notNull(), // Store in cents
+  price: integer("price").notNull(), // Store in cents
   organizationId: text("organization_id")
     .notNull()
     .references(() => organization.id),
   createdBy: text("created_by")
     .notNull()
     .references(() => user.id),
-  createdAt: int("created_at", { mode: "timestamp" }).$default(
-    () => new Date(),
-  ),
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+    mode: "date",
+  }).defaultNow(),
 });
 ```
 
@@ -327,7 +329,7 @@ To add fields to existing tables (like adding custom user fields):
 
 ```typescript
 // db/schema/user.ts
-export const user = sqliteTable("user", {
+export const user = pgTable("user", {
   // ... existing fields ...
 
   // Your custom fields
@@ -465,10 +467,11 @@ const org = await db.query.organization.findFirst({
 
 ::: tip Optimization Guidelines
 
-- **Index frequently queried fields**: Email, slug, and foreign keys are already indexed
+- **Index frequently queried fields**: Email, slug, and foreign keys are already indexed in PostgreSQL
 - **Use relations for complex queries**: Drizzle's `with` clause is more efficient than multiple queries
 - **Batch operations when possible**: Use `db.insert().values([...])` for bulk inserts
 - **Limit data fetching**: Only select columns you need using the `columns` option
+- **Leverage Hyperdrive**: Connection pooling and caching reduce latency at the edge
   :::
 
 ### Design Patterns
@@ -479,7 +482,7 @@ Every table that contains user data should reference an organization:
 
 ```typescript {4-6}
 // Always include organizationId in your tables
-export const yourTable = sqliteTable("your_table", {
+export const yourTable = pgTable("your_table", {
   id: text("id").primaryKey(),
   organizationId: text("organization_id")
     .notNull()
@@ -497,7 +500,7 @@ Preserve data integrity by marking records as deleted:
 
 ```typescript
 // Add to your schema
-deletedAt: int("deleted_at", { mode: "timestamp" }),
+deletedAt: timestamp("deleted_at", { withTimezone: true, mode: "date" }),
 
 // Filter out deleted records
 where: isNull(table.deletedAt),
@@ -516,8 +519,8 @@ Track who created/updated records:
 ```typescript
 createdBy: text("created_by").references(() => user.id),
 updatedBy: text("updated_by").references(() => user.id),
-createdAt: int("created_at", { mode: "timestamp" }).$default(() => new Date()),
-updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
+createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).defaultNow(),
+updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 ```
 
 ## Next Steps
@@ -531,4 +534,5 @@ updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(() => new Date()),
 
 - [Better Auth Documentation](https://www.better-auth.com/docs) - Authentication flows and plugins
 - [Drizzle ORM Documentation](https://orm.drizzle.team/) - Database queries and migrations
-- [Cloudflare D1 Documentation](https://developers.cloudflare.com/d1/) - Database deployment and optimization
+- [Neon PostgreSQL Documentation](https://neon.tech/docs) - Database deployment and optimization
+- [Cloudflare Hyperdrive Documentation](https://developers.cloudflare.com/hyperdrive/) - Connection pooling and edge optimization

@@ -7,7 +7,7 @@
  */
 
 import { relations } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { organization } from "./organization";
 import { team } from "./team";
 import { user } from "./user";
@@ -16,7 +16,7 @@ import { user } from "./user";
  * Invitations table for Better Auth organization and teams plugins.
  * Manages pending invites to organizations and teams.
  */
-export const invitation = sqliteTable("invitation", {
+export const invitation = pgTable("invitation", {
   id: text("id").primaryKey(),
   email: text("email").notNull(),
   inviterId: text("inviter_id")
@@ -28,9 +28,12 @@ export const invitation = sqliteTable("invitation", {
   role: text("role").notNull(),
   status: text("status").notNull(),
   teamId: text("team_id").references(() => team.id, { onDelete: "cascade" }),
-  expiresAt: int("expires_at", { mode: "timestamp" }).notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .$default(() => new Date())
+  expiresAt: timestamp("expires_at", {
+    withTimezone: true,
+    mode: "date",
+  }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
     .notNull(),
 });
 

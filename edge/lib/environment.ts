@@ -1,8 +1,6 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import type { CloudflareEnv } from "@root/core/types";
-
 /**
  * Environment detection utilities for Cloudflare Workers.
  * Uses ENVIRONMENT variable with "development" as default.
@@ -13,29 +11,29 @@ import type { CloudflareEnv } from "@root/core/types";
  * Defaults to "development" when ENVIRONMENT is not set (local dev).
  */
 export function getEnvironment(
-  env: CloudflareEnv,
-): "development" | "production" | "preview" {
+  env: Cloudflare.Env,
+): "development" | "production" | "preview" | "staging" {
   return env.ENVIRONMENT ?? "development";
 }
 
 /**
  * Determines if running in development environment.
  */
-export function isDevelopment(env: CloudflareEnv): boolean {
+export function isDevelopment(env: Cloudflare.Env): boolean {
   return getEnvironment(env) === "development";
 }
 
 /**
  * Determines if running in production environment.
  */
-export function isProduction(env: CloudflareEnv): boolean {
+export function isProduction(env: Cloudflare.Env): boolean {
   return getEnvironment(env) === "production";
 }
 
 /**
  * Determines if running in preview environment.
  */
-export function isPreview(env: CloudflareEnv): boolean {
+export function isPreview(env: Cloudflare.Env): boolean {
   return getEnvironment(env) === "preview";
 }
 
@@ -55,7 +53,7 @@ export function isLocalDevelopment(origin?: string): boolean {
 /**
  * Gets comprehensive environment information.
  */
-export function getEnvironmentInfo(env: CloudflareEnv, origin?: string) {
+export function getEnvironmentInfo(env: Cloudflare.Env, origin?: string) {
   const environment = getEnvironment(env);
   const isLocal = isLocalDevelopment(origin);
 

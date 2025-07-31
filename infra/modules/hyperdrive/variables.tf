@@ -24,3 +24,30 @@ variable "account_id" {
     error_message = "Account ID must be a 32-character hexadecimal string."
   }
 }
+
+variable "database_host" {
+  description = "PostgreSQL database host"
+  type        = string
+}
+
+variable "database_port" {
+  description = "PostgreSQL database port"
+  type        = number
+  default     = 5432
+}
+
+variable "database_name" {
+  description = "PostgreSQL database name"
+  type        = string
+}
+
+variable "database_user" {
+  description = "PostgreSQL database user"
+  type        = string
+}
+
+variable "database_password" {
+  description = "PostgreSQL database password"
+  type        = string
+  sensitive   = true
+}

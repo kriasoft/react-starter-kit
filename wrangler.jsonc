@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
 
   "name": "example",
-  "account_id": "abcdef1234567890abcdef1234567890",
+  "account_id": "your-cloudflare-account-id-here",
   "main": "./edge/dist/index.js",
 
   "assets": {
@@ -12,77 +12,97 @@
 
   "upload_source_maps": true,
 
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "example",
-      "database_id": "12345678-1234-1234-1234-123456789abc",
-      "migrations_dir": "./db/migrations"
-    }
-  ],
-
-  // "hyperdrive": [
-  //   {
-  //     "binding": "HYPERDRIVE",
-  //     "id": "your-hyperdrive-id-here"
-  //   }
-  // ],
-
   "compatibility_date": "2025-05-05",
   "compatibility_flags": ["nodejs_compat"],
 
-  "kv_namespaces": [],
-
+  // Default configuration applied to all environments unless overridden
   "vars": {
     "ENVIRONMENT": "development",
-    "DATABASE_URL": "postgres://root@localhost:5432/example",
     "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173"
   },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "your-hyperdrive-cached-id-here"
+    },
+    {
+      "binding": "HYPERDRIVE_DIRECT",
+      "id": "your-hyperdrive-direct-id-here"
+    }
+  ],
+  "kv_namespaces": [],
 
+  // Overrides and settings for each deployment environment
+  // (production, staging, preview)
   "env": {
     "production": {
-      "vars": {
-        "ENVIRONMENT": "production",
-        "DATABASE_URL": "postgres://root@localhost:5432/example",
-        "ALLOWED_ORIGINS": "https://example.com"
-      },
       "routes": [
         {
           "pattern": "example.com/*",
           "custom_domain": true
         }
       ],
-      "kv_namespaces": [],
-      "d1_databases": [
+      "vars": {
+        "ENVIRONMENT": "production",
+        "ALLOWED_ORIGINS": "https://example.com"
+      },
+      "hyperdrive": [
         {
-          "binding": "DB",
-          "database_name": "example",
-          "database_id": "12345678-1234-1234-1234-123456789abc",
-          "migrations_dir": "./db/migrations"
+          "binding": "HYPERDRIVE",
+          "id": "your-production-hyperdrive-cached-id-here"
+        },
+        {
+          "binding": "HYPERDRIVE_DIRECT",
+          "id": "your-production-hyperdrive-direct-id-here"
         }
-      ]
+      ],
+      "kv_namespaces": []
+    },
+    "staging": {
+      "routes": [
+        {
+          "pattern": "example.com/*",
+          "custom_domain": true
+        }
+      ],
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "ALLOWED_ORIGINS": "https://staging.example.com"
+      },
+      "hyperdrive": [
+        {
+          "binding": "HYPERDRIVE",
+          "id": "your-staging-hyperdrive-cached-id-here"
+        },
+        {
+          "binding": "HYPERDRIVE_DIRECT",
+          "id": "your-staging-hyperdrive-direct-id-here"
+        }
+      ],
+      "kv_namespaces": []
     },
     "preview": {
-      "vars": {
-        "ENVIRONMENT": "preview",
-        "DATABASE_URL": "postgres://root@localhost:5432/example",
-        "ALLOWED_ORIGINS": "https://preview.example.com"
-      },
       "routes": [
         {
           "pattern": "preview.example.com/*",
           "custom_domain": true
         }
       ],
-      "kv_namespaces": [],
-      "d1_databases": [
+      "vars": {
+        "ENVIRONMENT": "preview",
+        "ALLOWED_ORIGINS": "https://preview.example.com"
+      },
+      "hyperdrive": [
         {
-          "binding": "DB",
-          "database_name": "example",
-          "database_id": "12345678-1234-1234-1234-123456789abc",
-          "migrations_dir": "./db/migrations"
+          "binding": "HYPERDRIVE",
+          "id": "your-preview-hyperdrive-cached-id-here"
+        },
+        {
+          "binding": "HYPERDRIVE_DIRECT",
+          "id": "your-preview-hyperdrive-direct-id-here"
         }
-      ]
+      ],
+      "kv_namespaces": []
     }
   }
 }

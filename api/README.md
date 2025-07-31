@@ -252,7 +252,7 @@ return result;
 The API is designed to run on Cloudflare Workers with zero configuration:
 
 - **Edge deployment**: API runs close to your users globally
-- **D1 database**: Integrated with our Drizzle ORM setup
+- **Neon PostgreSQL database**: Integrated with our Drizzle ORM setup
 - **Environment variables**: Managed through Cloudflare dashboard
 - **Request context**: Includes Cloudflare-specific environment and bindings
 
@@ -319,7 +319,7 @@ Common issues and solutions:
 
 - **"Context not found"**: Make sure your middleware is properly configured
 - **"Procedure not found"**: Check that your router is added to the main router
-- **Database connection errors**: Verify your D1 database is set up and accessible
+- **Database connection errors**: Verify your Neon database is set up and accessible
 
 ### Performance Issues
 

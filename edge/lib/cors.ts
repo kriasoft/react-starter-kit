@@ -6,12 +6,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { CloudflareEnv } from "@root/core/types";
 import type { Context, MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
 import { isDevelopment, isLocalDevelopment } from "./environment";
 
-function parseAllowedOrigins(env: CloudflareEnv): string[] {
+function parseAllowedOrigins(env: Cloudflare.Env): string[] {
   return env.ALLOWED_ORIGINS
     ? env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
     : [];
@@ -24,7 +23,7 @@ function createOriginValidator() {
   ): string | undefined | null {
     if (!origin) return null;
 
-    const env = c.env as CloudflareEnv;
+    const env = c.env as Cloudflare.Env;
     if (isDevelopment(env) && isLocalDevelopment(origin)) {
       return origin;
     }
@@ -35,7 +34,7 @@ function createOriginValidator() {
 }
 
 export function createCorsConfig(
-  env: CloudflareEnv,
+  env: Cloudflare.Env,
   options: {
     additionalHeaders?: string[];
     additionalMethods?: string[];
@@ -76,7 +75,7 @@ function createCorsMiddleware(
   config?: { additionalHeaders?: string[] },
 ): MiddlewareHandler {
   return (c: Context, next) => {
-    const env = c.env as CloudflareEnv;
+    const env = c.env as Cloudflare.Env;
     const envKey = (env.ENVIRONMENT ?? "dev").replace(/[^a-zA-Z0-9]/g, "_");
     const originsKey = (env.ALLOWED_ORIGINS ?? "none").replace(
       /[^a-zA-Z0-9,]/g,

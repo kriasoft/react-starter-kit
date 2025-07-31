@@ -15,7 +15,7 @@ Designed for developers who value both speed and quality, this template provides
 - **Type Safety Throughout**: TypeScript and tRPC create an unbreakable contract between frontend and backend. Catch errors at compile time, not in production.
 - **Modern React Stack**: React 19 with TanStack Router provides type-safe navigation and powerful data fetching patterns. Tailwind CSS v4 handles styling with zero configuration.
 - **Edge-Native Deployment**: Cloudflare Workers ensure your app runs close to users worldwide. Experience sub-100ms response times globally.
-- **Database Ready**: Drizzle ORM with Cloudflare D1 provides a complete data layer. Multi-tenant support included out of the box.
+- **Database Ready**: Drizzle ORM with Neon PostgreSQL provides a complete data layer. Multi-tenant support included out of the box.
 - **Developer Experience**: ESLint, Prettier, and VSCode configurations eliminate bikeshedding. Focus on features, not formatting.
 
 <a href="https://reactstarter.com/s/1"><img src="https://reactstarter.com/s/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/2"><img src="https://reactstarter.com/s/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/3"><img src="https://reactstarter.com/s/3.png" height="60" /></a>
@@ -75,7 +75,7 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 **Database & ORM**
 
 - [Drizzle ORM](https://orm.drizzle.team/) — TypeScript ORM with excellent DX
-- [Cloudflare D1](https://developers.cloudflare.com/d1/) — Serverless SQLite database
+- [Neon PostgreSQL](https://neon.tech/) — Serverless PostgreSQL database
 
 **Development Tools**
 
@@ -132,8 +132,6 @@ bun wrangler dev
 ### 5. Initialize Database
 
 ```bash
-# Let Wrangler create the D1 database locally
-bun wrangler d1 execute db --local --command "SELECT 1"
 # Apply database schema and migrations
 bun --cwd db migrate
 bun --cwd db seed  # Optional: add sample data

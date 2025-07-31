@@ -3,7 +3,7 @@
 
 import type { OpenAIProvider } from "@ai-sdk/openai";
 import { createOpenAI } from "@ai-sdk/openai";
-import type { CloudflareEnv } from "@root/core/types";
+import type { Env } from "./env";
 
 // Request-scoped cache key
 const OPENAI_CACHE_KEY = Symbol("openai");
@@ -13,10 +13,7 @@ const OPENAI_CACHE_KEY = Symbol("openai");
  * Uses the tRPC context cache to avoid recreating the provider multiple times
  * within the same request while ensuring environment isolation.
  */
-export function getOpenAI(
-  env: CloudflareEnv,
-  cache?: Map<string | symbol, unknown>,
-) {
+export function getOpenAI(env: Env, cache?: Map<string | symbol, unknown>) {
   // Use request-scoped cache if available (from tRPC context)
   if (cache?.has(OPENAI_CACHE_KEY)) {
     return cache.get(OPENAI_CACHE_KEY) as OpenAIProvider;

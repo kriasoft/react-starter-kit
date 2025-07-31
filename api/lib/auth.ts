@@ -18,7 +18,13 @@ import type { Env } from "./env";
  * @param env The environment variables.
  * @returns An instance of the Better Auth service.
  */
-export function createAuth(db: DB, env: Env): ReturnType<typeof betterAuth> {
+export function createAuth(
+  db: DB,
+  env: Pick<
+    Env,
+    "BETTER_AUTH_SECRET" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET"
+  >,
+): ReturnType<typeof betterAuth> {
   return betterAuth({
     secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
