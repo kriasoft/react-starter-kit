@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       deployments: write
+      pull-requests: read
     environment:
       name: ${{ inputs.environment }}
       url: ${{ steps.pr.outputs.formatted }}
@@ -29,5 +30,6 @@ jobs:
         id: pr
         with:
           template: ${{ inputs.url }}
+          token: ${{ github.token }}
       # TODO: Add deployment steps
       # - run: bun wrangler deploy --env=${{ inputs.environment }}

@@ -9,26 +9,45 @@ import { anonymous, organization } from "better-auth/plugins";
 import type { Env } from "./env";
 
 /**
- * Creates an authentication instance using Better Auth with Drizzle ORM.
+ * Environment variables required for authentication configuration.
+ * Extracted from the main Env type for better type safety and documentation.
+ */
+type AuthEnv = Pick<
+  Env,
+  "BETTER_AUTH_SECRET" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET"
+>;
+
+/**
+ * Creates a Better Auth instance configured for multi-tenant SaaS with organization support.
  *
- * @link {https://www.better-auth.com/}
- * @link {https://www.better-auth.com/llms.txt}
+ * Key behaviors:
+ * - Uses custom 'identity' table instead of default 'account' model for OAuth accounts
+ * - Allows users to create up to 5 organizations with 'owner' role as creator
+ * - Disables automatic ID generation (assumes custom ID logic in schema)
+ * - Supports anonymous authentication alongside email/password and Google OAuth
  *
- * @param db The Drizzle ORM database instance.
- * @param env The environment variables.
- * @returns An instance of the Better Auth service.
+ * @param db Drizzle database instance - must include all required auth tables (user, session, identity, organization, member, invitation, verification)
+ * @param env Environment variables containing auth secrets and OAuth credentials
+ * @returns Configured Better Auth instance with email/password and Google OAuth
+ * @throws Will fail silently if required database tables are missing from schema
+ *
+ * @example
+ * ```ts
+ * const auth = createAuth(database, {
+ *   BETTER_AUTH_SECRET: "your-secret",
+ *   GOOGLE_CLIENT_ID: "google-id",
+ *   GOOGLE_CLIENT_SECRET: "google-secret"
+ * });
+ * ```
  */
 export function createAuth(
   db: DB,
-  env: Pick<
-    Env,
-    "BETTER_AUTH_SECRET" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET"
-  >,
+  env: AuthEnv,
 ): ReturnType<typeof betterAuth> {
   return betterAuth({
     secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
-      provider: "sqlite", // Or, use "pg" for PostgreSQL via Cloudflare Hyperdrive
+      provider: "pg",
 
       schema: {
         identity: Db.identity,
@@ -66,6 +85,12 @@ export function createAuth(
         creatorRole: "owner",
       }),
     ],
+
+    advanced: {
+      database: {
+        generateId: false,
+      },
+    },
   });
 }
 

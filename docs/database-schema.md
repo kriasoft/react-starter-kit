@@ -11,6 +11,44 @@ The database uses:
 - **Authentication:** Built on [Better Auth](https://www.better-auth.com/) specification
 - **Connection Pooling:** Cloudflare Hyperdrive provides connection pooling and caching at the edge
 
+## Database Setup
+
+### Required PostgreSQL Extensions
+
+Before running migrations or seeding data, you must install required PostgreSQL extensions. These are located in `db/scripts/setup-extensions.sql`:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS "pg_uuidv7";
+```
+
+The `pg_uuidv7` extension provides UUIDv7 support for primary key generation. UUIDv7 combines the benefits of UUIDs with time-based sorting, making them ideal for distributed systems.
+
+**All primary keys in the schema use `uuid_generate_v7()` as their default value**, providing consistent, time-ordered identifiers across all tables.
+
+### Installation Process
+
+**For Neon PostgreSQL (Production/Staging):**
+
+1. Connect to your Neon database using the SQL Editor in the Neon Console
+2. Run the contents of `db/scripts/setup-extensions.sql`
+3. This requires elevated database permissions and must be done manually
+
+**For Local Development:**
+
+If using a local PostgreSQL instance, you can install extensions via your database client:
+
+```bash
+# Connect to your local database
+psql $DATABASE_URL
+
+# Run the extension setup
+\i db/scripts/setup-extensions.sql
+```
+
+::: warning Important
+Extension installation requires superuser privileges and cannot be automated through normal database migrations. This step must be completed manually for each new database before running your application.
+:::
+
 The schema is divided into two main sections:
 
 1. **Authentication tables** - Required for user authentication and session management
@@ -26,7 +64,7 @@ The authentication tables follow [Better Auth's requirements](https://www.better
 erDiagram
     %% Core Authentication Tables
     user {
-        text id PK "User ID from identity provider"
+        text id PK "UUIDv7 primary key"
         text name "Full name"
         text email UK "Email address"
         boolean email_verified "Email verification status"
@@ -37,7 +75,7 @@ erDiagram
     }
 
     session {
-        text id PK "Session ID"
+        text id PK "UUIDv7 session ID"
         timestamp expires_at "Session expiration"
         text token UK "Session token"
         timestamp created_at "Creation timestamp"
@@ -50,7 +88,7 @@ erDiagram
     }
 
     identity {
-        text id PK "Identity record ID"
+        text id PK "UUIDv7 identity ID"
         text account_id "Provider account ID"
         text provider_id "OAuth provider name"
         text user_id FK "User reference"
@@ -66,7 +104,7 @@ erDiagram
     }
 
     verification {
-        text id PK "Verification ID"
+        text id PK "UUIDv7 verification ID"
         text identifier "Email or other identifier"
         text value "Verification code/token"
         timestamp expires_at "Expiration timestamp"
@@ -76,7 +114,7 @@ erDiagram
 
     %% Multi-tenancy Tables
     organization {
-        text id PK "Organization ID"
+        text id PK "UUIDv7 organization ID"
         text name "Organization name"
         text slug UK "URL-friendly identifier"
         text logo "Logo URL"
@@ -85,7 +123,7 @@ erDiagram
     }
 
     member {
-        text id PK "Membership ID"
+        text id PK "UUIDv7 membership ID"
         text user_id FK "User reference"
         text organization_id FK "Organization reference"
         text role "Member role (owner, admin, member)"
@@ -93,7 +131,7 @@ erDiagram
     }
 
     team {
-        text id PK "Team ID"
+        text id PK "UUIDv7 team ID"
         text name "Team name"
         text organization_id FK "Parent organization"
         timestamp created_at "Creation timestamp"
@@ -101,14 +139,14 @@ erDiagram
     }
 
     team_member {
-        text id PK "Team membership ID"
+        text id PK "UUIDv7 team membership ID"
         text team_id FK "Team reference"
         text user_id FK "User reference"
         timestamp created_at "Join timestamp"
     }
 
     invitation {
-        text id PK "Invitation ID"
+        text id PK "UUIDv7 invitation ID"
         text email "Invitee email"
         text inviter_id FK "Inviting user"
         text organization_id FK "Target organization"
@@ -144,22 +182,24 @@ These tables handle user authentication and are based on the Better Auth specifi
 
 Central table for all user accounts in your application.
 
-| Column           | Type      | Description                           | Required |
-| ---------------- | --------- | ------------------------------------- | -------- |
-| `id`             | TEXT      | Primary key, typically a CUID or UUID | Yes      |
-| `name`           | TEXT      | User's display name                   | Yes      |
-| `email`          | TEXT      | Email address (unique)                | Yes      |
-| `email_verified` | BOOLEAN   | Email verification status             | Yes      |
-| `image`          | TEXT      | Profile image URL                     | No       |
-| `is_anonymous`   | BOOLEAN   | Anonymous user flag                   | Yes      |
-| `created_at`     | TIMESTAMP | Account creation time                 | Yes      |
-| `updated_at`     | TIMESTAMP | Last modification time                | Yes      |
+| Column           | Type      | Description               | Required | Constraints                             |
+| ---------------- | --------- | ------------------------- | -------- | --------------------------------------- |
+| `id`             | TEXT      | Primary key (UUIDv7)      | Yes      | PRIMARY KEY, DEFAULT uuid_generate_v7() |
+| `name`           | TEXT      | User's display name       | Yes      |                                         |
+| `email`          | TEXT      | Email address             | Yes      | UNIQUE                                  |
+| `email_verified` | BOOLEAN   | Email verification status | Yes      | DEFAULT false                           |
+| `image`          | TEXT      | Profile image URL         | No       |                                         |
+| `is_anonymous`   | BOOLEAN   | Anonymous user flag       | Yes      | DEFAULT false                           |
+| `created_at`     | TIMESTAMP | Account creation time     | Yes      | DEFAULT now()                           |
+| `updated_at`     | TIMESTAMP | Last modification time    | Yes      | DEFAULT now(), auto-update              |
 
 ::: details TypeScript Schema Definition
 
 ```typescript
 export const user = pgTable("user", {
-  id: text().primaryKey(),
+  id: text()
+    .primaryKey()
+    .default(sql`uuid_generate_v7()`),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified")
@@ -363,6 +403,70 @@ betterAuth({
 bun --cwd db generate --name add-custom-fields
 bun --cwd db migrate # or, bun --cwd db push
 ```
+
+## Database Seeding
+
+The project includes a seeding system for populating your database with test data during development.
+
+### Seed Scripts
+
+Seed scripts are located in `db/seeds/` and organized by entity type:
+
+- `db/seeds/users.ts` - Creates test user accounts with realistic data
+- Add your own seed files following the same pattern
+
+### Running Seeds
+
+```bash
+# Seed development database
+bun --cwd db seed
+
+# Seed specific environments
+bun --cwd db seed:staging
+bun --cwd db seed:prod
+```
+
+### Creating Custom Seeds
+
+Follow this pattern when creating new seed files:
+
+```typescript
+// db/seeds/products.ts
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { schema as Db } from "../schema";
+
+export async function seedProducts(db: PostgresJsDatabase<typeof Db>) {
+  console.log("Seeding products...");
+
+  const products = [
+    { name: "Example Product", price: 2999, organizationId: "org-1" },
+    // ... more test data
+  ];
+
+  for (const product of products) {
+    await db.insert(Db.product).values(product).onConflictDoNothing();
+  }
+
+  console.log(`✅ Seeded ${products.length} products`);
+}
+```
+
+Then add your seed function to `db/scripts/seed.ts`:
+
+```typescript
+import { seedProducts } from "../seeds/products";
+
+// In the main seeding function:
+await seedUsers(db);
+await seedProducts(db);
+```
+
+### Seed Data Guidelines
+
+- Use realistic but obviously fake data (example.com emails, etc.)
+- Include `onConflictDoNothing()` to allow re-running seeds safely
+- Provide variety in your test data (verified/unverified users, different roles, etc.)
+- Keep seed data small but representative of real usage patterns
 
 ::: details Important: Schema Compatibility
 When extending authentication tables, ensure your changes don't break Better Auth's expected schema. Always test authentication flows after making changes.

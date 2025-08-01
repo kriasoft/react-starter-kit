@@ -1,5 +1,5 @@
 /**
- * Alternative database client using Neon (PostgreSQL) instead of Cloudflare D1 (SQLite).
+ * Database client using Neon PostgreSQL.
  *
  * Provides the same Drizzle ORM interface as the default D1 setup but connects to
  * Neon via Cloudflare Hyperdrive for connection pooling and edge optimization.
@@ -19,8 +19,14 @@ import postgres from "postgres";
 /**
  * Creates a database client using Drizzle ORM and Cloudflare Hyperdrive.
  *
- * @param db - Cloudflare Hyperdrive binding
- * @returns Drizzle ORM database client
+ * Configuration is optimized for Cloudflare Workers environment with single
+ * connection per request and aggressive timeouts to prevent connection leaks.
+ * The `prepare: false` setting avoids prepared statement caching which can
+ * cause issues in the Workers runtime.
+ *
+ * @param db - Cloudflare Hyperdrive binding providing connection string
+ * @returns Drizzle ORM database client with postgres.js adapter
+ * @throws Will throw if connection string is invalid or connection fails
  *
  * @example
  * ```typescript
@@ -51,4 +57,19 @@ export function createDb(db: Hyperdrive) {
   return drizzle(client, { schema });
 }
 
+/**
+ * Database schema re-exported as `Db` for convenient table access.
+ *
+ * Provides typed access to all database tables, columns, and relations
+ * defined in the shared schema package.
+ *
+ * @example
+ * ```typescript
+ * import { Db } from './db';
+ *
+ * // Access tables directly
+ * await db.select().from(Db.users);
+ * await db.insert(Db.posts).values({ title: 'Hello', userId: 1 });
+ * ```
+ */
 export { schema as Db };

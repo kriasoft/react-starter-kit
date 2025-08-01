@@ -1,8 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import { configDotenv } from "dotenv";
 import { defineConfig } from "drizzle-kit";
-import { loadEnvFile } from "node:process";
 
 // Environment detection: ENVIRONMENT var takes priority, then NODE_ENV mapping
 const envName = (() => {
@@ -15,11 +15,7 @@ const envName = (() => {
 
 // Load .env files in priority order: environment-specific → local → base
 for (const file of [`.env.${envName}.local`, ".env.local", ".env"]) {
-  try {
-    loadEnvFile(`../${file}`);
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
-  }
+  configDotenv({ path: `../${file}` });
 }
 
 if (!process.env.DATABASE_URL) {

@@ -5,20 +5,15 @@ Terraform configuration for deploying this application to a cloud provider.
 ## Structure
 
 - `environments/` - Environment-specific configurations (`preview`, `staging`, `prod`)
-- `modules/` - Reusable Terraform modules for database and storage
+- `modules/` - Reusable Terraform modules for database connectivity
 
 ## Modules
 
-### Database (`modules/db`)
+### Hyperdrive (`modules/hyperdrive`)
 
-- Creates Cloudflare D1 (or, Neon) database for each environment
-- Names: `{project-name}-{environment}`
-
-### Storage (`modules/storage`)
-
-- Creates R2 buckets for file storage
-- Main bucket: `{project-name}-{environment}`
-- Uploads bucket: `{project-name}-uploads-{environment}`
+- Creates Cloudflare Hyperdrive configurations for Neon PostgreSQL connectivity
+- Provides connection pooling and edge optimization for database access
+- Configurations: direct (no-cache) and cached (60s TTL) variants
 
 ## Environments
 
@@ -70,8 +65,7 @@ Your Cloudflare API token needs the following permissions:
 
 - **Zone:Zone:Read** (for domain management)
 - **Zone:Zone Settings:Edit** (for configuration)
-- **Account:Cloudflare D1:Edit** (for database creation)
-- **Account:Cloudflare R2:Edit** (for storage buckets)
+- **Account:Cloudflare Hyperdrive:Edit** (for database connection pooling)
 
 ### Secrets Management
 
@@ -93,12 +87,9 @@ This configuration uses remote state storage for team collaboration:
 After successful deployment, use outputs to configure your application:
 
 ```bash
-# Get database ID for wrangler.jsonc
-terraform output database_id
-
-# Get R2 bucket names for environment variables
-terraform output storage_bucket_name
-terraform output uploads_bucket_name
+# Get Hyperdrive configuration IDs for wrangler.jsonc
+terraform output hyperdrive_direct_id
+terraform output hyperdrive_cached_id
 ```
 
 Add these values to your application's environment configuration.

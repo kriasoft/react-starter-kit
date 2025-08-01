@@ -30,6 +30,7 @@
 - `bun --cwd db migrate` - Apply migrations to database
 - `bun --cwd db studio` - Open Drizzle Studio
 - `bun --cwd db push` - Push schema to database
+- `bun --cwd db seed` - Seed database with test data
 
 ## Conventions
 

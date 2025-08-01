@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
@@ -15,7 +15,9 @@ import { user } from "./user";
  * Each organization represents a separate tenant with isolated data.
  */
 export const organization = pgTable("organization", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .default(sql`uuid_generate_v7()`),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   logo: text("logo"),
@@ -30,7 +32,9 @@ export const organization = pgTable("organization", {
  * Links users to organizations with specific roles.
  */
 export const member = pgTable("member", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .default(sql`uuid_generate_v7()`),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),

@@ -12,7 +12,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "email": {
           "name": "email",
@@ -108,7 +109,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "user_id": {
           "name": "user_id",
@@ -171,7 +173,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "name": {
           "name": "name",
@@ -227,7 +230,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "name": {
           "name": "name",
@@ -282,7 +286,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "team_id": {
           "name": "team_id",
@@ -339,7 +344,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "account_id": {
           "name": "account_id",
@@ -442,7 +448,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "expires_at": {
           "name": "expires_at",
@@ -533,7 +540,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "name": {
           "name": "name",
@@ -602,7 +610,8 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "uuid_generate_v7()"
         },
         "identifier": {
           "name": "identifier",
