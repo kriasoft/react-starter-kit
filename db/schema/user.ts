@@ -21,7 +21,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 /**
@@ -29,7 +29,9 @@ import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
  * Matches to the `user` table in Better Auth.
  */
 export const user = pgTable("user", {
-  id: text().primaryKey(), // User ID from identity provider
+  id: text()
+    .primaryKey()
+    .default(sql`uuid_generate_v7()`),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified")
@@ -54,7 +56,9 @@ export const user = pgTable("user", {
  * Matches to the `session` table in Better Auth.
  */
 export const session = pgTable("session", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .default(sql`uuid_generate_v7()`),
   expiresAt: timestamp("expires_at", {
     withTimezone: true,
     mode: "date",
@@ -81,7 +85,9 @@ export const session = pgTable("session", {
  * Matches to the `account` table in Better Auth.
  */
 export const identity = pgTable("identity", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .default(sql`uuid_generate_v7()`),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: text("user_id")
@@ -114,7 +120,9 @@ export const identity = pgTable("identity", {
  * Matches to the `verification` table in Better Auth.
  */
 export const verification = pgTable("verification", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .default(sql`uuid_generate_v7()`),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at", {

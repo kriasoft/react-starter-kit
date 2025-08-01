@@ -5,6 +5,10 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true
+  },
   "eslint.nodePath": "./node_modules",
   "eslint.runtime": "node",
   "prettier.prettierPath": "./node_modules/prettier",

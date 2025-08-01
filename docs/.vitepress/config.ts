@@ -34,6 +34,10 @@ export default withMermaid(
 
       socialLinks: [
         {
+          icon: "discord",
+          link: "https://discord.gg/2nKEnKq",
+        },
+        {
           icon: "github",
           link: "https://github.com/kriasoft/react-starter-kit",
         },

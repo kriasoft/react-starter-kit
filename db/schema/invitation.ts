@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { organization } from "./organization";
 import { team } from "./team";
@@ -17,7 +17,9 @@ import { user } from "./user";
  * Manages pending invites to organizations and teams.
  */
 export const invitation = pgTable("invitation", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .default(sql`uuid_generate_v7()`),
   email: text("email").notNull(),
   inviterId: text("inviter_id")
     .notNull()

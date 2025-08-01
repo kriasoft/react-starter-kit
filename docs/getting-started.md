@@ -89,8 +89,10 @@ Once you're set up, here's what you're working with:
 my-app/
 ├── app/          # React 19 frontend (where the magic happens)
 ├── api/          # tRPC backend (type-safe goodness)
+├── core/         # Shared modules and utilities
 ├── edge/         # Cloudflare Workers entry point
 ├── db/           # Database schemas and migrations
+├── infra/        # Terraform infrastructure configuration
 ├── docs/         # Documentation (you are here!)
 └── package.json  # Monorepo root
 ```

@@ -21,6 +21,9 @@
     "studio": "drizzle-kit studio",
     "studio:staging": "bun --env ENVIRONMENT=staging drizzle-kit studio",
     "studio:prod": "bun --env ENVIRONMENT=prod drizzle-kit studio",
+    "seed": "bun scripts/seed.ts",
+    "seed:staging": "bun --env ENVIRONMENT=staging scripts/seed.ts",
+    "seed:prod": "bun --env ENVIRONMENT=prod scripts/seed.ts",
     "introspect": "drizzle-kit introspect",
     "up": "drizzle-kit up",
     "check": "drizzle-kit check",
@@ -32,6 +35,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.2.19",
+    "dotenv": "^17.2.1",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.4",
     "typescript": "~5.8.3"

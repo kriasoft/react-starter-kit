@@ -84,6 +84,7 @@ jobs:
     secrets: inherit
     permissions:
       deployments: write
+      pull-requests: read
 
   deploy-staging:
     name: "Deploy"
@@ -97,6 +98,7 @@ jobs:
     secrets: inherit
     permissions:
       deployments: write
+      pull-requests: read
 
   deploy-prod:
     name: "Deploy"
@@ -110,3 +112,4 @@ jobs:
     secrets: inherit
     permissions:
       deployments: write
+      pull-requests: read
