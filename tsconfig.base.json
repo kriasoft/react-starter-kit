@@ -30,12 +30,12 @@
     "moduleResolution": "Bundler",                       /* Specify how TypeScript looks up a file from a given module specifier. */
     "baseUrl": "./",                                     /* Specify the base directory to resolve non-relative module names. */
     "paths": {                                           /* Specify a set of entries that re-map imports to additional lookup locations. */
-      "@root/api": ["api"],
-      "@root/api/*": ["api/*"],
-      "@root/core": ["core"],
-      "@root/core/*": ["core/*"],
-      "@root/db": ["db"],
-      "@root/db/*": ["db/*"]
+      "@repo/api": ["apps/api"],
+      "@repo/api/*": ["apps/api/*"],
+      "@repo/core": ["packages/core"],
+      "@repo/core/*": ["packages/core/*"],
+      "@repo/db": ["db"],
+      "@repo/db/*": ["db/*"]
     },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */

@@ -47,30 +47,36 @@ jobs:
       - run: bun lint
         if: ${{ github.event_name == 'pull_request' }}
 
-      - run: bun --filter app build
+      # Type checking
       - run: bun tsc --build
-      # - run: bun --filter app test
+
+      # Testing (commented out - enable as needed)
+      # - run: bun --filter @repo/web test
       #   if: ${{ github.event_name == 'pull_request' }}
-      # - run: bun --filter edge test
+      # - run: bun --filter @repo/api test
       #   if: ${{ github.event_name == 'pull_request' }}
+      # - run: bun --filter @repo/edge test
+      #   if: ${{ github.event_name == 'pull_request' }}
+
+      # Build all workspaces
+      - run: bun --filter @repo/web build
+      - run: bun --filter @repo/api build
+      - run: bun --filter @repo/edge build
 
       # Validate Terraform configuration and formatting
       - uses: hashicorp/setup-terraform@v3
       - run: terraform fmt -check -recursive infra/
       # - run: terraform validate infra/environments/preview/
 
-      # Compile
-      - run: bun run build
-
       # Build Docker image (only on main branch pushes or manual triggers)
-      - run: docker build --tag api:${{ github.sha }} -f ./api/Dockerfile .
+      - run: docker build --tag api:${{ github.sha }} -f ./apps/api/Dockerfile .
       - run: docker save api:${{ github.sha }} | gzip > api-image.tar.gz
 
       # Upload build artifacts
       - uses: actions/upload-artifact@v4
         with:
           name: "build"
-          path: "app/dist\nedge/dist\napi/dist\napi-image.tar.gz\n"
+          path: "apps/web/dist\napps/edge/dist\napps/api/dist\napi-image.tar.gz\n"
 
   deploy-preview:
     name: "Deploy"

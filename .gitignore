@@ -2,7 +2,8 @@
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
 
 # Compiled output
-/*/dist/
+**/dist/
+**/*.tsbuildinfo
 
 # Bun package manager
 # https://bun.sh/docs/install/lockfile
