@@ -45,12 +45,12 @@ bun test:edge                  # Test edge (shortcut)
 
 # Other
 bun lint                       # Lint all code
-bun --cwd db push              # Apply DB schema changes
+bun --filter @repo/db push     # Apply DB schema changes
 
 # Database
-bun --cwd db generate          # Generate migrations
-bun --cwd db studio            # Open DB GUI
-bun --cwd db seed              # Seed sample data
+bun --filter @repo/db generate # Generate migrations
+bun --filter @repo/db studio   # Open DB GUI
+bun --filter @repo/db seed     # Seed sample data
 
 # Deployment
 bun wrangler deploy --env=production

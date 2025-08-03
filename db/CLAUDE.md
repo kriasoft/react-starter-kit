@@ -26,11 +26,11 @@
 
 ## Common Commands
 
-- `bun --cwd db generate --name <name>` - Generate migrations
-- `bun --cwd db migrate` - Apply migrations to database
-- `bun --cwd db studio` - Open Drizzle Studio
-- `bun --cwd db push` - Push schema to database
-- `bun --cwd db seed` - Seed database with test data
+- `bun --filter @repo/db generate --name <name>` - Generate migrations
+- `bun --filter @repo/db migrate` - Apply migrations to database
+- `bun --filter @repo/db studio` - Open Drizzle Studio
+- `bun --filter @repo/db push` - Push schema to database
+- `bun --filter @repo/db seed` - Seed database with test data
 
 ## Conventions
 

@@ -87,10 +87,13 @@ Once you're set up, here's what you're working with:
 
 ```bash
 my-app/
-├── app/          # React 19 frontend (where the magic happens)
-├── api/          # tRPC backend (type-safe goodness)
-├── core/         # Shared modules and utilities
-├── edge/         # Cloudflare Workers entry point
+├── apps/
+│   ├── web/      # React 19 frontend (where the magic happens)
+│   ├── api/      # tRPC backend (type-safe goodness)
+│   └── edge/     # Cloudflare Workers entry point
+├── packages/
+│   ├── core/     # Shared modules and utilities
+│   └── ws-protocol/ # WebSocket protocol template
 ├── db/           # Database schemas and migrations
 ├── infra/        # Terraform infrastructure configuration
 ├── docs/         # Documentation (you are here!)
@@ -127,15 +130,15 @@ The `bun dev` command runs multiple processes concurrently:
 Open your browser and check out:
 
 - **Frontend**: `http://localhost:5173` — Your React app with TanStack Router
-- **Database GUI**: Run `bun --cwd db studio` to explore your database
+- **Database GUI**: Run `bun --filter @repo/db studio` to explore your database
 
 ### 3. Make It Yours
 
 Time to customize:
 
-1. **Update branding** → Edit `app/index.html` with your app's title
-2. **Homepage content** → Modify `app/routes/index.tsx`
-3. **API endpoints** → Check out `api/routers/` for tRPC routes
+1. **Update branding** → Edit `apps/web/index.html` with your app's title
+2. **Homepage content** → Modify `apps/web/routes/index.tsx`
+3. **API endpoints** → Check out `apps/api/routers/` for tRPC routes
 4. **Data models** → Explore `db/schema/` for database structure
 
 ## Database Setup
@@ -144,17 +147,17 @@ The template uses Cloudflare D1 (SQLite) with Drizzle ORM. To set up your databa
 
 ```bash
 # Generate the initial schema
-bun --cwd db generate
+bun --filter @repo/db generate
 
 # Apply migrations to your local database
-bun --cwd db push
+bun --filter @repo/db push
 
 # (Optional) Seed with sample data
-bun --cwd db seed
+bun --filter @repo/db seed
 ```
 
 ::: tip Database GUI
-Want to explore your data visually? Run `bun --cwd db studio` to open Drizzle Studio in your browser.
+Want to explore your data visually? Run `bun --filter @repo/db studio` to open Drizzle Studio in your browser.
 :::
 
 ## Authentication
@@ -163,8 +166,8 @@ Better Auth is pre-configured but needs your touch:
 
 1. **Create environment file** → Create `.env.local` (excluded from Git)
 2. **Add OAuth credentials** → Google, GitHub, etc.
-3. **Client setup** → Check `app/lib/auth.ts`
-4. **Server config** → See `api/auth.ts`
+3. **Client setup** → Check `apps/web/lib/auth.ts`
+4. **Server config** → See `apps/api/lib/auth.ts`
 
 ::: details Example .env.local
 
@@ -197,15 +200,15 @@ bun lint
 ```
 
 ::: info Type Checking
-TypeScript checking happens automatically in your editor. For CI/CD, run `bun --cwd api build` to verify types.
+TypeScript checking happens automatically in your editor. For CI/CD, run `bun --filter @repo/api build` to verify types.
 :::
 
 ### 💡 Hot Tips for Development
 
 - **API Types**: After modifying tRPC routes, types auto-generate — no manual sync needed
-- **Database Changes**: Edit `db/schema/`, then run `bun --cwd db generate` and `push`
-- **Component Library**: ShadCN UI components are ready to use — check `app/components/ui`
-- **State Management**: Global state lives in `app/lib/store.ts` using Jotai
+- **Database Changes**: Edit `db/schema/`, then run `bun --filter @repo/db generate` and `push`
+- **Component Library**: ShadCN UI components are ready to use — check `apps/web/components/ui`
+- **State Management**: Global state lives in `apps/web/lib/store.ts` using Jotai
 
 ## Deploy to Production
 
@@ -245,14 +248,14 @@ All API calls go through `/api/trpc` — the client handles this automatically. 
 :::
 
 ::: info Build Errors
-If TypeScript complains, try `bun --cwd api build` first. This regenerates type definitions.
+If TypeScript complains, try `bun --filter @repo/api build` first. This regenerates type definitions.
 :::
 
 ## Next Steps
 
 Now that you're up and running:
 
-1. Browse the [example components](https://github.com/kriasoft/react-starter-kit/tree/main/app/components) for inspiration
+1. Browse the [example components](https://github.com/kriasoft/react-starter-kit/tree/main/apps/web/components) for inspiration
 2. Check out the [deployment guide](/deployment) for advanced Cloudflare setup
 3. Join our [Discord community](https://discord.gg/2nKEnKq) for help and updates
 

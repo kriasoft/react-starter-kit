@@ -150,22 +150,22 @@ Domain-specific components that combine UI primitives:
 
 ```bash
 # Start development server
-bun --cwd app dev
+bun --filter @repo/web dev
 
 # Run type checking
-bun --cwd app typecheck
+bun --filter @repo/web typecheck
 
 # Run tests
-bun --cwd app test
+bun --filter @repo/web test
 
 # Run tests in watch mode
-bun --cwd app test --watch
+bun --filter @repo/web test --watch
 
 # Lint code
-bun --cwd app lint
+bun --filter @repo/web lint
 
 # Build for production
-bun --cwd app build
+bun --filter @repo/web build
 ```
 
 ### Component Development
@@ -341,10 +341,10 @@ export const Route = createFileRoute("/dashboard")({
 
 ```bash
 # Analyze bundle size
-bun --cwd app build && bun --cwd app analyze
+bun --filter @repo/web build && bun --filter @repo/web analyze
 
 # Check for unused dependencies
-bun --cwd app depcheck
+bun --filter @repo/web depcheck
 ```
 
 ## Testing Strategy
@@ -372,7 +372,7 @@ Test complete user flows including routing and API calls.
 ### Production Build
 
 ```bash
-bun --cwd app build
+bun --filter @repo/web build
 ```
 
 This creates an optimized build in the `dist/` directory with:
