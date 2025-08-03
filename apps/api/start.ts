@@ -15,7 +15,7 @@
  * @example
  * Start the development server:
  * ```bash
- * bun --cwd api dev
+ * bun --filter @repo/api dev
  * ```
  *
  * SPDX-FileCopyrightText: 2014-present Kriasoft

@@ -29,19 +29,20 @@ Be sure to join our [Discord channel](https://discord.gg/2nKEnKq) for assistance
 
 This starter kit uses a thoughtfully organized monorepo structure that promotes code reuse and maintainability:
 
-- [`app/`](./app) — React frontend with Vite, TanStack Router, and Tailwind CSS
-- [`api/`](./api) — tRPC API server powered by Hono framework
-- [`edge/`](./edge) — Cloudflare Workers entry point for edge deployment
-- [`core/`](./core) — Shared TypeScript types, utilities, and WebSocket communication
+- [`apps/web/`](./apps/web) — React frontend with Vite, TanStack Router, and Tailwind CSS
+- [`apps/api/`](./apps/api) — tRPC API server powered by Hono framework
+- [`apps/edge/`](./apps/edge) — Cloudflare Workers entry point for edge deployment
+- [`packages/core/`](./packages/core) — Shared TypeScript types and utilities
+- [`packages/ws-protocol/`](./packages/ws-protocol) — WebSocket protocol template with type-safe messaging
 - [`db/`](./db) — Database schemas, migrations, and seed data
 - [`docs/`](./docs) — VitePress documentation site
 - [`infra/`](./infra) — Terraform infrastructure configurations for multi-environment deployment
 - [`scripts/`](./scripts) — Build automation and development tools
-- [`app/scripts/`](./app/scripts) — ShadCN UI component management utilities
+- [`apps/web/scripts/`](./apps/web/scripts) — ShadCN UI component management utilities
 
 **Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
 
-**Deployment Flexibility:** The API is deployed to Cloudflare Workers (via `edge/`) for global edge computing, ensuring optimal performance worldwide.
+**Deployment Flexibility:** The API is deployed to Cloudflare Workers (via `apps/edge/`) for global edge computing, ensuring optimal performance worldwide.
 
 ## Perfect For
 
@@ -119,13 +120,13 @@ Open two terminals and run these commands:
 **Terminal 1 - Frontend:**
 
 ```bash
-bun --cwd app dev
+bun --filter @repo/web dev
 ```
 
 **Terminal 2 - Backend:**
 
 ```bash
-bun --cwd edge build --watch
+bun --filter @repo/edge build --watch
 bun wrangler dev
 ```
 
@@ -133,8 +134,8 @@ bun wrangler dev
 
 ```bash
 # Apply database schema and migrations
-bun --cwd db migrate
-bun --cwd db seed  # Optional: add sample data
+bun --filter @repo/db migrate
+bun --filter @repo/db seed  # Optional: add sample data
 ```
 
 Open <http://localhost:5173> to see your app running. The backend API will be available at the port shown by `wrangler dev` (typically 8787).
@@ -155,8 +156,8 @@ bun wrangler secret put OPENAI_API_KEY --env=production
 
 ```bash
 # Build all packages
-bun --cwd app build
-bun --cwd edge build
+bun --filter @repo/web build
+bun --filter @repo/edge build
 
 # Deploy to Cloudflare Workers
 bun wrangler deploy --env=production
