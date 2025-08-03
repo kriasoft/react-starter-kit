@@ -1,0 +1,26 @@
+{
+  "name": "@repo/ws-protocol",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./messages": "./messages.ts",
+    "./router": "./router.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "example": "bun run example.ts"
+  },
+  "peerDependencies": {
+    "bun-ws-router": "^0.3.2",
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.19",
+    "bun-ws-router": "^0.3.2",
+    "typescript": "~5.8.3",
+    "zod": "^4.0.14"
+  }
+}

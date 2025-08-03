@@ -1,0 +1,40 @@
+{
+  "name": "@repo/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./auth": "./lib/auth.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "dev": "bun run --env-file ../../.env --env-file ../../.env.local ./start.ts",
+    "build": "bun build index.ts --outdir dist --target bun",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^2.0.0",
+    "@trpc/server": "^11.4.3",
+    "ai": "^5.0.0",
+    "better-auth": "^1.3.4",
+    "@repo/core": "workspace:*",
+    "dataloader": "^2.2.3",
+    "@repo/db": "workspace:*",
+    "drizzle-orm": "^0.44.4",
+    "postgres": "^3.4.7"
+  },
+  "peerDependencies": {
+    "hono": "^4.8.10",
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250731.0",
+    "@types/bun": "^1.2.19",
+    "hono": "^4.8.10",
+    "typescript": "~5.8.3",
+    "vitest": "~3.2.4",
+    "zod": "^4.0.14"
+  }
+}

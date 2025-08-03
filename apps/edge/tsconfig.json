@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "outDir": "./dist",
+    "types": ["@cloudflare/workers-types", "vite/client"]
+  },
+  "include": ["**/*.ts", "**/*.json", "**/*.d.ts"],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    { "path": "../api" },
+    { "path": "../../packages/core" },
+    { "path": "../../db" }
+  ]
+}

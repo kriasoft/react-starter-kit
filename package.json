@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "@repo/root",
   "version": "0.0.0",
   "packageManager": "bun@1.2.19",
   "private": true,
@@ -8,26 +8,32 @@
     "bun": ">=1.2.0"
   },
   "workspaces": [
-    "api",
-    "app",
-    "core",
+    "apps/*",
     "db",
-    "edge",
+    "packages/*",
     "scripts"
   ],
   "scripts": {
-    "dev": "bun --cwd app dev",
+    "dev": "bun --filter @repo/web dev",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "vitest",
-    "build": "bun --filter app --filter api --filter edge build",
-    "build:api": "docker build --tag api:latest -f ./api/Dockerfile .",
+    "build": "bun --filter @repo/web --filter @repo/api --filter @repo/edge build",
+    "build:api": "docker build --tag api:latest -f ./apps/api/Dockerfile .",
     "deploy": "bun wrangler deploy",
-    "generate:types": "bun wrangler types --include-runtime=false edge/types/cloudflare-env.d.ts --env-file wrangler.jsonc && bun prettier --write edge/types/*-env.d.ts",
+    "generate:types": "bun wrangler types --include-runtime=false apps/edge/types/cloudflare-env.d.ts --env-file wrangler.jsonc && bun prettier --write apps/edge/types/*-env.d.ts",
     "prepare": "husky",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "docs:deploy": "gh-pages --dist docs/.vitepress/dist"
+    "docs:deploy": "gh-pages --dist docs/.vitepress/dist",
+    "dev:web": "bun --filter @repo/web dev",
+    "dev:api": "bun --filter @repo/api dev",
+    "dev:edge": "bun --filter @repo/edge dev",
+    "build:web": "bun --filter @repo/web build",
+    "build:edge": "bun --filter @repo/edge build",
+    "test:web": "bun --filter @repo/web test",
+    "test:api": "bun --filter @repo/api test",
+    "test:edge": "bun --filter @repo/edge test"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.13.5",
