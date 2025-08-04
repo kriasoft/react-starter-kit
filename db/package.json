@@ -24,11 +24,13 @@
     "seed": "bun scripts/seed.ts",
     "seed:staging": "bun --env ENVIRONMENT=staging scripts/seed.ts",
     "seed:prod": "bun --env ENVIRONMENT=prod scripts/seed.ts",
+    "export": "bun scripts/export.ts",
+    "export:staging": "bun --env ENVIRONMENT=staging scripts/export.ts",
+    "export:prod": "bun --env ENVIRONMENT=prod scripts/export.ts",
     "introspect": "drizzle-kit introspect",
     "up": "drizzle-kit up",
     "check": "drizzle-kit check",
-    "drop": "drizzle-kit drop",
-    "export": "drizzle-kit export"
+    "drop": "drizzle-kit drop"
   },
   "peerDependencies": {
     "drizzle-orm": "^0.44.4"
