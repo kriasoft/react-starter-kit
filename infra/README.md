@@ -87,7 +87,7 @@ This configuration uses remote state storage for team collaboration:
 After successful deployment, use outputs to configure your application:
 
 ```bash
-# Get Hyperdrive configuration IDs for wrangler.jsonc
+# Get Hyperdrive configuration IDs for apps/edge/wrangler.jsonc
 terraform output hyperdrive_direct_id
 terraform output hyperdrive_cached_id
 ```

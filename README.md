@@ -111,7 +111,7 @@ bun install
 
 ### 3. Configure Environment
 
-Update environment variables in [`.env`](./.env) and `.env.local` files as well as Wrangler configuration in [`wrangler.jsonc`](./wrangler.jsonc).
+Update environment variables in [`.env`](./.env) and `.env.local` files as well as Wrangler configuration in [`wrangler.jsonc`](./apps/edge/wrangler.jsonc).
 
 ### 4. Start Development
 
