@@ -219,7 +219,7 @@ Ready to ship? Let's deploy to Cloudflare Workers:
 bun wrangler login
 
 # Deploy to production
-bun wrangler deploy --env=production
+bun wrangler deploy --config apps/edge/wrangler.jsonc --env=production
 ```
 
 ::: warning Environment Configuration
@@ -238,7 +238,7 @@ Remember to set them in Cloudflare dashboard for production — local `.env` fil
 Production uses Cloudflare D1 — you must run migrations there separately:
 
 ```bash
-bun wrangler d1 migrations apply YOUR_DATABASE --env=production
+bun wrangler d1 migrations apply YOUR_DATABASE --config apps/edge/wrangler.jsonc --env=production
 ```
 
 :::

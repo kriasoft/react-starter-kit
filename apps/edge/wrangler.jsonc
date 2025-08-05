@@ -2,11 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
 
   "name": "example",
-  "account_id": "your-cloudflare-account-id-here",
-  "main": "./edge/dist/index.js",
+  "main": "./dist/index.js",
 
   "assets": {
-    "directory": "./app/dist",
+    "directory": "../../apps/web/dist",
     "binding": "ASSETS"
   },
 
@@ -38,7 +37,7 @@
     "production": {
       "routes": [
         {
-          "pattern": "example.com/*",
+          "pattern": "example.com",
           "custom_domain": true
         }
       ],
@@ -61,7 +60,7 @@
     "staging": {
       "routes": [
         {
-          "pattern": "example.com/*",
+          "pattern": "staging.example.com",
           "custom_domain": true
         }
       ],
@@ -84,7 +83,7 @@
     "preview": {
       "routes": [
         {
-          "pattern": "preview.example.com/*",
+          "pattern": "preview.example.com",
           "custom_domain": true
         }
       ],
