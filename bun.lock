@@ -40,7 +40,7 @@
       },
     },
     "@repo/scripts": {
-      "name": "scripts",
+      "name": "@repo/scripts",
       "version": "0.0.0",
       "dependencies": {
         "@modelcontextprotocol/sdk": "^1.17.1",
@@ -677,6 +677,8 @@
     "@repo/db": ["@repo/db@workspace:db"],
 
     "@repo/edge": ["@repo/edge@workspace:apps/edge"],
+
+    "@repo/scripts": ["@repo/scripts@workspace:@repo/scripts"],
 
     "@repo/web": ["@repo/web@workspace:apps/web"],
 
@@ -2415,8 +2417,6 @@
     "safer-buffer": ["safer-buffer@2.1.2", "", {}, "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="],
 
     "scheduler": ["scheduler@0.26.0", "", {}, "sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA=="],
-
-    "scripts": ["scripts@workspace:@repo/scripts"],
 
     "search-insights": ["search-insights@2.17.3", "", {}, "sha512-RQPdCYTa8A68uM2jwxoY842xDhvx3E5LFL1LxvxCNMev4o5mLuokczhzjAgGwUZBAmOKZknArSxLKmXtIi2AxQ=="],
 
