@@ -22,6 +22,26 @@ bun install
 
 ```
 
+### Component Styling
+
+Components use Tailwind classes with the `cn()` utility for conditional styling:
+
+```typescript
+import { cn } from "@repo/ui";
+
+function Card({ className, ...props }: CardProps) {
+  return (
+    <div
+      className={cn(
+        'rounded-lg border bg-card text-card-foreground shadow-sm',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
 ## Usage
 
 ```typescript

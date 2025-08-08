@@ -267,26 +267,6 @@ We use CSS variables and Tailwind utilities for consistent theming:
 }
 ```
 
-### Component Styling
-
-Components use Tailwind classes with the `cn()` utility for conditional styling:
-
-```typescript
-import { cn } from '@/lib/utils';
-
-function Card({ className, ...props }: CardProps) {
-  return (
-    <div
-      className={cn(
-        'rounded-lg border bg-card text-card-foreground shadow-sm',
-        className
-      )}
-      {...props}
-    />
-  );
-}
-```
-
 ## Authentication Flow
 
 ### Better Auth Integration
