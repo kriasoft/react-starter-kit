@@ -92,7 +92,7 @@ export const Route = createFileRoute("/dashboard/$orgId")({
 
 ## Component Architecture
 
-### UI Components (`components/ui/`)
+### UI Components (`@repo/ui`)
 
 ShadCN UI components that you can copy, paste, and own:
 
@@ -414,14 +414,6 @@ VITE_APP_NAME="React Starter Kit"
 
 ## Best Practices
 
-### Component Design
-
-1. **Keep components focused** on single responsibilities
-2. **Use TypeScript** for prop validation and documentation
-3. **Implement proper error boundaries** for graceful failures
-4. **Follow accessibility guidelines** with proper ARIA attributes
-5. **Test user interactions** not implementation details
-
 ### State Management
 
 1. **Keep atoms small** and focused
@@ -433,8 +425,8 @@ VITE_APP_NAME="React Starter Kit"
 
 1. **Lazy load routes** and heavy components
 2. **Optimize images** with proper sizing and formats
-3. **Use React.memo** judiciously for expensive components
-4. **Implement virtualization** for long lists
+3. **Implement code splitting** for better load times
+4. **Use React DevTools Profiler** to identify unnecessary renders
 
 ## Package Exports
 
@@ -445,7 +437,7 @@ Clean imports thanks to our package.json exports:
 import { cn, formatDate } from "@/lib/utils";
 
 // Import components
-import { Button, Card } from "@/components/ui";
+import { Button, Card } from "@repo/ui";
 
 // Import hooks
 import { useAuth, useLocalStorage } from "@/hooks";
