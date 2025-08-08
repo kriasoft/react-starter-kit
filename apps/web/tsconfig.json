@@ -3,7 +3,13 @@
   "compilerOptions": {
     "composite": true,
     "noEmit": true,
-    "tsBuildInfoFile": "../../.cache/tsconfig/web.tsbuildinfo"
+    "tsBuildInfoFile": "../../.cache/tsconfig/web.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@repo/ui": ["../../packages/ui"],
+      "@repo/ui/*": ["../../packages/ui/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.json", "./global.d.ts"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
