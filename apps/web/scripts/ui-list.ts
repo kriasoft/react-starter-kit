@@ -25,7 +25,7 @@ async function listComponents(): Promise<void> {
   console.log("📋 ShadCN Component Inventory");
   console.log("=============================\n");
 
-  const componentsDir = "components/ui";
+  const componentsDir = "../../packages/ui/components";
 
   if (!existsSync(componentsDir)) {
     console.log(`❌ Components directory not found: ${componentsDir}`);

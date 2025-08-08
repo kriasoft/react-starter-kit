@@ -6,7 +6,7 @@ import { basename } from "node:path";
 import { execCommand, formatGeneratedFiles } from "./format-utils.js";
 
 async function getInstalledComponents(): Promise<string[]> {
-  const componentsDir = "components/ui";
+  const componentsDir = "../../packages/ui/components";
 
   if (!existsSync(componentsDir)) {
     throw new Error(`Components directory not found: ${componentsDir}`);
@@ -25,7 +25,7 @@ async function updateComponents(): Promise<void> {
     const components = await getInstalledComponents();
 
     if (components.length === 0) {
-      console.log("❌ No ShadCN components found in components/ui");
+      console.log("❌ No ShadCN components found in packages/ui/components");
       process.exit(1);
     }
 

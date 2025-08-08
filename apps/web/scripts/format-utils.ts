@@ -27,7 +27,7 @@ export async function execCommand(
  */
 export async function formatGeneratedFiles(): Promise<void> {
   try {
-    const componentFiles = await globby("components/ui/**/*.{ts,tsx}", {
+    const componentFiles = await globby("../../packages/ui/components/**/*.{ts,tsx}", {
       absolute: true,
     });
 
