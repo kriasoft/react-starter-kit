@@ -17,6 +17,8 @@
     "dev": "bun --filter @repo/web dev",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "vitest",
+    "typecheck": "tsc --build",
+    "build:types": "tsc --build",
     "build": "bun --filter @repo/web --filter @repo/api --filter @repo/edge build",
     "build:api": "docker build --tag api:latest -f ./apps/api/Dockerfile .",
     "deploy": "bun wrangler deploy --config apps/edge/wrangler.jsonc",
@@ -61,14 +63,14 @@
     "prettier": "^3.6.2",
     "react": "^19.1.1",
     "relay-config": "^12.0.1",
-    "typescript": "~5.8.3",
+    "typescript": "~5.9.2",
     "typescript-eslint": "^8.39.0",
     "typescript-language-server": "^4.4.0",
-    "vite": "~7.0.6",
-    "vitepress": "^1.6.3",
+    "vite": "~7.1.1",
+    "vitepress": "^1.6.4",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitest": "~3.2.4",
-    "wrangler": "^4.28.0"
+    "wrangler": "^4.28.1"
   },
   "prettier": {
     "printWidth": 80,

@@ -24,6 +24,28 @@ const appRouter = router({
 // HTTP router
 const app = new Hono<AppContext>();
 
+// Root endpoint with API information
+app.get("/", (c) => {
+  return c.json({
+    name: "@repo/api",
+    version: "0.0.0",
+    endpoints: {
+      trpc: "/api/trpc",
+      auth: "/api/auth",
+      health: "/health",
+    },
+    documentation: {
+      trpc: "https://trpc.io",
+      auth: "https://www.better-auth.com",
+    },
+  });
+});
+
+// Health check endpoint
+app.get("/health", (c) => {
+  return c.json({ status: "healthy", timestamp: new Date().toISOString() });
+});
+
 /*
  * Middleware for initializing database and authentication services.
  *

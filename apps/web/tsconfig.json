@@ -1,16 +1,11 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../packages/typescript-config/react.jsonc",
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "types": ["vite/client"],
-    "outDir": "../../.cache/ts-app",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "composite": true,
+    "noEmit": true,
+    "tsBuildInfoFile": "../../.cache/tsconfig/web.tsbuildinfo"
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.json", "./global.d.ts"],
-  "exclude": ["**/dist/**/*", "**/node_modules/**/*", "lib/routeTree.gen.ts"]
+  "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
+  "references": [{ "path": "../api" }]
 }

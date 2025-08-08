@@ -1,0 +1,20 @@
+{
+  "name": "@repo/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./base": "./base.jsonc",
+    "./base.jsonc": "./base.jsonc",
+    "./cloudflare": "./cloudflare.jsonc",
+    "./cloudflare.jsonc": "./cloudflare.jsonc",
+    "./node": "./node.jsonc",
+    "./node.jsonc": "./node.jsonc",
+    "./react": "./react.jsonc",
+    "./react.jsonc": "./react.jsonc",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "*.jsonc",
+    "package.json"
+  ]
+}
