@@ -14,4 +14,3 @@ export * from "./components/textarea";
 export * from "./lib/utils";
 
 // Export hooks
-export * from "./hooks";
