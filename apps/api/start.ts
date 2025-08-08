@@ -49,7 +49,7 @@ const app = new Hono<AppContext>();
  * - Provides access to all Cloudflare bindings defined in wrangler.jsonc
  */
 const cf = await getPlatformProxy<CloudflareEnv>({
-  configPath: "../../wrangler.jsonc",
+  configPath: "../edge/wrangler.jsonc",
   persist: true,
 });
 

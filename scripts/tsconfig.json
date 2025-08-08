@@ -1,9 +1,9 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../packages/typescript-config/node.jsonc",
   "compilerOptions": {
-    "outDir": "../.cache/ts-scripts",
-    "moduleResolution": "node",
-    "noEmit": true
+    "composite": true,
+    "noEmit": true,
+    "tsBuildInfoFile": "../.cache/tsconfig/scripts.tsbuildinfo"
   },
   "include": ["**/*.ts", "**/*.js"]
 }

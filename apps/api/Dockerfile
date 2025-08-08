@@ -22,8 +22,9 @@ COPY ./apps/api/package.json ./package.json
 # Workspace dependencies like "workspace:*" or "workspace:^1.0.0" cannot be resolved
 # inside Docker since the workspace packages aren't available in the container context.
 # This jq command filters out any dependency where the version starts with "workspace:"
-# Example: "core": "workspace:*" gets removed, "zod": "4.0.5" remains
-RUN jq '.dependencies |= with_entries(select(.value | startswith("workspace:") | not))' \
+# from both dependencies and devDependencies sections
+RUN jq '.dependencies |= with_entries(select(.value | startswith("workspace:") | not)) | \
+    .devDependencies |= with_entries(select(.value | startswith("workspace:") | not))' \
     package.json > package.tmp.json && \
     mv package.tmp.json package.json
 

@@ -1,0 +1,52 @@
+{
+  /* Visit https://aka.ms/tsconfig to read more about this file */
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+
+    /* Modules */
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "baseUrl": "../../",
+    "paths": {
+      "@repo/api": ["apps/api"],
+      "@repo/api/*": ["apps/api/*"],
+      "@repo/core": ["packages/core"],
+      "@repo/core/*": ["packages/core/*"],
+      "@repo/db": ["db"],
+      "@repo/db/*": ["db/*"],
+      "@repo/ws-protocol": ["packages/ws-protocol"],
+      "@repo/ws-protocol/*": ["packages/ws-protocol/*"],
+      "@/*": ["apps/web/*"]
+    },
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": false,
+
+    /* Emit */
+    // noEmit is set per-package based on needs
+
+    /* JavaScript Support */
+    "allowJs": true,
+
+    /* Interop Constraints */
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    /* Language and Environment */
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "useDefineForClassFields": true,
+
+    /* Completeness */
+    "skipLibCheck": true
+  }
+}

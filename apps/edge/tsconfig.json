@@ -1,7 +1,9 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../packages/typescript-config/cloudflare.jsonc",
   "compilerOptions": {
-    "lib": ["ESNext"],
+    "composite": true,
+    "declaration": true,
+    "noEmit": false,
     "outDir": "./dist",
     "types": ["@cloudflare/workers-types", "vite/client"]
   },
