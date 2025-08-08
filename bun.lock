@@ -39,16 +39,6 @@
         "wrangler": "^4.28.0",
       },
     },
-    "@repo/scripts": {
-      "name": "@repo/scripts",
-      "version": "0.0.0",
-      "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.17.1",
-        "execa": "^9.6.0",
-        "got": "^14.4.7",
-        "zx": "^8.7.2",
-      },
-    },
     "apps/api": {
       "name": "@repo/api",
       "version": "0.0.0",
@@ -186,6 +176,16 @@
       "peerDependencies": {
         "bun-ws-router": "^0.3.2",
         "zod": "^4.0.14",
+      },
+    },
+    "scripts": {
+      "name": "@repo/scripts",
+      "version": "0.0.0",
+      "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.17.1",
+        "execa": "^9.6.0",
+        "got": "^14.4.7",
+        "zx": "^8.7.2",
       },
     },
   },
@@ -678,7 +678,7 @@
 
     "@repo/edge": ["@repo/edge@workspace:apps/edge"],
 
-    "@repo/scripts": ["@repo/scripts@workspace:@repo/scripts"],
+    "@repo/scripts": ["@repo/scripts@workspace:scripts"],
 
     "@repo/web": ["@repo/web@workspace:apps/web"],
 

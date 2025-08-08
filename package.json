@@ -11,9 +11,9 @@
     "apps/*",
     "db",
     "packages/*",
-    "@repo/scripts"
+    "scripts"
   ],
-  "@repo/scripts": {
+  "scripts": {
     "dev": "bun --filter @repo/web dev",
     "lint": "eslint --cache --report-unused-disable-directives .",
     "test": "vitest",
