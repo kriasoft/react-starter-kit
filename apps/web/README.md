@@ -38,7 +38,7 @@ app/
 ├── styles/               # Global styles and theme configuration
 ├── index.html            # HTML template
 ├── index.tsx             # Main application entry point
-├── tailwind.config.js    # Tailwind CSS configuration
+├── tailwind.config.css   # Tailwind CSS v4 configuration
 └── vite.config.ts        # Vite configuration
 ```
 
