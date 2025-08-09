@@ -3,7 +3,7 @@ export default {
   content: [
     "./components/**/*.{ts,tsx}",
     "./lib/**/*.{ts,tsx}",
-    "./hooks/**/*.{ts,tsx}"
+    "./hooks/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {
@@ -50,4 +50,4 @@ export default {
     },
   },
   plugins: [],
-}
+};

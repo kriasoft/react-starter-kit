@@ -27,9 +27,12 @@ export async function execCommand(
  */
 export async function formatGeneratedFiles(): Promise<void> {
   try {
-    const componentFiles = await globby("../../packages/ui/components/**/*.{ts,tsx}", {
-      absolute: true,
-    });
+    const componentFiles = await globby(
+      "../../packages/ui/components/**/*.{ts,tsx}",
+      {
+        absolute: true,
+      },
+    );
 
     if (componentFiles.length === 0) {
       return;

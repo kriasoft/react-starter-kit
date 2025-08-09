@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../typescript-config/base.jsonc",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
@@ -15,7 +15,9 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@repo/ui": ["./"],
+      "@repo/ui/*": ["./*"]
     }
   },
   "include": ["components", "hooks", "lib", "index.ts"],
