@@ -184,6 +184,28 @@ AUTH_SECRET="your-random-secret-here"
 
 :::
 
+## UI Components Management
+
+The template includes powerful ShadCN UI component management utilities:
+
+```bash
+# Add specific components
+bun run ui:add button dialog
+
+# Install essential components (37 pre-selected)
+bun run ui:essentials
+
+# List installed components
+bun run ui:list
+
+# Update components to latest versions
+bun run ui:update
+```
+
+::: tip Quick Setup
+Running `bun run ui:essentials` gives you 37 carefully selected components that cover 90% of typical UI needs — forms, layout, navigation, and feedback components.
+:::
+
 ## Development Workflow
 
 Here's your daily routine:
@@ -207,7 +229,8 @@ TypeScript checking happens automatically in your editor. For CI/CD, run `bun --
 
 - **API Types**: After modifying tRPC routes, types auto-generate — no manual sync needed
 - **Database Changes**: Edit `db/schema/`, then run `bun --filter @repo/db generate` and `push`
-- **Component Library**: ShadCN UI components are ready to use — check `apps/web/components/ui`
+- **Component Library**: ShadCN UI components are ready to use — check `packages/ui/components`
+- **UI Components**: Add new components with `bun run ui:add <component>` or install essentials with `bun run ui:essentials`
 - **State Management**: Global state lives in `apps/web/lib/store.ts` using Jotai
 
 ## Deploy to Production

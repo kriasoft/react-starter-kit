@@ -64,6 +64,7 @@ packages/ui/
 ├── components/          # ShadCN UI components (the good stuff)
 ├── hooks/              # Custom React hooks (when we need them)
 ├── lib/                # Utilities (cn function and friends)
+├── scripts/            # ShadCN component management utilities
 ├── index.ts            # Barrel exports for clean imports
 ├── components.json     # ShadCN configuration magic
 └── tailwind.config.js  # Tailwind theme and colors
@@ -164,16 +165,53 @@ export default {
 - **CSS Variables**: Components use `hsl(var(--primary))` for theming
 - **App responsibility**: Consuming apps handle their own global styles and CSS variables
 
-## Adding Components
+## Component Management Scripts
+
+### Adding Components
 
 ```bash
-cd packages/ui
-bunx shadcn@latest add button card input  # Add specific components
-# or
-bunx shadcn@latest add --all              # Add all available components
+# From project root
+bun run ui:add button          # Add a single component
+bun run ui:add button card      # Add multiple components
+bun run ui:essentials           # Install curated essential components (37 components)
+
+# From packages/ui directory
+bun run ui:add dialog
 ```
 
-ShadCN CLI automatically generates components with proper `@/` imports that resolve within the package.
+### Listing Components
+
+```bash
+bun run ui:list                 # Show all installed components with metadata
+```
+
+### Updating Components
+
+```bash
+bun run ui:update               # Update all components to latest versions
+bun run ui:update button        # Update specific component
+```
+
+### Essential Components
+
+The `ui:essentials` script installs a curated set of 37 components perfect for most applications:
+
+- **Forms**: button, input, textarea, select, checkbox, radio-group, switch, label, form
+- **Layout**: card, separator, skeleton, scroll-area
+- **Navigation**: navigation-menu, breadcrumb, tabs
+- **Feedback**: dialog, alert-dialog, toast, alert, badge, progress
+- **Data Display**: avatar, tooltip, popover
+
+```bash
+bun run ui:essentials --list    # Preview components without installing
+bun run ui:essentials           # Install all essential components
+```
+
+All scripts include:
+
+- Automatic Prettier formatting after generation
+- Progress indicators and clear success/error messages
+- Built-in help with `--help` flag
 
 ## Internal Architecture
 

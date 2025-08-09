@@ -2,11 +2,13 @@
 
 import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
-import { basename } from "node:path";
+import { basename, dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { execCommand, formatGeneratedFiles } from "./format-utils.js";
 
 async function getInstalledComponents(): Promise<string[]> {
-  const componentsDir = "../../packages/ui/components";
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const componentsDir = join(__dirname, "../components");
 
   if (!existsSync(componentsDir)) {
     throw new Error(`Components directory not found: ${componentsDir}`);

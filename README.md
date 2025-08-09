@@ -38,7 +38,7 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 - [`docs/`](./docs) — VitePress documentation site
 - [`infra/`](./infra) — Terraform infrastructure configurations for multi-environment deployment
 - [`scripts/`](./scripts) — Build automation and development tools
-- [`apps/web/scripts/`](./apps/web/scripts) — ShadCN UI component management utilities
+- [`packages/ui/`](./packages/ui) — Shared UI components with ShadCN management utilities
 
 **Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
 

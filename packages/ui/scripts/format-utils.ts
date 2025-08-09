@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { execa } from "execa";
 import { globby } from "globby";
 
@@ -27,8 +29,9 @@ export async function execCommand(
  */
 export async function formatGeneratedFiles(): Promise<void> {
   try {
+    const __dirname = dirname(fileURLToPath(import.meta.url));
     const componentFiles = await globby(
-      "../../packages/ui/components/**/*.{ts,tsx}",
+      join(__dirname, "../components/**/*.{ts,tsx}"),
       {
         absolute: true,
       },

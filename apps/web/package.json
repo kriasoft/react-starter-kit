@@ -8,11 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "coverage": "vitest --coverage",
-    "ui:list": "bun scripts/ui-list.ts",
-    "ui:update": "bun scripts/ui-update.ts",
-    "ui:add": "bun scripts/ui-add.ts",
-    "ui:essentials": "bun scripts/ui-essentials.ts"
+    "coverage": "vitest --coverage"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.2",
