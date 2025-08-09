@@ -1,0 +1,180 @@
+---
+import '@/styles/globals.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { 
+  title = 'React Starter Kit - Modern Full-Stack Web Application', 
+  description = 'Modern full-stack web application template optimized for serverless deployment to CDN edge locations. Built with React, TypeScript, and the latest web technologies.',
+  image = '/og-image.png'
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.url)} />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+  </head>
+  <body>
+    <div class="min-h-screen flex flex-col">
+      <!-- Header -->
+      <header class="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex h-16 items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <a href="/" class="text-xl font-bold text-primary">
+                React Starter Kit
+              </a>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6">
+              <a href="/" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Home
+              </a>
+              <a href="/features" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Features
+              </a>
+              <a href="/pricing" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Pricing
+              </a>
+              <a href="/about" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                About
+              </a>
+            </nav>
+            <div class="flex items-center space-x-2">
+              <a 
+                href="https://github.com/kriasoft/react-starter-kit" 
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3"
+              >
+                GitHub
+              </a>
+              <a 
+                href="https://github.com/kriasoft/react-starter-kit"
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-8 px-3"
+              >
+                Get Started
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="flex-1">
+        <slot />
+      </main>
+
+      <!-- Footer -->
+      <footer class="border-t bg-background/95">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+              <h3 class="font-semibold">React Starter Kit</h3>
+              <p class="text-sm text-muted-foreground">
+                Modern full-stack web application template optimized for
+                serverless deployment.
+              </p>
+            </div>
+            <div class="space-y-3">
+              <h4 class="font-medium">Resources</h4>
+              <ul class="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <a href="/docs" class="hover:text-foreground transition-colors">
+                    Documentation
+                  </a>
+                </li>
+                <li>
+                  <a href="/examples" class="hover:text-foreground transition-colors">
+                    Examples
+                  </a>
+                </li>
+                <li>
+                  <a href="/templates" class="hover:text-foreground transition-colors">
+                    Templates
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="space-y-3">
+              <h4 class="font-medium">Community</h4>
+              <ul class="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <a href="https://github.com/kriasoft/react-starter-kit" class="hover:text-foreground transition-colors">
+                    GitHub
+                  </a>
+                </li>
+                <li>
+                  <a href="https://discord.gg/kriasoft" class="hover:text-foreground transition-colors">
+                    Discord
+                  </a>
+                </li>
+                <li>
+                  <a href="https://twitter.com/kriasoft" class="hover:text-foreground transition-colors">
+                    Twitter
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="space-y-3">
+              <h4 class="font-medium">Legal</h4>
+              <ul class="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <a href="/privacy" class="hover:text-foreground transition-colors">
+                    Privacy
+                  </a>
+                </li>
+                <li>
+                  <a href="/terms" class="hover:text-foreground transition-colors">
+                    Terms
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/kriasoft/react-starter-kit/blob/main/LICENSE" class="hover:text-foreground transition-colors">
+                    License
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="border-t mt-6 pt-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+              <p class="text-sm text-muted-foreground">
+                © 2024 Kriasoft. All rights reserved.
+              </p>
+              <p class="text-sm text-muted-foreground">
+                Built with Astro, React, TypeScript, and Tailwind CSS
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -23,7 +23,7 @@ async function getComponentInfo(filePath: string): Promise<ComponentInfo> {
 }
 
 async function listComponents(): Promise<void> {
-  console.log("📋 ShadCN Component Inventory");
+  console.log("📋 shadcn/ui Component Inventory");
   console.log("=============================\n");
 
   const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -31,7 +31,7 @@ async function listComponents(): Promise<void> {
 
   if (!existsSync(componentsDir)) {
     console.log(`❌ Components directory not found: ${componentsDir}`);
-    console.log("💡 Run 'bunx shadcn@latest init' to set up ShadCN UI first");
+    console.log("💡 Run 'bunx shadcn@latest init' to set up shadcn/ui first");
     process.exit(1);
   }
 
@@ -40,7 +40,7 @@ async function listComponents(): Promise<void> {
     const tsxFiles = files.filter((file) => file.endsWith(".tsx"));
 
     if (tsxFiles.length === 0) {
-      console.log("❌ No ShadCN components found");
+      console.log("❌ No shadcn/ui components found");
       console.log("💡 Add components with: bun run ui:add <component-name>");
       return;
     }

@@ -3,7 +3,7 @@
 <a href="https://github.com/kriasoft/react-starter-kit?sponsor=1"><img src="https://img.shields.io/badge/-GitHub-%23555.svg?logo=github-sponsors" height="20"></a>
 <a href="https://discord.gg/2nKEnKq"><img src="https://img.shields.io/discord/643523529131950086?label=Chat" height="20"></a>
 <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a>
-<a href="https://twitter.com/koistya"><img src="https://img.shields.io/twitter/follow/koistya.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
+<a href="https://x.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
 Building modern web applications shouldn't require weeks of configuration hell. This React Starter Kit eliminates the tedious setup work so you can focus on what matters: shipping great products.
 
@@ -29,16 +29,17 @@ Be sure to join our [Discord channel](https://discord.gg/2nKEnKq) for assistance
 
 This starter kit uses a thoughtfully organized monorepo structure that promotes code reuse and maintainability:
 
-- [`apps/web/`](./apps/web) — React frontend with Vite, TanStack Router, and Tailwind CSS
+- [`apps/app/`](./apps/app) — React 19 application with TanStack Router, Jotai, and Tailwind CSS v4
+- [`apps/web/`](./apps/web) — Astro marketing website for static site generation
 - [`apps/api/`](./apps/api) — tRPC API server powered by Hono framework
 - [`apps/edge/`](./apps/edge) — Cloudflare Workers entry point for edge deployment
 - [`packages/core/`](./packages/core) — Shared TypeScript types and utilities
+- [`packages/ui/`](./packages/ui) — Shared UI components with shadcn/ui management utilities
 - [`packages/ws-protocol/`](./packages/ws-protocol) — WebSocket protocol template with type-safe messaging
 - [`db/`](./db) — Database schemas, migrations, and seed data
 - [`docs/`](./docs) — VitePress documentation site
 - [`infra/`](./infra) — Terraform infrastructure configurations for multi-environment deployment
 - [`scripts/`](./scripts) — Build automation and development tools
-- [`packages/ui/`](./packages/ui) — Shared UI components with ShadCN management utilities
 
 **Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
 
@@ -59,26 +60,27 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 - [Bun](https://bun.sh/) — Lightning-fast JavaScript runtime and package manager
 - [Cloudflare Workers](https://workers.cloudflare.com/) — Edge computing platform
 
-**Frontend & UI**
+### Frontend & UI
 
 - [React 19](https://react.dev/) — Latest React with concurrent features
 - [TanStack Router](https://tanstack.com/router) — Type-safe routing with data loading
 - [Tailwind CSS v4](https://tailwindcss.com/) — Utility-first CSS framework
-- [ShadCN UI](https://ui.shadcn.com/) — Beautiful, accessible components
+- [shadcn/ui](https://ui.shadcn.com/) — Beautiful, accessible components
 - [Jotai](https://jotai.org/) — Atomic state management
+- [Astro](https://astro.build/) — Static site generator for marketing pages
 
-**Backend & API**
+### Backend & API
 
-- [Hono](https://hono.dev/) — Ultrafast web framework for the edge
+- [Hono](https://hono.dev/) — Ultra-fast web framework for the edge
 - [tRPC](https://trpc.io/) — End-to-end type safety for APIs
 - [Better Auth](https://www.better-auth.com/) — Modern authentication solution
 
-**Database & ORM**
+### Database & ORM
 
 - [Drizzle ORM](https://orm.drizzle.team/) — TypeScript ORM with excellent DX
 - [Neon PostgreSQL](https://neon.tech/) — Serverless PostgreSQL database
 
-**Development Tools**
+### Development Tools
 
 - [Vite](https://vitejs.dev/) — Next-generation frontend tooling
 - [Vitest](https://vitest.dev/) — Blazing fast unit testing
@@ -117,10 +119,10 @@ Update environment variables in [`.env`](./.env) and `.env.local` files as well 
 
 Open two terminals and run these commands:
 
-**Terminal 1 - Frontend:**
+**Terminal 1 - Application (React):**
 
 ```bash
-bun --filter @repo/web dev
+bun --filter @repo/app dev
 ```
 
 **Terminal 2 - Backend:**
@@ -128,6 +130,12 @@ bun --filter @repo/web dev
 ```bash
 bun --filter @repo/edge build --watch
 bun wrangler dev
+```
+
+For the marketing website:
+
+```bash
+bun --filter @repo/web dev
 ```
 
 ### 5. Initialize Database
@@ -138,7 +146,7 @@ bun --filter @repo/db migrate
 bun --filter @repo/db seed  # Optional: add sample data
 ```
 
-Open <http://localhost:5173> to see your app running. The backend API will be available at the port shown by `wrangler dev` (typically 8787).
+Open <http://localhost:5173> to see your React app running. The marketing website runs on <http://localhost:4321>. The backend API will be available at the port shown by `wrangler dev` (typically 8787).
 
 ## Production Deployment
 
@@ -156,6 +164,7 @@ bun wrangler secret put OPENAI_API_KEY --env=production
 
 ```bash
 # Build all packages
+bun --filter @repo/app build
 bun --filter @repo/web build
 bun --filter @repo/edge build
 
@@ -167,7 +176,7 @@ Your application will be live on your Cloudflare Workers domain within seconds. 
 
 ## Contributors 👨‍💻
 
-<a href="https://reactstarter.com/c/1"><img src="https://reactstarter.com/c/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/2"><img src="https://reactstarter.com/c/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/3"><img src="https://reactstarter.com/c/3.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/4"><img src="https://reactstarter.com/c/4.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/5"><img src="https://reactstarter.com/c/5.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/6"><img src="https://reactstarter.com/c/6.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/7"><img src="https://reactstarter.com/c/7.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/8"><img src="https://reactstarter.com/c/8.png" height="60" /></a>
+<a href="https://reactstarter.com/c/1"><img src="https://reactstarter.com/c/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/2"><img src="https://reactstarter.com/c/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/3"><img src="https://reactstarter.com/c/3.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/4"><img src="https://reactstarter.com/c/4.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/5"><img src="https://reactstarter.com/c/5.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/6"><img src="https://reactstarter.com/c/6.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/7"><img src="https://reactstarter.com/c/7.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/8"><img src="https://reactstarter.com/c/8.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/9"><img src="https://reactstarter.com/c/9.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/10"><img src="https://reactstarter.com/c/10.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/11"><img src="https://reactstarter.com/c/11.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/12"><img src="https://reactstarter.com/c/12.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/13"><img src="https://reactstarter.com/c/13.png" height="60" /></a>
 
 ## Backers 💰
 

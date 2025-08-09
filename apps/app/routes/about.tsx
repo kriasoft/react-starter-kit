@@ -157,7 +157,7 @@ function About() {
                     code splitting
                   </li>
                   <li>
-                    <strong>ShadCN UI:</strong> Beautiful, accessible component
+                    <strong>shadcn/ui:</strong> Beautiful, accessible component
                     library
                   </li>
                   <li>

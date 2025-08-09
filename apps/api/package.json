@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.6",
+    "@ai-sdk/openai": "^2.0.8",
     "@repo/core": "workspace:*",
     "@repo/db": "workspace:*",
     "@trpc/server": "^11.4.4",
@@ -27,15 +27,15 @@
   },
   "peerDependencies": {
     "hono": "^4.9.0",
-    "zod": "^4.0.15"
+    "zod": "^4.0.17"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250807.0",
+    "@cloudflare/workers-types": "^4.20250809.0",
     "@repo/typescript-config": "workspace:*",
     "@types/bun": "^1.2.19",
     "hono": "^4.9.0",
     "typescript": "~5.9.2",
     "vitest": "~3.2.4",
-    "zod": "^4.0.15"
+    "zod": "^4.0.17"
   }
 }

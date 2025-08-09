@@ -88,15 +88,18 @@ Once you're set up, here's what you're working with:
 ```bash
 my-app/
 ├── apps/
-│   ├── web/      # React 19 frontend (where the magic happens)
+│   ├── app/      # React 19 frontend with TanStack Router
+│   ├── web/      # Astro static site (landing/marketing)
 │   ├── api/      # tRPC backend (type-safe goodness)
 │   └── edge/     # Cloudflare Workers entry point
 ├── packages/
 │   ├── core/     # Shared modules and utilities
+│   ├── ui/       # Shared UI components (shadcn/ui)
 │   └── ws-protocol/ # WebSocket protocol template
 ├── db/           # Database schemas and migrations
 ├── infra/        # Terraform infrastructure configuration
 ├── docs/         # Documentation (you are here!)
+├── scripts/      # Build and utility scripts
 └── package.json  # Monorepo root
 ```
 
@@ -112,9 +115,10 @@ bun dev
 
 This starts:
 
-- 🚀 Frontend dev server at `http://localhost:5173`
+- 🚀 App dev server at `http://localhost:5173` (React app)
+- 🌐 Web dev server for Astro static site (when running `bun --filter @repo/web dev`)
 - 🔥 API server with hot reload
-- 💾 Database connection (local SQLite)
+- 💾 Database connection (Neon PostgreSQL)
 
 ::: details What's happening under the hood?
 The `bun dev` command runs multiple processes concurrently:
@@ -129,21 +133,22 @@ The `bun dev` command runs multiple processes concurrently:
 
 Open your browser and check out:
 
-- **Frontend**: `http://localhost:5173` — Your React app with TanStack Router
+- **App**: `http://localhost:5173` — Your React app with TanStack Router
 - **Database GUI**: Run `bun --filter @repo/db studio` to explore your database
+- **Astro Site**: Run `bun --filter @repo/web dev` separately for the static site
 
 ### 3. Make It Yours
 
 Time to customize:
 
-1. **Update branding** → Edit `apps/web/index.html` with your app's title
-2. **Homepage content** → Modify `apps/web/routes/index.tsx`
+1. **Update branding** → Edit `apps/app/index.html` with your app's title
+2. **Homepage content** → Modify `apps/app/routes/index.tsx`
 3. **API endpoints** → Check out `apps/api/routers/` for tRPC routes
 4. **Data models** → Explore `db/schema/` for database structure
 
 ## Database Setup
 
-The template uses Cloudflare D1 (SQLite) with Drizzle ORM. To set up your database:
+The template uses Neon PostgreSQL with Drizzle ORM. To set up your database:
 
 ```bash
 # Generate the initial schema
@@ -186,7 +191,7 @@ AUTH_SECRET="your-random-secret-here"
 
 ## UI Components Management
 
-The template includes powerful ShadCN UI component management utilities:
+The template includes powerful shadcn/ui component management utilities:
 
 ```bash
 # Add specific components
@@ -204,6 +209,8 @@ bun run ui:update
 
 ::: tip Quick Setup
 Running `bun run ui:essentials` gives you 37 carefully selected components that cover 90% of typical UI needs — forms, layout, navigation, and feedback components.
+
+For detailed component management documentation, see the [UI Components Guide](/ui-components).
 :::
 
 ## Development Workflow
@@ -229,9 +236,9 @@ TypeScript checking happens automatically in your editor. For CI/CD, run `bun --
 
 - **API Types**: After modifying tRPC routes, types auto-generate — no manual sync needed
 - **Database Changes**: Edit `db/schema/`, then run `bun --filter @repo/db generate` and `push`
-- **Component Library**: ShadCN UI components are ready to use — check `packages/ui/components`
+- **Component Library**: shadcn/ui components are ready to use — check `packages/ui/components`
 - **UI Components**: Add new components with `bun run ui:add <component>` or install essentials with `bun run ui:essentials`
-- **State Management**: Global state lives in `apps/web/lib/store.ts` using Jotai
+- **State Management**: Global state lives in `apps/app/lib/store.ts` using Jotai
 
 ## Deploy to Production
 

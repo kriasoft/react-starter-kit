@@ -1,0 +1,162 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui';
+
+const features = [
+  {
+    title: "⚡ Lightning Fast",
+    description: "SSR at CDN edge locations with ~100 Lighthouse scores",
+    content: "Optimized for Cloudflare Workers with Bun runtime for maximum performance."
+  },
+  {
+    title: "🎨 Modern UI",
+    description: "Beautiful components with ShadCN UI and Tailwind CSS",
+    content: "Pre-built components following modern design principles and accessibility standards."
+  },
+  {
+    title: "🚀 Developer Experience",
+    description: "TypeScript, hot reload, and excellent tooling",
+    content: "Full TypeScript support with Vite, TanStack Router, and modern development tools."
+  },
+  {
+    title: "📱 Full-Stack",
+    description: "tRPC API with PostgreSQL and authentication",
+    content: "Complete backend solution with type-safe APIs and database integration."
+  },
+  {
+    title: "🔧 Configurable",
+    description: "Monorepo structure with workspace management",
+    content: "Organized codebase with separate app, API, edge, and database workspaces."
+  },
+  {
+    title: "☁️ Serverless Ready",
+    description: "Deploy to edge locations worldwide",
+    content: "Built for Cloudflare Workers with global distribution and automatic scaling."
+  }
+];
+
+const technologies = [
+  "React 19", "TypeScript", "Astro", "TanStack Router", 
+  "ShadCN UI", "Tailwind CSS", "Bun", "Hono", 
+  "tRPC", "PostgreSQL", "Cloudflare", "Jotai"
+];
+---
+
+<BaseLayout>
+  <!-- Hero Section -->
+  <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/20">
+    <div class="container mx-auto text-center">
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+        React Starter Kit
+      </h1>
+      <p class="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+        Modern full-stack web application template optimized for serverless
+        deployment to CDN edge locations. Built with React, TypeScript, and
+        the latest web technologies.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button size="lg" asChild client:visible>
+          <a
+            href="https://github.com/kriasoft/react-starter-kit"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get Started
+          </a>
+        </Button>
+        <Button variant="outline" size="lg" asChild client:visible>
+          <a
+            href="https://github.com/kriasoft/react-starter-kit"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on GitHub
+          </a>
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 px-4 sm:px-6 lg:px-8">
+    <div class="container mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold tracking-tight mb-4">
+          Everything you need to build modern web apps
+        </h2>
+        <p class="text-muted-foreground text-lg max-w-2xl mx-auto">
+          React Starter Kit provides a solid foundation with best practices,
+          modern tooling, and optimized performance out of the box.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {features.map((feature) => (
+          <Card client:visible>
+            <CardHeader>
+              <CardTitle>{feature.title}</CardTitle>
+              <CardDescription>{feature.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p class="text-sm text-muted-foreground">{feature.content}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack Section -->
+  <section class="py-20 px-4 sm:px-6 lg:px-8 bg-muted/20">
+    <div class="container mx-auto text-center">
+      <h2 class="text-3xl font-bold tracking-tight mb-4">
+        Built with Modern Technologies
+      </h2>
+      <p class="text-muted-foreground text-lg mb-12 max-w-2xl mx-auto">
+        Carefully selected technologies that work together seamlessly
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+        {technologies.map((tech) => (
+          <div class="p-4 rounded-lg bg-background border">
+            <span class="font-medium">{tech}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 px-4 sm:px-6 lg:px-8">
+    <div class="container mx-auto text-center">
+      <h2 class="text-3xl font-bold tracking-tight mb-4">
+        Ready to start building?
+      </h2>
+      <p class="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
+        Get started with React Starter Kit today and build your next project
+        with confidence.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button size="lg" asChild client:visible>
+          <a
+            href="https://github.com/kriasoft/react-starter-kit"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Clone Repository
+          </a>
+        </Button>
+        <Button variant="outline" size="lg" asChild client:visible>
+          <a
+            href="https://github.com/kriasoft/react-starter-kit#readme"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read Documentation
+          </a>
+        </Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

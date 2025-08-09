@@ -1,0 +1,225 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui';
+
+const title = "Pricing - React Starter Kit";
+const description = "React Starter Kit is free and open source. Choose the support level that's right for your team.";
+
+const plans = [
+  {
+    name: "Open Source",
+    price: "$0",
+    period: "forever",
+    description: "Perfect for personal projects and learning",
+    features: [
+      "Full source code access",
+      "MIT License",
+      "Community support",
+      "GitHub issues",
+      "Regular updates",
+      "All features included"
+    ],
+    cta: "Get Started",
+    href: "https://github.com/kriasoft/react-starter-kit",
+    variant: "outline" as const
+  },
+  {
+    name: "Professional",
+    price: "$299",
+    period: "one-time",
+    description: "For teams that need priority support",
+    popular: true,
+    features: [
+      "Everything in Open Source",
+      "Priority email support",
+      "Private Discord channel",
+      "Code review sessions",
+      "Architecture consultation",
+      "Custom deployment help"
+    ],
+    cta: "Contact Sales",
+    href: "mailto:hello@kriasoft.com?subject=React Starter Kit Professional",
+    variant: "default" as const
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    period: "contact us",
+    description: "For organizations with specific needs",
+    features: [
+      "Everything in Professional",
+      "SLA guarantees",
+      "Custom integrations",
+      "Training workshops",
+      "Dedicated support team",
+      "White-label options"
+    ],
+    cta: "Contact Us",
+    href: "mailto:hello@kriasoft.com?subject=React Starter Kit Enterprise",
+    variant: "outline" as const
+  }
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <!-- Hero Section -->
+    <div class="text-center mb-16">
+      <h1 class="text-4xl font-bold tracking-tight mb-6">
+        Simple, Transparent Pricing
+      </h1>
+      <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+        React Starter Kit is free and open source. Choose additional support
+        options based on your team's needs.
+      </p>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+      {plans.map((plan) => (
+        <Card className={plan.popular ? "border-primary shadow-lg relative" : ""} client:visible>
+          {plan.popular && (
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span class="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                MOST POPULAR
+              </span>
+            </div>
+          )}
+          <CardHeader>
+            <CardTitle className="text-2xl">{plan.name}</CardTitle>
+            <CardDescription>{plan.description}</CardDescription>
+            <div class="mt-4">
+              <span class="text-4xl font-bold">{plan.price}</span>
+              <span class="text-muted-foreground ml-2">/{plan.period}</span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ul class="space-y-3 mb-6">
+              {plan.features.map((feature) => (
+                <li class="flex items-start">
+                  <svg 
+                    class="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round" 
+                      stroke-width="2" 
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span class="text-sm">{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <Button 
+              variant={plan.variant} 
+              className="w-full" 
+              asChild 
+              client:visible
+            >
+              <a 
+                href={plan.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {plan.cta}
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="mb-20">
+      <h2 class="text-3xl font-bold tracking-tight mb-8 text-center">
+        Frequently Asked Questions
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <Card client:visible>
+          <CardHeader>
+            <CardTitle className="text-lg">Is React Starter Kit really free?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm text-muted-foreground">
+              Yes! React Starter Kit is completely free and open source under the MIT license.
+              You can use it for personal or commercial projects without any restrictions.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card client:visible>
+          <CardHeader>
+            <CardTitle className="text-lg">What's included in support?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm text-muted-foreground">
+              Professional and Enterprise support includes direct access to our team for
+              technical questions, code reviews, and deployment assistance.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card client:visible>
+          <CardHeader>
+            <CardTitle className="text-lg">Can I upgrade later?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm text-muted-foreground">
+              Absolutely! You can start with the open source version and upgrade to
+              Professional or Enterprise support whenever you need it.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card client:visible>
+          <CardHeader>
+            <CardTitle className="text-lg">Do you offer custom development?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm text-muted-foreground">
+              Yes, our Enterprise plan includes custom development and integration services.
+              Contact us to discuss your specific requirements.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="text-center bg-muted/20 rounded-lg p-12">
+      <h2 class="text-3xl font-bold tracking-tight mb-4">
+        Ready to Build Something Amazing?
+      </h2>
+      <p class="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
+        Start with our free open source version and upgrade when you need
+        professional support.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button size="lg" asChild client:visible>
+          <a
+            href="https://github.com/kriasoft/react-starter-kit"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Start Building for Free
+          </a>
+        </Button>
+        <Button variant="outline" size="lg" asChild client:visible>
+          <a
+            href="mailto:hello@kriasoft.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Contact Sales
+          </a>
+        </Button>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,453 +1,357 @@
-# React App
+# Marketing Website
 
-This directory contains the frontend application for the React Starter Kit. It is built with React 19 and TanStack Router, providing a foundation for building type-safe and performant user interfaces.
+A modern marketing website built with [Astro](https://astro.build/) for blazing-fast static site generation and deployed to [Cloudflare Workers](https://workers.cloudflare.com/) edge locations worldwide.
 
-## Architecture Overview
+## Tech Stack
 
-We're running [React 19](https://react.dev/) with [TanStack Router](https://tanstack.com/router) for type-safe routing, [Jotai](https://jotai.org/) for atomic state management, [ShadCN UI](https://ui.shadcn.com/) components styled with [Tailwind CSS v4](https://tailwindcss.com/), and [Better Auth](https://www.better-auth.com/) for authentication. The whole thing is bundled with [Vite](https://vitejs.dev/) because life's too short for slow builds.
+We're running [Astro 5](https://astro.build/) with [React 19](https://react.dev/) islands for interactive components, styled with [Tailwind CSS v4](https://tailwindcss.com/), and deployed as a static site to Cloudflare's global edge network. Because nothing says "fast" like serving HTML from 300+ locations worldwide.
 
 ### Why This Stack?
 
-- **React 19**: The latest and greatest, with concurrent features that make your app feel snappy
-- **TanStack Router**: Type-safe routing that catches broken links at compile time, not user complaint time
-- **Jotai**: Bottom-up state management that scales from simple counters to complex application state
-- **ShadCN UI**: Copy-paste components that you actually own, built on Radix UI primitives
-- **Tailwind CSS v4**: Utility-first CSS with lightning-fast builds and zero runtime
-- **Better Auth**: Modern authentication that doesn't make you want to cry
-- **Vite**: Fast development server and optimized production builds
-- **TypeScript**: Because runtime errors are so 2019
+- **Astro 5**: Static site generation with islands architecture for optimal performance
+- **React 19**: For interactive components where you actually need JavaScript (sparingly)
+- **Tailwind CSS v4**: Lightning-fast utility-first CSS with the new CSS-based config
+- **Cloudflare Workers**: Deploy once, run everywhere at the edge
+- **Bun**: Because npm is so last year (and it's genuinely faster)
+- **TypeScript**: Catching bugs at compile time since 2012
 
 ## Project Structure
 
-```
-app/
-├── components/           # Reusable UI components
-│   ├── ui/                 # Basic UI primitives (buttons, inputs, etc.)
-│   └── layout/             # Layout components (header, sidebar, etc.)
-├── lib/                  # Utility functions and configurations
-│   ├── auth.ts             # Authentication utilities
-│   ├── routeTree.gen.ts    # Generated route tree for TanStack Router
-│   ├── store.ts            # Jotai atoms and store logic
-│   └── utils.ts            # General utilities
-├── public/               # Static assets
-├── routes/               # Page components and route definitions
-│   ├── __root.tsx          # Root layout component
-│   ├── index.tsx           # Home page
-│   └── about.tsx           # About page
-├── scripts/              # Scripts for UI components
-├── styles/               # Global styles and theme configuration
-├── index.html            # HTML template
-├── index.tsx             # Main application entry point
-├── tailwind.config.css   # Tailwind CSS v4 configuration
-└── vite.config.ts        # Vite configuration
+```text
+web/
+├── layouts/              # Astro layout components
+│   └── BaseLayout.astro    # Main layout with header/footer
+├── lib/                  # Utilities and helpers
+│   └── utils.ts            # Shared utility functions
+├── pages/                # Astro pages (file-based routing)
+│   ├── index.astro         # Landing page
+│   ├── features.astro      # Features showcase
+│   ├── pricing.astro       # Pricing tiers
+│   └── about.astro         # About page
+├── public/               # Static assets (favicon, images, etc.)
+├── styles/               # Global styles
+│   └── globals.css         # CSS variables and base styles
+├── astro.config.mjs      # Astro configuration
+├── tailwind.config.css   # Tailwind CSS v4 config
+├── postcss.config.js     # PostCSS plugins
+└── wrangler.jsonc        # Cloudflare Workers deployment config
 ```
 
-## State Management Philosophy
+## Development
 
-### Jotai Atoms
-
-We use [Jotai](https://jotai.org/) for state management because it's atomic, composable, and doesn't require boilerplate ceremonies:
-
-```typescript
-// Simple atom
-const countAtom = atom(0);
-
-// Derived atom
-const doubleCountAtom = atom((get) => get(countAtom) * 2);
-
-// Async atom
-const userAtom = atom(async (get) => {
-  const userId = get(userIdAtom);
-  return api.user.me.query();
-});
-```
-
-## Routing Architecture
-
-### TanStack Router Setup
-
-Our routing is fully type-safe with automatic code splitting:
-
-```typescript
-// Route definition
-export const Route = createFileRoute("/dashboard/$orgId")({
-  component: Dashboard,
-  loader: async ({ params }) => {
-    // Pre-load data before component renders
-    return queryClient.ensureQueryData(organizationQuery(params.orgId));
-  },
-  validateSearch: z.object({
-    tab: z.enum(["overview", "members", "settings"]).optional(),
-  }),
-});
-```
-
-### Route Organization
-
-- **`routes/__root.tsx`**: Root layout with navigation and error boundaries
-- **`routes/index.tsx`**: Landing page
-- **`routes/auth/`**: Authentication flows (login, signup, forgot password)
-- **`routes/dashboard/`**: Main application views
-- **`routes/settings/`**: User and organization settings
-
-## Component Architecture
-
-### UI Components (`@repo/ui`)
-
-ShadCN UI components that you can copy, paste, and own:
-
-```typescript
-// Button component with variants using Tailwind CSS
-export function Button({
-  variant = 'default',
-  size = 'default',
-  className,
-  ...props
-}: ButtonProps) {
-  return (
-    <button
-      className={cn(
-        'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-        'disabled:pointer-events-none disabled:opacity-50',
-        {
-          'bg-primary text-primary-foreground hover:bg-primary/90': variant === 'default',
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90': variant === 'destructive',
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground': variant === 'outline',
-        },
-        {
-          'h-10 px-4 py-2': size === 'default',
-          'h-9 rounded-md px-3': size === 'sm',
-          'h-11 rounded-md px-8': size === 'lg',
-        },
-        className
-      )}
-      {...props}
-    />
-  );
-}
-```
-
-### Layout Components (`components/layout/`)
-
-Structural components for consistent layouts:
-
-- **`AppLayout`**: Main application shell
-- **`AuthLayout`**: Authentication page wrapper
-- **`DashboardLayout`**: Dashboard-specific layout with sidebar
-
-### Feature Components
-
-Domain-specific components that combine UI primitives:
-
-- **`UserProfile`**: User profile management
-- **`OrganizationSettings`**: Organization configuration
-- **`MemberList`**: Team member management
-
-## Development Workflow
-
-### Local Development
+### Getting Started
 
 ```bash
+# Install dependencies (from monorepo root)
+bun install
+
 # Start development server
+bun dev:web
+# or
 bun --filter @repo/web dev
 
-# Run type checking
-bun --filter @repo/web typecheck
-
-# Run tests
-bun --filter @repo/web test
-
-# Run tests in watch mode
-bun --filter @repo/web test --watch
-
-# Lint code
-bun --filter @repo/web lint
-
 # Build for production
+bun build:web
+# or
 bun --filter @repo/web build
 ```
 
-### Component Development
+The site will be available at `http://localhost:4321` (Astro's default port, because 3000 was too mainstream).
 
-1. **Create component** in appropriate directory
-2. **Add story** (if using Storybook)
-3. **Write tests** for key functionality
-4. **Export from index** for clean imports
+### Available Commands
 
-### Adding New Pages
+```bash
+# Development
+bun dev                  # Start dev server with hot reload
+bun build                # Build static site to dist/
+bun preview              # Preview production build locally
+bun check                # Type-check .astro files
 
-1. **Create route file** in `routes/` directory following TanStack Router conventions
-2. **Define loader** for data fetching
-3. **Add navigation** links where appropriate
-4. **Test route** with different parameters and states
-
-## API Integration
-
-### tRPC Client Setup
-
-We use tRPC for end-to-end type safety with our API:
-
-```typescript
-// lib/trpc.ts
-import { createTRPCClient } from "@trpc/client";
-import type { AppRouter } from "@repo/api";
-
-export const api = createTRPCClient<AppRouter>({
-  url: "/api/trpc",
-  // Additional configuration
-});
+# Deployment
+bun deploy               # Deploy to Cloudflare Workers (production)
+bun deploy:preview       # Deploy to preview environment
 ```
 
-### Data Fetching Patterns
+## Styling with Tailwind CSS v4
 
-```typescript
-// In a component
-function UserProfile() {
-  const { data: user, isLoading } = api.user.me.useQuery();
+We're using the latest Tailwind CSS v4 with its new CSS-based configuration. No more JavaScript config files!
 
-  if (isLoading) return <Skeleton />;
-  if (!user) return <div>User not found</div>;
+### Configuration
 
-  return <div>Hello, {user.name}!</div>;
-}
+The `tailwind.config.css` file uses CSS directives:
 
-// In a route loader
-export const Route = createFileRoute('/profile')({
-  loader: () => queryClient.ensureQueryData(userQuery),
-  component: UserProfile,
-});
-```
+```css
+@import "tailwindcss";
 
-## Styling & Theming
+/* Tell Tailwind where to look for classes */
+@source "./pages/**/*.{astro,js,ts,jsx,tsx}";
+@source "./layouts/**/*.{astro,js,ts,jsx,tsx}";
+@source "../../packages/ui/components/**/*.{ts,tsx}";
 
-### Tailwind CSS v4 Configuration
+/* Custom dark mode variant */
+@custom-variant dark (&:is(.dark *));
 
-Our styling is powered by Tailwind CSS v4 with full design system support:
-
-```typescript
-// Theme switching with Jotai and CSS variables
-const themeAtom = atom<'light' | 'dark'>('light');
-
-// Theme provider that updates CSS variables
-function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme] = useAtom(themeAtom);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  return <>{children}</>;
+/* Theme configuration */
+@theme inline {
+  --color-primary: var(--primary);
+  --color-background: var(--background);
+  /* ... more theme tokens */
 }
 ```
 
 ### Design System
 
-We use CSS variables and Tailwind utilities for consistent theming:
+Our design system uses CSS custom properties for theming:
 
 ```css
-/* Global styles with CSS variables */
-@theme {
-  --color-primary: #0f172a;
-  --color-primary-foreground: #f8fafc;
-  --color-background: #ffffff;
-  --color-foreground: #0f172a;
-  --color-muted: #f1f5f9;
-  --color-border: #e2e8f0;
-  --radius: 0.5rem;
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  /* Light mode colors */
 }
 
-[data-theme="dark"] {
-  --color-primary: #f8fafc;
-  --color-primary-foreground: #0f172a;
-  --color-background: #0f172a;
-  --color-foreground: #f8fafc;
-  --color-muted: #1e293b;
-  --color-border: #334155;
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  /* Dark mode colors */
 }
 ```
 
-## Authentication Flow
+We use [OKLCH](https://oklch.com/) color space because RGB is for screens from the 90s.
 
-### Better Auth Integration
+## Component Architecture
 
-Authentication is handled through Better Auth with automatic token management:
+### Astro Components
 
-```typescript
-// hooks/useAuth.ts
-export function useAuth() {
-  const [session] = useAtom(sessionAtom);
+Pure Astro components for maximum performance:
 
-  return {
-    user: session?.user,
-    isAuthenticated: !!session,
-    login: (credentials) => authClient.signIn(credentials),
-    logout: () => authClient.signOut(),
-  };
+```astro
+---
+// BaseLayout.astro
+export interface Props {
+  title?: string;
+  description?: string;
 }
+
+const { title = 'Your Site Title', description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
 ```
 
-### Protected Routes
+### React Islands
 
-Routes are automatically protected based on authentication state:
+Interactive components using React (only where needed):
+
+```astro
+---
+import { Button } from '@repo/ui';
+---
+
+<!-- Only hydrate on visibility for performance -->
+<Button client:visible>
+  Interactive Button
+</Button>
+
+<!-- Or load immediately if critical -->
+<Button client:load>
+  Critical Button
+</Button>
+```
+
+### Shared UI Components
+
+We import components from `@repo/ui` - our shared component library powered by [shadcn/ui](https://ui.shadcn.com/):
 
 ```typescript
-export const Route = createFileRoute("/dashboard")({
-  beforeLoad: ({ context }) => {
-    if (!context.auth.isAuthenticated) {
-      throw redirect({ to: "/auth/login" });
-    }
+import { Button, Card, Badge } from "@repo/ui";
+```
+
+## Pages & Routing
+
+Astro uses file-based routing. Each `.astro` file in `pages/` becomes a route:
+
+- `pages/index.astro` → `/`
+- `pages/about.astro` → `/about`
+- `pages/features.astro` → `/features`
+- `pages/pricing.astro` → `/pricing`
+
+### Dynamic Routes
+
+For dynamic content (if needed):
+
+```astro
+---
+// pages/blog/[slug].astro
+export async function getStaticPaths() {
+  return [
+    { params: { slug: 'hello-world' } },
+    { params: { slug: 'astro-is-awesome' } },
+  ];
+}
+
+const { slug } = Astro.params;
+---
+
+<h1>Blog post: {slug}</h1>
+```
+
+## Performance
+
+### Optimization Features
+
+- **Static Generation**: Pre-rendered HTML for instant loading
+- **Zero JavaScript by Default**: JS only loads for interactive islands
+- **Automatic Image Optimization**: Via Astro's Image component
+- **CSS Extraction**: All styles bundled and minified
+- **Asset Hashing**: Optimal browser caching
+
+### Lighthouse Scores
+
+We aim for (and usually hit) perfect scores:
+
+- Performance: 100
+- Accessibility: 100
+- Best Practices: 100
+- SEO: 100
+
+Because if you're not getting 100s, are you even trying? 😎
+
+## Deployment
+
+### Cloudflare Workers
+
+The site deploys to Cloudflare Workers Sites for edge delivery:
+
+```bash
+# Deploy to production
+bun deploy
+
+# Deploy to preview environment
+bun deploy:preview
+```
+
+### Deployment Configuration
+
+The `wrangler.jsonc` handles deployment:
+
+```jsonc
+{
+  "name": "your-website-name",
+  "compatibility_date": "2024-12-01",
+  "assets": {
+    "directory": "./dist",
   },
-  component: Dashboard,
-});
+  "build": {
+    "command": "bun run build",
+  },
+}
 ```
 
-## Performance Optimization
-
-### Code Splitting
-
-Automatic route-based code splitting with TanStack Router:
-
-```typescript
-// Routes are automatically split
-const DashboardLazy = lazy(() => import("./Dashboard"));
-
-export const Route = createFileRoute("/dashboard")({
-  component: DashboardLazy,
-});
-```
-
-### Bundle Analysis
+### Environment Variables
 
 ```bash
-# Analyze bundle size
-bun --filter @repo/web build && bun --filter @repo/web analyze
-
-# Check for unused dependencies
-bun --filter @repo/web depcheck
+# .env.local (for local development)
+PUBLIC_SITE_URL=http://localhost:4321
+PUBLIC_API_URL=http://localhost:3000
 ```
 
-## Testing Strategy
+Note: Astro requires `PUBLIC_` prefix for client-side variables.
 
-### Component Testing
+## SEO & Meta Tags
 
-```typescript
-// UserProfile.test.tsx
-import { render, screen } from '@testing-library/react';
-import { UserProfile } from './UserProfile';
+The `BaseLayout.astro` component handles all SEO meta tags:
 
-test('displays user name', async () => {
-  render(<UserProfile />, { wrapper: TestWrapper });
+- Open Graph tags for social sharing
+- Twitter Card meta tags
+- Structured data (JSON-LD)
+- Canonical URLs
+- Sitemap generation
 
-  expect(await screen.findByText(/hello/i)).toBeInTheDocument();
-});
-```
+## Best Practices
 
-### Integration Testing
+### Performance Guidelines
 
-Test complete user flows including routing and API calls.
+1. **Use Astro components** for static content
+2. **Add React islands sparingly** - only for interactivity
+3. **Lazy load images** below the fold
+4. **Minimize client-side JavaScript** - let Astro do the heavy lifting
 
-## Build & Deployment
+### Accessibility Guidelines
 
-### Production Build
+1. **Semantic HTML** everywhere
+2. **ARIA labels** where needed
+3. **Keyboard navigation** for all interactive elements
+4. **Color contrast** meeting Web Content Accessibility Guidelines AA standards
 
-```bash
-bun --filter @repo/web build
-```
+### Development Guidelines
 
-This creates an optimized build in the `dist/` directory with:
-
-- **Minified code** for smaller bundle sizes
-- **Asset hashing** for optimal caching
-- **Tree shaking** to remove unused code
-- **Code splitting** for faster loading
-
-### Environment Configuration
-
-Environment variables are managed through `.env` files:
-
-```bash
-# .env.local
-VITE_API_URL=http://localhost:3000
-VITE_APP_NAME="React Starter Kit"
-```
+1. **Type everything** - TypeScript isn't optional
+2. **Component composition** over complex components
+3. **Mobile-first** responsive design
+4. **Test on slow connections** - not everyone has gigabit
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Build failures**: Check TypeScript errors and dependency versions
+**Port already in use**: Another process is using port 4321
 
-**Route not found**: Verify route file naming and exports
+```bash
+# Find and kill the process
+lsof -i :4321
+kill -9 <PID>
+```
 
-**tRPC errors**: Ensure API server is running and types are up to date
+**Tailwind classes not working**: Make sure the path is included in `@source` directive
 
-**Style issues**: Check Tailwind CSS configuration and CSS variables
+**Build fails on Cloudflare**: Check Node.js version compatibility
 
-### Performance Issues
+**React components not interactive**: Forgot to add `client:*` directive
 
-**Slow initial load**: Check bundle size and lazy loading implementation
+### Debug Mode
 
-**Memory leaks**: Verify cleanup in useEffect hooks and subscriptions
+```bash
+# Verbose logging
+DEBUG=* bun dev
 
-**Re-renders**: Use React DevTools Profiler to identify unnecessary renders
-
-## Best Practices
-
-### State Management
-
-1. **Keep atoms small** and focused
-2. **Use derived atoms** for computed values
-3. **Avoid prop drilling** by using appropriate state scope
-4. **Cache expensive computations** with useMemo when needed
-
-### Performance
-
-1. **Lazy load routes** and heavy components
-2. **Optimize images** with proper sizing and formats
-3. **Implement code splitting** for better load times
-4. **Use React DevTools Profiler** to identify unnecessary renders
-
-## Package Exports
-
-Clean imports thanks to our package.json exports:
-
-```typescript
-// Import utilities
-import { cn, formatDate } from "@/lib/utils";
-
-// Import components
-import { Button, Card } from "@repo/ui";
-
-// Import hooks
-import { useAuth, useLocalStorage } from "@/hooks";
+# Astro debug info
+bun astro info
 ```
 
 ## Contributing
 
-When adding new features:
+When adding new pages or features:
 
-1. **Follow existing patterns** for consistency
-2. **Add proper TypeScript types** for everything
-3. **Include tests** for new functionality
-4. **Update documentation** if needed
-5. **Consider accessibility** from the start
-6. **Test on different screen sizes** and devices
+1. **Keep it static** unless interactivity is essential
+2. **Optimize images** - use WebP/AVIF formats
+3. **Test performance** with Lighthouse
+4. **Check accessibility** with axe DevTools
+5. **Preview on mobile** - most users aren't on desktops
+6. **Write semantic HTML** - divs are not the only element
 
-Remember: Great UIs are like good typography - when done right, nobody notices. When done wrong, everybody complains. 😉
+Remember: The fastest JavaScript is no JavaScript. 🚀
 
 ## Resources
 
-- [React Documentation](https://react.dev/)
-- [TanStack Router Documentation](https://tanstack.com/router)
-- [Jotai Documentation](https://jotai.org/)
-- [ShadCN UI Documentation](https://ui.shadcn.com/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/)
-- [Better Auth Documentation](https://www.better-auth.com/)
-- [Vite Documentation](https://vitejs.dev/)
-- [tRPC Documentation](https://trpc.io/)
+- [Astro Documentation](https://docs.astro.build/)
+- [Tailwind CSS v4 Beta](https://tailwindcss.com/docs/v4-beta)
+- [Cloudflare Workers Sites](https://developers.cloudflare.com/workers/platform/sites)
+- [shadcn/ui Components](https://ui.shadcn.com/)
+- [OKLCH Color Space](https://oklch.com/)
 
 ---
 
-> _The best user interface is the one that gets out of the user's way. 🧘_  
-> — Ancient UX Proverb
+> _"Why did the developer use Astro? Because they wanted their site to be out of this world!"_ 🌟  
+> — Dad Joke Department

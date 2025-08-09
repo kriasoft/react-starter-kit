@@ -1,0 +1,279 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui';
+
+const title = "Features - React Starter Kit";
+const description = "Explore all the powerful features that make React Starter Kit the perfect foundation for your next project.";
+
+const featureCategories = [
+  {
+    title: "Developer Experience",
+    icon: "🛠️",
+    features: [
+      {
+        title: "TypeScript First",
+        description: "Full TypeScript support with strict type checking and IntelliSense"
+      },
+      {
+        title: "Hot Module Replacement",
+        description: "Instant feedback with fast refresh and state preservation"
+      },
+      {
+        title: "Monorepo Structure",
+        description: "Organized workspace management with Bun workspaces"
+      },
+      {
+        title: "Code Generation",
+        description: "Automated route generation and type inference"
+      }
+    ]
+  },
+  {
+    title: "Performance",
+    icon: "⚡",
+    features: [
+      {
+        title: "Edge Rendering",
+        description: "Server-side rendering at CDN edge locations worldwide"
+      },
+      {
+        title: "Code Splitting",
+        description: "Automatic route-based code splitting for optimal loading"
+      },
+      {
+        title: "Asset Optimization",
+        description: "Image optimization, lazy loading, and efficient bundling"
+      },
+      {
+        title: "Zero-Config CDN",
+        description: "Built-in CDN support with Cloudflare Workers"
+      }
+    ]
+  },
+  {
+    title: "Full-Stack Capabilities",
+    icon: "🚀",
+    features: [
+      {
+        title: "Type-Safe APIs",
+        description: "End-to-end type safety with tRPC"
+      },
+      {
+        title: "Authentication",
+        description: "Built-in auth with Better Auth and session management"
+      },
+      {
+        title: "Database Integration",
+        description: "PostgreSQL with Drizzle ORM and migrations"
+      },
+      {
+        title: "Real-time Support",
+        description: "WebSocket integration for live features"
+      }
+    ]
+  },
+  {
+    title: "UI & Design",
+    icon: "🎨",
+    features: [
+      {
+        title: "Component Library",
+        description: "Pre-built components with ShadCN UI"
+      },
+      {
+        title: "Tailwind CSS v4",
+        description: "Latest Tailwind with automatic class sorting"
+      },
+      {
+        title: "Dark Mode",
+        description: "Built-in theme support with system preference detection"
+      },
+      {
+        title: "Responsive Design",
+        description: "Mobile-first approach with adaptive layouts"
+      }
+    ]
+  },
+  {
+    title: "Testing & Quality",
+    icon: "✅",
+    features: [
+      {
+        title: "Unit Testing",
+        description: "Vitest setup with coverage reporting"
+      },
+      {
+        title: "E2E Testing",
+        description: "Playwright integration for browser testing"
+      },
+      {
+        title: "Type Checking",
+        description: "Strict TypeScript configuration"
+      },
+      {
+        title: "Linting & Formatting",
+        description: "ESLint and Prettier pre-configured"
+      }
+    ]
+  },
+  {
+    title: "Deployment & DevOps",
+    icon: "☁️",
+    features: [
+      {
+        title: "CI/CD Pipeline",
+        description: "GitHub Actions workflow included"
+      },
+      {
+        title: "Infrastructure as Code",
+        description: "Terraform configuration for Cloudflare"
+      },
+      {
+        title: "Environment Management",
+        description: "Multi-environment support with .env files"
+      },
+      {
+        title: "Monitoring",
+        description: "Built-in error tracking and analytics"
+      }
+    ]
+  }
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <!-- Hero Section -->
+    <div class="text-center mb-16">
+      <h1 class="text-4xl font-bold tracking-tight mb-6">
+        Powerful Features for Modern Development
+      </h1>
+      <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+        Everything you need to build, test, and deploy production-ready web applications
+        with confidence and speed.
+      </p>
+    </div>
+
+    <!-- Feature Categories -->
+    {featureCategories.map((category) => (
+      <section class="mb-20">
+        <div class="flex items-center mb-8">
+          <span class="text-4xl mr-4">{category.icon}</span>
+          <h2 class="text-3xl font-bold tracking-tight">{category.title}</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {category.features.map((feature) => (
+            <Card client:visible>
+              <CardHeader>
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                <CardDescription>{feature.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <!-- Tech Stack Detail -->
+    <section class="mb-20 bg-muted/20 rounded-lg p-12">
+      <h2 class="text-3xl font-bold tracking-tight mb-8 text-center">
+        Built with Best-in-Class Technologies
+      </h2>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {[
+          { name: "React 19", category: "UI Framework" },
+          { name: "TypeScript 5.9", category: "Language" },
+          { name: "Astro", category: "Static Site Gen" },
+          { name: "Bun", category: "Runtime" },
+          { name: "Vite", category: "Build Tool" },
+          { name: "TanStack Router", category: "Routing" },
+          { name: "tRPC", category: "API Layer" },
+          { name: "Hono", category: "Web Framework" },
+          { name: "ShadCN UI", category: "Components" },
+          { name: "Tailwind CSS", category: "Styling" },
+          { name: "Drizzle ORM", category: "Database" },
+          { name: "PostgreSQL", category: "Database" },
+          { name: "Better Auth", category: "Authentication" },
+          { name: "Cloudflare", category: "Platform" },
+          { name: "Vitest", category: "Testing" },
+          { name: "Terraform", category: "Infrastructure" }
+        ].map((tech) => (
+          <div class="bg-background rounded-lg p-4 border">
+            <div class="font-semibold">{tech.name}</div>
+            <div class="text-xs text-muted-foreground">{tech.category}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Code Example -->
+    <section class="mb-20">
+      <h2 class="text-3xl font-bold tracking-tight mb-8 text-center">
+        Clean, Modern Code
+      </h2>
+      
+      <Card client:visible>
+        <CardHeader>
+          <CardTitle>Example: Type-Safe API Route</CardTitle>
+          <CardDescription>
+            Define your API with full type safety from backend to frontend
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre class="bg-muted p-4 rounded-lg overflow-x-auto">
+            <code class="text-sm">{`// api/router.ts
+export const appRouter = router({
+  user: {
+    get: publicProcedure
+      .input(z.object({ id: z.string() }))
+      .query(async ({ input }) => {
+        return await db.user.findUnique({
+          where: { id: input.id }
+        });
+      }),
+  },
+});
+
+// app/page.tsx
+function UserProfile({ userId }: Props) {
+  const { data } = trpc.user.get.useQuery({ id: userId });
+  
+  return <div>{data?.name}</div>;
+}`}</code>
+          </pre>
+        </CardContent>
+      </Card>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="text-center">
+      <h2 class="text-3xl font-bold tracking-tight mb-4">
+        Experience the Difference
+      </h2>
+      <p class="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
+        See why developers choose React Starter Kit for their most important projects.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a 
+          href="https://github.com/kriasoft/react-starter-kit"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2"
+        >
+          Try It Now
+        </a>
+        <a 
+          href="https://github.com/kriasoft/react-starter-kit#readme"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+        >
+          View Documentation
+        </a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
