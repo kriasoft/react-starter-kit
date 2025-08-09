@@ -13,5 +13,8 @@
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.json", "./global.d.ts"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
-  "references": [{ "path": "../api" }]
+  "references": [
+    { "path": "../api" },
+    { "path": "../../packages/ui" }
+  ]
 }

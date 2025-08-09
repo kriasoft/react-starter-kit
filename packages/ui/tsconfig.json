@@ -1,23 +1,16 @@
 {
-  "extends": "../typescript-config/base.jsonc",
+  "extends": "../typescript-config/react.jsonc",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": ".",
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "target": "ES2022",
-    "moduleResolution": "Bundler",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "tsBuildInfoFile": "../../.cache/tsconfig/ui.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@repo/ui": ["./"],
-      "@repo/ui/*": ["./*"]
+      "@/*": ["./*"]
     }
   },
   "include": ["components", "hooks", "lib", "index.ts"],
