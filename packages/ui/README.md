@@ -59,15 +59,14 @@ function MyComponent() {
 
 ## Package Structure
 
-```
+```bash
 packages/ui/
-├── components/          # ShadCN UI components (the good stuff)
+├── components/         # ShadCN UI components (the good stuff)
 ├── hooks/              # Custom React hooks (when we need them)
 ├── lib/                # Utilities (cn function and friends)
 ├── scripts/            # ShadCN component management utilities
 ├── index.ts            # Barrel exports for clean imports
-├── components.json     # ShadCN configuration magic
-└── tailwind.config.js  # Tailwind theme and colors
+└── components.json     # ShadCN configuration magic
 ```
 
 ## Import Strategies
@@ -119,31 +118,36 @@ Each component comes with:
 
 ## Integration Setup
 
-### Tailwind Configuration
+### Tailwind CSS v4 Configuration
 
-Consuming apps **must** include UI package paths in their Tailwind config:
+Consuming apps **must** include UI package paths in their Tailwind CSS v4 config:
 
-```javascript
-// apps/web/tailwind.config.js
-export default {
-  content: [
-    "./routes/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    // Include UI components for Tailwind compilation
-    "../../packages/ui/components/**/*.{ts,tsx}",
-    "../../packages/ui/lib/**/*.{ts,tsx}",
-  ],
-  theme: {
-    extend: {
-      // CSS variables for theming
-      colors: {
-        primary: "hsl(var(--primary))",
-        destructive: "hsl(var(--destructive))",
-        // ... other theme colors
-      },
-    },
-  },
-};
+```css
+/* apps/web/tailwind.config.css */
+@import "tailwindcss";
+
+/* Content paths for Tailwind to scan */
+@source "./routes/**/*.{ts,tsx}";
+@source "./components/**/*.{ts,tsx}";
+/* Include UI components for Tailwind compilation */
+@source "../../packages/ui/components/**/*.{ts,tsx}";
+@source "../../packages/ui/lib/**/*.{ts,tsx}";
+@source "../../packages/ui/hooks/**/*.{ts,tsx}";
+
+/* Custom dark mode variant */
+@custom-variant dark (&:is(.dark *));
+
+/* Theme configuration */
+@theme inline {
+  /* Map CSS variables to Tailwind utilities */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  /* ... continue with other color mappings */
+}
 ```
 
 ### TypeScript Paths
