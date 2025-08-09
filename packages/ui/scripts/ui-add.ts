@@ -6,7 +6,7 @@ async function addComponent(): Promise<void> {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
-    console.log("📋 ShadCN UI Component Installer");
+    console.log("📋 shadcn/ui Component Installer");
     console.log("=================================\n");
     console.log("Usage:");
     console.log("  bun run ui:add <component>     Add a single component");
@@ -26,7 +26,7 @@ async function addComponent(): Promise<void> {
     }
   }
 
-  console.log("🚀 Adding ShadCN components...");
+  console.log("🚀 Adding shadcn/ui components...");
 
   try {
     const shadcnArgs = ["shadcn@latest", "add", ...args, "--yes"];

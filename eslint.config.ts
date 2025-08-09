@@ -17,6 +17,7 @@ export default ts.config(
     ignores: [
       ".cache",
       ".venv",
+      "**/.astro/**/*",
       "**/dist",
       "**/node_modules",
       "docs/.vitepress/cache",

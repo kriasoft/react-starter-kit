@@ -40,10 +40,10 @@ async function installEssentials(): Promise<void> {
   const args = process.argv.slice(2);
 
   if (args.includes("--help") || args.includes("-h")) {
-    console.log("🎯 ShadCN UI Essential Components Installer");
+    console.log("🎯 shadcn/ui Essential Components Installer");
     console.log("===========================================\n");
     console.log(
-      "Installs a curated set of essential ShadCN UI components for most applications.\n",
+      "Installs a curated set of essential shadcn/ui components for most applications.\n",
     );
     console.log("Essential components include:");
     console.log(
@@ -66,7 +66,7 @@ async function installEssentials(): Promise<void> {
   }
 
   if (args.includes("--list")) {
-    console.log("📋 Essential ShadCN UI Components");
+    console.log("📋 Essential shadcn/ui Components");
     console.log("==================================\n");
     console.log(`Total: ${ESSENTIAL_COMPONENTS.length} components\n`);
 
@@ -79,7 +79,7 @@ async function installEssentials(): Promise<void> {
     return;
   }
 
-  console.log("🎯 Installing Essential ShadCN UI Components");
+  console.log("🎯 Installing Essential shadcn/ui Components");
   console.log("=============================================\n");
   console.log(
     `Installing ${ESSENTIAL_COMPONENTS.length} essential components...\n`,

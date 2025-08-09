@@ -4,7 +4,7 @@ Reusable UI components for the React Starter Kit monorepo. Built with React 19, 
 
 ## What's Inside?
 
-We're shipping [ShadCN UI](https://ui.shadcn.com/) components built on [Radix UI](https://radix-ui.com/) primitives, styled with [Tailwind CSS v4](https://tailwindcss.com/), and typed with TypeScript. Components that you can copy, paste, and actually own.
+We're shipping [shadcn/ui](https://ui.shadcn.com/) components built on [Radix UI](https://radix-ui.com/) primitives, styled with [Tailwind CSS v4](https://tailwindcss.com/), and typed with TypeScript. Components that you can copy, paste, and actually own.
 
 ### Why This Approach?
 
@@ -61,12 +61,12 @@ function MyComponent() {
 
 ```bash
 packages/ui/
-├── components/         # ShadCN UI components (the good stuff)
+├── components/         # shadcn/ui components (the good stuff)
 ├── hooks/              # Custom React hooks (when we need them)
 ├── lib/                # Utilities (cn function and friends)
-├── scripts/            # ShadCN component management utilities
+├── scripts/            # shadcn/ui component management utilities
 ├── index.ts            # Barrel exports for clean imports
-└── components.json     # ShadCN configuration magic
+└── components.json     # shadcn/ui configuration magic
 ```
 
 ## Import Strategies

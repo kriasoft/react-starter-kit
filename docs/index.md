@@ -23,13 +23,13 @@ features:
     details: Built for Cloudflare Workers with optimized performance, global distribution, and instant deployment
   - icon: ⚛️
     title: Modern React Stack
-    details: React 19, TanStack Router, Jotai state management, and ShadCN UI components with Tailwind CSS v4
+    details: React 19 with Vite & Astro, TanStack Router, Jotai state management, and shadcn/ui components with Tailwind CSS v4
   - icon: 🔐
     title: Complete Authentication
     details: Pre-configured Better Auth with social providers, session management, and secure user flows
   - icon: 🏢
     title: Multi-Tenant Database
-    details: Cloudflare D1 / Neon with Drizzle ORM, pre-built multi-tenant schema, migrations, and type-safe queries
+    details: Neon PostgreSQL with Drizzle ORM, pre-built multi-tenant schema with UUIDv7, migrations, and type-safe queries
   - icon: ⚡
     title: Ship Faster
     details: Bun runtime for instant builds, hot reload, unified tooling, and comprehensive testing setup

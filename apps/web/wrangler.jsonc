@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/wrangler/main/config-schema.json",
+  "name": "react-starter-kit-web",
+  "compatibility_date": "2024-12-01",
+
+  // Static assets configuration
+  "assets": {
+    "directory": "./dist"
+  },
+
+  "build": {
+    "command": "bun run build"
+  },
+
+  // Environment-specific configurations
+  "env": {
+    "production": {
+      "name": "react-starter-kit-web-production"
+    },
+    "preview": {
+      "name": "react-starter-kit-web-preview"
+    }
+  }
+}

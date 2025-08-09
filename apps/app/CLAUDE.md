@@ -1,6 +1,6 @@
 ## Tech Stack
 
-React 19, TypeScript, Vite, TanStack Router, ShadCN UI, Tailwind CSS v4, Jotai, Better Auth.
+React 19, TypeScript, Vite, TanStack Router, shadcn/ui, Tailwind CSS v4, Jotai, Better Auth.
 
 ## Commands
 

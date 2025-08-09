@@ -72,6 +72,7 @@ export default defineProject(({ mode }) => {
     ],
 
     server: {
+      port: 5180,
       proxy: {
         "/api": {
           target:

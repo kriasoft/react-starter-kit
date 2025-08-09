@@ -21,13 +21,13 @@ async function getInstalledComponents(): Promise<string[]> {
 }
 
 async function updateComponents(): Promise<void> {
-  console.log("🔍 Finding installed ShadCN components...");
+  console.log("🔍 Finding installed shadcn/ui components...");
 
   try {
     const components = await getInstalledComponents();
 
     if (components.length === 0) {
-      console.log("❌ No ShadCN components found in packages/ui/components");
+      console.log("❌ No shadcn/ui components found in packages/ui/components");
       process.exit(1);
     }
 
@@ -66,7 +66,7 @@ async function updateComponents(): Promise<void> {
 const args = process.argv.slice(2);
 
 if (args.includes("--help") || args.includes("-h")) {
-  console.log("🔄 ShadCN UI Component Updater");
+  console.log("🔄 shadcn/ui Component Updater");
   console.log("===============================\n");
   console.log("Usage:");
   console.log(

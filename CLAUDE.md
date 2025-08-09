@@ -4,11 +4,11 @@ Full-stack React application template optimized for Cloudflare Workers deploymen
 
 ## Monorepo Structure
 
-- `apps/web/` - React 19 frontend (Vite, TanStack Router, Jotai, ShadCN UI, Tailwind CSS v4)
+- `apps/web/` - React 19 frontend (Vite, TanStack Router, Jotai, shadcn/ui, Tailwind CSS v4)
 - `apps/api/` - tRPC API server
 - `apps/edge/` - Cloudflare Workers edge deployment
 - `packages/core/` - Shared core utilities and WebSocket functionality
-- `packages/ui/` - Shared UI components and ShadCN management scripts
+- `packages/ui/` - Shared UI components and shadcn/ui management scripts
 - `db/` - Drizzle ORM schemas and migrations
 - `infra/` - Terraform infrastructure configuration
 - `docs/` - VitePress documentation site
@@ -17,7 +17,7 @@ Full-stack React application template optimized for Cloudflare Workers deploymen
 ## Tech Stack
 
 - **Runtime:** Bun (>=1.2.0), TypeScript 5.8
-- **Frontend:** React 19, TanStack Router, Jotai, ShadCN UI, Tailwind CSS v4, Better Auth
+- **Frontend:** React 19, TanStack Router, Jotai, shadcn/ui, Tailwind CSS v4, Better Auth
 - **Backend:** Hono framework, tRPC
 - **Database:** Neon PostgreSQL, Drizzle ORM
 - **Testing:** Vitest, Happy DOM
@@ -45,7 +45,7 @@ bun test:api                   # Test API (shortcut)
 bun test:edge                  # Test edge (shortcut)
 
 # UI Components
-bun ui:add <component>         # Add ShadCN component
+bun ui:add <component>         # Add shadcn/ui component
 bun ui:list                    # List installed components
 bun ui:update                  # Update all components
 bun ui:essentials              # Install essential components
