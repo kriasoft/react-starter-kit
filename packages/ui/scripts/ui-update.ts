@@ -2,11 +2,13 @@
 
 import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
-import { basename } from "node:path";
+import { basename, dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { execCommand, formatGeneratedFiles } from "./format-utils.js";
 
 async function getInstalledComponents(): Promise<string[]> {
-  const componentsDir = "components/ui";
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const componentsDir = join(__dirname, "../components");
 
   if (!existsSync(componentsDir)) {
     throw new Error(`Components directory not found: ${componentsDir}`);
@@ -25,7 +27,7 @@ async function updateComponents(): Promise<void> {
     const components = await getInstalledComponents();
 
     if (components.length === 0) {
-      console.log("❌ No ShadCN components found in components/ui");
+      console.log("❌ No ShadCN components found in packages/ui/components");
       process.exit(1);
     }
 

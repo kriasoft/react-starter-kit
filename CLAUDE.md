@@ -8,6 +8,7 @@ Full-stack React application template optimized for Cloudflare Workers deploymen
 - `apps/api/` - tRPC API server
 - `apps/edge/` - Cloudflare Workers edge deployment
 - `packages/core/` - Shared core utilities and WebSocket functionality
+- `packages/ui/` - Shared UI components and ShadCN management scripts
 - `db/` - Drizzle ORM schemas and migrations
 - `infra/` - Terraform infrastructure configuration
 - `docs/` - VitePress documentation site
@@ -42,6 +43,12 @@ bun test                       # Run all tests
 bun test:web                   # Test web app (shortcut)
 bun test:api                   # Test API (shortcut)
 bun test:edge                  # Test edge (shortcut)
+
+# UI Components
+bun ui:add <component>         # Add ShadCN component
+bun ui:list                    # List installed components
+bun ui:update                  # Update all components
+bun ui:essentials              # Install essential components
 
 # Other
 bun lint                       # Lint all code

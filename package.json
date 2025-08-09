@@ -35,7 +35,11 @@
     "build:edge": "bun --filter @repo/edge build",
     "test:web": "bun --filter @repo/web test",
     "test:api": "bun --filter @repo/api test",
-    "test:edge": "bun --filter @repo/edge test"
+    "test:edge": "bun --filter @repo/edge test",
+    "ui:add": "bun --filter @repo/ui ui:add",
+    "ui:list": "bun --filter @repo/ui ui:list",
+    "ui:update": "bun --filter @repo/ui ui:update",
+    "ui:essentials": "bun --filter @repo/ui ui:essentials"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.13.5",

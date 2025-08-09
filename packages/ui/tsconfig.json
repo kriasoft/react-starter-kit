@@ -1,0 +1,18 @@
+{
+  "extends": "../typescript-config/react.jsonc",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "tsBuildInfoFile": "../../.cache/tsconfig/ui.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["components", "hooks", "lib", "index.ts"],
+  "exclude": ["dist", "node_modules"]
+}

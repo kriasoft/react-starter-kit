@@ -1,9 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import { Button, Separator } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
