@@ -2,6 +2,8 @@ resource "cloudflare_hyperdrive_config" "direct" {
   account_id = var.account_id
   name       = "${var.project_name}-${var.environment}-direct"
 
+  mtls = {}
+
   origin = {
     database = var.database_name
     password = var.database_password
@@ -10,6 +12,8 @@ resource "cloudflare_hyperdrive_config" "direct" {
     scheme   = "postgres"
     user     = var.database_user
   }
+
+  origin_connection_limit = 60
 
   caching = {
     disabled = true
@@ -20,6 +24,8 @@ resource "cloudflare_hyperdrive_config" "cached" {
   account_id = var.account_id
   name       = "${var.project_name}-${var.environment}-cached"
 
+  mtls = {}
+
   origin = {
     database = var.database_name
     password = var.database_password
@@ -28,6 +34,8 @@ resource "cloudflare_hyperdrive_config" "cached" {
     scheme   = "postgres"
     user     = var.database_user
   }
+
+  origin_connection_limit = 60
 
   caching = {
     disabled               = false

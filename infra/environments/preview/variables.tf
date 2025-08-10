@@ -55,3 +55,8 @@ variable "database_password" {
   type        = string
   sensitive   = true
 }
+
+variable "domain_name" {
+  description = "Base domain name for preview deployment slots (e.g., preview.example.com)"
+  type        = string
+}

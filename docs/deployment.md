@@ -127,11 +127,15 @@ openssl rand -hex 32
 # Build all applications
 bun build
 
-# Deploy to production
+# Deploy edge app to production
 bun wrangler deploy --config apps/edge/wrangler.jsonc --env=production
+
+# Deploy web app (marketing site) to production
+bun wrangler deploy --config apps/web/wrangler.jsonc --env=production
 
 # Or deploy to staging first
 bun wrangler deploy --config apps/edge/wrangler.jsonc --env=staging
+bun wrangler deploy --config apps/web/wrangler.jsonc --env=staging
 ```
 
 ## OAuth Provider Setup
@@ -208,6 +212,12 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: deploy --config apps/edge/wrangler.jsonc --env=production
+
+      - name: Deploy Web App to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy --config apps/web/wrangler.jsonc --env=production
 ```
 
 ### Preview Deployments
@@ -240,6 +250,12 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: deploy --config apps/edge/wrangler.jsonc --env=preview
+
+      - name: Deploy Web App Preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy --config apps/web/wrangler.jsonc --env=preview
 
       - name: Comment PR
         uses: actions/github-script@v7

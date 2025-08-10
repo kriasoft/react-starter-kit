@@ -34,6 +34,9 @@ export default defineProject(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
+          assetFileNames: "_app/assets/[name]-[hash][extname]",
+          chunkFileNames: "_app/assets/[name]-[hash].js",
+          entryFileNames: "_app/assets/[name]-[hash].js",
           manualChunks: {
             react: ["react", "react-dom"],
             tanstack: ["@tanstack/react-router"],

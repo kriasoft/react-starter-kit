@@ -21,7 +21,6 @@
     "build:types": "tsc --build",
     "build": "bun --filter @repo/web --filter @repo/api --filter @repo/edge build",
     "build:api": "docker build --tag api:latest -f ./apps/api/Dockerfile .",
-    "deploy": "bun wrangler deploy --config apps/edge/wrangler.jsonc",
     "generate:types": "bun wrangler types --config apps/edge/wrangler.jsonc --include-runtime=false apps/edge/types/cloudflare-env.d.ts && bun prettier --write apps/edge/types/*-env.d.ts",
     "prepare": "husky",
     "docs:dev": "vitepress dev docs",
