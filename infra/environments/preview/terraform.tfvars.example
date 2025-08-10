@@ -8,7 +8,10 @@ project_name = "example"
 # Cloudflare credentials
 # cloudflare_api_token = "your-cloudflare-api-token"
 # cloudflare_account_id = "your-cloudflare-account-id"
-# cloudflare_zone_id   = "your-cloudflare-zone-id"  # Optional, for DNS management
+# cloudflare_zone_id   = "your-cloudflare-zone-id"  # Required for DNS management
+
+# Domain configuration for preview deployment slots
+# domain_name = "preview.example.com"
 
 # External database configuration (e.g., Neon, Supabase, PlanetScale)
 # database_host     = "ep-cool-darkness-123456.us-east-2.aws.neon.tech"

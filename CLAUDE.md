@@ -60,6 +60,7 @@ bun --filter @repo/db studio   # Open DB GUI
 bun --filter @repo/db seed     # Seed sample data
 
 # Deployment
+bun wrangler deploy --config apps/web/wrangler.jsonc --env=production
 bun wrangler deploy --config apps/edge/wrangler.jsonc --env=production
 ```
 

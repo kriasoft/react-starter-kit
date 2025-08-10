@@ -7,9 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check",
-    "deploy": "wrangler deploy --config wrangler.jsonc",
-    "deploy:preview": "wrangler deploy --config wrangler.jsonc --env preview"
+    "check": "astro check"
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",
@@ -26,7 +24,6 @@
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
-    "typescript": "~5.9.2",
-    "wrangler": "^4.28.1"
+    "typescript": "~5.9.2"
   }
 }

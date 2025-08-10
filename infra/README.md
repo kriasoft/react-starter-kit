@@ -63,6 +63,7 @@ For the best development experience with Terraform files:
 
 Your Cloudflare API token needs the following permissions:
 
+- **Zone:DNS:Edit** (for DNS management)
 - **Zone:Zone:Read** (for domain management)
 - **Zone:Zone Settings:Edit** (for configuration)
 - **Account:Cloudflare Hyperdrive:Edit** (for database connection pooling)
