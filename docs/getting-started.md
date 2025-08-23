@@ -6,7 +6,7 @@ Welcome to **React Starter Kit** — your shortcut to building modern web apps w
 Just want to dive in? Run these commands and you're good to go:
 
 ```bash
-git clone -o seed -b master --single-branch \
+git clone -o seed -b main --single-branch \
   https://github.com/kriasoft/react-starter-kit.git my-app
 cd my-app && bun install && bun dev
 ```
@@ -55,7 +55,7 @@ This approach lets you pull updates from the template later  because who doesn'
 
 ```bash
 # Clone the template with a custom remote name
-git clone -o seed -b master --single-branch \
+git clone -o seed -b main --single-branch \
   https://github.com/kriasoft/react-starter-kit.git my-app
 
 # Jump into your project
@@ -70,11 +70,11 @@ The magic here is naming the remote "seed" instead of "origin". This way, you ca
 ```bash
 # Add your own repository as origin
 git remote add origin https://github.com/YOUR_USERNAME/YOUR_PROJECT.git
-git push -u origin master
+git push -u origin main
 
 # Later, when you want template updates
 git fetch seed
-git merge seed/master
+git merge seed/main
 ```
 
 ::: warning
