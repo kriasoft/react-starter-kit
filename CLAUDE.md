@@ -4,9 +4,9 @@ Full-stack React application template optimized for Cloudflare Workers deploymen
 
 ## Monorepo Structure
 
-- `apps/web/` - React 19 frontend (Vite, TanStack Router, Jotai, shadcn/ui, Tailwind CSS v4)
+- `apps/web/` - Marketing static website
+- `apps/app/` - Main application SPA
 - `apps/api/` - tRPC API server
-- `apps/edge/` - Cloudflare Workers edge deployment
 - `packages/core/` - Shared core utilities and WebSocket functionality
 - `packages/ui/` - Shared UI components and shadcn/ui management scripts
 - `db/` - Drizzle ORM schemas and migrations
@@ -28,21 +28,21 @@ Full-stack React application template optimized for Cloudflare Workers deploymen
 ```bash
 # Development
 bun dev                        # Start web app dev server
-bun dev:web                    # Start web app (shortcut)
-bun dev:api                    # Start API server (shortcut)
-bun dev:edge                   # Start edge server (shortcut)
+bun web:dev                    # Start web app (shortcut)
+bun api:dev                    # Start API server (shortcut)
+bun app:dev                    # Start main app (shortcut)
 
 # Building
 bun build                      # Build all apps
-bun build:web                  # Build web app (shortcut)
-bun build:edge                 # Build edge app (shortcut)
+bun web:build                  # Build web app (shortcut)
+bun app:build                  # Build main app (shortcut)
 bun --filter @repo/api build   # Build API types
 
 # Testing
 bun test                       # Run all tests
-bun test:web                   # Test web app (shortcut)
-bun test:api                   # Test API (shortcut)
-bun test:edge                  # Test edge (shortcut)
+bun web:test                   # Test web app (shortcut)
+bun app:test                   # Test main app (shortcut)
+bun api:test                   # Test API (shortcut)
 
 # UI Components
 bun ui:add <component>         # Add shadcn/ui component
@@ -61,7 +61,8 @@ bun --filter @repo/db seed     # Seed sample data
 
 # Deployment
 bun wrangler deploy --config apps/web/wrangler.jsonc --env=production
-bun wrangler deploy --config apps/edge/wrangler.jsonc --env=production
+bun wrangler deploy --config apps/app/wrangler.jsonc --env=production
+bun wrangler deploy --config apps/api/wrangler.jsonc --env=production
 ```
 
 ## Code Conventions

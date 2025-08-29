@@ -5,7 +5,7 @@
  * Neon via Cloudflare Hyperdrive for connection pooling and edge optimization.
  *
  * Two Hyperdrive bindings are available:
- * - HYPERDRIVE: Cached connection with 60-second cache for read-heavy operations
+ * - HYPERDRIVE_CACHED: Cached connection with 60-second cache for read-heavy operations
  * - HYPERDRIVE_DIRECT: Direct connection with no caching for real-time data operations
  *
  * SPDX-FileCopyrightText: 2014-present Kriasoft
@@ -33,7 +33,7 @@ import postgres from "postgres";
  * // In Cloudflare Workers context
  *
  * // Use cached connection for read-heavy operations
- * const db = createDb(env.HYPERDRIVE);
+ * const db = createDb(env.HYPERDRIVE_CACHED);
  * const activeUsers = await db.select().from(Db.users).where(eq(Db.users.isActive, true));
  *
  * // Use direct connection for real-time operations

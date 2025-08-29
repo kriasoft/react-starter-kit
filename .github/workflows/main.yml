@@ -55,13 +55,13 @@ jobs:
       #   if: ${{ github.event_name == 'pull_request' }}
       # - run: bun --filter @repo/api test
       #   if: ${{ github.event_name == 'pull_request' }}
-      # - run: bun --filter @repo/edge test
+      # - run: bun --filter @repo/app test
       #   if: ${{ github.event_name == 'pull_request' }}
 
       # Build all workspaces
       - run: bun --filter @repo/web build
       - run: bun --filter @repo/api build
-      - run: bun --filter @repo/edge build
+      - run: bun --filter @repo/app build
 
       # Validate Terraform configuration and formatting
       - uses: hashicorp/setup-terraform@v3
@@ -76,7 +76,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: "build"
-          path: "apps/web/dist\napps/edge/dist\napps/api/dist\napi-image.tar.gz\n"
+          path: "apps/web/dist\napps/app/dist\napps/api/dist\napi-image.tar.gz\n"
 
   deploy-preview:
     name: "Deploy"

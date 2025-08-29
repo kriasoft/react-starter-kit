@@ -37,8 +37,11 @@ export type TRPCContext = {
   /** tRPC request metadata (headers, connection info) */
   info: CreateHTTPContextOptions["info"];
 
-  /** Drizzle ORM database instance (PostgreSQL via Hyperdrive) */
+  /** Drizzle ORM database instance (PostgreSQL via Hyperdrive cached connection) */
   db: PostgresJsDatabase<DbSchema>;
+
+  /** Drizzle ORM database instance (PostgreSQL via Hyperdrive direct connection) */
+  dbDirect: PostgresJsDatabase<DbSchema>;
 
   /** Authenticated user session (null if not authenticated) */
   session: Session | null;
@@ -75,6 +78,7 @@ export type AppContext = {
   Bindings: Env;
   Variables: {
     db: PostgresJsDatabase<DbSchema>;
+    dbDirect: PostgresJsDatabase<DbSchema>;
     auth: Auth;
     session: Session | null;
     user: User | null;

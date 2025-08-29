@@ -90,8 +90,7 @@ my-app/
 ├── apps/
 │   ├── app/      # React 19 frontend with TanStack Router
 │   ├── web/      # Astro static site (landing/marketing)
-│   ├── api/      # tRPC backend (type-safe goodness)
-│   └── edge/     # Cloudflare Workers entry point
+│   └── api/      # tRPC backend (type-safe goodness)
 ├── packages/
 │   ├── core/     # Shared modules and utilities
 │   ├── ui/       # Shared UI components (shadcn/ui)

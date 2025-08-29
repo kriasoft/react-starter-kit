@@ -31,8 +31,7 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 
 - [`apps/app/`](./apps/app) — React 19 application with TanStack Router, Jotai, and Tailwind CSS v4
 - [`apps/web/`](./apps/web) — Astro marketing website for static site generation
-- [`apps/api/`](./apps/api) — tRPC API server powered by Hono framework
-- [`apps/edge/`](./apps/edge) — Cloudflare Workers entry point for edge deployment
+- [`apps/api/`](./apps/api) — tRPC API server powered by Hono framework for Cloudflare Workers
 - [`packages/core/`](./packages/core) — Shared TypeScript types and utilities
 - [`packages/ui/`](./packages/ui) — Shared UI components with shadcn/ui management utilities
 - [`packages/ws-protocol/`](./packages/ws-protocol) — WebSocket protocol template with type-safe messaging
@@ -43,7 +42,7 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 
 **Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
 
-**Deployment Flexibility:** The API is deployed to Cloudflare Workers (via `apps/edge/`) for global edge computing, ensuring optimal performance worldwide.
+**Deployment Flexibility:** Each app can be deployed independently to Cloudflare Workers for global edge computing, ensuring optimal performance worldwide.
 
 ## Perfect For
 

@@ -31,7 +31,7 @@ import { createDb } from "./lib/db.js";
 import type { Env } from "./lib/env.js";
 
 type CloudflareEnv = {
-  HYPERDRIVE: Hyperdrive;
+  HYPERDRIVE_CACHED: Hyperdrive;
   HYPERDRIVE_DIRECT: Hyperdrive;
 } & Env;
 
@@ -49,7 +49,7 @@ const app = new Hono<AppContext>();
  * - Provides access to all Cloudflare bindings defined in wrangler.jsonc
  */
 const cf = await getPlatformProxy<CloudflareEnv>({
-  configPath: "../edge/wrangler.jsonc",
+  configPath: "./wrangler.jsonc",
   persist: true,
 });
 
@@ -61,15 +61,17 @@ const cf = await getPlatformProxy<CloudflareEnv>({
  * and production deployment with connection pooling and caching.
  */
 app.use("*", async (c, next) => {
-  const db = createDb(cf.env.HYPERDRIVE);
+  const db = createDb(cf.env.HYPERDRIVE_CACHED);
+  const dbDirect = createDb(cf.env.HYPERDRIVE_DIRECT);
   c.set("db", db);
+  c.set("dbDirect", dbDirect);
   c.set("auth", createAuth(db, cf.env));
   await next();
 });
 
 /**
  * Mount the main API routes.
- * All routes defined in ./index.js will be available at the root path.
+ * All routes defined in ./lib/app.ts will be available at the root path.
  */
 app.route("/", api);
 
