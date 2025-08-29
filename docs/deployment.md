@@ -15,7 +15,7 @@ Before deploying, ensure you have:
 
 The deployment architecture consists of:
 
-- **Edge Layer**: Cloudflare Workers serving both app and API
+- **Applications**: Cloudflare Workers serving separate app, web, and API deployments
 - **Database**: Neon PostgreSQL with Hyperdrive connection pooling
 - **Static Assets**: Served directly from Workers with caching
 - **Environments**: Development, Preview, Staging, and Production
@@ -69,35 +69,26 @@ bun --filter @repo/db migrate
 
 ### 1. Configure Wrangler
 
-Update `apps/edge/wrangler.jsonc` with your settings:
+Update the wrangler configuration files for each app:
+
+For `apps/api/wrangler.jsonc`:
 
 ```jsonc
 {
-  "name": "your-app-name",
-  "env": {
-    "production": {
-      "routes": [
-        {
-          "pattern": "yourdomain.com",
-          "custom_domain": true,
-        },
-      ],
-      "vars": {
-        "ENVIRONMENT": "production",
-        "ALLOWED_ORIGINS": "https://yourdomain.com",
-      },
-      "hyperdrive": [
-        {
-          "binding": "HYPERDRIVE",
-          "id": "your-hyperdrive-cached-id",
-        },
-        {
-          "binding": "HYPERDRIVE_DIRECT",
-          "id": "your-hyperdrive-direct-id",
-        },
-      ],
+  "name": "your-app-api",
+  "routes": [
+    { "pattern": "yourdomain.com/api*", "zone_name": "yourdomain.com" },
+  ],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE_CACHED",
+      "id": "your-hyperdrive-cached-id",
     },
-  },
+    {
+      "binding": "HYPERDRIVE_DIRECT",
+      "id": "your-hyperdrive-direct-id",
+    },
+  ],
 }
 ```
 
@@ -127,14 +118,14 @@ openssl rand -hex 32
 # Build all applications
 bun build
 
-# Deploy edge app to production
-bun wrangler deploy --config apps/edge/wrangler.jsonc --env=production
-
-# Deploy web app (marketing site) to production
+# Deploy apps to production
+bun wrangler deploy --config apps/api/wrangler.jsonc --env=production
+bun wrangler deploy --config apps/app/wrangler.jsonc --env=production
 bun wrangler deploy --config apps/web/wrangler.jsonc --env=production
 
 # Or deploy to staging first
-bun wrangler deploy --config apps/edge/wrangler.jsonc --env=staging
+bun wrangler deploy --config apps/api/wrangler.jsonc --env=staging
+bun wrangler deploy --config apps/app/wrangler.jsonc --env=staging
 bun wrangler deploy --config apps/web/wrangler.jsonc --env=staging
 ```
 
@@ -207,13 +198,19 @@ jobs:
       - name: Build
         run: bun build
 
-      - name: Deploy to Cloudflare
+      - name: Deploy API to Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy --config apps/edge/wrangler.jsonc --env=production
+          command: deploy --config apps/api/wrangler.jsonc --env=production
 
-      - name: Deploy Web App to Cloudflare
+      - name: Deploy App to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy --config apps/app/wrangler.jsonc --env=production
+
+      - name: Deploy Web to Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -245,13 +242,19 @@ jobs:
       - name: Build
         run: bun build
 
-      - name: Deploy Preview
+      - name: Deploy API Preview
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy --config apps/edge/wrangler.jsonc --env=preview
+          command: deploy --config apps/api/wrangler.jsonc --env=preview
 
-      - name: Deploy Web App Preview
+      - name: Deploy App Preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy --config apps/app/wrangler.jsonc --env=preview
+
+      - name: Deploy Web Preview
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

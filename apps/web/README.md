@@ -46,12 +46,12 @@ web/
 bun install
 
 # Start development server
-bun dev:web
+bun web:dev
 # or
 bun --filter @repo/web dev
 
 # Build for production
-bun build:web
+bun web:build
 # or
 bun --filter @repo/web build
 ```
@@ -249,7 +249,7 @@ The `wrangler.jsonc` handles deployment:
 ```jsonc
 {
   "name": "your-website-name",
-  "compatibility_date": "2024-12-01",
+  "compatibility_date": "2025-08-15",
   "assets": {
     "directory": "./dist",
   },

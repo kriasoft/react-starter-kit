@@ -1,90 +1,89 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
+
+  // [METADATA]
+  // Application identity and Cloudflare runtime compatibility settings.
   "name": "example-app",
-  "compatibility_date": "2025-08-07",
+  "compatibility_date": "2025-08-15",
+  "compatibility_flags": [],
   "workers_dev": false,
 
+  // [ASSETS]
+  // Serves bundled JavaScript, CSS, images, and other static assets.
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
   },
 
-  // Specific routes for app functionality - more targeted than apps/web marketing site
-  // which handles all remaining traffic via catch-all patterns
+  // [ENVIRONMENTS]
+  // Environment-specific configurations for different deployment stages.
+  // Top-level config = production, nested env objects = other environments.
+
+  // [ENV:PRODUCTION]
+  // Default configuration used when no --env flag is specified.
+  // Command: bun wrangler deploy
+
+  // WARNING: Route modifications must be synchronized across all environments
+  // NOTE: These routes allow other workers to handle non-app paths (e.g., marketing site)
+  // prettier-ignore
+  "routes": [
+    { "pattern": "example.com/_app*", "zone_name": "example.com" },
+    { "pattern": "example.com/login*", "zone_name": "example.com" },
+    { "pattern": "example.com/signup*", "zone_name": "example.com" },
+    { "pattern": "example.com/settings*", "zone_name": "example.com" },
+    { "pattern": "example.com/analytics*", "zone_name": "example.com" },
+    { "pattern": "example.com/reports*", "zone_name": "example.com" }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ALLOWED_ORIGINS": "https://example.com"
+  },
+
   "env": {
-    "production": {
-      "name": "example-app",
-      "routes": [
-        {
-          "pattern": "example.com/_app/*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "example.com/login",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "example.com/account*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "example.com/billing*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "example.com/team*",
-          "zone_name": "your_zone_name_here"
-        }
-      ]
+    // [ENV:DEVELOPMENT]
+    // Command: bun wrangler dev
+    "dev": {
+      "vars": {
+        "ENVIRONMENT": "development",
+        "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173"
+      }
     },
+
+    // [ENV:STAGING]
+    // Pre-production testing environment that mirrors production setup.
+    // Command: bun wrangler deploy --env staging
     "staging": {
-      "name": "example-app-staging",
+      // prettier-ignore
       "routes": [
-        {
-          "pattern": "staging.example.com/_app/*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "staging.example.com/login",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "staging.example.com/account*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "staging.example.com/billing*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "staging.example.com/team*",
-          "zone_name": "your_zone_name_here"
-        }
-      ]
+        { "pattern": "staging.example.com/_app*", "zone_name": "example.com" },
+        { "pattern": "staging.example.com/login*", "zone_name": "example.com" },
+        { "pattern": "staging.example.com/signup*", "zone_name": "example.com" },
+        { "pattern": "staging.example.com/settings*", "zone_name": "example.com" },
+        { "pattern": "staging.example.com/analytics*", "zone_name": "example.com" },
+        { "pattern": "staging.example.com/reports*", "zone_name": "example.com" }
+      ],
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "ALLOWED_ORIGINS": "https://staging.example.com"
+      }
     },
+
+    // [ENV:PREVIEW]
+    // Command: bun wrangler deploy --env preview
     "preview": {
-      "name": "example-app-preview",
+      // prettier-ignore
       "routes": [
-        {
-          "pattern": "preview.example.com/_app/*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "preview.example.com/login",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "preview.example.com/account*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "preview.example.com/billing*",
-          "zone_name": "your_zone_name_here"
-        },
-        {
-          "pattern": "preview.example.com/team*",
-          "zone_name": "your_zone_name_here"
-        }
-      ]
+        { "pattern": "preview.example.com/_app*", "zone_name": "example.com" },
+        { "pattern": "preview.example.com/login*", "zone_name": "example.com" },
+        { "pattern": "preview.example.com/signup*", "zone_name": "example.com" },
+        { "pattern": "preview.example.com/settings*", "zone_name": "example.com" },
+        { "pattern": "preview.example.com/analytics*", "zone_name": "example.com" },
+        { "pattern": "preview.example.com/reports*", "zone_name": "example.com" }
+      ],
+      "vars": {
+        "ENVIRONMENT": "preview",
+        "ALLOWED_ORIGINS": "https://preview.example.com"
+      }
     }
   }
 }

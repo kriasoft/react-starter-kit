@@ -32,4 +32,6 @@ jobs:
           template: ${{ inputs.url }}
           token: ${{ github.token }}
       # TODO: Add deployment steps
-      # - run: bun wrangler deploy --config apps/edge/wrangler.jsonc --env=${{ inputs.environment }}
+      # - run: bun wrangler deploy --config apps/api/wrangler.jsonc --env=${{ inputs.environment }}
+      # - run: bun wrangler deploy --config apps/app/wrangler.jsonc --env=${{ inputs.environment }}
+      # - run: bun wrangler deploy --config apps/web/wrangler.jsonc --env=${{ inputs.environment }}

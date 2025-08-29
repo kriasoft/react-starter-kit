@@ -9,33 +9,36 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "dev": "bun run --watch --env-file ../../.env --env-file ../../.env.local ./start.ts",
+    "dev": "bun run --watch --env-file ../../.env --env-file ../../.env.local ./dev.ts",
     "build": "bun build index.ts --outdir dist --target bun",
     "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy --env-file ../../.env --env-file ../../.env.local",
+    "logs": "wrangler tail --env-file ../../.env --env-file ../../.env.local"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.21",
+    "@ai-sdk/openai": "^2.0.23",
     "@repo/core": "workspace:*",
     "@repo/db": "workspace:*",
     "@trpc/server": "^11.5.0",
-    "ai": "^5.0.24",
+    "ai": "^5.0.28",
     "better-auth": "^1.3.7",
     "dataloader": "^2.2.3",
     "drizzle-orm": "^0.44.5",
     "postgres": "^3.4.7"
   },
   "peerDependencies": {
-    "hono": "^4.9.4",
-    "zod": "^4.1.3"
+    "hono": "^4.9.5",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250826.0",
+    "@cloudflare/workers-types": "^4.20250829.0",
     "@repo/typescript-config": "workspace:*",
     "@types/bun": "^1.2.21",
-    "hono": "^4.9.4",
+    "hono": "^4.9.5",
     "typescript": "~5.9.2",
     "vitest": "~3.2.4",
-    "zod": "^4.1.3"
+    "wrangler": "^4.33.1",
+    "zod": "^4.1.5"
   }
 }

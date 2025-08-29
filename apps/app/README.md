@@ -56,12 +56,12 @@ app/
 bun install
 
 # Start development server
-bun dev:app
+bun app:dev
 # or
 bun --filter @repo/app dev
 
 # Build for production
-bun build:app
+bun app:build
 # or
 bun --filter @repo/app build
 ```

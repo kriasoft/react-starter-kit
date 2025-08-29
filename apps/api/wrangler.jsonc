@@ -1,0 +1,93 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+
+  // [METADATA]
+  // Application identity and Cloudflare runtime compatibility settings.
+  "name": "example-api",
+  "main": "./worker.ts",
+  "compatibility_date": "2025-08-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "upload_source_maps": true,
+
+  // [ENVIRONMENTS]
+  // Environment-specific configurations for different deployment stages.
+  // Top-level config = production, nested env objects = other environments.
+
+  // [ENV:PRODUCTION]
+  // Default configuration used when no --env flag is specified.
+  // Command: bun wrangler deploy
+
+  // WARNING: Route modifications must be synchronized across all environments
+  // NOTE: These routes allow other workers to handle non-api paths (e.g., marketing site)
+  // prettier-ignore
+  "routes": [
+    { "pattern": "example.com/api*", "zone_name": "example.com" }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ALLOWED_ORIGINS": "https://example.com"
+  },
+  // prettier-ignore
+  "hyperdrive": [
+    { "binding": "HYPERDRIVE_CACHED", "id": "your-hyperdrive-cached-id-here" },
+    { "binding": "HYPERDRIVE_DIRECT", "id": "your-hyperdrive-direct-id-here" }
+  ],
+  "kv_namespaces": [],
+
+  "env": {
+    // [ENV:DEVELOPMENT]
+    // Command: bun wrangler dev
+    "dev": {
+      "vars": {
+        "ENVIRONMENT": "development",
+        "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173"
+      },
+      // prettier-ignore
+      "hyperdrive": [
+        { "binding": "HYPERDRIVE_CACHED", "id": "your-dev-hyperdrive-cached-id-here" },
+        { "binding": "HYPERDRIVE_DIRECT", "id": "your-dev-hyperdrive-direct-id-here" }
+      ],
+      "kv_namespaces": []
+    },
+
+    // [ENV:STAGING]
+    // Pre-production testing environment that mirrors production setup.
+    // Command: bun wrangler deploy --env staging
+    "staging": {
+      // prettier-ignore
+      "routes": [
+        { "pattern": "staging.example.com/api*", "zone_name": "example.com" }
+      ],
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "ALLOWED_ORIGINS": "https://staging.example.com"
+      },
+      // prettier-ignore
+      "hyperdrive": [
+        { "binding": "HYPERDRIVE_CACHED", "id": "your-staging-hyperdrive-cached-id-here" },
+        { "binding": "HYPERDRIVE_DIRECT", "id": "your-staging-hyperdrive-direct-id-here" }
+      ],
+      "kv_namespaces": []
+    },
+
+    // [ENV:PREVIEW]
+    // Command: bun wrangler deploy --env preview
+    "preview": {
+      // prettier-ignore
+      "routes": [
+        { "pattern": "preview.example.com/api*", "zone_name": "example.com" }
+      ],
+      "vars": {
+        "ENVIRONMENT": "preview",
+        "ALLOWED_ORIGINS": "https://preview.example.com"
+      },
+      // prettier-ignore
+      "hyperdrive": [
+        { "binding": "HYPERDRIVE_CACHED", "id": "your-preview-hyperdrive-cached-id-here" },
+        { "binding": "HYPERDRIVE_DIRECT", "id": "your-preview-hyperdrive-direct-id-here" }
+      ],
+      "kv_namespaces": []
+    }
+  }
+}

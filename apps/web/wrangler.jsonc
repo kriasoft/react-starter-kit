@@ -1,42 +1,68 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
+
+  // [METADATA]
+  // Application identity and Cloudflare runtime compatibility settings.
   "name": "example-web",
-  "compatibility_date": "2025-08-07",
+  "compatibility_date": "2025-08-15",
+  "compatibility_flags": [],
   "workers_dev": false,
 
-  // Static assets configuration
+  // [ASSETS]
+  // Serves bundled JavaScript, CSS, images, and other static assets.
   "assets": {
     "directory": "./dist"
   },
 
-  // Environment-specific configurations
+  // [ENVIRONMENTS]
+  // Environment-specific configurations for different deployment stages.
+  // Top-level config = production, nested env objects = other environments.
+
+  // [ENV:PRODUCTION]
+  // Default configuration used when no --env flag is specified.
+  // Command: bun wrangler deploy
+
+  // WARNING: Route modifications must be synchronized across all environments
+  // prettier-ignore
+  "routes": [
+    { "pattern": "example.com/*", "zone_name": "example.com" }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+
   "env": {
-    "production": {
-      "name": "example-web",
-      "routes": [
-        {
-          "pattern": "example.com/*",
-          "zone_name": "your_zone_name_here"
-        }
-      ]
+    // [ENV:DEVELOPMENT]
+    // Command: bun wrangler dev
+    "dev": {
+      "vars": {
+        "ENVIRONMENT": "development"
+      }
     },
+
+    // [ENV:STAGING]
+    // Pre-production testing environment that mirrors production setup.
+    // Command: bun wrangler deploy --env staging
     "staging": {
-      "name": "example-web-staging",
+      // prettier-ignore
       "routes": [
-        {
-          "pattern": "staging.example.com/*",
-          "zone_name": "your_zone_name_here"
-        }
-      ]
+        { "pattern": "staging.example.com/*", "zone_name": "example.com" }
+      ],
+      "vars": {
+        "ENVIRONMENT": "staging"
+      }
     },
+
+    // [ENV:PREVIEW]
+    // Command: bun wrangler deploy --env preview
     "preview": {
-      "name": "example-web-preview",
+      // prettier-ignore
       "routes": [
-        {
-          "pattern": "preview.example.com/*",
-          "zone_name": "your_zone_name_here"
-        }
-      ]
+        { "pattern": "preview.example.com/*", "zone_name": "example.com" }
+      ],
+      "vars": {
+        "ENVIRONMENT": "preview"
+      }
     }
   }
 }
