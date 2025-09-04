@@ -6,6 +6,7 @@ import { betterAuth } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { anonymous, organization } from "better-auth/plugins";
+import { passkey } from "better-auth/plugins/passkey";
 import type { Env } from "./env";
 
 /**
@@ -14,7 +15,11 @@ import type { Env } from "./env";
  */
 type AuthEnv = Pick<
   Env,
-  "BETTER_AUTH_SECRET" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET"
+  | "APP_NAME"
+  | "APP_ORIGIN"
+  | "BETTER_AUTH_SECRET"
+  | "GOOGLE_CLIENT_ID"
+  | "GOOGLE_CLIENT_SECRET"
 >;
 
 /**
@@ -44,7 +49,13 @@ export function createAuth(
   db: DB,
   env: AuthEnv,
 ): ReturnType<typeof betterAuth> {
+  // Extract domain from APP_ORIGIN for passkey rpID
+  const appUrl = new URL(env.APP_ORIGIN);
+  const rpID = appUrl.hostname;
+
   return betterAuth({
+    baseURL: `${env.APP_ORIGIN}/api/auth`,
+    trustedOrigins: [env.APP_ORIGIN],
     secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
       provider: "pg",
@@ -54,6 +65,7 @@ export function createAuth(
         invitation: Db.invitation,
         member: Db.member,
         organization: Db.organization,
+        passkey: Db.passkey,
         session: Db.session,
         user: Db.user,
         verification: Db.verification,
@@ -83,6 +95,14 @@ export function createAuth(
         allowUserToCreateOrganization: true,
         organizationLimit: 5,
         creatorRole: "owner",
+      }),
+      passkey({
+        // rpID: Relying Party ID - domain name in production, 'localhost' for dev
+        rpID,
+        // rpName: Human-readable name for your app
+        rpName: env.APP_NAME,
+        // origin: URL where auth occurs (no trailing slash)
+        origin: env.APP_ORIGIN,
       }),
     ],
 

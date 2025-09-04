@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import { resolve } from "node:path";
 import { configDotenv } from "dotenv";
 import { defineConfig } from "drizzle-kit";
 
@@ -15,7 +16,7 @@ const envName = (() => {
 
 // Load .env files in priority order: environment-specific → local → base
 for (const file of [`.env.${envName}.local`, ".env.local", ".env"]) {
-  configDotenv({ path: `../${file}` });
+  configDotenv({ path: resolve(__dirname, "..", file) });
 }
 
 if (!process.env.DATABASE_URL) {

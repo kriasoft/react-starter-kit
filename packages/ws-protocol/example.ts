@@ -2,7 +2,8 @@
 /* SPDX-License-Identifier: MIT */
 
 import { createWSRouter } from "./router";
-import { createMessage, NotificationSchema } from "./index";
+import { NotificationSchema } from "./messages";
+import { createMessage } from "./schema";
 
 /**
  * Minimal WebSocket server example.

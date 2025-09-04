@@ -3,10 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.4",
+    "@modelcontextprotocol/sdk": "^1.17.5",
     "execa": "^9.6.0",
-    "got": "^14.4.7",
+    "got": "^14.4.8",
     "zx": "^8.8.1"
   },
   "devDependencies": {

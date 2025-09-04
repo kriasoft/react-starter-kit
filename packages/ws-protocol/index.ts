@@ -3,4 +3,4 @@
 
 export * from "./messages";
 export * from "./router";
-export { createMessage } from "bun-ws-router/zod";
+export { createMessage } from "./schema";

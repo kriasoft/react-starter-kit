@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "typecheck": "tsc --noEmit",
     "deploy": "wrangler deploy --env-file ../../.env --env-file ../../.env.local",
     "logs": "wrangler tail --env-file ../../.env --env-file ../../.env.local"
   },
@@ -27,6 +28,6 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.12",
     "typescript": "~5.9.2",
-    "wrangler": "^4.33.1"
+    "wrangler": "^4.33.2"
   }
 }
