@@ -13,6 +13,7 @@ import ts from "typescript-eslint";
  * @see https://eslint.org/docs/latest/use/configure/
  */
 export default ts.config(
+  // Global ignores
   {
     ignores: [
       ".cache",
@@ -24,20 +25,43 @@ export default ts.config(
       "docs/.vitepress/dist",
     ],
   },
+
+  // Base configs for all files
+  js.configs.recommended,
+  ...ts.configs.recommended,
+  prettierConfig,
+
+  // TypeScript parser for all .ts files
   {
-    ignores: ["app/**/*"],
+    files: ["**/*.ts"],
+    languageOptions: {
+      parser: tsParser,
+    },
+  },
+
+  // Node.js environment (servers, scripts, config files)
+  {
+    files: [
+      "**/*.config.{js,ts,mjs}",
+      "**/scripts/**/*",
+      "apps/api/**/*",
+      "db/**/*",
+      "infra/**/*",
+    ],
     languageOptions: {
       globals: { ...globals.node },
     },
   },
-  js.configs.recommended,
-  ...ts.configs.recommended,
-  prettierConfig,
+
+  // React/Browser environment (frontend apps)
   {
-    files: ["app/**/*.ts", "**/*.tsx"],
+    files: [
+      "apps/app/**/*.{ts,tsx}",
+      "apps/web/**/*.{ts,tsx}",
+      "packages/ui/**/*.tsx",
+    ],
     ...react.configs["recommended-typescript"],
     rules: {
-      ...react.configs["recommended-typescript"].rules,
       "@eslint-react/dom/no-missing-iframe-sandbox": "off",
     },
     languageOptions: {
@@ -45,6 +69,7 @@ export default ts.config(
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
+        jsxImportSource: "react",
         ecmaFeatures: {
           jsx: true,
         },
@@ -53,6 +78,14 @@ export default ts.config(
         ...globals.browser,
         ...globals.es2021,
       },
+    },
+  },
+
+  // UI package specific overrides
+  {
+    files: ["packages/ui/**/*.tsx"],
+    rules: {
+      "@eslint-react/no-forward-ref": "off",
     },
   },
 );

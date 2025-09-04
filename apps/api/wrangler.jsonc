@@ -26,6 +26,8 @@
   ],
   "vars": {
     "ENVIRONMENT": "production",
+    "APP_NAME": "Example",
+    "APP_ORIGIN": "https://example.com",
     "ALLOWED_ORIGINS": "https://example.com"
   },
   // prettier-ignore
@@ -41,6 +43,8 @@
     "dev": {
       "vars": {
         "ENVIRONMENT": "development",
+        "APP_NAME": "Example",
+        "APP_ORIGIN": "http://localhost:5173",
         "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173"
       },
       // prettier-ignore
@@ -61,6 +65,8 @@
       ],
       "vars": {
         "ENVIRONMENT": "staging",
+        "APP_NAME": "Example",
+        "APP_ORIGIN": "https://staging.example.com",
         "ALLOWED_ORIGINS": "https://staging.example.com"
       },
       // prettier-ignore
@@ -80,6 +86,8 @@
       ],
       "vars": {
         "ENVIRONMENT": "preview",
+        "APP_NAME": "Example",
+        "APP_ORIGIN": "https://preview.example.com",
         "ALLOWED_ORIGINS": "https://preview.example.com"
       },
       // prettier-ignore

@@ -7,6 +7,6 @@
     "outDir": "./dist",
     "types": ["bun", "node", "vite/client"]
   },
-  "include": ["**/*.ts", "**/*.json"],
-  "exclude": ["**/dist/**/*", "**/node_modules/**/*"]
+  "include": ["schema/**/*.ts", "*.ts", "*.json"],
+  "exclude": ["**/dist/**/*", "**/node_modules/**/*", "scripts/**/*"]
 }

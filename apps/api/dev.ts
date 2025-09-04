@@ -1,21 +1,13 @@
 /**
- * Local development server for the API with Neon database support via Hyperdrive.
+ * Local development server that emulates Cloudflare Workers runtime with Neon database.
  *
- * @remarks
- * This file bootstraps a local Cloudflare Workers environment using Wrangler's
- * getPlatformProxy, allowing you to develop against a Neon database instance
- * locally with Hyperdrive bindings.
- *
- * Features:
- * - Emulates Cloudflare Workers runtime environment
- * - Provides access to Hyperdrive bindings for Neon PostgreSQL
- * - Connection pooling via Hyperdrive
- * - Hot reloading support for rapid development
+ * WARNING: This file uses getPlatformProxy which requires wrangler.jsonc configuration.
+ * Hyperdrive bindings must be configured for both HYPERDRIVE_CACHED and HYPERDRIVE_DIRECT.
  *
  * @example
- * Start the development server:
  * ```bash
  * bun --filter @repo/api dev
+ * bun --filter @repo/api dev --env=staging  # Use staging environment config
  * ```
  *
  * SPDX-FileCopyrightText: 2014-present Kriasoft
@@ -23,6 +15,7 @@
  */
 
 import { Hono } from "hono";
+import { parseArgs } from "node:util";
 import { getPlatformProxy } from "wrangler";
 import api from "./index.js";
 import { createAuth } from "./lib/auth.js";
@@ -30,49 +23,67 @@ import type { AppContext } from "./lib/context.js";
 import { createDb } from "./lib/db.js";
 import type { Env } from "./lib/env.js";
 
+const { values: args } = parseArgs({
+  args: Bun.argv.slice(2),
+  options: {
+    env: { type: "string" },
+  },
+});
+
 type CloudflareEnv = {
   HYPERDRIVE_CACHED: Hyperdrive;
   HYPERDRIVE_DIRECT: Hyperdrive;
 } & Env;
 
-/**
- * Initialize the local development server with Cloudflare bindings.
- */
+// [INITIALIZATION]
 const app = new Hono<AppContext>();
 
-/**
- * Create a local Cloudflare environment proxy.
- *
- * @remarks
- * - Reads configuration from wrangler.jsonc in the parent directory
- * - Enables persistence to maintain D1 database state across restarts
- * - Provides access to all Cloudflare bindings defined in wrangler.jsonc
- */
+// NOTE: persist:true maintains D1 state across restarts (.wrangler directory)
+// Environment defaults to 'dev' unless --env flag is provided
 const cf = await getPlatformProxy<CloudflareEnv>({
   configPath: "./wrangler.jsonc",
+  environment: args.env ?? "dev",
   persist: true,
 });
 
-/**
- * Middleware to inject database binding into request context.
- *
- * @remarks
- * Uses Neon PostgreSQL via Hyperdrive for both local development
- * and production deployment with connection pooling and caching.
- */
+// [CONTEXT INJECTION]
+// Creates two database connections per request:
+// - db: Uses Hyperdrive caching (read-heavy queries)
+// - dbDirect: Bypasses cache (write operations, transactions)
 app.use("*", async (c, next) => {
   const db = createDb(cf.env.HYPERDRIVE_CACHED);
   const dbDirect = createDb(cf.env.HYPERDRIVE_DIRECT);
+
+  // Priority: Cloudflare bindings > process.env > empty string
+  // Required for local dev where secrets aren't in wrangler.jsonc
+  const secretKeys = [
+    "BETTER_AUTH_SECRET",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "OPENAI_API_KEY",
+  ] as const;
+
+  const env = {
+    ...cf.env,
+    ...Object.fromEntries(
+      secretKeys.map((key) => [key, (cf.env[key] || process.env[key]) ?? ""]),
+    ),
+    APP_NAME: cf.env.APP_NAME || process.env.APP_NAME || "Example",
+    APP_ORIGIN:
+      // Prefer origin set by `apps/app` at runtime
+      c.req.header("x-forwarded-origin") ||
+      c.env.APP_ORIGIN ||
+      process.env.APP_ORIGIN ||
+      "http://localhost:5173",
+  };
+
   c.set("db", db);
   c.set("dbDirect", dbDirect);
-  c.set("auth", createAuth(db, cf.env));
+  c.set("auth", createAuth(db, env));
   await next();
 });
 
-/**
- * Mount the main API routes.
- * All routes defined in ./lib/app.ts will be available at the root path.
- */
+// Routes from ./index.js mounted at root
 app.route("/", api);
 
 export default app;

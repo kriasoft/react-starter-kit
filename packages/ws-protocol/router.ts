@@ -1,8 +1,9 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { WebSocketRouter, createMessage } from "bun-ws-router/zod";
+import { WebSocketRouter } from "bun-ws-router/zod";
 import { PingSchema, PongSchema, EchoSchema, ErrorSchema } from "./messages";
+import { createMessage } from "./schema";
 
 /**
  * Basic connection metadata. Extend this interface as needed.

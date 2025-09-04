@@ -3,6 +3,7 @@
 
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
+import { TLSSocket } from "node:tls";
 import { URL, fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -76,9 +77,23 @@ export default defineProject(({ mode }) => {
 
     server: {
       proxy: {
+        // Proxy API requests to the backend server during development
         "/api": {
           target: env.API_ORIGIN,
           changeOrigin: true,
+          configure(proxy) {
+            proxy.on("proxyReq", (proxyReq, req) => {
+              // Forward the frontend's origin to the API server
+              // This allows the API to know the actual client origin for:
+              // - CORS configuration
+              // - Better Auth baseURL and trustedOrigins
+              // - Redirect URLs and callbacks
+              const proto = req.socket instanceof TLSSocket ? "https" : "http";
+              const host = req.headers.host || "";
+              const origin = req.headers.origin || `${proto}://${host}`;
+              proxyReq.setHeader("x-forwarded-origin", origin);
+            });
+          },
         },
       },
     },

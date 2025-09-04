@@ -9,9 +9,9 @@ import {
   CardTitle,
 } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
-import { Activity, Users, FileText, TrendingUp } from "lucide-react";
+import { Activity, FileText, TrendingUp, Users } from "lucide-react";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/(app)/")({
   component: Dashboard,
 });
 
