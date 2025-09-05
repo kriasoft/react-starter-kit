@@ -48,6 +48,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
 
       # Type checking
+      - run: bun email:build # Build email templates first
       - run: bun tsc --build
 
       # Testing (commented out - enable as needed)

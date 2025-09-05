@@ -99,29 +99,37 @@ For `apps/api/wrangler.jsonc`:
 wrangler login
 
 # Set production secrets
-wrangler secret put AUTH_SECRET --env production
+wrangler secret put BETTER_AUTH_SECRET --env production
 wrangler secret put GOOGLE_CLIENT_ID --env production
 wrangler secret put GOOGLE_CLIENT_SECRET --env production
-wrangler secret put GITHUB_CLIENT_ID --env production
-wrangler secret put GITHUB_CLIENT_SECRET --env production
+wrangler secret put RESEND_API_KEY --env production
+wrangler secret put RESEND_EMAIL_FROM --env production
 ```
 
-Generate `AUTH_SECRET` with:
+Generate `BETTER_AUTH_SECRET` with:
 
 ```bash
 openssl rand -hex 32
 ```
 
+Set `RESEND_EMAIL_FROM` to your sender email address:
+
+```bash
+"Your App <noreply@yourdomain.com>"
+```
+
 ### 3. Build and Deploy
 
 ```bash
-# Build all applications
-bun build
+# Build packages in the correct order
+bun email:build   # Build email templates first
+bun web:build     # Build marketing site
+bun app:build     # Build React app
 
 # Deploy apps to production
-bun wrangler deploy --config apps/api/wrangler.jsonc --env=production
-bun wrangler deploy --config apps/app/wrangler.jsonc --env=production
-bun wrangler deploy --config apps/web/wrangler.jsonc --env=production
+bun api:deploy    # Deploy API server
+bun app:deploy    # Deploy React app
+bun web:deploy    # Deploy marketing site
 
 # Or deploy to staging first
 bun wrangler deploy --config apps/api/wrangler.jsonc --env=staging
@@ -195,8 +203,13 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build
-        run: bun build
+      - name: Build Email Templates
+        run: bun email:build
+
+      - name: Build Applications
+        run: |
+          bun web:build
+          bun app:build
 
       - name: Deploy API to Cloudflare
         uses: cloudflare/wrangler-action@v3
@@ -239,8 +252,13 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build
-        run: bun build
+      - name: Build Email Templates
+        run: bun email:build
+
+      - name: Build Applications
+        run: |
+          bun web:build
+          bun app:build
 
       - name: Deploy API Preview
         uses: cloudflare/wrangler-action@v3

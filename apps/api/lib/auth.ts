@@ -6,7 +6,9 @@ import { betterAuth } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { anonymous, organization } from "better-auth/plugins";
+import { emailOTP } from "better-auth/plugins/email-otp";
 import { passkey } from "better-auth/plugins/passkey";
+import { sendOTP, sendPasswordReset, sendVerificationEmail } from "./email";
 import type { Env } from "./env";
 
 /**
@@ -20,6 +22,8 @@ type AuthEnv = Pick<
   | "BETTER_AUTH_SECRET"
   | "GOOGLE_CLIENT_ID"
   | "GOOGLE_CLIENT_SECRET"
+  | "RESEND_API_KEY"
+  | "RESEND_EMAIL_FROM"
 >;
 
 /**
@@ -79,6 +83,16 @@ export function createAuth(
     // Email and password authentication
     emailAndPassword: {
       enabled: true,
+      sendResetPassword: async ({ user, url }) => {
+        await sendPasswordReset(env, { user, url });
+      },
+    },
+
+    // Email verification
+    emailVerification: {
+      sendVerificationEmail: async ({ user, url }) => {
+        await sendVerificationEmail(env, { user, url });
+      },
     },
 
     // OAuth providers
@@ -103,6 +117,14 @@ export function createAuth(
         rpName: env.APP_NAME,
         // origin: URL where auth occurs (no trailing slash)
         origin: env.APP_ORIGIN,
+      }),
+      emailOTP({
+        async sendVerificationOTP({ email, otp, type }) {
+          await sendOTP(env, { email, otp, type });
+        },
+        otpLength: 6,
+        expiresIn: 300, // 5 minutes
+        allowedAttempts: 3,
       }),
     ],
 

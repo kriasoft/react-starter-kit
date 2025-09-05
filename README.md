@@ -32,6 +32,7 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 - [`apps/app/`](./apps/app) — React 19 application with TanStack Router, Jotai, and Tailwind CSS v4
 - [`apps/web/`](./apps/web) — Astro marketing website for static site generation
 - [`apps/api/`](./apps/api) — tRPC API server powered by Hono framework for Cloudflare Workers
+- [`apps/email/`](./apps/email) — React Email templates for authentication and transactional emails
 - [`packages/core/`](./packages/core) — Shared TypeScript types and utilities
 - [`packages/ui/`](./packages/ui) — Shared UI components with shadcn/ui management utilities
 - [`packages/ws-protocol/`](./packages/ws-protocol) — WebSocket protocol template with type-safe messaging
@@ -112,7 +113,7 @@ bun install
 
 ### 3. Configure Environment
 
-Update environment variables in [`.env`](./.env) and `.env.local` files as well as Wrangler configuration in [`wrangler.jsonc`](./apps/edge/wrangler.jsonc).
+Update environment variables in [`.env`](./.env) and `.env.local` files as well as Wrangler configuration in [`wrangler.jsonc`](./apps/api/wrangler.jsonc).
 
 ### 4. Start Development
 
@@ -124,11 +125,10 @@ Open two terminals and run these commands:
 bun --filter @repo/app dev
 ```
 
-**Terminal 2 - Backend:**
+**Terminal 2 - API Server:**
 
 ```bash
-bun --filter @repo/edge build --watch
-bun wrangler dev
+bun --filter @repo/api dev
 ```
 
 For the marketing website:
@@ -162,13 +162,15 @@ bun wrangler secret put OPENAI_API_KEY --env=production
 ### 2. Build and Deploy
 
 ```bash
-# Build all packages
-bun --filter @repo/app build
-bun --filter @repo/web build
-bun --filter @repo/edge build
+# Build packages that require compilation (order matters!)
+bun email:build    # Build email templates first
+bun web:build      # Build marketing site
+bun app:build      # Build main React app
 
-# Deploy to Cloudflare Workers
-bun wrangler deploy --env=production
+# Deploy all applications
+bun web:deploy     # Deploy marketing site
+bun api:deploy     # Deploy API server
+bun app:deploy     # Deploy main React app
 ```
 
 Your application will be live on your Cloudflare Workers domain within seconds. The edge-first architecture ensures optimal performance regardless of user location.

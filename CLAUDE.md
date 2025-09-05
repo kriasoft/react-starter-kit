@@ -7,6 +7,7 @@ Full-stack React application template optimized for Cloudflare Workers deploymen
 - `apps/web/` - Marketing static website
 - `apps/app/` - Main application SPA
 - `apps/api/` - tRPC API server
+- `apps/email/` - React Email templates for authentication emails
 - `packages/core/` - Shared core utilities and WebSocket functionality
 - `packages/ui/` - Shared UI components and shadcn/ui management scripts
 - `db/` - Drizzle ORM schemas and migrations
@@ -50,6 +51,11 @@ bun ui:list                    # List installed components
 bun ui:update                  # Update all components
 bun ui:essentials              # Install essential components
 
+# Email Templates
+bun email:dev                  # Start email preview server
+bun email:build                # Build email templates
+bun email:export               # Export static email templates
+
 # Other
 bun lint                       # Lint all code
 bun --filter @repo/db push     # Apply DB schema changes
@@ -60,9 +66,15 @@ bun --filter @repo/db studio   # Open DB GUI
 bun --filter @repo/db seed     # Seed sample data
 
 # Deployment
-bun wrangler deploy --config apps/web/wrangler.jsonc --env=production
-bun wrangler deploy --config apps/app/wrangler.jsonc --env=production
-bun wrangler deploy --config apps/api/wrangler.jsonc --env=production
+# Build required packages first
+bun email:build                # Build email templates
+bun web:build                  # Build marketing site
+bun app:build                  # Build main React app
+
+# Deploy all applications
+bun web:deploy                 # Deploy marketing site
+bun api:deploy                 # Deploy API server
+bun app:deploy                 # Deploy main React app
 ```
 
 ## Code Conventions

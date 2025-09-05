@@ -3,6 +3,7 @@
 
 import {
   anonymousClient,
+  emailOTPClient,
   organizationClient,
   passkeyClient,
 } from "better-auth/client/plugins";
@@ -37,7 +38,12 @@ const baseURL =
 // Create the auth client with plugins and configuration
 export const authClient = createAuthClient({
   baseURL: baseURL + authConfig.api.basePath,
-  plugins: [anonymousClient(), organizationClient(), passkeyClient()],
+  plugins: [
+    anonymousClient(),
+    emailOTPClient(),
+    organizationClient(),
+    passkeyClient(),
+  ],
 });
 
 // Alias for brevity - use either 'auth' or 'authClient' based on preference

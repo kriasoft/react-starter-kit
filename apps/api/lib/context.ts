@@ -5,6 +5,7 @@ import type { DbSchema } from "@repo/db";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { Session, User } from "better-auth/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Resend } from "resend";
 import type { Auth } from "./auth.js";
 import type { Env } from "./env.js";
 
@@ -80,6 +81,7 @@ export type AppContext = {
     db: PostgresJsDatabase<DbSchema>;
     dbDirect: PostgresJsDatabase<DbSchema>;
     auth: Auth;
+    resend?: Resend;
     session: Session | null;
     user: User | null;
   };

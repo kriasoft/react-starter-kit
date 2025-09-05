@@ -28,7 +28,8 @@
     "ENVIRONMENT": "production",
     "APP_NAME": "Example",
     "APP_ORIGIN": "https://example.com",
-    "ALLOWED_ORIGINS": "https://example.com"
+    "ALLOWED_ORIGINS": "https://example.com",
+    "RESEND_EMAIL_FROM": "onboarding@resend.dev"
   },
   // prettier-ignore
   "hyperdrive": [
@@ -45,7 +46,8 @@
         "ENVIRONMENT": "development",
         "APP_NAME": "Example",
         "APP_ORIGIN": "http://localhost:5173",
-        "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173"
+        "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173",
+        "RESEND_EMAIL_FROM": "onboarding@resend.dev"
       },
       // prettier-ignore
       "hyperdrive": [
@@ -67,7 +69,8 @@
         "ENVIRONMENT": "staging",
         "APP_NAME": "Example",
         "APP_ORIGIN": "https://staging.example.com",
-        "ALLOWED_ORIGINS": "https://staging.example.com"
+        "ALLOWED_ORIGINS": "https://staging.example.com",
+        "RESEND_EMAIL_FROM": "onboarding@resend.dev"
       },
       // prettier-ignore
       "hyperdrive": [
@@ -88,7 +91,8 @@
         "ENVIRONMENT": "preview",
         "APP_NAME": "Example",
         "APP_ORIGIN": "https://preview.example.com",
-        "ALLOWED_ORIGINS": "https://preview.example.com"
+        "ALLOWED_ORIGINS": "https://preview.example.com",
+        "RESEND_EMAIL_FROM": "onboarding@resend.dev"
       },
       // prettier-ignore
       "hyperdrive": [
