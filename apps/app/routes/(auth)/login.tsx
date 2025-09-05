@@ -3,11 +3,7 @@
 
 import { LoginForm } from "@/components/auth/login-form";
 import { authConfig, getSafeRedirectUrl } from "@/lib/auth-config";
-import {
-  getCachedSession,
-  invalidateSession,
-  sessionQueryOptions,
-} from "@/lib/queries/session";
+import { invalidateSession, sessionQueryOptions } from "@/lib/queries/session";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
@@ -16,7 +12,8 @@ export const Route = createFileRoute("/(auth)/login")({
   // [AUTH GUARD] Redirect authenticated users away from login page
   // WARNING: Both user AND session must exist - partial data indicates corrupted session
   beforeLoad: async ({ context }) => {
-    const session = getCachedSession(context.queryClient);
+    // Fetch fresh session data to ensure we have the latest auth state
+    const session = await context.queryClient.fetchQuery(sessionQueryOptions());
 
     if (session?.user && session?.session) {
       throw redirect({ to: "/" });

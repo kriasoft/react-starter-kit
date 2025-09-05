@@ -90,7 +90,8 @@ my-app/
 ├── apps/
 │   ├── app/      # React 19 frontend with TanStack Router
 │   ├── web/      # Astro static site (landing/marketing)
-│   └── api/      # tRPC backend (type-safe goodness)
+│   ├── api/      # tRPC backend (type-safe goodness)
+│   └── email/    # React Email templates (authentication & transactional)
 ├── packages/
 │   ├── core/     # Shared modules and utilities
 │   ├── ui/       # Shared UI components (shadcn/ui)
@@ -106,26 +107,40 @@ my-app/
 
 ### 1. Start Development Server
 
-Fire up the development environment:
+Fire up the development environment with two terminals:
+
+**Terminal 1 - React App:**
 
 ```bash
-bun dev
+bun app:dev  # or bun --filter @repo/app dev
+```
+
+**Terminal 2 - API Server:**
+
+```bash
+bun api:dev  # or bun --filter @repo/api dev
 ```
 
 This starts:
 
 - 🚀 App dev server at `http://localhost:5173` (React app)
-- 🌐 Web dev server for Astro static site (when running `bun --filter @repo/web dev`)
-- 🔥 API server with hot reload
+- 🔥 API server at `http://localhost:8787` (tRPC with hot reload)
 - 💾 Database connection (Neon PostgreSQL)
 
-::: details What's happening under the hood?
-The `bun dev` command runs multiple processes concurrently:
+**Optional - Other services:**
 
-- Vite dev server for the React app
-- tRPC API server with file watching
-- TypeScript compiler in watch mode
-- Database migrations (if needed)
+```bash
+bun web:dev    # Marketing site (Astro) at http://localhost:4321
+bun email:dev  # Email preview server at http://localhost:3001
+```
+
+::: details What's happening under the hood?
+Each command starts its specific development server:
+
+- **app:dev**: Vite dev server for the React app with HMR
+- **api:dev**: Wrangler dev server for the tRPC API with file watching
+- **email:dev**: React Email preview server for template development
+- **web:dev**: Astro dev server for the marketing site
   :::
 
 ### 2. Explore the Stack
@@ -133,8 +148,10 @@ The `bun dev` command runs multiple processes concurrently:
 Open your browser and check out:
 
 - **App**: `http://localhost:5173` — Your React app with TanStack Router
+- **API**: `http://localhost:8787` — tRPC API endpoints
 - **Database GUI**: Run `bun --filter @repo/db studio` to explore your database
-- **Astro Site**: Run `bun --filter @repo/web dev` separately for the static site
+- **Email Templates**: Run `bun email:dev` for preview at `http://localhost:3001`
+- **Astro Site**: Run `bun web:dev` for the marketing site at `http://localhost:4321`
 
 ### 3. Make It Yours
 
@@ -166,12 +183,21 @@ Want to explore your data visually? Run `bun --filter @repo/db studio` to open D
 
 ## Authentication
 
-Better Auth is pre-configured but needs your touch:
+Better Auth is pre-configured with multiple authentication methods:
+
+- **Email/Password** - Traditional authentication
+- **Passkeys** - WebAuthn biometric authentication
+- **OAuth** - Google and other providers
+- **OTP** - One-time passwords via email
+- **Email Templates** - Beautiful transactional emails
+
+### Configuration
 
 1. **Create environment file** → Create `.env.local` (excluded from Git)
 2. **Add OAuth credentials** → Google, GitHub, etc.
-3. **Client setup** → Check `apps/web/lib/auth.ts`
-4. **Server config** → See `apps/api/lib/auth.ts`
+3. **Configure email** → Set up Resend for email delivery
+4. **Client setup** → Check `apps/app/lib/auth.ts`
+5. **Server config** → See `apps/api/lib/auth.ts`
 
 ::: details Example .env.local
 
@@ -179,14 +205,31 @@ Better Auth is pre-configured but needs your touch:
 # OAuth Providers
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
-GITHUB_CLIENT_ID="your-github-client-id"
-GITHUB_CLIENT_SECRET="your-github-client-secret"
+
+# Email Service (Resend)
+RESEND_API_KEY="re_xxxxxxxxxx"
+RESEND_EMAIL_FROM="Your App <noreply@example.com>"
 
 # Auth Secret (generate with: openssl rand -hex 32)
-AUTH_SECRET="your-random-secret-here"
+BETTER_AUTH_SECRET="your-random-secret-here"
 ```
 
 :::
+
+### Email Templates
+
+The template includes React Email templates for authentication:
+
+```bash
+# Preview email templates
+bun email:dev
+
+# Build for production
+bun email:build
+
+# Export static HTML
+bun email:export
+```
 
 ## UI Components Management
 
@@ -217,14 +260,20 @@ For detailed component management documentation, see the [UI Components Guide](/
 Here's your daily routine:
 
 ```bash
-# Start everything
-bun dev
+# Start development (in separate terminals)
+bun app:dev   # Terminal 1: React app
+bun api:dev   # Terminal 2: API server
 
 # Run tests (yes, we have tests!)
 bun test
 
 # Lint your code (keep it clean)
 bun lint
+
+# Build for production
+bun email:build  # Build email templates first
+bun app:build    # Build React app
+bun api:build    # Build API
 ```
 
 ::: info Type Checking
@@ -247,8 +296,15 @@ Ready to ship? Let's deploy to Cloudflare Workers:
 # First, login to Cloudflare
 bun wrangler login
 
-# Deploy to production
-bun wrangler deploy --config apps/edge/wrangler.jsonc --env=production
+# Build packages (order matters!)
+bun email:build   # Build email templates
+bun web:build     # Build marketing site
+bun app:build     # Build React app
+
+# Deploy applications
+bun web:deploy    # Deploy marketing site
+bun api:deploy    # Deploy API server
+bun app:deploy    # Deploy React app
 ```
 
 ::: warning Environment Configuration
@@ -264,10 +320,11 @@ Remember to set them in Cloudflare dashboard for production — local `.env` fil
 :::
 
 ::: warning Database Migrations
-Production uses Cloudflare D1 — you must run migrations there separately:
+Production uses Neon PostgreSQL — ensure your production database is configured:
 
 ```bash
-bun wrangler d1 migrations apply YOUR_DATABASE --config apps/edge/wrangler.jsonc --env=production
+# Apply migrations to production
+bun --filter @repo/db migrate --env=production
 ```
 
 :::

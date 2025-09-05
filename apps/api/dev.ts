@@ -61,19 +61,21 @@ app.use("*", async (c, next) => {
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "OPENAI_API_KEY",
+    "RESEND_API_KEY",
+    "RESEND_EMAIL_FROM",
   ] as const;
 
   const env = {
     ...cf.env,
     ...Object.fromEntries(
-      secretKeys.map((key) => [key, (cf.env[key] || process.env[key]) ?? ""]),
+      secretKeys.map((key) => [key, (process.env[key] || cf.env[key]) ?? ""]),
     ),
-    APP_NAME: cf.env.APP_NAME || process.env.APP_NAME || "Example",
+    APP_NAME: process.env.APP_NAME || cf.env.APP_NAME || "Example",
     APP_ORIGIN:
       // Prefer origin set by `apps/app` at runtime
       c.req.header("x-forwarded-origin") ||
-      c.env.APP_ORIGIN ||
       process.env.APP_ORIGIN ||
+      c.env.APP_ORIGIN ||
       "http://localhost:5173",
   };
 
