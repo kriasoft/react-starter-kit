@@ -9,6 +9,10 @@ Building modern web applications shouldn't require weeks of configuration hell. 
 
 Designed for developers who value both speed and quality, this template provides a complete foundation for full-stack applications. From solo projects to team collaborations, it scales with your ambitions while maintaining the developer experience you deserve.
 
+React Starter Kit is proudly supported by these amazing sponsors:
+
+<a href="https://reactstarter.com/s/1"><img src="https://reactstarter.com/s/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/2"><img src="https://reactstarter.com/s/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/3"><img src="https://reactstarter.com/s/3.png" height="60" /></a>
+
 ## What You Get
 
 - **Performance by Default**: Bun runtime delivers exceptional speed across development and production. Your build times will thank you.
@@ -18,33 +22,6 @@ Designed for developers who value both speed and quality, this template provides
 - **Database Ready**: Drizzle ORM with Neon PostgreSQL provides a complete data layer. Multi-tenant support included out of the box.
 - **Developer Experience**: ESLint, Prettier, and VSCode configurations eliminate bikeshedding. Focus on features, not formatting.
 
-<a href="https://reactstarter.com/s/1"><img src="https://reactstarter.com/s/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/2"><img src="https://reactstarter.com/s/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/3"><img src="https://reactstarter.com/s/3.png" height="60" /></a>
-
----
-
-This project was bootstrapped with [React Starter Kit](https://github.com/kriasoft/react-starter-kit).
-Be sure to join our [Discord channel](https://discord.gg/2nKEnKq) for assistance.
-
-## Monorepo Architecture
-
-This starter kit uses a thoughtfully organized monorepo structure that promotes code reuse and maintainability:
-
-- [`apps/app/`](./apps/app) — React 19 application with TanStack Router, Jotai, and Tailwind CSS v4
-- [`apps/web/`](./apps/web) — Astro marketing website for static site generation
-- [`apps/api/`](./apps/api) — tRPC API server powered by Hono framework for Cloudflare Workers
-- [`apps/email/`](./apps/email) — React Email templates for authentication and transactional emails
-- [`packages/core/`](./packages/core) — Shared TypeScript types and utilities
-- [`packages/ui/`](./packages/ui) — Shared UI components with shadcn/ui management utilities
-- [`packages/ws-protocol/`](./packages/ws-protocol) — WebSocket protocol template with type-safe messaging
-- [`db/`](./db) — Database schemas, migrations, and seed data
-- [`docs/`](./docs) — VitePress documentation site
-- [`infra/`](./infra) — Terraform infrastructure configurations for multi-environment deployment
-- [`scripts/`](./scripts) — Build automation and development tools
-
-**Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
-
-**Deployment Flexibility:** Each app can be deployed independently to Cloudflare Workers for global edge computing, ensuring optimal performance worldwide.
-
 ## Perfect For
 
 - **SaaS Applications**: Multi-tenant architecture with user management built-in
@@ -52,6 +29,11 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 - **Global Applications**: Edge deployment ensures fast loading times worldwide
 - **Team Projects**: Monorepo structure scales well with multiple developers
 - **Rapid Prototyping**: Skip configuration and start building features immediately
+
+---
+
+This project was bootstrapped with [React Starter Kit](https://github.com/kriasoft/react-starter-kit).
+Be sure to join our [Discord channel](https://discord.gg/2nKEnKq) for assistance.
 
 ## Technology Stack
 
@@ -87,6 +69,26 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 - [TypeScript](https://www.typescriptlang.org/) — Static type checking
 - [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/) — Code quality and formatting
 
+## Monorepo Architecture
+
+This starter kit uses a thoughtfully organized monorepo structure that promotes code reuse and maintainability:
+
+- [`apps/app/`](./apps/app) — React 19 application with TanStack Router, Jotai, and Tailwind CSS v4
+- [`apps/web/`](./apps/web) — Astro marketing website for static site generation
+- [`apps/api/`](./apps/api) — tRPC API server powered by Hono framework for Cloudflare Workers
+- [`apps/email/`](./apps/email) — React Email templates for authentication and transactional emails
+- [`packages/core/`](./packages/core) — Shared TypeScript types and utilities
+- [`packages/ui/`](./packages/ui) — Shared UI components with shadcn/ui management utilities
+- [`packages/ws-protocol/`](./packages/ws-protocol) — WebSocket protocol template with type-safe messaging
+- [`db/`](./db) — Database schemas, migrations, and seed data
+- [`docs/`](./docs) — VitePress documentation site
+- [`infra/`](./infra) — Terraform infrastructure configurations for multi-environment deployment
+- [`scripts/`](./scripts) — Build automation and development tools
+
+**Why Monorepo?** This structure enables seamless code sharing between frontend and backend, ensures type consistency across your entire stack, and simplifies dependency management. When you update a type definition, both client and server stay in sync automatically.
+
+**Deployment Flexibility:** Each app can be deployed independently to Cloudflare Workers for global edge computing, ensuring optimal performance worldwide.
+
 ## Prerequisites
 
 - [Bun](https://bun.sh/) v1.2+ (replaces Node.js and npm)
@@ -117,33 +119,35 @@ Update environment variables in [`.env`](./.env) and `.env.local` files as well 
 
 ### 4. Start Development
 
-Open two terminals and run these commands:
-
-**Terminal 1 - Application (React):**
-
 ```bash
-bun --filter @repo/app dev
-```
+# Launch all apps in development mode (web, api, and app)
+bun dev
 
-**Terminal 2 - API Server:**
-
-```bash
-bun --filter @repo/api dev
-```
-
-For the marketing website:
-
-```bash
-bun --filter @repo/web dev
+# Or, start specific apps individually
+bun --filter @repo/web dev  # Marketing site
+bun --filter @repo/app dev  # Main application
+bun --filter @repo/api dev  # API server
 ```
 
 ### 5. Initialize Database
 
+Set up your database connection and schema:
+
 ```bash
-# Apply database schema and migrations
+# Apply migrations to database
 bun --filter @repo/db migrate
-bun --filter @repo/db seed  # Optional: add sample data
+
+# Quick development setup (pushes schema directly, skips migrations)
+bun --filter @repo/db push
+
+# Seed with sample data (optional)
+bun --filter @repo/db seed
+
+# Open database GUI for inspection
+bun --filter @repo/db studio
 ```
+
+**Note:** Ensure `DATABASE_URL` is configured in your `.env.local` file before running these commands.
 
 Open <http://localhost:5173> to see your React app running. The marketing website runs on <http://localhost:4321>. The backend API will be available at the port shown by `wrangler dev` (typically 8787).
 
@@ -151,13 +155,24 @@ Open <http://localhost:5173> to see your React app running. The marketing websit
 
 ### 1. Environment Setup
 
-Ensure your production environment variables are configured:
+Configure your production secrets in Cloudflare Workers:
 
 ```bash
-# Set secrets in Cloudflare Workers
-bun wrangler secret put BETTER_AUTH_SECRET --env=production
-bun wrangler secret put OPENAI_API_KEY --env=production
+# Required secrets
+bun wrangler secret put BETTER_AUTH_SECRET
+
+# OAuth providers (as needed)
+bun wrangler secret put GOOGLE_CLIENT_ID
+bun wrangler secret put GOOGLE_CLIENT_SECRET
+
+# Email service
+bun wrangler secret put RESEND_API_KEY
+
+# AI features (optional)
+bun wrangler secret put OPENAI_API_KEY
 ```
+
+**Note:** The `RESEND_EMAIL_FROM` is configured in `wrangler.jsonc` as it's not sensitive.
 
 ### 2. Build and Deploy
 
@@ -175,27 +190,21 @@ bun app:deploy     # Deploy main React app
 
 Your application will be live on your Cloudflare Workers domain within seconds. The edge-first architecture ensures optimal performance regardless of user location.
 
-## Contributors 👨‍💻
-
-<a href="https://reactstarter.com/c/1"><img src="https://reactstarter.com/c/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/2"><img src="https://reactstarter.com/c/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/3"><img src="https://reactstarter.com/c/3.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/4"><img src="https://reactstarter.com/c/4.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/5"><img src="https://reactstarter.com/c/5.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/6"><img src="https://reactstarter.com/c/6.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/7"><img src="https://reactstarter.com/c/7.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/8"><img src="https://reactstarter.com/c/8.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/9"><img src="https://reactstarter.com/c/9.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/10"><img src="https://reactstarter.com/c/10.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/11"><img src="https://reactstarter.com/c/11.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/12"><img src="https://reactstarter.com/c/12.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/13"><img src="https://reactstarter.com/c/13.png" height="60" /></a>
-
 ## Backers 💰
 
 <a href="https://reactstarter.com/b/1"><img src="https://reactstarter.com/b/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/2"><img src="https://reactstarter.com/b/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/3"><img src="https://reactstarter.com/b/3.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/4"><img src="https://reactstarter.com/b/4.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/5"><img src="https://reactstarter.com/b/5.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/6"><img src="https://reactstarter.com/b/6.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/7"><img src="https://reactstarter.com/b/7.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/b/8"><img src="https://reactstarter.com/b/8.png" height="60" /></a>
 
-## Related Projects
+## Contributors 👨‍💻
 
-- [GraphQL API and Relay Starter Kit](https://github.com/kriasoft/graphql-starter) — monorepo template, pre-configured with GraphQL API, React, and Relay
-- [Cloudflare Workers Starter Kit](https://github.com/kriasoft/cloudflare-starter-kit) — TypeScript project template for Cloudflare Workers
-- [Node.js API Starter Kit](https://github.com/kriasoft/node-starter-kit) — project template, pre-configured with Node.js, GraphQL, and PostgreSQL
+<a href="https://reactstarter.com/c/1"><img src="https://reactstarter.com/c/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/2"><img src="https://reactstarter.com/c/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/3"><img src="https://reactstarter.com/c/3.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/4"><img src="https://reactstarter.com/c/4.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/5"><img src="https://reactstarter.com/c/5.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/6"><img src="https://reactstarter.com/c/6.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/7"><img src="https://reactstarter.com/c/7.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/8"><img src="https://reactstarter.com/c/8.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/9"><img src="https://reactstarter.com/c/9.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/10"><img src="https://reactstarter.com/c/10.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/11"><img src="https://reactstarter.com/c/11.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/12"><img src="https://reactstarter.com/c/12.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/c/13"><img src="https://reactstarter.com/c/13.png" height="60" /></a>
 
-## How to Contribute
+## Contributing
 
-Anyone and everyone is welcome to [contribute](.github/CONTRIBUTING.md). Start
-by checking out the list of [open issues](https://github.com/kriasoft/react-starter-kit/issues)
-marked [help wanted](https://github.com/kriasoft/react-starter-kit/issues?q=label:"help+wanted").
-However, if you decide to get involved, please take a moment to review the
-[guidelines](.github/CONTRIBUTING.md).
+We welcome contributions! Whether you're fixing bugs, improving docs, or proposing new features, check out our [Contributing Guide](.github/CONTRIBUTING.md) to get started.
+
+- [Good first issues](https://github.com/kriasoft/react-starter-kit/issues?q=label:"good+first+issue") for beginners
+- [Discord community](https://discord.gg/2nKEnKq) for help and discussions
+- [Open issues](https://github.com/kriasoft/react-starter-kit/issues) needing attention
 
 ## License
 
