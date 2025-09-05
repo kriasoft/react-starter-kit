@@ -67,7 +67,7 @@ bun wrangler deploy --config apps/api/wrangler.jsonc --env=production
 
 ## Code Conventions
 
-- **Functional Programming:** Prefer functional patterns over class-based code
-- **Modern TypeScript:** Use latest TypeScript features, avoid legacy patterns like `_` for private vars
-- **Bun/Hono Idioms:** Utilize Bun-specific features and Hono middleware patterns
-- **WebSocket:** Use pub-sub pattern for WebSocket communication via `bun-ws-router`
+1. **Functional Programming:** Favor functional patterns (e.g., hooks, pure functions) over class-based code for better composability and testability.
+2. **Modern TypeScript:** Leverage latest features (e.g., const assertions, template literals); avoid legacy patterns like `_` prefixes for private variables.
+3. **Imports:** Use named imports (e.g., `import { foo } from "bar";`) for tree-shaking, readability, and modern standards; avoid namespace imports (e.g., `import * as baz from "bar";`).
+4. **Bun/Hono Idioms:** Incorporate Bun-specific features (e.g., native APIs) and Hono middleware patterns for performance and simplicity.

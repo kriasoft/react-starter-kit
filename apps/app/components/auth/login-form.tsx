@@ -2,26 +2,35 @@
 /* SPDX-License-Identifier: MIT */
 
 import { auth } from "@/lib/auth";
+import { authConfig } from "@/lib/auth-config";
 import { queryClient } from "@/lib/query";
 import { Button, Card, CardContent, Input, cn } from "@repo/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { KeyRound } from "lucide-react";
-import * as React from "react";
+import { useEffect, useState } from "react";
+import type { ComponentProps, FormEvent } from "react";
 
 interface AuthFormContentProps {
   onSuccess?: () => void;
   className?: string;
+  isExternallyLoading?: boolean;
 }
 
-function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
+function AuthFormContent({
+  onSuccess,
+  className,
+  isExternallyLoading,
+}: AuthFormContentProps) {
   const navigate = useNavigate();
-  const [email, setEmail] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [showPasskeyEmail, setShowPasskeyEmail] = React.useState(false);
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  // Combine internal and external loading states
+  const isDisabled = isLoading || isExternallyLoading;
+  const [error, setError] = useState<string | null>(null);
+  const [showPasskeyEmail, setShowPasskeyEmail] = useState(false);
 
   // Set up conditional UI for passkey autofill when component mounts
-  React.useEffect(() => {
+  useEffect(() => {
     let abortController: AbortController | null = null;
 
     const setupConditionalUI = async () => {
@@ -153,10 +162,17 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
       // Clear any stale session data before OAuth redirect
       queryClient.removeQueries();
 
-      // Initiate Google OAuth flow
+      // Capture intended destination for post-OAuth redirect
+      const currentPath = window.location.pathname + window.location.search;
+      const returnUrl =
+        currentPath !== "/login"
+          ? currentPath
+          : authConfig.oauth.postLoginRedirect;
+
+      // Initiate Google OAuth flow - redirect to login page first
       await auth.signIn.social({
         provider: "google",
-        callbackURL: "/", // Redirect to dashboard after successful auth
+        callbackURL: `${authConfig.oauth.defaultCallbackUrl}?returnUrl=${encodeURIComponent(returnUrl)}`,
       });
 
       // Note: This code won't execute as OAuth redirects the page
@@ -168,7 +184,7 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
     }
   };
 
-  const handleEmailContinue = async (e: React.FormEvent) => {
+  const handleEmailContinue = async (e: FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
@@ -217,7 +233,7 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
             placeholder="your@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={isLoading}
+            disabled={isDisabled}
             autoComplete="email webauthn"
             required
             autoFocus
@@ -227,7 +243,7 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
             variant="default"
             className="w-full"
             onClick={handlePasskeyLogin}
-            disabled={isLoading || !email}
+            disabled={isDisabled || !email}
           >
             <KeyRound className="mr-2 h-4 w-4" />
             Continue with passkey
@@ -241,7 +257,7 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
               setError(null);
               setEmail("");
             }}
-            disabled={isLoading}
+            disabled={isDisabled}
           >
             Try a different method
           </Button>
@@ -252,7 +268,7 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
           variant="default"
           className="w-full"
           onClick={handlePasskeyLogin}
-          disabled={isLoading}
+          disabled={isDisabled}
         >
           <KeyRound className="mr-2 h-4 w-4" />
           Sign in with passkey
@@ -265,7 +281,7 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
         variant="outline"
         className="w-full"
         onClick={handleGoogleLogin}
-        disabled={isLoading}
+        disabled={isDisabled}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -294,7 +310,7 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
           placeholder="your@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          disabled={isLoading || showPasskeyEmail}
+          disabled={isDisabled || showPasskeyEmail}
           autoComplete="email webauthn"
           required
         />
@@ -302,7 +318,7 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
           type="submit"
           variant="secondary"
           className="w-full"
-          disabled={isLoading || !email}
+          disabled={isDisabled || !email}
         >
           Continue with email
         </Button>
@@ -311,10 +327,11 @@ function AuthFormContent({ onSuccess, className }: AuthFormContentProps) {
   );
 }
 
-interface LoginFormProps extends React.ComponentProps<"div"> {
+interface LoginFormProps extends ComponentProps<"div"> {
   variant?: "page" | "modal";
   showTerms?: boolean;
   onSuccess?: () => void;
+  isLoading?: boolean;
 }
 
 export function LoginForm({
@@ -322,6 +339,7 @@ export function LoginForm({
   variant = "page",
   showTerms,
   onSuccess,
+  isLoading,
   ...props
 }: LoginFormProps) {
   // Default: Show terms on full page, hide in modals (unless overridden)
@@ -330,7 +348,10 @@ export function LoginForm({
   if (variant === "modal") {
     return (
       <div className={cn("flex flex-col gap-4", className)} {...props}>
-        <AuthFormContent onSuccess={onSuccess} />
+        <AuthFormContent
+          onSuccess={onSuccess}
+          isExternallyLoading={isLoading}
+        />
         {shouldShowTerms && (
           <div className="text-center text-xs text-muted-foreground text-balance">
             By clicking continue, you agree to our{" "}
@@ -360,7 +381,10 @@ export function LoginForm({
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <div className="p-6 md:p-8">
-            <AuthFormContent onSuccess={onSuccess} />
+            <AuthFormContent
+              onSuccess={onSuccess}
+              isExternallyLoading={isLoading}
+            />
           </div>
 
           {/* Right panel - Hidden on mobile, provides visual balance on desktop */}

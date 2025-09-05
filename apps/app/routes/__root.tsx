@@ -18,7 +18,7 @@ export function Root() {
   return (
     <AuthErrorBoundary>
       <Outlet />
-      <TanStackRouterDevtools />
+      {import.meta.env.DEV && <TanStackRouterDevtools />}
     </AuthErrorBoundary>
   );
 }
