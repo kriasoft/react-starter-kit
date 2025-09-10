@@ -1,1 +1,4 @@
-bun test
+#!/usr/bin/env sh
+set -e
+
+bunx lint-staged

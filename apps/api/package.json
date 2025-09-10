@@ -9,6 +9,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "predev": "bun --filter @repo/email build",
     "dev": "bun run --watch --env-file ../../.env --env-file ../../.env.local ./dev.ts",
     "build": "bun build index.ts --outdir dist --target bun",
     "test": "vitest",
@@ -17,30 +18,30 @@
     "logs": "wrangler tail --env-file ../../.env --env-file ../../.env.local"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.24",
+    "@ai-sdk/openai": "^2.0.27",
     "@repo/core": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/email": "workspace:*",
     "@trpc/server": "^11.5.1",
-    "ai": "^5.0.33",
-    "better-auth": "^1.3.8",
+    "ai": "^5.0.39",
+    "better-auth": "^1.3.9",
     "dataloader": "^2.2.3",
     "drizzle-orm": "^0.44.5",
     "postgres": "^3.4.7",
-    "resend": "^6.0.2"
+    "resend": "^6.0.3"
   },
   "peerDependencies": {
     "hono": "^4.9.6",
     "zod": "^4.1.5"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250905.0",
+    "@cloudflare/workers-types": "^4.20250910.0",
     "@repo/typescript-config": "workspace:*",
     "@types/bun": "^1.2.21",
     "hono": "^4.9.6",
     "typescript": "~5.9.2",
     "vitest": "~3.2.4",
-    "wrangler": "^4.34.0",
+    "wrangler": "^4.35.0",
     "zod": "^4.1.5"
   }
 }
