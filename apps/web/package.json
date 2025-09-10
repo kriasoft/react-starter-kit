@@ -13,9 +13,9 @@
     "logs": "wrangler tail --env-file ../../.env --env-file ../../.env.local"
   },
   "dependencies": {
-    "@astrojs/react": "^4.3.0",
+    "@astrojs/react": "^4.3.1",
     "@repo/ui": "workspace:*",
-    "astro": "^5.13.5",
+    "astro": "^5.13.7",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
@@ -28,6 +28,6 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
     "typescript": "~5.9.2",
-    "wrangler": "^4.34.0"
+    "wrangler": "^4.35.0"
   }
 }
