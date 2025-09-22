@@ -24,7 +24,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 // Validate DATABASE_URL format (basic PostgreSQL URL validation)
-if (!process.env.DATABASE_URL.match(/^postgresql?:\/\/.+/)) {
+if (!process.env.DATABASE_URL.match(/^postgres(?:ql)?:\/\/.+/)) {
   throw new Error("DATABASE_URL must be a valid PostgreSQL connection string");
 }
 

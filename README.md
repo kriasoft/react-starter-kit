@@ -32,6 +32,61 @@ React Starter Kit is proudly supported by these amazing sponsors:
 
 ---
 
+
+## 🐳 Running with Docker
+
+You can run the project locally together with **PostgreSQL 17 + `pg_uuidv7` extension** using Docker Compose.
+
+### 1. Stop containers and remove old data (if previously launched):
+
+```bash
+docker compose down -v
+```
+
+### 2. Build and start containers:
+
+```bash
+docker compose build postgres
+docker exec -it postgres_pg_uuidv7 bash
+```
+
+Inside psql:
+```
+psql -U postgres -d example
+CREATE EXTENSION pg_uuidv7
+exit
+```
+
+```bash
+docker compose up --build -d
+```
+
+- The `postgres` container will build and install the `pg_uuidv7` extension
+- On the first run, the `example` database will be created and the extension enabled
+- The `api` container will be built from `apps/api/Dockerfile`
+
+### 3. Verify PostgreSQL is working:
+
+```bash
+docker exec -it postgres_pg_uuidv7 psql -U postgres -d example
+```
+
+Inside psql:
+
+```sql
+\dx                          -- installed extensions
+SELECT uuid_generate_v7();   -- generate UUIDv7
+```
+
+### 4. Access
+
+- API available at: <http://localhost:8080>
+- PostgreSQL available at: `localhost:5432`
+- Connection string:
+```
+postgres://postgres:postgres@localhost:5432/example
+```
+
 This project was bootstrapped with [React Starter Kit](https://github.com/kriasoft/react-starter-kit).
 Be sure to join our [Discord channel](https://discord.gg/2nKEnKq) for assistance.
 

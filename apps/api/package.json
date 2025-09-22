@@ -9,7 +9,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "predev": "bun --filter @repo/email build",
+    "predev": "kill-port 5174 && bun --filter @repo/email build",
     "dev": "bun run --watch --env-file ../../.env --env-file ../../.env.local ./dev.ts",
     "build": "bun build index.ts --outdir dist --target bun",
     "test": "vitest",
@@ -38,6 +38,7 @@
     "@cloudflare/workers-types": "^4.20250910.0",
     "@repo/typescript-config": "workspace:*",
     "@types/bun": "^1.2.21",
+    "kill-port": "^2.0.1",
     "hono": "^4.9.6",
     "typescript": "~5.9.2",
     "vitest": "~3.2.4",
