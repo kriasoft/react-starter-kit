@@ -1,20 +1,6 @@
 version: "3.9"
 
 services:
-  api:
-    build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile
-    container_name: api
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/example
-    ports:
-      - "8080:8080"
-
   postgres:
     build:
       context: ./docker/postgres
@@ -29,6 +15,32 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    container_name: api
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/example
+    ports:
+      - "8080:8080"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
 
 volumes:
   pgdata:

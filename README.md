@@ -46,19 +46,15 @@ docker compose down -v
 ### 2. Build and start containers:
 
 ```bash
-docker compose build postgres
+docker compose up --build -d
 docker exec -it postgres_pg_uuidv7 bash
 ```
 
 Inside psql:
 ```
 psql -U postgres -d example
-CREATE EXTENSION pg_uuidv7
-exit
-```
-
-```bash
-docker compose up --build -d
+CREATE EXTENSION pg_uuidv7;
+\q
 ```
 
 - The `postgres` container will build and install the `pg_uuidv7` extension
