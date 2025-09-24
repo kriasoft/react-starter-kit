@@ -1,0 +1,26 @@
+# Dependabot configuration for automated dependency updates
+# Creates weekly PRs with all dependency updates grouped together
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "bun"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    versioning-strategy: "increase-if-necessary"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        # Allow security updates to be created separately
+        applies-to: version-updates
