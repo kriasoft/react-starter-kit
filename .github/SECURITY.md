@@ -1,10 +1,10 @@
-# Security Policy
+# Security Policy & Incident Response Plan
 
 ## Our Security Commitment
 
-The React Starter Kit team and community take the security of our project seriously. We appreciate the efforts of security researchers and believe that responsible disclosure of security vulnerabilities helps us ensure the security and privacy of all users.
+The React Starter Kit team takes security seriously. We appreciate responsible disclosure of vulnerabilities and are committed to working with security researchers to keep our project secure.
 
-We are committed to working with the community to verify, reproduce, and respond to legitimate reported vulnerabilities. Thank you for helping us maintain a secure foundation for modern web applications.
+This document outlines our security policy, incident response procedures, and how to report vulnerabilities.
 
 ## Scope
 
@@ -38,84 +38,59 @@ We provide security updates for the most recent version of React Starter Kit ava
 | main    | :white_check_mark: |
 | < main  | :x:                |
 
+## Incident Response
+
+- **Report Security Issues**: `security@kriasoft.com`
+- **Initial Response**: Within 2 business days
+- **Critical Issues**: Escalated immediately to maintainers
+
 ## Reporting a Vulnerability
 
-**⚠️ Please DO NOT report security vulnerabilities through public GitHub issues, discussions, or pull requests.**
+**⚠️ DO NOT report security vulnerabilities through public GitHub issues.**
 
-Instead, please send a detailed report to: **security@kriasoft.com**
+Report to: **security@kriasoft.com**
 
-To help us triage and validate your report efficiently, please include:
+### Include in Your Report
 
-### Required Information
+1. **Description**: Clear explanation of the vulnerability and impact
+2. **Steps to Reproduce**: Minimal steps to demonstrate the issue
+3. **Proof of Concept**: Code or screenshots if applicable
+4. **Affected Version**: Branch or commit hash
+5. **Suggested Fix**: Optional recommendations
 
-- **Title**: A clear, descriptive summary of the vulnerability
-- **Description**: A detailed explanation of the vulnerability and its potential impact
-- **Affected Component(s)**: Specific files, modules, or features affected (e.g., `apps/api/src/auth.ts`, Better Auth configuration, tRPC procedures)
-- **Steps to Reproduce**:
-  1. Clear, numbered steps to reproduce the issue
-  2. Include any necessary configuration or environment details
-  3. Expected vs. actual behavior
-- **Proof of Concept (PoC)**: Working code, scripts, or screenshots demonstrating the vulnerability
-- **Impact Assessment**: Your assessment of the severity and potential impact:
-  - Data exposure or leakage
-  - Authentication/authorization bypass
-  - Remote code execution
-  - Denial of service
-  - Cross-site scripting (XSS)
-  - Other security impacts
+## Incident Response Process
 
-### Optional Information
+### Severity Classification
 
-- **Suggested Fix**: If you have ideas for how to address the vulnerability
-- **References**: Links to similar vulnerabilities or relevant documentation
-- **Your Contact Information**: Name/alias for public credit and preferred contact method
+We classify security incidents based on their potential impact:
 
-## Disclosure Process
+- **Critical (P0)**: Remote code execution, authentication bypass, data breach affecting all users
+- **High (P1)**: Privilege escalation, significant data exposure, XSS in authentication flows
+- **Medium (P2)**: Limited data exposure, XSS in non-critical areas, CSRF vulnerabilities
+- **Low (P3)**: Information disclosure, minor security misconfigurations
 
-Once we receive your security report, we will follow this process:
+### Response Timeline
 
-### 1. Acknowledgment (Within 2 Business Days)
+| Severity | Initial Response | Fix Target  | Disclosure   |
+| -------- | ---------------- | ----------- | ------------ |
+| Critical | 2 days           | 14 days     | Upon patch   |
+| High     | 3 days           | 30 days     | Upon patch   |
+| Medium   | 5 days           | 60 days     | Upon patch   |
+| Low      | 7 days           | Best effort | With release |
 
-We will acknowledge receipt of your vulnerability report and provide you with a tracking reference.
+### How We Handle Reports
 
-### 2. Initial Triage (Within 7 Business Days)
+1. **Acknowledge** - We confirm receipt within 2 business days
+2. **Validate** - We reproduce and assess the issue
+3. **Fix** - We develop and test a patch
+4. **Release** - We publish the fix and security advisory
+5. **Credit** - We acknowledge your contribution (unless you prefer anonymity)
 
-Our team will:
+## Working Together
 
-- Validate the vulnerability
-- Assess its impact and severity
-- Determine affected components
-- Provide you with an initial assessment and expected timeline
-
-### 3. Remediation (Target: 90 Days)
-
-We will:
-
-- Develop and test a fix for the vulnerability
-- Prepare security patches for affected versions
-- Request a CVE identifier from GitHub if appropriate
-- Coordinate the release timeline with you
-
-### 4. Public Disclosure
-
-Once the patch is released:
-
-- We will publish a security advisory on GitHub
-- Full credit will be given to the reporter (unless you prefer to remain anonymous)
-- The advisory will include:
-  - Description of the vulnerability
-  - Impact assessment
-  - Affected versions
-  - Patched versions
-  - Workarounds (if any)
-  - Credits and acknowledgments
-
-## Communication Expectations
-
-- All security-related communications will be conducted via email
-- We will keep you informed throughout the remediation process
-- If our investigation determines that the issue is not a security vulnerability, we will explain our reasoning
-- We ask that you keep the vulnerability confidential until we've had adequate time to address it
+- We communicate via email and keep you informed of progress
+- We explain our decisions if we determine something isn't a vulnerability
+- Please keep issues confidential until patched
 
 ## Safe Harbor
 
@@ -142,43 +117,33 @@ We greatly value the contributions of security researchers. With your permission
 - Add your name to our security acknowledgments
 - Provide a letter of appreciation upon request
 
-## Security Best Practices for Users
+## Security Quick Start
 
-While this policy covers vulnerabilities in the starter kit itself, we recommend all users follow these security best practices:
+### Essential Setup
 
-### Configuration & Secret Management
+```bash
+# Check for vulnerabilities
+bun audit
 
-- Do commit `.env` for non-sensitive defaults and documentation; never store secrets (API keys, tokens, DB URLs) in `.env`.
-- Do not commit secrets. Store them in:
-  - `.env.local` (developer/runner-specific, gitignored)
-  - `terraform.tfvars` (infra inputs that may include secrets, gitignored)
-  - a secret manager for CI/CD and production:
-    - GitHub Actions: Encrypted Secrets (repo/org/environment)
-    - Cloudflare Workers: wrangler secret put / dashboard secrets
-    - Google Cloud: Secret Manager
-- Ensure `.env.local` and `terraform.tfvars` are in `.gitignore` and never pushed.
-- Browser safety: Never reference server-only secrets in client code. Only expose explicitly public variables intended for the browser (e.g., values with a `PUBLIC_` prefix). Review bundles to ensure no server secrets are included.
-- Rotation and scanning: Rotate secrets regularly and enable secret scanning (GitHub Advanced Security, trufflehog, git-secrets) to prevent accidental leaks.
+# Enable GitHub security features
+# Settings > Security > Code security and analysis
+# ✓ Dependabot alerts
+# ✓ Secret scanning
+```
 
-### Authentication
+### Secret Management
 
-- Implement proper session management
-- Use secure password policies
-- Enable multi-factor authentication where appropriate
-- Regularly update Better Auth and related dependencies
+- **Never commit secrets** - Use `.env.local` (gitignored) for local development
+- **Production secrets** - Store in Cloudflare Workers secrets or GitHub Actions secrets
+- **Client code** - Only expose `PUBLIC_*` prefixed variables to browser
 
-### Dependencies
+### Key Commands
 
-- Regularly run `bun audit` to check for vulnerable dependencies
-- Keep all dependencies up to date
-- Review dependency licenses and security advisories
-
-### Deployment
-
-- Use HTTPS for all production deployments
-- Implement proper CORS policies
-- Enable security headers (CSP, HSTS, etc.)
-- Regular security audits of your deployed applications
+```bash
+bun audit              # Check dependencies
+bun test:security      # Run security tests (if configured)
+bun update --latest    # Update dependencies
+```
 
 ## Additional Resources
 

@@ -30,6 +30,17 @@ export default withMermaid(
             { text: "Deployment", link: "/deployment" },
           ],
         },
+        {
+          text: "Security",
+          items: [
+            { text: "Security Checklist", link: "/security/checklist" },
+            { text: "Incident Playbook", link: "/security/incident-playbook" },
+            {
+              text: "Security Policy Template",
+              link: "/security/SECURITY.template",
+            },
+          ],
+        },
       ],
 
       socialLinks: [
