@@ -2,30 +2,24 @@
 /* SPDX-License-Identifier: MIT */
 
 import { useState } from "react";
-import { Header } from "./header";
-import { Sidebar } from "./sidebar";
+import { HamburgerMenu } from "../HamburgerMenu";
+import { Header } from "../Header";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="h-screen flex bg-background">
-      <Sidebar isOpen={sidebarOpen} />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header
-          isSidebarOpen={sidebarOpen}
-          onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
-        />
-
-        <main className="flex-1 overflow-auto">
-          <div className="h-full">{children}</div>
-        </main>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header onMenuClick={() => setMenuOpen(true)} />
+      <HamburgerMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      
+      <main className="pb-safe">
+        {children}
+      </main>
     </div>
   );
 }

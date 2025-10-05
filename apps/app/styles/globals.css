@@ -15,25 +15,37 @@
  */
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  /* CineFind Cinema Theme - Light Mode */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.15 0 0);
+  --card: oklch(0.96 0 0);
+  --card-foreground: oklch(0.15 0 0);
+  --popover: oklch(0.96 0 0);
+  --popover-foreground: oklch(0.15 0 0);
+  --primary: oklch(0.2 0 0); /* Dark for cinema feel */
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.75 0.1 55); /* Gold accent */
+  --secondary-foreground: oklch(0.15 0 0);
+  --muted: oklch(0.92 0 0);
+  --muted-foreground: oklch(0.5 0 0);
+  --accent: oklch(0.75 0.1 55); /* Gold accent */
+  --accent-foreground: oklch(0.15 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --border: oklch(0.88 0 0);
+  --input: oklch(0.92 0 0);
   --ring: oklch(0.708 0 0);
+  
+  /* CineFind specific variables */
+  --cinema-gold: oklch(0.75 0.1 55);
+  --cinema-dark: oklch(0.15 0 0);
+  --cinema-surface: oklch(0.18 0 0);
+  --cinema-text-muted: oklch(0.6 0 0);
+  
+  /* Touch targets */
+  --touch-min: 44px;
+  --spacing-touch: 1rem;
+  
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -50,25 +62,33 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* CineFind Cinema Theme - Dark Mode */
+  --background: oklch(0.12 0 0);
+  --foreground: oklch(0.92 0 0);
+  --card: oklch(0.18 0 0);
+  --card-foreground: oklch(0.92 0 0);
+  --popover: oklch(0.18 0 0);
+  --popover-foreground: oklch(0.92 0 0);
+  --primary: oklch(0.75 0.1 55); /* Gold for dark mode */
+  --primary-foreground: oklch(0.12 0 0);
+  --secondary: oklch(0.25 0 0);
+  --secondary-foreground: oklch(0.92 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.75 0.1 55); /* Gold accent */
+  --accent-foreground: oklch(0.12 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(0.3 0 0);
+  --input: oklch(0.25 0 0);
   --ring: oklch(0.556 0 0);
+  
+  /* CineFind dark mode specific variables */
+  --cinema-gold: oklch(0.75 0.1 55);
+  --cinema-dark: oklch(0.12 0 0);
+  --cinema-surface: oklch(0.18 0 0);
+  --cinema-text-muted: oklch(0.6 0 0);
+  
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -86,9 +106,99 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+  }
+  
+  /* CineFind Web specific styles */
+  .nav-link {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--foreground);
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: background-color 0.2s ease;
+    min-height: var(--touch-min);
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-link:hover {
+    background-color: var(--muted);
+  }
+  
+  /* Touch-friendly button styles */
+  .touch-target {
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+    padding: var(--spacing-touch);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Movie poster styles */
+  .movie-poster {
+    border-radius: var(--radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .movie-poster:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Horizontal scroll containers */
+  .scroll-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Responsive breakpoints */
+  @media (max-width: 768px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+  
+  /* Utility classes */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  
+  /* Safe area padding for mobile devices */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }

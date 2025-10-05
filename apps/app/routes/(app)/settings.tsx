@@ -1,141 +1,156 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-  Separator,
-  Switch,
-} from "@repo/ui";
+import { WatchlistItem } from "@/components/WatchlistItem";
 import { createFileRoute } from "@tanstack/react-router";
-import { Bell, Palette, Shield, User } from "lucide-react";
+import { useState } from "react";
+import { sampleMovies } from "@/lib/sample-data";
 
 export const Route = createFileRoute("/(app)/settings")({
-  component: Settings,
+  component: WatchlistPage,
 });
 
-function Settings() {
+function WatchlistPage() {
+  // Sample watchlist data with watched status
+  const [watchlistMovies, setWatchlistMovies] = useState([
+    { ...sampleMovies[0], watched: false, addedDate: "2024-01-15" },
+    { ...sampleMovies[1], watched: true, addedDate: "2024-01-10" },
+    { ...sampleMovies[2], watched: false, addedDate: "2024-01-08" },
+    { ...sampleMovies[3], watched: false, addedDate: "2024-01-05" },
+  ]);
+
+  const [filter, setFilter] = useState<"all" | "watched" | "unwatched">("all");
+  const [sortBy, setSortBy] = useState<"title" | "addedDate" | "releaseDate">("addedDate");
+
+  const handleRemove = (movieToRemove: any) => {
+    setWatchlistMovies(prev => 
+      prev.filter(movie => movie.title !== movieToRemove.title)
+    );
+  };
+
+  const handleToggleWatched = (movieToToggle: any) => {
+    setWatchlistMovies(prev =>
+      prev.map(movie =>
+        movie.title === movieToToggle.title
+          ? { ...movie, watched: !movie.watched }
+          : movie
+      )
+    );
+  };
+
+  // Filter movies based on selected filter
+  const filteredMovies = watchlistMovies.filter(movie => {
+    if (filter === "watched") return movie.watched;
+    if (filter === "unwatched") return !movie.watched;
+    return true;
+  });
+
+  // Sort movies based on selected sort option
+  const sortedMovies = [...filteredMovies].sort((a, b) => {
+    switch (sortBy) {
+      case "title":
+        return a.title.localeCompare(b.title);
+      case "releaseDate":
+        return b.year - a.year;
+      case "addedDate":
+      default:
+        return new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime();
+    }
+  });
+
+  const watchedCount = watchlistMovies.filter(m => m.watched).length;
+  const totalCount = watchlistMovies.length;
+
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Settings</h2>
+    <div className="min-h-screen p-4">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-foreground mb-2">My Watchlist</h1>
         <p className="text-muted-foreground">
-          Manage your account settings and preferences.
+          {totalCount} movies • {watchedCount} watched • {totalCount - watchedCount} to watch
         </p>
       </div>
 
-      <div className="grid gap-6">
-        {/* Profile Settings */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              <CardTitle>Profile</CardTitle>
-            </div>
-            <CardDescription>
-              Update your personal information and profile settings.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="Enter your name" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="Enter your email" />
-            </div>
-            <Button>Save Changes</Button>
-          </CardContent>
-        </Card>
+      {/* Filters and Sort */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        {/* Filter Tabs */}
+        <div className="flex gap-1 bg-muted rounded-lg p-1">
+          {[
+            { key: "all", label: "All" },
+            { key: "unwatched", label: "To Watch" },
+            { key: "watched", label: "Watched" },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setFilter(key as any)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                filter === key
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
 
-        {/* Notification Settings */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Bell className="h-5 w-5" />
-              <CardTitle>Notifications</CardTitle>
-            </div>
-            <CardDescription>
-              Configure how you receive notifications.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-notifications">Email Notifications</Label>
-                <p className="text-sm text-muted-foreground">
-                  Receive notifications via email
-                </p>
-              </div>
-              <Switch id="email-notifications" />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="push-notifications">Push Notifications</Label>
-                <p className="text-sm text-muted-foreground">
-                  Receive push notifications in your browser
-                </p>
-              </div>
-              <Switch id="push-notifications" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Security Settings */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              <CardTitle>Security</CardTitle>
-            </div>
-            <CardDescription>
-              Manage your security preferences and authentication.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Button variant="outline">Change Password</Button>
-            </div>
-            <div className="space-y-2">
-              <Button variant="outline">
-                Enable Two-Factor Authentication
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Appearance Settings */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Palette className="h-5 w-5" />
-              <CardTitle>Appearance</CardTitle>
-            </div>
-            <CardDescription>
-              Customize the look and feel of the application.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="dark-mode">Dark Mode</Label>
-                <p className="text-sm text-muted-foreground">
-                  Toggle dark mode theme
-                </p>
-              </div>
-              <Switch id="dark-mode" />
-            </div>
-          </CardContent>
-        </Card>
+        {/* Sort Dropdown */}
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as any)}
+          className="px-3 py-2 bg-background border border-border rounded-md text-sm focus:ring-2 focus:ring-ring outline-none"
+        >
+          <option value="addedDate">Sort by: Date Added</option>
+          <option value="title">Sort by: Title</option>
+          <option value="releaseDate">Sort by: Release Date</option>
+        </select>
       </div>
+
+      {/* Watchlist Items */}
+      {sortedMovies.length > 0 ? (
+        <div className="space-y-2">
+          {sortedMovies.map((movie) => (
+            <WatchlistItem
+              key={movie.title}
+              movie={{
+                ...movie,
+                genre: movie.genres?.[0] || "Unknown",
+              }}
+              onRemove={() => handleRemove(movie)}
+              onToggleWatched={() => handleToggleWatched(movie)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🎬</div>
+          <h3 className="text-lg font-semibold mb-2">
+            {filter === "all" 
+              ? "Your watchlist is empty" 
+              : filter === "watched"
+              ? "No watched movies"
+              : "No movies to watch"
+            }
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            {filter === "all"
+              ? "Start adding movies you want to watch!"
+              : filter === "watched"
+              ? "Mark some movies as watched to see them here."
+              : "All your movies are watched! Add more to your watchlist."
+            }
+          </p>
+          <button
+            onClick={() => {
+              console.log("Navigate to discover page");
+              // TODO: Navigate to discover page
+            }}
+            className="touch-target px-6 py-3 bg-accent text-accent-foreground rounded-md font-semibold hover:bg-accent/90 transition-colors"
+          >
+            Discover Movies
+          </button>
+        </div>
+      )}
     </div>
   );
 }
