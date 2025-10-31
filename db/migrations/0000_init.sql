@@ -1,3 +1,26 @@
+-- Enable UUID extension for uuid generation
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Create uuid_generate_v7 function (UUIDv7 with timestamp ordering)
+-- This provides better performance for indexed primary keys compared to UUIDv4
+CREATE OR REPLACE FUNCTION uuid_generate_v7()
+RETURNS uuid
+AS $$
+DECLARE
+  unix_ts_ms bytea;
+  uuid_bytes bytea;
+BEGIN
+  unix_ts_ms = substring(int8send(floor(extract(epoch from clock_timestamp()) * 1000)::bigint) from 3);
+  uuid_bytes = uuid_send(gen_random_uuid());
+  uuid_bytes = overlay(uuid_bytes placing unix_ts_ms from 1 for 6);
+  uuid_bytes = set_byte(uuid_bytes, 6, (b'0111' || get_byte(uuid_bytes, 6)::bit(4))::bit(8)::int);
+  RETURN encode(uuid_bytes, 'hex')::uuid;
+END
+$$
+LANGUAGE plpgsql
+VOLATILE;
+
+--> statement-breakpoint
 CREATE TABLE "invitation" (
 	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
 	"email" text NOT NULL,
