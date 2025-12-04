@@ -26,6 +26,7 @@ const root = createRoot(container!);
 root.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
+      {/* eslint-disable-next-line @eslint-react/no-context-provider -- tRPC library API */}
       <api.Provider client={trpcClient} queryClient={queryClient}>
         <RouterProvider router={router} />
         {import.meta.env.DEV && (
