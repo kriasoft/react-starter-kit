@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "@repo/root",
@@ -59,7 +60,7 @@
       "devDependencies": {
         "@cloudflare/workers-types": "^4.20250910.0",
         "@repo/typescript-config": "workspace:*",
-        "@types/bun": "^1.2.21",
+        "@types/bun": "^1.3.3",
         "hono": "^4.9.6",
         "typescript": "~5.9.2",
         "vitest": "~3.2.4",
@@ -105,7 +106,7 @@
         "@tanstack/react-query-devtools": "^5.87.3",
         "@tanstack/react-router-devtools": "^1.131.36",
         "@tanstack/router-plugin": "^1.131.36",
-        "@types/bun": "^1.2.21",
+        "@types/bun": "^1.3.3",
         "@types/node": "^24.3.1",
         "@types/react": "^19.1.12",
         "@types/react-dom": "^19.1.9",
@@ -169,7 +170,7 @@
       "version": "0.0.0",
       "devDependencies": {
         "@repo/typescript-config": "workspace:*",
-        "@types/bun": "^1.2.21",
+        "@types/bun": "^1.3.3",
         "dotenv": "^17.2.2",
         "drizzle-kit": "^0.31.4",
         "drizzle-orm": "^0.44.5",
@@ -184,7 +185,7 @@
       "version": "0.0.0",
       "devDependencies": {
         "@repo/typescript-config": "workspace:*",
-        "@types/bun": "^1.2.21",
+        "@types/bun": "^1.3.3",
         "typescript": "~5.9.2",
       },
     },
@@ -229,7 +230,7 @@
       "version": "0.0.0",
       "devDependencies": {
         "@repo/typescript-config": "workspace:*",
-        "@types/bun": "^1.2.21",
+        "@types/bun": "^1.3.3",
         "bun-ws-router": "^0.4.3",
         "typescript": "~5.9.2",
         "zod": "^4.1.5",
@@ -1061,7 +1062,7 @@
 
     "@types/babel__traverse": ["@types/babel__traverse@7.28.0", "", { "dependencies": { "@babel/types": "^7.28.2" } }, "sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q=="],
 
-    "@types/bun": ["@types/bun@1.2.21", "", { "dependencies": { "bun-types": "1.2.21" } }, "sha512-NiDnvEqmbfQ6dmZ3EeUO577s4P5bf4HCTXtI6trMc6f6RzirY5IrF3aIookuSpyslFzrnvv2lmEWv5HyC1X79A=="],
+    "@types/bun": ["@types/bun@1.3.3", "", { "dependencies": { "bun-types": "1.3.3" } }, "sha512-ogrKbJ2X5N0kWLLFKeytG0eHDleBYtngtlbu9cyBKFtNL3cnpDZkNdQj8flVf6WTZUX5ulI9AY1oa7ljhSrp+g=="],
 
     "@types/caseless": ["@types/caseless@0.12.5", "", {}, "sha512-hWtVTC2q7hc7xZ/RLbxapMvDMgUnDvKvMOpKal4DrMyfGBUfB1oKaZlIRr6mJL+If3bAP6sV/QneGzF6tJjZDg=="],
 
@@ -1495,7 +1496,7 @@
 
     "buffer-from": ["buffer-from@1.1.2", "", {}, "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ=="],
 
-    "bun-types": ["bun-types@1.2.21", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-sa2Tj77Ijc/NTLS0/Odjq/qngmEPZfbfnOERi0KRUYhT9R8M4VBioWVmMWE5GrYbKMc+5lVybXygLdibHaqVqw=="],
+    "bun-types": ["bun-types@1.3.3", "", { "dependencies": { "@types/node": "*" } }, "sha512-z3Xwlg7j2l9JY27x5Qn3Wlyos8YAp0kKRlrePAOjgjMGS5IG6E7Jnlx736vH9UVI4wUICwwhC9anYL++XeOgTQ=="],
 
     "bun-ws-router": ["bun-ws-router@0.4.3", "", { "dependencies": { "uuid": "^11.1.0" }, "peerDependencies": { "@types/bun": ">=1.1.0", "valibot": ">=1.1.0", "zod": ">=4.0.14" }, "optionalPeers": ["valibot", "zod"] }, "sha512-euCukCJFVlQX+Dj1Hzfo4BQIYMjc6t2YxX3V5m1Hsb+zVc13HB6vLAwAgXybiC1wj1+HCN3KKvbG9vm6KLWwNQ=="],
 

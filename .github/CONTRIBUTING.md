@@ -68,7 +68,7 @@ Looking for a place to start? Check out issues labeled with:
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) >= 1.2.0
+- [Bun](https://bun.sh) >= 1.3.0
 - [Node.js](https://nodejs.org) >= 20 (for some tooling compatibility)
 - [Git](https://git-scm.com)
 
