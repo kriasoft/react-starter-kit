@@ -1,97 +1,90 @@
 # WebSocket Protocol
 
-A minimal WebSocket protocol template using TypeScript, Zod, and bun-ws-router.
+Type-safe WebSocket protocol definitions using [WS-Kit](https://github.com/kriasoft/ws-kit).
 
 ## Quick Start
 
 ```bash
-# Install dependencies
-bun install
-
 # Run example server
-bun run example.ts
+bun run example
 ```
 
-## Basic Usage
+## Usage
 
-### 1. Define Messages
+### Define Messages
 
 ```typescript
-import { messageSchema } from "bun-ws-router/zod";
-import { z } from "zod";
+import { z, message, rpc } from "@ws-kit/zod";
 
-// Simple message (no payload)
-const PingSchema = messageSchema("PING");
+// Message with optional payload
+const Ping = message("PING", { timestamp: z.number().optional() });
 
-// Message with payload
-const GreetingSchema = messageSchema("GREETING", {
+// Message with required payload
+const Greeting = message("GREETING", {
   name: z.string(),
-  message: z.string(),
+  text: z.string(),
+});
+
+// RPC with request/response
+const GetUser = rpc("GET_USER", { id: z.string() }, "USER", {
+  id: z.string(),
+  name: z.string(),
 });
 ```
 
-### 2. Create Messages
+### Create Router
 
 ```typescript
-import { createMessage } from "bun-ws-router/zod";
+import { createRouter, withZod } from "@ws-kit/zod";
 
-const ping = createMessage(PingSchema, undefined);
-if (ping.success) {
-  ws.send(JSON.stringify(ping.data));
-}
-
-const greeting = createMessage(GreetingSchema, {
-  name: "Alice",
-  message: "Hello!",
-});
-if (greeting.success) {
-  ws.send(JSON.stringify(greeting.data));
-}
+const router = createRouter<{ userId?: string }>()
+  .plugin(withZod())
+  .on(Ping, (ctx) => {
+    ctx.send(Pong, { timestamp: Date.now() });
+  })
+  .on(Greeting, (ctx) => {
+    console.log(`${ctx.payload.name}: ${ctx.payload.text}`);
+  })
+  .rpc(GetUser, async (ctx) => {
+    ctx.reply({ id: ctx.payload.id, name: "Alice" });
+  });
 ```
 
-### 3. Set Up Server
+### Start Server
 
 ```typescript
-import { createWSRouter } from "@repo/ws-protocol";
+import { createBunHandler } from "@ws-kit/bun";
 
-const router = createWSRouter();
-
-// Add custom handlers
-router.onMessage(GreetingSchema, (c) => {
-  console.log(`${c.payload.name}: ${c.payload.message}`);
-});
+const { fetch, websocket } = createBunHandler(router);
 
 Bun.serve({
   port: 3000,
   fetch(req, server) {
-    if (req.url.endsWith("/ws")) {
-      return router.upgrade(req, { server });
+    if (new URL(req.url).pathname === "/ws") {
+      return fetch(req, server);
     }
     return new Response("WebSocket server");
   },
-  websocket: router.websocket,
+  websocket,
 });
 ```
 
 ## Built-in Messages
 
-- `PING` / `PONG` - Connection heartbeat
-- `ECHO` - Echo server (example request/response)
-- `NOTIFICATION` - Server-to-client broadcast example
-- `ERROR` - Error reporting
-
-## Extending
-
-1. Add new messages to `messages.ts`
-2. Update `MessageSchema` discriminated union
-3. Add handlers in your router
+| Message         | Description                     |
+| --------------- | ------------------------------- |
+| `PING` / `PONG` | Connection heartbeat            |
+| `ECHO`          | Echo server example             |
+| `NOTIFICATION`  | Server-to-client broadcast      |
+| `ERROR`         | Protocol-level error reporting  |
+| `GET_USER`      | Example RPC with typed response |
 
 ## Project Structure
 
-```bash
+```
 ws-protocol/
-├── messages.ts   # Message definitions
-├── router.ts     # WebSocket router setup
+├── messages.ts   # Message schema definitions
+├── router.ts     # Router factory with handlers
 ├── example.ts    # Example server
 └── index.ts      # Public exports
 ```

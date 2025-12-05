@@ -4,6 +4,9 @@
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
   "editor.tabSize": 2,
   "[terraform]": {
     "editor.defaultFormatter": "hashicorp.terraform",
@@ -17,7 +20,8 @@
   "vitest.commandLine": "bun run vitest",
   "files.associations": {
     ".env.*.local": "properties",
-    ".env.*": "properties"
+    ".env.*": "properties",
+    "*.css": "tailwindcss"
   },
   "files.exclude": {
     "**/.cache": true,
@@ -44,6 +48,10 @@
     "**/bun.lock": true,
     "**/routeTree.gen.ts": true
   },
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*)[\"'`]"],
+    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*)[\"'`]"]
+  ],
   "terminal.integrated.env.linux": {
     "CACHE_DIR": "${workspaceFolder}/.cache"
   },

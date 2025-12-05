@@ -1,51 +1,27 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { createWSRouter } from "./router";
-import { NotificationSchema } from "./messages";
-import { createMessage } from "./schema";
-
 /**
- * Minimal WebSocket server example.
+ * Minimal WebSocket server example using WS-Kit.
  *
  * Run with: bun run example.ts
  */
 
-const router = createWSRouter();
+import { createBunHandler } from "@ws-kit/bun";
+import { memoryPubSub } from "@ws-kit/memory";
+import { withPubSub } from "@ws-kit/pubsub";
+import { createAppRouter, Notification } from "./index";
 
-// Track connections for broadcasting
-const connections = new Set<{ send: (data: string) => void }>();
+// Create the router with pub/sub support
+const router = createAppRouter().plugin(
+  withPubSub({ adapter: memoryPubSub() }),
+);
 
-// Add connection tracking to existing handlers
-// Note: This creates additional handlers alongside the ones in createWSRouter()
-// The warnings about "Handler for message type undefined" can be safely ignored
-router.onOpen((c) => {
-  connections.add(c.ws);
-});
-
-router.onClose((c) => {
-  connections.delete(c.ws);
-});
-
-// Add handler for echo messages with broadcast feature
-import { EchoSchema } from "./messages";
-
-router.onMessage(EchoSchema, (c) => {
-  console.log(`[WS] Echo message:`, c.payload.text);
-
-  // Broadcast notification if text is "broadcast"
-  if (c.payload.text === "broadcast") {
-    const notification = createMessage(NotificationSchema, {
-      level: "info",
-      message: "Hello to all connected clients!",
-    });
-
-    if (notification.success) {
-      const message = JSON.stringify(notification.data);
-      connections.forEach((ws) => ws.send(message));
-      console.log(`Broadcast sent to ${connections.size} clients`);
-    }
-  }
+// Create Bun WebSocket handlers
+const { fetch: handleWebSocket, websocket } = createBunHandler(router, {
+  authenticate() {
+    return { connectedAt: Date.now() };
+  },
 });
 
 const server = Bun.serve({
@@ -55,10 +31,18 @@ const server = Bun.serve({
     const url = new URL(req.url);
 
     if (url.pathname === "/ws") {
-      return router.upgrade(req, { server });
+      return handleWebSocket(req, server);
     }
 
-    // Simple HTTP endpoint for testing
+    // Broadcast endpoint for testing pub/sub
+    if (url.pathname === "/broadcast" && req.method === "POST") {
+      router.publish("notifications", Notification, {
+        level: "info",
+        message: "Hello to all connected clients!",
+      });
+      return new Response("Broadcast sent");
+    }
+
     return new Response(
       `
 WebSocket Server Example
@@ -66,9 +50,12 @@ WebSocket Server Example
 Connect to ws://localhost:3000/ws
 
 Try sending:
-- {"type": "PING", "meta": {}}
-- {"type": "ECHO", "payload": {"text": "Hello"}, "meta": {}}
-- {"type": "ECHO", "payload": {"text": "broadcast"}, "meta": {}}
+- {"type": "PING", "meta": {}, "payload": {}}
+- {"type": "ECHO", "meta": {}, "payload": {"text": "Hello"}}
+- {"type": "GET_USER", "meta": {"correlationId": "1"}, "payload": {"id": "123"}}
+
+Broadcast to all clients:
+- curl -X POST http://localhost:3000/broadcast
     `,
       {
         headers: { "content-type": "text/plain" },
@@ -76,11 +63,11 @@ Try sending:
     );
   },
 
-  websocket: router.websocket,
+  websocket,
 });
 
 console.log(`
-🚀 WebSocket server running at:
+WebSocket server running at:
    HTTP: http://localhost:${server.port}
    WebSocket: ws://localhost:${server.port}/ws
 
@@ -88,30 +75,46 @@ Test with:
    wscat -c ws://localhost:${server.port}/ws
 `);
 
-// Example client code (for reference)
+// ============================================================================
+// Example Client Code (for reference)
+// ============================================================================
 /*
-import { createMessage, PingSchema, EchoSchema, MessageSchema } from "@repo/ws-protocol";
+import { wsClient, message, z } from "@ws-kit/client/zod";
+import { Ping, Pong, Echo, GetUser } from "@repo/ws-protocol/messages";
 
-const ws = new WebSocket("ws://localhost:3000/ws");
+// Create typed client
+const client = wsClient({
+  url: "ws://localhost:3000/ws",
+  reconnect: { enabled: true },
+});
 
-ws.onopen = () => {
-  // Send ping
-  const ping = createMessage(PingSchema, undefined);
-  if (ping.success) {
-    ws.send(JSON.stringify(ping.data));
-  }
-  
-  // Send echo
-  const echo = createMessage(EchoSchema, { text: "Hello server!" });
-  if (echo.success) {
-    ws.send(JSON.stringify(echo.data));
-  }
-};
+// Handle incoming messages
+client.on(Pong, (msg) => {
+  console.log("Received Pong");
+});
 
-ws.onmessage = (event) => {
-  const message = MessageSchema.safeParse(JSON.parse(event.data));
-  if (message.success) {
-    console.log("Received:", message.data);
-  }
-};
+client.on(Echo, (msg) => {
+  console.log("Echo response:", msg.payload.text);
+});
+
+// Connect and send messages
+await client.connect();
+
+// Send ping
+client.send(Ping);
+
+// Send echo
+client.send(Echo, { text: "Hello server!" });
+
+// RPC request with typed response
+const user = await client.request(
+  GetUser,
+  { id: "123" },
+  GetUser.response,
+  { timeoutMs: 5000 }
+);
+console.log("User:", user.payload.name);
+
+// Cleanup
+await client.close();
 */

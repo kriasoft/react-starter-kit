@@ -1,26 +1,22 @@
 #!/usr/bin/env bun
 
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { execa } from "execa";
-import { globby } from "globby";
+import { join } from "node:path";
+import { Glob } from "bun";
 
 /**
- * Execute a command using execa with proper error handling
+ * Execute a command with inherited stdio
  */
 export async function execCommand(
   command: string,
   args: string[],
 ): Promise<void> {
-  try {
-    await execa(command, args, {
-      stdio: "inherit",
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(
-      `Command failed: ${command} ${args.join(" ")} - ${message}`,
-    );
+  const proc = Bun.spawn([command, ...args], {
+    stdio: ["inherit", "inherit", "inherit"],
+  });
+
+  const exitCode = await proc.exited;
+  if (exitCode !== 0) {
+    throw new Error(`Command failed: ${command} ${args.join(" ")}`);
   }
 }
 
@@ -29,13 +25,17 @@ export async function execCommand(
  */
 export async function formatGeneratedFiles(): Promise<void> {
   try {
-    const __dirname = dirname(fileURLToPath(import.meta.url));
-    const componentFiles = await globby(
-      join(__dirname, "../components/**/*.{ts,tsx}"),
-      {
-        absolute: true,
-      },
-    );
+    const componentsDir = join(import.meta.dirname, "../components");
+
+    const glob = new Glob("**/*.{ts,tsx}");
+    const componentFiles: string[] = [];
+
+    for await (const file of glob.scan({
+      cwd: componentsDir,
+      absolute: true,
+    })) {
+      componentFiles.push(file);
+    }
 
     if (componentFiles.length === 0) {
       return;
@@ -43,9 +43,7 @@ export async function formatGeneratedFiles(): Promise<void> {
 
     console.log("🎨 Formatting generated files with Prettier...");
 
-    await execa("bunx", ["prettier", "--write", ...componentFiles], {
-      stdio: "inherit",
-    });
+    await execCommand("bunx", ["prettier", "--write", ...componentFiles]);
 
     console.log("✨ Files formatted successfully");
   } catch (error) {

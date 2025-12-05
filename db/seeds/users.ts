@@ -2,18 +2,17 @@
 /* SPDX-License-Identifier: MIT */
 
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { schema as Db } from "../schema";
-
-type UserInsert = typeof Db.user.$inferInsert;
+import * as schema from "../schema";
+import { type NewUser, user } from "../schema";
 
 /**
  * Seeds the database with test user accounts.
  */
-export async function seedUsers(db: PostgresJsDatabase<typeof Db>) {
+export async function seedUsers(db: PostgresJsDatabase<typeof schema>) {
   console.log("Seeding users...");
 
   // Test user data with realistic names and email addresses
-  const users: UserInsert[] = [
+  const users: NewUser[] = [
     { name: "Alice Johnson", email: "alice@example.com", emailVerified: true },
     { name: "Bob Smith", email: "bob@example.com", emailVerified: true },
     {
@@ -30,8 +29,8 @@ export async function seedUsers(db: PostgresJsDatabase<typeof Db>) {
     { name: "Jack Thompson", email: "jack@example.com", emailVerified: true },
   ];
 
-  for (const user of users) {
-    await db.insert(Db.user).values(user).onConflictDoNothing();
+  for (const u of users) {
+    await db.insert(user).values(u).onConflictDoNothing();
   }
 
   console.log(`✅ Seeded ${users.length} test users`);

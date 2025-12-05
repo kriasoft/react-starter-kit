@@ -99,9 +99,9 @@ This installs 37 components including:
 
 Components are organized in the `packages/ui` workspace:
 
-```
+```bash
 packages/ui/
-├── components/           # Component files
+├── components/          # Component files
 │   ├── ui/              # shadcn/ui components
 │   │   ├── button.tsx
 │   │   ├── card.tsx
@@ -110,10 +110,10 @@ packages/ui/
 ├── lib/
 │   └── utils.ts         # Shared utilities (cn function)
 ├── scripts/             # Management scripts
-│   ├── ui-add.ts       # Add components
-│   ├── ui-list.ts      # List components
-│   ├── ui-update.ts    # Update components
-│   └── ui-essentials.ts # Install essentials
+│   ├── add.ts           # Add components
+│   ├── list.ts          # List components
+│   ├── update.ts        # Update components
+│   └── essentials.ts    # Install essentials
 └── package.json
 ```
 

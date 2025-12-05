@@ -18,7 +18,8 @@ export default ts.config(
     ignores: [
       ".cache",
       ".venv",
-      "**/.astro/**/*",
+      "**/.astro",
+      "**/.react-email",
       "**/dist",
       "**/node_modules",
       "docs/.vitepress/cache",
@@ -31,9 +32,9 @@ export default ts.config(
   ...ts.configs.recommended,
   prettierConfig,
 
-  // TypeScript parser for all .ts files
+  // TypeScript parser for all .ts/.tsx files
   {
-    files: ["**/*.ts"],
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,
     },
@@ -45,8 +46,11 @@ export default ts.config(
       "**/*.config.{js,ts,mjs}",
       "**/scripts/**/*",
       "apps/api/**/*",
+      "apps/email/**/*",
       "db/**/*",
       "infra/**/*",
+      "packages/core/**/*",
+      "packages/ws-protocol/**/*",
     ],
     languageOptions: {
       globals: { ...globals.node },
@@ -55,13 +59,14 @@ export default ts.config(
 
   // React/Browser environment (frontend apps)
   {
+    ...react.configs["recommended-typescript"],
     files: [
       "apps/app/**/*.{ts,tsx}",
       "apps/web/**/*.{ts,tsx}",
       "packages/ui/**/*.tsx",
     ],
-    ...react.configs["recommended-typescript"],
     rules: {
+      ...react.configs["recommended-typescript"].rules,
       "@eslint-react/dom/no-missing-iframe-sandbox": "off",
     },
     languageOptions: {
@@ -70,9 +75,7 @@ export default ts.config(
         ecmaVersion: "latest",
         sourceType: "module",
         jsxImportSource: "react",
-        ecmaFeatures: {
-          jsx: true,
-        },
+        ecmaFeatures: { jsx: true },
       },
       globals: {
         ...globals.browser,

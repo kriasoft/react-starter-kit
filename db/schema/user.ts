@@ -10,19 +10,22 @@
  * - `identity`: OAuth provider accounts (renamed from Better Auth's `account`)
  * - `verification`: Tokens for email verification and password resets
  *
- * @remarks
- * - All tables include required Better Auth fields
- * - Uses PostgreSQL with Drizzle ORM for Neon compatibility
- *
- * @see https://www.better-auth.com/docs/concepts/database - Better Auth database schema
- * @see https://www.better-auth.com/docs/adapters/drizzle - Drizzle adapter configuration
+ * @see https://www.better-auth.com/docs/concepts/database
+ * @see https://www.better-auth.com/docs/adapters/drizzle
  *
  * SPDX-FileCopyrightText: 2014-present Kriasoft
  * SPDX-License-Identifier: MIT
  */
 
 import { relations, sql } from "drizzle-orm";
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+} from "drizzle-orm/pg-core";
 
 /**
  * User accounts table.
@@ -32,111 +35,136 @@ export const user = pgTable("user", {
   id: text()
     .primaryKey()
     .default(sql`uuid_generate_v7()`),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified")
-    .$defaultFn(() => false)
-    .notNull(),
-  image: text("image"),
-  isAnonymous: boolean("is_anonymous")
-    .$default(() => false)
-    .notNull(),
-  // Timestamps
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+  name: text().notNull(),
+  email: text().notNull().unique(),
+  emailVerified: boolean().default(false).notNull(),
+  image: text(),
+  isAnonymous: boolean().default(false).notNull(),
+  createdAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+  updatedAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+export type User = typeof user.$inferSelect;
+export type NewUser = typeof user.$inferInsert;
 
 /**
  * Stores user session data for authentication.
  * Matches to the `session` table in Better Auth.
  */
-export const session = pgTable("session", {
-  id: text("id")
-    .primaryKey()
-    .default(sql`uuid_generate_v7()`),
-  expiresAt: timestamp("expires_at", {
-    withTimezone: true,
-    mode: "date",
-  }).notNull(),
-  token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  activeOrganizationId: text("active_organization_id"),
-  activeTeamId: text("active_team_id"),
-});
+export const session = pgTable(
+  "session",
+  {
+    id: text()
+      .primaryKey()
+      .default(sql`uuid_generate_v7()`),
+    expiresAt: timestamp({ withTimezone: true, mode: "date" }).notNull(),
+    token: text().notNull().unique(),
+    createdAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+    ipAddress: text(),
+    userAgent: text(),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    activeOrganizationId: text(),
+    activeTeamId: text(),
+  },
+  (table) => [
+    index("session_user_id_idx").on(table.userId),
+    index("session_active_org_id_idx").on(table.activeOrganizationId),
+    index("session_active_team_id_idx").on(table.activeTeamId),
+  ],
+);
+
+export type Session = typeof session.$inferSelect;
+export type NewSession = typeof session.$inferInsert;
 
 /**
  * Stores OAuth provider account information.
  * Matches to the `account` table in Better Auth.
  */
-export const identity = pgTable("identity", {
-  id: text("id")
-    .primaryKey()
-    .default(sql`uuid_generate_v7()`),
-  accountId: text("account_id").notNull(),
-  providerId: text("provider_id").notNull(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  accessToken: text("access_token"),
-  refreshToken: text("refresh_token"),
-  idToken: text("id_token"),
-  accessTokenExpiresAt: timestamp("access_token_expires_at", {
-    withTimezone: true,
-    mode: "date",
-  }),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
-    withTimezone: true,
-    mode: "date",
-  }),
-  scope: text("scope"),
-  password: text("password"),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
+export const identity = pgTable(
+  "identity",
+  {
+    id: text()
+      .primaryKey()
+      .default(sql`uuid_generate_v7()`),
+    accountId: text().notNull(),
+    providerId: text().notNull(),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    accessToken: text(),
+    refreshToken: text(),
+    idToken: text(),
+    accessTokenExpiresAt: timestamp({ withTimezone: true, mode: "date" }),
+    refreshTokenExpiresAt: timestamp({ withTimezone: true, mode: "date" }),
+    scope: text(),
+    password: text(),
+    createdAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    unique("identity_provider_account_unique").on(
+      table.providerId,
+      table.accountId,
+    ),
+    index("identity_user_id_idx").on(table.userId),
+  ],
+);
+
+export type Identity = typeof identity.$inferSelect;
+export type NewIdentity = typeof identity.$inferInsert;
 
 /**
  * Stores verification tokens (email verification, password reset, etc.)
  * Matches to the `verification` table in Better Auth.
  */
-export const verification = pgTable("verification", {
-  id: text("id")
-    .primaryKey()
-    .default(sql`uuid_generate_v7()`),
-  identifier: text("identifier").notNull(),
-  value: text("value").notNull(),
-  expiresAt: timestamp("expires_at", {
-    withTimezone: true,
-    mode: "date",
-  }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
+export const verification = pgTable(
+  "verification",
+  {
+    id: text()
+      .primaryKey()
+      .default(sql`uuid_generate_v7()`),
+    identifier: text().notNull(),
+    value: text().notNull(),
+    expiresAt: timestamp({ withTimezone: true, mode: "date" }).notNull(),
+    createdAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    unique("verification_identifier_value_unique").on(
+      table.identifier,
+      table.value,
+    ),
+    index("verification_identifier_idx").on(table.identifier),
+    index("verification_value_idx").on(table.value),
+    index("verification_expires_at_idx").on(table.expiresAt),
+  ],
+);
+
+export type Verification = typeof verification.$inferSelect;
+export type NewVerification = typeof verification.$inferInsert;
 
 // —————————————————————————————————————————————————————————————————————————————
 // Relations for better query experience

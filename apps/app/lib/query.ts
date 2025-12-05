@@ -30,32 +30,17 @@ export const queryClient = new QueryClient({
       // momentary network blips (user can manually retry for persistent failures)
       retry: 1,
       retryDelay: 1000,
-      // Global error handler for mutations
       onError: (error) => {
+        // Redirect to login on auth errors
+        if (error instanceof TRPCClientError) {
+          const trpcError = error as TRPCClientError<AppRouter>;
+          if (trpcError.data?.code === "UNAUTHORIZED") {
+            window.location.href = "/login";
+            return;
+          }
+        }
         console.error("Mutation error:", error);
       },
     },
-  },
-});
-
-// Set tRPC-specific defaults for better offline support
-queryClient.setQueryDefaults(["trpc"], {
-  networkMode: "offlineFirst",
-});
-
-// Global error handler for auth issues
-queryClient.setMutationDefaults(["trpc"], {
-  onError: (error) => {
-    if (error instanceof TRPCClientError) {
-      const trpcError = error as TRPCClientError<AppRouter>;
-      // Handle 401 unauthorized errors
-      if (
-        trpcError.data?.code === "UNAUTHORIZED" ||
-        trpcError.message?.includes("401")
-      ) {
-        // Trigger re-authentication flow
-        window.location.href = "/login";
-      }
-    }
   },
 });

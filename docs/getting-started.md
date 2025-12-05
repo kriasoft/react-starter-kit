@@ -17,7 +17,7 @@ cd my-app && bun install && bun dev
 
 Before diving in, make sure you have these essentials:
 
-- **Bun** 1.2.0+ ([install here](https://bun.sh)) — trust us, it's worth it
+- **Bun** 1.3.0+ ([install here](https://bun.sh)) — trust us, it's worth it
 - A **Cloudflare** account for deployment (free tier works great)
 - Your favorite code editor (VS Code recommended, but we won't judge)
 

@@ -14,14 +14,17 @@
     "example": "bun run example.ts"
   },
   "peerDependencies": {
-    "bun-ws-router": "^0.4.3",
-    "zod": "^4.1.5"
+    "@ws-kit/zod": "^0.10.1",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/bun": "^1.2.21",
-    "bun-ws-router": "^0.4.3",
-    "typescript": "~5.9.2",
-    "zod": "^4.1.5"
+    "@types/bun": "^1.3.3",
+    "@ws-kit/bun": "^0.10.0",
+    "@ws-kit/memory": "^0.10.0",
+    "@ws-kit/pubsub": "^0.10.1",
+    "@ws-kit/zod": "^0.10.1",
+    "typescript": "~5.9.3",
+    "zod": "^4.1.13"
   }
 }

@@ -1,11 +1,11 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
+import { passkeyClient } from "@better-auth/passkey/client";
 import {
   anonymousClient,
   emailOTPClient,
   organizationClient,
-  passkeyClient,
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { authConfig } from "./auth-config";
@@ -13,10 +13,8 @@ import { authConfig } from "./auth-config";
 /**
  * ARCHITECTURE: Better Auth Client Configuration
  *
- * This is the single Better Auth client instance used throughout the app.
- *
- * WARNING: Do NOT use the native useSession hook exported here.
- * Instead, use our TanStack Query wrappers in lib/queries/session.ts:
+ * WARNING: Do NOT use auth.useSession() directly.
+ * Instead, use TanStack Query wrappers in lib/queries/session.ts:
  * - useSessionQuery() - for components that handle loading states
  * - useSuspenseSessionQuery() - for components with Suspense boundaries
  *
@@ -35,8 +33,10 @@ const baseURL =
     ? window.location.origin
     : "http://localhost:5173";
 
-// Create the auth client with plugins and configuration
-export const authClient = createAuthClient({
+/**
+ * Auth client for use throughout the app.
+ */
+export const auth = createAuthClient({
   baseURL: baseURL + authConfig.api.basePath,
   plugins: [
     anonymousClient(),
@@ -46,9 +46,5 @@ export const authClient = createAuthClient({
   ],
 });
 
-// Alias for brevity - use either 'auth' or 'authClient' based on preference
-export const auth = authClient;
-
-// Export commonly used hooks and methods
-// NOTE: Prefer TanStack Query wrappers over useSession for consistency
-export const { useSession, signIn, signOut, signUp, getSession } = authClient;
+/** Auth client type for router context */
+export type AuthClient = typeof auth;

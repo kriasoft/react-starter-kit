@@ -14,7 +14,7 @@
 
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import schema from "../schema";
+import * as schema from "../schema";
 import { seedUsers } from "../seeds/users";
 
 // Import drizzle config to trigger environment loading

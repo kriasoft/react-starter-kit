@@ -1,57 +1,92 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { z } from "zod";
-import { messageSchema } from "./schema";
+/**
+ * WebSocket message schemas for the application protocol.
+ *
+ * Uses @ws-kit/zod for type-safe message definitions with Zod validation.
+ * All messages follow the envelope structure: { type, meta, payload }.
+ *
+ * @example
+ * ```ts
+ * import { Ping, Pong, Echo } from "@repo/ws-protocol";
+ *
+ * // Send a ping
+ * ctx.send(Ping);
+ *
+ * // Send an echo with payload
+ * ctx.send(Echo, { text: "Hello" });
+ * ```
+ */
+
+import { message, rpc, z } from "@ws-kit/zod";
+
+// ============================================================================
+// Connection Health
+// ============================================================================
 
 /**
  * Ping message for connection health checks.
+ * Server responds with Pong.
  */
-export const PingSchema = messageSchema("PING");
-export type PingMessage = z.infer<typeof PingSchema>;
+export const Ping = message("PING", { timestamp: z.number().optional() });
 
 /**
- * Pong message sent in response to PING.
+ * Pong message sent in response to Ping.
  */
-export const PongSchema = messageSchema("PONG");
-export type PongMessage = z.infer<typeof PongSchema>;
+export const Pong = message("PONG", { timestamp: z.number().optional() });
+
+// ============================================================================
+// Echo (Simple Request/Response)
+// ============================================================================
 
 /**
- * Echo request - simple example of request/response pattern.
+ * Echo message - simple example demonstrating request/response pattern.
+ * Server echoes back the same text.
  */
-export const EchoSchema = messageSchema("ECHO", {
-  text: z.string(),
-});
-export type EchoMessage = z.infer<typeof EchoSchema>;
+export const Echo = message("ECHO", { text: z.string() });
+
+// ============================================================================
+// Notifications
+// ============================================================================
 
 /**
- * Notification - simple example of server-to-client broadcast.
+ * Server notification broadcast to clients.
  */
-export const NotificationSchema = messageSchema("NOTIFICATION", {
+export const Notification = message("NOTIFICATION", {
   level: z.enum(["info", "warning", "error"]),
   message: z.string(),
 });
-export type NotificationMessage = z.infer<typeof NotificationSchema>;
+
+// ============================================================================
+// Error Handling
+// ============================================================================
 
 /**
- * Error message for communicating errors.
+ * Error message for communicating protocol-level errors.
  */
-export const ErrorSchema = messageSchema("ERROR", {
+export const ErrorMessage = message("ERROR", {
   code: z.enum(["INVALID_MESSAGE", "UNAUTHORIZED", "SERVER_ERROR"]),
   message: z.string(),
 });
-export type ErrorMessage = z.infer<typeof ErrorSchema>;
+
+// ============================================================================
+// RPC Examples
+// ============================================================================
 
 /**
- * All possible message types for easy discrimination.
+ * Get user by ID - example RPC with request/response pattern.
+ * Request: GET_USER with { id }
+ * Response: USER with { id, name, email }
  */
-export const MessageSchema = z.discriminatedUnion("type", [
-  PingSchema,
-  PongSchema,
-  EchoSchema,
-  NotificationSchema,
-  ErrorSchema,
-]);
+export const GetUser = rpc("GET_USER", { id: z.string() }, "USER", {
+  id: z.string(),
+  name: z.string(),
+  email: z.string().optional(),
+});
 
-export type Message = z.infer<typeof MessageSchema>;
-export type MessageType = Message["type"];
+// ============================================================================
+// Type Exports
+// ============================================================================
+
+export type { InferMessage, InferPayload, InferResponse } from "@ws-kit/zod";
