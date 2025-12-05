@@ -5,9 +5,9 @@ import { schema as Db } from "@repo/db";
 import { betterAuth } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { passkey } from "@better-auth/passkey";
 import { anonymous, organization } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins/email-otp";
-import { passkey } from "better-auth/plugins/passkey";
 import { sendOTP, sendPasswordReset, sendVerificationEmail } from "./email";
 import type { Env } from "./env";
 
