@@ -34,7 +34,7 @@ import {
 export const user = pgTable("user", {
   id: text()
     .primaryKey()
-    .default(sql`uuid_generate_v7()`),
+    .default(sql`gen_random_uuid()`),
   name: text().notNull(),
   email: text().notNull().unique(),
   emailVerified: boolean().default(false).notNull(),
@@ -61,7 +61,7 @@ export const session = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`uuid_generate_v7()`),
+      .default(sql`gen_random_uuid()`),
     expiresAt: timestamp({ withTimezone: true, mode: "date" }).notNull(),
     token: text().notNull().unique(),
     createdAt: timestamp({ withTimezone: true, mode: "date" })
@@ -98,7 +98,7 @@ export const identity = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`uuid_generate_v7()`),
+      .default(sql`gen_random_uuid()`),
     accountId: text().notNull(),
     providerId: text().notNull(),
     userId: text()
@@ -140,7 +140,7 @@ export const verification = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`uuid_generate_v7()`),
+      .default(sql`gen_random_uuid()`),
     identifier: text().notNull(),
     value: text().notNull(),
     expiresAt: timestamp({ withTimezone: true, mode: "date" }).notNull(),

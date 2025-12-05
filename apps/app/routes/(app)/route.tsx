@@ -28,15 +28,9 @@ export const Route = createFileRoute("/(app)")({
     // Check both user AND session exist to ensure valid auth state
     // Better Auth can return partial data during edge cases
     if (!session?.user || !session?.session) {
-      // Validate redirect URL to prevent open redirect attacks
-      const currentPath = location.pathname + location.search;
-      const safeRedirect = currentPath.startsWith("/") ? currentPath : "/";
-
       throw redirect({
         to: "/login",
-        search: {
-          redirect: safeRedirect,
-        },
+        search: { returnTo: location.href },
       });
     }
 

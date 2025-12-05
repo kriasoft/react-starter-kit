@@ -17,7 +17,7 @@ import { user } from "./user";
 export const organization = pgTable("organization", {
   id: text()
     .primaryKey()
-    .default(sql`uuid_generate_v7()`),
+    .default(sql`gen_random_uuid()`),
   name: text().notNull(),
   slug: text().notNull().unique(),
   logo: text(),
@@ -50,7 +50,7 @@ export const member = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`uuid_generate_v7()`),
+      .default(sql`gen_random_uuid()`),
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),

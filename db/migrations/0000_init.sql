@@ -1,7 +1,6 @@
-CREATE EXTENSION IF NOT EXISTS "pg_uuidv7";
 CREATE TYPE "public"."invitation_status" AS ENUM('pending', 'accepted', 'rejected', 'canceled');--> statement-breakpoint
 CREATE TABLE "invitation" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"email" text NOT NULL,
 	"inviter_id" text NOT NULL,
 	"organization_id" text NOT NULL,
@@ -17,7 +16,7 @@ CREATE TABLE "invitation" (
 );
 --> statement-breakpoint
 CREATE TABLE "team" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"organization_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -25,7 +24,7 @@ CREATE TABLE "team" (
 );
 --> statement-breakpoint
 CREATE TABLE "team_member" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"team_id" text NOT NULL,
 	"user_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -34,7 +33,7 @@ CREATE TABLE "team_member" (
 );
 --> statement-breakpoint
 CREATE TABLE "passkey" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text,
 	"public_key" text NOT NULL,
 	"user_id" text NOT NULL,
@@ -53,7 +52,7 @@ CREATE TABLE "passkey" (
 );
 --> statement-breakpoint
 CREATE TABLE "member" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" text NOT NULL,
 	"organization_id" text NOT NULL,
 	"role" text NOT NULL,
@@ -63,7 +62,7 @@ CREATE TABLE "member" (
 );
 --> statement-breakpoint
 CREATE TABLE "organization" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
 	"logo" text,
@@ -74,7 +73,7 @@ CREATE TABLE "organization" (
 );
 --> statement-breakpoint
 CREATE TABLE "identity" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"account_id" text NOT NULL,
 	"provider_id" text NOT NULL,
 	"user_id" text NOT NULL,
@@ -91,7 +90,7 @@ CREATE TABLE "identity" (
 );
 --> statement-breakpoint
 CREATE TABLE "session" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
 	"token" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -105,7 +104,7 @@ CREATE TABLE "session" (
 );
 --> statement-breakpoint
 CREATE TABLE "user" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"email" text NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
@@ -117,7 +116,7 @@ CREATE TABLE "user" (
 );
 --> statement-breakpoint
 CREATE TABLE "verification" (
-	"id" text PRIMARY KEY DEFAULT uuid_generate_v7() NOT NULL,
+	"id" text PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"identifier" text NOT NULL,
 	"value" text NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,

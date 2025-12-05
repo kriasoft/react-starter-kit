@@ -3,7 +3,9 @@
 
 import { auth } from "@/lib/auth";
 import { authConfig } from "@/lib/auth-config";
+import { sessionQueryKey } from "@/lib/queries/session";
 import { queryClient } from "@/lib/query";
+import { useRouterState } from "@tanstack/react-router";
 import { Button } from "@repo/ui";
 
 interface SocialLoginProps {
@@ -12,24 +14,25 @@ interface SocialLoginProps {
 }
 
 export function SocialLogin({ onError, isDisabled }: SocialLoginProps) {
+  // Get returnTo from router state (already sanitized by validateSearch)
+  const returnTo = useRouterState({
+    select: (s) => (s.location.search as { returnTo?: string }).returnTo,
+  });
+
   const handleGoogleLogin = async () => {
     try {
       onError(""); // Clear any previous errors
 
-      // Clear any stale session data before OAuth redirect
-      queryClient.removeQueries();
+      // Clear stale session before OAuth redirect
+      queryClient.removeQueries({ queryKey: sessionQueryKey });
 
-      // Capture intended destination for post-OAuth redirect
-      const currentPath = window.location.pathname + window.location.search;
-      const returnUrl =
-        currentPath !== "/login"
-          ? currentPath
-          : authConfig.oauth.postLoginRedirect;
+      // Use sanitized returnTo or root as default
+      const destination = returnTo || "/";
 
-      // Initiate Google OAuth flow - redirect to login page first
+      // Initiate Google OAuth flow
       await auth.signIn.social({
         provider: "google",
-        callbackURL: `${authConfig.oauth.defaultCallbackUrl}?returnUrl=${encodeURIComponent(returnUrl)}`,
+        callbackURL: `${authConfig.oauth.defaultCallbackUrl}?returnTo=${encodeURIComponent(destination)}`,
       });
 
       // Note: This code won't execute as OAuth redirects the page
