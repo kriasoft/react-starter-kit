@@ -19,8 +19,7 @@ if (import.meta.env.DEV) {
   links.push(
     loggerLink({
       enabled: (opts) =>
-        (process.env.NODE_ENV === "development" &&
-          typeof window !== "undefined") ||
+        (import.meta.env.DEV && typeof window !== "undefined") ||
         (opts.direction === "down" && opts.result instanceof Error),
     }),
   );
