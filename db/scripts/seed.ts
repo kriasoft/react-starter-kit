@@ -21,7 +21,7 @@ import { seedUsers } from "../seeds/users";
 import "../drizzle.config";
 
 const client = postgres(process.env.DATABASE_URL!, { max: 1 });
-const db = drizzle(client, { schema });
+const db = drizzle(client, { schema, casing: "snake_case" });
 
 console.log("🌱 Starting database seeding...");
 

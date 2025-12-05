@@ -20,7 +20,7 @@ export const team = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`uuid_generate_v7()`),
+      .default(sql`gen_random_uuid()`),
     name: text().notNull(),
     organizationId: text()
       .notNull()
@@ -48,7 +48,7 @@ export const teamMember = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`uuid_generate_v7()`),
+      .default(sql`gen_random_uuid()`),
     teamId: text()
       .notNull()
       .references(() => team.id, { onDelete: "cascade" }),

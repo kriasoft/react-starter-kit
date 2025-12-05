@@ -89,3 +89,17 @@ import { organization, member } from "@/db/schema/organization";
 - Missing URL: ensure `DATABASE_URL` is set and starts with `postgres://` or `postgresql://`.
 - Wrong environment: confirm `ENVIRONMENT`/`NODE_ENV` matches the target and the corresponding `.env.*` file exists.
 - Drift/conflicts: run `bun --filter @repo/db check`; regenerate migrations if schema and migrations diverge.
+
+## UUID v7
+
+The schema uses `gen_random_uuid()` by default for maximum compatibility. For time-ordered UUIDs (better index locality), replace with:
+
+- **PostgreSQL 18+**: `uuidv7()` (native)
+- **Earlier versions**: `uuid_generate_v7()` (requires [pg_uuidv7](https://github.com/fboulnois/pg_uuidv7) extension
+
+```typescript
+// Example: enable UUID v7 in schema
+id: text()
+  .primaryKey()
+  .default(sql`uuidv7()`);
+```

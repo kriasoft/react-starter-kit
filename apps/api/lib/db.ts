@@ -54,7 +54,7 @@ export function createDb(db: Hyperdrive) {
     onnotice: () => {}, // Suppress notices in Workers
   });
 
-  return drizzle(client, { schema });
+  return drizzle(client, { schema, casing: "snake_case" });
 }
 
 /**

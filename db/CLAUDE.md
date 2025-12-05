@@ -3,7 +3,7 @@
 ## Schema (Drizzle casing: snake_case)
 
 - user, session, identity, verification, organization, member, team, team_member, invitation, passkey.
-- UUID v7 ids via `uuid_generate_v7()` from the `pg_uuidv7` extension (Neon has it pre-installed).
+- UUID ids via `gen_random_uuid()` (built-in). For UUID v7, use `uuidv7()` (PostgreSQL 18+) or `uuid_generate_v7()` (pg_uuidv7 extension).
 - Timestamps use `timestamp(..., withTimezone: true, mode: "date")` with `defaultNow()` and `$onUpdate`.
 - Indexes on all FK columns; composite uniques on membership, team membership, identity provider/account, and invitation (org/email/team).
 - No FKs on `session.activeOrganizationId/activeTeamId` to stay compatible with Better Auth's dynamic context.
@@ -32,7 +32,7 @@
 ## Conventions
 
 - Keep singular table names and snake_case columns; avoid adding FKs to dynamic Better Auth fields.
-- Preserve UUID v7 defaults; do not swap to `gen_random_uuid()`.
+- Use `gen_random_uuid()` for portability. UUID v7 alternatives: `uuidv7()` (PG 18+) or `uuid_generate_v7()` (pg_uuidv7).
 - Keep `updatedAt` on all tables for audit trails.
 
 ## References

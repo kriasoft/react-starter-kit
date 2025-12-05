@@ -32,7 +32,7 @@ type AuthEnv = Pick<
  * Key behaviors:
  * - Uses custom 'identity' table instead of default 'account' model for OAuth accounts
  * - Allows users to create up to 5 organizations with 'owner' role as creator
- * - Disables automatic ID generation (assumes custom ID logic in schema)
+ * - Delegates ID generation to database (schema defaults to gen_random_uuid)
  * - Supports anonymous authentication alongside email/password and Google OAuth
  *
  * @param db Drizzle database instance - must include all required auth tables (user, session, identity, organization, member, invitation, verification)

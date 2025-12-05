@@ -45,7 +45,7 @@ export const invitation = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`uuid_generate_v7()`),
+      .default(sql`gen_random_uuid()`),
     email: text().notNull(),
     inviterId: text()
       .notNull()

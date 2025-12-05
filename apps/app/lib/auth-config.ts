@@ -15,10 +15,8 @@
 export const authConfig = {
   // OAuth provider configuration
   oauth: {
-    // Default callback URL after OAuth authentication - redirect to login page first
+    // Callback URL after OAuth authentication - returns to login page for session sync
     defaultCallbackUrl: "/login",
-    // Final destination after login page processing
-    postLoginRedirect: "/",
     // Supported OAuth providers
     providers: ["google"] as const,
   },

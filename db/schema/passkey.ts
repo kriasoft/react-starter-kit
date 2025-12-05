@@ -32,7 +32,7 @@ export const passkey = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`uuid_generate_v7()`),
+      .default(sql`gen_random_uuid()`),
     name: text(),
     publicKey: text().notNull(),
     userId: text()
