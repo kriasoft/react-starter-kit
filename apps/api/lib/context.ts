@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import type { DbSchema } from "@repo/db";
+import type { DatabaseSchema } from "@repo/db";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { Session, User } from "better-auth/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
@@ -39,10 +39,10 @@ export type TRPCContext = {
   info: CreateHTTPContextOptions["info"];
 
   /** Drizzle ORM database instance (PostgreSQL via Hyperdrive cached connection) */
-  db: PostgresJsDatabase<DbSchema>;
+  db: PostgresJsDatabase<DatabaseSchema>;
 
   /** Drizzle ORM database instance (PostgreSQL via Hyperdrive direct connection) */
-  dbDirect: PostgresJsDatabase<DbSchema>;
+  dbDirect: PostgresJsDatabase<DatabaseSchema>;
 
   /** Authenticated user session (null if not authenticated) */
   session: Session | null;
@@ -78,8 +78,8 @@ export type TRPCContext = {
 export type AppContext = {
   Bindings: Env;
   Variables: {
-    db: PostgresJsDatabase<DbSchema>;
-    dbDirect: PostgresJsDatabase<DbSchema>;
+    db: PostgresJsDatabase<DatabaseSchema>;
+    dbDirect: PostgresJsDatabase<DatabaseSchema>;
     auth: Auth;
     resend?: Resend;
     session: Session | null;

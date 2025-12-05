@@ -1,13 +1,13 @@
 /**
  * Database schema for multi-tenant SaaS organizations and memberships. Defines
- * tables: organization, member, invite with role-based access control.
+ * tables: organization, member with role-based access control.
  *
  * SPDX-FileCopyrightText: 2014-present Kriasoft
  * SPDX-License-Identifier: MIT
  */
 
 import { relations, sql } from "drizzle-orm";
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
 /**
@@ -15,41 +15,66 @@ import { user } from "./user";
  * Each organization represents a separate tenant with isolated data.
  */
 export const organization = pgTable("organization", {
-  id: text("id")
+  id: text()
     .primaryKey()
     .default(sql`uuid_generate_v7()`),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  logo: text("logo"),
-  metadata: text("metadata"),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+  name: text().notNull(),
+  slug: text().notNull().unique(),
+  logo: text(),
+  metadata: text(), // Better Auth expects string (JSON serialized)
+  createdAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+  updatedAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
 });
 
+export type Organization = typeof organization.$inferSelect;
+export type NewOrganization = typeof organization.$inferInsert;
+
 /**
  * Organization membership table for Better Auth organization plugin.
  * Links users to organizations with specific roles.
+ *
+ * Role values (Better Auth defaults):
+ * - "owner": Full control, can delete organization
+ * - "admin": Can manage members and settings
+ * - "member": Standard access
+ *
+ * @see apps/api/lib/auth.ts creatorRole config
  */
-export const member = pgTable("member", {
-  id: text("id")
-    .primaryKey()
-    .default(sql`uuid_generate_v7()`),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  organizationId: text("organization_id")
-    .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
-  role: text("role").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .notNull(),
-});
+export const member = pgTable(
+  "member",
+  {
+    id: text()
+      .primaryKey()
+      .default(sql`uuid_generate_v7()`),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text()
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    role: text().notNull(), // "owner" | "admin" | "member"
+    createdAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    unique("member_user_org_unique").on(table.userId, table.organizationId),
+    index("member_user_id_idx").on(table.userId),
+    index("member_organization_id_idx").on(table.organizationId),
+  ],
+);
+
+export type Member = typeof member.$inferSelect;
+export type NewMember = typeof member.$inferInsert;
 
 // —————————————————————————————————————————————————————————————————————————————
 // Relations for better query experience

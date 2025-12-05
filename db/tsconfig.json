@@ -1,6 +1,7 @@
 {
   "extends": "../packages/typescript-config/node.jsonc",
   "compilerOptions": {
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
     "composite": true,
     "declaration": true,
     "emitDeclarationOnly": true,

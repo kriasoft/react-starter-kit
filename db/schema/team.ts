@@ -7,7 +7,7 @@
  */
 
 import { relations, sql } from "drizzle-orm";
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
 import { organization } from "./organization";
 import { user } from "./user";
 
@@ -15,41 +15,63 @@ import { user } from "./user";
  * Teams table for Better Auth teams plugin.
  * Teams belong to organizations and contain members.
  */
-export const team = pgTable("team", {
-  id: text("id")
-    .primaryKey()
-    .default(sql`uuid_generate_v7()`),
-  name: text("name").notNull(),
-  organizationId: text("organization_id")
-    .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
+export const team = pgTable(
+  "team",
+  {
+    id: text()
+      .primaryKey()
+      .default(sql`uuid_generate_v7()`),
+    name: text().notNull(),
+    organizationId: text()
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    createdAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("team_organization_id_idx").on(table.organizationId)],
+);
+
+export type Team = typeof team.$inferSelect;
+export type NewTeam = typeof team.$inferInsert;
 
 /**
  * Team membership table for Better Auth teams plugin.
  * Links users to teams within organizations.
  */
-export const teamMember = pgTable("team_member", {
-  id: text("id")
-    .primaryKey()
-    .default(sql`uuid_generate_v7()`),
-  teamId: text("team_id")
-    .notNull()
-    .references(() => team.id, { onDelete: "cascade" }),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
-    .defaultNow()
-    .notNull(),
-});
+export const teamMember = pgTable(
+  "team_member",
+  {
+    id: text()
+      .primaryKey()
+      .default(sql`uuid_generate_v7()`),
+    teamId: text()
+      .notNull()
+      .references(() => team.id, { onDelete: "cascade" }),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    unique("team_member_team_user_unique").on(table.teamId, table.userId),
+    index("team_member_team_id_idx").on(table.teamId),
+    index("team_member_user_id_idx").on(table.userId),
+  ],
+);
+
+export type TeamMember = typeof teamMember.$inferSelect;
+export type NewTeamMember = typeof teamMember.$inferInsert;
 
 // —————————————————————————————————————————————————————————————————————————————
 // Relations for better query experience
