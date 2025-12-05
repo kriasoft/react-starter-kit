@@ -9,7 +9,6 @@ import { createRoot } from "react-dom/client";
 import { auth } from "./lib/auth";
 import { queryClient } from "./lib/query";
 import { routeTree } from "./lib/routeTree.gen";
-import { api, trpcClient } from "./lib/trpc";
 import "./styles/globals.css";
 
 const router = createRouter({
@@ -26,15 +25,13 @@ const root = createRoot(container!);
 root.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <api.Provider client={trpcClient} queryClient={queryClient}>
-        <RouterProvider router={router} />
-        {import.meta.env.DEV && (
-          <ReactQueryDevtools
-            initialIsOpen={false}
-            buttonPosition="bottom-right"
-          />
-        )}
-      </api.Provider>
+      <RouterProvider router={router} />
+      {import.meta.env.DEV && (
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          buttonPosition="bottom-right"
+        />
+      )}
     </QueryClientProvider>
   </StrictMode>,
 );

@@ -2,15 +2,17 @@
 /* SPDX-License-Identifier: MIT */
 
 import type { AppRouter } from "@repo/api";
-import { httpBatchLink, loggerLink } from "@trpc/client";
-import type { CreateTRPCReact } from "@trpc/react-query";
-import { createTRPCReact } from "@trpc/react-query";
-
-export const api: CreateTRPCReact<AppRouter, unknown> =
-  createTRPCReact<AppRouter>();
+import {
+  createTRPCClient,
+  httpBatchLink,
+  type TRPCLink,
+  loggerLink,
+} from "@trpc/client";
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import { queryClient } from "./query";
 
 // Build links array conditionally based on environment
-const links = [];
+const links: TRPCLink<AppRouter>[] = [];
 
 // Add logger link in development for debugging
 if (import.meta.env.DEV) {
@@ -44,6 +46,9 @@ links.push(
   }),
 );
 
-export const trpcClient = api.createClient({
-  links,
+export const trpcClient = createTRPCClient<AppRouter>({ links });
+
+export const api = createTRPCOptionsProxy<AppRouter>({
+  client: trpcClient,
+  queryClient,
 });
