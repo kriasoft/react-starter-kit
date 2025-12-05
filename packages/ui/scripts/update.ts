@@ -2,13 +2,11 @@
 
 import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
-import { basename, dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { basename, join } from "node:path";
 import { execCommand, formatGeneratedFiles } from "./format-utils.js";
 
 async function getInstalledComponents(): Promise<string[]> {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const componentsDir = join(__dirname, "../components");
+  const componentsDir = join(import.meta.dirname, "../components");
 
   if (!existsSync(componentsDir)) {
     throw new Error(`Components directory not found: ${componentsDir}`);
@@ -62,34 +60,46 @@ async function updateComponents(): Promise<void> {
   }
 }
 
-// Add option to update specific component
-const args = process.argv.slice(2);
-
-if (args.includes("--help") || args.includes("-h")) {
-  console.log("🔄 shadcn/ui Component Updater");
-  console.log("===============================\n");
-  console.log("Usage:");
-  console.log(
-    "  bun run ui:update              Update all installed components",
-  );
-  console.log("  bun run ui:update <component>  Update a specific component");
-  console.log("\nExamples:");
-  console.log("  bun run ui:update");
-  console.log("  bun run ui:update button");
-  process.exit(0);
+async function updateSpecificComponent(component: string): Promise<void> {
+  console.log(`🚀 Updating specific component: ${component}...`);
+  try {
+    await execCommand("bunx", [
+      "shadcn@latest",
+      "add",
+      component,
+      "--overwrite",
+      "--yes",
+    ]);
+    await formatGeneratedFiles();
+    console.log(`✅ ${component} updated successfully`);
+  } catch (error) {
+    console.error(`❌ Failed to update ${component}:`, error);
+    process.exit(1);
+  }
 }
 
-if (args.length > 0) {
-  console.log(`🚀 Updating specific component: ${args[0]}...`);
-  execCommand("bunx", ["shadcn@latest", "add", args[0], "--overwrite", "--yes"])
-    .then(async () => {
-      await formatGeneratedFiles();
-      console.log(`✅ ${args[0]} updated successfully`);
-    })
-    .catch((error) => {
-      console.error(`❌ Failed to update ${args[0]}:`, error);
-      process.exit(1);
-    });
-} else {
-  updateComponents().catch(console.error);
+async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+
+  if (args.includes("--help") || args.includes("-h")) {
+    console.log("🔄 shadcn/ui Component Updater");
+    console.log("===============================\n");
+    console.log("Usage:");
+    console.log(
+      "  bun run ui:update              Update all installed components",
+    );
+    console.log("  bun run ui:update <component>  Update a specific component");
+    console.log("\nExamples:");
+    console.log("  bun run ui:update");
+    console.log("  bun run ui:update button");
+    process.exit(0);
+  }
+
+  if (args.length > 0) {
+    await updateSpecificComponent(args[0]);
+  } else {
+    await updateComponents();
+  }
 }
+
+main().catch(console.error);

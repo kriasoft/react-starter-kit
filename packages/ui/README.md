@@ -175,25 +175,25 @@ Consuming apps **must** include UI package paths in their Tailwind CSS v4 config
 
 ```bash
 # From project root
-bun run ui:add button          # Add a single component
-bun run ui:add button card      # Add multiple components
-bun run ui:essentials           # Install curated essential components (37 components)
+bun ui:add button               # Add a single component
+bun ui:add button card          # Add multiple components
+bun ui:essentials               # Install curated essential components
 
 # From packages/ui directory
-bun run ui:add dialog
+bun run add dialog
 ```
 
 ### Listing Components
 
 ```bash
-bun run ui:list                 # Show all installed components with metadata
+bun ui:list                     # Show all installed components with metadata
 ```
 
 ### Updating Components
 
 ```bash
-bun run ui:update               # Update all components to latest versions
-bun run ui:update button        # Update specific component
+bun ui:update                   # Update all components to latest versions
+bun ui:update button            # Update specific component
 ```
 
 ### Essential Components
@@ -207,8 +207,8 @@ The `ui:essentials` script installs a curated set of 37 components perfect for m
 - **Data Display**: avatar, tooltip, popover
 
 ```bash
-bun run ui:essentials --list    # Preview components without installing
-bun run ui:essentials           # Install all essential components
+bun ui:essentials --list        # Preview components without installing
+bun ui:essentials               # Install all essential components
 ```
 
 All scripts include:

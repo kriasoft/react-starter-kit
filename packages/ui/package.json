@@ -24,10 +24,10 @@
     "dev": "tsc --watch",
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
-    "ui:list": "bun scripts/ui-list.ts",
-    "ui:update": "bun scripts/ui-update.ts",
-    "ui:add": "bun scripts/ui-add.ts",
-    "ui:essentials": "bun scripts/ui-essentials.ts"
+    "add": "bun scripts/add.ts",
+    "list": "bun scripts/list.ts",
+    "update": "bun scripts/update.ts",
+    "essentials": "bun scripts/essentials.ts"
   },
   "peerDependencies": {
     "react": ">=19.2.1",
@@ -52,8 +52,6 @@
   "devDependencies": {
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "execa": "^9.6.1",
-    "globby": "^16.0.0",
     "tailwindcss": "^4.1.17",
     "typescript": "~5.9.3"
   },

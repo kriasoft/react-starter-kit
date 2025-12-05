@@ -2,8 +2,7 @@
 
 import { existsSync } from "node:fs";
 import { readdir, stat } from "node:fs/promises";
-import { basename, dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { basename, join } from "node:path";
 
 interface ComponentInfo {
   name: string;
@@ -26,8 +25,7 @@ async function listComponents(): Promise<void> {
   console.log("📋 shadcn/ui Component Inventory");
   console.log("=============================\n");
 
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const componentsDir = join(__dirname, "../components");
+  const componentsDir = join(import.meta.dirname, "../components");
 
   if (!existsSync(componentsDir)) {
     console.log(`❌ Components directory not found: ${componentsDir}`);
