@@ -51,11 +51,23 @@ export async function sendEmail(
 
   const resend = createResendClient(env.RESEND_API_KEY);
 
+  if (!options.text && !options.html) {
+    throw new Error("Either text or html content is required");
+  }
+
+  if (options.html && !options.text) {
+    throw new Error(
+      "Plain text version required when sending HTML email. Use renderEmailToText() from @repo/email.",
+    );
+  }
+
   try {
     const result = await resend.emails.send({
-      ...options,
       from: options.from || env.RESEND_EMAIL_FROM,
-      text: options.text || options.html?.replace(/<[^>]*>/g, "") || "",
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      text: options.text as string,
     });
 
     if (result.error) {
