@@ -1,136 +1,101 @@
-# Infrastructure
+# Infra
 
-Terraform configuration for deploying this application to a cloud provider.
+Terraform configuration for deploying to Cloudflare (edge) or GCP (hybrid).
+
+## Design Goals
+
+- **One obvious default:** Edge stack handles most SaaS apps with zero GCP overhead.
+- **Stacks are composable:** Modules have no credentials; stacks wire them together.
+- **State isolation:** Each `envs/<env>/<stack>` directory = one Terraform root = one state file.
+
+## Which Stack?
+
+| Choose **edge** (default) | Choose **hybrid**                  |
+| ------------------------- | ---------------------------------- |
+| Most SaaS apps            | Need GCP services (Vertex AI, etc) |
+| Fastest cold starts       | Require Cloud Run containers       |
+| Minimal cost              | Need Cloud SQL (managed Postgres)  |
+| Neon for database         | Already on GCP                     |
 
 ## Structure
 
-- `environments/` - Environment-specific configurations (`preview`, `staging`, `prod`)
-- `modules/` - Reusable Terraform modules for database connectivity
+```bash
+infra/
+  modules/         # Atomic resources (no credentials)
+  stacks/          # Composable architectures
+    edge/          # Cloudflare Workers + Hyperdrive + DNS
+    hybrid/        # Cloud Run + Cloud SQL + GCS (+ optional CF edge)
+  envs/            # Terraform roots (providers + backend + state)
+    dev/edge/
+    preview/edge/
+    staging/edge/
+    prod/edge/
+  templates/       # Copy-paste templates for hybrid envs and remote state
+```
 
-## Modules
-
-### Hyperdrive (`modules/hyperdrive`)
-
-- Creates Cloudflare Hyperdrive configurations for Neon PostgreSQL connectivity
-- Provides connection pooling and edge optimization for database access
-- Configurations: direct (no-cache) and cached (60s TTL) variants
-
-## Environments
-
-Each environment includes:
-
-- `main.tf` - Module instantiation
-- `variables.tf` - Input variables
-- `outputs.tf` - Output values
-- `provider.tf` - Provider configuration
-- `backend.tf` - Remote state configuration
-- `terraform.tfvars.example` - Example variables
-- `terraform.tfvars` - Environment-specific variables
-
-## Usage
+## Quickstart (Edge Stack)
 
 ```bash
-# Navigate to environment
-cd environments/preview
-
-# Copy and configure variables
-cp terraform.tfvars.example terraform.tfvars
+# Configure variables
+cp infra/envs/dev/edge/terraform.tfvars.example infra/envs/dev/edge/terraform.tfvars
 # Edit terraform.tfvars with your values
 
 # Initialize and apply
-terraform init
-terraform plan
-terraform apply
+terraform -chdir=infra/envs/dev/edge init
+terraform -chdir=infra/envs/dev/edge apply
+
+# Get API URL
+terraform -chdir=infra/envs/dev/edge output api_url
 ```
+
+Required variables: `cloudflare_api_token`, `cloudflare_account_id`, `project_slug`, `environment`, `neon_database_url`
+
+Optional: `cloudflare_zone_id`, `hostname` (for custom domains)
+
+Pass secrets via environment variables (recommended for CI/CD):
+
+```bash
+export TF_VAR_cloudflare_api_token="..."
+export TF_VAR_neon_database_url="$DATABASE_URL"
+terraform -chdir=infra/envs/dev/edge apply
+```
+
+## Hybrid Stack (GCP)
+
+Copy the hybrid template and configure:
+
+```bash
+cp -r infra/templates/env-roots/hybrid infra/envs/prod/hybrid
+# Edit terraform.tfvars with GCP credentials and settings
+terraform -chdir=infra/envs/prod/hybrid init
+terraform -chdir=infra/envs/prod/hybrid apply
+```
+
+## Remote State
+
+By default, Terraform uses local state. For team collaboration, configure a remote backend:
+
+```bash
+# Edge stack (R2)
+cp infra/templates/backend-r2.example.hcl infra/envs/prod/edge/backend.hcl
+terraform -chdir=infra/envs/prod/edge init -backend-config=backend.hcl -migrate-state
+
+# Hybrid stack (GCS)
+cp infra/templates/backend-gcs.example.hcl infra/envs/prod/hybrid/backend.hcl
+terraform -chdir=infra/envs/prod/hybrid init -backend-config=backend.hcl -migrate-state
+```
+
+## API Token Permissions (Cloudflare)
+
+- Zone:DNS:Edit
+- Zone:Zone:Read
+- Account:Workers Scripts:Edit
+- Account:Cloudflare Hyperdrive:Edit
 
 ## Requirements
 
 - Terraform >= 1.12
-- Cloudflare account with API token
-- Required variables: `project_name` (lowercase, hyphens only), `cloudflare_account_id`
+- Cloudflare account (edge stack)
+- GCP project (hybrid stack)
 
-## Development Setup
-
-For the best development experience with Terraform files:
-
-- **VS Code**: Install the HashiCorp Terraform extension (included in project recommendations)
-- **Formatting**: Run `terraform fmt -recursive` to format all .tf files
-- **Validation**: Use `terraform validate` to check syntax before applying
-
-## Security
-
-### API Token Permissions
-
-Your Cloudflare API token needs the following permissions:
-
-- **Zone:DNS:Edit** (for DNS management)
-- **Zone:Zone:Read** (for domain management)
-- **Zone:Zone Settings:Edit** (for configuration)
-- **Account:Cloudflare Hyperdrive:Edit** (for database connection pooling)
-
-### Secrets Management
-
-- Keep `terraform.tfvars` files secure and never commit them to version control
-- The `.gitignore` should include `*.tfvars` (except `.example` files)
-- Store sensitive values in environment variables when possible
-
-## State Management
-
-This configuration uses remote state storage for team collaboration:
-
-- State files are stored in Cloudflare R2 (configured in `backend.tf`)
-- Each environment maintains separate state files
-- Initialize with `terraform init` to download remote state
-- State locking prevents concurrent modifications
-
-## Outputs
-
-After successful deployment, use outputs to configure your application:
-
-```bash
-# Get Hyperdrive configuration IDs for apps/edge/wrangler.jsonc
-terraform output hyperdrive_direct_id
-terraform output hyperdrive_cached_id
-```
-
-Add these values to your application's environment configuration.
-
-## Troubleshooting
-
-### Common Issues
-
-**Authentication Error**
-
-```
-Error: Authentication error (10000)
-```
-
-- Verify your Cloudflare API token has correct permissions
-- Check `CLOUDFLARE_API_TOKEN` environment variable is set
-
-**Resource Already Exists**
-
-```
-Error: resource already exists
-```
-
-- Check if resources exist in Cloudflare dashboard
-- Import existing resources: `terraform import <resource> <id>`
-
-**State Lock Error**
-
-```
-Error: state locked
-```
-
-- Another user may be running terraform
-- Force unlock (use carefully): `terraform force-unlock <lock-id>`
-
-**Invalid Project Name**
-
-```
-Error: invalid project name
-```
-
-- Use only lowercase letters, numbers, and hyphens
-- Must start with a letter, max 63 characters
+See `docs/specs/infra-terraform.md` for design details.

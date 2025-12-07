@@ -1,0 +1,17 @@
+# GCP Configuration
+gcp_project_id = "my-gcp-project"
+gcp_region     = "us-central1"
+
+# Project Configuration
+project_slug = "myapp"
+environment  = "prod"
+
+# API Configuration
+api_image      = "gcr.io/my-gcp-project/api:latest"
+cloud_sql_tier = "db-f1-micro"
+
+# --- Edge routing (optional) ---
+# cloudflare_account_id = "your-account-id"
+# cloudflare_zone_id    = "your-zone-id"
+# hostname              = "api.example.com"
+# TF_VAR_cloudflare_api_token: set via environment variable in CI
