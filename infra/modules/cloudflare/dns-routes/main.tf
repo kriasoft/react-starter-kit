@@ -19,7 +19,8 @@ resource "cloudflare_dns_record" "record" {
 resource "cloudflare_workers_route" "route" {
   for_each = var.routes
 
-  zone_id = var.zone_id
-  pattern = each.key
-  script  = each.value
+  account_id = var.account_id
+  zone_id    = var.zone_id
+  pattern    = each.key
+  script     = each.value
 }

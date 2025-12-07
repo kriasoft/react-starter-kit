@@ -24,8 +24,9 @@ module "dns_routes" {
   count  = var.hostname != "" ? 1 : 0
   source = "../../modules/cloudflare/dns-routes"
 
-  zone_id  = var.cloudflare_zone_id
-  hostname = var.hostname
+  account_id = var.cloudflare_account_id
+  zone_id    = var.cloudflare_zone_id
+  hostname   = var.hostname
 
   # Workers module must export script_name for route binding
   routes = {
