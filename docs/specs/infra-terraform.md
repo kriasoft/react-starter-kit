@@ -6,10 +6,10 @@ Two deployment stacks with clear separation of concerns.
 
 **Non-goals:** Multi-region orchestration, blue-green deployments, auto-scaling policies. These belong in CI/CD or dedicated tooling.
 
-| Stack               | Components                                   | Use Case                |
-| ------------------- | -------------------------------------------- | ----------------------- |
-| **edge** (default)  | Cloudflare Workers, R2, Neon via Hyperdrive  | Most SaaS apps          |
-| **hybrid** (opt-in) | Cloud Run, Cloud SQL, GCS + optional CF edge | GCP services, Vertex AI |
+| Stack               | Components                                  | Use Case                |
+| ------------------- | ------------------------------------------- | ----------------------- |
+| **edge** (default)  | Hyperdrive, DNS (Workers via Wrangler)      | Most SaaS apps          |
+| **hybrid** (opt-in) | Cloud Run, Cloud SQL, GCS + optional CF DNS | GCP services, Vertex AI |
 
 ## Directory Structure
 
@@ -19,16 +19,15 @@ infra/
     cloudflare/
       hyperdrive/    # Database connection pooling
       r2-bucket/     # Object storage
-      workers/       # Worker scripts
-      dns-routes/    # DNS and worker routes
+      dns/           # Proxied DNS records
     gcp/
       cloud-run/     # Container deployment
       cloud-sql/     # Managed PostgreSQL
       gcs/           # Object storage
 
   stacks/            # Architectural compositions
-    edge/            # Cloudflare-only
-    hybrid/          # GCP + optional CF edge
+    edge/            # Hyperdrive + DNS (Workers via Wrangler)
+    hybrid/          # GCP + optional CF DNS
 
   envs/              # Terraform roots (providers + backend + state)
     dev/edge/
@@ -155,7 +154,7 @@ One simple set of rules:
    ```hcl
    resource "cloudflare_hyperdrive_config" "hyperdrive" {}
    resource "cloudflare_r2_bucket"         "bucket"     {}
-   resource "cloudflare_workers_script"    "script"     {}
+   resource "cloudflare_dns_record"        "record"     {}
    resource "google_cloud_run_v2_service"  "service"    {}
    resource "google_sql_database_instance" "instance"   {}
    ```
@@ -167,22 +166,13 @@ One simple set of rules:
    resource "cloudflare_r2_bucket" "backups" {}
    ```
 
-3. With `for_each`, keep the label singular.
+3. Module names describe architectural role; resource names describe the concrete thing.
 
    ```hcl
-   resource "cloudflare_workers_route" "route" {
-     for_each = var.routes
+   module "hyperdrive" {
+     # contains: cloudflare_hyperdrive_config.hyperdrive
    }
-   # → cloudflare_workers_route.route["api/*"]
-   ```
-
-4. Module names describe architectural role; resource names describe the concrete thing.
-
-   ```hcl
-   module "worker" {
-     # contains: cloudflare_workers_script.script
-   }
-   # → module.worker.script_name
+   # → module.hyperdrive.id
    ```
 
 ## Known Limitations

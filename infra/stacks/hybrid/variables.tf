@@ -35,12 +35,6 @@ variable "enable_edge_routing" {
   default     = false
 }
 
-variable "cloudflare_account_id" {
-  type        = string
-  description = "Cloudflare account ID (required when enable_edge_routing = true)"
-  default     = ""
-}
-
 variable "cloudflare_zone_id" {
   type        = string
   description = "Cloudflare zone ID (required when enable_edge_routing = true and hostname is set)"

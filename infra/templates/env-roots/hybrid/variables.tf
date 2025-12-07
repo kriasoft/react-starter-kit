@@ -35,10 +35,6 @@ variable "cloud_sql_tier" {
 #   sensitive = true
 # }
 #
-# variable "cloudflare_account_id" {
-#   type = string
-# }
-#
 # variable "cloudflare_zone_id" {
 #   type    = string
 #   default = ""

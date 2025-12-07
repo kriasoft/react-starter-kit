@@ -1,3 +1,6 @@
+# Hybrid stack: GCP backend with optional Cloudflare edge.
+# Workers are deployed separately via Wrangler.
+
 # Cloud SQL PostgreSQL
 module "database" {
   source = "../../modules/gcp/cloud-sql"
@@ -35,31 +38,12 @@ module "api" {
   }
 }
 
-# --- Optional Cloudflare edge routing ---
-# WARNING: Only enable edge routing in hybrid if you are NOT also deploying
-# the edge stack for this {env, domain}. They would conflict over routes.
-
-module "worker" {
-  count  = var.enable_edge_routing ? 1 : 0
-  source = "../../modules/cloudflare/workers"
-
-  account_id = var.cloudflare_account_id
-  name       = "${var.project_slug}-edge-${var.environment}"
-
-  env_vars = {
-    ORIGIN_URL = module.api.url
-  }
-}
-
-module "dns_routes" {
+# Optional: Cloudflare DNS for edge routing.
+# Deploy the edge proxy Worker separately via Wrangler.
+module "dns" {
   count  = var.enable_edge_routing && var.hostname != "" ? 1 : 0
-  source = "../../modules/cloudflare/dns-routes"
+  source = "../../modules/cloudflare/dns"
 
-  account_id = var.cloudflare_account_id
-  zone_id    = var.cloudflare_zone_id
-  hostname   = var.hostname
-
-  routes = {
-    "api/*" = module.worker[0].script_name
-  }
+  zone_id  = var.cloudflare_zone_id
+  hostname = var.hostname
 }

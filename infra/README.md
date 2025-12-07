@@ -23,8 +23,8 @@ Terraform configuration for deploying to Cloudflare (edge) or GCP (hybrid).
 infra/
   modules/         # Atomic resources (no credentials)
   stacks/          # Composable architectures
-    edge/          # Cloudflare Workers + Hyperdrive + DNS
-    hybrid/        # Cloud Run + Cloud SQL + GCS (+ optional CF edge)
+    edge/          # Hyperdrive + DNS (Workers deployed via Wrangler)
+    hybrid/        # Cloud Run + Cloud SQL + GCS (+ optional CF DNS)
   envs/            # Terraform roots (providers + backend + state)
     dev/edge/
     preview/edge/
@@ -44,8 +44,11 @@ cp infra/envs/dev/edge/terraform.tfvars.example infra/envs/dev/edge/terraform.tf
 terraform -chdir=infra/envs/dev/edge init
 terraform -chdir=infra/envs/dev/edge apply
 
-# Get API URL
-terraform -chdir=infra/envs/dev/edge output api_url
+# Get Hyperdrive ID and copy to wrangler.jsonc
+terraform -chdir=infra/envs/dev/edge output hyperdrive_id
+
+# Deploy Worker via Wrangler
+cd apps/api && bun wrangler deploy --env dev
 ```
 
 Required variables: `cloudflare_api_token`, `cloudflare_account_id`, `project_slug`, `environment`, `neon_database_url`
@@ -87,10 +90,16 @@ terraform -chdir=infra/envs/prod/hybrid init -backend-config=backend.hcl -migrat
 
 ## API Token Permissions (Cloudflare)
 
+Terraform token:
+
 - Zone:DNS:Edit
 - Zone:Zone:Read
-- Account:Workers Scripts:Edit
 - Account:Cloudflare Hyperdrive:Edit
+
+Wrangler token (for Worker deployment):
+
+- Account:Workers Scripts:Edit
+- Zone:Workers Routes:Edit
 
 ## Requirements
 

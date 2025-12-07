@@ -9,16 +9,11 @@ module "stack" {
   cloud_sql_tier = var.cloud_sql_tier
 
   # --- Edge routing (optional) ---
-  # enable_edge_routing   = true
-  # cloudflare_account_id = var.cloudflare_account_id
-  # cloudflare_zone_id    = var.cloudflare_zone_id
-  # hostname              = var.hostname
+  # enable_edge_routing = true
+  # cloudflare_zone_id  = var.cloudflare_zone_id
+  # hostname            = var.hostname
 }
 
 output "api_url" {
   value = module.stack.api_url
 }
-
-# output "edge_api_url" {
-#   value = module.stack.edge_api_url
-# }

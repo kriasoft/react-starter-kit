@@ -1,3 +1,6 @@
+# Proxied DNS record for Cloudflare Workers routing.
+# Workers and routes are managed via Wrangler, not Terraform.
+
 terraform {
   required_providers {
     cloudflare = {
@@ -14,13 +17,4 @@ resource "cloudflare_dns_record" "record" {
   ttl     = 1 # Auto (required for proxied records)
   proxied = true
   comment = "Managed by Terraform"
-}
-
-resource "cloudflare_workers_route" "route" {
-  for_each = var.routes
-
-  account_id = var.account_id
-  zone_id    = var.zone_id
-  pattern    = each.key
-  script     = each.value
 }
