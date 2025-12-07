@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { z } from "zod";
 import { protectedProcedure, router } from "../lib/trpc.js";
 

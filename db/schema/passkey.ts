@@ -1,12 +1,5 @@
-/**
- * WebAuthn (FIDO2) passkey credentials used by Better Auth's passkey plugin.
- * Each row = one registered authenticator (device / platform credential) for a user.
- *
- * @see https://www.better-auth.com/docs/plugins/passkey
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
- */
+// WebAuthn passkey credentials for Better Auth
+// @see https://www.better-auth.com/docs/plugins/passkey
 
 import { sql } from "drizzle-orm";
 import {

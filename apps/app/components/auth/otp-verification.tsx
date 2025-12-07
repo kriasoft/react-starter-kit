@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { auth } from "@/lib/auth";
 import { Button, Input } from "@repo/ui";
 import { useState } from "react";

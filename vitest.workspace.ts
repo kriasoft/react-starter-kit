@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { defineWorkspace } from "vitest/config";
 import { workspaces } from "./package.json";
 

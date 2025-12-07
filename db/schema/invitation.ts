@@ -1,10 +1,4 @@
-/**
- * Database schema for Better Auth invitation system.
- * Defines invitation table for organization and team invitations.
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
- */
+// Better Auth invitation system for organization and team invites
 
 import { relations, sql } from "drizzle-orm";
 import {

@@ -1,10 +1,4 @@
-/**
- * Database schema for multi-tenant SaaS organizations and memberships. Defines
- * tables: organization, member with role-based access control.
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
- */
+// Multi-tenant organizations and memberships with role-based access control
 
 import { relations, sql } from "drizzle-orm";
 import { index, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";

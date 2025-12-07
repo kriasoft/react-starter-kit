@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import {
   EmailVerification,
   OTPEmail,
@@ -12,10 +9,6 @@ import { Resend } from "resend";
 import { z } from "zod";
 import type { Env } from "./env";
 
-/**
- * Email options for sending emails via Resend API.
- * HTML content is required; text fallback is auto-generated if not provided.
- */
 export interface EmailOptions {
   to: string | string[];
   subject: string;
@@ -24,13 +17,6 @@ export interface EmailOptions {
   from?: string;
 }
 
-/**
- * Create a Resend client instance with the provided API key.
- *
- * @param apiKey Resend API key
- * @returns Resend client instance
- * @throws Error if API key is not provided
- */
 export function createResendClient(apiKey: string): Resend {
   if (!apiKey) {
     throw new Error("RESEND_API_KEY is required");
@@ -40,24 +26,17 @@ export function createResendClient(apiKey: string): Resend {
 
 /**
  * Send an email using the Resend client.
- * Validates recipients and uses configured FROM address.
- *
- * [VALIDATION] Validates all recipient emails before attempting send.
- * [FALLBACK] Auto-strips HTML tags for text version if not provided.
  *
  * @param env Environment variables containing Resend configuration
  * @param options Email configuration
- * @returns Promise resolving to Resend response
- * @throws Error if email validation fails or sending fails
  */
 export async function sendEmail(
   env: Pick<Env, "RESEND_API_KEY" | "RESEND_EMAIL_FROM">,
   options: EmailOptions,
 ) {
-  // Email validation schema using Zod (only validates format, not deliverability)
   const emailSchema = z.email();
 
-  // [VALIDATION] Pre-validate all recipients to fail fast before API call
+  // Validate all recipients before sending
   const recipients = Array.isArray(options.to) ? options.to : [options.to];
   for (const email of recipients) {
     const result = emailSchema.safeParse(email);
@@ -66,21 +45,31 @@ export async function sendEmail(
     }
   }
 
-  // [CONFIG] FROM address must be configured for compliance and deliverability
   if (!env.RESEND_EMAIL_FROM) {
     throw new Error("RESEND_EMAIL_FROM environment variable is required");
   }
 
   const resend = createResendClient(env.RESEND_API_KEY);
 
+  if (!options.text && !options.html) {
+    throw new Error("Either text or html content is required");
+  }
+
+  if (options.html && !options.text) {
+    throw new Error(
+      "Plain text version required when sending HTML email. Use renderEmailToText() from @repo/email.",
+    );
+  }
+
   try {
     const result = await resend.emails.send({
-      ...options,
       from: options.from || env.RESEND_EMAIL_FROM,
-      text: options.text || options.html?.replace(/<[^>]*>/g, "") || "", // NOTE: Basic HTML stripping; consider html-to-text for complex content
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      text: options.text as string,
     });
 
-    // Check if Resend returned an error in the response
     if (result.error) {
       throw new Error(
         `Resend API error: ${result.error.message || result.error.name || "Unknown error"}`,
@@ -98,14 +87,8 @@ export async function sendEmail(
 /**
  * Send email verification message.
  *
- * [SECURITY] URL should contain time-limited, signed token.
- * [PERFORMANCE] Component rendering deferred until send to minimize cold start impact.
- *
- * @example
- * ```typescript
- * import { sendVerificationEmail } from "./lib/email";
- * await sendVerificationEmail(env, { user, url });
- * ```
+ * @param env Environment variables
+ * @param options User and verification URL (should be time-limited, signed token)
  */
 export async function sendVerificationEmail(
   env: Pick<
@@ -138,13 +121,8 @@ export async function sendVerificationEmail(
 /**
  * Send password reset email.
  *
- * [SECURITY] URL must contain single-use token with short expiration.
- *
- * @example
- * ```typescript
- * import { sendPasswordReset } from "./lib/email";
- * await sendPasswordReset(env, { user, url });
- * ```
+ * @param env Environment variables
+ * @param options User and reset URL (must be single-use token with short expiration)
  */
 export async function sendPasswordReset(
   env: Pick<
@@ -177,14 +155,8 @@ export async function sendPasswordReset(
 /**
  * Send OTP email for authentication.
  *
- * [SECURITY] OTP should be rate-limited, time-bound (5-10 min), and single-use.
- * [UX] Subject line varies by type to help users identify purpose.
- *
- * @example
- * ```typescript
- * import { sendOTP } from "./lib/email";
- * await sendOTP(env, { email, otp, type: "sign-in" });
- * ```
+ * @param env Environment variables
+ * @param options Email, OTP code (must be rate-limited, time-bound, single-use), and type
  */
 export async function sendOTP(
   env: Pick<

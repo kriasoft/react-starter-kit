@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import type { DatabaseSchema } from "@repo/db";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { Session, User } from "better-auth/types";

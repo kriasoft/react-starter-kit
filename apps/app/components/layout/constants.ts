@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { Activity, FileText, Home, Settings, Users } from "lucide-react";
 
 export const sidebarItems = [

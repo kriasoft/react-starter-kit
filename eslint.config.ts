@@ -1,10 +1,8 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import react from "@eslint-react/eslint-plugin";
 import js from "@eslint/js";
 import * as tsParser from "@typescript-eslint/parser";
 import prettierConfig from "eslint-config-prettier";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
 import ts from "typescript-eslint";
 
@@ -12,7 +10,7 @@ import ts from "typescript-eslint";
  * ESLint configuration.
  * @see https://eslint.org/docs/latest/use/configure/
  */
-export default ts.config(
+export default defineConfig(
   // Global ignores
   {
     ignores: [
@@ -30,7 +28,6 @@ export default ts.config(
   // Base configs for all files
   js.configs.recommended,
   ...ts.configs.recommended,
-  prettierConfig,
 
   // TypeScript parser for all .ts/.tsx files
   {
@@ -57,11 +54,12 @@ export default ts.config(
     },
   },
 
-  // React/Browser environment (frontend apps)
+  // React environment (frontend apps, email templates)
   {
     ...react.configs["recommended-typescript"],
     files: [
       "apps/app/**/*.{ts,tsx}",
+      "apps/email/**/*.tsx",
       "apps/web/**/*.{ts,tsx}",
       "packages/ui/**/*.tsx",
     ],
@@ -84,6 +82,14 @@ export default ts.config(
     },
   },
 
+  // Email templates: add Node globals (server-side rendering)
+  {
+    files: ["apps/email/**/*.tsx"],
+    languageOptions: {
+      globals: { ...globals.node },
+    },
+  },
+
   // UI package specific overrides
   {
     files: ["packages/ui/**/*.tsx"],
@@ -91,4 +97,7 @@ export default ts.config(
       "@eslint-react/no-forward-ref": "off",
     },
   },
+
+  // Prettier must be last to override any formatting rules
+  prettierConfig,
 );

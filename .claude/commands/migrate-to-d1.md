@@ -6,15 +6,8 @@ Migrate the project from Neon to Cloudflare D1 database following these steps:
 
 ```typescript
 /**
- * Drizzle ORM configuration supporting dual-mode database connections.
- *
- * Local: Uses Wrangler-generated SQLite file from .wrangler/state/v3/d1/ directory.
- * Remote: Connects to Cloudflare D1 production database via HTTPS using account credentials.
- *
- * Environment detection based on npm lifecycle events or DB environment variable.
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
+ * Drizzle ORM configuration for dual-mode (local/remote) D1 connections.
+ * Local: Wrangler SQLite file. Remote: D1 via HTTPS with account credentials.
  */
 
 import { defineConfig } from "drizzle-kit";

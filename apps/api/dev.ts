@@ -1,17 +1,7 @@
 /**
- * Local development server that emulates Cloudflare Workers runtime with Neon database.
+ * @file Local development server emulating Cloudflare Workers runtime.
  *
- * WARNING: This file uses getPlatformProxy which requires wrangler.jsonc configuration.
- * Hyperdrive bindings must be configured for both HYPERDRIVE_CACHED and HYPERDRIVE_DIRECT.
- *
- * @example
- * ```bash
- * bun --filter @repo/api dev
- * bun --filter @repo/api dev --env=staging  # Use staging environment config
- * ```
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
+ * Requires wrangler.jsonc with HYPERDRIVE_CACHED and HYPERDRIVE_DIRECT bindings.
  */
 
 import { Hono } from "hono";
@@ -35,27 +25,23 @@ type CloudflareEnv = {
   HYPERDRIVE_DIRECT: Hyperdrive;
 } & Env;
 
-// [INITIALIZATION]
 const app = new Hono<AppContext>();
 
-// NOTE: persist:true maintains D1 state across restarts (.wrangler directory)
-// Environment defaults to 'dev' unless --env flag is provided
+// persist:true maintains state across restarts in .wrangler directory
 const cf = await getPlatformProxy<CloudflareEnv>({
   configPath: "./wrangler.jsonc",
   environment: args.env ?? "dev",
   persist: true,
 });
 
-// [CONTEXT INJECTION]
-// Creates two database connections per request:
-// - db: Uses Hyperdrive caching (read-heavy queries)
-// - dbDirect: Bypasses cache (write operations, transactions)
+// Inject context with two database connections:
+// - db: Hyperdrive caching for read-heavy queries
+// - dbDirect: No cache for writes and transactions
 app.use("*", async (c, next) => {
   const db = createDb(cf.env.HYPERDRIVE_CACHED);
   const dbDirect = createDb(cf.env.HYPERDRIVE_DIRECT);
 
-  // Priority: Cloudflare bindings > process.env > empty string
-  // Required for local dev where secrets aren't in wrangler.jsonc
+  // Merge secrets from process.env (local dev) with Cloudflare bindings
   const secretKeys = [
     "BETTER_AUTH_SECRET",
     "GOOGLE_CLIENT_ID",
@@ -72,7 +58,6 @@ app.use("*", async (c, next) => {
     ),
     APP_NAME: process.env.APP_NAME || cf.env.APP_NAME || "Example",
     APP_ORIGIN:
-      // Prefer origin set by `apps/app` at runtime
       c.req.header("x-forwarded-origin") ||
       process.env.APP_ORIGIN ||
       c.env.APP_ORIGIN ||
@@ -85,7 +70,6 @@ app.use("*", async (c, next) => {
   await next();
 });
 
-// Routes from ./index.js mounted at root
 app.route("/", api);
 
 export default app;

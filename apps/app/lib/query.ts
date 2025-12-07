@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import type { AppRouter } from "@repo/api";
 import { QueryClient } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";

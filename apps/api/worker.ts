@@ -1,12 +1,7 @@
 /**
- * Cloudflare Workers entry point for the API.
+ * @file Cloudflare Workers entrypoint.
  *
- * This module configures the core API app with Cloudflare Workers-specific
- * context initialization, including Hyperdrive database bindings and
- * authentication setup.
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
+ * Initializes database and auth context, then mounts the core Hono app.
  */
 
 import { Hono } from "hono";

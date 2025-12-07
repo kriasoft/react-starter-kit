@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-
 import { execCommand, formatGeneratedFiles } from "./format-utils.js";
 
 // Essential components for most applications

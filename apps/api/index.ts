@@ -1,11 +1,7 @@
 /**
- * Main exports for the API package.
+ * @file Public API surface for the backend package.
  *
- * This file serves as the public interface for the API package, exporting
- * utilities, routers, types, and the core application for library usage.
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
+ * Re-exports the Hono app, tRPC router, and core utilities.
  */
 
 // Core utilities and services

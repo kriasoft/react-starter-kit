@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { useState } from "react";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
