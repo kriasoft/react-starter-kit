@@ -10,9 +10,6 @@
  * ```
  */
 
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import DataLoader from "dataloader";
 import { inArray } from "drizzle-orm";
 import { user } from "@repo/db/schema/user.js";

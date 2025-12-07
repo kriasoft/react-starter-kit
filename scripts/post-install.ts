@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { execa } from "execa";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";

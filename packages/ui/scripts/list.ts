@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-
 import { existsSync } from "node:fs";
 import { readdir, stat } from "node:fs/promises";
 import { basename, join } from "node:path";

@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { useLoginForm } from "@/hooks/use-login-form";
 import { Button, Card, CardContent, Input, cn } from "@repo/ui";
 import { Mail } from "lucide-react";

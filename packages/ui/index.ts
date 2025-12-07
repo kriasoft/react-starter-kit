@@ -1,5 +1,8 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
+/**
+ * @file UI component library entrypoint.
+ *
+ * Re-exports all shadcn/ui components, utilities, and hooks.
+ */
 
 export * from "./components/avatar";
 export * from "./components/button";

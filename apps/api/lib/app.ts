@@ -1,12 +1,7 @@
 /**
- * Core Hono application for the API.
+ * @file Hono app construction and tRPC router initialization.
  *
- * This module contains the pure API routing logic that can be used across
- * different deployment environments (local development, Cloudflare Workers, etc.).
- * The app expects database and auth to be initialized upstream via middleware.
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
+ * Combines authentication, tRPC, and health check endpoints into a single HTTP router.
  */
 
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";

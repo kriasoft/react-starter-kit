@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 

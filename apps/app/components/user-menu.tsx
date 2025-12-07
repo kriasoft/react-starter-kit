@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { signOut, useSessionQuery } from "@/lib/queries/session";
 import { Avatar, AvatarFallback, Button } from "@repo/ui";
 import { useQueryClient } from "@tanstack/react-query";

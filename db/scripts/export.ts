@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-
 /**
  * PostgreSQL database export utility with schema/data options
  *
@@ -22,9 +21,6 @@
  * - Process exits with code 1 on any failure for CI/CD integration
  * - File permissions on output SQL files are restricted (readable by owner only)
  * - Script handles concurrent executions without filename conflicts
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
  */
 
 import { $ } from "bun";

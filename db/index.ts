@@ -1,5 +1,8 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
+/**
+ * @file Database schema exports.
+ *
+ * Re-exports Drizzle ORM schemas for users, organizations, and authentication.
+ */
 
 import * as schema from "./schema";
 

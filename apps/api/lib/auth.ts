@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { schema as Db } from "@repo/db";
 import { betterAuth } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";

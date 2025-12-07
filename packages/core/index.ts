@@ -1,4 +1,7 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
+/**
+ * @file Core package entrypoint.
+ *
+ * Placeholder for shared utilities and WebSocket functionality.
+ */
 
 export default {};

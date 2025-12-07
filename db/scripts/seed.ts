@@ -1,16 +1,5 @@
 #!/usr/bin/env bun
-
-/**
- * Database seeding script
- *
- * Usage:
- *   bun scripts/seed.ts
- *   bun --env ENVIRONMENT=staging scripts/seed.ts
- *   bun --env ENVIRONMENT=prod scripts/seed.ts
- *
- * SPDX-FileCopyrightText: 2014-present Kriasoft
- * SPDX-License-Identifier: MIT
- */
+// Usage: bun scripts/seed.ts [--env ENVIRONMENT=staging|prod]
 
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";

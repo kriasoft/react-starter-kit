@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { LoginForm } from "@/components/auth/login-form";
 import { getSafeRedirectUrl } from "@/lib/auth-config";
 import { invalidateSession, sessionQueryOptions } from "@/lib/queries/session";

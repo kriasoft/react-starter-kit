@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { auth } from "@/lib/auth";
 import { authConfig } from "@/lib/auth-config";
 import { Button } from "@repo/ui";

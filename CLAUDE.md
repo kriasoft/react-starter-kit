@@ -83,3 +83,4 @@ bun app:deploy                 # Deploy main React app
 2. **Modern TypeScript:** Leverage latest features (e.g., const assertions, template literals); avoid legacy patterns like `_` prefixes for private variables.
 3. **Imports:** Use named imports (e.g., `import { foo } from "bar";`) for tree-shaking, readability, and modern standards; avoid namespace imports (e.g., `import * as baz from "bar";`).
 4. **Bun/Hono Idioms:** Incorporate Bun-specific features (e.g., native APIs) and Hono middleware patterns for performance and simplicity.
+5. **Comments:** Use brief `//` rationale comments for non-obvious logic; reserve `@file` JSDoc blocks for core architectural files only.

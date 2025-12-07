@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { UserMenu } from "@/components/user-menu";
 import { sidebarItems } from "./constants";
 import { SidebarNav } from "./sidebar-nav";
