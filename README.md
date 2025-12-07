@@ -91,7 +91,7 @@ This starter kit uses a thoughtfully organized monorepo structure that promotes 
 
 ## Prerequisites
 
-- [Bun](https://bun.sh/) v1.2+ (replaces Node.js and npm)
+- [Bun](https://bun.sh/) v1.3+ (replaces Node.js and npm)
 - [VS Code](https://code.visualstudio.com/) with our [recommended extensions](.vscode/extensions.json)
 - [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) browser extension (recommended)
 - [Cloudflare account](https://dash.cloudflare.com/sign-up) for deployment
