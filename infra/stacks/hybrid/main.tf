@@ -55,8 +55,9 @@ module "dns_routes" {
   count  = var.enable_edge_routing && var.hostname != "" ? 1 : 0
   source = "../../modules/cloudflare/dns-routes"
 
-  zone_id  = var.cloudflare_zone_id
-  hostname = var.hostname
+  account_id = var.cloudflare_account_id
+  zone_id    = var.cloudflare_zone_id
+  hostname   = var.hostname
 
   routes = {
     "api/*" = module.worker[0].script_name
