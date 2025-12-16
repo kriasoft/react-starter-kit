@@ -4,6 +4,7 @@
   // [METADATA]
   // Application identity and Cloudflare runtime compatibility settings.
   "name": "example-web",
+  "main": "./worker.ts",
   "compatibility_date": "2025-08-15",
   "compatibility_flags": [],
   "workers_dev": false,
@@ -11,8 +12,28 @@
   // [ASSETS]
   // Serves bundled JavaScript, CSS, images, and other static assets.
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // CRITICAL: Force worker execution for "/" before serving static index.html
+    // This enables dynamic authentication-aware routing at the root URL:
+    // - Authenticated users → proxied to app dashboard
+    // - Unauthenticated users → served marketing site
+    // Without this, static index.html would be served directly, bypassing worker logic
+    "run_worker_first": ["/"]
   },
+
+  // [SERVICE BINDINGS]
+  // Connect to other workers for dynamic routing
+  "services": [
+    {
+      "binding": "APP_SERVICE",
+      "service": "example-app"
+    },
+    {
+      "binding": "API_SERVICE",
+      "service": "example-api"
+    }
+  ],
 
   // [ENVIRONMENTS]
   // Environment-specific configurations for different deployment stages.
@@ -35,6 +56,16 @@
     // [ENV:DEVELOPMENT]
     // Command: bun wrangler dev
     "dev": {
+      "services": [
+        {
+          "binding": "APP_SERVICE",
+          "service": "example-app"
+        },
+        {
+          "binding": "API_SERVICE",
+          "service": "example-api"
+        }
+      ],
       "vars": {
         "ENVIRONMENT": "development"
       }
@@ -44,6 +75,16 @@
     // Pre-production testing environment that mirrors production setup.
     // Command: bun wrangler deploy --env staging
     "staging": {
+      "services": [
+        {
+          "binding": "APP_SERVICE",
+          "service": "example-app"
+        },
+        {
+          "binding": "API_SERVICE",
+          "service": "example-api"
+        }
+      ],
       // prettier-ignore
       "routes": [
         { "pattern": "staging.example.com/*", "zone_name": "example.com" }
@@ -56,6 +97,16 @@
     // [ENV:PREVIEW]
     // Command: bun wrangler deploy --env preview
     "preview": {
+      "services": [
+        {
+          "binding": "APP_SERVICE",
+          "service": "example-app"
+        },
+        {
+          "binding": "API_SERVICE",
+          "service": "example-api"
+        }
+      ],
       // prettier-ignore
       "routes": [
         { "pattern": "preview.example.com/*", "zone_name": "example.com" }
