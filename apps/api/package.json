@@ -18,13 +18,13 @@
     "logs": "wrangler tail --env-file ../../.env --env-file ../../.env.local"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.77",
+    "@ai-sdk/openai": "^3.0.1",
     "@better-auth/passkey": "^1.4.5",
     "@repo/core": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/email": "workspace:*",
     "@trpc/server": "^11.7.2",
-    "ai": "^5.0.107",
+    "ai": "^6.0.3",
     "better-auth": "^1.4.5",
     "dataloader": "^2.2.3",
     "drizzle-orm": "^0.45.0",
