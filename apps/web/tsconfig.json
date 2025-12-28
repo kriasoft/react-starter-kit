@@ -14,13 +14,7 @@
     },
     "types": ["astro/client", "@cloudflare/workers-types"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.json",
-    "**/*.astro",
-    "types/**/*.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.json", "**/*.astro"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
   "references": [{ "path": "../api" }, { "path": "../../packages/ui" }]
 }

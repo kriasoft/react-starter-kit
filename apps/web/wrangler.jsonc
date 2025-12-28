@@ -14,25 +14,16 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    // CRITICAL: Force worker execution for "/" before serving static index.html
-    // This enables dynamic authentication-aware routing at the root URL:
-    // - Authenticated users → proxied to app dashboard
-    // - Unauthenticated users → served marketing site
-    // Without this, static index.html would be served directly, bypassing worker logic
+    // Force worker execution for "/" to enable auth-aware routing
+    // See docs/adr/001-auth-hint-cookie.md
     "run_worker_first": ["/"]
   },
 
   // [SERVICE BINDINGS]
-  // Connect to other workers for dynamic routing
+  // Connect to other workers for dynamic routing (inherited by all environments)
   "services": [
-    {
-      "binding": "APP_SERVICE",
-      "service": "example-app"
-    },
-    {
-      "binding": "API_SERVICE",
-      "service": "example-api"
-    }
+    { "binding": "APP_SERVICE", "service": "example-app" },
+    { "binding": "API_SERVICE", "service": "example-api" }
   ],
 
   // [ENVIRONMENTS]
@@ -56,16 +47,6 @@
     // [ENV:DEVELOPMENT]
     // Command: bun wrangler dev
     "dev": {
-      "services": [
-        {
-          "binding": "APP_SERVICE",
-          "service": "example-app"
-        },
-        {
-          "binding": "API_SERVICE",
-          "service": "example-api"
-        }
-      ],
       "vars": {
         "ENVIRONMENT": "development"
       }
@@ -75,16 +56,6 @@
     // Pre-production testing environment that mirrors production setup.
     // Command: bun wrangler deploy --env staging
     "staging": {
-      "services": [
-        {
-          "binding": "APP_SERVICE",
-          "service": "example-app"
-        },
-        {
-          "binding": "API_SERVICE",
-          "service": "example-api"
-        }
-      ],
       // prettier-ignore
       "routes": [
         { "pattern": "staging.example.com/*", "zone_name": "example.com" }
@@ -97,16 +68,6 @@
     // [ENV:PREVIEW]
     // Command: bun wrangler deploy --env preview
     "preview": {
-      "services": [
-        {
-          "binding": "APP_SERVICE",
-          "service": "example-app"
-        },
-        {
-          "binding": "API_SERVICE",
-          "service": "example-api"
-        }
-      ],
       // prettier-ignore
       "routes": [
         { "pattern": "preview.example.com/*", "zone_name": "example.com" }

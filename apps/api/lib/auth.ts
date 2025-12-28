@@ -1,4 +1,5 @@
 import { schema as Db } from "@repo/db";
+import { createAuthMiddleware } from "better-auth/api";
 import { betterAuth } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -7,6 +8,11 @@ import { anonymous, organization } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins/email-otp";
 import { sendOTP, sendPasswordReset, sendVerificationEmail } from "./email";
 import type { Env } from "./env";
+
+// Auth hint cookie for edge routing (see docs/adr/001-auth-hint-cookie.md)
+// NOT a security boundary - false positives are acceptable (causes one redirect)
+// __Host- prefix requires Secure; use plain name in HTTP dev
+const AUTH_HINT_VALUE = "1";
 
 /**
  * Environment variables required for authentication configuration.
@@ -129,6 +135,46 @@ export function createAuth(
       database: {
         generateId: false,
       },
+    },
+
+    // Set/clear auth hint cookie for edge routing
+    hooks: {
+      after: createAuthMiddleware(async (ctx) => {
+        const isSecure = new URL(env.APP_ORIGIN).protocol === "https:";
+        // __Host- prefix requires Secure; browsers reject it over HTTP
+        const cookieName = isSecure ? "__Host-auth" : "auth";
+        const cookieOpts = {
+          path: "/",
+          secure: isSecure,
+          httpOnly: true,
+          sameSite: "lax" as const,
+        };
+
+        // Set hint cookie on session creation (sign-in, sign-up, OAuth callback)
+        if (ctx.context.newSession) {
+          ctx.setCookie(cookieName, AUTH_HINT_VALUE, cookieOpts);
+          return;
+        }
+
+        // Clear hint cookie on sign-out
+        if (ctx.path.startsWith("/sign-out")) {
+          ctx.setCookie(cookieName, "", { ...cookieOpts, maxAge: 0 });
+          return;
+        }
+
+        // Clear stale hint cookie on session check when session is invalid
+        // Only run on /get-session where ctx.context.session is reliably populated
+        // This handles: expired sessions, revoked sessions, deleted users
+        if (ctx.path === "/get-session" && !ctx.context.session) {
+          const cookies = ctx.request?.headers.get("cookie") ?? "";
+          const hasHintCookie = cookies
+            .split(";")
+            .some((c) => c.trim().startsWith(`${cookieName}=`));
+          if (hasHintCookie) {
+            ctx.setCookie(cookieName, "", { ...cookieOpts, maxAge: 0 });
+          }
+        }
+      }),
     },
   });
 }
