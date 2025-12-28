@@ -12,7 +12,7 @@
       "@repo/ui": ["../../packages/ui"],
       "@repo/ui/*": ["../../packages/ui/*"]
     },
-    "types": ["astro/client"]
+    "types": ["astro/client", "@cloudflare/workers-types"]
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.json", "**/*.astro"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
