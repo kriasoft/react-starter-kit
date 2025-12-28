@@ -20,7 +20,9 @@
   },
 
   // [SERVICE BINDINGS]
-  // Connect to other workers for dynamic routing (inherited by all environments)
+  // Connect to other workers for dynamic routing.
+  // NOTE: services is non-inheritable — must be specified per environment.
+  // Use naming convention: <worker>-<env> (e.g., example-app-staging)
   "services": [
     { "binding": "APP_SERVICE", "service": "example-app" },
     { "binding": "API_SERVICE", "service": "example-api" }
@@ -60,6 +62,10 @@
       "routes": [
         { "pattern": "staging.example.com/*", "zone_name": "example.com" }
       ],
+      "services": [
+        { "binding": "APP_SERVICE", "service": "example-app-staging" },
+        { "binding": "API_SERVICE", "service": "example-api-staging" }
+      ],
       "vars": {
         "ENVIRONMENT": "staging"
       }
@@ -71,6 +77,10 @@
       // prettier-ignore
       "routes": [
         { "pattern": "preview.example.com/*", "zone_name": "example.com" }
+      ],
+      "services": [
+        { "binding": "APP_SERVICE", "service": "example-app-preview" },
+        { "binding": "API_SERVICE", "service": "example-api-preview" }
       ],
       "vars": {
         "ENVIRONMENT": "preview"

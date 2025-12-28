@@ -157,6 +157,7 @@ export function createAuth(
         }
 
         // Clear hint cookie on sign-out
+        // ctx.path is normalized (base path stripped) by better-call router
         if (ctx.path.startsWith("/sign-out")) {
           ctx.setCookie(cookieName, "", { ...cookieOpts, maxAge: 0 });
           return;

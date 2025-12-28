@@ -9,6 +9,7 @@
  */
 
 import { Hono } from "hono";
+import { getCookie } from "hono/cookie";
 
 interface Env {
   ASSETS: Fetcher;
@@ -30,19 +31,25 @@ app.all("/analytics*", (c) => c.env.APP_SERVICE.fetch(c.req.raw));
 app.all("/reports*", (c) => c.env.APP_SERVICE.fetch(c.req.raw));
 
 // Home page: route based on auth-hint cookie presence
-// Check both names: __Host-auth (HTTPS) and auth (HTTP dev)
+// __Host-auth (HTTPS) or auth (HTTP dev) — see docs/adr/001-auth-hint-cookie.md
 app.on(["GET", "HEAD"], "/", async (c) => {
-  const cookie = c.req.header("cookie") ?? "";
   const hasAuthHint =
-    cookie.includes("__Host-auth=1") || cookie.includes("auth=1");
+    getCookie(c, "__Host-auth") === "1" || getCookie(c, "auth") === "1";
 
-  const target = hasAuthHint ? c.env.APP_SERVICE : c.env.ASSETS;
-  const res = await target.fetch(c.req.raw);
+  const upstream = await (hasAuthHint ? c.env.APP_SERVICE : c.env.ASSETS).fetch(
+    c.req.raw,
+  );
 
-  // Prevent caching - response varies by auth state
-  res.headers.set("Cache-Control", "private, no-store");
-  res.headers.set("Vary", "Cookie");
-  return res;
+  // Prevent caching — response varies by auth state
+  const headers = new Headers(upstream.headers);
+  headers.set("Cache-Control", "private, no-store");
+  headers.set("Vary", "Cookie");
+
+  return new Response(upstream.body, {
+    status: upstream.status,
+    statusText: upstream.statusText,
+    headers,
+  });
 });
 
 // Marketing pages
