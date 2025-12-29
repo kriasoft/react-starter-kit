@@ -16,5 +16,5 @@
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.json", "**/*.astro"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
-  "references": [{ "path": "../api" }, { "path": "../../packages/ui" }]
+  "references": [{ "path": "../../packages/ui" }]
 }

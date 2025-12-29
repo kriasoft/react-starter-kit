@@ -61,7 +61,7 @@ export const organizationRouter = router({
     .input(
       z.object({
         organizationId: z.string(),
-        email: z.email({ message: "Invalid email address" }),
+        email: z.email({ error: "Invalid email address" }),
         role: z.enum(["admin", "member"]).default("member"),
       }),
     )

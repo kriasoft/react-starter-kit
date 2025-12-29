@@ -30,3 +30,9 @@ export const auth = createAuthClient({
 });
 
 export type AuthClient = typeof auth;
+
+// Inferred types from configured instance - includes plugin extensions
+// $Infer.Session is the full response shape { user, session }
+type SessionResponse = typeof auth.$Infer.Session;
+export type User = SessionResponse["user"];
+export type Session = SessionResponse["session"];

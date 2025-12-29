@@ -1,27 +1,26 @@
 import type { OpenAIProvider } from "@ai-sdk/openai";
 import { createOpenAI } from "@ai-sdk/openai";
-import type { Env } from "./env";
+import type { TRPCContext } from "./context";
 
-// Request-scoped cache key
-const OPENAI_CACHE_KEY = Symbol("openai");
+type OpenAIContext = Pick<TRPCContext, "env" | "cache">;
+
+// Request-scoped cache key for the provider instance.
+const OPENAI_PROVIDER = Symbol("openaiProvider");
 
 /**
- * Returns an OpenAI provider instance with request-scoped caching.
- * Uses the tRPC context cache to avoid recreating the provider multiple times
- * within the same request while ensuring environment isolation.
+ * Returns a request-scoped OpenAI provider instance.
+ * Pass the tRPC context to reuse the provider within a single request.
  */
-export function getOpenAI(env: Env, cache?: Map<string | symbol, unknown>) {
-  // Use request-scoped cache if available (from tRPC context)
-  if (cache?.has(OPENAI_CACHE_KEY)) {
-    return cache.get(OPENAI_CACHE_KEY) as OpenAIProvider;
+export function getOpenAI(ctx: OpenAIContext): OpenAIProvider {
+  if (ctx.cache.has(OPENAI_PROVIDER)) {
+    return ctx.cache.get(OPENAI_PROVIDER) as OpenAIProvider;
   }
 
   const provider = createOpenAI({
-    apiKey: env.OPENAI_API_KEY,
+    apiKey: ctx.env.OPENAI_API_KEY,
   });
 
-  // Cache for this request only
-  cache?.set(OPENAI_CACHE_KEY, provider);
+  ctx.cache.set(OPENAI_PROVIDER, provider);
 
   return provider;
 }

@@ -6,8 +6,16 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
+      "@repo/api": ["../api"],
+      "@repo/api/*": ["../api/*"],
+      "@repo/core": ["../../packages/core"],
+      "@repo/core/*": ["../../packages/core/*"],
+      "@repo/db": ["../../db"],
+      "@repo/db/*": ["../../db/*"],
       "@repo/ui": ["../../packages/ui"],
-      "@repo/ui/*": ["../../packages/ui/*"]
+      "@repo/ui/*": ["../../packages/ui/*"],
+      "@repo/ws-protocol": ["../../packages/ws-protocol"],
+      "@repo/ws-protocol/*": ["../../packages/ws-protocol/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.json", "./global.d.ts"],

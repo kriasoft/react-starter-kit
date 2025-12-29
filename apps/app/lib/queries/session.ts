@@ -11,8 +11,7 @@ import {
   useQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import type { Session, User } from "better-auth/types";
-import { auth } from "../auth";
+import { auth, type Session, type User } from "../auth";
 
 // Both user and session must be present for valid auth state
 export interface SessionData {

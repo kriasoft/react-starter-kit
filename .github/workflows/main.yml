@@ -34,7 +34,7 @@ jobs:
     name: "Build"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       # Configure Bun and install dependencies
       - uses: oven-sh/setup-bun@v2
         with:
@@ -74,7 +74,7 @@ jobs:
       - run: docker save api:${{ github.sha }} | gzip > api-image.tar.gz
 
       # Upload build artifacts
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "build"
           path: "apps/web/dist\napps/app/dist\napps/api/dist\napi-image.tar.gz\n"

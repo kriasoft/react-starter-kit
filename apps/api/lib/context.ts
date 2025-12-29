@@ -1,9 +1,8 @@
 import type { DatabaseSchema } from "@repo/db";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
-import type { Session, User } from "better-auth/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { Resend } from "resend";
-import type { Auth } from "./auth.js";
+import type { Auth, AuthSession, AuthUser } from "./auth.js";
 import type { Env } from "./env.js";
 
 /**
@@ -42,10 +41,10 @@ export type TRPCContext = {
   dbDirect: PostgresJsDatabase<DatabaseSchema>;
 
   /** Authenticated user session (null if not authenticated) */
-  session: Session | null;
+  session: AuthSession | null;
 
   /** Authenticated user data (null if not authenticated) */
-  user: User | null;
+  user: AuthUser | null;
 
   /** Request-scoped cache for storing computed values during request lifecycle */
   cache: Map<string | symbol, unknown>;
@@ -79,7 +78,7 @@ export type AppContext = {
     dbDirect: PostgresJsDatabase<DatabaseSchema>;
     auth: Auth;
     resend?: Resend;
-    session: Session | null;
-    user: User | null;
+    session: AuthSession | null;
+    user: AuthUser | null;
   };
 };
