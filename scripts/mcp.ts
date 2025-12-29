@@ -23,14 +23,10 @@ const server = new McpServer({
 server.tool(
   "eslint",
   "Lint JavaScript and TypeScript files with ESLint",
-  {
-    filename: z.string(),
-  },
-  async function lint({ filename }) {
+  { filename: z.string() },
+  async ({ filename }) => {
     const cmd = await $`bun run eslint ${filename}`;
-    return {
-      content: [{ type: "text", text: cmd.stdout }],
-    };
+    return { content: [{ type: "text", text: cmd.stdout }] };
   },
 );
 

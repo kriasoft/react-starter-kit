@@ -12,6 +12,7 @@
         "@types/eslint": "^9.6.1",
         "@typescript-eslint/eslint-plugin": "^8.51.0",
         "@typescript-eslint/parser": "^8.51.0",
+        "@ws-kit/zod": "^0.10.2",
         "eslint": "^9.39.2",
         "eslint-config-prettier": "^10.1.8",
         "eslint-import-resolver-typescript": "^4.4.4",
@@ -158,6 +159,7 @@
         "react-dom": "^19.2.3",
       },
       "devDependencies": {
+        "@cloudflare/workers-types": "^4.20251229.0",
         "@repo/typescript-config": "workspace:*",
         "@tailwindcss/postcss": "^4.1.18",
         "@types/react": "^19.2.7",
@@ -175,6 +177,7 @@
       "devDependencies": {
         "@repo/typescript-config": "workspace:*",
         "@types/bun": "^1.3.5",
+        "@types/node": "^25.0.3",
         "dotenv": "^17.2.3",
         "drizzle-kit": "^0.31.8",
         "drizzle-orm": "^0.45.1",
@@ -236,12 +239,12 @@
         "@ws-kit/bun": "^0.10.0",
         "@ws-kit/memory": "^0.10.0",
         "@ws-kit/pubsub": "^0.10.1",
-        "@ws-kit/zod": "^0.10.1",
+        "@ws-kit/zod": "^0.10.2",
         "typescript": "~5.9.3",
         "zod": "^4.2.1",
       },
       "peerDependencies": {
-        "@ws-kit/zod": "^0.10.1",
+        "@ws-kit/zod": "^0.10.2",
         "zod": "^4.2.1",
       },
     },
@@ -252,10 +255,12 @@
         "@modelcontextprotocol/sdk": "^1.25.1",
         "execa": "^9.6.1",
         "got": "^14.6.5",
+        "zod": "^4.2.1",
         "zx": "^8.8.5",
       },
       "devDependencies": {
         "@repo/typescript-config": "workspace:*",
+        "@types/bun": "^1.3.5",
         "typescript": "~5.9.3",
       },
     },
@@ -1311,7 +1316,7 @@
 
     "@ws-kit/rate-limit": ["@ws-kit/rate-limit@0.10.0", "", { "peerDependencies": { "@ws-kit/core": "^0.10.0" } }, "sha512-KixZzx2mEEBQ7pKRTS4otBPP7MKlc0gj2h3Du4gIy7JSKSrZpOXt31DBISn809R1qJ1FMa3yk4lAqHCSv0cpPA=="],
 
-    "@ws-kit/zod": ["@ws-kit/zod@0.10.1", "", { "dependencies": { "@ws-kit/core": "^0.10.0", "@ws-kit/plugins": "^0.10.1", "@ws-kit/pubsub": "^0.10.1" }, "peerDependencies": { "zod": ">=4.1.13" } }, "sha512-YLybHLoW54ApNj+tv1U5nO+UHG2e0ecKsZ0H4PzuLHfPFdvQeGwZZKvm8lTXETMV6B0NQ2o7pjC9EZ/RmRiHuw=="],
+    "@ws-kit/zod": ["@ws-kit/zod@0.10.2", "", { "dependencies": { "@ws-kit/core": "^0.10.0", "@ws-kit/plugins": "^0.10.1", "@ws-kit/pubsub": "^0.10.1" }, "peerDependencies": { "zod": ">=4.1.13" } }, "sha512-hz8Dfmyobs24sfodDP8H+8PNthwDZU/vH6fPJEl9JHFDda96hquC54Vit6aUaWY4uPU2oPm/rwTVev5h+hOSdA=="],
 
     "abort-controller": ["abort-controller@3.0.0", "", { "dependencies": { "event-target-shim": "^5.0.0" } }, "sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg=="],
 

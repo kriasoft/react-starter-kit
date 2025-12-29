@@ -22,34 +22,24 @@ import { message, rpc, z } from "@ws-kit/zod";
 // Connection Health
 // ============================================================================
 
-/**
- * Ping message for connection health checks.
- * Server responds with Pong.
- */
+/** Ping message for connection health checks. Server responds with Pong. */
 export const Ping = message("PING", { timestamp: z.number().optional() });
 
-/**
- * Pong message sent in response to Ping.
- */
+/** Pong message sent in response to Ping. */
 export const Pong = message("PONG", { timestamp: z.number().optional() });
 
 // ============================================================================
 // Echo (Simple Request/Response)
 // ============================================================================
 
-/**
- * Echo message - simple example demonstrating request/response pattern.
- * Server echoes back the same text.
- */
+/** Echo message - server echoes back the same text. */
 export const Echo = message("ECHO", { text: z.string() });
 
 // ============================================================================
 // Notifications
 // ============================================================================
 
-/**
- * Server notification broadcast to clients.
- */
+/** Server notification broadcast to clients. */
 export const Notification = message("NOTIFICATION", {
   level: z.enum(["info", "warning", "error"]),
   message: z.string(),
@@ -59,9 +49,7 @@ export const Notification = message("NOTIFICATION", {
 // Error Handling
 // ============================================================================
 
-/**
- * Error message for communicating protocol-level errors.
- */
+/** Error message for communicating protocol-level errors. */
 export const ErrorMessage = message("ERROR", {
   code: z.enum(["INVALID_MESSAGE", "UNAUTHORIZED", "SERVER_ERROR"]),
   message: z.string(),

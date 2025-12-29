@@ -6,7 +6,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "./dist",
-    "types": ["bun", "node", "vite/client"]
+    "types": ["bun", "node"]
   },
   "include": ["schema/**/*.ts", "*.ts", "*.json"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*", "scripts/**/*"]

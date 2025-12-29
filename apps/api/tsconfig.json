@@ -4,8 +4,9 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "noEmit": false,
+    "emitDeclarationOnly": true,
     "outDir": "./dist",
+    "tsBuildInfoFile": "../../.cache/tsconfig/api.tsbuildinfo",
     "types": ["@cloudflare/workers-types", "bun"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
