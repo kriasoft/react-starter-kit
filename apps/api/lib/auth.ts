@@ -181,3 +181,8 @@ export function createAuth(
 }
 
 export type Auth = ReturnType<typeof betterAuth>;
+
+// Base session types from Better Auth - plugin-specific fields added at runtime
+type SessionResponse = Auth["$Infer"]["Session"];
+export type AuthUser = SessionResponse["user"];
+export type AuthSession = SessionResponse["session"];

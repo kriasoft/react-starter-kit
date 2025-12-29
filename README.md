@@ -172,6 +172,8 @@ bun wrangler secret put RESEND_API_KEY
 bun wrangler secret put OPENAI_API_KEY
 ```
 
+Note: run these commands from the target app directory or pass `--config apps/<app>/wrangler.jsonc`.
+
 **Note:** The `RESEND_EMAIL_FROM` is configured in `wrangler.jsonc` as it's not sensitive.
 
 ### 2. Build and Deploy

@@ -15,7 +15,7 @@ export const userRouter = router({
     .input(
       z.object({
         name: z.string().min(1).optional(),
-        email: z.email({ message: "Invalid email address" }).optional(),
+        email: z.email({ error: "Invalid email address" }).optional(),
       }),
     )
     .mutation(({ input, ctx }) => {

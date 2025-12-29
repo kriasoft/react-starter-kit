@@ -274,23 +274,34 @@ export const Route = createFileRoute("/(dashboard)")({
 
 ### tRPC Client Setup
 
-We use tRPC for end-to-end type safety:
+We use tRPC with TanStack Query for end-to-end type safety:
 
 ```typescript
 // lib/trpc.ts
-import { createTRPCReact } from "@trpc/react-query";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "@repo/api";
 
-export const api = createTRPCReact<AppRouter>();
+const trpcClient = createTRPCClient<AppRouter>({
+  links: [httpBatchLink({ url: "/api/trpc" })],
+});
+
+export const api = createTRPCOptionsProxy<AppRouter>({
+  client: trpcClient,
+  queryClient,
+});
 ```
 
 ### Using tRPC in Components
 
 ```tsx
-function UserProfile() {
-  const { data: user, isLoading } = api.user.me.useQuery();
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/trpc";
 
-  if (isLoading) return <Skeleton />;
+function UserProfile() {
+  const { data: user, isPending } = useQuery(api.user.me.queryOptions());
+
+  if (isPending) return <Skeleton />;
   if (!user) return <div>User not found</div>;
 
   return <div>Welcome, {user.name}!</div>;
