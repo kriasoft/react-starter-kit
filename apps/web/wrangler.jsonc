@@ -2,7 +2,7 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
 
   // [METADATA]
-  // Application identity and Cloudflare runtime compatibility settings.
+  // Edge router that receives all traffic and routes to api/app via service bindings.
   "name": "example-web",
   "main": "./worker.ts",
   "compatibility_date": "2025-08-15",
@@ -28,15 +28,8 @@
     { "binding": "API_SERVICE", "service": "example-api" }
   ],
 
-  // [ENVIRONMENTS]
-  // Environment-specific configurations for different deployment stages.
-  // Top-level config = production, nested env objects = other environments.
-
   // [ENV:PRODUCTION]
-  // Default configuration used when no --env flag is specified.
   // Command: bun wrangler deploy
-
-  // WARNING: Route modifications must be synchronized across all environments
   // prettier-ignore
   "routes": [
     { "pattern": "example.com/*", "zone_name": "example.com" }
@@ -55,36 +48,35 @@
     },
 
     // [ENV:STAGING]
-    // Pre-production testing environment that mirrors production setup.
     // Command: bun wrangler deploy --env staging
     "staging": {
-      // prettier-ignore
-      "routes": [
-        { "pattern": "staging.example.com/*", "zone_name": "example.com" }
-      ],
       "services": [
         { "binding": "APP_SERVICE", "service": "example-app-staging" },
         { "binding": "API_SERVICE", "service": "example-api-staging" }
       ],
       "vars": {
         "ENVIRONMENT": "staging"
-      }
+      },
+      // prettier-ignore
+      "routes": [
+        { "pattern": "staging.example.com/*", "zone_name": "example.com" }
+      ]
     },
 
     // [ENV:PREVIEW]
     // Command: bun wrangler deploy --env preview
     "preview": {
-      // prettier-ignore
-      "routes": [
-        { "pattern": "preview.example.com/*", "zone_name": "example.com" }
-      ],
       "services": [
         { "binding": "APP_SERVICE", "service": "example-app-preview" },
         { "binding": "API_SERVICE", "service": "example-api-preview" }
       ],
       "vars": {
         "ENVIRONMENT": "preview"
-      }
+      },
+      // prettier-ignore
+      "routes": [
+        { "pattern": "preview.example.com/*", "zone_name": "example.com" }
+      ]
     }
   }
 }

@@ -11,7 +11,7 @@ variable "cloudflare_zone_id" {
 
 variable "hostname" {
   type        = string
-  description = "Public hostname (e.g., api.example.com). If empty, uses workers.dev URL."
+  description = "Public hostname (e.g., example.com). If empty, uses workers.dev URLs."
   default     = ""
 }
 

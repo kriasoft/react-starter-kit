@@ -2,7 +2,7 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
 
   // [METADATA]
-  // Application identity and Cloudflare runtime compatibility settings.
+  // API worker accessed via service binding from web worker (no routes needed).
   "name": "example-api",
   "main": "./worker.ts",
   "compatibility_date": "2025-08-15",
@@ -10,20 +10,8 @@
   "workers_dev": false,
   "upload_source_maps": true,
 
-  // [ENVIRONMENTS]
-  // Environment-specific configurations for different deployment stages.
-  // Top-level config = production, nested env objects = other environments.
-
   // [ENV:PRODUCTION]
-  // Default configuration used when no --env flag is specified.
   // Command: bun wrangler deploy
-
-  // WARNING: Route modifications must be synchronized across all environments
-  // NOTE: These routes allow other workers to handle non-api paths (e.g., marketing site)
-  // prettier-ignore
-  "routes": [
-    { "pattern": "example.com/api*", "zone_name": "example.com" }
-  ],
   "vars": {
     "ENVIRONMENT": "production",
     "APP_NAME": "Example",
@@ -58,13 +46,8 @@
     },
 
     // [ENV:STAGING]
-    // Pre-production testing environment that mirrors production setup.
     // Command: bun wrangler deploy --env staging
     "staging": {
-      // prettier-ignore
-      "routes": [
-        { "pattern": "staging.example.com/api*", "zone_name": "example.com" }
-      ],
       "vars": {
         "ENVIRONMENT": "staging",
         "APP_NAME": "Example",
@@ -83,10 +66,6 @@
     // [ENV:PREVIEW]
     // Command: bun wrangler deploy --env preview
     "preview": {
-      // prettier-ignore
-      "routes": [
-        { "pattern": "preview.example.com/api*", "zone_name": "example.com" }
-      ],
       "vars": {
         "ENVIRONMENT": "preview",
         "APP_NAME": "Example",

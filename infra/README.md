@@ -7,6 +7,7 @@ Terraform configuration for deploying to Cloudflare (edge) or GCP (hybrid).
 - **One obvious default:** Edge stack handles most SaaS apps with zero GCP overhead.
 - **Stacks are composable:** Modules have no credentials; stacks wire them together.
 - **State isolation:** Each `envs/<env>/<stack>` directory = one Terraform root = one state file.
+- **Instant code deployments:** Terraform provisions infrastructure; Wrangler deploys code.
 
 ## Which Stack?
 
@@ -22,8 +23,12 @@ Terraform configuration for deploying to Cloudflare (edge) or GCP (hybrid).
 ```bash
 infra/
   modules/         # Atomic resources (no credentials)
+    cloudflare/
+      worker/      # Worker resource (Beta API) - created without code
+      hyperdrive/  # Database connection pooling
+      dns/         # Proxied DNS records
   stacks/          # Composable architectures
-    edge/          # Hyperdrive + DNS (Workers deployed via Wrangler)
+    edge/          # Workers + Hyperdrive + DNS (routes via Wrangler)
     hybrid/        # Cloud Run + Cloud SQL + GCS (+ optional CF DNS)
   envs/            # Terraform roots (providers + backend + state)
     dev/edge/
@@ -40,15 +45,17 @@ infra/
 cp infra/envs/dev/edge/terraform.tfvars.example infra/envs/dev/edge/terraform.tfvars
 # Edit terraform.tfvars with your values
 
-# Initialize and apply
+# 1. Provision infrastructure (workers, hyperdrive, DNS)
 terraform -chdir=infra/envs/dev/edge init
 terraform -chdir=infra/envs/dev/edge apply
 
-# Get Hyperdrive ID and copy to wrangler.jsonc
+# 2. Copy Hyperdrive ID to apps/api/wrangler.jsonc
 terraform -chdir=infra/envs/dev/edge output hyperdrive_id
 
-# Deploy Worker via Wrangler
-cd apps/api && bun wrangler deploy --env dev
+# 3. Deploy code + routes via Wrangler
+bun api:deploy    # or: cd apps/api && bun wrangler deploy
+bun app:deploy    # or: cd apps/app && bun wrangler deploy
+bun web:deploy    # or: cd apps/web && bun wrangler deploy (includes routes)
 ```
 
 Required variables: `cloudflare_api_token`, `cloudflare_account_id`, `project_slug`, `environment`, `neon_database_url`
@@ -90,20 +97,22 @@ terraform -chdir=infra/envs/prod/hybrid init -backend-config=backend.hcl -migrat
 
 ## API Token Permissions (Cloudflare)
 
-Terraform token:
+Terraform token (infrastructure):
 
 - Zone:DNS:Edit
 - Zone:Zone:Read
+- Account:Workers Scripts:Edit
 - Account:Cloudflare Hyperdrive:Edit
 
-Wrangler token (for Worker deployment):
+Wrangler token (code + routes deployment):
 
-- Account:Workers Scripts:Edit
 - Zone:Workers Routes:Edit
+- Account:Workers Scripts:Edit
 
 ## Requirements
 
 - Terraform >= 1.12
+- Cloudflare provider >= 5.15.0 (for `cloudflare_worker` Beta resource)
 - Cloudflare account (edge stack)
 - GCP project (hybrid stack)
 
