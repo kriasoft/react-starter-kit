@@ -9,7 +9,18 @@ module "stack" {
   neon_database_url     = var.neon_database_url
 }
 
-# Copy hyperdrive_id to wrangler.jsonc hyperdrive binding
+output "worker_api_name" {
+  value = module.stack.worker_api_name
+}
+
+output "worker_app_name" {
+  value = module.stack.worker_app_name
+}
+
+output "worker_web_name" {
+  value = module.stack.worker_web_name
+}
+
 output "hyperdrive_id" {
   value = module.stack.hyperdrive_id
 }
