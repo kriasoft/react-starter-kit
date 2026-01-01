@@ -294,6 +294,7 @@ When proposing a new feature:
 
 Need assistance? Here's where to find help:
 
+- **[Ask GPT](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant)** - AI assistant trained on this codebase
 - **Discord** - Join our [community Discord server](https://discord.gg/2nKEnKq) for real-time help
 - **GitHub Issues** - For bug reports and feature requests
 - **GitHub Discussions** - For questions and community discussions
