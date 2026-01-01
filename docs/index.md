@@ -13,6 +13,9 @@ hero:
     - theme: alt
       text: View on GitHub
       link: https://github.com/kriasoft/react-starter-kit
+    - theme: alt
+      text: Ask GPT
+      link: https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant
 
 features:
   - icon: 🤖

@@ -18,14 +18,14 @@
     "logs": "wrangler tail --env-file ../../.env --env-file ../../.env.local"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^3.0.1",
-    "@better-auth/passkey": "^1.4.9",
+    "@ai-sdk/openai": "^3.0.2",
+    "@better-auth/passkey": "^1.4.10",
     "@repo/core": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/email": "workspace:*",
     "@trpc/server": "^11.8.1",
-    "ai": "^6.0.3",
-    "better-auth": "^1.4.9",
+    "ai": "^6.0.5",
+    "better-auth": "^1.4.10",
     "dataloader": "^2.2.3",
     "drizzle-orm": "^0.45.1",
     "postgres": "^3.4.7",
@@ -33,16 +33,16 @@
   },
   "peerDependencies": {
     "hono": "^4.11.3",
-    "zod": "^4.2.1"
+    "zod": "^4.3.4"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251229.0",
+    "@cloudflare/workers-types": "^4.20260101.0",
     "@repo/typescript-config": "workspace:*",
     "@types/bun": "^1.3.5",
     "hono": "^4.11.3",
     "typescript": "~5.9.3",
     "vitest": "~4.0.16",
     "wrangler": "^4.54.0",
-    "zod": "^4.2.1"
+    "zod": "^4.3.4"
   }
 }

@@ -1,12 +1,13 @@
 /**
  * Custom theme for VitePress documentation.
- * https://vitepress.dev/guide/custom-theme
+ * @see https://vitepress.dev/guide/custom-theme
  */
 
 import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 import { h } from "vue";
 import GitHubStats from "./components/GitHubStats.vue";
+import Mermaid from "./components/Mermaid.vue";
 import "./style.css";
 
 export default {
@@ -17,8 +18,7 @@ export default {
       "nav-bar-content-after": () => h(GitHubStats),
     });
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  enhanceApp({ app, router, siteData }) {
-    // ...
+  enhanceApp({ app }) {
+    app.component("Mermaid", Mermaid);
   },
 } satisfies Theme;

@@ -351,6 +351,7 @@ Remember: This template is intentionally minimal. It's not trying to be everythi
 
 ::: tip Community Support
 
+- 🤖 [Ask GPT](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant) — AI assistant trained on this codebase
 - 💬 [GitHub Discussions](https://github.com/kriasoft/react-starter-kit/discussions)
 - 🐛 [Report Issues](https://github.com/kriasoft/react-starter-kit/issues)
 - ⭐ [Star us on GitHub](https://github.com/kriasoft/react-starter-kit) (it helps!)
