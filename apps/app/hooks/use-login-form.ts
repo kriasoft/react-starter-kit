@@ -8,11 +8,13 @@ import type { FormEvent } from "react";
 interface UseLoginFormOptions {
   onSuccess?: () => void;
   isExternallyLoading?: boolean;
+  mode?: "login" | "signup";
 }
 
 export function useLoginForm({
   onSuccess,
   isExternallyLoading,
+  mode = "login",
 }: UseLoginFormOptions = {}) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -86,6 +88,7 @@ export function useLoginForm({
     isDisabled,
     error,
     showOtpInput,
+    mode,
 
     // Setters
     setEmail,

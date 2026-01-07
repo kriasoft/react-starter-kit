@@ -1,7 +1,7 @@
 import { useLoginForm } from "@/hooks/use-login-form";
 import { Button, Card, CardContent, Input, cn } from "@repo/ui";
 import { Mail } from "lucide-react";
-import type { ComponentProps } from "react";
+import type { ChangeEvent, ComponentProps } from "react";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
 import { SocialLogin } from "./social-login";
@@ -10,12 +10,14 @@ interface AuthFormContentProps {
   onSuccess?: () => void;
   className?: string;
   isExternallyLoading?: boolean;
+  mode?: "login" | "signup";
 }
 
 function AuthFormContent({
   onSuccess,
   className,
   isExternallyLoading,
+  mode = "login",
 }: AuthFormContentProps) {
   const {
     email,
@@ -27,18 +29,27 @@ function AuthFormContent({
     handleError,
     sendOtp,
     resetOtpFlow,
+    mode: formMode,
   } = useLoginForm({
     onSuccess,
     isExternallyLoading,
+    mode,
   });
+
+  const isSignup = formMode === "signup";
+  const heading = isSignup ? "Welcome" : "Welcome back";
+  const subheading = isSignup
+    ? "Create your account"
+    : "Sign in to your account";
+  const emailButtonText = isSignup
+    ? "Sign up with email"
+    : "Sign in with email";
 
   return (
     <div className={cn("flex flex-col gap-6", className)}>
       <div className="flex flex-col items-center text-center">
-        <h1 className="text-2xl font-bold">Welcome</h1>
-        <p className="text-muted-foreground text-balance">
-          Sign in or create your account
-        </p>
+        <h1 className="text-2xl font-bold">{heading}</h1>
+        <p className="text-muted-foreground text-balance">{subheading}</p>
       </div>
 
       {/* Error message */}
@@ -48,12 +59,14 @@ function AuthFormContent({
         </div>
       )}
 
-      {/* Passkey Login - Primary CTA for returning users with passkeys */}
-      <PasskeyLogin
-        onSuccess={handleSuccess}
-        onError={handleError}
-        isDisabled={isDisabled}
-      />
+      {/* Passkey Login - Only show for login mode (requires existing account) */}
+      {!isSignup && (
+        <PasskeyLogin
+          onSuccess={handleSuccess}
+          onError={handleError}
+          isDisabled={isDisabled}
+        />
+      )}
 
       {/* Google OAuth - Works for both new and existing accounts */}
       <SocialLogin onError={handleError} isDisabled={isDisabled} />
@@ -72,7 +85,9 @@ function AuthFormContent({
             type="email"
             placeholder="your@email.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
             disabled={isDisabled}
             autoComplete="email webauthn"
             required
@@ -84,8 +99,32 @@ function AuthFormContent({
             disabled={isDisabled || !email}
           >
             <Mail className="mr-2 h-4 w-4" />
-            Continue with email
+            {emailButtonText}
           </Button>
+          {/* Account Link - Show link to switch between login/signup */}
+          <div className="text-center text-sm text-muted-foreground">
+            {isSignup ? (
+              <>
+                Already have an account?{" "}
+                <a
+                  href="/login"
+                  className="font-medium text-primary underline-offset-4 hover:underline"
+                >
+                  Sign in
+                </a>
+              </>
+            ) : (
+              <>
+                Don't have an account?{" "}
+                <a
+                  href="/signup"
+                  className="font-medium text-primary underline-offset-4 hover:underline"
+                >
+                  Sign up
+                </a>
+              </>
+            )}
+          </div>
         </form>
       ) : (
         <OtpVerification
@@ -94,6 +133,7 @@ function AuthFormContent({
           onError={handleError}
           onCancel={resetOtpFlow}
           isDisabled={isDisabled}
+          mode={formMode}
         />
       )}
     </div>
@@ -105,6 +145,7 @@ interface LoginFormProps extends ComponentProps<"div"> {
   showTerms?: boolean;
   onSuccess?: () => void;
   isLoading?: boolean;
+  mode?: "login" | "signup";
 }
 
 export function LoginForm({
@@ -113,6 +154,7 @@ export function LoginForm({
   showTerms,
   onSuccess,
   isLoading,
+  mode = "login",
   ...props
 }: LoginFormProps) {
   // Default: Show terms on full page, hide in modals (unless overridden)
@@ -124,6 +166,7 @@ export function LoginForm({
         <AuthFormContent
           onSuccess={onSuccess}
           isExternallyLoading={isLoading}
+          mode={mode}
         />
         {shouldShowTerms && (
           <div className="text-center text-xs text-muted-foreground text-balance">
@@ -157,6 +200,7 @@ export function LoginForm({
             <AuthFormContent
               onSuccess={onSuccess}
               isExternallyLoading={isLoading}
+              mode={mode}
             />
           </div>
 
