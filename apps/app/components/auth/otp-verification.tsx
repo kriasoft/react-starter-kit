@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { Button, Input } from "@repo/ui";
-import { useState } from "react";
 import type { FormEvent } from "react";
+import { useState } from "react";
 
 interface OtpVerificationProps {
   email: string;
@@ -9,6 +9,7 @@ interface OtpVerificationProps {
   onError: (error: string) => void;
   onCancel: () => void;
   isDisabled?: boolean;
+  mode?: "login" | "signup";
 }
 
 export function OtpVerification({
@@ -17,6 +18,7 @@ export function OtpVerification({
   onError,
   onCancel,
   isDisabled,
+  mode = "login",
 }: OtpVerificationProps) {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -84,11 +86,21 @@ export function OtpVerification({
   };
 
   const disabled = isDisabled || isLoading;
+  const isSignup = mode === "signup";
 
   return (
     <form onSubmit={handleOtpVerification} className="grid gap-3">
       <div className="text-sm text-muted-foreground">
-        We've sent a verification code to <strong>{email}</strong>
+        {isSignup ? (
+          <>
+            We've sent a verification code to verify your email at{" "}
+            <strong>{email}</strong>
+          </>
+        ) : (
+          <>
+            We've sent a verification code to <strong>{email}</strong>
+          </>
+        )}
       </div>
       <Input
         type="text"
