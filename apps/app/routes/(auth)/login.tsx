@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/auth/login-form";
+import { AuthForm } from "@/components/auth/auth-form";
 import { getSafeRedirectUrl } from "@/lib/auth-config";
 import { invalidateSession, sessionQueryOptions } from "@/lib/queries/session";
 import { useQueryClient } from "@tanstack/react-query";
@@ -56,7 +56,7 @@ function LoginPage() {
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm md:max-w-3xl">
-        <LoginForm mode="login" onSuccess={handleSuccess} />
+        <AuthForm mode="login" onSuccess={handleSuccess} />
       </div>
     </div>
   );

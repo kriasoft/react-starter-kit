@@ -5,17 +5,17 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
-interface UseLoginFormOptions {
+interface UseAuthFormOptions {
   onSuccess?: () => void;
   isExternallyLoading?: boolean;
   mode?: "login" | "signup";
 }
 
-export function useLoginForm({
+export function useAuthForm({
   onSuccess,
   isExternallyLoading,
   mode = "login",
-}: UseLoginFormOptions = {}) {
+}: UseAuthFormOptions = {}) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);

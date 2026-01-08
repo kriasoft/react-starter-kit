@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { Button, Input } from "@repo/ui";
+import type { FormEvent } from "react";
 import { useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
 
 interface OtpVerificationProps {
   email: string;
@@ -106,9 +106,7 @@ export function OtpVerification({
         type="text"
         placeholder="Enter 6-digit code"
         value={otp}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-        }
+        onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
         disabled={disabled}
         autoComplete="one-time-code"
         required

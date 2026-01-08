@@ -1,7 +1,7 @@
-import { useLoginForm } from "@/hooks/use-login-form";
+import { useAuthForm } from "@/hooks/use-auth-form";
 import { Button, Card, CardContent, Input, cn } from "@repo/ui";
 import { Mail } from "lucide-react";
-import type { ChangeEvent, ComponentProps } from "react";
+import type { ComponentProps } from "react";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
 import { SocialLogin } from "./social-login";
@@ -30,7 +30,7 @@ function AuthFormContent({
     sendOtp,
     resetOtpFlow,
     mode: formMode,
-  } = useLoginForm({
+  } = useAuthForm({
     onSuccess,
     isExternallyLoading,
     mode,
@@ -85,9 +85,7 @@ function AuthFormContent({
             type="email"
             placeholder="your@email.com"
             value={email}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setEmail(e.target.value)
-            }
+            onChange={(e) => setEmail(e.target.value)}
             disabled={isDisabled}
             autoComplete="email webauthn"
             required
@@ -140,25 +138,33 @@ function AuthFormContent({
   );
 }
 
-interface LoginFormProps extends ComponentProps<"div"> {
+interface AuthFormProps extends ComponentProps<"div"> {
   variant?: "page" | "modal";
   showTerms?: boolean;
   onSuccess?: () => void;
   isLoading?: boolean;
   mode?: "login" | "signup";
+  /**
+   * Optional image path (svg, jpg, or png) to display in right panel.
+   * When provided, layout becomes two-column on md+.
+   * If empty/undefined, only single card is shown.
+   */
+  rightPanelImage?: string;
 }
 
-export function LoginForm({
+export function AuthForm({
   className,
   variant = "page",
   showTerms,
   onSuccess,
   isLoading,
   mode = "login",
+  rightPanelImage,
   ...props
-}: LoginFormProps) {
+}: AuthFormProps) {
   // Default: Show terms on full page, hide in modals (unless overridden)
   const shouldShowTerms = showTerms ?? variant === "page";
+  const hasRightPanel = Boolean(rightPanelImage);
 
   if (variant === "modal") {
     return (
@@ -194,8 +200,15 @@ export function LoginForm({
   // Default page variant with card layout
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
+      <Card
+        className={cn(
+          "overflow-hidden p-0 mx-auto w-full max-w-md",
+          hasRightPanel ? "max-w-3xl" : "max-w-md",
+        )}
+      >
+        <CardContent
+          className={cn("p-0", hasRightPanel ? "grid md:grid-cols-2" : "block")}
+        >
           <div className="p-6 md:p-8">
             <AuthFormContent
               onSuccess={onSuccess}
@@ -203,11 +216,15 @@ export function LoginForm({
               mode={mode}
             />
           </div>
-
-          {/* Right panel - Hidden on mobile, provides visual balance on desktop */}
-          <div className="relative hidden bg-muted md:block">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/10" />
-          </div>
+          {hasRightPanel && (
+            <div className="relative hidden bg-muted md:flex md:items-center md:justify-center">
+              <img
+                src={rightPanelImage}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
