@@ -22,7 +22,7 @@ const searchSchema = z.object({
     .catch(undefined),
 });
 
-export const Route = createFileRoute("/(auth)/login")({
+export const Route = createFileRoute("/(auth)/signup")({
   validateSearch: searchSchema,
   beforeLoad: async ({ context, search }) => {
     try {
@@ -35,14 +35,14 @@ export const Route = createFileRoute("/(auth)/login")({
         throw redirect({ to: search.returnTo ?? "/" });
       }
     } catch (error) {
-      // Re-throw redirects, show login form for fetch errors
+      // Re-throw redirects, show signup form for fetch errors
       if (isRedirect(error)) throw error;
     }
   },
-  component: LoginPage,
+  component: SignupPage,
 });
 
-function LoginPage() {
+function SignupPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const search = Route.useSearch();
@@ -56,7 +56,10 @@ function LoginPage() {
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm md:max-w-3xl">
-        <AuthForm mode="login" onSuccess={handleSuccess} />
+        <AuthForm mode="signup" onSuccess={handleSuccess} />
+        {/* with image panel on the right side of the card 
+        <AuthForm mode="signup" onSuccess={handleSuccess} rightPanelImage="logo512.png" />
+        */}
       </div>
     </div>
   );

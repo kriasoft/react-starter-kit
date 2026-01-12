@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@repo/ui";
 import * as React from "react";
-import { LoginForm } from "./login-form";
+import { AuthForm } from "./auth-form";
 
 /**
  * LoginDialog component - Renders login form in a dialog.
@@ -41,8 +41,9 @@ export function LoginDialog() {
             Choose your preferred sign in method
           </DialogDescription>
         </DialogHeader>
-        <LoginForm
+        <AuthForm
           variant="modal"
+          mode="login"
           onSuccess={handleSuccess}
           showTerms={true} // Override default (false for modals) to show terms
         />
@@ -79,10 +80,11 @@ export function useLoginDialog() {
               Choose your preferred sign in method
             </DialogDescription>
           </DialogHeader>
-          <LoginForm
+          <AuthForm
             variant="modal"
+            mode="login"
             onSuccess={handleSuccess}
-            // showTerms defaults to false for modals per LoginForm implementation
+            // showTerms defaults to false for modals per AuthForm implementation
           />
         </DialogContent>
       </Dialog>
