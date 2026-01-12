@@ -93,8 +93,7 @@ export function OtpVerification({
       <div className="text-sm text-muted-foreground">
         {isSignup ? (
           <>
-            We've sent a verification code to verify your email at{" "}
-            <strong>{email}</strong>
+            We've sent a verification code to verify <strong>{email}</strong>
           </>
         ) : (
           <>

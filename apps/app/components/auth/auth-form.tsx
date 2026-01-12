@@ -5,6 +5,7 @@ import type { ComponentProps } from "react";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
 import { SocialLogin } from "./social-login";
+import { Link } from "@tanstack/react-router";
 
 interface AuthFormContentProps {
   onSuccess?: () => void;
@@ -104,22 +105,28 @@ function AuthFormContent({
             {isSignup ? (
               <>
                 Already have an account?{" "}
-                <a
-                  href="/login"
-                  className="font-medium text-primary underline-offset-4 hover:underline"
+                <Link
+                  to="/login"
+                  activeProps={{
+                    className:
+                      "font-medium text-primary underline-offset-4 hover:underline",
+                  }}
                 >
                   Sign in
-                </a>
+                </Link>
               </>
             ) : (
               <>
                 Don't have an account?{" "}
-                <a
-                  href="/signup"
-                  className="font-medium text-primary underline-offset-4 hover:underline"
+                <Link
+                  to="/signup"
+                  activeProps={{
+                    className:
+                      "font-medium text-primary underline-offset-4 hover:underline",
+                  }}
                 >
                   Sign up
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -202,7 +209,7 @@ export function AuthForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card
         className={cn(
-          "overflow-hidden p-0 mx-auto w-full max-w-md",
+          "overflow-hidden p-0 mx-auto w-full",
           hasRightPanel ? "max-w-3xl" : "max-w-md",
         )}
       >
@@ -220,7 +227,7 @@ export function AuthForm({
             <div className="relative hidden bg-muted md:flex md:items-center md:justify-center">
               <img
                 src={rightPanelImage}
-                alt=""
+                alt="descriptive text about the image card"
                 className="h-full w-full object-cover"
               />
             </div>

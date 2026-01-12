@@ -43,6 +43,7 @@ export function LoginDialog() {
         </DialogHeader>
         <AuthForm
           variant="modal"
+          mode="login"
           onSuccess={handleSuccess}
           showTerms={true} // Override default (false for modals) to show terms
         />
@@ -81,6 +82,7 @@ export function useLoginDialog() {
           </DialogHeader>
           <AuthForm
             variant="modal"
+            mode="login"
             onSuccess={handleSuccess}
             // showTerms defaults to false for modals per AuthForm implementation
           />
