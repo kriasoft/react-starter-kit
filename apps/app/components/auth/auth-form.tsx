@@ -2,9 +2,9 @@ import { Button, Input, cn } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail } from "lucide-react";
 import type { ComponentProps, FormEvent } from "react";
+import { GoogleLogin } from "./google-login";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
-import { SocialLogin } from "./social-login";
 import { useAuthForm } from "./use-auth-form";
 
 const APP_NAME = import.meta.env.VITE_APP_NAME || "your account";
@@ -58,7 +58,7 @@ export function AuthForm({
     isDisabled,
     error,
     changeEmail,
-    completeAuth,
+    onAuthSuccess,
     setError,
     sendOtp,
     goToEmailStep,
@@ -111,7 +111,7 @@ export function AuthForm({
           isSignup={isSignup}
           isDisabled={isDisabled}
           onEmailClick={goToEmailStep}
-          onAuthComplete={completeAuth}
+          onSuccess={onAuthSuccess}
           onError={setError}
           onLoadingChange={setChildBusy}
           returnTo={returnTo}
@@ -135,7 +135,7 @@ export function AuthForm({
         <OtpStep
           email={email}
           isDisabled={isDisabled}
-          onSuccess={completeAuth}
+          onSuccess={onAuthSuccess}
           onError={setError}
           onLoadingChange={setChildBusy}
           onBack={handleOtpBack}
@@ -151,7 +151,7 @@ interface MethodSelectionProps {
   isSignup: boolean;
   isDisabled: boolean;
   onEmailClick: () => void;
-  onAuthComplete: () => void;
+  onSuccess: () => void;
   onError: (error: string | null) => void;
   onLoadingChange: (loading: boolean) => void;
   returnTo?: string;
@@ -161,7 +161,7 @@ function MethodSelection({
   isSignup,
   isDisabled,
   onEmailClick,
-  onAuthComplete,
+  onSuccess,
   onError,
   onLoadingChange,
   returnTo,
@@ -173,7 +173,7 @@ function MethodSelection({
       <h1 className="text-2xl font-bold text-center">{heading}</h1>
 
       <div className="flex flex-col gap-3">
-        <SocialLogin
+        <GoogleLogin
           onError={onError}
           isDisabled={isDisabled}
           onLoadingChange={onLoadingChange}
@@ -194,7 +194,7 @@ function MethodSelection({
         {/* Passkey only available for login (requires existing account) */}
         {!isSignup && (
           <PasskeyLogin
-            onSuccess={onAuthComplete}
+            onSuccess={onSuccess}
             onError={onError}
             onLoadingChange={onLoadingChange}
             isDisabled={isDisabled}

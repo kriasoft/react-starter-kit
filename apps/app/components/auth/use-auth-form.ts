@@ -56,7 +56,7 @@ export function useAuthForm({
   // Unified busy state: disables navigation and other auth methods while any flow is active
   const isDisabled = isLoading || pendingOps > 0 || !!isExternallyLoading;
 
-  const completeAuth = async () => {
+  const onAuthSuccess = async () => {
     if (hasSucceededRef.current) return;
     hasSucceededRef.current = true;
 
@@ -137,7 +137,7 @@ export function useAuthForm({
 
     // Actions
     changeEmail,
-    completeAuth,
+    onAuthSuccess,
     setError,
     sendOtp,
     goToEmailStep,
