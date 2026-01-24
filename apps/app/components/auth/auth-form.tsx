@@ -1,13 +1,35 @@
-import { useAuthForm } from "./use-auth-form";
 import { Button, Input, cn } from "@repo/ui";
+import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail } from "lucide-react";
 import type { ComponentProps } from "react";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
 import { SocialLogin } from "./social-login";
-import { Link } from "@tanstack/react-router";
+import { useAuthForm, type AuthChildKey } from "./use-auth-form";
 
 const APP_NAME = import.meta.env.VITE_APP_NAME || "your account";
+
+function SignupTerms() {
+  return (
+    <p className="text-xs text-muted-foreground text-center text-balance">
+      By signing up, you agree to our{" "}
+      <a
+        href="/terms"
+        className="underline underline-offset-4 hover:text-primary"
+      >
+        Terms of Service
+      </a>{" "}
+      and{" "}
+      <a
+        href="/privacy"
+        className="underline underline-offset-4 hover:text-primary"
+      >
+        Privacy Policy
+      </a>
+      .
+    </p>
+  );
+}
 
 interface AuthFormProps extends ComponentProps<"div"> {
   /**
@@ -15,9 +37,11 @@ interface AuthFormProps extends ComponentProps<"div"> {
    * Both variants use the same passwordless OTP flow that auto-creates accounts.
    */
   variant?: "login" | "signup";
-  /** Called after successful auth. Caller handles cache invalidation and navigation. */
-  onSuccess: () => void;
+  /** Called after successful auth. Awaited before UI progresses. Caller handles cache invalidation and navigation. */
+  onSuccess: () => Promise<void>;
   isLoading?: boolean;
+  /** Post-auth redirect destination. Must be a safe relative path (validated by caller). */
+  returnTo?: string;
 }
 
 export function AuthForm({
@@ -25,6 +49,7 @@ export function AuthForm({
   onSuccess,
   isLoading,
   variant = "login",
+  returnTo,
   ...props
 }: AuthFormProps) {
   const {
@@ -32,7 +57,7 @@ export function AuthForm({
     email,
     isDisabled,
     error,
-    setEmail,
+    changeEmail,
     handleSuccess,
     handleError,
     clearError,
@@ -40,6 +65,7 @@ export function AuthForm({
     goToEmailStep,
     goToMethodStep,
     resetToEmail,
+    setChildLoading,
     variant: formVariant,
   } = useAuthForm({
     onSuccess,
@@ -50,7 +76,7 @@ export function AuthForm({
   // Clear error when user changes email
   const handleEmailChange = (value: string) => {
     if (error) clearError();
-    setEmail(value);
+    changeEmail(value);
   };
 
   // Voluntary back from OTP clears error; forced back (via onCancel) preserves it
@@ -85,6 +111,8 @@ export function AuthForm({
           onEmailClick={goToEmailStep}
           onSuccess={handleSuccess}
           onError={handleError}
+          setChildLoading={setChildLoading}
+          returnTo={returnTo}
         />
       )}
 
@@ -107,6 +135,7 @@ export function AuthForm({
           isDisabled={isDisabled}
           onSuccess={handleSuccess}
           onError={handleError}
+          setChildLoading={setChildLoading}
           onBack={handleOtpBack}
           onCancel={resetToEmail}
         />
@@ -121,7 +150,9 @@ interface MethodSelectionProps {
   isDisabled: boolean;
   onEmailClick: () => void;
   onSuccess: () => void;
-  onError: (error: string) => void;
+  onError: (error: string | null) => void;
+  setChildLoading: (key: AuthChildKey, loading: boolean) => void;
+  returnTo?: string;
 }
 
 function MethodSelection({
@@ -130,6 +161,8 @@ function MethodSelection({
   onEmailClick,
   onSuccess,
   onError,
+  setChildLoading,
+  returnTo,
 }: MethodSelectionProps) {
   const heading = isSignup ? "Create your account" : `Log in to ${APP_NAME}`;
 
@@ -138,7 +171,12 @@ function MethodSelection({
       <h1 className="text-2xl font-bold text-center">{heading}</h1>
 
       <div className="flex flex-col gap-3">
-        <SocialLogin onError={onError} isDisabled={isDisabled} />
+        <SocialLogin
+          onError={onError}
+          isDisabled={isDisabled}
+          onLoadingChange={(loading) => setChildLoading("social", loading)}
+          returnTo={returnTo}
+        />
 
         <Button
           type="button"
@@ -156,31 +194,13 @@ function MethodSelection({
           <PasskeyLogin
             onSuccess={onSuccess}
             onError={onError}
+            onLoadingChange={(loading) => setChildLoading("passkey", loading)}
             isDisabled={isDisabled}
           />
         )}
       </div>
 
-      {/* Terms (signup only) */}
-      {isSignup && (
-        <p className="text-xs text-muted-foreground text-center text-balance">
-          By signing up, you agree to our{" "}
-          <a
-            href="/terms"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a
-            href="/privacy"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            Privacy Policy
-          </a>
-          .
-        </p>
-      )}
+      {isSignup && <SignupTerms />}
 
       {/* Account switch link */}
       <p className="text-sm text-muted-foreground text-center">
@@ -241,7 +261,7 @@ function EmailInput({
           value={email}
           onChange={(e) => onEmailChange(e.target.value)}
           disabled={isDisabled}
-          autoComplete="email webauthn"
+          autoComplete="email"
           autoFocus
           required
         />
@@ -255,26 +275,7 @@ function EmailInput({
         </Button>
       </form>
 
-      {/* Terms (signup only) */}
-      {isSignup && (
-        <p className="text-xs text-muted-foreground text-center text-balance">
-          By signing up, you agree to our{" "}
-          <a
-            href="/terms"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a
-            href="/privacy"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            Privacy Policy
-          </a>
-          .
-        </p>
-      )}
+      {isSignup && <SignupTerms />}
 
       {/* Back link */}
       <button
@@ -295,7 +296,8 @@ interface OtpStepProps {
   email: string;
   isDisabled: boolean;
   onSuccess: () => void;
-  onError: (error: string) => void;
+  onError: (error: string | null) => void;
+  setChildLoading: (key: AuthChildKey, loading: boolean) => void;
   onBack: () => void;
   onCancel: () => void;
 }
@@ -305,6 +307,7 @@ function OtpStep({
   isDisabled,
   onSuccess,
   onError,
+  setChildLoading,
   onBack,
   onCancel,
 }: OtpStepProps) {
@@ -321,6 +324,7 @@ function OtpStep({
         email={email}
         onSuccess={onSuccess}
         onError={onError}
+        onLoadingChange={(loading) => setChildLoading("otp", loading)}
         onCancel={onCancel}
         isDisabled={isDisabled}
       />

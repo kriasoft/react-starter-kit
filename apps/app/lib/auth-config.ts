@@ -2,7 +2,6 @@
 // Changing api.basePath requires updating server routing.
 export const authConfig = {
   oauth: {
-    defaultCallbackUrl: "/login",
     providers: ["google"] as const,
   },
 

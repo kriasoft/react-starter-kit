@@ -1,3 +1,4 @@
+import { getSafeRedirectUrl } from "@/lib/auth-config";
 import { revalidateSession } from "@/lib/queries/session";
 import {
   Dialog,
@@ -7,7 +8,7 @@ import {
   DialogTitle,
 } from "@repo/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { useRouter, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { AuthForm } from "./auth-form";
 
@@ -24,6 +25,14 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  // Preserve full URL (pathname + search + hash) for OAuth redirect
+  const returnTo = useRouterState({
+    select: (s) => {
+      const { pathname, search, hash } = s.location;
+      return getSafeRedirectUrl(pathname + search + hash);
+    },
+  });
+
   async function handleSuccess() {
     await revalidateSession(queryClient, router);
     onOpenChange(false);
@@ -38,7 +47,11 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
             Choose your preferred sign in method
           </DialogDescription>
         </DialogHeader>
-        <AuthForm variant="login" onSuccess={handleSuccess} />
+        <AuthForm
+          variant="login"
+          onSuccess={handleSuccess}
+          returnTo={returnTo}
+        />
       </DialogContent>
     </Dialog>
   );

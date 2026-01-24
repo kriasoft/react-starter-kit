@@ -6,8 +6,9 @@ import { useEffect, useRef, useState } from "react";
 
 interface PasskeyLoginProps {
   onSuccess: () => void;
-  onError: (error: string) => void;
+  onError: (error: string | null) => void;
   isDisabled?: boolean;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
 /**
@@ -20,8 +21,14 @@ export function PasskeyLogin({
   onSuccess,
   onError,
   isDisabled,
+  onLoadingChange,
 }: PasskeyLoginProps) {
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sync loading state to parent
+  useEffect(() => {
+    onLoadingChange?.(isLoading);
+  }, [isLoading, onLoadingChange]);
   const onSuccessRef = useRef(onSuccess);
   onSuccessRef.current = onSuccess;
 
@@ -65,7 +72,7 @@ export function PasskeyLogin({
     }
 
     setIsLoading(true);
-    onError("");
+    onError(null);
 
     try {
       // Better Auth passkey client returns errors via result.error for HTTP/WebAuthn errors,

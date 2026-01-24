@@ -8,9 +8,10 @@ const RESEND_COOLDOWN_SECONDS = 30;
 interface OtpVerificationProps {
   email: string;
   onSuccess: () => void;
-  onError: (error: string) => void;
+  onError: (error: string | null) => void;
   onCancel: () => void;
   isDisabled?: boolean;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
 export function OtpVerification({
@@ -19,10 +20,16 @@ export function OtpVerification({
   onError,
   onCancel,
   isDisabled,
+  onLoadingChange,
 }: OtpVerificationProps) {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Sync loading state to parent
+  useEffect(() => {
+    onLoadingChange?.(isLoading);
+  }, [isLoading, onLoadingChange]);
 
   // Countdown timer for resend cooldown
   useEffect(() => {
@@ -39,7 +46,7 @@ export function OtpVerification({
 
     try {
       setIsLoading(true);
-      onError("");
+      onError(null);
 
       const result = await auth.signIn.emailOtp({
         email,
@@ -72,7 +79,7 @@ export function OtpVerification({
     if (resendCooldown > 0) return;
 
     setOtp("");
-    onError("");
+    onError(null);
 
     try {
       setIsLoading(true);

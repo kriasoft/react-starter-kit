@@ -1,41 +1,59 @@
 import { auth } from "@/lib/auth";
-import { authConfig, getSafeRedirectUrl } from "@/lib/auth-config";
 import { sessionQueryKey } from "@/lib/queries/session";
 import { Button } from "@repo/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 interface SocialLoginProps {
-  onError: (error: string) => void;
+  onError: (error: string | null) => void;
   isDisabled?: boolean;
+  /** Post-auth redirect destination (already validated by caller). */
+  returnTo?: string;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
-export function SocialLogin({ onError, isDisabled }: SocialLoginProps) {
+export function SocialLogin({
+  onError,
+  isDisabled,
+  returnTo,
+  onLoadingChange,
+}: SocialLoginProps) {
   const queryClient = useQueryClient();
-  const returnTo = useRouterState({
-    select: (s) => (s.location.search as { returnTo?: string }).returnTo,
-  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Sync loading state to parent
+  useEffect(() => {
+    onLoadingChange?.(isLoading);
+  }, [isLoading, onLoadingChange]);
 
   const handleGoogleLogin = async () => {
-    try {
-      onError(""); // Clear any previous errors
+    setIsLoading(true);
+    onError(null);
 
+    try {
       // Clear stale session before OAuth redirect
       queryClient.removeQueries({ queryKey: sessionQueryKey });
 
-      // Always sanitize here - component may render outside auth routes (e.g. LoginDialog)
-      const destination = getSafeRedirectUrl(returnTo);
+      // OAuth redirects to /login which validates session and redirects to returnTo
+      const callbackURL = returnTo
+        ? `/login?returnTo=${encodeURIComponent(returnTo)}`
+        : "/login";
 
-      // Initiate Google OAuth flow
-      await auth.signIn.social({
+      const result = await auth.signIn.social({
         provider: "google",
-        callbackURL: `${authConfig.oauth.defaultCallbackUrl}?returnTo=${encodeURIComponent(destination)}`,
+        callbackURL,
       });
 
-      // Note: This code won't execute as OAuth redirects the page
+      // Handle error result (Better Auth returns { error } instead of throwing)
+      if (result?.error) {
+        onError(result.error.message || "Failed to sign in with Google");
+        setIsLoading(false);
+      }
+      // On success, page redirects - component unmounts, no cleanup needed
     } catch (err) {
       console.error("Google login error:", err);
       onError("Failed to sign in with Google");
+      setIsLoading(false);
     }
   };
 
@@ -45,7 +63,7 @@ export function SocialLogin({ onError, isDisabled }: SocialLoginProps) {
       variant="outline"
       className="w-full"
       onClick={handleGoogleLogin}
-      disabled={isDisabled}
+      disabled={isDisabled || isLoading}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
