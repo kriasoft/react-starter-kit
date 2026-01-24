@@ -1,57 +1,42 @@
+import { getErrorMessage, getErrorStatus } from "@/lib/errors";
 import { sessionQueryKey } from "@/lib/queries/session";
-import { queryClient } from "@/lib/query";
+import type { AppRouter } from "@repo/api";
 import { Button } from "@repo/ui";
-import { useQueryErrorResetBoundary } from "@tanstack/react-query";
+import {
+  useQueryClient,
+  useQueryErrorResetBoundary,
+} from "@tanstack/react-query";
+import { isTRPCClientError } from "@trpc/client";
 import { AlertCircle } from "lucide-react";
-import * as React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-interface AuthErrorFallbackProps {
-  error: Error;
+// Check if error indicates session expiry (401 only, not 403 which is authorization)
+export function isAuthError(error: unknown): boolean {
+  // tRPC errors: check typed code
+  if (isTRPCClientError<AppRouter>(error)) {
+    return error.data?.code === "UNAUTHORIZED";
+  }
+  // Non-tRPC: only 401 (unauthenticated), not 403 (forbidden/no permission)
+  return getErrorStatus(error) === 401;
+}
+
+interface ResetProps {
   resetErrorBoundary: () => void;
 }
 
-// Error type that may include status code
-// NOTE: This extends Error to handle both tRPC errors (with status) and native JS errors
-interface ErrorWithStatus extends Error {
-  status?: number;
-}
+// Fallback for auth errors in protected routes
+function AuthErrorFallback({ resetErrorBoundary }: ResetProps) {
+  const queryClient = useQueryClient();
 
-// Determine if an error is authentication-related
-// WARNING: This function must catch all auth errors to prevent infinite error loops
-// when wrapped components try to access protected resources
-function isAuthError(error: Error): boolean {
-  // Check for explicit status codes
-  const status = (error as ErrorWithStatus)?.status;
-  if (status === 401 || status === 403) return true;
-
-  // Check for auth-related error messages
-  const message = error.message?.toLowerCase() || "";
-  return (
-    message.includes("unauthorized") ||
-    message.includes("unauthenticated") ||
-    message.includes("session expired") ||
-    message.includes("401") ||
-    message.includes("403")
-  );
-}
-
-// Fallback component for auth errors
-function AuthErrorFallback({
-  error,
-  resetErrorBoundary,
-}: AuthErrorFallbackProps) {
   const handleRetry = () => {
-    // Reset session query error state but preserve cached data
     queryClient.resetQueries({ queryKey: sessionQueryKey });
     resetErrorBoundary();
   };
 
   const handleSignIn = () => {
-    // Clear session cache and redirect to login with return path
-    // Full page reload ensures all React state clears stale auth tokens
     queryClient.removeQueries({ queryKey: sessionQueryKey });
-    const returnTo = encodeURIComponent(window.location.pathname);
+    const { pathname, search, hash } = window.location;
+    const returnTo = encodeURIComponent(pathname + search + hash);
     window.location.href = `/login?returnTo=${returnTo}`;
   };
 
@@ -61,10 +46,7 @@ function AuthErrorFallback({
         <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
         <h1 className="mb-2 text-2xl font-bold">Authentication Required</h1>
         <p className="mb-6 text-muted-foreground">
-          {error.message === "Unauthorized" ||
-          (error as ErrorWithStatus)?.status === 401
-            ? "Your session has expired. Please sign in again."
-            : "You need to sign in to access this page."}
+          Please sign in to access this page.
         </p>
         <div className="flex justify-center gap-3">
           <Button variant="outline" onClick={handleRetry}>
@@ -77,56 +59,79 @@ function AuthErrorFallback({
   );
 }
 
-interface AuthErrorBoundaryProps {
-  children: React.ReactNode;
+interface ErrorFallbackProps {
+  error: unknown;
+  resetErrorBoundary: () => void;
 }
 
-// General error fallback that handles both auth and other errors
-// This wrapper ensures auth errors get special UI treatment while preserving
-// generic error handling for all other failures
-function ErrorFallbackWrapper({
+// Generic error fallback for non-auth errors
+function GenericErrorFallback({
   error,
   resetErrorBoundary,
-}: AuthErrorFallbackProps) {
-  // If it's not an auth error, show a generic error message
-  if (!isAuthError(error)) {
-    return (
-      <div className="flex min-h-svh flex-col items-center justify-center p-6">
-        <div className="mx-auto max-w-md text-center">
-          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
-          <h1 className="mb-2 text-2xl font-bold">Something went wrong</h1>
-          <p className="mb-6 text-muted-foreground">
-            {error.message || "An unexpected error occurred"}
-          </p>
-          <Button onClick={resetErrorBoundary}>Try Again</Button>
-        </div>
-      </div>
-    );
-  }
-
-  // For auth errors, use the auth-specific UI
+}: ErrorFallbackProps) {
   return (
-    <AuthErrorFallback error={error} resetErrorBoundary={resetErrorBoundary} />
+    <div className="flex min-h-svh flex-col items-center justify-center p-6">
+      <div className="mx-auto max-w-md text-center">
+        <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
+        <h1 className="mb-2 text-2xl font-bold">Something went wrong</h1>
+        <p className="mb-6 text-muted-foreground">{getErrorMessage(error)}</p>
+        <Button onClick={resetErrorBoundary}>Try Again</Button>
+      </div>
+    </div>
   );
 }
 
-// Modern auth error boundary using react-error-boundary
-export function AuthErrorBoundary({ children }: AuthErrorBoundaryProps) {
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+// Routes auth errors to AuthErrorFallback, others to GenericErrorFallback
+function AuthAwareErrorFallback({
+  error,
+  resetErrorBoundary,
+}: ErrorFallbackProps) {
+  return isAuthError(error) ? (
+    <AuthErrorFallback resetErrorBoundary={resetErrorBoundary} />
+  ) : (
+    <GenericErrorFallback
+      error={error}
+      resetErrorBoundary={resetErrorBoundary}
+    />
+  );
+}
+
+// Auth error boundary for protected routes only.
+// Catches auth errors (tRPC UNAUTHORIZED or HTTP 401) and shows recovery UI.
+// 403 (forbidden) falls through to generic handler since user IS authenticated.
+export function AuthErrorBoundary({ children }: ErrorBoundaryProps) {
+  const queryClient = useQueryClient();
   const { reset } = useQueryErrorResetBoundary();
 
   return (
     <ErrorBoundary
-      FallbackComponent={ErrorFallbackWrapper}
+      FallbackComponent={AuthAwareErrorFallback}
       onReset={reset}
-      onError={(error, errorInfo) => {
-        console.error("Error caught by boundary:", error, errorInfo);
-        // Clear stale session data for auth errors
-        // NOTE: sessionQueryKey is imported from queries/session - ensures we clear
-        // the exact query key used by useSession() hook to prevent stale auth state
+      onError={(error) => {
+        console.error("Error caught by boundary:", error);
         if (isAuthError(error)) {
           queryClient.removeQueries({ queryKey: sessionQueryKey });
         }
       }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+}
+
+// Generic error boundary for app root - no auth-specific handling
+export function AppErrorBoundary({ children }: ErrorBoundaryProps) {
+  const { reset } = useQueryErrorResetBoundary();
+
+  return (
+    <ErrorBoundary
+      FallbackComponent={GenericErrorFallback}
+      onReset={reset}
+      onError={(error) => console.error("Uncaught error:", error)}
     >
       {children}
     </ErrorBoundary>

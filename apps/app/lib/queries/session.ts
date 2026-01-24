@@ -5,6 +5,7 @@
  * TanStack Query handles caching, refresh, and consistency automatically.
  */
 
+import { getErrorStatus } from "@/lib/errors";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   queryOptions,
@@ -40,9 +41,10 @@ export function sessionQueryOptions() {
     refetchOnWindowFocus: true,
     // Always refetch after network issues to sync with server
     refetchOnReconnect: "always",
-    // Don't retry auth errors (401/403) - user must re-authenticate
+    // Don't retry auth/permission errors - retrying won't help
+    // Allow 408 (timeout) and 429 (rate limit) which are transient
     retry(failureCount, error) {
-      const status = (error as { status?: number })?.status;
+      const status = getErrorStatus(error);
       if (status === 401 || status === 403) return false;
       return failureCount < 3;
     },
@@ -105,4 +107,16 @@ export async function refreshSession(queryClient: QueryClient) {
     queryKey: sessionQueryKey,
     type: "active",
   });
+}
+
+/**
+ * Clears session cache and revalidates router after auth state changes.
+ * Uses removeQueries (not invalidate) so beforeLoad sees undefined and fetches fresh.
+ */
+export async function revalidateSession(
+  queryClient: QueryClient,
+  router: { invalidate: () => Promise<void> },
+) {
+  queryClient.removeQueries({ queryKey: sessionQueryKey });
+  await router.invalidate();
 }

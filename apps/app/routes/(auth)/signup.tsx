@@ -1,6 +1,6 @@
 import { AuthForm } from "@/components/auth";
 import { getSafeRedirectUrl } from "@/lib/auth-config";
-import { invalidateSession, sessionQueryOptions } from "@/lib/queries/session";
+import { revalidateSession, sessionQueryOptions } from "@/lib/queries/session";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -48,10 +48,7 @@ function SignupPage() {
   const search = Route.useSearch();
 
   async function handleSuccess() {
-    // Fetch fresh session into cache, then invalidate to trigger re-renders
-    await queryClient.fetchQuery(sessionQueryOptions());
-    await invalidateSession(queryClient);
-    await router.invalidate();
+    await revalidateSession(queryClient, router);
     await router.navigate({ to: search.returnTo ?? "/" });
   }
 

@@ -1,9 +1,9 @@
 import { auth } from "@/lib/auth";
 import { authConfig, getSafeRedirectUrl } from "@/lib/auth-config";
 import { sessionQueryKey } from "@/lib/queries/session";
-import { queryClient } from "@/lib/query";
-import { useRouterState } from "@tanstack/react-router";
 import { Button } from "@repo/ui";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouterState } from "@tanstack/react-router";
 
 interface SocialLoginProps {
   onError: (error: string) => void;
@@ -11,6 +11,7 @@ interface SocialLoginProps {
 }
 
 export function SocialLogin({ onError, isDisabled }: SocialLoginProps) {
+  const queryClient = useQueryClient();
   const returnTo = useRouterState({
     select: (s) => (s.location.search as { returnTo?: string }).returnTo,
   });

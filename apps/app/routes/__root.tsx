@@ -1,11 +1,11 @@
-import { AuthErrorBoundary } from "@/components/auth";
-import type { AuthClient } from "@/lib/auth";
+import { AppErrorBoundary } from "@/components/auth";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
+// Only queryClient in context - needed for beforeLoad prefetching.
+// Auth client is a singleton (no hook equivalent in Better Auth).
 export const Route = createRootRouteWithContext<{
-  auth: AuthClient;
   queryClient: QueryClient;
 }>()({
   component: Root,
@@ -13,9 +13,9 @@ export const Route = createRootRouteWithContext<{
 
 export function Root() {
   return (
-    <AuthErrorBoundary>
+    <AppErrorBoundary>
       <Outlet />
       {import.meta.env.DEV && <TanStackRouterDevtools />}
-    </AuthErrorBoundary>
+    </AppErrorBoundary>
   );
 }

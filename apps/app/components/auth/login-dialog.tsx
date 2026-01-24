@@ -1,6 +1,4 @@
-import { invalidateSession, sessionQueryOptions } from "@/lib/queries/session";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { revalidateSession } from "@/lib/queries/session";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +6,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { AuthForm } from "./auth-form";
 
@@ -25,9 +25,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
   const queryClient = useQueryClient();
 
   async function handleSuccess() {
-    await queryClient.fetchQuery(sessionQueryOptions());
-    await invalidateSession(queryClient);
-    await router.invalidate();
+    await revalidateSession(queryClient, router);
     onOpenChange(false);
   }
 
