@@ -5,7 +5,7 @@ import type { ComponentProps } from "react";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
 import { SocialLogin } from "./social-login";
-import { useAuthForm, type AuthChildKey } from "./use-auth-form";
+import { useAuthForm, type AuthMethod } from "./use-auth-form";
 
 const APP_NAME = import.meta.env.VITE_APP_NAME || "your account";
 
@@ -33,10 +33,10 @@ function SignupTerms() {
 
 interface AuthFormProps extends ComponentProps<"div"> {
   /**
-   * UI variant affecting copy, ToS display, and available methods.
-   * Both variants use the same passwordless OTP flow that auto-creates accounts.
+   * UI mode affecting copy, ToS display, and available methods.
+   * Both modes use the same passwordless OTP flow that auto-creates accounts.
    */
-  variant?: "login" | "signup";
+  mode?: "login" | "signup";
   /** Called after successful auth. Awaited before UI progresses. Caller handles cache invalidation and navigation. */
   onSuccess: () => Promise<void>;
   isLoading?: boolean;
@@ -48,7 +48,7 @@ export function AuthForm({
   className,
   onSuccess,
   isLoading,
-  variant = "login",
+  mode = "login",
   returnTo,
   ...props
 }: AuthFormProps) {
@@ -58,19 +58,19 @@ export function AuthForm({
     isDisabled,
     error,
     changeEmail,
-    handleSuccess,
+    completeAuth,
     handleError,
     clearError,
     sendOtp,
     goToEmailStep,
     goToMethodStep,
     resetToEmail,
-    setChildLoading,
-    variant: formVariant,
+    setMethodLoading,
+    mode: formMode,
   } = useAuthForm({
     onSuccess,
     isExternallyLoading: isLoading,
-    variant,
+    mode,
   });
 
   // Clear error when user changes email
@@ -85,7 +85,7 @@ export function AuthForm({
     resetToEmail();
   };
 
-  const isSignup = formVariant === "signup";
+  const isSignup = formMode === "signup";
 
   return (
     <div className={cn("flex flex-col gap-6 w-full", className)} {...props}>
@@ -112,9 +112,9 @@ export function AuthForm({
           isSignup={isSignup}
           isDisabled={isDisabled}
           onEmailClick={goToEmailStep}
-          onSuccess={handleSuccess}
+          onSuccess={completeAuth}
           onError={handleError}
-          setChildLoading={setChildLoading}
+          setMethodLoading={setMethodLoading}
           returnTo={returnTo}
         />
       )}
@@ -136,9 +136,9 @@ export function AuthForm({
         <OtpStep
           email={email}
           isDisabled={isDisabled}
-          onSuccess={handleSuccess}
+          onSuccess={completeAuth}
           onError={handleError}
-          setChildLoading={setChildLoading}
+          setMethodLoading={setMethodLoading}
           onBack={handleOtpBack}
           onCancel={resetToEmail}
         />
@@ -154,7 +154,7 @@ interface MethodSelectionProps {
   onEmailClick: () => void;
   onSuccess: () => void;
   onError: (error: string | null) => void;
-  setChildLoading: (key: AuthChildKey, loading: boolean) => void;
+  setMethodLoading: (method: AuthMethod, loading: boolean) => void;
   returnTo?: string;
 }
 
@@ -164,7 +164,7 @@ function MethodSelection({
   onEmailClick,
   onSuccess,
   onError,
-  setChildLoading,
+  setMethodLoading,
   returnTo,
 }: MethodSelectionProps) {
   const heading = isSignup ? "Create your account" : `Log in to ${APP_NAME}`;
@@ -177,7 +177,7 @@ function MethodSelection({
         <SocialLogin
           onError={onError}
           isDisabled={isDisabled}
-          onLoadingChange={(loading) => setChildLoading("social", loading)}
+          onLoadingChange={(loading) => setMethodLoading("social", loading)}
           returnTo={returnTo}
         />
 
@@ -197,7 +197,7 @@ function MethodSelection({
           <PasskeyLogin
             onSuccess={onSuccess}
             onError={onError}
-            onLoadingChange={(loading) => setChildLoading("passkey", loading)}
+            onLoadingChange={(loading) => setMethodLoading("passkey", loading)}
             isDisabled={isDisabled}
           />
         )}
@@ -300,7 +300,7 @@ interface OtpStepProps {
   isDisabled: boolean;
   onSuccess: () => void;
   onError: (error: string | null) => void;
-  setChildLoading: (key: AuthChildKey, loading: boolean) => void;
+  setMethodLoading: (method: AuthMethod, loading: boolean) => void;
   onBack: () => void;
   onCancel: () => void;
 }
@@ -310,7 +310,7 @@ function OtpStep({
   isDisabled,
   onSuccess,
   onError,
-  setChildLoading,
+  setMethodLoading,
   onBack,
   onCancel,
 }: OtpStepProps) {
@@ -327,7 +327,7 @@ function OtpStep({
         email={email}
         onSuccess={onSuccess}
         onError={onError}
-        onLoadingChange={(loading) => setChildLoading("otp", loading)}
+        onLoadingChange={(loading) => setMethodLoading("otp", loading)}
         onCancel={onCancel}
         isDisabled={isDisabled}
       />

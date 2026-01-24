@@ -4,8 +4,8 @@ import { useCallback, useRef, useState } from "react";
 
 export type AuthStep = "method" | "email" | "otp";
 
-/** Child component identifiers for tracking concurrent loading states */
-export type AuthChildKey = "social" | "passkey" | "otp";
+/** Authentication method identifiers for tracking concurrent loading states */
+export type AuthMethod = "social" | "passkey" | "otp";
 
 // Minimal state machine for passwordless OTP flow. Intentionally shallow:
 // - Errors are orthogonal to steps (can occur at any step)
@@ -26,27 +26,27 @@ interface UseAuthFormOptions {
   onSuccess: () => Promise<void>;
   isExternallyLoading?: boolean;
   /**
-   * UI variant affecting copy, ToS display, and available methods.
-   * Both variants use the same passwordless OTP flow that auto-creates accounts.
+   * UI mode affecting copy, ToS display, and available methods.
+   * Both modes use the same passwordless OTP flow that auto-creates accounts.
    */
-  variant?: "login" | "signup";
+  mode?: "login" | "signup";
 }
 
 export function useAuthForm({
   onSuccess,
   isExternallyLoading,
-  variant = "login",
+  mode = "login",
 }: UseAuthFormOptions) {
   const [step, setStep] = useState<AuthStep>("method");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  // Tracks loading state per child component to handle concurrent auth methods
-  const [loadingChildren, setLoadingChildren] = useState<Set<AuthChildKey>>(
+  // Tracks loading state per auth method to handle concurrent attempts
+  const [loadingMethods, setLoadingMethods] = useState<Set<AuthMethod>>(
     () => new Set(),
   );
   const [error, setError] = useState<string | null>(null);
 
-  const isChildLoading = loadingChildren.size > 0;
+  const isMethodLoading = loadingMethods.size > 0;
   // Guards against concurrent auth completion (e.g., passkey conditional UI + manual OTP).
   // Reset when returning to method step to allow retry after navigation back.
   const hasSucceededRef = useRef(false);
@@ -54,22 +54,25 @@ export function useAuthForm({
   const stepRef = useRef(step);
   stepRef.current = step;
 
-  // Unified busy state: parent loading, child loading, or external loading
-  const isDisabled = isLoading || isChildLoading || !!isExternallyLoading;
+  // Unified busy state: parent loading, method loading, or external loading
+  const isDisabled = isLoading || isMethodLoading || !!isExternallyLoading;
 
-  // Keyed loading tracker - idempotent to handle redundant calls from children
-  const setChildLoading = useCallback((key: AuthChildKey, loading: boolean) => {
-    setLoadingChildren((prev) => {
-      const has = prev.has(key);
-      if (loading ? has : !has) return prev; // No logical change
-      const next = new Set(prev);
-      if (loading) next.add(key);
-      else next.delete(key);
-      return next;
-    });
-  }, []);
+  // Keyed loading tracker - idempotent to handle redundant calls
+  const setMethodLoading = useCallback(
+    (method: AuthMethod, loading: boolean) => {
+      setLoadingMethods((prev) => {
+        const has = prev.has(method);
+        if (loading ? has : !has) return prev; // No logical change
+        const next = new Set(prev);
+        if (loading) next.add(method);
+        else next.delete(method);
+        return next;
+      });
+    },
+    [],
+  );
 
-  const handleSuccess = async () => {
+  const completeAuth = async () => {
     if (hasSucceededRef.current) return;
     hasSucceededRef.current = true;
 
@@ -155,17 +158,17 @@ export function useAuthForm({
     isLoading,
     isDisabled,
     error,
-    variant,
+    mode,
 
     // Actions
     changeEmail,
-    handleSuccess,
+    completeAuth,
     handleError,
     clearError,
     sendOtp,
     goToEmailStep,
     goToMethodStep,
     resetToEmail,
-    setChildLoading,
+    setMethodLoading,
   };
 }

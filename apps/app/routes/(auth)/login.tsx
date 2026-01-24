@@ -56,7 +56,7 @@ function LoginPage() {
     <div className="flex min-h-svh flex-col items-center justify-center bg-muted/40 p-6 md:p-10">
       <div className="w-full max-w-sm rounded-xl bg-background p-8 shadow-sm ring-1 ring-border/50">
         <AuthForm
-          variant="login"
+          mode="login"
           onSuccess={handleSuccess}
           returnTo={search.returnTo}
         />

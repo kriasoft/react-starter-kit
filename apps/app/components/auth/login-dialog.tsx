@@ -47,11 +47,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
             Choose your preferred sign in method
           </DialogDescription>
         </DialogHeader>
-        <AuthForm
-          variant="login"
-          onSuccess={handleSuccess}
-          returnTo={returnTo}
-        />
+        <AuthForm mode="login" onSuccess={handleSuccess} returnTo={returnTo} />
       </DialogContent>
     </Dialog>
   );
