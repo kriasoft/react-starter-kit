@@ -46,6 +46,9 @@ export function useAuthForm({
   // Guards against concurrent auth completion (e.g., passkey conditional UI + manual OTP).
   // Reset when returning to method step to allow retry after navigation back.
   const hasSucceededRef = useRef(false);
+  // Sync ref for checking current step in transitionTo without stale closure
+  const stepRef = useRef(step);
+  stepRef.current = step;
 
   // Unified busy state: parent loading, child loading, or external loading
   const isDisabled = isLoading || isChildLoading || !!isExternallyLoading;
@@ -89,15 +92,12 @@ export function useAuthForm({
 
   // Validates transitions to prevent invalid step jumps
   const transitionTo = useCallback((next: AuthStep, clearErr = true) => {
-    setStep((prev) => {
-      if (!VALID_TRANSITIONS[prev].includes(next)) {
-        if (import.meta.env.DEV) {
-          console.warn(`Invalid auth step transition: ${prev} → ${next}`);
-        }
-        return prev;
-      }
-      return next;
-    });
+    const current = stepRef.current;
+    if (!VALID_TRANSITIONS[current].includes(next)) {
+      return;
+    }
+    setStep(next);
+    stepRef.current = next; // Sync immediately for potential same-tick calls
     if (clearErr) setError(null);
   }, []);
 
