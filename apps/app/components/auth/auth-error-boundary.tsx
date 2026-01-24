@@ -1,24 +1,12 @@
-import { getErrorMessage, getErrorStatus } from "@/lib/errors";
+import { getErrorMessage, isUnauthenticatedError } from "@/lib/errors";
 import { sessionQueryKey } from "@/lib/queries/session";
-import type { AppRouter } from "@repo/api";
 import { Button } from "@repo/ui";
 import {
   useQueryClient,
   useQueryErrorResetBoundary,
 } from "@tanstack/react-query";
-import { isTRPCClientError } from "@trpc/client";
 import { AlertCircle } from "lucide-react";
 import { ErrorBoundary } from "react-error-boundary";
-
-// Check if error indicates session expiry (401 only, not 403 which is authorization)
-export function isAuthError(error: unknown): boolean {
-  // tRPC errors: check typed code
-  if (isTRPCClientError<AppRouter>(error)) {
-    return error.data?.code === "UNAUTHORIZED";
-  }
-  // Non-tRPC: only 401 (unauthenticated), not 403 (forbidden/no permission)
-  return getErrorStatus(error) === 401;
-}
 
 interface ResetProps {
   resetErrorBoundary: () => void;
@@ -90,7 +78,7 @@ function AuthAwareErrorFallback({
   error,
   resetErrorBoundary,
 }: ErrorFallbackProps) {
-  return isAuthError(error) ? (
+  return isUnauthenticatedError(error) ? (
     <AuthErrorFallback resetErrorBoundary={resetErrorBoundary} />
   ) : (
     <GenericErrorFallback
@@ -113,7 +101,7 @@ export function AuthErrorBoundary({ children }: ErrorBoundaryProps) {
       onReset={reset}
       onError={(error) => {
         console.error("Error caught by boundary:", error);
-        if (isAuthError(error)) {
+        if (isUnauthenticatedError(error)) {
           queryClient.removeQueries({ queryKey: sessionQueryKey });
         }
       }}

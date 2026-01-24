@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getErrorMessage, getErrorStatus } from "./errors";
+import {
+  getErrorMessage,
+  getErrorStatus,
+  isUnauthenticatedError,
+} from "./errors";
 
 describe("getErrorStatus", () => {
   it("returns undefined for non-objects", () => {
@@ -71,5 +75,40 @@ describe("getErrorMessage", () => {
     expect(getErrorMessage({ statusText: "" })).toBe(
       "An unexpected error occurred",
     );
+  });
+});
+
+describe("isUnauthenticatedError", () => {
+  it("returns true for 401 status", () => {
+    expect(isUnauthenticatedError({ status: 401 })).toBe(true);
+  });
+
+  it("returns false for 403 status (authorization, not authentication)", () => {
+    expect(isUnauthenticatedError({ status: 403 })).toBe(false);
+  });
+
+  it("returns false for other status codes", () => {
+    expect(isUnauthenticatedError({ status: 500 })).toBe(false);
+    expect(isUnauthenticatedError({ status: 404 })).toBe(false);
+  });
+
+  it("returns false for non-error values", () => {
+    expect(isUnauthenticatedError(null)).toBe(false);
+    expect(isUnauthenticatedError("error")).toBe(false);
+    expect(isUnauthenticatedError({})).toBe(false);
+  });
+
+  it("detects 401 in nested cause", () => {
+    expect(isUnauthenticatedError({ cause: { status: 401 } })).toBe(true);
+  });
+
+  it("returns true for tRPC UNAUTHORIZED code", () => {
+    expect(isUnauthenticatedError({ data: { code: "UNAUTHORIZED" } })).toBe(
+      true,
+    );
+  });
+
+  it("returns false for tRPC FORBIDDEN code", () => {
+    expect(isUnauthenticatedError({ data: { code: "FORBIDDEN" } })).toBe(false);
   });
 });

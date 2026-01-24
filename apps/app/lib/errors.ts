@@ -22,6 +22,18 @@ export function getErrorStatus(
   return undefined;
 }
 
+// Check if error indicates unauthenticated state (401).
+// Maps tRPC UNAUTHORIZED code and HTTP 401 status to a semantic boolean.
+// Does not match 403 (forbidden) - that means authenticated but lacking permission.
+export function isUnauthenticatedError(error: unknown): boolean {
+  // tRPC errors expose typed code
+  if (error && typeof error === "object" && "data" in error) {
+    const data = (error as { data?: { code?: string } }).data;
+    if (data?.code === "UNAUTHORIZED") return true;
+  }
+  return getErrorStatus(error) === 401;
+}
+
 // Safely extract message from any thrown value
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
