@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { authConfig } from "@/lib/auth-config";
+import { authConfig, getSafeRedirectUrl } from "@/lib/auth-config";
 import { sessionQueryKey } from "@/lib/queries/session";
 import { queryClient } from "@/lib/query";
 import { useRouterState } from "@tanstack/react-router";
@@ -11,7 +11,6 @@ interface SocialLoginProps {
 }
 
 export function SocialLogin({ onError, isDisabled }: SocialLoginProps) {
-  // Get returnTo from router state (already sanitized by validateSearch)
   const returnTo = useRouterState({
     select: (s) => (s.location.search as { returnTo?: string }).returnTo,
   });
@@ -23,8 +22,8 @@ export function SocialLogin({ onError, isDisabled }: SocialLoginProps) {
       // Clear stale session before OAuth redirect
       queryClient.removeQueries({ queryKey: sessionQueryKey });
 
-      // Use sanitized returnTo or root as default
-      const destination = returnTo || "/";
+      // Always sanitize here - component may render outside auth routes (e.g. LoginDialog)
+      const destination = getSafeRedirectUrl(returnTo);
 
       // Initiate Google OAuth flow
       await auth.signIn.social({

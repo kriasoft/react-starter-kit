@@ -24,7 +24,7 @@ export const authConfig = {
 
   api: {
     basePath: "/api/auth",
-    requestTimeout: process.env.NODE_ENV === "development" ? 60_000 : 30_000,
+    requestTimeout: import.meta.env.DEV ? 60_000 : 30_000,
   },
 
   retry: {

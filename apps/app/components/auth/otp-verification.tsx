@@ -1,7 +1,9 @@
 import { auth } from "@/lib/auth";
 import { Button, Input } from "@repo/ui";
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+const RESEND_COOLDOWN_SECONDS = 30;
 
 interface OtpVerificationProps {
   email: string;
@@ -9,7 +11,6 @@ interface OtpVerificationProps {
   onError: (error: string) => void;
   onCancel: () => void;
   isDisabled?: boolean;
-  mode?: "login" | "signup";
 }
 
 export function OtpVerification({
@@ -18,10 +19,17 @@ export function OtpVerification({
   onError,
   onCancel,
   isDisabled,
-  mode = "login",
 }: OtpVerificationProps) {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Countdown timer for resend cooldown
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
 
   const handleOtpVerification = async (e: FormEvent) => {
     e.preventDefault();
@@ -31,9 +39,8 @@ export function OtpVerification({
 
     try {
       setIsLoading(true);
-      onError(""); // Clear any previous errors
+      onError("");
 
-      // Sign in with OTP
       const result = await auth.signIn.emailOtp({
         email,
         otp,
@@ -45,10 +52,10 @@ export function OtpVerification({
         const errorMessage = result.error.message || "";
         if (errorMessage.includes("TOO_MANY_ATTEMPTS")) {
           onError("Too many failed attempts. Please request a new code.");
-          onCancel(); // Reset to email input
+          onCancel();
         } else if (errorMessage.includes("expired")) {
           onError("Code has expired. Please request a new one.");
-          onCancel(); // Reset to email input
+          onCancel();
         } else {
           onError(errorMessage || "Invalid verification code");
         }
@@ -61,14 +68,16 @@ export function OtpVerification({
     }
   };
 
-  const handleResendOtp = async () => {
+  const handleResendOtp = useCallback(async () => {
+    if (resendCooldown > 0) return;
+
     setOtp("");
     onError("");
 
     try {
       setIsLoading(true);
 
-      // Send new OTP to the user's email
+      // "sign-in" type handles both login and signup (creates user if needed)
       const result = await auth.emailOtp.sendVerificationOtp({
         email,
         type: "sign-in",
@@ -76,6 +85,8 @@ export function OtpVerification({
 
       if (result.error) {
         onError(result.error.message || "Failed to send OTP");
+      } else {
+        setResendCooldown(RESEND_COOLDOWN_SECONDS);
       }
     } catch (err) {
       console.error("Email OTP error:", err);
@@ -83,24 +94,12 @@ export function OtpVerification({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [email, onError, resendCooldown]);
 
   const disabled = isDisabled || isLoading;
-  const isSignup = mode === "signup";
 
   return (
-    <form onSubmit={handleOtpVerification} className="grid gap-3">
-      <div className="text-sm text-muted-foreground">
-        {isSignup ? (
-          <>
-            We've sent a verification code to verify <strong>{email}</strong>
-          </>
-        ) : (
-          <>
-            We've sent a verification code to <strong>{email}</strong>
-          </>
-        )}
-      </div>
+    <form onSubmit={handleOtpVerification} className="flex flex-col gap-3">
       <Input
         type="text"
         placeholder="Enter 6-digit code"
@@ -113,6 +112,7 @@ export function OtpVerification({
         maxLength={6}
         pattern="[0-9]{6}"
         inputMode="numeric"
+        className="text-center text-lg tracking-widest"
       />
       <Button
         type="submit"
@@ -122,29 +122,17 @@ export function OtpVerification({
       >
         Verify code
       </Button>
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          variant="ghost"
-          className="flex-1 text-sm"
-          onClick={onCancel}
-          disabled={disabled}
-        >
-          Change email
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          className="flex-1 text-sm"
-          onClick={handleResendOtp}
-          disabled={disabled}
-        >
-          Resend code
-        </Button>
-      </div>
-      <div className="text-xs text-muted-foreground text-center">
-        Code expires in 5 minutes
-      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        className="w-full text-sm"
+        onClick={handleResendOtp}
+        disabled={disabled || resendCooldown > 0}
+      >
+        {resendCooldown > 0
+          ? `Resend code in ${resendCooldown}s`
+          : "Resend code"}
+      </Button>
     </form>
   );
 }

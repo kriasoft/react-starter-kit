@@ -1,12 +1,15 @@
 import { auth } from "@/lib/auth";
-import { queryClient } from "@/lib/query";
-import { sessionQueryOptions } from "@/lib/queries/session";
-import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
+export type AuthStep = "method" | "email" | "otp";
+
 interface UseAuthFormOptions {
-  onSuccess?: () => void;
+  /**
+   * Called after successful authentication. Caller is responsible for
+   * cache invalidation and navigation.
+   */
+  onSuccess: () => void;
   isExternallyLoading?: boolean;
   mode?: "login" | "signup";
 }
@@ -15,29 +18,17 @@ export function useAuthForm({
   onSuccess,
   isExternallyLoading,
   mode = "login",
-}: UseAuthFormOptions = {}) {
-  const navigate = useNavigate();
+}: UseAuthFormOptions) {
+  const [step, setStep] = useState<AuthStep>("method");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showOtpInput, setShowOtpInput] = useState(false);
 
   // Combine internal and external loading states
-  const isDisabled = isLoading || isExternallyLoading;
+  const isDisabled = isLoading || !!isExternallyLoading;
 
-  const handleSuccess = async () => {
-    // First, fetch the fresh session to ensure it's in the cache
-    await queryClient.fetchQuery(sessionQueryOptions());
-
-    // Then invalidate all queries to refresh session state
-    await queryClient.invalidateQueries();
-
-    // Call custom success handler or navigate to home
-    if (onSuccess) {
-      onSuccess();
-    } else {
-      navigate({ to: "/" });
-    }
+  const handleSuccess = () => {
+    onSuccess();
   };
 
   const handleError = (errorMessage: string) => {
@@ -56,14 +47,14 @@ export function useAuthForm({
       setIsLoading(true);
       setError(null);
 
-      // Send OTP to the user's email
+      // Send OTP - "sign-in" type handles both login and signup (creates user if needed)
       const result = await auth.emailOtp.sendVerificationOtp({
         email,
         type: "sign-in",
       });
 
       if (result.data) {
-        setShowOtpInput(true);
+        setStep("otp");
         setError(null);
       } else if (result.error) {
         setError(result.error.message || "Failed to send OTP");
@@ -76,31 +67,43 @@ export function useAuthForm({
     }
   };
 
-  const resetOtpFlow = () => {
-    setShowOtpInput(false);
+  const goToEmailStep = () => {
+    setStep("email");
     setError(null);
+  };
+
+  const goToMethodStep = () => {
+    setStep("method");
+    setError(null);
+  };
+
+  // Go back to email step, preserving any error message
+  const resetToEmail = () => {
+    setStep("email");
   };
 
   return {
     // State
+    step,
     email,
     isLoading,
     isDisabled,
     error,
-    showOtpInput,
     mode,
 
     // Setters
     setEmail,
     setIsLoading,
     setError,
-    setShowOtpInput,
+    setStep,
 
     // Handlers
     handleSuccess,
     handleError,
     clearError,
     sendOtp,
-    resetOtpFlow,
+    goToEmailStep,
+    goToMethodStep,
+    resetToEmail,
   };
 }

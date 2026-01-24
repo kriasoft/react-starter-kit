@@ -94,7 +94,7 @@ export function PasskeyLogin({
       disabled={isDisabled || isLoading}
     >
       <KeyRound className="mr-2 h-4 w-4" />
-      Sign in with passkey
+      Log in with passkey
     </Button>
   );
 }

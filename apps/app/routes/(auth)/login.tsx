@@ -1,4 +1,4 @@
-import { AuthForm } from "@/components/auth/auth-form";
+import { AuthForm } from "@/components/auth";
 import { getSafeRedirectUrl } from "@/lib/auth-config";
 import { invalidateSession, sessionQueryOptions } from "@/lib/queries/session";
 import { useQueryClient } from "@tanstack/react-query";
@@ -48,14 +48,16 @@ function LoginPage() {
   const search = Route.useSearch();
 
   async function handleSuccess() {
+    // Fetch fresh session into cache, then invalidate to trigger re-renders
+    await queryClient.fetchQuery(sessionQueryOptions());
     await invalidateSession(queryClient);
     await router.invalidate();
     await router.navigate({ to: search.returnTo ?? "/" });
   }
 
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm md:max-w-3xl">
+    <div className="flex min-h-svh flex-col items-center justify-center bg-muted/40 p-6 md:p-10">
+      <div className="w-full max-w-sm rounded-xl bg-background p-8 shadow-sm ring-1 ring-border/50">
         <AuthForm mode="login" onSuccess={handleSuccess} />
       </div>
     </div>

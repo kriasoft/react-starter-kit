@@ -1,39 +1,38 @@
+import { invalidateSession, sessionQueryOptions } from "@/lib/queries/session";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@repo/ui";
-import * as React from "react";
+import { useState } from "react";
 import { AuthForm } from "./auth-form";
 
-/**
- * LoginDialog component - Renders login form in a dialog.
- * Self-contained with trigger button. For programmatic control, use useLoginDialog hook.
- *
- * NOTE: This component doesn't handle post-auth navigation since it's typically used
- * in contexts where the user should stay on the current page after signing in.
- */
-export function LoginDialog() {
-  const [open, setOpen] = React.useState(false);
+interface LoginDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
-  const handleSuccess = () => {
-    // Close modal on success - navigation not needed as user typically wants
-    // to continue on the same page that triggered the login requirement.
-    // React Query will automatically refetch protected data after auth state changes.
-    setOpen(false);
-    // TODO: Consider invalidating specific queries if immediate data refresh needed:
-    // queryClient.invalidateQueries({ queryKey: ["protected-data"] })
-  };
+/**
+ * Login dialog component for modal authentication.
+ * Use with useLoginDialog hook for programmatic control.
+ */
+export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  async function handleSuccess() {
+    await queryClient.fetchQuery(sessionQueryOptions());
+    await invalidateSession(queryClient);
+    await router.invalidate();
+    onOpenChange(false);
+  }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Sign In</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="sr-only">
           <DialogTitle>Sign in to your account</DialogTitle>
@@ -41,60 +40,39 @@ export function LoginDialog() {
             Choose your preferred sign in method
           </DialogDescription>
         </DialogHeader>
-        <AuthForm
-          variant="modal"
-          mode="login"
-          onSuccess={handleSuccess}
-          showTerms={true} // Override default (false for modals) to show terms
-        />
+        <AuthForm mode="login" onSuccess={handleSuccess} />
       </DialogContent>
     </Dialog>
   );
 }
 
 /**
- * Hook for programmatically controlling a login dialog.
- * Returns dialog component and control functions.
+ * Hook for programmatically controlling the login dialog.
  *
- * USAGE: Place LoginDialog component at app root, then call openLoginDialog()
- * from any component that detects auth is required (e.g., after 401 response).
+ * @example
+ * ```tsx
+ * function App() {
+ *   const loginDialog = useLoginDialog();
  *
- * WARNING: Only one instance should be mounted to avoid conflicts.
+ *   return (
+ *     <>
+ *       <button onClick={loginDialog.open}>Sign In</button>
+ *       <LoginDialog {...loginDialog.props} />
+ *     </>
+ *   );
+ * }
+ * ```
  */
 export function useLoginDialog() {
-  const [open, setOpen] = React.useState(false);
-
-  const LoginDialog = React.useCallback(() => {
-    const handleSuccess = () => {
-      setOpen(false);
-      // Post-auth behavior handled by React Query's automatic refetching
-      // and the auth error boundary's session invalidation
-    };
-
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="sr-only">
-            <DialogTitle>Sign in to your account</DialogTitle>
-            <DialogDescription>
-              Choose your preferred sign in method
-            </DialogDescription>
-          </DialogHeader>
-          <AuthForm
-            variant="modal"
-            mode="login"
-            onSuccess={handleSuccess}
-            // showTerms defaults to false for modals per AuthForm implementation
-          />
-        </DialogContent>
-      </Dialog>
-    );
-  }, [open]);
+  const [isOpen, setIsOpen] = useState(false);
 
   return {
-    LoginDialog,
-    openLoginDialog: () => setOpen(true),
-    closeLoginDialog: () => setOpen(false),
-    isOpen: open,
+    isOpen,
+    open: () => setIsOpen(true),
+    close: () => setIsOpen(false),
+    props: {
+      open: isOpen,
+      onOpenChange: setIsOpen,
+    },
   };
 }

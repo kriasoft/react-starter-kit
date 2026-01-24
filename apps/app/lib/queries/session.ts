@@ -92,7 +92,7 @@ export async function signOut(
   options?: { redirect?: boolean },
 ) {
   await auth.signOut();
-  await queryClient.invalidateQueries({ queryKey: ["auth"] });
+  await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
 
   if (options?.redirect !== false) {
     window.location.href = "/login";

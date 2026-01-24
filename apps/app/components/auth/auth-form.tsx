@@ -1,56 +1,69 @@
-import { useAuthForm } from "@/hooks/use-auth-form";
-import { Button, Card, CardContent, Input, cn } from "@repo/ui";
-import { Mail } from "lucide-react";
+import { useAuthForm } from "./use-auth-form";
+import { Button, Input, cn } from "@repo/ui";
+import { ArrowLeft, Mail } from "lucide-react";
 import type { ComponentProps } from "react";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
 import { SocialLogin } from "./social-login";
 import { Link } from "@tanstack/react-router";
 
-interface AuthFormContentProps {
-  onSuccess?: () => void;
-  className?: string;
-  isExternallyLoading?: boolean;
+const APP_NAME = import.meta.env.VITE_APP_NAME || "your account";
+
+interface AuthFormProps extends ComponentProps<"div"> {
   mode?: "login" | "signup";
+  /** Called after successful auth. Caller handles cache invalidation and navigation. */
+  onSuccess: () => void;
+  isLoading?: boolean;
 }
 
-function AuthFormContent({
-  onSuccess,
+export function AuthForm({
   className,
-  isExternallyLoading,
+  onSuccess,
+  isLoading,
   mode = "login",
-}: AuthFormContentProps) {
+  ...props
+}: AuthFormProps) {
   const {
+    step,
     email,
     isDisabled,
     error,
-    showOtpInput,
     setEmail,
     handleSuccess,
     handleError,
+    clearError,
     sendOtp,
-    resetOtpFlow,
+    goToEmailStep,
+    goToMethodStep,
+    resetToEmail,
     mode: formMode,
   } = useAuthForm({
     onSuccess,
-    isExternallyLoading,
+    isExternallyLoading: isLoading,
     mode,
   });
 
+  // Clear error when user changes email
+  const handleEmailChange = (value: string) => {
+    if (error) clearError();
+    setEmail(value);
+  };
+
+  // Voluntary back from OTP clears error; forced back (via onCancel) preserves it
+  const handleOtpBack = () => {
+    clearError();
+    resetToEmail();
+  };
+
   const isSignup = formMode === "signup";
-  const heading = isSignup ? "Welcome" : "Welcome back";
-  const subheading = isSignup
-    ? "Create your account"
-    : "Sign in to your account";
-  const emailButtonText = isSignup
-    ? "Sign up with email"
-    : "Sign in with email";
 
   return (
-    <div className={cn("flex flex-col gap-6", className)}>
-      <div className="flex flex-col items-center text-center">
-        <h1 className="text-2xl font-bold">{heading}</h1>
-        <p className="text-muted-foreground text-balance">{subheading}</p>
+    <div className={cn("flex flex-col gap-6 w-full", className)} {...props}>
+      {/* Logo */}
+      <div className="flex justify-center">
+        <Link to="/" aria-label="Go to homepage">
+          <img src="/logo512.png" alt="" className="h-10 w-10" />
+        </Link>
       </div>
 
       {/* Error message */}
@@ -60,185 +73,94 @@ function AuthFormContent({
         </div>
       )}
 
-      {/* Passkey Login - Only show for login mode (requires existing account) */}
-      {!isSignup && (
-        <PasskeyLogin
+      {/* Step: Method Selection */}
+      {step === "method" && (
+        <MethodSelection
+          isSignup={isSignup}
+          isDisabled={isDisabled}
+          onEmailClick={goToEmailStep}
           onSuccess={handleSuccess}
           onError={handleError}
-          isDisabled={isDisabled}
         />
       )}
 
-      {/* Google OAuth - Works for both new and existing accounts */}
-      <SocialLogin onError={handleError} isDisabled={isDisabled} />
-
-      {/* Divider - Uses pseudo-element for line-through effect */}
-      <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-        <span className="relative z-10 bg-background px-2 text-muted-foreground">
-          Or continue with email
-        </span>
-      </div>
-
-      {/* Email Form - OTP authentication flow */}
-      {!showOtpInput ? (
-        <form onSubmit={sendOtp} className="grid gap-3">
-          <Input
-            type="email"
-            placeholder="your@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isDisabled}
-            autoComplete="email webauthn"
-            required
-          />
-          <Button
-            type="submit"
-            variant="secondary"
-            className="w-full"
-            disabled={isDisabled || !email}
-          >
-            <Mail className="mr-2 h-4 w-4" />
-            {emailButtonText}
-          </Button>
-          {/* Account Link - Show link to switch between login/signup */}
-          <div className="text-center text-sm text-muted-foreground">
-            {isSignup ? (
-              <>
-                Already have an account?{" "}
-                <Link
-                  to="/login"
-                  activeProps={{
-                    className:
-                      "font-medium text-primary underline-offset-4 hover:underline",
-                  }}
-                >
-                  Sign in
-                </Link>
-              </>
-            ) : (
-              <>
-                Don't have an account?{" "}
-                <Link
-                  to="/signup"
-                  activeProps={{
-                    className:
-                      "font-medium text-primary underline-offset-4 hover:underline",
-                  }}
-                >
-                  Sign up
-                </Link>
-              </>
-            )}
-          </div>
-        </form>
-      ) : (
-        <OtpVerification
+      {/* Step: Email Input */}
+      {step === "email" && (
+        <EmailInput
           email={email}
+          isSignup={isSignup}
+          isDisabled={isDisabled}
+          onEmailChange={handleEmailChange}
+          onSubmit={sendOtp}
+          onBack={goToMethodStep}
+        />
+      )}
+
+      {/* Step: OTP Verification */}
+      {step === "otp" && (
+        <OtpStep
+          email={email}
+          isDisabled={isDisabled}
           onSuccess={handleSuccess}
           onError={handleError}
-          onCancel={resetOtpFlow}
-          isDisabled={isDisabled}
-          mode={formMode}
+          onBack={handleOtpBack}
+          onCancel={resetToEmail}
         />
       )}
     </div>
   );
 }
 
-interface AuthFormProps extends ComponentProps<"div"> {
-  variant?: "page" | "modal";
-  showTerms?: boolean;
-  onSuccess?: () => void;
-  isLoading?: boolean;
-  mode?: "login" | "signup";
-  /**
-   * Optional image path (svg, jpg, or png) to display in right panel.
-   * When provided, layout becomes two-column on md+.
-   * If empty/undefined, only single card is shown.
-   */
-  rightPanelImage?: string;
+// Step 1: Method Selection
+interface MethodSelectionProps {
+  isSignup: boolean;
+  isDisabled: boolean;
+  onEmailClick: () => void;
+  onSuccess: () => void;
+  onError: (error: string) => void;
 }
 
-export function AuthForm({
-  className,
-  variant = "page",
-  showTerms,
+function MethodSelection({
+  isSignup,
+  isDisabled,
+  onEmailClick,
   onSuccess,
-  isLoading,
-  mode = "login",
-  rightPanelImage,
-  ...props
-}: AuthFormProps) {
-  // Default: Show terms on full page, hide in modals (unless overridden)
-  const shouldShowTerms = showTerms ?? variant === "page";
-  const hasRightPanel = Boolean(rightPanelImage);
+  onError,
+}: MethodSelectionProps) {
+  const heading = isSignup ? "Create your account" : `Log in to ${APP_NAME}`;
 
-  if (variant === "modal") {
-    return (
-      <div className={cn("flex flex-col gap-4", className)} {...props}>
-        <AuthFormContent
-          onSuccess={onSuccess}
-          isExternallyLoading={isLoading}
-          mode={mode}
-        />
-        {shouldShowTerms && (
-          <div className="text-center text-xs text-muted-foreground text-balance">
-            By clicking continue, you agree to our{" "}
-            <a
-              href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Privacy Policy
-            </a>
-            .
-          </div>
+  return (
+    <div className="flex flex-col gap-6">
+      <h1 className="text-2xl font-bold text-center">{heading}</h1>
+
+      <div className="flex flex-col gap-3">
+        <SocialLogin onError={onError} isDisabled={isDisabled} />
+
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={onEmailClick}
+          disabled={isDisabled}
+        >
+          <Mail className="mr-2 h-4 w-4" />
+          Continue with email
+        </Button>
+
+        {/* Passkey only available for login (requires existing account) */}
+        {!isSignup && (
+          <PasskeyLogin
+            onSuccess={onSuccess}
+            onError={onError}
+            isDisabled={isDisabled}
+          />
         )}
       </div>
-    );
-  }
 
-  // Default page variant with card layout
-  return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card
-        className={cn(
-          "overflow-hidden p-0 mx-auto w-full",
-          hasRightPanel ? "max-w-3xl" : "max-w-md",
-        )}
-      >
-        <CardContent
-          className={cn("p-0", hasRightPanel ? "grid md:grid-cols-2" : "block")}
-        >
-          <div className="p-6 md:p-8">
-            <AuthFormContent
-              onSuccess={onSuccess}
-              isExternallyLoading={isLoading}
-              mode={mode}
-            />
-          </div>
-          {hasRightPanel && (
-            <div className="relative hidden bg-muted md:flex md:items-center md:justify-center">
-              <img
-                src={rightPanelImage}
-                alt="descriptive text about the image card"
-                className="h-full w-full object-cover"
-              />
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Terms Footer - Required for compliance, configurable via showTerms prop */}
-      {shouldShowTerms && (
-        <div className="text-center text-xs text-muted-foreground text-balance">
-          By clicking continue, you agree to our{" "}
+      {/* Terms (signup only) */}
+      {isSignup && (
+        <p className="text-xs text-muted-foreground text-center text-balance">
+          By signing up, you agree to our{" "}
           <a
             href="/terms"
             className="underline underline-offset-4 hover:text-primary"
@@ -253,8 +175,162 @@ export function AuthForm({
             Privacy Policy
           </a>
           .
-        </div>
+        </p>
       )}
+
+      {/* Account switch link */}
+      <p className="text-sm text-muted-foreground text-center">
+        {isSignup ? (
+          <>
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Log in
+            </Link>
+          </>
+        ) : (
+          <>
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Sign up
+            </Link>
+          </>
+        )}
+      </p>
+    </div>
+  );
+}
+
+// Step 2: Email Input
+interface EmailInputProps {
+  email: string;
+  isSignup: boolean;
+  isDisabled: boolean;
+  onEmailChange: (email: string) => void;
+  onSubmit: (e?: React.FormEvent) => void;
+  onBack: () => void;
+}
+
+function EmailInput({
+  email,
+  isSignup,
+  isDisabled,
+  onEmailChange,
+  onSubmit,
+  onBack,
+}: EmailInputProps) {
+  return (
+    <div className="flex flex-col gap-6">
+      <h1 className="text-2xl font-bold text-center">
+        What's your email address?
+      </h1>
+
+      <form onSubmit={onSubmit} className="flex flex-col gap-3">
+        <Input
+          type="email"
+          placeholder="Enter your email address..."
+          value={email}
+          onChange={(e) => onEmailChange(e.target.value)}
+          disabled={isDisabled}
+          autoComplete="email webauthn"
+          autoFocus
+          required
+        />
+        <Button
+          type="submit"
+          variant="default"
+          className="w-full"
+          disabled={isDisabled || !email}
+        >
+          Continue with email
+        </Button>
+      </form>
+
+      {/* Terms (signup only) */}
+      {isSignup && (
+        <p className="text-xs text-muted-foreground text-center text-balance">
+          By signing up, you agree to our{" "}
+          <a
+            href="/terms"
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a
+            href="/privacy"
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            Privacy Policy
+          </a>
+          .
+        </p>
+      )}
+
+      {/* Back link */}
+      <button
+        type="button"
+        onClick={onBack}
+        disabled={isDisabled}
+        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to {isSignup ? "sign up" : "login"}
+      </button>
+    </div>
+  );
+}
+
+// Step 3: OTP Verification
+interface OtpStepProps {
+  email: string;
+  isDisabled: boolean;
+  onSuccess: () => void;
+  onError: (error: string) => void;
+  onBack: () => void;
+  onCancel: () => void;
+}
+
+function OtpStep({
+  email,
+  isDisabled,
+  onSuccess,
+  onError,
+  onBack,
+  onCancel,
+}: OtpStepProps) {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold">Check your email</h1>
+        <p className="text-muted-foreground mt-1">
+          We sent a code to <strong>{email}</strong>
+        </p>
+      </div>
+
+      <OtpVerification
+        email={email}
+        onSuccess={onSuccess}
+        onError={onError}
+        onCancel={onCancel}
+        isDisabled={isDisabled}
+      />
+
+      {/* Back link */}
+      <button
+        type="button"
+        onClick={onBack}
+        disabled={isDisabled}
+        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to email
+      </button>
     </div>
   );
 }

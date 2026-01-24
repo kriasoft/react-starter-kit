@@ -1,4 +1,4 @@
-import { AuthErrorBoundary } from "@/components/auth/auth-error-boundary";
+import { AuthErrorBoundary } from "@/components/auth";
 import type { AuthClient } from "@/lib/auth";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";

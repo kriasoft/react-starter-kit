@@ -42,20 +42,17 @@ function AuthErrorFallback({
   resetErrorBoundary,
 }: AuthErrorFallbackProps) {
   const handleRetry = () => {
-    // Reset React Query errors and component errors
-    // NOTE: resetQueries() clears error state but preserves cached data,
-    // allowing immediate retry without full data refetch
-    queryClient.resetQueries();
+    // Reset session query error state but preserve cached data
+    queryClient.resetQueries({ queryKey: sessionQueryKey });
     resetErrorBoundary();
   };
 
   const handleSignIn = () => {
-    // Clear auth caches and redirect to login
-    // WARNING: removeQueries() permanently deletes cached auth data.
-    // Using window.location.href (not router navigation) ensures full page reload,
-    // clearing all React state that might hold stale auth tokens
-    queryClient.removeQueries({ queryKey: ["auth"] });
-    window.location.href = "/login";
+    // Clear session cache and redirect to login with return path
+    // Full page reload ensures all React state clears stale auth tokens
+    queryClient.removeQueries({ queryKey: sessionQueryKey });
+    const returnTo = encodeURIComponent(window.location.pathname);
+    window.location.href = `/login?returnTo=${returnTo}`;
   };
 
   return (
