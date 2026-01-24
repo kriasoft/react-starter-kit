@@ -43,7 +43,8 @@ export function useAuthForm({
   const [error, setError] = useState<string | null>(null);
 
   const isChildLoading = loadingChildren.size > 0;
-  // Prevents double-execution from concurrent auth methods (e.g., passkey + OTP)
+  // Guards against concurrent auth completion (e.g., passkey conditional UI + manual OTP).
+  // Reset when returning to method step to allow retry after navigation back.
   const hasSucceededRef = useRef(false);
 
   // Unified busy state: parent loading, child loading, or external loading
@@ -101,7 +102,10 @@ export function useAuthForm({
   }, []);
 
   const goToEmailStep = () => transitionTo("email");
-  const goToMethodStep = () => transitionTo("method");
+  const goToMethodStep = () => {
+    hasSucceededRef.current = false; // Allow new auth attempt
+    transitionTo("method");
+  };
   // Go back to email step, preserving error message
   const resetToEmail = () => transitionTo("email", false);
 
