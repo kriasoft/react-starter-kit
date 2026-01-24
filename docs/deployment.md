@@ -24,7 +24,7 @@ The deployment architecture consists of:
 
 ### 1. Create Neon Database
 
-1. Sign up at [neon.tech](https://neon.tech)
+1. Sign up at [Neon](https://get.neon.com/HD157BR) (referral link)
 2. Create a new project for your application
 3. Note your connection string (looks like `postgresql://user:pass@host/dbname`)
 
