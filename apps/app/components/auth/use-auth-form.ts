@@ -111,10 +111,10 @@ export function useAuthForm({
 
   const sendOtp = async (e?: FormEvent) => {
     e?.preventDefault();
-    if (!email) return;
 
     // Normalize before auth calls to prevent case/whitespace mismatches
     const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) return;
     setEmail(normalizedEmail);
 
     try {

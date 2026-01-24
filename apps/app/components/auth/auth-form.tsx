@@ -272,7 +272,7 @@ function EmailInput({
           type="submit"
           variant="default"
           className="w-full"
-          disabled={isDisabled || !email}
+          disabled={isDisabled || !email.trim()}
         >
           Continue with email
         </Button>
