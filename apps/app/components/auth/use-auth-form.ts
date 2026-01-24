@@ -11,13 +11,17 @@ interface UseAuthFormOptions {
    */
   onSuccess: () => void;
   isExternallyLoading?: boolean;
-  mode?: "login" | "signup";
+  /**
+   * UI variant affecting copy, ToS display, and available methods.
+   * Both variants use the same passwordless OTP flow that auto-creates accounts.
+   */
+  variant?: "login" | "signup";
 }
 
 export function useAuthForm({
   onSuccess,
   isExternallyLoading,
-  mode = "login",
+  variant = "login",
 }: UseAuthFormOptions) {
   const [step, setStep] = useState<AuthStep>("method");
   const [email, setEmail] = useState("");
@@ -89,7 +93,7 @@ export function useAuthForm({
     isLoading,
     isDisabled,
     error,
-    mode,
+    variant,
 
     // Setters
     setEmail,

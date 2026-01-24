@@ -10,7 +10,11 @@ import { Link } from "@tanstack/react-router";
 const APP_NAME = import.meta.env.VITE_APP_NAME || "your account";
 
 interface AuthFormProps extends ComponentProps<"div"> {
-  mode?: "login" | "signup";
+  /**
+   * UI variant affecting copy, ToS display, and available methods.
+   * Both variants use the same passwordless OTP flow that auto-creates accounts.
+   */
+  variant?: "login" | "signup";
   /** Called after successful auth. Caller handles cache invalidation and navigation. */
   onSuccess: () => void;
   isLoading?: boolean;
@@ -20,7 +24,7 @@ export function AuthForm({
   className,
   onSuccess,
   isLoading,
-  mode = "login",
+  variant = "login",
   ...props
 }: AuthFormProps) {
   const {
@@ -36,11 +40,11 @@ export function AuthForm({
     goToEmailStep,
     goToMethodStep,
     resetToEmail,
-    mode: formMode,
+    variant: formVariant,
   } = useAuthForm({
     onSuccess,
     isExternallyLoading: isLoading,
-    mode,
+    variant,
   });
 
   // Clear error when user changes email
@@ -55,7 +59,7 @@ export function AuthForm({
     resetToEmail();
   };
 
-  const isSignup = formMode === "signup";
+  const isSignup = formVariant === "signup";
 
   return (
     <div className={cn("flex flex-col gap-6 w-full", className)} {...props}>
