@@ -7,7 +7,11 @@ export type AuthStep = "method" | "email" | "otp";
 /** Child component identifiers for tracking concurrent loading states */
 export type AuthChildKey = "social" | "passkey" | "otp";
 
-// Explicit valid transitions - prevents accidental jumps (e.g., otp → method)
+// Minimal state machine for passwordless OTP flow. Intentionally shallow:
+// - Errors are orthogonal to steps (can occur at any step)
+// - Loading states handled by isLoading/isChildLoading
+// - No terminal state (component unmounts on success)
+// Revisit if adding password fallback or MFA steps.
 const VALID_TRANSITIONS: Record<AuthStep, AuthStep[]> = {
   method: ["email"],
   email: ["method", "otp"],
