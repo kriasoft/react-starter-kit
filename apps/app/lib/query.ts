@@ -1,6 +1,4 @@
-import type { AppRouter } from "@repo/api";
 import { QueryClient } from "@tanstack/react-query";
-import { TRPCClientError } from "@trpc/client";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,17 +25,9 @@ export const queryClient = new QueryClient({
       // momentary network blips (user can manually retry for persistent failures)
       retry: 1,
       retryDelay: 1000,
-      onError: (error) => {
-        // Redirect to login on auth errors
-        if (error instanceof TRPCClientError) {
-          const trpcError = error as TRPCClientError<AppRouter>;
-          if (trpcError.data?.code === "UNAUTHORIZED") {
-            window.location.href = "/login";
-            return;
-          }
-        }
-        console.error("Mutation error:", error);
-      },
+      // Auth errors handled at component level via useMutation's error state.
+      // Components show inline errors with retry/sign-in options.
+      onError: (error) => console.error("Mutation failed:", error),
     },
   },
 });

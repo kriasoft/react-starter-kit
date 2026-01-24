@@ -164,7 +164,7 @@ Time to customize:
 
 ## Database Setup
 
-The template uses Neon PostgreSQL with Drizzle ORM. To set up your database:
+The template uses [Neon PostgreSQL](https://get.neon.com/HD157BR) with Drizzle ORM (referral link). To set up your database:
 
 ```bash
 # Generate the initial schema

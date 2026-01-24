@@ -2,7 +2,6 @@
 // Changing api.basePath requires updating server routing.
 export const authConfig = {
   oauth: {
-    defaultCallbackUrl: "/login",
     providers: ["google"] as const,
   },
 
@@ -13,18 +12,13 @@ export const authConfig = {
   },
 
   security: {
-    allowedRedirectOrigins: [
-      typeof window !== "undefined"
-        ? window.location.origin
-        : "http://localhost:5173",
-    ],
     csrfTokenHeader: "x-csrf-token",
     sessionCookieName: "better-auth.session",
   },
 
   api: {
     basePath: "/api/auth",
-    requestTimeout: process.env.NODE_ENV === "development" ? 60_000 : 30_000,
+    requestTimeout: import.meta.env.DEV ? 60_000 : 30_000,
   },
 
   retry: {
@@ -50,18 +44,9 @@ export const authConfig = {
   },
 } as const;
 
-// Rejects protocol-relative URLs (//example.com) and external domains
+// Only allows same-origin relative paths (starts with "/" but not "//")
 export function isValidRedirectUrl(url: string): boolean {
-  if (!url.startsWith("/") || url.startsWith("//")) {
-    return false;
-  }
-
-  try {
-    const parsed = new URL(url, window.location.origin);
-    return authConfig.security.allowedRedirectOrigins.includes(parsed.origin);
-  } catch {
-    return false;
-  }
+  return url.startsWith("/") && !url.startsWith("//");
 }
 
 // Returns "/" for invalid or missing URLs

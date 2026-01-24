@@ -1,3 +1,4 @@
+import { AuthErrorBoundary } from "@/components/auth";
 import { Layout } from "@/components/layout";
 import { getCachedSession, sessionQueryOptions } from "@/lib/queries/session";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
@@ -27,8 +28,10 @@ export const Route = createFileRoute("/(app)")({
 
 function AppLayout() {
   return (
-    <Layout>
-      <Outlet />
-    </Layout>
+    <AuthErrorBoundary>
+      <Layout>
+        <Outlet />
+      </Layout>
+    </AuthErrorBoundary>
   );
 }

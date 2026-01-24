@@ -2,11 +2,12 @@ import { auth } from "@/lib/auth";
 import { authConfig } from "@/lib/auth-config";
 import { Button } from "@repo/ui";
 import { KeyRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface PasskeyLoginProps {
   onSuccess: () => void;
-  onError: (error: string) => void;
+  onError: (error: string | null) => void;
+  onLoadingChange?: (loading: boolean) => void;
   isDisabled?: boolean;
 }
 
@@ -19,13 +20,27 @@ interface PasskeyLoginProps {
 export function PasskeyLogin({
   onSuccess,
   onError,
+  onLoadingChange,
   isDisabled,
 }: PasskeyLoginProps) {
   const [isLoading, setIsLoading] = useState(false);
 
+  const setLoading = useCallback(
+    (loading: boolean) => {
+      setIsLoading(loading);
+      onLoadingChange?.(loading);
+    },
+    [onLoadingChange],
+  );
+
+  const onSuccessRef = useRef(onSuccess);
+  onSuccessRef.current = onSuccess;
+
   // Set up conditional UI for passkey autofill (gated by config)
   useEffect(() => {
     if (!authConfig.passkey.enableConditionalUI) return;
+
+    let aborted = false;
 
     const setupConditionalUI = async () => {
       try {
@@ -38,8 +53,8 @@ export function PasskeyLogin({
 
         // Enable autofill for passkeys on input fields with autocomplete="webauthn"
         const result = await auth.signIn.passkey({ autoFill: true });
-        if (result.data) {
-          onSuccess();
+        if (result.data && !aborted) {
+          onSuccessRef.current();
         }
       } catch {
         // Silently ignore errors from conditional UI (user hasn't explicitly requested auth)
@@ -47,7 +62,11 @@ export function PasskeyLogin({
     };
 
     setupConditionalUI();
-  }, [onSuccess]);
+
+    return () => {
+      aborted = true;
+    };
+  }, []);
 
   const handlePasskeyLogin = async () => {
     // Check WebAuthn support before attempting
@@ -56,8 +75,8 @@ export function PasskeyLogin({
       return;
     }
 
-    setIsLoading(true);
-    onError("");
+    setLoading(true);
+    onError(null);
 
     try {
       // Better Auth passkey client returns errors via result.error for HTTP/WebAuthn errors,
@@ -81,7 +100,7 @@ export function PasskeyLogin({
       // Network-level failures (offline, DNS, connection refused)
       onError(authConfig.errors.networkError);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -94,7 +113,7 @@ export function PasskeyLogin({
       disabled={isDisabled || isLoading}
     >
       <KeyRound className="mr-2 h-4 w-4" />
-      Sign in with passkey
+      Log in with passkey
     </Button>
   );
 }

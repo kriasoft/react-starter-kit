@@ -1,12 +1,22 @@
 import { auth } from "@/lib/auth";
 import { Button, Input } from "@repo/ui";
-import { useState } from "react";
 import type { FormEvent } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+const RESEND_COOLDOWN_SECONDS = 30;
+
+// Better Auth email-otp plugin error codes (matches server-side ERROR_CODES)
+const OTP_ERROR_CODES = {
+  TOO_MANY_ATTEMPTS: "TOO_MANY_ATTEMPTS",
+  OTP_EXPIRED: "OTP_EXPIRED",
+  INVALID_OTP: "INVALID_OTP",
+} as const;
 
 interface OtpVerificationProps {
   email: string;
   onSuccess: () => void;
-  onError: (error: string) => void;
+  onError: (error: string | null) => void;
+  onLoadingChange?: (loading: boolean) => void;
   onCancel: () => void;
   isDisabled?: boolean;
 }
@@ -15,11 +25,28 @@ export function OtpVerification({
   email,
   onSuccess,
   onError,
+  onLoadingChange,
   onCancel,
   isDisabled,
 }: OtpVerificationProps) {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  const setLoading = useCallback(
+    (loading: boolean) => {
+      setIsLoading(loading);
+      onLoadingChange?.(loading);
+    },
+    [onLoadingChange],
+  );
+
+  // Countdown timer for resend cooldown
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
 
   const handleOtpVerification = async (e: FormEvent) => {
     e.preventDefault();
@@ -28,10 +55,9 @@ export function OtpVerification({
     if (!email || !otp) return;
 
     try {
-      setIsLoading(true);
-      onError(""); // Clear any previous errors
+      setLoading(true);
+      onError(null);
 
-      // Sign in with OTP
       const result = await auth.signIn.emailOtp({
         email,
         otp,
@@ -40,33 +66,35 @@ export function OtpVerification({
       if (result.data) {
         onSuccess();
       } else if (result.error) {
-        const errorMessage = result.error.message || "";
-        if (errorMessage.includes("TOO_MANY_ATTEMPTS")) {
+        const code = "code" in result.error ? result.error.code : undefined;
+        if (code === OTP_ERROR_CODES.TOO_MANY_ATTEMPTS) {
           onError("Too many failed attempts. Please request a new code.");
-          onCancel(); // Reset to email input
-        } else if (errorMessage.includes("expired")) {
+          onCancel();
+        } else if (code === OTP_ERROR_CODES.OTP_EXPIRED) {
           onError("Code has expired. Please request a new one.");
-          onCancel(); // Reset to email input
+          onCancel();
         } else {
-          onError(errorMessage || "Invalid verification code");
+          onError(result.error.message || "Invalid verification code");
         }
       }
     } catch (err) {
       console.error("OTP verification error:", err);
       onError("Failed to verify code");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const handleResendOtp = async () => {
+    if (resendCooldown > 0) return;
+
     setOtp("");
-    onError("");
+    onError(null);
 
     try {
-      setIsLoading(true);
+      setLoading(true);
 
-      // Send new OTP to the user's email
+      // "sign-in" type handles both login and signup (creates user if needed)
       const result = await auth.emailOtp.sendVerificationOtp({
         email,
         type: "sign-in",
@@ -74,22 +102,21 @@ export function OtpVerification({
 
       if (result.error) {
         onError(result.error.message || "Failed to send OTP");
+      } else {
+        setResendCooldown(RESEND_COOLDOWN_SECONDS);
       }
     } catch (err) {
       console.error("Email OTP error:", err);
       onError("Failed to send verification code");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const disabled = isDisabled || isLoading;
 
   return (
-    <form onSubmit={handleOtpVerification} className="grid gap-3">
-      <div className="text-sm text-muted-foreground">
-        We've sent a verification code to <strong>{email}</strong>
-      </div>
+    <form onSubmit={handleOtpVerification} className="flex flex-col gap-3">
       <Input
         type="text"
         placeholder="Enter 6-digit code"
@@ -102,6 +129,7 @@ export function OtpVerification({
         maxLength={6}
         pattern="[0-9]{6}"
         inputMode="numeric"
+        className="text-center text-lg tracking-widest"
       />
       <Button
         type="submit"
@@ -111,29 +139,17 @@ export function OtpVerification({
       >
         Verify code
       </Button>
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          variant="ghost"
-          className="flex-1 text-sm"
-          onClick={onCancel}
-          disabled={disabled}
-        >
-          Change email
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          className="flex-1 text-sm"
-          onClick={handleResendOtp}
-          disabled={disabled}
-        >
-          Resend code
-        </Button>
-      </div>
-      <div className="text-xs text-muted-foreground text-center">
-        Code expires in 5 minutes
-      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        className="w-full text-sm"
+        onClick={handleResendOtp}
+        disabled={disabled || resendCooldown > 0}
+      >
+        {resendCooldown > 0
+          ? `Resend code in ${resendCooldown}s`
+          : "Resend code"}
+      </Button>
     </form>
   );
 }

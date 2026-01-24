@@ -61,7 +61,7 @@ Be sure to join our [Discord channel](https://discord.gg/2nKEnKq) for assistance
 ### Database & ORM
 
 - [Drizzle ORM](https://orm.drizzle.team/) — TypeScript ORM with excellent DX
-- [Neon PostgreSQL](https://neon.tech/) — Serverless PostgreSQL database
+- [Neon PostgreSQL](https://get.neon.com/HD157BR) — Serverless PostgreSQL (referral — supports the project)
 
 ### Development Tools
 
