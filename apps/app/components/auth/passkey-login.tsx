@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { authConfig } from "@/lib/auth-config";
 import { Button } from "@repo/ui";
 import { KeyRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface PasskeyLoginProps {
   onSuccess: () => void;
@@ -22,10 +22,14 @@ export function PasskeyLogin({
   isDisabled,
 }: PasskeyLoginProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const onSuccessRef = useRef(onSuccess);
+  onSuccessRef.current = onSuccess;
 
   // Set up conditional UI for passkey autofill (gated by config)
   useEffect(() => {
     if (!authConfig.passkey.enableConditionalUI) return;
+
+    let aborted = false;
 
     const setupConditionalUI = async () => {
       try {
@@ -38,8 +42,8 @@ export function PasskeyLogin({
 
         // Enable autofill for passkeys on input fields with autocomplete="webauthn"
         const result = await auth.signIn.passkey({ autoFill: true });
-        if (result.data) {
-          onSuccess();
+        if (result.data && !aborted) {
+          onSuccessRef.current();
         }
       } catch {
         // Silently ignore errors from conditional UI (user hasn't explicitly requested auth)
@@ -47,7 +51,11 @@ export function PasskeyLogin({
     };
 
     setupConditionalUI();
-  }, [onSuccess]);
+
+    return () => {
+      aborted = true;
+    };
+  }, []);
 
   const handlePasskeyLogin = async () => {
     // Check WebAuthn support before attempting
