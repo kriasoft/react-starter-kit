@@ -26,10 +26,13 @@ export function OtpVerification({
   const [isLoading, setIsLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
 
-  // Sync loading state to parent
-  useEffect(() => {
-    onLoadingChange?.(isLoading);
-  }, [isLoading, onLoadingChange]);
+  const setLoading = useCallback(
+    (loading: boolean) => {
+      setIsLoading(loading);
+      onLoadingChange?.(loading);
+    },
+    [onLoadingChange],
+  );
 
   // Countdown timer for resend cooldown
   useEffect(() => {
@@ -45,7 +48,7 @@ export function OtpVerification({
     if (!email || !otp) return;
 
     try {
-      setIsLoading(true);
+      setLoading(true);
       onError(null);
 
       const result = await auth.signIn.emailOtp({
@@ -71,7 +74,7 @@ export function OtpVerification({
       console.error("OTP verification error:", err);
       onError("Failed to verify code");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -82,7 +85,7 @@ export function OtpVerification({
     onError(null);
 
     try {
-      setIsLoading(true);
+      setLoading(true);
 
       // "sign-in" type handles both login and signup (creates user if needed)
       const result = await auth.emailOtp.sendVerificationOtp({
@@ -99,9 +102,9 @@ export function OtpVerification({
       console.error("Email OTP error:", err);
       onError("Failed to send verification code");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }, [email, onError, resendCooldown]);
+  }, [email, onError, resendCooldown, setLoading]);
 
   const disabled = isDisabled || isLoading;
 

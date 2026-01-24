@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { sessionQueryKey } from "@/lib/queries/session";
 import { Button } from "@repo/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 interface SocialLoginProps {
   onError: (error: string | null) => void;
@@ -21,13 +21,16 @@ export function SocialLogin({
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Sync loading state to parent
-  useEffect(() => {
-    onLoadingChange?.(isLoading);
-  }, [isLoading, onLoadingChange]);
+  const setLoading = useCallback(
+    (loading: boolean) => {
+      setIsLoading(loading);
+      onLoadingChange?.(loading);
+    },
+    [onLoadingChange],
+  );
 
   const handleGoogleLogin = async () => {
-    setIsLoading(true);
+    setLoading(true);
     onError(null);
 
     try {
@@ -47,13 +50,13 @@ export function SocialLogin({
       // Handle error result (Better Auth returns { error } instead of throwing)
       if (result?.error) {
         onError(result.error.message || "Failed to sign in with Google");
-        setIsLoading(false);
+        setLoading(false);
       }
       // On success, page redirects - component unmounts, no cleanup needed
     } catch (err) {
       console.error("Google login error:", err);
       onError("Failed to sign in with Google");
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 

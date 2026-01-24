@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { authConfig } from "@/lib/auth-config";
 import { Button } from "@repo/ui";
 import { KeyRound } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface PasskeyLoginProps {
   onSuccess: () => void;
@@ -25,10 +25,13 @@ export function PasskeyLogin({
 }: PasskeyLoginProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  // Sync loading state to parent
-  useEffect(() => {
-    onLoadingChange?.(isLoading);
-  }, [isLoading, onLoadingChange]);
+  const setLoading = useCallback(
+    (loading: boolean) => {
+      setIsLoading(loading);
+      onLoadingChange?.(loading);
+    },
+    [onLoadingChange],
+  );
   const onSuccessRef = useRef(onSuccess);
   onSuccessRef.current = onSuccess;
 
@@ -71,7 +74,7 @@ export function PasskeyLogin({
       return;
     }
 
-    setIsLoading(true);
+    setLoading(true);
     onError(null);
 
     try {
@@ -96,7 +99,7 @@ export function PasskeyLogin({
       // Network-level failures (offline, DNS, connection refused)
       onError(authConfig.errors.networkError);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 

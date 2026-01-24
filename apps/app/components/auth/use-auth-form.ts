@@ -53,15 +53,14 @@ export function useAuthForm({
   // Unified busy state: parent loading, child loading, or external loading
   const isDisabled = isLoading || isChildLoading || !!isExternallyLoading;
 
-  // Keyed loading tracker - prevents race when multiple children are mounted
+  // Keyed loading tracker - idempotent to handle redundant calls from children
   const setChildLoading = useCallback((key: AuthChildKey, loading: boolean) => {
     setLoadingChildren((prev) => {
+      const has = prev.has(key);
+      if (loading ? has : !has) return prev; // No logical change
       const next = new Set(prev);
-      if (loading) {
-        next.add(key);
-      } else {
-        next.delete(key);
-      }
+      if (loading) next.add(key);
+      else next.delete(key);
       return next;
     });
   }, []);
