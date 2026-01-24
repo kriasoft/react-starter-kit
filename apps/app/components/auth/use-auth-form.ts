@@ -93,11 +93,15 @@ export function useAuthForm({
     setError(null);
   };
 
-  // Validates transitions to prevent invalid step jumps
+  // Validates transitions to prevent invalid step jumps.
+  // Returning to "method" resets the success guard to allow fresh auth attempts.
   const transitionTo = useCallback((next: AuthStep, clearErr = true) => {
     const current = stepRef.current;
     if (!VALID_TRANSITIONS[current].includes(next)) {
       return;
+    }
+    if (next === "method") {
+      hasSucceededRef.current = false;
     }
     setStep(next);
     stepRef.current = next; // Sync immediately for potential same-tick calls
@@ -105,10 +109,7 @@ export function useAuthForm({
   }, []);
 
   const goToEmailStep = () => transitionTo("email");
-  const goToMethodStep = () => {
-    hasSucceededRef.current = false; // Allow new auth attempt
-    transitionTo("method");
-  };
+  const goToMethodStep = () => transitionTo("method");
   // Go back to email step, preserving error message
   const resetToEmail = () => transitionTo("email", false);
 
