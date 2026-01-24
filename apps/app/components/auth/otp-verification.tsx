@@ -5,6 +5,13 @@ import { useCallback, useEffect, useState } from "react";
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
+// Better Auth email-otp plugin error codes (matches server-side ERROR_CODES)
+const OTP_ERROR_CODES = {
+  TOO_MANY_ATTEMPTS: "TOO_MANY_ATTEMPTS",
+  OTP_EXPIRED: "OTP_EXPIRED",
+  INVALID_OTP: "INVALID_OTP",
+} as const;
+
 interface OtpVerificationProps {
   email: string;
   onSuccess: () => void;
@@ -59,15 +66,15 @@ export function OtpVerification({
       if (result.data) {
         onSuccess();
       } else if (result.error) {
-        const errorMessage = result.error.message || "";
-        if (errorMessage.includes("TOO_MANY_ATTEMPTS")) {
+        const code = "code" in result.error ? result.error.code : undefined;
+        if (code === OTP_ERROR_CODES.TOO_MANY_ATTEMPTS) {
           onError("Too many failed attempts. Please request a new code.");
           onCancel();
-        } else if (errorMessage.includes("expired")) {
+        } else if (code === OTP_ERROR_CODES.OTP_EXPIRED) {
           onError("Code has expired. Please request a new one.");
           onCancel();
         } else {
-          onError(errorMessage || "Invalid verification code");
+          onError(result.error.message || "Invalid verification code");
         }
       }
     } catch (err) {
