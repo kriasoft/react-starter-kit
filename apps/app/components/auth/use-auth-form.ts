@@ -72,14 +72,6 @@ export function useAuthForm({
     }
   };
 
-  const handleError = (errorMessage: string | null) => {
-    setError(errorMessage);
-  };
-
-  const clearError = () => {
-    setError(null);
-  };
-
   // Validates transitions to prevent invalid step jumps.
   // Returning to "method" resets the success guard to allow fresh auth attempts.
   const transitionTo = useCallback((next: AuthStep, clearErr = true) => {
@@ -146,8 +138,7 @@ export function useAuthForm({
     // Actions
     changeEmail,
     completeAuth,
-    handleError,
-    clearError,
+    setError,
     sendOtp,
     goToEmailStep,
     goToMethodStep,

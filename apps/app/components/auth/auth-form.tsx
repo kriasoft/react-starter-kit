@@ -59,8 +59,7 @@ export function AuthForm({
     error,
     changeEmail,
     completeAuth,
-    handleError,
-    clearError,
+    setError,
     sendOtp,
     goToEmailStep,
     goToMethodStep,
@@ -75,13 +74,13 @@ export function AuthForm({
 
   // Clear error when user changes email
   const handleEmailChange = (value: string) => {
-    if (error) clearError();
+    if (error) setError(null);
     changeEmail(value);
   };
 
   // Voluntary back from OTP clears error; forced back (via onCancel) preserves it
   const handleOtpBack = () => {
-    clearError();
+    setError(null);
     resetToEmail();
   };
 
@@ -113,7 +112,7 @@ export function AuthForm({
           isDisabled={isDisabled}
           onEmailClick={goToEmailStep}
           onAuthComplete={completeAuth}
-          onError={handleError}
+          onError={setError}
           onLoadingChange={setChildBusy}
           returnTo={returnTo}
         />
@@ -137,7 +136,7 @@ export function AuthForm({
           email={email}
           isDisabled={isDisabled}
           onSuccess={completeAuth}
-          onError={handleError}
+          onError={setError}
           onLoadingChange={setChildBusy}
           onBack={handleOtpBack}
           onCancel={resetToEmail}
