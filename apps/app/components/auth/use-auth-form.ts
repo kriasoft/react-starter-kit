@@ -44,7 +44,7 @@ export function useAuthForm({
   // Conditional passkey autofill intentionally doesn't block UI - it's passive/background.
   // Reset when returning to method step to allow retry after navigation back.
   const hasSucceededRef = useRef(false);
-  // Sync ref for checking current step in transitionTo without stale closure
+  // Ref provides current step to memoized transitionTo callback (avoids stale closure)
   const stepRef = useRef(step);
   stepRef.current = step;
 
@@ -91,7 +91,6 @@ export function useAuthForm({
       hasSucceededRef.current = false;
     }
     setStep(next);
-    stepRef.current = next; // Sync immediately for potential same-tick calls
     if (clearErr) setError(null);
   }, []);
 
