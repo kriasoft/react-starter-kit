@@ -16,18 +16,18 @@ interface OtpVerificationProps {
   email: string;
   onSuccess: () => void;
   onError: (error: string | null) => void;
+  onLoadingChange?: (loading: boolean) => void;
   onCancel: () => void;
   isDisabled?: boolean;
-  onLoadingChange?: (loading: boolean) => void;
 }
 
 export function OtpVerification({
   email,
   onSuccess,
   onError,
+  onLoadingChange,
   onCancel,
   isDisabled,
-  onLoadingChange,
 }: OtpVerificationProps) {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +85,7 @@ export function OtpVerification({
     }
   };
 
-  const handleResendOtp = useCallback(async () => {
+  const handleResendOtp = async () => {
     if (resendCooldown > 0) return;
 
     setOtp("");
@@ -111,7 +111,7 @@ export function OtpVerification({
     } finally {
       setLoading(false);
     }
-  }, [email, onError, resendCooldown, setLoading]);
+  };
 
   const disabled = isDisabled || isLoading;
 

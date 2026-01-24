@@ -7,8 +7,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 interface PasskeyLoginProps {
   onSuccess: () => void;
   onError: (error: string | null) => void;
-  isDisabled?: boolean;
   onLoadingChange?: (loading: boolean) => void;
+  isDisabled?: boolean;
 }
 
 /**
@@ -20,8 +20,8 @@ interface PasskeyLoginProps {
 export function PasskeyLogin({
   onSuccess,
   onError,
-  isDisabled,
   onLoadingChange,
+  isDisabled,
 }: PasskeyLoginProps) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,6 +32,7 @@ export function PasskeyLogin({
     },
     [onLoadingChange],
   );
+
   const onSuccessRef = useRef(onSuccess);
   onSuccessRef.current = onSuccess;
 

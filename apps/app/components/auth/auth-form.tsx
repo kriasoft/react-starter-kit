@@ -1,11 +1,11 @@
 import { Button, Input, cn } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail } from "lucide-react";
-import type { ComponentProps } from "react";
+import type { ComponentProps, FormEvent } from "react";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
 import { SocialLogin } from "./social-login";
-import { useAuthForm, type AuthMethod } from "./use-auth-form";
+import { useAuthForm } from "./use-auth-form";
 
 const APP_NAME = import.meta.env.VITE_APP_NAME || "your account";
 
@@ -65,7 +65,7 @@ export function AuthForm({
     goToEmailStep,
     goToMethodStep,
     resetToEmail,
-    setMethodLoading,
+    setChildBusy,
     mode: formMode,
   } = useAuthForm({
     onSuccess,
@@ -112,9 +112,9 @@ export function AuthForm({
           isSignup={isSignup}
           isDisabled={isDisabled}
           onEmailClick={goToEmailStep}
-          onSuccess={completeAuth}
+          onAuthComplete={completeAuth}
           onError={handleError}
-          setMethodLoading={setMethodLoading}
+          onLoadingChange={setChildBusy}
           returnTo={returnTo}
         />
       )}
@@ -138,7 +138,7 @@ export function AuthForm({
           isDisabled={isDisabled}
           onSuccess={completeAuth}
           onError={handleError}
-          setMethodLoading={setMethodLoading}
+          onLoadingChange={setChildBusy}
           onBack={handleOtpBack}
           onCancel={resetToEmail}
         />
@@ -152,9 +152,9 @@ interface MethodSelectionProps {
   isSignup: boolean;
   isDisabled: boolean;
   onEmailClick: () => void;
-  onSuccess: () => void;
+  onAuthComplete: () => void;
   onError: (error: string | null) => void;
-  setMethodLoading: (method: AuthMethod, loading: boolean) => void;
+  onLoadingChange: (loading: boolean) => void;
   returnTo?: string;
 }
 
@@ -162,9 +162,9 @@ function MethodSelection({
   isSignup,
   isDisabled,
   onEmailClick,
-  onSuccess,
+  onAuthComplete,
   onError,
-  setMethodLoading,
+  onLoadingChange,
   returnTo,
 }: MethodSelectionProps) {
   const heading = isSignup ? "Create your account" : `Log in to ${APP_NAME}`;
@@ -177,7 +177,7 @@ function MethodSelection({
         <SocialLogin
           onError={onError}
           isDisabled={isDisabled}
-          onLoadingChange={(loading) => setMethodLoading("social", loading)}
+          onLoadingChange={onLoadingChange}
           returnTo={returnTo}
         />
 
@@ -195,9 +195,9 @@ function MethodSelection({
         {/* Passkey only available for login (requires existing account) */}
         {!isSignup && (
           <PasskeyLogin
-            onSuccess={onSuccess}
+            onSuccess={onAuthComplete}
             onError={onError}
-            onLoadingChange={(loading) => setMethodLoading("passkey", loading)}
+            onLoadingChange={onLoadingChange}
             isDisabled={isDisabled}
           />
         )}
@@ -239,7 +239,7 @@ interface EmailInputProps {
   isSignup: boolean;
   isDisabled: boolean;
   onEmailChange: (email: string) => void;
-  onSubmit: (e?: React.FormEvent) => void;
+  onSubmit: (e?: FormEvent) => void;
   onBack: () => void;
 }
 
@@ -300,7 +300,7 @@ interface OtpStepProps {
   isDisabled: boolean;
   onSuccess: () => void;
   onError: (error: string | null) => void;
-  setMethodLoading: (method: AuthMethod, loading: boolean) => void;
+  onLoadingChange: (loading: boolean) => void;
   onBack: () => void;
   onCancel: () => void;
 }
@@ -310,7 +310,7 @@ function OtpStep({
   isDisabled,
   onSuccess,
   onError,
-  setMethodLoading,
+  onLoadingChange,
   onBack,
   onCancel,
 }: OtpStepProps) {
@@ -327,7 +327,7 @@ function OtpStep({
         email={email}
         onSuccess={onSuccess}
         onError={onError}
-        onLoadingChange={(loading) => setMethodLoading("otp", loading)}
+        onLoadingChange={onLoadingChange}
         onCancel={onCancel}
         isDisabled={isDisabled}
       />

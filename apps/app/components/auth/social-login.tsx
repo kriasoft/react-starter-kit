@@ -7,16 +7,16 @@ import { useCallback, useState } from "react";
 interface SocialLoginProps {
   onError: (error: string | null) => void;
   isDisabled?: boolean;
+  onLoadingChange?: (loading: boolean) => void;
   /** Post-auth redirect destination (already validated by caller). */
   returnTo?: string;
-  onLoadingChange?: (loading: boolean) => void;
 }
 
 export function SocialLogin({
   onError,
   isDisabled,
-  returnTo,
   onLoadingChange,
+  returnTo,
 }: SocialLoginProps) {
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
@@ -47,12 +47,14 @@ export function SocialLogin({
         callbackURL,
       });
 
-      // Handle error result (Better Auth returns { error } instead of throwing)
       if (result?.error) {
         onError(result.error.message || "Failed to sign in with Google");
         setLoading(false);
+      } else if (!result?.data?.redirect) {
+        // No redirect (popup blocked, misconfigured provider, etc.) - reset loading
+        setLoading(false);
       }
-      // On success, page redirects - component unmounts, no cleanup needed
+      // On redirect, page navigates away - component unmounts, no cleanup needed
     } catch (err) {
       console.error("Google login error:", err);
       onError("Failed to sign in with Google");

@@ -4,12 +4,8 @@ import { useCallback, useRef, useState } from "react";
 
 export type AuthStep = "method" | "email" | "otp";
 
-/** Authentication method identifiers for tracking concurrent loading states */
-export type AuthMethod = "social" | "passkey" | "otp";
-
 // Minimal state machine for passwordless OTP flow. Intentionally shallow:
 // - Errors are orthogonal to steps (can occur at any step)
-// - Loading states handled by isLoading/isChildLoading
 // - No terminal state (component unmounts on success)
 // Revisit if adding password fallback or MFA steps.
 const VALID_TRANSITIONS: Record<AuthStep, AuthStep[]> = {
@@ -40,37 +36,25 @@ export function useAuthForm({
   const [step, setStep] = useState<AuthStep>("method");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  // Tracks loading state per auth method to handle concurrent attempts
-  const [loadingMethods, setLoadingMethods] = useState<Set<AuthMethod>>(
-    () => new Set(),
-  );
+  // Counter-based to handle overlapping child operations (e.g., rapid double-click)
+  const [pendingOps, setPendingOps] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const isMethodLoading = loadingMethods.size > 0;
-  // Guards against concurrent auth completion (e.g., passkey conditional UI + manual OTP).
+  // Guards against concurrent auth completion (e.g., passkey conditional UI + manual click).
+  // Conditional passkey autofill intentionally doesn't block UI - it's passive/background.
   // Reset when returning to method step to allow retry after navigation back.
   const hasSucceededRef = useRef(false);
   // Sync ref for checking current step in transitionTo without stale closure
   const stepRef = useRef(step);
   stepRef.current = step;
 
-  // Unified busy state: parent loading, method loading, or external loading
-  const isDisabled = isLoading || isMethodLoading || !!isExternallyLoading;
+  // Track child loading via counter to correctly handle overlapping operations
+  const setChildBusy = useCallback((busy: boolean) => {
+    setPendingOps((c) => (busy ? c + 1 : Math.max(0, c - 1)));
+  }, []);
 
-  // Keyed loading tracker - idempotent to handle redundant calls
-  const setMethodLoading = useCallback(
-    (method: AuthMethod, loading: boolean) => {
-      setLoadingMethods((prev) => {
-        const has = prev.has(method);
-        if (loading ? has : !has) return prev; // No logical change
-        const next = new Set(prev);
-        if (loading) next.add(method);
-        else next.delete(method);
-        return next;
-      });
-    },
-    [],
-  );
+  // Unified busy state: disables navigation and other auth methods while any flow is active
+  const isDisabled = isLoading || pendingOps > 0 || !!isExternallyLoading;
 
   const completeAuth = async () => {
     if (hasSucceededRef.current) return;
@@ -169,6 +153,6 @@ export function useAuthForm({
     goToEmailStep,
     goToMethodStep,
     resetToEmail,
-    setMethodLoading,
+    setChildBusy,
   };
 }
