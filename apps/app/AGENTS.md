@@ -1,3 +1,5 @@
+Client-side SPA — no SSR. All rendering happens in the browser.
+
 ## Routing
 
 - File-based routing in `routes/`. `lib/routeTree.gen.ts` is auto-generated — never edit it.

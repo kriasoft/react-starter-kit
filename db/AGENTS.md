@@ -8,6 +8,12 @@
 - `invitationStatusEnum` is a pgEnum (`"pending" | "accepted" | "rejected" | "canceled"`); changes require a migration.
 - `organization.metadata` is `text`, not JSONB — Better Auth handles serialization.
 
+## Extended Fields (beyond Better Auth defaults)
+
+- **Passkey:** `lastUsedAt` (security audits), `deviceName` (user-friendly label), `platform` ("platform" | "cross-platform").
+- **Invitation:** `invitationStatusEnum` pgEnum; `acceptedAt`/`rejectedAt` lifecycle timestamps. Adding new statuses requires a migration before upgrading Better Auth.
+- **Member roles:** free text `role` ("owner", "admin", "member") — not pgEnum, to stay compatible with Better Auth's role customization.
+
 ## Indexes and Constraints
 
 - Every foreign key column gets an index: `{table}_{column}_idx`.
