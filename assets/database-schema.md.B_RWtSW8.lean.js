@@ -1,4 +1,4 @@
-import{_ as t,I as e,c as n,o as l,a5 as i,J as h}from"./chunks/framework.BeeQ8TS1.js";const y=JSON.parse('{"title":"Database Schema","description":"","frontmatter":{},"headers":[],"relativePath":"database-schema.md","filePath":"database-schema.md","lastUpdated":1771102490000}'),d={name:"database-schema.md"};function p(r,s,k,o,E,c){const a=e("Mermaid");return l(),n("div",null,[s[0]||(s[0]=i("",12)),h(a,{code:`erDiagram
+import{_ as t,I as e,c as n,o as l,a5 as i,J as h}from"./chunks/framework.BeeQ8TS1.js";const y=JSON.parse('{"title":"Database Schema","description":"","frontmatter":{},"headers":[],"relativePath":"database-schema.md","filePath":"database-schema.md","lastUpdated":1771102970000}'),d={name:"database-schema.md"};function p(r,s,k,o,E,c){const a=e("Mermaid");return l(),n("div",null,[s[0]||(s[0]=i("",12)),h(a,{code:`erDiagram
     %% Core Authentication Tables
     user {
         text id PK "gen_random_uuid()"
