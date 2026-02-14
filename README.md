@@ -4,13 +4,14 @@
 
 <a href="https://github.com/kriasoft/react-starter-kit?sponsor=1"><img src="https://img.shields.io/badge/-GitHub-%23555.svg?logo=github-sponsors" height="20"></a>
 <a href="https://discord.gg/2nKEnKq"><img src="https://img.shields.io/discord/643523529131950086?label=Chat" height="20"></a>
-<a href="https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant"><img src="https://img.shields.io/badge/Ask_ChatGPT-10a37f?logo=google+gemini&logoColor=white" height="20"></a>
+<a href="https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant"><img src="https://img.shields.io/badge/Ask_ChatGPT-10a37f?logo=openai&logoColor=white" height="20"></a>
+<a href="https://gemini.google.com/gem/1IXFElQ2UvvZY86iL6uZLeoC-r8mp-OB-?usp=sharing"><img src="https://img.shields.io/badge/Ask_Gemini-8E75B2?logo=googlegemini&logoColor=white" height="20"></a>
 <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a>
 <a href="https://x.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
 </div>
 
-A full-stack monorepo template for building SaaS applications with React 19, tRPC, and Cloudflare Workers. Type-safe from database to UI, deployable to the edge in minutes.
+A full-stack monorepo template for building SaaS applications with React 19, tRPC, and Cloudflare Workers. Type-safe from database to UI, deployable to the edge in minutes. New here? Ask our AI assistant on [ChatGPT](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant) or [Gemini](https://gemini.google.com/gem/1IXFElQ2UvvZY86iL6uZLeoC-r8mp-OB-?usp=sharing).
 
 React Starter Kit is proudly supported by these amazing sponsors:
 
@@ -161,7 +162,7 @@ bun app:deploy     # Deploy main React app
 
 ## Need Help?
 
-[Ask GPT](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant) — AI assistant trained on this codebase. Try these questions:
+Our AI assistant is trained on this codebase — ask it anything on [ChatGPT](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant) or [Gemini](https://gemini.google.com/gem/1IXFElQ2UvvZY86iL6uZLeoC-r8mp-OB-?usp=sharing). Try these questions:
 
 - [How do I add a new tRPC endpoint?](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant?prompt=How%20do%20I%20add%20a%20new%20tRPC%20endpoint%3F)
 - [Help me create a database table](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant?prompt=Help%20me%20create%20a%20database%20table)
