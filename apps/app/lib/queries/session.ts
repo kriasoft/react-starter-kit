@@ -22,7 +22,9 @@ export interface SessionData {
 
 export const sessionQueryKey = ["auth", "session"] as const;
 
-// Returns null when unauthenticated (not an error condition)
+// Returns null when unauthenticated (not an error condition).
+// Only overrides staleTime and retry — inherits gcTime, refetchOnWindowFocus,
+// refetchOnReconnect, and retryDelay from QueryClient defaults.
 export function sessionQueryOptions() {
   return queryOptions<SessionData | null>({
     queryKey: sessionQueryKey,
@@ -33,22 +35,14 @@ export function sessionQueryOptions() {
       }
       return response.data;
     },
-    // Fresh for 30s to balance performance vs up-to-date state
+    // Shorter freshness than global 2min — auth state should stay current
     staleTime: 30_000,
-    // Keep in memory for 5min to prevent refetches during navigation
-    gcTime: 5 * 60_000,
-    // Auto-refresh on tab focus for multi-tab scenarios
-    refetchOnWindowFocus: true,
-    // Always refetch after network issues to sync with server
-    refetchOnReconnect: "always",
-    // Don't retry auth/permission errors - retrying won't help
-    // Allow 408 (timeout) and 429 (rate limit) which are transient
+    // Don't retry 401/403 — retrying won't help for auth/permission errors
     retry(failureCount, error) {
       const status = getErrorStatus(error);
       if (status === 401 || status === 403) return false;
       return failureCount < 3;
     },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 }
 
@@ -58,21 +52,6 @@ export function useSessionQuery() {
 
 export function useSuspenseSessionQuery() {
   return useSuspenseQuery(sessionQueryOptions());
-}
-
-export async function prefetchSession(queryClient: QueryClient) {
-  return queryClient.prefetchQuery(sessionQueryOptions());
-}
-
-export async function invalidateSession(queryClient: QueryClient) {
-  return queryClient.invalidateQueries({ queryKey: sessionQueryKey });
-}
-
-export function setSessionData(
-  queryClient: QueryClient,
-  data: SessionData | null,
-) {
-  queryClient.setQueryData(sessionQueryKey, data);
 }
 
 export function getCachedSession(
@@ -88,25 +67,24 @@ export function isAuthenticated(queryClient: QueryClient): boolean {
   return session?.user != null && session?.session != null;
 }
 
-// Clears server session first, then invalidates caches and redirects
+// Clears server session, then updates cache and redirects.
+// Uses setQueryData(null) instead of invalidateQueries to avoid a wasted
+// refetch — session is binary state, not partially stale data.
+// Hard redirect resets all in-memory state (Jotai atoms, component state)
+// for a clean slate between user sessions.
 export async function signOut(
   queryClient: QueryClient,
   options?: { redirect?: boolean },
 ) {
-  await auth.signOut();
-  await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
+  try {
+    await auth.signOut();
+  } finally {
+    queryClient.setQueryData(sessionQueryKey, null);
 
-  if (options?.redirect !== false) {
-    window.location.href = "/login";
+    if (options?.redirect !== false) {
+      window.location.href = "/login";
+    }
   }
-}
-
-// Only refetches if query is active (mounted in a component)
-export async function refreshSession(queryClient: QueryClient) {
-  return queryClient.refetchQueries({
-    queryKey: sessionQueryKey,
-    type: "active",
-  });
 }
 
 /**

@@ -28,17 +28,7 @@ The deployment architecture consists of:
 2. Create a new project for your application
 3. Note your connection string (looks like `postgresql://user:pass@host/dbname`)
 
-### 2. Install PostgreSQL Extensions
-
-Connect to your Neon database and run:
-
-```sql
-CREATE EXTENSION IF NOT EXISTS "pg_uuidv7";
-```
-
-This extension is required for UUIDv7 primary key generation used throughout the schema.
-
-### 3. Configure Hyperdrive
+### 2. Configure Hyperdrive
 
 Hyperdrive provides connection pooling and caching at the edge:
 
@@ -61,8 +51,8 @@ Note the Hyperdrive IDs returned - you'll need these for configuration.
 export DATABASE_URL="postgresql://user:pass@host/dbname"
 
 # Generate and apply migrations
-bun --filter @repo/db generate
-bun --filter @repo/db migrate
+bun db:generate
+bun db:migrate
 ```
 
 ## Cloudflare Workers Setup
@@ -148,13 +138,6 @@ bun wrangler deploy --config apps/web/wrangler.jsonc --env=staging
 5. Add authorized redirect URIs:
    - `https://yourdomain.com/api/auth/callback/google`
    - `https://staging.yourdomain.com/api/auth/callback/google`
-
-### GitHub OAuth
-
-1. Go to GitHub Settings > Developer settings > OAuth Apps
-2. Create a new OAuth App
-3. Set Authorization callback URL:
-   - `https://yourdomain.com/api/auth/callback/github`
 
 ## Custom Domain Configuration
 
@@ -388,11 +371,12 @@ wrangler rollback --env=production --message="Reverting to stable version"
 
 ### Database Rollback
 
-Keep migration rollback scripts:
+Drizzle ORM does not have built-in rollback. To revert a migration, write a new migration that undoes the changes:
 
 ```bash
-# Rollback last migration
-bun --filter @repo/db rollback
+# Create a new migration to revert changes
+bun db:generate
+bun db:migrate
 ```
 
 ## Security Checklist
@@ -426,13 +410,12 @@ If you hit the 10MB Workers size limit:
 
 1. Verify Hyperdrive configuration
 2. Check connection string format
-3. Ensure PostgreSQL extensions are installed
-4. Review Neon connection limits
+3. Review Neon connection limits
 
 #### Authentication Problems
 
 1. Verify OAuth redirect URIs
-2. Check AUTH_SECRET is set correctly
+2. Check BETTER_AUTH_SECRET is set correctly
 3. Ensure cookies are configured for your domain
 4. Review CORS settings
 
@@ -441,7 +424,7 @@ If you hit the 10MB Workers size limit:
 Enable verbose logging:
 
 ```typescript
-// In apps/edge/index.ts
+// In apps/web/worker.ts
 const DEBUG = env.ENVIRONMENT === "staging";
 
 if (DEBUG) {

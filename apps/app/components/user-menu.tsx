@@ -3,10 +3,7 @@ import { Avatar, AvatarFallback, Button } from "@repo/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { LogOut, RefreshCw, User } from "lucide-react";
 
-/**
- * Example component showing how to use session query
- * with loading states and error handling
- */
+/** Displays current authenticated user and sign-out control. */
 export function UserMenu() {
   const queryClient = useQueryClient();
   const { data: session, isPending, error, refetch } = useSessionQuery();

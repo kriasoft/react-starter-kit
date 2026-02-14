@@ -107,30 +107,24 @@ my-app/
 
 ### 1. Start Development Server
 
-Fire up the development environment with two terminals:
-
-**Terminal 1 - React App:**
+Fire up the full development environment:
 
 ```bash
-bun app:dev  # or bun --filter @repo/app dev
-```
-
-**Terminal 2 - API Server:**
-
-```bash
-bun api:dev  # or bun --filter @repo/api dev
+bun dev  # Starts web + api + app concurrently
 ```
 
 This starts:
 
-- 🚀 App dev server at `http://localhost:5173` (React app)
-- 🔥 API server at `http://localhost:8787` (tRPC with hot reload)
-- 💾 Database connection (Neon PostgreSQL)
+- App dev server at `http://localhost:5173` (React app)
+- API server at `http://localhost:8787` (tRPC with hot reload)
+- Web dev server at `http://localhost:4321` (Astro marketing site)
 
-**Optional - Other services:**
+You can also start individual services:
 
 ```bash
-bun web:dev    # Marketing site (Astro) at http://localhost:4321
+bun app:dev    # React app only
+bun api:dev    # API server only
+bun web:dev    # Marketing site only
 bun email:dev  # Email preview server at http://localhost:3001
 ```
 
@@ -149,9 +143,8 @@ Open your browser and check out:
 
 - **App**: `http://localhost:5173` — Your React app with TanStack Router
 - **API**: `http://localhost:8787` — tRPC API endpoints
-- **Database GUI**: Run `bun --filter @repo/db studio` to explore your database
+- **Database GUI**: Run `bun db:studio` to explore your database
 - **Email Templates**: Run `bun email:dev` for preview at `http://localhost:3001`
-- **Astro Site**: Run `bun web:dev` for the marketing site at `http://localhost:4321`
 
 ### 3. Make It Yours
 
@@ -168,33 +161,34 @@ The template uses [Neon PostgreSQL](https://get.neon.com/HD157BR) with Drizzle O
 
 ```bash
 # Generate the initial schema
-bun --filter @repo/db generate
+bun db:generate
 
 # Apply migrations to your local database
-bun --filter @repo/db push
+bun db:push
 
 # (Optional) Seed with sample data
-bun --filter @repo/db seed
+bun db:seed
 ```
 
 ::: tip Database GUI
-Want to explore your data visually? Run `bun --filter @repo/db studio` to open Drizzle Studio in your browser.
+Want to explore your data visually? Run `bun db:studio` to open Drizzle Studio in your browser.
 :::
 
 ## Authentication
 
 Better Auth is pre-configured with multiple authentication methods:
 
-- **Email/Password** - Traditional authentication
+- **Email OTP** - One-time passwords via email (6 digits, 5-min expiry)
+- **Email/Password** - Traditional authentication with password reset
 - **Passkeys** - WebAuthn biometric authentication
-- **OAuth** - Google and other providers
-- **OTP** - One-time passwords via email
-- **Email Templates** - Beautiful transactional emails
+- **Google OAuth** - Social login via Google
+- **Anonymous** - Guest access that can be upgraded later
+- **Organizations** - Multi-tenant workspaces with roles
 
 ### Configuration
 
 1. **Create environment file** → Create `.env.local` (excluded from Git)
-2. **Add OAuth credentials** → Google, GitHub, etc.
+2. **Add OAuth credentials** → Google (and other providers you add)
 3. **Configure email** → Set up Resend for email delivery
 4. **Client setup** → Check `apps/app/lib/auth.ts`
 5. **Server config** → See `apps/api/lib/auth.ts`
@@ -260,30 +254,30 @@ For detailed component management documentation, see the [UI Components Guide](/
 Here's your daily routine:
 
 ```bash
-# Start development (in separate terminals)
-bun app:dev   # Terminal 1: React app
-bun api:dev   # Terminal 2: API server
+# Start development (all services concurrently)
+bun dev
 
-# Run tests (yes, we have tests!)
+# Run tests
 bun test
 
-# Lint your code (keep it clean)
+# Lint your code
 bun lint
 
-# Build for production
-bun email:build  # Build email templates first
-bun app:build    # Build React app
-bun api:build    # Build API
+# Type check
+bun typecheck
+
+# Build for production (order matters)
+bun build  # Builds email → web → api → app
 ```
 
 ::: info Type Checking
-TypeScript checking happens automatically in your editor. For CI/CD, run `bun --filter @repo/api build` to verify types.
+TypeScript checking happens automatically in your editor. For CI/CD, run `bun typecheck` (which runs `tsc --build`).
 :::
 
 ### 💡 Hot Tips for Development
 
 - **API Types**: After modifying tRPC routes, types auto-generate — no manual sync needed
-- **Database Changes**: Edit `db/schema/`, then run `bun --filter @repo/db generate` and `push`
+- **Database Changes**: Edit `db/schema/`, then run `bun db:generate` and `bun db:push`
 - **Component Library**: shadcn/ui components are ready to use — check `packages/ui/components`
 - **UI Components**: Add new components with `bun run ui:add <component>` or install essentials with `bun run ui:essentials`
 - **State Management**: Global state lives in `apps/app/lib/store.ts` using Jotai
@@ -296,10 +290,8 @@ Ready to ship? Let's deploy to Cloudflare Workers:
 # First, login to Cloudflare
 bun wrangler login
 
-# Build packages (order matters!)
-bun email:build   # Build email templates
-bun web:build     # Build marketing site
-bun app:build     # Build React app
+# Build all packages (order matters)
+bun build  # email → web → api → app
 
 # Deploy applications
 bun web:deploy    # Deploy marketing site
@@ -324,7 +316,7 @@ Production uses Neon PostgreSQL — ensure your production database is configure
 
 ```bash
 # Apply migrations to production
-bun --filter @repo/db migrate --env=production
+bun db:migrate:prod
 ```
 
 :::
@@ -334,7 +326,7 @@ All API calls go through `/api/trpc` — the client handles this automatically. 
 :::
 
 ::: info Build Errors
-If TypeScript complains, try `bun --filter @repo/api build` first. This regenerates type definitions.
+If TypeScript complains, try `bun typecheck` to see all type errors across the monorepo.
 :::
 
 ## Next Steps

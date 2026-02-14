@@ -1,17 +1,10 @@
-# GitHub Actions workflow
-# https://help.github.com/actions
-
-name: CI/CD
+name: CI
 
 on:
   push:
     branches: [main]
-    tags:
-      - "v*"
   pull_request:
     branches: [main]
-  schedule:
-    - cron: "0 7 * * *"
   workflow_dispatch:
     inputs:
       environment:
@@ -21,13 +14,14 @@ on:
         required: true
 
 env:
-  BUN_VERSION: latest
-  VERSION: ${{ github.event.pull_request.number }}
   HUSKY: 0
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -35,49 +29,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      # Configure Bun and install dependencies
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-      - run: bun install
+      - run: bun install --frozen-lockfile
 
-      # Analyze code for potential problems
+      # Code style (PRs only — merged code was already checked)
       - run: bun prettier --check .
-        if: ${{ github.event_name == 'pull_request' }}
+        if: github.event_name == 'pull_request'
       - run: bun lint
-        if: ${{ github.event_name == 'pull_request' }}
+        if: github.event_name == 'pull_request'
 
-      # Type checking
-      - run: bun email:build # Build email templates first
+      # Validate Terraform formatting
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive infra/
+
+      # Type checking (email templates must be built first for types)
+      - run: bun email:build
       - run: bun tsc --build
 
-      # Testing (commented out - enable as needed)
-      # - run: bun --filter @repo/web test
-      #   if: ${{ github.event_name == 'pull_request' }}
-      # - run: bun --filter @repo/api test
-      #   if: ${{ github.event_name == 'pull_request' }}
-      # - run: bun --filter @repo/app test
-      #   if: ${{ github.event_name == 'pull_request' }}
+      # Tests
+      - run: bun test
 
       # Build all workspaces
       - run: bun --filter @repo/web build
       - run: bun --filter @repo/api build
       - run: bun --filter @repo/app build
 
-      # Validate Terraform configuration and formatting
-      - uses: hashicorp/setup-terraform@v3
-      - run: terraform fmt -check -recursive infra/
-      # - run: terraform validate infra/environments/preview/
-
-      # Build Docker image (only on main branch pushes or manual triggers)
-      - run: docker build --tag api:${{ github.sha }} -f ./apps/api/Dockerfile .
-      - run: docker save api:${{ github.sha }} | gzip > api-image.tar.gz
-
-      # Upload build artifacts
+      # Upload build artifacts for deploy jobs
       - uses: actions/upload-artifact@v6
         with:
-          name: "build"
-          path: "apps/web/dist\napps/app/dist\napps/api/dist\napi-image.tar.gz\n"
+          name: build
+          path: |
+            apps/web/dist
+            apps/app/dist
+            apps/api/dist
 
   deploy-preview:
     name: "Deploy"

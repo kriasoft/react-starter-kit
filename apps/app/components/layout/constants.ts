@@ -6,4 +6,4 @@ export const sidebarItems = [
   { icon: Users, label: "Users", to: "/users" },
   { icon: FileText, label: "Reports", to: "/reports" },
   { icon: Settings, label: "Settings", to: "/settings" },
-];
+] as const;

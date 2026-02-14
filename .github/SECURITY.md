@@ -117,40 +117,17 @@ We greatly value the contributions of security researchers. With your permission
 - Add your name to our security acknowledgments
 - Provide a letter of appreciation upon request
 
-## Security Quick Start
+## Secret Management
 
-### Essential Setup
-
-```bash
-# Check for vulnerabilities
-bun audit
-
-# Enable GitHub security features
-# Settings > Security > Code security and analysis
-# ✓ Dependabot alerts
-# ✓ Secret scanning
-```
-
-### Secret Management
-
-- **Never commit secrets** - Use `.env.local` (gitignored) for local development
-- **Production secrets** - Store in Cloudflare Workers secrets or GitHub Actions secrets
-- **Client code** - Only expose `PUBLIC_*` prefixed variables to browser
-
-### Key Commands
-
-```bash
-bun audit              # Check dependencies
-bun test:security      # Run security tests (if configured)
-bun update --latest    # Update dependencies
-```
+- **Never commit secrets** — use `.env.local` (gitignored) for local development
+- **Production secrets** — store in Cloudflare Workers secrets or GitHub Actions secrets
+- **Client-exposed variables** — only `VITE_*` (Vite/app) and `PUBLIC_*` (Astro/web) prefixed variables are exposed to the browser
 
 ## Additional Resources
 
 - [GitHub Security Advisories](https://github.com/kriasoft/react-starter-kit/security/advisories)
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [Cloudflare Workers Security Best Practices](https://developers.cloudflare.com/workers/platform/security/)
-- [React Security Best Practices](https://react.dev/learn/security)
+- [Cloudflare Workers Security](https://developers.cloudflare.com/workers/platform/security/)
 
 ---
 

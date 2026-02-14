@@ -6,9 +6,5 @@ import { defineConfig } from "vitest/config";
  * @see https://vitest.dev/config/
  */
 export default defineConfig({
-  test: {
-    cache: {
-      dir: "./.cache/vitest",
-    },
-  },
+  cacheDir: "./.cache/vite",
 });
