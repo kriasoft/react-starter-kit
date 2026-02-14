@@ -1,1 +1,1 @@
-React Starter Kit is a production-ready, edge-first web application template built with Bun, TypeScript, React 19, and Cloudflare Workers. This monorepo delivers end-to-end type safety, global edge deployment, and enterprise-grade patterns from day one. #file:../CLAUDE.md
+Read AGENTS.md in the repository root and any subdirectory AGENTS.md files for project context, conventions, and architecture details before making changes.
