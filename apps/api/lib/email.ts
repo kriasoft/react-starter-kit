@@ -80,6 +80,7 @@ export async function sendEmail(
   } catch (error) {
     throw new Error(
       `Failed to send email: ${error instanceof Error ? error.message : "Unknown error"}`,
+      { cause: error },
     );
   }
 }
@@ -161,7 +162,11 @@ export async function sendPasswordReset(
 export async function sendOTP(
   env: Pick<
     Env,
-    "RESEND_API_KEY" | "RESEND_EMAIL_FROM" | "APP_NAME" | "APP_ORIGIN"
+    | "ENVIRONMENT"
+    | "RESEND_API_KEY"
+    | "RESEND_EMAIL_FROM"
+    | "APP_NAME"
+    | "APP_ORIGIN"
   >,
   options: {
     email: string;
@@ -169,6 +174,10 @@ export async function sendOTP(
     type: "sign-in" | "email-verification" | "forget-password";
   },
 ) {
+  if (env.ENVIRONMENT === "development") {
+    console.log(`OTP code for ${options.email}: ${options.otp}`);
+  }
+
   const component = OTPEmail({
     otp: options.otp,
     type: options.type,

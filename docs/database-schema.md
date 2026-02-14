@@ -13,40 +13,10 @@ The database uses:
 
 ## Database Setup
 
-### Required PostgreSQL Extensions
+All primary keys use `gen_random_uuid()` (built-in PostgreSQL function), so no extensions are required to get started.
 
-Before running migrations or seeding data, you must install required PostgreSQL extensions. These are located in `db/scripts/setup-extensions.sql`:
-
-```sql
-CREATE EXTENSION IF NOT EXISTS "pg_uuidv7";
-```
-
-The `pg_uuidv7` extension provides UUIDv7 support for primary key generation. UUIDv7 combines the benefits of UUIDs with time-based sorting, making them ideal for distributed systems.
-
-**All primary keys in the schema use `uuid_generate_v7()` as their default value**, providing consistent, time-ordered identifiers across all tables.
-
-### Installation Process
-
-**For Neon PostgreSQL (Production/Staging):**
-
-1. Connect to your Neon database using the SQL Editor in the Neon Console
-2. Run the contents of `db/scripts/setup-extensions.sql`
-3. This requires elevated database permissions and must be done manually
-
-**For Local Development:**
-
-If using a local PostgreSQL instance, you can install extensions via your database client:
-
-```bash
-# Connect to your local database
-psql $DATABASE_URL
-
-# Run the extension setup
-\i db/scripts/setup-extensions.sql
-```
-
-::: warning Important
-Extension installation requires superuser privileges and cannot be automated through normal database migrations. This step must be completed manually for each new database before running your application.
+::: tip UUIDv7 Upgrade Path
+For time-ordered UUIDs (better index locality), you can switch to `uuidv7()` (PostgreSQL 18+) or `uuid_generate_v7()` via the [pg_uuidv7](https://github.com/fboulnois/pg_uuidv7) extension. The `db/scripts/setup-extensions.sql` file pre-installs `pg_uuidv7` for this purpose.
 :::
 
 The schema is divided into two main sections:
@@ -64,7 +34,7 @@ The authentication tables follow [Better Auth's requirements](https://www.better
 erDiagram
     %% Core Authentication Tables
     user {
-        text id PK "UUIDv7 primary key"
+        text id PK "gen_random_uuid()"
         text name "Full name"
         text email UK "Email address"
         boolean email_verified "Email verification status"
@@ -75,7 +45,7 @@ erDiagram
     }
 
     session {
-        text id PK "UUIDv7 session ID"
+        text id PK "gen_random_uuid()"
         timestamp expires_at "Session expiration"
         text token UK "Session token"
         timestamp created_at "Creation timestamp"
@@ -88,7 +58,7 @@ erDiagram
     }
 
     identity {
-        text id PK "UUIDv7 identity ID"
+        text id PK "gen_random_uuid()"
         text account_id "Provider account ID"
         text provider_id "OAuth provider name"
         text user_id FK "User reference"
@@ -104,7 +74,7 @@ erDiagram
     }
 
     verification {
-        text id PK "UUIDv7 verification ID"
+        text id PK "gen_random_uuid()"
         text identifier "Email or other identifier"
         text value "Verification code/token"
         timestamp expires_at "Expiration timestamp"
@@ -112,26 +82,46 @@ erDiagram
         timestamp updated_at "Last update timestamp"
     }
 
+    passkey {
+        text id PK "gen_random_uuid()"
+        text name "Key name"
+        text public_key "WebAuthn public key"
+        text credential_id UK "WebAuthn credential ID"
+        integer counter "Signature counter"
+        text device_type "Authenticator type"
+        boolean backed_up "Backed up flag"
+        text transports "Supported transports"
+        text aaguid "Authenticator AAGUID"
+        timestamp last_used_at "Last authentication time"
+        text device_name "User-friendly device name"
+        text platform "platform or cross-platform"
+        text user_id FK "User reference"
+        timestamp created_at "Creation timestamp"
+        timestamp updated_at "Last update timestamp"
+    }
+
     %% Multi-tenancy Tables
     organization {
-        text id PK "UUIDv7 organization ID"
+        text id PK "gen_random_uuid()"
         text name "Organization name"
         text slug UK "URL-friendly identifier"
         text logo "Logo URL"
         text metadata "JSON metadata"
         timestamp created_at "Creation timestamp"
+        timestamp updated_at "Last update timestamp"
     }
 
     member {
-        text id PK "UUIDv7 membership ID"
+        text id PK "gen_random_uuid()"
         text user_id FK "User reference"
         text organization_id FK "Organization reference"
-        text role "Member role (owner, admin, member)"
+        text role "owner, admin, or member"
         timestamp created_at "Join timestamp"
+        timestamp updated_at "Last update timestamp"
     }
 
     team {
-        text id PK "UUIDv7 team ID"
+        text id PK "gen_random_uuid()"
         text name "Team name"
         text organization_id FK "Parent organization"
         timestamp created_at "Creation timestamp"
@@ -139,27 +129,32 @@ erDiagram
     }
 
     team_member {
-        text id PK "UUIDv7 team membership ID"
+        text id PK "gen_random_uuid()"
         text team_id FK "Team reference"
         text user_id FK "User reference"
         timestamp created_at "Join timestamp"
+        timestamp updated_at "Last update timestamp"
     }
 
     invitation {
-        text id PK "UUIDv7 invitation ID"
+        text id PK "gen_random_uuid()"
         text email "Invitee email"
         text inviter_id FK "Inviting user"
         text organization_id FK "Target organization"
         text role "Invited role"
-        text status "Invitation status"
+        invitation_status status "pending, accepted, rejected, canceled"
         text team_id FK "Target team (optional)"
         timestamp expires_at "Expiration timestamp"
+        timestamp accepted_at "Acceptance timestamp"
+        timestamp rejected_at "Rejection timestamp"
         timestamp created_at "Creation timestamp"
+        timestamp updated_at "Last update timestamp"
     }
 
     %% Relationships
     user ||--o{ session : "has"
     user ||--o{ identity : "authenticates with"
+    user ||--o{ passkey : "registers"
     user ||--o{ member : "belongs to"
     user ||--o{ team_member : "member of"
     user ||--o{ invitation : "invited by"
@@ -182,37 +177,34 @@ These tables handle user authentication and are based on the Better Auth specifi
 
 Central table for all user accounts in your application.
 
-| Column           | Type      | Description               | Required | Constraints                             |
-| ---------------- | --------- | ------------------------- | -------- | --------------------------------------- |
-| `id`             | TEXT      | Primary key (UUIDv7)      | Yes      | PRIMARY KEY, DEFAULT uuid_generate_v7() |
-| `name`           | TEXT      | User's display name       | Yes      |                                         |
-| `email`          | TEXT      | Email address             | Yes      | UNIQUE                                  |
-| `email_verified` | BOOLEAN   | Email verification status | Yes      | DEFAULT false                           |
-| `image`          | TEXT      | Profile image URL         | No       |                                         |
-| `is_anonymous`   | BOOLEAN   | Anonymous user flag       | Yes      | DEFAULT false                           |
-| `created_at`     | TIMESTAMP | Account creation time     | Yes      | DEFAULT now()                           |
-| `updated_at`     | TIMESTAMP | Last modification time    | Yes      | DEFAULT now(), auto-update              |
+| Column           | Type      | Description               | Required | Constraints                            |
+| ---------------- | --------- | ------------------------- | -------- | -------------------------------------- |
+| `id`             | TEXT      | Primary key (UUID)        | Yes      | PRIMARY KEY, DEFAULT gen_random_uuid() |
+| `name`           | TEXT      | User's display name       | Yes      |                                        |
+| `email`          | TEXT      | Email address             | Yes      | UNIQUE                                 |
+| `email_verified` | BOOLEAN   | Email verification status | Yes      | DEFAULT false                          |
+| `image`          | TEXT      | Profile image URL         | No       |                                        |
+| `is_anonymous`   | BOOLEAN   | Anonymous user flag       | Yes      | DEFAULT false                          |
+| `created_at`     | TIMESTAMP | Account creation time     | Yes      | DEFAULT now()                          |
+| `updated_at`     | TIMESTAMP | Last modification time    | Yes      | DEFAULT now(), auto-update             |
 
 ::: details TypeScript Schema Definition
 
 ```typescript
+// Drizzle casing: "snake_case" — camelCase in TS maps to snake_case columns
 export const user = pgTable("user", {
   id: text()
     .primaryKey()
-    .default(sql`uuid_generate_v7()`),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified")
-    .$defaultFn(() => false)
-    .notNull(),
-  image: text("image"),
-  isAnonymous: boolean("is_anonymous")
-    .$default(() => false)
-    .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .default(sql`gen_random_uuid()`),
+  name: text().notNull(),
+  email: text().notNull().unique(),
+  emailVerified: boolean().default(false).notNull(),
+  image: text(),
+  isAnonymous: boolean().default(false).notNull(),
+  createdAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" })
+  updatedAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
@@ -230,6 +222,8 @@ Manages active user sessions with device tracking and organization context.
 | `id`                     | TEXT      | Session identifier      | Yes      |
 | `expires_at`             | TIMESTAMP | Session expiration time | Yes      |
 | `token`                  | TEXT      | Unique session token    | Yes      |
+| `created_at`             | TIMESTAMP | Creation timestamp      | Yes      |
+| `updated_at`             | TIMESTAMP | Last update timestamp   | Yes      |
 | `user_id`                | TEXT      | Reference to user       | Yes      |
 | `ip_address`             | TEXT      | Client IP for security  | No       |
 | `user_agent`             | TEXT      | Browser/client info     | No       |
@@ -263,6 +257,28 @@ Manages email verification, password resets, and other verification flows.
 | `identifier` | TEXT      | Email or identifier to verify | Yes      |
 | `value`      | TEXT      | Verification code/token       | Yes      |
 | `expires_at` | TIMESTAMP | Code expiration               | Yes      |
+| `created_at` | TIMESTAMP | Creation timestamp            | Yes      |
+| `updated_at` | TIMESTAMP | Last update timestamp         | Yes      |
+
+#### `passkey` Table
+
+Stores WebAuthn passkey credentials for passwordless authentication via the [Better Auth passkey plugin](https://www.better-auth.com/docs/plugins/passkey).
+
+| Column          | Type      | Description                                       | Required |
+| --------------- | --------- | ------------------------------------------------- | -------- |
+| `id`            | TEXT      | Passkey ID                                        | Yes      |
+| `name`          | TEXT      | Key name                                          | No       |
+| `public_key`    | TEXT      | WebAuthn public key                               | Yes      |
+| `user_id`       | TEXT      | Reference to user                                 | Yes      |
+| `credential_id` | TEXT      | WebAuthn credential ID (unique)                   | Yes      |
+| `counter`       | INTEGER   | Signature counter                                 | Yes      |
+| `device_type`   | TEXT      | Authenticator device type                         | Yes      |
+| `backed_up`     | BOOLEAN   | Whether key is backed up                          | Yes      |
+| `transports`    | TEXT      | Supported transports                              | No       |
+| `aaguid`        | TEXT      | Authenticator AAGUID                              | No       |
+| `last_used_at`  | TIMESTAMP | Last authentication time (extended)               | No       |
+| `device_name`   | TEXT      | User-friendly name, e.g. "MacBook Pro" (extended) | No       |
+| `platform`      | TEXT      | "platform" or "cross-platform" (extended)         | No       |
 
 ## Application Tables
 
@@ -272,49 +288,59 @@ These tables implement the multi-tenant architecture with organizations and team
 
 Represents a tenant/company/workspace in your application. This is the primary grouping mechanism for multi-tenancy.
 
-| Column     | Type | Description                      |
-| ---------- | ---- | -------------------------------- |
-| `id`       | TEXT | Organization ID                  |
-| `name`     | TEXT | Display name                     |
-| `slug`     | TEXT | URL-friendly identifier (unique) |
-| `logo`     | TEXT | Logo image URL                   |
-| `metadata` | TEXT | JSON for custom fields           |
+| Column       | Type      | Description                      |
+| ------------ | --------- | -------------------------------- |
+| `id`         | TEXT      | Organization ID                  |
+| `name`       | TEXT      | Display name                     |
+| `slug`       | TEXT      | URL-friendly identifier (unique) |
+| `logo`       | TEXT      | Logo image URL                   |
+| `metadata`   | TEXT      | JSON for custom fields           |
+| `created_at` | TIMESTAMP | Creation timestamp               |
+| `updated_at` | TIMESTAMP | Last update timestamp            |
 
 ### `member` Table
 
 Defines the relationship between users and organizations, including their role within each organization.
 
-| Column            | Type | Description                 |
-| ----------------- | ---- | --------------------------- |
-| `id`              | TEXT | Membership ID               |
-| `user_id`         | TEXT | Reference to user           |
-| `organization_id` | TEXT | Reference to organization   |
-| `role`            | TEXT | Role (owner, admin, member) |
+| Column            | Type      | Description                 |
+| ----------------- | --------- | --------------------------- |
+| `id`              | TEXT      | Membership ID               |
+| `user_id`         | TEXT      | Reference to user           |
+| `organization_id` | TEXT      | Reference to organization   |
+| `role`            | TEXT      | Role (owner, admin, member) |
+| `created_at`      | TIMESTAMP | Join timestamp              |
+| `updated_at`      | TIMESTAMP | Last update timestamp       |
 
 ### `team` Table
 
 Optional subgroups within organizations. Use teams when you need more granular permissions beyond organization-level roles.
 
-| Column            | Type | Description         |
-| ----------------- | ---- | ------------------- |
-| `id`              | TEXT | Team ID             |
-| `name`            | TEXT | Team name           |
-| `organization_id` | TEXT | Parent organization |
+| Column            | Type      | Description           |
+| ----------------- | --------- | --------------------- |
+| `id`              | TEXT      | Team ID               |
+| `name`            | TEXT      | Team name             |
+| `organization_id` | TEXT      | Parent organization   |
+| `created_at`      | TIMESTAMP | Creation timestamp    |
+| `updated_at`      | TIMESTAMP | Last update timestamp |
 
 ### `invitation` Table
 
 Tracks pending invitations. Users can be invited to join organizations with specific roles, and optionally assigned to teams.
 
-| Column            | Type      | Description                |
-| ----------------- | --------- | -------------------------- |
-| `id`              | TEXT      | Invitation ID              |
-| `email`           | TEXT      | Invitee's email            |
-| `inviter_id`      | TEXT      | User who sent invitation   |
-| `organization_id` | TEXT      | Target organization        |
-| `role`            | TEXT      | Invited role               |
-| `status`          | TEXT      | pending, accepted, expired |
-| `team_id`         | TEXT      | Target team (optional)     |
-| `expires_at`      | TIMESTAMP | Invitation expiry          |
+| Column            | Type              | Description                                    |
+| ----------------- | ----------------- | ---------------------------------------------- |
+| `id`              | TEXT              | Invitation ID                                  |
+| `email`           | TEXT              | Invitee's email                                |
+| `inviter_id`      | TEXT              | User who sent invitation                       |
+| `organization_id` | TEXT              | Target organization                            |
+| `role`            | TEXT              | Invited role                                   |
+| `status`          | invitation_status | pending, accepted, rejected, canceled (pgEnum) |
+| `team_id`         | TEXT              | Target team (optional)                         |
+| `expires_at`      | TIMESTAMP         | Invitation expiry                              |
+| `accepted_at`     | TIMESTAMP         | When accepted (extended)                       |
+| `rejected_at`     | TIMESTAMP         | When rejected/canceled (extended)              |
+| `created_at`      | TIMESTAMP         | Creation timestamp                             |
+| `updated_at`      | TIMESTAMP         | Last update timestamp                          |
 
 ## Extending the Schema
 
@@ -327,20 +353,25 @@ As you build your application, you'll add tables specific to your domain. Here's
 ```typescript {7-12}
 // db/schema/product.ts
 export const product = pgTable("product", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  description: text("description"),
-  price: integer("price").notNull(), // Store in cents
-  organizationId: text("organization_id")
+  id: text()
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  name: text().notNull(),
+  description: text(),
+  price: integer().notNull(), // Store in cents
+  organizationId: text()
     .notNull()
-    .references(() => organization.id),
-  createdBy: text("created_by")
+    .references(() => organization.id, { onDelete: "cascade" }),
+  createdBy: text()
     .notNull()
     .references(() => user.id),
-  createdAt: timestamp("created_at", {
-    withTimezone: true,
-    mode: "date",
-  }).defaultNow(),
+  createdAt: timestamp({ withTimezone: true, mode: "date" })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp({ withTimezone: true, mode: "date" })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
 });
 ```
 
@@ -373,9 +404,9 @@ export const user = pgTable("user", {
   // ... existing fields ...
 
   // Your custom fields
-  phoneNumber: text("phone_number"),
-  preferences: text("preferences"), // JSON string
-  tier: text("tier").$default(() => "free"),
+  phoneNumber: text(),
+  preferences: text(), // JSON string
+  tier: text().default("free"),
 });
 ```
 
@@ -400,8 +431,8 @@ betterAuth({
 3. Generate and apply migrations:
 
 ```bash
-bun --filter @repo/db generate --name add-custom-fields
-bun --filter @repo/db migrate # or, bun --filter @repo/db push
+bun db:generate
+bun db:migrate  # or bun db:push
 ```
 
 ## Database Seeding
@@ -410,20 +441,19 @@ The project includes a seeding system for populating your database with test dat
 
 ### Seed Scripts
 
-Seed scripts are located in `db/seeds/` and organized by entity type:
-
+- `db/scripts/seed.ts` - Entry point that orchestrates all seed functions
 - `db/seeds/users.ts` - Creates test user accounts with realistic data
-- Add your own seed files following the same pattern
+- Add your own seed files in `db/seeds/` following the same pattern
 
 ### Running Seeds
 
 ```bash
 # Seed development database
-bun --filter @repo/db seed
+bun db:seed
 
 # Seed specific environments
-bun --filter @repo/db seed:staging
-bun --filter @repo/db seed:prod
+bun db:seed:staging
+bun db:seed:prod
 ```
 
 ### Creating Custom Seeds
@@ -432,10 +462,10 @@ Follow this pattern when creating new seed files:
 
 ```typescript
 // db/seeds/products.ts
-import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { schema as Db } from "../schema";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type * as schema from "../schema";
 
-export async function seedProducts(db: PostgresJsDatabase<typeof Db>) {
+export async function seedProducts(db: PostgresJsDatabase<typeof schema>) {
   console.log("Seeding products...");
 
   const products = [
@@ -444,10 +474,10 @@ export async function seedProducts(db: PostgresJsDatabase<typeof Db>) {
   ];
 
   for (const product of products) {
-    await db.insert(Db.product).values(product).onConflictDoNothing();
+    await db.insert(schema.product).values(product).onConflictDoNothing();
   }
 
-  console.log(`✅ Seeded ${products.length} products`);
+  console.log(`Seeded ${products.length} products`);
 }
 ```
 
@@ -584,13 +614,15 @@ const org = await db.query.organization.findFirst({
 
 Every table that contains user data should reference an organization:
 
-```typescript {4-6}
+```typescript {4-7}
 // Always include organizationId in your tables
 export const yourTable = pgTable("your_table", {
-  id: text("id").primaryKey(),
-  organizationId: text("organization_id")
+  id: text()
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  organizationId: text()
     .notNull()
-    .references(() => organization.id),
+    .references(() => organization.id, { onDelete: "cascade" }),
   // ... other fields
 });
 
@@ -630,7 +662,7 @@ updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).default
 ## Next Steps
 
 1. Add your domain-specific tables in `db/schema/`
-2. Configure authentication providers in `api/lib/auth.ts`
+2. Configure authentication providers in `apps/api/lib/auth.ts`
 3. Set up database backups for production deployments
 4. Implement proper access control in your API endpoints
 

@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { NotFound } from "./components/not-found";
 import { queryClient } from "./lib/query";
 import { routeTree } from "./lib/routeTree.gen";
 import "./styles/globals.css";
@@ -10,6 +11,8 @@ import "./styles/globals.css";
 const router = createRouter({
   routeTree,
   context: { queryClient },
+  defaultPreload: "intent",
+  defaultNotFoundComponent: NotFound,
 });
 
 const container = document.getElementById("root");

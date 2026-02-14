@@ -77,7 +77,7 @@ const plans = [
     <!-- Pricing Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
       {plans.map((plan) => (
-        <Card className={plan.popular ? "border-primary shadow-lg relative" : ""} client:visible>
+        <Card className={plan.popular ? "border-primary shadow-lg relative" : ""}>
           {plan.popular && (
             <div class="absolute -top-3 left-1/2 -translate-x-1/2">
               <span class="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
@@ -90,7 +90,9 @@ const plans = [
             <CardDescription>{plan.description}</CardDescription>
             <div class="mt-4">
               <span class="text-4xl font-bold">{plan.price}</span>
-              <span class="text-muted-foreground ml-2">/{plan.period}</span>
+              {plan.period && (
+                <span class="text-muted-foreground ml-2">{plan.period}</span>
+              )}
             </div>
           </CardHeader>
           <CardContent>
@@ -114,11 +116,10 @@ const plans = [
                 </li>
               ))}
             </ul>
-            <Button 
-              variant={plan.variant} 
-              className="w-full" 
-              asChild 
-              client:visible
+            <Button
+              variant={plan.variant}
+              className="w-full"
+              asChild
             >
               <a 
                 href={plan.href}
@@ -140,7 +141,7 @@ const plans = [
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        <Card client:visible>
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg">Is React Starter Kit really free?</CardTitle>
           </CardHeader>
@@ -152,7 +153,7 @@ const plans = [
           </CardContent>
         </Card>
 
-        <Card client:visible>
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg">What's included in support?</CardTitle>
           </CardHeader>
@@ -164,7 +165,7 @@ const plans = [
           </CardContent>
         </Card>
 
-        <Card client:visible>
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg">Can I upgrade later?</CardTitle>
           </CardHeader>
@@ -176,7 +177,7 @@ const plans = [
           </CardContent>
         </Card>
 
-        <Card client:visible>
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg">Do you offer custom development?</CardTitle>
           </CardHeader>
@@ -201,7 +202,7 @@ const plans = [
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" asChild client:visible>
+        <Button size="lg" asChild>
           <a
             href="https://github.com/kriasoft/react-starter-kit"
             target="_blank"
@@ -210,7 +211,7 @@ const plans = [
             Start Building for Free
           </a>
         </Button>
-        <Button variant="outline" size="lg" asChild client:visible>
+        <Button variant="outline" size="lg" asChild>
           <a
             href="mailto:hello@kriasoft.com"
             target="_blank"

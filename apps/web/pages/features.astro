@@ -164,7 +164,7 @@ const featureCategories = [
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           {category.features.map((feature) => (
-            <Card client:visible>
+            <Card>
               <CardHeader>
                 <CardTitle className="text-lg">{feature.title}</CardTitle>
                 <CardDescription>{feature.description}</CardDescription>
@@ -214,7 +214,7 @@ const featureCategories = [
         Clean, Modern Code
       </h2>
       
-      <Card client:visible>
+      <Card>
         <CardHeader>
           <CardTitle>Example: Type-Safe API Route</CardTitle>
           <CardDescription>

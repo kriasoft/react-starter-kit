@@ -25,8 +25,6 @@ export const queryClient = new QueryClient({
       // momentary network blips (user can manually retry for persistent failures)
       retry: 1,
       retryDelay: 1000,
-      // Auth errors handled at component level via useMutation's error state.
-      // Components show inline errors with retry/sign-in options.
       onError: (error) => console.error("Mutation failed:", error),
     },
   },

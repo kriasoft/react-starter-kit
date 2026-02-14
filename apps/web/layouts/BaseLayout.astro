@@ -29,17 +29,16 @@ const {
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site ?? Astro.url)} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, Astro.url)} />
-    
+    <meta property="og:image" content={new URL(image, Astro.site ?? Astro.url)} />
+
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={Astro.url} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site ?? Astro.url)} />
   </head>
   <body>
     <div class="min-h-screen flex flex-col">
@@ -106,18 +105,18 @@ const {
               <h4 class="font-medium">Resources</h4>
               <ul class="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="/docs" class="hover:text-foreground transition-colors">
+                  <a href="https://github.com/kriasoft/react-starter-kit#readme" class="hover:text-foreground transition-colors">
                     Documentation
                   </a>
                 </li>
                 <li>
-                  <a href="/examples" class="hover:text-foreground transition-colors">
-                    Examples
+                  <a href="/features" class="hover:text-foreground transition-colors">
+                    Features
                   </a>
                 </li>
                 <li>
-                  <a href="/templates" class="hover:text-foreground transition-colors">
-                    Templates
+                  <a href="/pricing" class="hover:text-foreground transition-colors">
+                    Pricing
                   </a>
                 </li>
               </ul>
@@ -146,16 +145,6 @@ const {
               <h4 class="font-medium">Legal</h4>
               <ul class="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="/privacy" class="hover:text-foreground transition-colors">
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a href="/terms" class="hover:text-foreground transition-colors">
-                    Terms
-                  </a>
-                </li>
-                <li>
                   <a href="https://github.com/kriasoft/react-starter-kit/blob/main/LICENSE" class="hover:text-foreground transition-colors">
                     License
                   </a>
@@ -166,7 +155,7 @@ const {
           <div class="border-t mt-6 pt-6">
             <div class="flex flex-col sm:flex-row justify-between items-center">
               <p class="text-sm text-muted-foreground">
-                © 2024 Kriasoft. All rights reserved.
+                © {new Date().getFullYear()} Kriasoft. All rights reserved.
               </p>
               <p class="text-sm text-muted-foreground">
                 Built with Astro, React, TypeScript, and Tailwind CSS

@@ -1,8 +1,4 @@
-# GitHub Actions workflow
-# https://help.github.com/actions
-# https://www.conventionalcommits.org
-
-name: "Conventional Commits"
+name: Conventional Commits
 
 on:
   pull_request_target:
@@ -19,6 +15,6 @@ jobs:
     name: "Lint PR Title"
     runs-on: ubuntu-latest
     steps:
-      - uses: amannn/action-semantic-pull-request@v5
+      - uses: amannn/action-semantic-pull-request@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

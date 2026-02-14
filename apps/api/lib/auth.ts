@@ -1,9 +1,9 @@
+import { passkey } from "@better-auth/passkey";
 import { schema as Db } from "@repo/db";
-import { createAuthMiddleware } from "better-auth/api";
 import { betterAuth } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { passkey } from "@better-auth/passkey";
+import { createAuthMiddleware } from "better-auth/api";
 import { anonymous, organization } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins/email-otp";
 import { sendOTP, sendPasswordReset, sendVerificationEmail } from "./email";
@@ -20,6 +20,7 @@ const AUTH_HINT_VALUE = "1";
  */
 type AuthEnv = Pick<
   Env,
+  | "ENVIRONMENT"
   | "APP_NAME"
   | "APP_ORIGIN"
   | "BETTER_AUTH_SECRET"

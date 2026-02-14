@@ -352,18 +352,12 @@ bun ui:add [component-name]
 
 If styles aren't applying correctly:
 
-1. Check Tailwind configuration includes the UI package:
+1. Check `tailwind.config.css` includes the UI package source via `@source`:
 
-```js
-// apps/app/tailwind.config.js
-export default {
-  content: [
-    "./index.html",
-    "./routes/**/*.{js,ts,jsx,tsx}",
-    "../../packages/ui/components/**/*.{js,ts,jsx,tsx}",
-  ],
-  // ...
-};
+```css
+/* apps/app/tailwind.config.css */
+@import "tailwindcss";
+@source "../../packages/ui/";
 ```
 
 2. Ensure globals.css is imported:
@@ -375,16 +369,12 @@ import "./styles/globals.css";
 
 ### TypeScript Errors
 
-If TypeScript can't find component types:
+If TypeScript can't find component types, ensure the workspace reference is set up in `tsconfig.json`:
 
 ```json
 // apps/app/tsconfig.json
 {
-  "compilerOptions": {
-    "paths": {
-      "@repo/ui/*": ["../../packages/ui/*"]
-    }
-  }
+  "references": [{ "path": "../../packages/ui" }]
 }
 ```
 

@@ -55,7 +55,7 @@ const technologies = [
         the latest web technologies.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" asChild client:visible>
+        <Button size="lg" asChild>
           <a
             href="https://github.com/kriasoft/react-starter-kit"
             target="_blank"
@@ -64,7 +64,7 @@ const technologies = [
             Get Started
           </a>
         </Button>
-        <Button variant="outline" size="lg" asChild client:visible>
+        <Button variant="outline" size="lg" asChild>
           <a
             href="https://github.com/kriasoft/react-starter-kit"
             target="_blank"
@@ -92,7 +92,7 @@ const technologies = [
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {features.map((feature) => (
-          <Card client:visible>
+          <Card>
             <CardHeader>
               <CardTitle>{feature.title}</CardTitle>
               <CardDescription>{feature.description}</CardDescription>
@@ -138,7 +138,7 @@ const technologies = [
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" asChild client:visible>
+        <Button size="lg" asChild>
           <a
             href="https://github.com/kriasoft/react-starter-kit"
             target="_blank"
@@ -147,7 +147,7 @@ const technologies = [
             Clone Repository
           </a>
         </Button>
-        <Button variant="outline" size="lg" asChild client:visible>
+        <Button variant="outline" size="lg" asChild>
           <a
             href="https://github.com/kriasoft/react-starter-kit#readme"
             target="_blank"
