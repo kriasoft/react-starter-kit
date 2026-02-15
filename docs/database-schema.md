@@ -19,10 +19,11 @@ All primary keys use `gen_random_uuid()` (built-in PostgreSQL function), so no e
 For time-ordered UUIDs (better index locality), you can switch to `uuidv7()` (PostgreSQL 18+) or `uuid_generate_v7()` via the [pg_uuidv7](https://github.com/fboulnois/pg_uuidv7) extension. The `db/scripts/setup-extensions.sql` file pre-installs `pg_uuidv7` for this purpose.
 :::
 
-The schema is divided into two main sections:
+The schema is divided into three main sections:
 
 1. **Authentication tables** - Required for user authentication and session management
-2. **Application tables** - For your specific business logic (organizations and your custom tables)
+2. **Application tables** - Organizations and multi-tenancy
+3. **Billing tables** - Stripe subscription state (managed by @better-auth/stripe plugin)
 
 ::: warning Important
 The authentication tables follow [Better Auth's requirements](https://www.better-auth.com/docs/concepts/database). Maintain compatibility when extending these tables.
@@ -40,6 +41,7 @@ erDiagram
         boolean email_verified "Email verification status"
         text image "Profile image URL"
         boolean is_anonymous "Anonymous user flag"
+        text stripe_customer_id "Stripe customer ID"
         timestamp created_at "Account creation timestamp"
         timestamp updated_at "Last update timestamp"
     }
@@ -106,6 +108,7 @@ erDiagram
         text slug UK "URL-friendly identifier"
         text logo "Logo URL"
         text metadata "JSON metadata"
+        text stripe_customer_id "Stripe customer ID"
         timestamp created_at "Creation timestamp"
         timestamp updated_at "Last update timestamp"
     }
@@ -133,15 +136,32 @@ erDiagram
         timestamp updated_at "Last update timestamp"
     }
 
+    %% Billing Tables
+    subscription {
+        text id PK "gen_random_uuid()"
+        text plan "Plan name (free, starter, pro)"
+        text reference_id "user.id or organization.id"
+        text stripe_customer_id "Stripe customer ID"
+        text stripe_subscription_id UK "Stripe subscription ID"
+        text status "Subscription status"
+        timestamp period_start "Current period start"
+        timestamp period_end "Current period end"
+        boolean cancel_at_period_end "Scheduled for cancellation"
+        timestamp created_at "Creation timestamp"
+        timestamp updated_at "Last update timestamp"
+    }
+
     %% Relationships
     user ||--o{ session : "has"
     user ||--o{ identity : "authenticates with"
     user ||--o{ passkey : "registers"
     user ||--o{ member : "belongs to"
     user ||--o{ invitation : "invited by"
+    user ||--o{ subscription : "subscribes"
 
     organization ||--o{ member : "has members"
     organization ||--o{ invitation : "receives"
+    organization ||--o{ subscription : "subscribes"
 ```
 
 ## Authentication Tables
@@ -154,16 +174,17 @@ These tables handle user authentication and are based on the Better Auth specifi
 
 Central table for all user accounts in your application.
 
-| Column           | Type      | Description               | Required | Constraints                            |
-| ---------------- | --------- | ------------------------- | -------- | -------------------------------------- |
-| `id`             | TEXT      | Primary key (UUID)        | Yes      | PRIMARY KEY, DEFAULT gen_random_uuid() |
-| `name`           | TEXT      | User's display name       | Yes      |                                        |
-| `email`          | TEXT      | Email address             | Yes      | UNIQUE                                 |
-| `email_verified` | BOOLEAN   | Email verification status | Yes      | DEFAULT false                          |
-| `image`          | TEXT      | Profile image URL         | No       |                                        |
-| `is_anonymous`   | BOOLEAN   | Anonymous user flag       | Yes      | DEFAULT false                          |
-| `created_at`     | TIMESTAMP | Account creation time     | Yes      | DEFAULT now()                          |
-| `updated_at`     | TIMESTAMP | Last modification time    | Yes      | DEFAULT now(), auto-update             |
+| Column               | Type      | Description               | Required | Constraints                            |
+| -------------------- | --------- | ------------------------- | -------- | -------------------------------------- |
+| `id`                 | TEXT      | Primary key (UUID)        | Yes      | PRIMARY KEY, DEFAULT gen_random_uuid() |
+| `name`               | TEXT      | User's display name       | Yes      |                                        |
+| `email`              | TEXT      | Email address             | Yes      | UNIQUE                                 |
+| `email_verified`     | BOOLEAN   | Email verification status | Yes      | DEFAULT false                          |
+| `image`              | TEXT      | Profile image URL         | No       |                                        |
+| `is_anonymous`       | BOOLEAN   | Anonymous user flag       | Yes      | DEFAULT false                          |
+| `stripe_customer_id` | TEXT      | Stripe customer ID        | No       | Set by @better-auth/stripe plugin      |
+| `created_at`         | TIMESTAMP | Account creation time     | Yes      | DEFAULT now()                          |
+| `updated_at`         | TIMESTAMP | Last modification time    | Yes      | DEFAULT now(), auto-update             |
 
 ::: details TypeScript Schema Definition
 
@@ -178,6 +199,7 @@ export const user = pgTable("user", {
   emailVerified: boolean().default(false).notNull(),
   image: text(),
   isAnonymous: boolean().default(false).notNull(),
+  stripeCustomerId: text(),
   createdAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .notNull(),
@@ -264,15 +286,16 @@ These tables implement the multi-tenant architecture with organizations. They in
 
 Represents a tenant/company/workspace in your application. This is the primary grouping mechanism for multi-tenancy.
 
-| Column       | Type      | Description                      |
-| ------------ | --------- | -------------------------------- |
-| `id`         | TEXT      | Organization ID                  |
-| `name`       | TEXT      | Display name                     |
-| `slug`       | TEXT      | URL-friendly identifier (unique) |
-| `logo`       | TEXT      | Logo image URL                   |
-| `metadata`   | TEXT      | JSON for custom fields           |
-| `created_at` | TIMESTAMP | Creation timestamp               |
-| `updated_at` | TIMESTAMP | Last update timestamp            |
+| Column               | Type      | Description                      |
+| -------------------- | --------- | -------------------------------- |
+| `id`                 | TEXT      | Organization ID                  |
+| `name`               | TEXT      | Display name                     |
+| `slug`               | TEXT      | URL-friendly identifier (unique) |
+| `logo`               | TEXT      | Logo image URL                   |
+| `metadata`           | TEXT      | JSON for custom fields           |
+| `stripe_customer_id` | TEXT      | Stripe customer ID               |
+| `created_at`         | TIMESTAMP | Creation timestamp               |
+| `updated_at`         | TIMESTAMP | Last update timestamp            |
 
 ### `member` Table
 
@@ -304,6 +327,32 @@ Tracks pending invitations to organizations.
 | `rejected_at`     | TIMESTAMP | When rejected/canceled (extended)     |
 | `created_at`      | TIMESTAMP | Creation timestamp                    |
 | `updated_at`      | TIMESTAMP | Last update timestamp                 |
+
+## Billing Tables
+
+These tables support Stripe subscription billing via the [`@better-auth/stripe`](https://www.better-auth.com/docs/plugins/stripe) plugin. The plugin manages the subscription lifecycle — no manual inserts or updates needed.
+
+### `subscription` Table
+
+Tracks Stripe subscription state. The `referenceId` column is polymorphic: it points to `user.id` for personal billing or `organization.id` for org-level billing.
+
+| Column                   | Type      | Description                        |
+| ------------------------ | --------- | ---------------------------------- |
+| `id`                     | TEXT      | Subscription ID                    |
+| `plan`                   | TEXT      | Plan name (free, starter, pro)     |
+| `reference_id`           | TEXT      | user.id or organization.id         |
+| `stripe_customer_id`     | TEXT      | Stripe customer ID                 |
+| `stripe_subscription_id` | TEXT      | Stripe subscription ID (unique)    |
+| `status`                 | TEXT      | incomplete, active, canceled, etc. |
+| `period_start`           | TIMESTAMP | Current billing period start       |
+| `period_end`             | TIMESTAMP | Current billing period end         |
+| `cancel_at_period_end`   | BOOLEAN   | Whether cancellation is scheduled  |
+| `seats`                  | INTEGER   | Number of seats                    |
+| `billing_interval`       | TEXT      | monthly or yearly                  |
+| `created_at`             | TIMESTAMP | Creation timestamp                 |
+| `updated_at`             | TIMESTAMP | Last update timestamp              |
+
+See [Billing Integration](./specs/billing.md) for architecture details and environment setup.
 
 ## Extending the Schema
 

@@ -31,8 +31,8 @@ features:
     title: Modern React Stack
     details: React 19 with Vite & Astro, TanStack Router, Jotai state management, and shadcn/ui components with Tailwind CSS v4
   - icon: 🔐
-    title: Complete Authentication
-    details: Pre-configured Better Auth with social providers, session management, and secure user flows
+    title: Auth + Billing Included
+    details: Better Auth with social providers, passkeys, organizations, and Stripe subscriptions via hosted checkout
   - icon: 🏢
     title: Multi-Tenant Database
     details: Neon PostgreSQL with Drizzle ORM, pre-built multi-tenant schema with organizations, migrations, and type-safe queries
