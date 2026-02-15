@@ -1,14 +1,17 @@
-// Better Auth teams plugin tables
+# Adding Teams
 
+Teams let you create subgroups within organizations. This recipe shows how to enable Better Auth's teams plugin.
+
+## 1. Add the schema
+
+Create `db/schema/team.ts`:
+
+```typescript
 import { relations, sql } from "drizzle-orm";
 import { index, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
 import { organization } from "./organization";
 import { user } from "./user";
 
-/**
- * Teams table for Better Auth teams plugin.
- * Teams belong to organizations and contain members.
- */
 export const team = pgTable(
   "team",
   {
@@ -30,13 +33,6 @@ export const team = pgTable(
   (table) => [index("team_organization_id_idx").on(table.organizationId)],
 );
 
-export type Team = typeof team.$inferSelect;
-export type NewTeam = typeof team.$inferInsert;
-
-/**
- * Team membership table for Better Auth teams plugin.
- * Links users to teams within organizations.
- */
 export const teamMember = pgTable(
   "team_member",
   {
@@ -64,13 +60,6 @@ export const teamMember = pgTable(
   ],
 );
 
-export type TeamMember = typeof teamMember.$inferSelect;
-export type NewTeamMember = typeof teamMember.$inferInsert;
-
-// —————————————————————————————————————————————————————————————————————————————
-// Relations for better query experience
-// —————————————————————————————————————————————————————————————————————————————
-
 export const teamRelations = relations(team, ({ one, many }) => ({
   organization: one(organization, {
     fields: [team.organizationId],
@@ -89,3 +78,55 @@ export const teamMemberRelations = relations(teamMember, ({ one }) => ({
     references: [user.id],
   }),
 }));
+```
+
+Export it from `db/schema/index.ts`:
+
+```typescript
+export * from "./team";
+```
+
+## 2. Add session and invitation fields
+
+Add `activeTeamId` to the session table in `db/schema/user.ts`:
+
+```typescript
+// In the session table definition
+activeTeamId: text(),
+```
+
+Optionally add `teamId` to the invitation table in `db/schema/invitation.ts` if you want team-scoped invitations:
+
+```typescript
+teamId: text().references(() => team.id, { onDelete: "cascade" }),
+```
+
+## 3. Enable the teams plugin
+
+In `apps/api/lib/auth.ts`, enable teams in the organization plugin and add the schema mapping:
+
+```typescript
+// Add to the drizzle adapter schema mapping
+schema: {
+  // ...existing mappings
+  team: Db.team,
+  teamMember: Db.teamMember,
+},
+
+// Enable teams in the organization plugin
+organization({
+  // ...existing config
+  teams: { enabled: true },
+}),
+```
+
+## 4. Apply the migration
+
+```bash
+bun db:generate
+bun db:push  # or bun db:migrate
+```
+
+## Reference
+
+- [Better Auth organization plugin — Teams](https://www.better-auth.com/docs/plugins/organization#teams)

@@ -16,6 +16,7 @@ export const organization = pgTable("organization", {
   slug: text().notNull().unique(),
   logo: text(),
   metadata: text(), // Better Auth expects string (JSON serialized)
+  stripeCustomerId: text(),
   createdAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .notNull(),

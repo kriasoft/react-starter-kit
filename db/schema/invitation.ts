@@ -1,34 +1,13 @@
-// Better Auth invitation system for organization and team invites
+// Better Auth invitation system for organization invites
 
 import { relations, sql } from "drizzle-orm";
-import {
-  index,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  unique,
-} from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
 import { organization } from "./organization";
-import { team } from "./team";
 import { user } from "./user";
 
 /**
- * Invitation status enum matching Better Auth's expected values.
- * @see ~/gh/better-auth/packages/better-auth/src/plugins/organization/schema.ts
- */
-export const invitationStatusEnum = pgEnum("invitation_status", [
-  "pending",
-  "accepted",
-  "rejected",
-  "canceled",
-]);
-
-export type InvitationStatus = (typeof invitationStatusEnum.enumValues)[number];
-
-/**
- * Invitations table for Better Auth organization and teams plugins.
- * Manages pending invites to organizations and teams.
+ * Invitations table for Better Auth organization plugin.
+ * Manages pending invites to organizations.
  *
  * Lifecycle timestamps:
  * - acceptedAt: When the invite was accepted
@@ -48,8 +27,7 @@ export const invitation = pgTable(
       .notNull()
       .references(() => organization.id, { onDelete: "cascade" }),
     role: text().notNull(),
-    status: invitationStatusEnum().default("pending").notNull(),
-    teamId: text().references(() => team.id, { onDelete: "cascade" }),
+    status: text().default("pending").notNull(),
     expiresAt: timestamp({ withTimezone: true, mode: "date" }).notNull(),
     acceptedAt: timestamp({ withTimezone: true, mode: "date" }),
     rejectedAt: timestamp({ withTimezone: true, mode: "date" }),
@@ -62,14 +40,10 @@ export const invitation = pgTable(
       .notNull(),
   },
   (table) => [
-    // Prevent duplicate invites (NULLs NOT DISTINCT treats NULL teamId as equal)
-    unique("invitation_org_email_team_unique")
-      .on(table.organizationId, table.email, table.teamId)
-      .nullsNotDistinct(),
+    unique("invitation_org_email_unique").on(table.organizationId, table.email),
     index("invitation_email_idx").on(table.email),
     index("invitation_inviter_id_idx").on(table.inviterId),
     index("invitation_organization_id_idx").on(table.organizationId),
-    index("invitation_team_id_idx").on(table.teamId),
   ],
 );
 
@@ -88,9 +62,5 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
   organization: one(organization, {
     fields: [invitation.organizationId],
     references: [organization.id],
-  }),
-  team: one(team, {
-    fields: [invitation.teamId],
-    references: [team.id],
   }),
 }));

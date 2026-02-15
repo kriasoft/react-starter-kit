@@ -35,7 +35,7 @@ features:
     details: Pre-configured Better Auth with social providers, session management, and secure user flows
   - icon: 🏢
     title: Multi-Tenant Database
-    details: Neon PostgreSQL with Drizzle ORM, pre-built multi-tenant schema with organizations and teams, migrations, and type-safe queries
+    details: Neon PostgreSQL with Drizzle ORM, pre-built multi-tenant schema with organizations, migrations, and type-safe queries
   - icon: ⚡
     title: Ship Faster
     details: Bun runtime for instant builds, hot reload, unified tooling, and comprehensive testing setup

@@ -1,6 +1,6 @@
 # Database Schema
 
-This document describes the database schema for your application. The schema provides a foundation for building multi-tenant SaaS applications with authentication, organizations, teams, and role-based access control.
+This document describes the database schema for your application. The schema provides a foundation for building multi-tenant SaaS applications with authentication, organizations, and role-based access control.
 
 ## Overview
 
@@ -22,7 +22,7 @@ For time-ordered UUIDs (better index locality), you can switch to `uuidv7()` (Po
 The schema is divided into two main sections:
 
 1. **Authentication tables** - Required for user authentication and session management
-2. **Application tables** - For your specific business logic (organizations, teams, and your custom tables)
+2. **Application tables** - For your specific business logic (organizations and your custom tables)
 
 ::: warning Important
 The authentication tables follow [Better Auth's requirements](https://www.better-auth.com/docs/concepts/database). Maintain compatibility when extending these tables.
@@ -54,7 +54,6 @@ erDiagram
         text user_agent "Client user agent"
         text user_id FK "User reference"
         text active_organization_id "Current organization context"
-        text active_team_id "Current team context"
     }
 
     identity {
@@ -120,30 +119,13 @@ erDiagram
         timestamp updated_at "Last update timestamp"
     }
 
-    team {
-        text id PK "gen_random_uuid()"
-        text name "Team name"
-        text organization_id FK "Parent organization"
-        timestamp created_at "Creation timestamp"
-        timestamp updated_at "Last update timestamp"
-    }
-
-    team_member {
-        text id PK "gen_random_uuid()"
-        text team_id FK "Team reference"
-        text user_id FK "User reference"
-        timestamp created_at "Join timestamp"
-        timestamp updated_at "Last update timestamp"
-    }
-
     invitation {
         text id PK "gen_random_uuid()"
         text email "Invitee email"
         text inviter_id FK "Inviting user"
         text organization_id FK "Target organization"
         text role "Invited role"
-        invitation_status status "pending, accepted, rejected, canceled"
-        text team_id FK "Target team (optional)"
+        text status "pending, accepted, rejected, canceled"
         timestamp expires_at "Expiration timestamp"
         timestamp accepted_at "Acceptance timestamp"
         timestamp rejected_at "Rejection timestamp"
@@ -156,15 +138,10 @@ erDiagram
     user ||--o{ identity : "authenticates with"
     user ||--o{ passkey : "registers"
     user ||--o{ member : "belongs to"
-    user ||--o{ team_member : "member of"
     user ||--o{ invitation : "invited by"
 
     organization ||--o{ member : "has members"
-    organization ||--o{ team : "contains"
     organization ||--o{ invitation : "receives"
-
-    team ||--o{ team_member : "has members"
-    team ||--o{ invitation : "invites to"
 ```
 
 ## Authentication Tables
@@ -228,7 +205,6 @@ Manages active user sessions with device tracking and organization context.
 | `ip_address`             | TEXT      | Client IP for security  | No       |
 | `user_agent`             | TEXT      | Browser/client info     | No       |
 | `active_organization_id` | TEXT      | Current org context     | No       |
-| `active_team_id`         | TEXT      | Current team context    | No       |
 
 #### `identity` Table
 
@@ -282,7 +258,7 @@ Stores WebAuthn passkey credentials for passwordless authentication via the [Bet
 
 ## Application Tables
 
-These tables implement the multi-tenant architecture with organizations and teams. They integrate with the authentication layer through Better Auth's [organization](https://www.better-auth.com/docs/plugins/organization) and [teams](https://www.better-auth.com/docs/plugins/teams) plugins.
+These tables implement the multi-tenant architecture with organizations. They integrate with the authentication layer through Better Auth's [organization](https://www.better-auth.com/docs/plugins/organization) plugin.
 
 ### `organization` Table
 
@@ -311,36 +287,23 @@ Defines the relationship between users and organizations, including their role w
 | `created_at`      | TIMESTAMP | Join timestamp              |
 | `updated_at`      | TIMESTAMP | Last update timestamp       |
 
-### `team` Table
-
-Optional subgroups within organizations. Use teams when you need more granular permissions beyond organization-level roles.
-
-| Column            | Type      | Description           |
-| ----------------- | --------- | --------------------- |
-| `id`              | TEXT      | Team ID               |
-| `name`            | TEXT      | Team name             |
-| `organization_id` | TEXT      | Parent organization   |
-| `created_at`      | TIMESTAMP | Creation timestamp    |
-| `updated_at`      | TIMESTAMP | Last update timestamp |
-
 ### `invitation` Table
 
-Tracks pending invitations. Users can be invited to join organizations with specific roles, and optionally assigned to teams.
+Tracks pending invitations to organizations.
 
-| Column            | Type              | Description                                    |
-| ----------------- | ----------------- | ---------------------------------------------- |
-| `id`              | TEXT              | Invitation ID                                  |
-| `email`           | TEXT              | Invitee's email                                |
-| `inviter_id`      | TEXT              | User who sent invitation                       |
-| `organization_id` | TEXT              | Target organization                            |
-| `role`            | TEXT              | Invited role                                   |
-| `status`          | invitation_status | pending, accepted, rejected, canceled (pgEnum) |
-| `team_id`         | TEXT              | Target team (optional)                         |
-| `expires_at`      | TIMESTAMP         | Invitation expiry                              |
-| `accepted_at`     | TIMESTAMP         | When accepted (extended)                       |
-| `rejected_at`     | TIMESTAMP         | When rejected/canceled (extended)              |
-| `created_at`      | TIMESTAMP         | Creation timestamp                             |
-| `updated_at`      | TIMESTAMP         | Last update timestamp                          |
+| Column            | Type      | Description                           |
+| ----------------- | --------- | ------------------------------------- |
+| `id`              | TEXT      | Invitation ID                         |
+| `email`           | TEXT      | Invitee's email                       |
+| `inviter_id`      | TEXT      | User who sent invitation              |
+| `organization_id` | TEXT      | Target organization                   |
+| `role`            | TEXT      | Invited role                          |
+| `status`          | TEXT      | pending, accepted, rejected, canceled |
+| `expires_at`      | TIMESTAMP | Invitation expiry                     |
+| `accepted_at`     | TIMESTAMP | When accepted (extended)              |
+| `rejected_at`     | TIMESTAMP | When rejected/canceled (extended)     |
+| `created_at`      | TIMESTAMP | Creation timestamp                    |
+| `updated_at`      | TIMESTAMP | Last update timestamp                 |
 
 ## Extending the Schema
 
@@ -515,14 +478,6 @@ const membership = await db.query.member.findFirst({
     eq(member.role, "admin"),
   ),
 });
-
-// Get all teams user belongs to
-const teams = await db.query.teamMember.findMany({
-  where: eq(teamMember.userId, userId),
-  with: {
-    team: true,
-  },
-});
 ```
 
 ## Common Query Patterns
@@ -563,22 +518,13 @@ if (!membership) {
 Load nested relationships efficiently:
 
 ```typescript
-// Get organization with all members and their teams
+// Get organization with all members
 const org = await db.query.organization.findFirst({
   where: eq(organization.id, orgId),
   with: {
     members: {
       with: {
         user: true,
-      },
-    },
-    teams: {
-      with: {
-        members: {
-          with: {
-            user: true,
-          },
-        },
       },
     },
   },

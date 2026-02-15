@@ -37,6 +37,7 @@ export const user = pgTable("user", {
   emailVerified: boolean().default(false).notNull(),
   image: text(),
   isAnonymous: boolean().default(false).notNull(),
+  stripeCustomerId: text(),
   createdAt: timestamp({ withTimezone: true, mode: "date" })
     .defaultNow()
     .notNull(),
@@ -74,12 +75,10 @@ export const session = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     activeOrganizationId: text(),
-    activeTeamId: text(),
   },
   (table) => [
     index("session_user_id_idx").on(table.userId),
     index("session_active_org_id_idx").on(table.activeOrganizationId),
-    index("session_active_team_id_idx").on(table.activeTeamId),
   ],
 );
 
