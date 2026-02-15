@@ -17,6 +17,11 @@ export const envSchema = z.object({
   OPENAI_API_KEY: z.string(),
   RESEND_API_KEY: z.string(),
   RESEND_EMAIL_FROM: z.email(),
+  STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_"),
+  STRIPE_STARTER_PRICE_ID: z.string().startsWith("price_"),
+  STRIPE_PRO_PRICE_ID: z.string().startsWith("price_"),
+  STRIPE_PRO_ANNUAL_PRICE_ID: z.string().startsWith("price_"),
 });
 
 /**

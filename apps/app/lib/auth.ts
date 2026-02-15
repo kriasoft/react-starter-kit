@@ -6,6 +6,7 @@
  */
 
 import { passkeyClient } from "@better-auth/passkey/client";
+import { stripeClient } from "@better-auth/stripe/client";
 import {
   anonymousClient,
   emailOTPClient,
@@ -26,6 +27,7 @@ export const auth = createAuthClient({
     emailOTPClient(),
     organizationClient(),
     passkeyClient(),
+    stripeClient({ subscription: true }),
   ],
 });
 
