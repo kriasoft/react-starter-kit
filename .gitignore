@@ -22,6 +22,7 @@ node_modules/
 *.lcov
 
 # Environment variables
+# `.env` is committed with shared defaults/placeholders; keep secrets in `.env.local`.
 .env.*.local
 .env.local
 
@@ -69,4 +70,3 @@ srcpack.config.ts
 # macOS
 # https://github.com/github/gitignore/blob/master/Global/macOS.gitignore
 .DS_Store
-
