@@ -77,7 +77,7 @@ Config-as-code is the simplest correct approach — plans rarely change and this
 | `STRIPE_PRO_PRICE_ID`        | `price_` |
 | `STRIPE_PRO_ANNUAL_PRICE_ID` | `price_` |
 
-Set in `.dev.vars` (local), Cloudflare dashboard (staging/prod), and Terraform secrets.
+Set in `.env.local` (local dev), Cloudflare secrets (staging/prod).
 
 ## Webhook Setup
 
@@ -103,7 +103,7 @@ Events:
 
 ```bash
 stripe listen --forward-to localhost:5173/api/auth/stripe/webhook
-# Copy the whsec_... signing secret to .dev.vars
+# Copy the whsec_... signing secret to .env.local
 ```
 
 ### Raw Body Requirement

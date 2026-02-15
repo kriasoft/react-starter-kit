@@ -72,7 +72,7 @@ app.use(async (c, next) => {
   const env = {
     ...cf.env,
     ...Object.fromEntries(
-      secretKeys.map((key) => [key, (process.env[key] || cf.env[key]) ?? ""]),
+      secretKeys.map((key) => [key, process.env[key] || cf.env[key]]),
     ),
     APP_NAME: process.env.APP_NAME || cf.env.APP_NAME || "Example",
     APP_ORIGIN:

@@ -125,9 +125,12 @@ Configure your production secrets in Cloudflare Workers:
 # Required secrets
 bun wrangler secret put BETTER_AUTH_SECRET
 
-# Stripe billing
+# Stripe billing (optional — first 4 required to enable, annual is optional)
 bun wrangler secret put STRIPE_SECRET_KEY
 bun wrangler secret put STRIPE_WEBHOOK_SECRET
+bun wrangler secret put STRIPE_STARTER_PRICE_ID
+bun wrangler secret put STRIPE_PRO_PRICE_ID
+bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID  # optional
 
 # OAuth providers (as needed)
 bun wrangler secret put GOOGLE_CLIENT_ID
