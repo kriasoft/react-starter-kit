@@ -11,11 +11,7 @@
 
 </div>
 
-A full-stack monorepo template for building SaaS applications with React 19, tRPC, and Cloudflare Workers. Type-safe from database to UI, deployable to the edge in minutes. New here? Ask our AI assistant on [ChatGPT](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant) or [Gemini](https://gemini.google.com/gem/1IXFElQ2UvvZY86iL6uZLeoC-r8mp-OB-?usp=sharing).
-
-React Starter Kit is proudly supported by these amazing sponsors:
-
-<a href="https://reactstarter.com/s/1"><img src="https://reactstarter.com/s/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/2"><img src="https://reactstarter.com/s/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/3"><img src="https://reactstarter.com/s/3.png" height="60" /></a>
+A full-stack monorepo template for building SaaS applications with React 19, tRPC, and Cloudflare Workers. Type-safe from database to UI, deployable to the edge in minutes.
 
 ## Highlights
 
@@ -25,6 +21,10 @@ React Starter Kit is proudly supported by these amazing sponsors:
 - **Modern React** — React 19, TanStack Router (file-based), TanStack Query, Jotai, Tailwind CSS v4, shadcn/ui
 - **Database ready** — Drizzle ORM with Neon PostgreSQL, migrations, and seed data
 - **Fast DX** — Bun runtime, Vite, Vitest, ESLint, Prettier, and pre-configured VS Code settings
+
+React Starter Kit is proudly supported by these amazing sponsors:
+
+<a href="https://reactstarter.com/s/1"><img src="https://reactstarter.com/s/1.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/2"><img src="https://reactstarter.com/s/2.png" height="60" /></a>&nbsp;&nbsp;<a href="https://reactstarter.com/s/3"><img src="https://reactstarter.com/s/3.png" height="60" /></a>
 
 ## Technology Stack
 

@@ -47,7 +47,7 @@ jobs:
       - run: bun tsc --build
 
       # Tests
-      - run: bun test
+      - run: bun run test -- --run
 
       # Build all workspaces
       - run: bun --filter @repo/web build
