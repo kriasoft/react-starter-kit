@@ -83,7 +83,17 @@ bun install
 
 ### 3. Configure Environment
 
-Update environment variables in [`.env`](./.env) and `.env.local` files as well as Wrangler configuration in [`wrangler.jsonc`](./apps/api/wrangler.jsonc).
+This project follows [Vite env conventions](https://vite.dev/guide/env-and-mode#env-files):
+
+- [`.env`](./.env) is committed and contains shared defaults/placeholders only (no real secrets)
+- `.env.local` is git-ignored and should contain your real credentials
+- `.env.local` values override `.env`
+
+```bash
+cp .env .env.local  # then replace placeholder values with real ones
+```
+
+Also check [`wrangler.jsonc`](./apps/api/wrangler.jsonc) for Worker configuration and bindings.
 
 ### 4. Start Development
 
