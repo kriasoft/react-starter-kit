@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import type { TRPCContext } from "../lib/context";
 import { createCallerFactory } from "../lib/trpc";
 import { billingRouter } from "./billing";
 
@@ -7,20 +8,42 @@ const createCaller = createCallerFactory(billingRouter);
 // Minimal context mock — only fields the billing procedure accesses.
 function testCtx({
   userId = "user-1",
-  activeOrgId = null as string | null,
+  activeOrgId = undefined as string | undefined,
   subscription = undefined as Record<string, unknown> | undefined,
 } = {}) {
-  return {
-    session: { id: "s-1", activeOrganizationId: activeOrgId },
-    user: { id: userId },
+  const ctx: TRPCContext = {
+    req: new Request("http://localhost"),
+    info: {} as TRPCContext["info"],
+    session: {
+      id: "s-1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userId,
+      expiresAt: new Date(Date.now() + 60_000),
+      token: "token",
+      activeOrganizationId: activeOrgId,
+    },
+    user: {
+      id: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      email: "test@example.com",
+      emailVerified: true,
+      name: "Test User",
+    },
     db: {
       query: {
         subscription: {
           findFirst: vi.fn().mockResolvedValue(subscription),
         },
       },
-    },
-  } as Parameters<typeof createCaller>[0];
+    } as unknown as TRPCContext["db"],
+    dbDirect: {} as TRPCContext["dbDirect"],
+    cache: new Map(),
+    env: {} as TRPCContext["env"],
+  };
+
+  return ctx;
 }
 
 describe("billing.subscription", () => {
