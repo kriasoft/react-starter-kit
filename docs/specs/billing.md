@@ -110,6 +110,15 @@ stripe listen --forward-to localhost:5173/api/auth/stripe/webhook
 
 Stripe webhook verification requires the raw request body. The plugin handles this via `request.text()` — no special Hono middleware needed.
 
+## Testing
+
+The plugin tests its own internals (webhooks, checkout, subscription lifecycle, authorization). App tests cover the seams we own:
+
+- **Router** (`apps/api/routers/billing.test.ts`) — free plan fallback, plan limits mapping, unknown plan rejection, response shape
+- **Query** (`apps/app/lib/queries/billing.test.ts`) — cache key includes org ID, null normalization, distinct keys per org, prefix for bulk invalidation
+
+Checkout and webhook flows are not retested at app level — verified via `stripe listen` during development.
+
 ## File Map
 
 | Layer  | Files                                                                                                  |
@@ -119,3 +128,4 @@ Stripe webhook verification requires the raw request body. The plugin handles th
 | Router | `apps/api/routers/billing.ts`, registered in `apps/api/lib/app.ts`                                     |
 | Client | `stripeClient` in `apps/app/lib/auth.ts`, `apps/app/lib/queries/billing.ts`                            |
 | UI     | Billing card in `apps/app/routes/(app)/settings.tsx`                                                   |
+| Tests  | `apps/api/routers/billing.test.ts`, `apps/app/lib/queries/billing.test.ts`                             |
