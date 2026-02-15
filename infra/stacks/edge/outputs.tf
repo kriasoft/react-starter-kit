@@ -29,3 +29,9 @@ output "hostname" {
   value       = var.hostname != "" ? var.hostname : null
   description = "Configured hostname (null if using workers.dev)"
 }
+
+# Stripe webhook URL for dashboard configuration
+output "stripe_webhook_url" {
+  value       = "https://${var.hostname != "" ? var.hostname : "${module.worker_api.name}.workers.dev"}/api/auth/stripe/webhook"
+  description = "Register in Stripe Dashboard → Webhooks (only needed if billing is enabled)"
+}
