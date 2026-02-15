@@ -62,12 +62,17 @@ app.use(async (c, next) => {
     "OPENAI_API_KEY",
     "RESEND_API_KEY",
     "RESEND_EMAIL_FROM",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_STARTER_PRICE_ID",
+    "STRIPE_PRO_PRICE_ID",
+    "STRIPE_PRO_ANNUAL_PRICE_ID",
   ] as const;
 
   const env = {
     ...cf.env,
     ...Object.fromEntries(
-      secretKeys.map((key) => [key, (process.env[key] || cf.env[key]) ?? ""]),
+      secretKeys.map((key) => [key, process.env[key] || cf.env[key]]),
     ),
     APP_NAME: process.env.APP_NAME || cf.env.APP_NAME || "Example",
     APP_ORIGIN:

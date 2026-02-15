@@ -17,6 +17,7 @@ const t = initTRPC.context<TRPCContext>().create({
 
 export const router = t.router;
 export const publicProcedure = t.procedure;
+export const createCallerFactory = t.createCallerFactory;
 
 // Derive type from publicProcedure to stay in sync with initTRPC config.
 // Explicit annotation required to avoid TS2742 (non-portable inferred type).

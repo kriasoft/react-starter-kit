@@ -70,6 +70,32 @@ export TF_VAR_neon_database_url="$DATABASE_URL"
 terraform -chdir=infra/envs/dev/edge apply
 ```
 
+## Worker Secrets (Wrangler)
+
+Terraform provisions infrastructure only — worker secrets are deployed via Wrangler.
+
+**Required** (all environments):
+
+```bash
+wrangler secret put BETTER_AUTH_SECRET --env <environment>
+```
+
+**Optional** (only if billing is enabled):
+
+```bash
+wrangler secret put STRIPE_SECRET_KEY --env <environment>
+wrangler secret put STRIPE_WEBHOOK_SECRET --env <environment>
+wrangler secret put STRIPE_STARTER_PRICE_ID --env <environment>
+wrangler secret put STRIPE_PRO_PRICE_ID --env <environment>
+wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID --env <environment>
+```
+
+After adding Stripe secrets, register the webhook URL in the Stripe Dashboard:
+
+```bash
+terraform -chdir=infra/envs/<env>/edge output stripe_webhook_url
+```
+
 ## Hybrid Stack (GCP)
 
 Copy the hybrid template and configure:

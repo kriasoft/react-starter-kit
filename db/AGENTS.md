@@ -4,22 +4,20 @@
 - All primary keys: `text().primaryKey().default(sql`gen_random_uuid()`)`.
 - Timestamps: `timestamp({ withTimezone: true, mode: "date" })`. Every table has `createdAt` (`.defaultNow().notNull()`) and `updatedAt` (`.defaultNow().$onUpdate(() => new Date()).notNull()`).
 - `identity` table = Better Auth's `account` table, renamed via `account.modelName: "identity"` in auth config.
-- `member.role` is free `text`, not a pgEnum — Better Auth requires this for custom roles.
-- `invitationStatusEnum` is a pgEnum (`"pending" | "accepted" | "rejected" | "canceled"`); changes require a migration.
+- `member.role` and `invitation.status` are free `text`, not pgEnum — avoids fragile coupling with Better Auth's values.
 - `organization.metadata` is `text`, not JSONB — Better Auth handles serialization.
 
 ## Extended Fields (beyond Better Auth defaults)
 
 - **Passkey:** `lastUsedAt` (security audits), `deviceName` (user-friendly label), `platform` ("platform" | "cross-platform").
-- **Invitation:** `invitationStatusEnum` pgEnum; `acceptedAt`/`rejectedAt` lifecycle timestamps. Adding new statuses requires a migration before upgrading Better Auth.
+- **Invitation:** `acceptedAt`/`rejectedAt` lifecycle timestamps.
 - **Member roles:** free text `role` ("owner", "admin", "member") — not pgEnum, to stay compatible with Better Auth's role customization.
 
 ## Indexes and Constraints
 
 - Every foreign key column gets an index: `{table}_{column}_idx`.
-- Composite uniques: `member(userId, organizationId)`, `teamMember(teamId, userId)`, `identity(providerId, accountId)`.
-- `invitation(organizationId, email, teamId)` uses `.nullsNotDistinct()` — NULL teamId is treated as a value.
-- `session.activeOrganizationId` and `session.activeTeamId` have indexes but no FK constraints (Better Auth design).
+- Composite uniques: `member(userId, organizationId)`, `invitation(organizationId, email)`, `identity(providerId, accountId)`.
+- `session.activeOrganizationId` has an index but no FK constraint (Better Auth design).
 - All foreign keys use `onDelete: "cascade"`.
 
 ## Seeds

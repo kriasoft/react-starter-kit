@@ -17,7 +17,7 @@ A full-stack monorepo template for building SaaS applications with React 19, tRP
 
 - **Type-safe full stack** — TypeScript, tRPC, and Drizzle ORM create a single type contract from database to UI
 - **Edge-native** — Three Cloudflare Workers (web, app, api) connected via service bindings
-- **Auth included** — Better Auth with email OTP, passkey, Google OAuth, and organizations
+- **Auth + billing included** — Better Auth with email OTP, passkey, Google OAuth, organizations, and Stripe subscriptions
 - **Modern React** — React 19, TanStack Router (file-based), TanStack Query, Jotai, Tailwind CSS v4, shadcn/ui
 - **Database ready** — Drizzle ORM with Neon PostgreSQL, migrations, and seed data
 - **Fast DX** — Bun runtime, Vite, Vitest, ESLint, Prettier, and pre-configured VS Code settings
@@ -33,7 +33,7 @@ React Starter Kit is proudly supported by these amazing sponsors:
 | **Runtime**   | [Bun](https://bun.sh/), [Cloudflare Workers](https://workers.cloudflare.com/), [TypeScript](https://www.typescriptlang.org/) 5.9                                                              |
 | **Frontend**  | [React 19](https://react.dev/), [TanStack Router](https://tanstack.com/router), [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Jotai](https://jotai.org/) |
 | **Marketing** | [Astro](https://astro.build/)                                                                                                                                                                 |
-| **Backend**   | [Hono](https://hono.dev/), [tRPC](https://trpc.io/), [Better Auth](https://www.better-auth.com/)                                                                                              |
+| **Backend**   | [Hono](https://hono.dev/), [tRPC](https://trpc.io/), [Better Auth](https://www.better-auth.com/), [Stripe](https://stripe.com/)                                                               |
 | **Database**  | [Drizzle ORM](https://orm.drizzle.team/), [Neon PostgreSQL](https://get.neon.com/HD157BR)                                                                                                     |
 | **Tooling**   | [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)                                                                   |
 
@@ -124,6 +124,13 @@ Configure your production secrets in Cloudflare Workers:
 ```bash
 # Required secrets
 bun wrangler secret put BETTER_AUTH_SECRET
+
+# Stripe billing (optional — first 4 required to enable, annual is optional)
+bun wrangler secret put STRIPE_SECRET_KEY
+bun wrangler secret put STRIPE_WEBHOOK_SECRET
+bun wrangler secret put STRIPE_STARTER_PRICE_ID
+bun wrangler secret put STRIPE_PRO_PRICE_ID
+bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID  # optional
 
 # OAuth providers (as needed)
 bun wrangler secret put GOOGLE_CLIENT_ID

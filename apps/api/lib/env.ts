@@ -17,6 +17,12 @@ export const envSchema = z.object({
   OPENAI_API_KEY: z.string(),
   RESEND_API_KEY: z.string(),
   RESEND_EMAIL_FROM: z.email(),
+  // Stripe billing (optional — app works without these, billing features disabled)
+  STRIPE_SECRET_KEY: z.string().startsWith("sk_").optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_").optional(),
+  STRIPE_STARTER_PRICE_ID: z.string().startsWith("price_").optional(),
+  STRIPE_PRO_PRICE_ID: z.string().startsWith("price_").optional(),
+  STRIPE_PRO_ANNUAL_PRICE_ID: z.string().startsWith("price_").optional(),
 });
 
 /**
