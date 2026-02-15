@@ -40,6 +40,62 @@ type AuthEnv = Pick<
 >;
 
 /**
+ * Stripe billing plugin — only enabled when all required env vars are set.
+ * Without Stripe config, the app works but billing endpoints return 404.
+ */
+function stripePlugin(db: DB, env: AuthEnv) {
+  if (
+    !env.STRIPE_SECRET_KEY ||
+    !env.STRIPE_WEBHOOK_SECRET ||
+    !env.STRIPE_STARTER_PRICE_ID ||
+    !env.STRIPE_PRO_PRICE_ID
+  ) {
+    return [];
+  }
+
+  return [
+    stripe({
+      stripeClient: createStripeClient(env),
+      stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+      createCustomerOnSignUp: true,
+      subscription: {
+        enabled: true,
+        plans: [
+          {
+            name: "starter",
+            priceId: env.STRIPE_STARTER_PRICE_ID,
+            limits: planLimits.starter,
+          },
+          {
+            name: "pro",
+            priceId: env.STRIPE_PRO_PRICE_ID,
+            annualDiscountPriceId: env.STRIPE_PRO_ANNUAL_PRICE_ID,
+            limits: planLimits.pro,
+            freeTrial: { days: 14 },
+          },
+        ],
+        // Personal billing: user can manage their own subscription.
+        // Organization billing: only owner/admin can manage.
+        authorizeReference: async ({ user, referenceId }) => {
+          if (referenceId === user.id) return true;
+          const [row] = await db
+            .select({ role: Db.member.role })
+            .from(Db.member)
+            .where(
+              and(
+                eq(Db.member.organizationId, referenceId),
+                eq(Db.member.userId, user.id),
+              ),
+            );
+          return row?.role === "owner" || row?.role === "admin";
+        },
+      },
+      organization: { enabled: true },
+    }),
+  ];
+}
+
+/**
  * Creates a Better Auth instance configured for multi-tenant SaaS with organization support.
  *
  * Key behaviors:
@@ -140,53 +196,7 @@ export function createAuth(
         expiresIn: 300, // 5 minutes
         allowedAttempts: 3,
       }),
-      // Stripe billing — only enabled when all required env vars are set.
-      // Without Stripe config, the app works but billing endpoints return 404.
-      ...(env.STRIPE_SECRET_KEY &&
-      env.STRIPE_WEBHOOK_SECRET &&
-      env.STRIPE_STARTER_PRICE_ID &&
-      env.STRIPE_PRO_PRICE_ID
-        ? [
-            stripe({
-              stripeClient: createStripeClient(env),
-              stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
-              createCustomerOnSignUp: true,
-              subscription: {
-                enabled: true,
-                plans: [
-                  {
-                    name: "starter",
-                    priceId: env.STRIPE_STARTER_PRICE_ID,
-                    limits: planLimits.starter,
-                  },
-                  {
-                    name: "pro",
-                    priceId: env.STRIPE_PRO_PRICE_ID,
-                    annualDiscountPriceId: env.STRIPE_PRO_ANNUAL_PRICE_ID,
-                    limits: planLimits.pro,
-                    freeTrial: { days: 14 },
-                  },
-                ],
-                // Personal billing: user can manage their own subscription.
-                // Organization billing: only owner/admin can manage.
-                authorizeReference: async ({ user, referenceId }) => {
-                  if (referenceId === user.id) return true;
-                  const [row] = await db
-                    .select({ role: Db.member.role })
-                    .from(Db.member)
-                    .where(
-                      and(
-                        eq(Db.member.organizationId, referenceId),
-                        eq(Db.member.userId, user.id),
-                      ),
-                    );
-                  return row?.role === "owner" || row?.role === "admin";
-                },
-              },
-              organization: { enabled: true },
-            }),
-          ]
-        : []),
+      ...stripePlugin(db, env),
     ],
 
     advanced: {
