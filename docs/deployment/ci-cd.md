@@ -67,7 +67,7 @@ deploy-staging:
   secrets: inherit
 ```
 
-The deploy workflow downloads build artifacts and runs Wrangler deploy for each worker:
+The deploy workflow downloads build artifacts and deploys each worker via Wrangler:
 
 ```yaml
 # .github/workflows/deploy.yml (simplified)
@@ -76,11 +76,14 @@ steps:
   - uses: actions/download-artifact@v6
   - uses: oven-sh/setup-bun@v2
   - run: bun install --frozen-lockfile
-  # Deploy steps (wrangler deploy for api, app, web workers)
+  # Deploy each worker
+  - run: bun wrangler deploy --config apps/api/wrangler.jsonc --env ${{ inputs.environment }}
+  - run: bun wrangler deploy --config apps/app/wrangler.jsonc --env ${{ inputs.environment }}
+  - run: bun wrangler deploy --config apps/web/wrangler.jsonc --env ${{ inputs.environment }}
 ```
 
-::: info
-Deploy steps are currently scaffolded as TODO comments in the workflow. Uncomment the `wrangler deploy` commands once your Cloudflare infrastructure is provisioned.
+::: warning
+The `wrangler deploy` steps in `deploy.yml` are currently commented out as TODOs. Uncomment them once your Cloudflare infrastructure is provisioned and `CLOUDFLARE_API_TOKEN` is set in GitHub secrets.
 :::
 
 ## Preview Deployments

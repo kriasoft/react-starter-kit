@@ -93,9 +93,9 @@ bun app:deploy
 bun web:deploy
 
 # Or deploy to a specific environment
-bun wrangler deploy --config apps/api/wrangler.jsonc --env=staging
-bun wrangler deploy --config apps/app/wrangler.jsonc --env=staging
-bun wrangler deploy --config apps/web/wrangler.jsonc --env=staging
+bun wrangler deploy --config apps/api/wrangler.jsonc --env staging
+bun wrangler deploy --config apps/app/wrangler.jsonc --env staging
+bun wrangler deploy --config apps/web/wrangler.jsonc --env staging
 ```
 
 ## Custom Domain
