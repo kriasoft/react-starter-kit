@@ -26,12 +26,12 @@ See [Architecture Overview](/architecture/) for how these components connect.
 
 ## Environments
 
-| Environment | Trigger         | URL pattern              | Purpose                   |
-| ----------- | --------------- | ------------------------ | ------------------------- |
-| Development | `bun dev`       | `localhost:5173`         | Local development         |
-| Preview     | Pull request    | `{codename}.example.com` | Isolated PR testing       |
-| Staging     | Push to `main`  | `staging.example.com`    | Pre-production validation |
-| Production  | Manual dispatch | `example.com`            | Live environment          |
+| Environment | Trigger         | URL pattern              | Purpose                                                                      |
+| ----------- | --------------- | ------------------------ | ---------------------------------------------------------------------------- |
+| Development | `bun dev`       | `localhost:5173`         | Local development                                                            |
+| Preview     | Pull request    | `{codename}.example.com` | Isolated PR testing ([pr-codename](https://github.com/kriasoft/pr-codename)) |
+| Staging     | Push to `main`  | `staging.example.com`    | Pre-production validation                                                    |
+| Production  | Manual dispatch | `example.com`            | Live environment                                                             |
 
 Each environment has its own Wrangler config, Hyperdrive bindings, and Terraform state. See [CI/CD](/deployment/ci-cd) for how deployments are triggered.
 

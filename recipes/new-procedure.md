@@ -12,6 +12,7 @@ Add a new router in `apps/api/routers/`:
 ```ts
 // apps/api/routers/project.ts
 import { z } from "zod";
+import { schema } from "@repo/db";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 export const projectRouter = router({

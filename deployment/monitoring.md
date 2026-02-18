@@ -51,7 +51,7 @@ Wrangler rollback reverts worker code but not database migrations. If a deploy i
 
 ## Troubleshooting
 
-**Worker size limit** – Cloudflare Workers have a 10 MB compressed size limit. If you hit it:
+**Worker size limit** – Cloudflare Workers have a 10 MB compressed size limit (3 MB on the free plan). If you hit it:
 
 * Check for accidentally bundled dependencies
 * Move large assets to R2 storage
@@ -71,10 +71,11 @@ Wrangler rollback reverts worker code but not database migrations. If a deploy i
 
 ## Cost Overview
 
-| Service            | Free tier                            | Paid                      |
-| ------------------ | ------------------------------------ | ------------------------- |
-| Cloudflare Workers | 100,000 requests/day                 | $5/month for 10M requests |
-| Neon PostgreSQL    | 0.5 GB storage, auto-suspend compute | Scale-to-zero billing     |
-| Hyperdrive         | Included with Workers paid plan      | –                         |
+| Service            | Free tier                            | Paid                                                                                     |
+| ------------------ | ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Cloudflare Workers | 100,000 requests/day                 | [$5/month for 10M requests](https://developers.cloudflare.com/workers/platform/pricing/) |
+| Neon PostgreSQL    | 0.5 GB storage, auto-suspend compute | [Scale-to-zero billing](https://neon.tech/pricing)                                       |
+| Hyperdrive         | Included with Workers paid plan      | –                                                                                        |
+| Resend             | 100 emails/day                       | [$20/month for 50K emails](https://resend.com/pricing)                                   |
 
-For most projects, the free tiers are sufficient through early production. Monitor usage in the Cloudflare and Neon dashboards as traffic grows.
+A typical growth-stage project runs around **~$45/month** (Workers $5 + Neon $19 + Resend $20). Free tiers are sufficient through early production – monitor usage in the Cloudflare and Neon dashboards as traffic grows.

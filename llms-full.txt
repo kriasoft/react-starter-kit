@@ -268,6 +268,7 @@ Add a new router in `apps/api/routers/`:
 ```ts
 // apps/api/routers/project.ts
 import { z } from "zod";
+import { schema } from "@repo/db";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 export const projectRouter = router({
@@ -396,9 +397,9 @@ function CreateProjectButton() {
 ---
 url: /recipes/teams.md
 ---
-# Adding Teams
+# Add Teams
 
-Teams let you create subgroups within organizations. This recipe shows how to enable Better Auth's teams plugin.
+Teams let you create subgroups within organizations. This recipe enables Better Auth's [teams feature](https://www.better-auth.com/docs/plugins/organization#teams) and wires it into the existing schema.
 
 ## 1. Add the schema
 
@@ -482,53 +483,128 @@ export const teamMemberRelations = relations(teamMember, ({ one }) => ({
 Export it from `db/schema/index.ts`:
 
 ```typescript
-export * from "./team";
+export * from "./team"; // [!code ++]
 ```
 
-## 2. Add session and invitation fields
+## 2. Extend session and invitation tables
 
 Add `activeTeamId` to the session table in `db/schema/user.ts`:
 
 ```typescript
-// In the session table definition
-activeTeamId: text(),
+export const session = pgTable(
+  "session",
+  {
+    // ...existing columns
+    activeOrganizationId: text(),
+    activeTeamId: text(), // [!code ++]
+  },
+  // ...
+);
 ```
 
-Optionally add `teamId` to the invitation table in `db/schema/invitation.ts` if you want team-scoped invitations:
+Add `teamId` to the invitation table in `db/schema/invitation.ts` for team-scoped invitations:
 
 ```typescript
-teamId: text().references(() => team.id, { onDelete: "cascade" }),
+export const invitation = pgTable(
+  "invitation",
+  {
+    // ...existing columns
+    teamId: text().references(() => team.id, { onDelete: "cascade" }), // [!code ++]
+  },
+  // ...
+);
 ```
 
 ## 3. Enable the teams plugin
 
-In `apps/api/lib/auth.ts`, enable teams in the organization plugin and add the schema mapping:
+In `apps/api/lib/auth.ts`, add the new tables to the Drizzle adapter schema and enable teams in the organization plugin:
 
 ```typescript
-// Add to the drizzle adapter schema mapping
-schema: {
-  // ...existing mappings
-  team: Db.team,
-  teamMember: Db.teamMember,
-},
-
-// Enable teams in the organization plugin
-organization({
-  // ...existing config
-  teams: { enabled: true },
+database: drizzleAdapter(db, {
+  provider: "pg",
+  schema: {
+    // ...existing mappings
+    team: Db.team, // [!code ++]
+    teamMember: Db.teamMember, // [!code ++]
+  },
 }),
+
+// ...
+
+plugins: [
+  organization({
+    allowUserToCreateOrganization: true,
+    organizationLimit: 5,
+    creatorRole: "owner",
+    teams: { enabled: true }, // [!code ++]
+  }),
+],
+```
+
+In `apps/app/lib/auth.ts`, enable teams on the client:
+
+```typescript
+export const auth = createAuthClient({
+  // ...
+  plugins: [
+    organizationClient({
+      teams: { enabled: true }, // [!code ++]
+    }),
+    // ...other plugins
+  ],
+});
 ```
 
 ## 4. Apply the migration
 
 ```bash
 bun db:generate
-bun db:push  # or bun db:migrate
+bun db:push
 ```
+
+## 5. Use the teams API
+
+Create a team within the active organization:
+
+```ts
+await auth.organization.createTeam({
+  name: "Engineering",
+});
+```
+
+Set the active team for the current session:
+
+```ts
+await auth.organization.setActiveTeam({
+  teamId: "tea_...",
+});
+```
+
+List teams and manage members:
+
+```ts
+// List teams in the active organization
+const { data: teams } = await auth.organization.listTeams();
+
+// Add a member to a team
+await auth.organization.addTeamMember({
+  teamId: "tea_...",
+  userId: "usr_...",
+});
+
+// Remove a member from a team
+await auth.organization.removeTeamMember({
+  teamId: "tea_...",
+  userId: "usr_...",
+});
+```
+
+The active team ID is available in the session as `session.activeTeamId`, alongside the existing `session.activeOrganizationId`.
 
 ## Reference
 
 * [Better Auth organization plugin – Teams](https://www.better-auth.com/docs/plugins/organization#teams)
+* [Organizations & Roles](/auth/organizations) – base organization setup
 
 ---
 
@@ -1620,7 +1696,7 @@ deploy-staging:
   secrets: inherit
 ```
 
-The deploy workflow downloads build artifacts and runs Wrangler deploy for each worker:
+The deploy workflow downloads build artifacts and deploys each worker via Wrangler:
 
 ```yaml
 # .github/workflows/deploy.yml (simplified)
@@ -1629,11 +1705,14 @@ steps:
   - uses: actions/download-artifact@v6
   - uses: oven-sh/setup-bun@v2
   - run: bun install --frozen-lockfile
-  # Deploy steps (wrangler deploy for api, app, web workers)
+  # Deploy each worker
+  - run: bun wrangler deploy --config apps/api/wrangler.jsonc --env ${{ inputs.environment }}
+  - run: bun wrangler deploy --config apps/app/wrangler.jsonc --env ${{ inputs.environment }}
+  - run: bun wrangler deploy --config apps/web/wrangler.jsonc --env ${{ inputs.environment }}
 ```
 
-::: info
-Deploy steps are currently scaffolded as TODO comments in the workflow. Uncomment the `wrangler deploy` commands once your Cloudflare infrastructure is provisioned.
+::: warning
+The `wrangler deploy` steps in `deploy.yml` are currently commented out as TODOs. Uncomment them once your Cloudflare infrastructure is provisioned and `CLOUDFLARE_API_TOKEN` is set in GitHub secrets.
 :::
 
 ## Preview Deployments
@@ -1754,9 +1833,9 @@ bun app:deploy
 bun web:deploy
 
 # Or deploy to a specific environment
-bun wrangler deploy --config apps/api/wrangler.jsonc --env=staging
-bun wrangler deploy --config apps/app/wrangler.jsonc --env=staging
-bun wrangler deploy --config apps/web/wrangler.jsonc --env=staging
+bun wrangler deploy --config apps/api/wrangler.jsonc --env staging
+bun wrangler deploy --config apps/app/wrangler.jsonc --env staging
+bun wrangler deploy --config apps/web/wrangler.jsonc --env staging
 ```
 
 ## Custom Domain
@@ -2079,12 +2158,12 @@ See [Architecture Overview](/architecture/) for how these components connect.
 
 ## Environments
 
-| Environment | Trigger         | URL pattern              | Purpose                   |
-| ----------- | --------------- | ------------------------ | ------------------------- |
-| Development | `bun dev`       | `localhost:5173`         | Local development         |
-| Preview     | Pull request    | `{codename}.example.com` | Isolated PR testing       |
-| Staging     | Push to `main`  | `staging.example.com`    | Pre-production validation |
-| Production  | Manual dispatch | `example.com`            | Live environment          |
+| Environment | Trigger         | URL pattern              | Purpose                                                                      |
+| ----------- | --------------- | ------------------------ | ---------------------------------------------------------------------------- |
+| Development | `bun dev`       | `localhost:5173`         | Local development                                                            |
+| Preview     | Pull request    | `{codename}.example.com` | Isolated PR testing ([pr-codename](https://github.com/kriasoft/pr-codename)) |
+| Staging     | Push to `main`  | `staging.example.com`    | Pre-production validation                                                    |
+| Production  | Manual dispatch | `example.com`            | Live environment                                                             |
 
 Each environment has its own Wrangler config, Hyperdrive bindings, and Terraform state. See [CI/CD](/deployment/ci-cd) for how deployments are triggered.
 
@@ -2359,7 +2438,7 @@ Three templates ship out of the box, all wrapped in `BaseTemplate` for consisten
 | `EmailVerification` | Link-based email verification            | `sendVerificationEmail()`  |
 | `PasswordReset`     | Password reset flow                      | `sendPasswordReset()`      |
 
-`OTPEmail` handles three types via a single `type` prop – `"sign-in"`, `"email-verification"`, and `"forget-password"` – each with different copy and styling (password resets get a red button and a security warning).
+`OTPEmail` handles three types via a single `type` prop – `"sign-in"`, `"email-verification"`, and `"forget-password"` – each with different copy. Password resets include an additional security warning. The separate `PasswordReset` template uses a red button to emphasize the security-sensitive action.
 
 ## Development
 
@@ -2383,21 +2462,31 @@ The API sends emails through helper functions in `apps/api/lib/email.ts`. Each h
 // apps/api/lib/email.ts
 import { OTPEmail, renderEmailToHtml, renderEmailToText } from "@repo/email";
 
-const component = OTPEmail({ otp, type, appName: env.APP_NAME });
+const component = OTPEmail({
+  otp,
+  type,
+  appName: env.APP_NAME,
+  appUrl: env.APP_ORIGIN,
+});
 const html = await renderEmailToHtml(component);
 const text = await renderEmailToText(component);
 
-await sendEmail(env, { to: email, subject: "Your Sign In code", html, text });
+await sendEmail(env, {
+  to: email,
+  subject: `Your ${typeLabel} code`,
+  html,
+  text,
+});
 ```
 
 Available sender functions:
 
-| Function                  | Purpose                                                                    |
-| ------------------------- | -------------------------------------------------------------------------- |
-| `sendOTP()`               | OTP codes for all auth flows                                               |
-| `sendVerificationEmail()` | Link-based email verification                                              |
-| `sendPasswordReset()`     | Password reset links                                                       |
-| `sendEmail()`             | Low-level sender (validates recipients, requires both HTML and plain text) |
+| Function                  | Purpose                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| `sendOTP()`               | OTP codes for all auth flows                                                   |
+| `sendVerificationEmail()` | Link-based email verification                                                  |
+| `sendPasswordReset()`     | Password reset links                                                           |
+| `sendEmail()`             | Low-level sender (validates recipients, requires plain text fallback for HTML) |
 
 ::: warning
 `sendEmail()` throws if you provide HTML without a plain text fallback. Always render both versions using `renderEmailToHtml()` and `renderEmailToText()`.
@@ -2405,11 +2494,13 @@ Available sender functions:
 
 ### Development Shortcut
 
-In development, `sendOTP()` prints the code to the terminal so you don't need a Resend API key to test auth flows:
+In development, `sendOTP()` also prints the code to the terminal for convenience:
 
 ```txt
 OTP code for user@example.com: 482901
 ```
+
+A valid `RESEND_API_KEY` is still required – the console output supplements the email, it doesn't replace it.
 
 ## Adding a Template
 
@@ -2467,12 +2558,12 @@ export { Invitation } from "./templates/invitation.js";
 
 ## Environment Variables
 
-| Variable            | Required  | Description                                  |
-| ------------------- | --------- | -------------------------------------------- |
-| `RESEND_API_KEY`    | For email | Resend API key (`re_...`)                    |
-| `RESEND_EMAIL_FROM` | For email | Sender address (e.g., `noreply@example.com`) |
-| `APP_NAME`          | Yes       | Used in email subject lines and branding     |
-| `APP_ORIGIN`        | Yes       | Used for links in email footer               |
+| Variable            | Required  | Description                                                        |
+| ------------------- | --------- | ------------------------------------------------------------------ |
+| `RESEND_API_KEY`    | For email | Resend API key (`re_...`)                                          |
+| `RESEND_EMAIL_FROM` | For email | Sender address (e.g., `noreply@example.com`)                       |
+| `APP_NAME`          | No        | Used in email subject lines and branding (defaults to `"Example"`) |
+| `APP_ORIGIN`        | Yes       | Used for links in email footer                                     |
 
 Set in `.env.local` for development, Cloudflare secrets for staging/production. See [Environment Variables](/getting-started/environment-variables).
 
@@ -2758,7 +2849,7 @@ url: /recipes/file-uploads.md
 ---
 # File Uploads
 
-This recipe adds file uploads using [Cloudflare R2](https://developers.cloudflare.com/r2/) with presigned URLs. The client uploads directly to R2, keeping the API worker lightweight.
+This recipe adds file uploads using [Cloudflare R2](https://developers.cloudflare.com/r2/) with presigned URLs. A tRPC procedure validates the request and generates a signed PUT URL, then the client uploads directly to R2 – keeping the API worker lightweight.
 
 ## 1. Create the R2 bucket
 
@@ -2780,11 +2871,12 @@ cd infra/stacks/<env>
 terraform apply
 ```
 
-## 2. Add the R2 binding
+## 2. Configure bindings and secrets
 
-Bind the bucket to the API worker in `apps/api/wrangler.jsonc`:
+Bind the bucket to the API worker for serving files:
 
 ```jsonc
+// apps/api/wrangler.jsonc
 {
   "r2_buckets": [
     {
@@ -2793,6 +2885,13 @@ Bind the bucket to the API worker in `apps/api/wrangler.jsonc`:
     },
   ],
 }
+```
+
+Create an [R2 API token](https://developers.cloudflare.com/r2/api/s3/tokens/) with **Object Read & Write** permission, then add the credentials as Worker secrets:
+
+```bash
+npx wrangler secret put R2_ACCESS_KEY_ID
+npx wrangler secret put R2_SECRET_ACCESS_KEY
 ```
 
 Add the binding type in `apps/api/worker.ts`:
@@ -2805,12 +2904,36 @@ type CloudflareEnv = {
 } & Env;
 ```
 
-## 3. Create upload procedures
+Add the S3 API credentials to the env schema in `apps/api/lib/env.ts`:
 
-Add a router that generates presigned URLs for upload and retrieves files:
+```ts
+export const envSchema = z.object({
+  // ...existing vars
+  R2_ACCESS_KEY_ID: z.string().optional(), // [!code ++]
+  R2_SECRET_ACCESS_KEY: z.string().optional(), // [!code ++]
+  R2_ENDPOINT: z.url().optional(), // [!code ++]
+  R2_BUCKET_NAME: z.string().optional(), // [!code ++]
+});
+```
+
+::: tip
+`R2_ENDPOINT` is the S3-compatible endpoint: `https://<account-id>.r2.cloudflarestorage.com`. Find it in the R2 dashboard under **Settings > S3 API**.
+:::
+
+Install [`aws4fetch`](https://github.com/mhart/aws4fetch) for signing presigned URLs in Workers:
+
+```bash
+bun add --filter @repo/api aws4fetch
+```
+
+## 3. Create the upload procedure
+
+Add a router that generates presigned PUT URLs and confirms uploads:
 
 ```ts
 // apps/api/routers/upload.ts
+import { AwsClient } from "aws4fetch";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
@@ -2821,10 +2944,11 @@ const ALLOWED_TYPES = [
   "application/pdf",
 ];
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
+const URL_EXPIRY = 600; // 10 minutes
 
 export const uploadRouter = router({
-  /** Generate a presigned URL for direct client-to-R2 upload. */
-  createPresignedUrl: protectedProcedure
+  /** Generate a presigned PUT URL for direct client-to-R2 upload. */
+  requestUpload: protectedProcedure
     .input(
       z.object({
         filename: z.string().min(1),
@@ -2835,22 +2959,62 @@ export const uploadRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const {
+        R2_ACCESS_KEY_ID,
+        R2_SECRET_ACCESS_KEY,
+        R2_ENDPOINT,
+        R2_BUCKET_NAME,
+      } = ctx.env;
+
+      if (
+        !R2_ACCESS_KEY_ID ||
+        !R2_SECRET_ACCESS_KEY ||
+        !R2_ENDPOINT ||
+        !R2_BUCKET_NAME
+      ) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "File uploads are not configured",
+        });
+      }
+
       const key = `${ctx.session.activeOrganizationId}/${crypto.randomUUID()}/${input.filename}`;
 
-      // R2 presigned URL via S3-compatible API
-      const url = await ctx.env.UPLOADS.createMultipartUpload(key, {
-        httpMetadata: { contentType: input.contentType },
+      const r2 = new AwsClient({
+        accessKeyId: R2_ACCESS_KEY_ID,
+        secretAccessKey: R2_SECRET_ACCESS_KEY,
       });
 
-      return { key, uploadId: url.uploadId };
+      const url = new URL(`${R2_ENDPOINT}/${R2_BUCKET_NAME}/${key}`);
+      url.searchParams.set("X-Amz-Expires", String(URL_EXPIRY));
+
+      const signed = await r2.sign(
+        new Request(url, {
+          method: "PUT",
+          headers: { "Content-Type": input.contentType },
+        }),
+        { aws: { signQuery: true } },
+      );
+
+      return { key, uploadUrl: signed.url };
     }),
 
-  /** Confirm upload and store metadata. */
+  /** Confirm upload and return metadata. */
   complete: protectedProcedure
     .input(z.object({ key: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const object = await ctx.env.UPLOADS.head(input.key);
-      if (!object) throw new Error("Object not found");
+      const uploads = (ctx.env as { UPLOADS?: R2Bucket }).UPLOADS;
+      if (!uploads) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "R2 binding not configured",
+        });
+      }
+
+      const object = await uploads.head(input.key);
+      if (!object) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Object not found" });
+      }
       return { key: input.key, size: object.size };
     }),
 });
@@ -2873,21 +3037,23 @@ const appRouter = router({
 import { trpcClient } from "@/lib/trpc";
 
 async function uploadFile(file: File) {
-  // Get upload URL from the API
-  const { key } = await trpcClient.upload.createPresignedUrl.mutate({
+  // 1. Get a presigned URL from the API
+  const { key, uploadUrl } = await trpcClient.upload.requestUpload.mutate({
     filename: file.name,
     contentType: file.type,
     size: file.size,
   });
 
-  // Upload directly to R2
-  await fetch(`/api/uploads/${key}`, {
+  // 2. Upload directly to R2
+  const res = await fetch(uploadUrl, {
     method: "PUT",
     body: file,
     headers: { "Content-Type": file.type },
   });
 
-  // Confirm and store metadata
+  if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+
+  // 3. Confirm and store metadata
   return trpcClient.upload.complete.mutate({ key });
 }
 ```
@@ -2910,16 +3076,20 @@ function FileUpload() {
 
 ## 5. Serve files
 
-Use an R2 binding to stream objects back to the client:
+Add a Hono route that reads from R2 via the binding:
 
 ```ts
-// apps/api/routes/uploads.ts (Hono route)
+// apps/api/routes/uploads.ts
 import { Hono } from "hono";
+import type { AppContext } from "../lib/context.js";
 
-const uploads = new Hono();
+const uploads = new Hono<AppContext>();
 
-uploads.get("/uploads/:key{.+}", async (c) => {
-  const object = await c.env.UPLOADS.get(c.req.param("key"));
+uploads.get("/api/uploads/:key{.+}", async (c) => {
+  const bucket = (c.env as { UPLOADS?: R2Bucket }).UPLOADS;
+  if (!bucket) return c.json({ error: "R2 not configured" }, 503);
+
+  const object = await bucket.get(c.req.param("key"));
   if (!object) return c.notFound();
 
   return new Response(object.body, {
@@ -2934,12 +3104,23 @@ uploads.get("/uploads/:key{.+}", async (c) => {
 export { uploads };
 ```
 
+Mount it in `apps/api/lib/app.ts`:
+
+```ts
+import { uploads } from "../routes/uploads.js";
+
+app.route("/", uploads); // [!code ++]
+```
+
+Files are served at `/api/uploads/<key>`.
+
 ## Reference
 
 * [Cloudflare R2 docs](https://developers.cloudflare.com/r2/) – bucket API, S3 compatibility, pricing
+* [R2 S3 API tokens](https://developers.cloudflare.com/r2/api/s3/tokens/) – creating API credentials
+* [aws4fetch](https://github.com/mhart/aws4fetch) – lightweight AWS Signature V4 for Workers
 * [Security Checklist](/security/checklist) – file upload validation (type, size, content)
 * [Add a tRPC Procedure](/recipes/new-procedure) – procedure patterns
-* [Cloudflare Workers](/deployment/cloudflare) – wrangler bindings and secrets
 
 ---
 
@@ -3493,7 +3674,7 @@ Wrangler rollback reverts worker code but not database migrations. If a deploy i
 
 ## Troubleshooting
 
-**Worker size limit** – Cloudflare Workers have a 10 MB compressed size limit. If you hit it:
+**Worker size limit** – Cloudflare Workers have a 10 MB compressed size limit (3 MB on the free plan). If you hit it:
 
 * Check for accidentally bundled dependencies
 * Move large assets to R2 storage
@@ -3513,13 +3694,14 @@ Wrangler rollback reverts worker code but not database migrations. If a deploy i
 
 ## Cost Overview
 
-| Service            | Free tier                            | Paid                      |
-| ------------------ | ------------------------------------ | ------------------------- |
-| Cloudflare Workers | 100,000 requests/day                 | $5/month for 10M requests |
-| Neon PostgreSQL    | 0.5 GB storage, auto-suspend compute | Scale-to-zero billing     |
-| Hyperdrive         | Included with Workers paid plan      | –                         |
+| Service            | Free tier                            | Paid                                                                                     |
+| ------------------ | ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Cloudflare Workers | 100,000 requests/day                 | [$5/month for 10M requests](https://developers.cloudflare.com/workers/platform/pricing/) |
+| Neon PostgreSQL    | 0.5 GB storage, auto-suspend compute | [Scale-to-zero billing](https://neon.tech/pricing)                                       |
+| Hyperdrive         | Included with Workers paid plan      | –                                                                                        |
+| Resend             | 100 emails/day                       | [$20/month for 50K emails](https://resend.com/pricing)                                   |
 
-For most projects, the free tiers are sufficient through early production. Monitor usage in the Cloudflare and Neon dashboards as traffic grows.
+A typical growth-stage project runs around **~$45/month** (Workers $5 + Neon $19 + Resend $20). Free tiers are sufficient through early production – monitor usage in the Cloudflare and Neon dashboards as traffic grows.
 
 ---
 
@@ -6903,7 +7085,7 @@ url: /testing.md
 ---
 # Testing
 
-The project uses [Vitest](https://vitest.dev/) for both API and frontend tests. Two test projects run from a single root config – API tests in Node, frontend tests in [Happy DOM](https://github.com/nicknisi/happy-dom).
+The project uses [Vitest](https://vitest.dev/) for both API and frontend tests. Two test projects run from a single root config – API tests in Node, frontend tests in [Happy DOM](https://github.com/capricorn86/happy-dom).
 
 ## Configuration
 
@@ -6918,7 +7100,7 @@ export default defineConfig({
 });
 ```
 
-Each project has its own `vitest.config.ts` (or inline `test` block in `vite.config.ts`):
+`apps/api` has its own `vitest.config.ts`; `apps/app` uses an inline `test` block in `vite.config.ts`:
 
 | Project    | Environment    | Setup file        |
 | ---------- | -------------- | ----------------- |
@@ -6935,12 +7117,11 @@ import "@testing-library/jest-dom/vitest";
 ## Running Tests
 
 ```bash
-bun test                       # All projects, single run
-bun test --watch               # Watch mode
-bun test --project api         # API tests only
-bun test --project app         # Frontend tests only
+bun test                       # All projects, watch mode
+bun test --run                 # Single run (no watch)
+bun test --project @repo/api   # API tests only
+bun test --project @repo/app   # Frontend tests only
 bun test billing               # Filter by filename
-bun app:coverage               # Coverage report (apps/app only)
 ```
 
 ## File Conventions
@@ -6967,17 +7148,29 @@ const createCaller = createCallerFactory(billingRouter);
 
 function testCtx({
   userId = "user-1",
+  activeOrgId = undefined as string | undefined,
   subscription = undefined as Record<string, unknown> | undefined,
 } = {}) {
-  return {
+  const ctx: TRPCContext = {
     req: new Request("http://localhost"),
+    info: {} as TRPCContext["info"],
     session: {
       id: "s-1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
       userId,
-      activeOrganizationId: undefined,
-      // ... required session fields
+      expiresAt: new Date(Date.now() + 60_000),
+      token: "token",
+      activeOrganizationId: activeOrgId,
     },
-    user: { id: userId, email: "test@example.com", name: "Test User" },
+    user: {
+      id: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      email: "test@example.com",
+      emailVerified: true,
+      name: "Test User",
+    },
     db: {
       query: {
         subscription: {
@@ -6985,8 +7178,12 @@ function testCtx({
         },
       },
     } as unknown as TRPCContext["db"],
+    dbDirect: {} as TRPCContext["dbDirect"],
     cache: new Map(),
-  } as TRPCContext;
+    env: {} as TRPCContext["env"],
+  };
+
+  return ctx;
 }
 
 describe("billing.subscription", () => {
@@ -7079,7 +7276,7 @@ The app project includes [React Testing Library](https://testing-library.com/doc
 // apps/app/components/example.test.tsx
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { MyComponent } from "./my-component";
 
 describe("MyComponent", () => {
