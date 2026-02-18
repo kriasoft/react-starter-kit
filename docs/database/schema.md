@@ -49,6 +49,7 @@ erDiagram
         text name
         text email UK
         boolean email_verified
+        text image
         boolean is_anonymous
         text stripe_customer_id
     }
@@ -57,6 +58,8 @@ erDiagram
         text id PK "ses_..."
         timestamp expires_at
         text token UK
+        text ip_address
+        text user_agent
         text user_id FK
         text active_organization_id
     }
@@ -66,6 +69,12 @@ erDiagram
         text account_id
         text provider_id
         text user_id FK
+        text access_token
+        text refresh_token
+        text id_token
+        timestamp access_token_expires_at
+        timestamp refresh_token_expires_at
+        text scope
         text password
     }
 
@@ -78,16 +87,26 @@ erDiagram
 
     passkey {
         text id PK "pky_..."
+        text name
         text public_key
         text credential_id UK
         text user_id FK
         integer counter
+        text device_type
+        boolean backed_up
+        text transports
+        text aaguid
+        timestamp last_used_at
+        text device_name
+        text platform
     }
 
     organization {
         text id PK "org_..."
         text name
         text slug UK
+        text logo
+        text metadata
         text stripe_customer_id
     }
 
@@ -105,14 +124,25 @@ erDiagram
         text organization_id FK
         text role
         text status
+        timestamp expires_at
+        timestamp accepted_at
+        timestamp rejected_at
     }
 
     subscription {
         text id PK "sub_..."
         text plan
         text reference_id
+        text stripe_customer_id
         text stripe_subscription_id UK
         text status
+        timestamp period_start
+        timestamp period_end
+        timestamp trial_start
+        timestamp trial_end
+        boolean cancel_at_period_end
+        integer seats
+        text billing_interval
     }
 ```
 

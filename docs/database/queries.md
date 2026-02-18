@@ -51,19 +51,25 @@ const products = await ctx.db.query.product.findMany({
 
 ## DataLoader Pattern
 
-The API uses a [DataLoader](https://github.com/graphql/dataloader) pattern to batch lookups and prevent N+1 queries. Loaders are cached per-request in `ctx.cache`:
+The API uses a [DataLoader](https://github.com/graphql/dataloader) pattern to batch lookups and prevent N+1 queries. Loaders are cached per-request in `ctx.cache` (a `Map` keyed by symbols):
 
 ```ts
 // apps/api/lib/loaders.ts (simplified)
+const USER_BY_ID = Symbol("userById");
+
 export function userById(ctx: TRPCContext) {
-  return (ctx.cache.userById ??= new DataLoader(
-    async (ids: readonly string[]) => {
-      const rows = await ctx.db.query.user.findMany({
-        where: inArray(user.id, [...ids]),
-      });
-      return ids.map((id) => rows.find((r) => r.id === id) ?? null);
-    },
-  ));
+  if (!ctx.cache.has(USER_BY_ID)) {
+    ctx.cache.set(
+      USER_BY_ID,
+      new DataLoader(async (ids: readonly string[]) => {
+        const rows = await ctx.db.query.user.findMany({
+          where: inArray(user.id, [...ids]),
+        });
+        return ids.map((id) => rows.find((r) => r.id === id) ?? null);
+      }),
+    );
+  }
+  return ctx.cache.get(USER_BY_ID) as DataLoader<string, User | null>;
 }
 ```
 
