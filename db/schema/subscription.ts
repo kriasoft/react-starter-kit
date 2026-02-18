@@ -2,7 +2,6 @@
 // referenceId is polymorphic: points to user.id or organization.id depending
 // on whether the subscription is personal or org-level billing.
 
-import { sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -11,13 +10,14 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { generateAuthId } from "./id";
 
 export const subscription = pgTable(
   "subscription",
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateAuthId("subscription")),
     plan: text().notNull(),
     referenceId: text().notNull(),
     stripeCustomerId: text(),

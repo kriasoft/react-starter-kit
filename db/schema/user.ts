@@ -14,7 +14,7 @@
  * @see https://www.better-auth.com/docs/adapters/drizzle
  */
 
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -23,6 +23,7 @@ import {
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
+import { generateAuthId } from "./id";
 
 /**
  * User accounts table.
@@ -31,7 +32,7 @@ import {
 export const user = pgTable("user", {
   id: text()
     .primaryKey()
-    .default(sql`gen_random_uuid()`),
+    .$defaultFn(() => generateAuthId("user")),
   name: text().notNull(),
   email: text().notNull().unique(),
   emailVerified: boolean().default(false).notNull(),
@@ -59,7 +60,7 @@ export const session = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateAuthId("session")),
     expiresAt: timestamp({ withTimezone: true, mode: "date" }).notNull(),
     token: text().notNull().unique(),
     createdAt: timestamp({ withTimezone: true, mode: "date" })
@@ -94,7 +95,7 @@ export const identity = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateAuthId("account")),
     accountId: text().notNull(),
     providerId: text().notNull(),
     userId: text()
@@ -136,7 +137,7 @@ export const verification = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateAuthId("verification")),
     identifier: text().notNull(),
     value: text().notNull(),
     expiresAt: timestamp({ withTimezone: true, mode: "date" }).notNull(),

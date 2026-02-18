@@ -1,7 +1,6 @@
 // WebAuthn passkey credentials for Better Auth
 // @see https://www.better-auth.com/docs/plugins/passkey
 
-import { sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -10,6 +9,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { generateAuthId } from "./id";
 import { user } from "./user";
 
 /**
@@ -25,7 +25,7 @@ export const passkey = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateAuthId("passkey")),
     name: text(),
     publicKey: text().notNull(),
     userId: text()

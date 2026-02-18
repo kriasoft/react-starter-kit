@@ -1,6 +1,6 @@
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
-import { schema as Db } from "@repo/db";
+import { schema as Db, generateAuthId, type AuthModel } from "@repo/db";
 import { betterAuth } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -101,7 +101,7 @@ function stripePlugin(db: DB, env: AuthEnv) {
  * Key behaviors:
  * - Uses custom 'identity' table instead of default 'account' model for OAuth accounts
  * - Allows users to create up to 5 organizations with 'owner' role as creator
- * - Delegates ID generation to database (schema defaults to gen_random_uuid)
+ * - Generates prefixed CUID2 IDs at application level (e.g. usr_..., ses_...)
  * - Supports anonymous authentication alongside email/password and Google OAuth
  *
  * @param db Drizzle database instance - must include all required auth tables (user, session, identity, organization, member, invitation, verification)
@@ -201,7 +201,7 @@ export function createAuth(
 
     advanced: {
       database: {
-        generateId: false,
+        generateId: ({ model }) => generateAuthId(model as AuthModel),
       },
     },
 

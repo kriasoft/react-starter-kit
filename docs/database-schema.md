@@ -13,11 +13,7 @@ The database uses:
 
 ## Database Setup
 
-All primary keys use `gen_random_uuid()` (built-in PostgreSQL function), so no extensions are required to get started.
-
-::: tip UUIDv7 Upgrade Path
-For time-ordered UUIDs (better index locality), you can switch to `uuidv7()` (PostgreSQL 18+) or `uuid_generate_v7()` via the [pg_uuidv7](https://github.com/fboulnois/pg_uuidv7) extension. The `db/scripts/setup-extensions.sql` file pre-installs `pg_uuidv7` for this purpose.
-:::
+All primary keys use application-generated prefixed CUID2 IDs (e.g. `usr_ght4k2jxm7pqbv01`). The 3-char prefix encodes the entity type for instant recognition in logs, URLs, and support tickets. See [Prefixed CUID2 Database IDs](./specs/prefixed-ids.md) for design rationale.
 
 The schema is divided into three main sections:
 
@@ -35,7 +31,7 @@ The authentication tables follow [Better Auth's requirements](https://www.better
 erDiagram
     %% Core Authentication Tables
     user {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         text name "Full name"
         text email UK "Email address"
         boolean email_verified "Email verification status"
@@ -47,7 +43,7 @@ erDiagram
     }
 
     session {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         timestamp expires_at "Session expiration"
         text token UK "Session token"
         timestamp created_at "Creation timestamp"
@@ -59,7 +55,7 @@ erDiagram
     }
 
     identity {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         text account_id "Provider account ID"
         text provider_id "OAuth provider name"
         text user_id FK "User reference"
@@ -75,7 +71,7 @@ erDiagram
     }
 
     verification {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         text identifier "Email or other identifier"
         text value "Verification code/token"
         timestamp expires_at "Expiration timestamp"
@@ -84,7 +80,7 @@ erDiagram
     }
 
     passkey {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         text name "Key name"
         text public_key "WebAuthn public key"
         text credential_id UK "WebAuthn credential ID"
@@ -103,7 +99,7 @@ erDiagram
 
     %% Multi-tenancy Tables
     organization {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         text name "Organization name"
         text slug UK "URL-friendly identifier"
         text logo "Logo URL"
@@ -114,7 +110,7 @@ erDiagram
     }
 
     member {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         text user_id FK "User reference"
         text organization_id FK "Organization reference"
         text role "owner, admin, or member"
@@ -123,7 +119,7 @@ erDiagram
     }
 
     invitation {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         text email "Invitee email"
         text inviter_id FK "Inviting user"
         text organization_id FK "Target organization"
@@ -138,7 +134,7 @@ erDiagram
 
     %% Billing Tables
     subscription {
-        text id PK "gen_random_uuid()"
+        text id PK "prefixed CUID2"
         text plan "Plan name (free, starter, pro)"
         text reference_id "user.id or organization.id"
         text stripe_customer_id "Stripe customer ID"
@@ -174,17 +170,17 @@ These tables handle user authentication and are based on the Better Auth specifi
 
 Central table for all user accounts in your application.
 
-| Column               | Type      | Description               | Required | Constraints                            |
-| -------------------- | --------- | ------------------------- | -------- | -------------------------------------- |
-| `id`                 | TEXT      | Primary key (UUID)        | Yes      | PRIMARY KEY, DEFAULT gen_random_uuid() |
-| `name`               | TEXT      | User's display name       | Yes      |                                        |
-| `email`              | TEXT      | Email address             | Yes      | UNIQUE                                 |
-| `email_verified`     | BOOLEAN   | Email verification status | Yes      | DEFAULT false                          |
-| `image`              | TEXT      | Profile image URL         | No       |                                        |
-| `is_anonymous`       | BOOLEAN   | Anonymous user flag       | Yes      | DEFAULT false                          |
-| `stripe_customer_id` | TEXT      | Stripe customer ID        | No       | Set by @better-auth/stripe plugin      |
-| `created_at`         | TIMESTAMP | Account creation time     | Yes      | DEFAULT now()                          |
-| `updated_at`         | TIMESTAMP | Last modification time    | Yes      | DEFAULT now(), auto-update             |
+| Column               | Type      | Description                  | Required | Constraints                       |
+| -------------------- | --------- | ---------------------------- | -------- | --------------------------------- |
+| `id`                 | TEXT      | Primary key (prefixed CUID2) | Yes      | PRIMARY KEY, app-generated        |
+| `name`               | TEXT      | User's display name          | Yes      |                                   |
+| `email`              | TEXT      | Email address                | Yes      | UNIQUE                            |
+| `email_verified`     | BOOLEAN   | Email verification status    | Yes      | DEFAULT false                     |
+| `image`              | TEXT      | Profile image URL            | No       |                                   |
+| `is_anonymous`       | BOOLEAN   | Anonymous user flag          | Yes      | DEFAULT false                     |
+| `stripe_customer_id` | TEXT      | Stripe customer ID           | No       | Set by @better-auth/stripe plugin |
+| `created_at`         | TIMESTAMP | Account creation time        | Yes      | DEFAULT now()                     |
+| `updated_at`         | TIMESTAMP | Last modification time       | Yes      | DEFAULT now(), auto-update        |
 
 ::: details TypeScript Schema Definition
 
@@ -193,7 +189,7 @@ Central table for all user accounts in your application.
 export const user = pgTable("user", {
   id: text()
     .primaryKey()
-    .default(sql`gen_random_uuid()`),
+    .$defaultFn(() => generateAuthId("user")),
   name: text().notNull(),
   email: text().notNull().unique(),
   emailVerified: boolean().default(false).notNull(),
@@ -364,10 +360,12 @@ As you build your application, you'll add tables specific to your domain. Here's
 
 ```typescript {7-12}
 // db/schema/product.ts
+import { generateId } from "./id";
+
 export const product = pgTable("product", {
   id: text()
     .primaryKey()
-    .default(sql`gen_random_uuid()`),
+    .$defaultFn(() => generateId("prd")),
   name: text().notNull(),
   description: text(),
   price: integer().notNull(), // Store in cents
@@ -614,7 +612,7 @@ Every table that contains user data should reference an organization:
 export const yourTable = pgTable("your_table", {
   id: text()
     .primaryKey()
-    .default(sql`gen_random_uuid()`),
+    .$defaultFn(() => generateId("xxx")),
   organizationId: text()
     .notNull()
     .references(() => organization.id, { onDelete: "cascade" }),
