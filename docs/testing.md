@@ -1,6 +1,6 @@
 # Testing
 
-The project uses [Vitest](https://vitest.dev/) for both API and frontend tests. Two test projects run from a single root config – API tests in Node, frontend tests in [Happy DOM](https://github.com/nicknisi/happy-dom).
+The project uses [Vitest](https://vitest.dev/) for both API and frontend tests. Two test projects run from a single root config – API tests in Node, frontend tests in [Happy DOM](https://github.com/capricorn86/happy-dom).
 
 ## Configuration
 
@@ -15,7 +15,7 @@ export default defineConfig({
 });
 ```
 
-Each project has its own `vitest.config.ts` (or inline `test` block in `vite.config.ts`):
+`apps/api` has its own `vitest.config.ts`; `apps/app` uses an inline `test` block in `vite.config.ts`:
 
 | Project    | Environment    | Setup file        |
 | ---------- | -------------- | ----------------- |
@@ -32,12 +32,11 @@ import "@testing-library/jest-dom/vitest";
 ## Running Tests
 
 ```bash
-bun test                       # All projects, single run
-bun test --watch               # Watch mode
-bun test --project api         # API tests only
-bun test --project app         # Frontend tests only
+bun test                       # All projects, watch mode
+bun test --run                 # Single run (no watch)
+bun test --project @repo/api   # API tests only
+bun test --project @repo/app   # Frontend tests only
 bun test billing               # Filter by filename
-bun app:coverage               # Coverage report (apps/app only)
 ```
 
 ## File Conventions
@@ -64,17 +63,29 @@ const createCaller = createCallerFactory(billingRouter);
 
 function testCtx({
   userId = "user-1",
+  activeOrgId = undefined as string | undefined,
   subscription = undefined as Record<string, unknown> | undefined,
 } = {}) {
-  return {
+  const ctx: TRPCContext = {
     req: new Request("http://localhost"),
+    info: {} as TRPCContext["info"],
     session: {
       id: "s-1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
       userId,
-      activeOrganizationId: undefined,
-      // ... required session fields
+      expiresAt: new Date(Date.now() + 60_000),
+      token: "token",
+      activeOrganizationId: activeOrgId,
     },
-    user: { id: userId, email: "test@example.com", name: "Test User" },
+    user: {
+      id: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      email: "test@example.com",
+      emailVerified: true,
+      name: "Test User",
+    },
     db: {
       query: {
         subscription: {
@@ -82,8 +93,12 @@ function testCtx({
         },
       },
     } as unknown as TRPCContext["db"],
+    dbDirect: {} as TRPCContext["dbDirect"],
     cache: new Map(),
-  } as TRPCContext;
+    env: {} as TRPCContext["env"],
+  };
+
+  return ctx;
 }
 
 describe("billing.subscription", () => {
@@ -176,7 +191,7 @@ The app project includes [React Testing Library](https://testing-library.com/doc
 // apps/app/components/example.test.tsx
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { MyComponent } from "./my-component";
 
 describe("MyComponent", () => {

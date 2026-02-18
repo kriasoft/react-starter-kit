@@ -29,7 +29,7 @@ Three templates ship out of the box, all wrapped in `BaseTemplate` for consisten
 | `EmailVerification` | Link-based email verification            | `sendVerificationEmail()`  |
 | `PasswordReset`     | Password reset flow                      | `sendPasswordReset()`      |
 
-`OTPEmail` handles three types via a single `type` prop – `"sign-in"`, `"email-verification"`, and `"forget-password"` – each with different copy and styling (password resets get a red button and a security warning).
+`OTPEmail` handles three types via a single `type` prop – `"sign-in"`, `"email-verification"`, and `"forget-password"` – each with different copy. Password resets include an additional security warning. The separate `PasswordReset` template uses a red button to emphasize the security-sensitive action.
 
 ## Development
 
@@ -53,21 +53,31 @@ The API sends emails through helper functions in `apps/api/lib/email.ts`. Each h
 // apps/api/lib/email.ts
 import { OTPEmail, renderEmailToHtml, renderEmailToText } from "@repo/email";
 
-const component = OTPEmail({ otp, type, appName: env.APP_NAME });
+const component = OTPEmail({
+  otp,
+  type,
+  appName: env.APP_NAME,
+  appUrl: env.APP_ORIGIN,
+});
 const html = await renderEmailToHtml(component);
 const text = await renderEmailToText(component);
 
-await sendEmail(env, { to: email, subject: "Your Sign In code", html, text });
+await sendEmail(env, {
+  to: email,
+  subject: `Your ${typeLabel} code`,
+  html,
+  text,
+});
 ```
 
 Available sender functions:
 
-| Function                  | Purpose                                                                    |
-| ------------------------- | -------------------------------------------------------------------------- |
-| `sendOTP()`               | OTP codes for all auth flows                                               |
-| `sendVerificationEmail()` | Link-based email verification                                              |
-| `sendPasswordReset()`     | Password reset links                                                       |
-| `sendEmail()`             | Low-level sender (validates recipients, requires both HTML and plain text) |
+| Function                  | Purpose                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| `sendOTP()`               | OTP codes for all auth flows                                                   |
+| `sendVerificationEmail()` | Link-based email verification                                                  |
+| `sendPasswordReset()`     | Password reset links                                                           |
+| `sendEmail()`             | Low-level sender (validates recipients, requires plain text fallback for HTML) |
 
 ::: warning
 `sendEmail()` throws if you provide HTML without a plain text fallback. Always render both versions using `renderEmailToHtml()` and `renderEmailToText()`.
@@ -75,11 +85,13 @@ Available sender functions:
 
 ### Development Shortcut
 
-In development, `sendOTP()` prints the code to the terminal so you don't need a Resend API key to test auth flows:
+In development, `sendOTP()` also prints the code to the terminal for convenience:
 
 ```txt
 OTP code for user@example.com: 482901
 ```
+
+A valid `RESEND_API_KEY` is still required – the console output supplements the email, it doesn't replace it.
 
 ## Adding a Template
 
@@ -137,12 +149,12 @@ export { Invitation } from "./templates/invitation.js";
 
 ## Environment Variables
 
-| Variable            | Required  | Description                                  |
-| ------------------- | --------- | -------------------------------------------- |
-| `RESEND_API_KEY`    | For email | Resend API key (`re_...`)                    |
-| `RESEND_EMAIL_FROM` | For email | Sender address (e.g., `noreply@example.com`) |
-| `APP_NAME`          | Yes       | Used in email subject lines and branding     |
-| `APP_ORIGIN`        | Yes       | Used for links in email footer               |
+| Variable            | Required  | Description                                                        |
+| ------------------- | --------- | ------------------------------------------------------------------ |
+| `RESEND_API_KEY`    | For email | Resend API key (`re_...`)                                          |
+| `RESEND_EMAIL_FROM` | For email | Sender address (e.g., `noreply@example.com`)                       |
+| `APP_NAME`          | No        | Used in email subject lines and branding (defaults to `"Example"`) |
+| `APP_ORIGIN`        | Yes       | Used for links in email footer                                     |
 
 Set in `.env.local` for development, Cloudflare secrets for staging/production. See [Environment Variables](/getting-started/environment-variables).
 

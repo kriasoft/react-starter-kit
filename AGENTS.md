@@ -25,7 +25,7 @@
 ```bash
 bun dev                        # Start web + api + app concurrently
 bun build                      # Build email → web → api → app (in order)
-bun test                       # Vitest (single run, not watch)
+bun test                       # Vitest (watch mode; --run for single run)
 bun lint                       # ESLint with cache
 bun typecheck                  # tsc --build
 bun ui:add <component>         # Add shadcn/ui component to packages/ui
