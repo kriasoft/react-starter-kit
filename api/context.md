@@ -132,29 +132,32 @@ members: protectedProcedure
   }),
 ```
 
-Each loader function checks `ctx.cache` for an existing instance, creating one on first access:
+Loaders are created with a `defineLoader` helper that handles per-request caching via `ctx.cache`:
 
 ```ts
-export function userById(ctx: TRPCContext) {
-  if (!ctx.cache.has(USER_BY_ID)) {
-    const loader = new DataLoader(async (userIds: readonly string[]) => {
-      const users = await ctx.db
-        .select()
-        .from(user)
-        .where(inArray(user.id, [...userIds]));
-      const userMap = createKeyMap(users, "id");
-      return userIds.map((id) => userMap.get(id) || null);
-    });
-    ctx.cache.set(USER_BY_ID, loader);
-  }
-  return ctx.cache.get(USER_BY_ID);
-}
+function defineLoader<K, V>(
+  key: symbol,
+  batchFn: (ctx: TRPCContext, keys: readonly K[]) => Promise<(V | null)[]>,
+): (ctx: TRPCContext) => DataLoader<K, V | null>;
 ```
 
-Because loaders are stored in `ctx.cache` (a `Map` created per-request), they're automatically scoped to the request lifecycle – no stale data across requests.
+Each call returns a factory `(ctx) => DataLoader`. The first invocation per request creates the instance; subsequent calls return the cached one. Because `ctx.cache` is a `Map` created per-request, loaders are automatically scoped to the request lifecycle – no stale data across requests.
 
 ### Adding a DataLoader
 
-1. Define a symbol key and loader function in `apps/api/lib/loaders.ts`
-2. Use `ctx.cache` to store the instance (follow the `userById` pattern)
-3. Call `.load(key)` or `.loadMany(keys)` in your procedures
+Add a `defineLoader` call in `apps/api/lib/loaders.ts`:
+
+```ts
+export const postById = defineLoader(
+  Symbol("postById"),
+  async (ctx, ids: readonly string[]) => {
+    const posts = await ctx.db
+      .select()
+      .from(post)
+      .where(inArray(post.id, [...ids]));
+    return mapByKey(posts, "id", ids);
+  },
+);
+```
+
+Then call `.load(key)` or `.loadMany(keys)` in your procedures.

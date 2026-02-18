@@ -12,7 +12,7 @@ db/
 ├── schema/             # Table definitions and relations
 ├── migrations/         # Auto-generated SQL migrations
 ├── seeds/              # Seed data scripts
-├── scripts/            # Utilities (seed runner, export, introspect)
+├── scripts/            # Utilities (seed runner, export)
 ├── drizzle.config.ts   # Drizzle Kit configuration
 └── index.ts            # Re-exports schema + DatabaseSchema type
 ```
@@ -44,22 +44,23 @@ export function createDb(hyperdrive: Hyperdrive) {
 ```
 
 ::: info
-In development, the API server connects directly via `DATABASE_URL` without Hyperdrive. The connection setup is transparent – your queries work the same way in both environments.
+In development, Wrangler's `getPlatformProxy()` emulates the Hyperdrive bindings locally, resolving them to your `DATABASE_URL`. Your code uses the same `HYPERDRIVE_CACHED` / `HYPERDRIVE_DIRECT` bindings in both environments – no conditional connection logic needed.
 :::
 
 ## Commands
 
 Run from the repo root. Append `:staging` or `:prod` to target other environments.
 
-| Command           | Description                                   |
-| ----------------- | --------------------------------------------- |
-| `bun db:generate` | Generate migration SQL from schema changes    |
-| `bun db:migrate`  | Apply pending migrations                      |
-| `bun db:push`     | Push schema directly (skips migration files)  |
-| `bun db:studio`   | Open Drizzle Studio browser UI                |
-| `bun db:seed`     | Run seed scripts                              |
-| `bun db:check`    | Check for drift between schema and migrations |
-| `bun db:export`   | Export database via pg\_dump to `db/backups/`  |
+| Command            | Description                                         |
+| ------------------ | --------------------------------------------------- |
+| `bun db:generate`  | Generate migration SQL from schema changes          |
+| `bun db:migrate`   | Apply pending migrations                            |
+| `bun db:push`      | Push schema directly (skips migration files)        |
+| `bun db:studio`    | Open Drizzle Studio browser UI                      |
+| `bun db:seed`      | Run seed scripts                                    |
+| `bun db:check`     | Check for drift between schema and migrations       |
+| `bun db:export`    | Export database via pg\_dump to `db/backups/`        |
+| `bun db:typecheck` | Run TypeScript type-checking on the `db/` workspace |
 
 ## Environment Targeting
 

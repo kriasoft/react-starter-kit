@@ -1,4 +1,4 @@
-import{_ as t,I as e,o as n,c as h,a6 as i,J as l}from"./chunks/framework.BvqLMprX.js";const y=JSON.parse('{"title":"Schema","description":"","frontmatter":{"outline":[2,3]},"headers":[],"relativePath":"database/schema.md","filePath":"database/schema.md","lastUpdated":1771429567000}'),p={name:"database/schema.md"};function k(d,s,r,o,E,g){const a=e("Mermaid");return n(),h("div",null,[s[0]||(s[0]=i('<div style="display:none;" hidden="true" aria-hidden="true">Are you an LLM? You can read better optimized documentation at /database/schema.md for this page in Markdown format</div><h1 id="schema" tabindex="-1">Schema <a class="header-anchor" href="#schema" aria-label="Permalink to “Schema”">​</a></h1><p>The database schema lives in <code>db/schema/</code>, with one file per entity group. Drizzle ORM&#39;s <code>casing: &quot;snake_case&quot;</code> option maps camelCase TypeScript properties to snake_case database columns automatically.</p><h2 id="conventions" tabindex="-1">Conventions <a class="header-anchor" href="#conventions" aria-label="Permalink to “Conventions”">​</a></h2><p><strong>Primary keys</strong> – All tables use application-generated prefixed CUID2 IDs (e.g., <code>usr_ght4k2jxm7pqbv01</code>). The 3-character prefix encodes the entity type for recognition in logs, URLs, and support tickets.</p><table tabindex="0"><thead><tr><th>Model</th><th>Prefix</th><th>Table</th></tr></thead><tbody><tr><td>user</td><td><code>usr</code></td><td><code>user</code></td></tr><tr><td>session</td><td><code>ses</code></td><td><code>session</code></td></tr><tr><td>account</td><td><code>idn</code></td><td><code>identity</code></td></tr><tr><td>verification</td><td><code>vfy</code></td><td><code>verification</code></td></tr><tr><td>organization</td><td><code>org</code></td><td><code>organization</code></td></tr><tr><td>member</td><td><code>mem</code></td><td><code>member</code></td></tr><tr><td>invitation</td><td><code>inv</code></td><td><code>invitation</code></td></tr><tr><td>passkey</td><td><code>pky</code></td><td><code>passkey</code></td></tr><tr><td>subscription</td><td><code>sub</code></td><td><code>subscription</code></td></tr></tbody></table><p>IDs are generated at the application level via <code>$defaultFn()</code> – no database sequences or UUID functions. See <code>db/schema/id.ts</code> for the implementation and <a href="/specs/prefixed-ids">Prefixed CUID2 IDs</a> for design rationale.</p><p><strong>Timestamps</strong> – Every table has <code>createdAt</code> and <code>updatedAt</code> columns using <code>timestamp({ withTimezone: true, mode: &quot;date&quot; })</code>. <code>createdAt</code> defaults to <code>now()</code>; <code>updatedAt</code> auto-updates via <code>$onUpdate(() =&gt; new Date())</code>.</p><p><strong>Foreign keys</strong> – All FKs use <code>onDelete: &quot;cascade&quot;</code>. Every FK column gets a btree index named <code>{table}_{column}_idx</code>.</p><p><strong>No enums</strong> – <code>member.role</code> and <code>invitation.status</code> are plain <code>text</code> columns, not <code>pgEnum</code>. This avoids fragile coupling with Better Auth&#39;s role values.</p><h2 id="entity-relationship-diagram" tabindex="-1">Entity Relationship Diagram <a class="header-anchor" href="#entity-relationship-diagram" aria-label="Permalink to “Entity Relationship Diagram”">​</a></h2>',11)),l(a,{code:`erDiagram
+import{_ as t,I as e,o as n,c as h,a6 as i,J as l}from"./chunks/framework.BvqLMprX.js";const y=JSON.parse('{"title":"Schema","description":"","frontmatter":{"outline":[2,3]},"headers":[],"relativePath":"database/schema.md","filePath":"database/schema.md","lastUpdated":1771437477000}'),p={name:"database/schema.md"};function d(k,s,r,o,E,c){const a=e("Mermaid");return n(),h("div",null,[s[0]||(s[0]=i('<div style="display:none;" hidden="true" aria-hidden="true">Are you an LLM? You can read better optimized documentation at /database/schema.md for this page in Markdown format</div><h1 id="schema" tabindex="-1">Schema <a class="header-anchor" href="#schema" aria-label="Permalink to “Schema”">​</a></h1><p>The database schema lives in <code>db/schema/</code>, with one file per entity group. Drizzle ORM&#39;s <code>casing: &quot;snake_case&quot;</code> option maps camelCase TypeScript properties to snake_case database columns automatically.</p><h2 id="conventions" tabindex="-1">Conventions <a class="header-anchor" href="#conventions" aria-label="Permalink to “Conventions”">​</a></h2><p><strong>Primary keys</strong> – All tables use application-generated prefixed CUID2 IDs (e.g., <code>usr_ght4k2jxm7pqbv01</code>). The 3-character prefix encodes the entity type for recognition in logs, URLs, and support tickets.</p><table tabindex="0"><thead><tr><th>Model</th><th>Prefix</th><th>Table</th></tr></thead><tbody><tr><td>user</td><td><code>usr</code></td><td><code>user</code></td></tr><tr><td>session</td><td><code>ses</code></td><td><code>session</code></td></tr><tr><td>account</td><td><code>idn</code></td><td><code>identity</code></td></tr><tr><td>verification</td><td><code>vfy</code></td><td><code>verification</code></td></tr><tr><td>organization</td><td><code>org</code></td><td><code>organization</code></td></tr><tr><td>member</td><td><code>mem</code></td><td><code>member</code></td></tr><tr><td>invitation</td><td><code>inv</code></td><td><code>invitation</code></td></tr><tr><td>passkey</td><td><code>pky</code></td><td><code>passkey</code></td></tr><tr><td>subscription</td><td><code>sub</code></td><td><code>subscription</code></td></tr></tbody></table><p>IDs are generated at the application level via <code>$defaultFn()</code> – no database sequences or UUID functions. See <code>db/schema/id.ts</code> for the implementation and <a href="/specs/prefixed-ids">Prefixed CUID2 IDs</a> for design rationale.</p><p><strong>Timestamps</strong> – Every table has <code>createdAt</code> and <code>updatedAt</code> columns using <code>timestamp({ withTimezone: true, mode: &quot;date&quot; })</code>. <code>createdAt</code> defaults to <code>now()</code>; <code>updatedAt</code> auto-updates via <code>$onUpdate(() =&gt; new Date())</code>.</p><p><strong>Foreign keys</strong> – All FKs use <code>onDelete: &quot;cascade&quot;</code>. Every FK column gets a btree index named <code>{table}_{column}_idx</code>.</p><p><strong>No enums</strong> – <code>member.role</code> and <code>invitation.status</code> are plain <code>text</code> columns, not <code>pgEnum</code>. This avoids fragile coupling with Better Auth&#39;s role values.</p><h2 id="entity-relationship-diagram" tabindex="-1">Entity Relationship Diagram <a class="header-anchor" href="#entity-relationship-diagram" aria-label="Permalink to “Entity Relationship Diagram”">​</a></h2>',11)),l(a,{code:`erDiagram
     user ||--o{ session : "has"
     user ||--o{ identity : "authenticates with"
     user ||--o{ passkey : "registers"
@@ -14,6 +14,7 @@ import{_ as t,I as e,o as n,c as h,a6 as i,J as l}from"./chunks/framework.BvqLMp
         text name
         text email UK
         boolean email_verified
+        text image
         boolean is_anonymous
         text stripe_customer_id
     }
@@ -22,6 +23,8 @@ import{_ as t,I as e,o as n,c as h,a6 as i,J as l}from"./chunks/framework.BvqLMp
         text id PK "ses_..."
         timestamp expires_at
         text token UK
+        text ip_address
+        text user_agent
         text user_id FK
         text active_organization_id
     }
@@ -31,6 +34,12 @@ import{_ as t,I as e,o as n,c as h,a6 as i,J as l}from"./chunks/framework.BvqLMp
         text account_id
         text provider_id
         text user_id FK
+        text access_token
+        text refresh_token
+        text id_token
+        timestamp access_token_expires_at
+        timestamp refresh_token_expires_at
+        text scope
         text password
     }
 
@@ -43,16 +52,26 @@ import{_ as t,I as e,o as n,c as h,a6 as i,J as l}from"./chunks/framework.BvqLMp
 
     passkey {
         text id PK "pky_..."
+        text name
         text public_key
         text credential_id UK
         text user_id FK
         integer counter
+        text device_type
+        boolean backed_up
+        text transports
+        text aaguid
+        timestamp last_used_at
+        text device_name
+        text platform
     }
 
     organization {
         text id PK "org_..."
         text name
         text slug UK
+        text logo
+        text metadata
         text stripe_customer_id
     }
 
@@ -70,14 +89,25 @@ import{_ as t,I as e,o as n,c as h,a6 as i,J as l}from"./chunks/framework.BvqLMp
         text organization_id FK
         text role
         text status
+        timestamp expires_at
+        timestamp accepted_at
+        timestamp rejected_at
     }
 
     subscription {
         text id PK "sub_..."
         text plan
         text reference_id
+        text stripe_customer_id
         text stripe_subscription_id UK
         text status
+        timestamp period_start
+        timestamp period_end
+        timestamp trial_start
+        timestamp trial_end
+        boolean cancel_at_period_end
+        integer seats
+        text billing_interval
     }`}),s[1]||(s[1]=i(`<h2 id="table-groups" tabindex="-1">Table Groups <a class="header-anchor" href="#table-groups" aria-label="Permalink to “Table Groups”">​</a></h2><h3 id="authentication-tables" tabindex="-1">Authentication Tables <a class="header-anchor" href="#authentication-tables" aria-label="Permalink to “Authentication Tables”">​</a></h3><p>Managed by <a href="https://www.better-auth.com/docs/concepts/database" target="_blank" rel="noreferrer">Better Auth</a>. Extend with care – changes must stay compatible with the auth framework.</p><table tabindex="0"><thead><tr><th>Table</th><th>File</th><th>Purpose</th></tr></thead><tbody><tr><td><code>user</code></td><td><code>schema/user.ts</code></td><td>User accounts – name, email, verification status, Stripe customer ID</td></tr><tr><td><code>session</code></td><td><code>schema/user.ts</code></td><td>Active sessions with device tracking and <a href="/auth/sessions">active organization context</a></td></tr><tr><td><code>identity</code></td><td><code>schema/user.ts</code></td><td>OAuth credentials and email/password (Better Auth&#39;s <code>account</code> table, <a href="/auth/#identity-table-rename">renamed</a>)</td></tr><tr><td><code>verification</code></td><td><code>schema/user.ts</code></td><td>OTP codes, email verification tokens</td></tr><tr><td><code>passkey</code></td><td><code>schema/passkey.ts</code></td><td>WebAuthn credentials for <a href="/auth/passkeys">passwordless auth</a></td></tr></tbody></table><div class="warning custom-block"><p class="custom-block-title custom-block-title-default">WARNING</p><p>Authentication tables follow <a href="https://www.better-auth.com/docs/concepts/database" target="_blank" rel="noreferrer">Better Auth&#39;s schema requirements</a>. When adding columns, register them in the auth config&#39;s <code>additionalFields</code> to ensure proper data handling.</p></div><details class="details custom-block"><summary>user table – TypeScript definition</summary><div class="language-ts"><button title="Copy Code" class="copy"></button><span class="lang">ts</span><pre class="shiki shiki-themes github-light github-dark" style="--shiki-light:#24292e;--shiki-dark:#e1e4e8;--shiki-light-bg:#fff;--shiki-dark-bg:#24292e;" tabindex="0" dir="ltr"><code><span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// db/schema/user.ts</span></span>
 <span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">export</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> const</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> user</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> =</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> pgTable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;user&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, {</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  id: </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">text</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span>
@@ -147,4 +177,4 @@ import{_ as t,I as e,o as n,c as h,a6 as i,J as l}from"./chunks/framework.BvqLMp
 <span class="line diff add"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">      phoneNumber: { type: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;string&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, required: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">false</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }, </span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    },</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  },</span></span>
-<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">});</span></span></code></pre></div><p>Then <a href="./migrations">generate and apply migrations</a> as usual.</p>`,31))])}const u=t(p,[["render",k]]);export{y as __pageData,u as default};
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">});</span></span></code></pre></div><p>Then <a href="./migrations">generate and apply migrations</a> as usual.</p>`,31))])}const u=t(p,[["render",d]]);export{y as __pageData,u as default};

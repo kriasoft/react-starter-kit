@@ -1891,32 +1891,35 @@ members: protectedProcedure
   }),
 ```
 
-Each loader function checks `ctx.cache` for an existing instance, creating one on first access:
+Loaders are created with a `defineLoader` helper that handles per-request caching via `ctx.cache`:
 
 ```ts
-export function userById(ctx: TRPCContext) {
-  if (!ctx.cache.has(USER_BY_ID)) {
-    const loader = new DataLoader(async (userIds: readonly string[]) => {
-      const users = await ctx.db
-        .select()
-        .from(user)
-        .where(inArray(user.id, [...userIds]));
-      const userMap = createKeyMap(users, "id");
-      return userIds.map((id) => userMap.get(id) || null);
-    });
-    ctx.cache.set(USER_BY_ID, loader);
-  }
-  return ctx.cache.get(USER_BY_ID);
-}
+function defineLoader<K, V>(
+  key: symbol,
+  batchFn: (ctx: TRPCContext, keys: readonly K[]) => Promise<(V | null)[]>,
+): (ctx: TRPCContext) => DataLoader<K, V | null>;
 ```
 
-Because loaders are stored in `ctx.cache` (a `Map` created per-request), they're automatically scoped to the request lifecycle – no stale data across requests.
+Each call returns a factory `(ctx) => DataLoader`. The first invocation per request creates the instance; subsequent calls return the cached one. Because `ctx.cache` is a `Map` created per-request, loaders are automatically scoped to the request lifecycle – no stale data across requests.
 
 ### Adding a DataLoader
 
-1. Define a symbol key and loader function in `apps/api/lib/loaders.ts`
-2. Use `ctx.cache` to store the instance (follow the `userById` pattern)
-3. Call `.load(key)` or `.loadMany(keys)` in your procedures
+Add a `defineLoader` call in `apps/api/lib/loaders.ts`:
+
+```ts
+export const postById = defineLoader(
+  Symbol("postById"),
+  async (ctx, ids: readonly string[]) => {
+    const posts = await ctx.db
+      .select()
+      .from(post)
+      .where(inArray(post.id, [...ids]));
+    return mapByKey(posts, "id", ids);
+  },
+);
+```
+
+Then call `.load(key)` or `.loadMany(keys)` in your procedures.
 
 ---
 
@@ -1934,7 +1937,7 @@ db/
 ├── schema/             # Table definitions and relations
 ├── migrations/         # Auto-generated SQL migrations
 ├── seeds/              # Seed data scripts
-├── scripts/            # Utilities (seed runner, export, introspect)
+├── scripts/            # Utilities (seed runner, export)
 ├── drizzle.config.ts   # Drizzle Kit configuration
 └── index.ts            # Re-exports schema + DatabaseSchema type
 ```
@@ -1966,22 +1969,23 @@ export function createDb(hyperdrive: Hyperdrive) {
 ```
 
 ::: info
-In development, the API server connects directly via `DATABASE_URL` without Hyperdrive. The connection setup is transparent – your queries work the same way in both environments.
+In development, Wrangler's `getPlatformProxy()` emulates the Hyperdrive bindings locally, resolving them to your `DATABASE_URL`. Your code uses the same `HYPERDRIVE_CACHED` / `HYPERDRIVE_DIRECT` bindings in both environments – no conditional connection logic needed.
 :::
 
 ## Commands
 
 Run from the repo root. Append `:staging` or `:prod` to target other environments.
 
-| Command           | Description                                   |
-| ----------------- | --------------------------------------------- |
-| `bun db:generate` | Generate migration SQL from schema changes    |
-| `bun db:migrate`  | Apply pending migrations                      |
-| `bun db:push`     | Push schema directly (skips migration files)  |
-| `bun db:studio`   | Open Drizzle Studio browser UI                |
-| `bun db:seed`     | Run seed scripts                              |
-| `bun db:check`    | Check for drift between schema and migrations |
-| `bun db:export`   | Export database via pg\_dump to `db/backups/`  |
+| Command            | Description                                         |
+| ------------------ | --------------------------------------------------- |
+| `bun db:generate`  | Generate migration SQL from schema changes          |
+| `bun db:migrate`   | Apply pending migrations                            |
+| `bun db:push`      | Push schema directly (skips migration files)        |
+| `bun db:studio`    | Open Drizzle Studio browser UI                      |
+| `bun db:seed`      | Run seed scripts                                    |
+| `bun db:check`     | Check for drift between schema and migrations       |
+| `bun db:export`    | Export database via pg\_dump to `db/backups/`        |
+| `bun db:typecheck` | Run TypeScript type-checking on the `db/` workspace |
 
 ## Environment Targeting
 
@@ -4350,20 +4354,20 @@ const products = await ctx.db.query.product.findMany({
 
 ## DataLoader Pattern
 
-The API uses a [DataLoader](https://github.com/graphql/dataloader) pattern to batch lookups and prevent N+1 queries. Loaders are cached per-request in `ctx.cache`:
+The API uses a [DataLoader](https://github.com/graphql/dataloader) pattern to batch lookups and prevent N+1 queries. Loaders are defined with `defineLoader` and cached per-request in `ctx.cache`:
 
 ```ts
 // apps/api/lib/loaders.ts (simplified)
-export function userById(ctx: TRPCContext) {
-  return (ctx.cache.userById ??= new DataLoader(
-    async (ids: readonly string[]) => {
-      const rows = await ctx.db.query.user.findMany({
-        where: inArray(user.id, [...ids]),
-      });
-      return ids.map((id) => rows.find((r) => r.id === id) ?? null);
-    },
-  ));
-}
+export const userById = defineLoader(
+  Symbol("userById"),
+  async (ctx, ids: readonly string[]) => {
+    const users = await ctx.db
+      .select()
+      .from(user)
+      .where(inArray(user.id, [...ids]));
+    return mapByKey(users, "id", ids);
+  },
+);
 ```
 
 Use loaders when a procedure needs to fetch the same entity type for multiple IDs:
@@ -4371,6 +4375,8 @@ Use loaders when a procedure needs to fetch the same entity type for multiple ID
 ```ts
 const creator = await userById(ctx).load(product.createdBy);
 ```
+
+See [Context & Middleware – DataLoaders](/api/context#dataloaders) for the full pattern and how to add new loaders.
 
 ## Access Control
 
@@ -4841,6 +4847,7 @@ erDiagram
         text name
         text email UK
         boolean email_verified
+        text image
         boolean is_anonymous
         text stripe_customer_id
     }
@@ -4849,6 +4856,8 @@ erDiagram
         text id PK "ses_..."
         timestamp expires_at
         text token UK
+        text ip_address
+        text user_agent
         text user_id FK
         text active_organization_id
     }
@@ -4858,6 +4867,12 @@ erDiagram
         text account_id
         text provider_id
         text user_id FK
+        text access_token
+        text refresh_token
+        text id_token
+        timestamp access_token_expires_at
+        timestamp refresh_token_expires_at
+        text scope
         text password
     }
 
@@ -4870,16 +4885,26 @@ erDiagram
 
     passkey {
         text id PK "pky_..."
+        text name
         text public_key
         text credential_id UK
         text user_id FK
         integer counter
+        text device_type
+        boolean backed_up
+        text transports
+        text aaguid
+        timestamp last_used_at
+        text device_name
+        text platform
     }
 
     organization {
         text id PK "org_..."
         text name
         text slug UK
+        text logo
+        text metadata
         text stripe_customer_id
     }
 
@@ -4897,14 +4922,25 @@ erDiagram
         text organization_id FK
         text role
         text status
+        timestamp expires_at
+        timestamp accepted_at
+        timestamp rejected_at
     }
 
     subscription {
         text id PK "sub_..."
         text plan
         text reference_id
+        text stripe_customer_id
         text stripe_subscription_id UK
         text status
+        timestamp period_start
+        timestamp period_end
+        timestamp trial_start
+        timestamp trial_end
+        boolean cancel_at_period_end
+        integer seats
+        text billing_interval
     }
 ```
 
