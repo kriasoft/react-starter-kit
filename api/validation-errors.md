@@ -110,14 +110,22 @@ Hono middleware in `apps/api/lib/middleware.ts` catches errors outside the tRPC 
 ```ts
 export const errorHandler: ErrorHandler = (err, c) => {
   if (err instanceof HTTPException) {
-    return err.getResponse();
+    // Merge middleware headers (CORS, security) into the exception response
+    const res = err.getResponse();
+    const headers = new Headers(res.headers);
+    c.res.headers.forEach((v, k) => headers.set(k, v));
+    return new Response(res.body, {
+      status: res.status,
+      statusText: res.statusText,
+      headers,
+    });
   }
   console.error(`[${c.req.method}] ${c.req.path}:`, err);
   return c.json({ error: "Internal Server Error" }, 500);
 };
 ```
 
-* **`HTTPException`** (from Hono) – returns the exception's response directly. Used by Better Auth and webhook handlers.
+* **`HTTPException`** (from Hono) – merges middleware headers (security, CORS) into the exception's response before returning it. Used by Better Auth and webhook handlers.
 * **Unexpected errors** – logged and returned as a generic 500.
 
 The tRPC adapter also logs errors independently:

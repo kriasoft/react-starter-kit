@@ -9,16 +9,18 @@ Every tRPC procedure receives a context object (`ctx`) with request-scoped resou
 
 Defined in `apps/api/lib/context.ts`, the context provides:
 
-| Field        | Type                             | Description                                              |
-| ------------ | -------------------------------- | -------------------------------------------------------- |
-| `db`         | `PostgresJsDatabase`             | Drizzle ORM instance via Hyperdrive (cached connections) |
-| `dbDirect`   | `PostgresJsDatabase`             | Drizzle ORM instance via Hyperdrive (direct, no cache)   |
-| `session`    | `AuthSession \| null`            | Authenticated session from Better Auth                   |
-| `user`       | `AuthUser \| null`               | Authenticated user data                                  |
-| `cache`      | `Map<string \| symbol, unknown>` | Request-scoped cache (for DataLoaders, computed values)  |
-| `env`        | `Env`                            | Environment variables and secrets                        |
-| `req`        | `Request`                        | The incoming HTTP request                                |
-| `resHeaders` | `Headers`                        | Response headers (for setting cookies, etc.)             |
+| Field         | Type                               | Description                                             |
+| ------------- | ---------------------------------- | ------------------------------------------------------- |
+| `req`         | `Request`                          | The incoming HTTP request                               |
+| `info`        | `CreateHTTPContextOptions["info"]` | tRPC request metadata (headers, connection info)        |
+| `db`          | `PostgresJsDatabase`               | Drizzle ORM instance via Hyperdrive (cached connection) |
+| `dbDirect`    | `PostgresJsDatabase`               | Drizzle ORM instance via Hyperdrive (direct, no cache)  |
+| `session`     | `AuthSession \| null`              | Authenticated session from Better Auth                  |
+| `user`        | `AuthUser \| null`                 | Authenticated user data                                 |
+| `cache`       | `Map<string \| symbol, unknown>`   | Request-scoped cache (for DataLoaders, computed values) |
+| `res?`        | `Response`                         | Optional HTTP response from Hono context                |
+| `resHeaders?` | `Headers`                          | Response headers (for setting cookies, etc.)            |
+| `env`         | `Env`                              | Environment variables and secrets                       |
 
 ### Two Database Connections
 
@@ -42,6 +44,7 @@ Context is created per-request in the tRPC fetch adapter (`apps/api/lib/app.ts`)
 ```ts
 app.use("/api/trpc/*", (c) => {
   return fetchRequestHandler({
+    req: c.req.raw,
     router: appRouter,
     endpoint: "/api/trpc",
     async createContext({ req, resHeaders, info }) {
@@ -49,13 +52,19 @@ app.use("/api/trpc/*", (c) => {
       const dbDirect = c.get("dbDirect");
       const auth = c.get("auth");
 
-      // Resolve session from request headers (cookies)
+      if (!db) throw new Error("Database not available in context");
+      if (!dbDirect)
+        throw new Error("Direct database not available in context");
+      if (!auth)
+        throw new Error("Authentication service not available in context");
+
       const sessionData = await auth.api.getSession({
         headers: req.headers,
       });
 
       return {
         req,
+        res: c.res,
         resHeaders,
         info,
         env: c.env,
@@ -66,6 +75,7 @@ app.use("/api/trpc/*", (c) => {
         cache: new Map(),
       };
     },
+    batching: { enabled: true },
   });
 });
 ```
@@ -76,7 +86,7 @@ The `db`, `dbDirect`, and `auth` values come from the Hono middleware layer (set
 
 The Worker entrypoint (`worker.ts`) applies middleware in order:
 
-```
+```txt
 Request
   │
   ├── errorHandler          ← catches all unhandled errors
@@ -95,6 +105,10 @@ Request
 
 ::: info
 The `protectedProcedure` middleware (defined in `lib/trpc.ts`) adds another layer within tRPC. It checks that `session` and `user` are non-null and narrows their types – procedures using `protectedProcedure` never need null checks. See [Procedures](./procedures#protectedprocedure).
+:::
+
+::: tip
+In production (`worker.ts`), the request ID generator uses the Cloudflare Ray ID when available. In local development (`dev.ts`), it falls back to the default UUID generator since `cf-ray` headers aren't present.
 :::
 
 ## Request ID

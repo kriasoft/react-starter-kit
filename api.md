@@ -50,8 +50,11 @@ worker.use(logger());
 
 // Initialize shared context
 worker.use(async (c, next) => {
-  c.set("db", createDb(c.env.HYPERDRIVE_CACHED));
-  c.set("dbDirect", createDb(c.env.HYPERDRIVE_DIRECT));
+  const db = createDb(c.env.HYPERDRIVE_CACHED);
+  const dbDirect = createDb(c.env.HYPERDRIVE_DIRECT);
+
+  c.set("db", db);
+  c.set("dbDirect", dbDirect);
   c.set("auth", createAuth(db, c.env));
   await next();
 });
@@ -64,8 +67,9 @@ worker.route("/", app);
 
 | Path          | Method    | Handler     | Description                                                                    |
 | ------------- | --------- | ----------- | ------------------------------------------------------------------------------ |
+| `/`           | GET       | Hono        | Redirects to `/api`                                                            |
 | `/api`        | GET       | Hono        | API metadata (name, version, endpoints)                                        |
-| `/health`     | GET       | Hono        | Health check – returns `{ status: "healthy" }`                                 |
+| `/health`     | GET       | Hono        | Health check – returns `{ status, timestamp }`                                 |
 | `/api/auth/*` | GET, POST | Better Auth | Authentication routes ([docs](https://www.better-auth.com/docs/api-reference)) |
 | `/api/trpc/*` | \*        | tRPC        | Type-safe RPC – all queries and mutations                                      |
 
@@ -92,10 +96,12 @@ apps/api/
 ├── dev.ts                 # Local dev server (Bun)
 ├── index.ts               # Public package exports
 ├── lib/
+│   ├── ai.ts              # OpenAI provider factory
 │   ├── app.ts             # Hono app + tRPC router composition
 │   ├── auth.ts            # Better Auth configuration
 │   ├── context.ts         # TRPCContext and AppContext types
 │   ├── db.ts              # Drizzle ORM database factory
+│   ├── email.ts           # Resend email utilities
 │   ├── env.ts             # Environment variable schema (Zod)
 │   ├── loaders.ts         # DataLoader instances for N+1 prevention
 │   ├── middleware.ts       # Error handler, 404 handler, request ID

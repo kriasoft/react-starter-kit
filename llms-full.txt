@@ -659,8 +659,11 @@ worker.use(logger());
 
 // Initialize shared context
 worker.use(async (c, next) => {
-  c.set("db", createDb(c.env.HYPERDRIVE_CACHED));
-  c.set("dbDirect", createDb(c.env.HYPERDRIVE_DIRECT));
+  const db = createDb(c.env.HYPERDRIVE_CACHED);
+  const dbDirect = createDb(c.env.HYPERDRIVE_DIRECT);
+
+  c.set("db", db);
+  c.set("dbDirect", dbDirect);
   c.set("auth", createAuth(db, c.env));
   await next();
 });
@@ -673,8 +676,9 @@ worker.route("/", app);
 
 | Path          | Method    | Handler     | Description                                                                    |
 | ------------- | --------- | ----------- | ------------------------------------------------------------------------------ |
+| `/`           | GET       | Hono        | Redirects to `/api`                                                            |
 | `/api`        | GET       | Hono        | API metadata (name, version, endpoints)                                        |
-| `/health`     | GET       | Hono        | Health check – returns `{ status: "healthy" }`                                 |
+| `/health`     | GET       | Hono        | Health check – returns `{ status, timestamp }`                                 |
 | `/api/auth/*` | GET, POST | Better Auth | Authentication routes ([docs](https://www.better-auth.com/docs/api-reference)) |
 | `/api/trpc/*` | \*        | tRPC        | Type-safe RPC – all queries and mutations                                      |
 
@@ -701,10 +705,12 @@ apps/api/
 ├── dev.ts                 # Local dev server (Bun)
 ├── index.ts               # Public package exports
 ├── lib/
+│   ├── ai.ts              # OpenAI provider factory
 │   ├── app.ts             # Hono app + tRPC router composition
 │   ├── auth.ts            # Better Auth configuration
 │   ├── context.ts         # TRPCContext and AppContext types
 │   ├── db.ts              # Drizzle ORM database factory
+│   ├── email.ts           # Resend email utilities
 │   ├── env.ts             # Environment variable schema (Zod)
 │   ├── loaders.ts         # DataLoader instances for N+1 prevention
 │   ├── middleware.ts       # Error handler, 404 handler, request ID
@@ -1768,16 +1774,18 @@ Every tRPC procedure receives a context object (`ctx`) with request-scoped resou
 
 Defined in `apps/api/lib/context.ts`, the context provides:
 
-| Field        | Type                             | Description                                              |
-| ------------ | -------------------------------- | -------------------------------------------------------- |
-| `db`         | `PostgresJsDatabase`             | Drizzle ORM instance via Hyperdrive (cached connections) |
-| `dbDirect`   | `PostgresJsDatabase`             | Drizzle ORM instance via Hyperdrive (direct, no cache)   |
-| `session`    | `AuthSession \| null`            | Authenticated session from Better Auth                   |
-| `user`       | `AuthUser \| null`               | Authenticated user data                                  |
-| `cache`      | `Map<string \| symbol, unknown>` | Request-scoped cache (for DataLoaders, computed values)  |
-| `env`        | `Env`                            | Environment variables and secrets                        |
-| `req`        | `Request`                        | The incoming HTTP request                                |
-| `resHeaders` | `Headers`                        | Response headers (for setting cookies, etc.)             |
+| Field         | Type                               | Description                                             |
+| ------------- | ---------------------------------- | ------------------------------------------------------- |
+| `req`         | `Request`                          | The incoming HTTP request                               |
+| `info`        | `CreateHTTPContextOptions["info"]` | tRPC request metadata (headers, connection info)        |
+| `db`          | `PostgresJsDatabase`               | Drizzle ORM instance via Hyperdrive (cached connection) |
+| `dbDirect`    | `PostgresJsDatabase`               | Drizzle ORM instance via Hyperdrive (direct, no cache)  |
+| `session`     | `AuthSession \| null`              | Authenticated session from Better Auth                  |
+| `user`        | `AuthUser \| null`                 | Authenticated user data                                 |
+| `cache`       | `Map<string \| symbol, unknown>`   | Request-scoped cache (for DataLoaders, computed values) |
+| `res?`        | `Response`                         | Optional HTTP response from Hono context                |
+| `resHeaders?` | `Headers`                          | Response headers (for setting cookies, etc.)            |
+| `env`         | `Env`                              | Environment variables and secrets                       |
 
 ### Two Database Connections
 
@@ -1801,6 +1809,7 @@ Context is created per-request in the tRPC fetch adapter (`apps/api/lib/app.ts`)
 ```ts
 app.use("/api/trpc/*", (c) => {
   return fetchRequestHandler({
+    req: c.req.raw,
     router: appRouter,
     endpoint: "/api/trpc",
     async createContext({ req, resHeaders, info }) {
@@ -1808,13 +1817,19 @@ app.use("/api/trpc/*", (c) => {
       const dbDirect = c.get("dbDirect");
       const auth = c.get("auth");
 
-      // Resolve session from request headers (cookies)
+      if (!db) throw new Error("Database not available in context");
+      if (!dbDirect)
+        throw new Error("Direct database not available in context");
+      if (!auth)
+        throw new Error("Authentication service not available in context");
+
       const sessionData = await auth.api.getSession({
         headers: req.headers,
       });
 
       return {
         req,
+        res: c.res,
         resHeaders,
         info,
         env: c.env,
@@ -1825,6 +1840,7 @@ app.use("/api/trpc/*", (c) => {
         cache: new Map(),
       };
     },
+    batching: { enabled: true },
   });
 });
 ```
@@ -1835,7 +1851,7 @@ The `db`, `dbDirect`, and `auth` values come from the Hono middleware layer (set
 
 The Worker entrypoint (`worker.ts`) applies middleware in order:
 
-```
+```txt
 Request
   │
   ├── errorHandler          ← catches all unhandled errors
@@ -1854,6 +1870,10 @@ Request
 
 ::: info
 The `protectedProcedure` middleware (defined in `lib/trpc.ts`) adds another layer within tRPC. It checks that `session` and `user` are non-null and narrows their types – procedures using `protectedProcedure` never need null checks. See [Procedures](./procedures#protectedprocedure).
+:::
+
+::: tip
+In production (`worker.ts`), the request ID generator uses the Cloudflare Ray ID when available. In local development (`dev.ts`), it falls back to the default UUID generator since `cf-ray` headers aren't present.
 :::
 
 ## Request ID
@@ -7428,14 +7448,22 @@ Hono middleware in `apps/api/lib/middleware.ts` catches errors outside the tRPC 
 ```ts
 export const errorHandler: ErrorHandler = (err, c) => {
   if (err instanceof HTTPException) {
-    return err.getResponse();
+    // Merge middleware headers (CORS, security) into the exception response
+    const res = err.getResponse();
+    const headers = new Headers(res.headers);
+    c.res.headers.forEach((v, k) => headers.set(k, v));
+    return new Response(res.body, {
+      status: res.status,
+      statusText: res.statusText,
+      headers,
+    });
   }
   console.error(`[${c.req.method}] ${c.req.path}:`, err);
   return c.json({ error: "Internal Server Error" }, 500);
 };
 ```
 
-* **`HTTPException`** (from Hono) – returns the exception's response directly. Used by Better Auth and webhook handlers.
+* **`HTTPException`** (from Hono) – merges middleware headers (security, CORS) into the exception's response before returning it. Used by Better Auth and webhook handlers.
 * **Unexpected errors** – logged and returned as a generic 500.
 
 The tRPC adapter also logs errors independently:
