@@ -1,0 +1,91 @@
+# React Starter Kit
+
+> Production-ready monorepo for building fast web apps
+
+Skip months of setup and ship your AI-powered SaaS fast. Authentication, database migrations, edge deployment, and cutting-edge React patterns all configured with industry best practices.
+
+## Table of Contents
+
+### Getting Started
+
+- [Introduction](/getting-started.md)
+- [Quick Start](/getting-started/quick-start.md)
+- [Project Structure](/getting-started/project-structure.md)
+- [Environment Variables](/getting-started/environment-variables.md)
+
+### Architecture
+
+- [Architecture Overview](/architecture.md)
+- [Edge](/architecture/edge.md)
+
+### Frontend
+
+- [Routing](/frontend/routing.md)
+- [State & Data Fetching](/frontend/state.md)
+- [UI](/frontend/ui.md)
+- [Forms & Validation](/frontend/forms.md)
+
+### API
+
+- [API Overview](/api.md)
+- [Procedures](/api/procedures.md)
+- [Validation & Errors](/api/validation-errors.md)
+- [Context & Middleware](/api/context.md)
+
+### Authentication
+
+- [Authentication Overview](/auth.md)
+- [Email & OTP](/auth/email-otp.md)
+- [Social Providers](/auth/social-providers.md)
+- [Passkeys](/auth/passkeys.md)
+- [Organizations & Roles](/auth/organizations.md)
+- [Sessions & Protected Routes](/auth/sessions.md)
+
+### Database
+
+- [Database](/database.md)
+- [Schema](/database/schema.md)
+- [Migrations](/database/migrations.md)
+- [Seeding](/database/seeding.md)
+- [Query Patterns](/database/queries.md)
+
+### Billing
+
+- [Billing](/billing.md)
+- [Plans & Pricing](/billing/plans.md)
+- [Checkout Flow](/billing/checkout.md)
+- [Webhooks](/billing/webhooks.md)
+
+### Deployment
+
+- [Deployment](/deployment.md)
+- [Cloudflare Workers](/deployment/cloudflare.md)
+- [Production Database](/deployment/production-database.md)
+- [CI/CD](/deployment/ci-cd.md)
+- [Monitoring](/deployment/monitoring.md)
+
+### Recipes
+
+- [Add a Page](/recipes/new-page.md)
+- [Add a tRPC Procedure](/recipes/new-procedure.md)
+- [Add a Database Table](/recipes/new-table.md)
+- [Adding Teams](/recipes/teams.md)
+- [WebSockets](/recipes/websockets.md)
+- [File Uploads](/recipes/file-uploads.md)
+
+### Security
+
+- [Security Best Practices Checklist](/security/checklist.md)
+- [Security Incident Response Playbook](/security/incident-playbook.md)
+- [Security Policy & Incident Response Plan](/security/policy-template.md)
+
+### Other
+
+- [ADR-001 Auth Hint Cookie For Edge Routing](/adr/001-auth-hint-cookie.md)
+- [ADR-NNN Title](/adr/000-template.md)
+- [Auth Flow UX Specification](/specs/auth-form.md)
+- [Email](/email.md)
+- [Infrastructure Terraform Specification](/specs/infra-terraform.md)
+- [Prefixed CUID2 Database IDs](/specs/prefixed-ids.md)
+- [Stripe Billing Integration](/specs/billing.md)
+- [Testing](/testing.md)
