@@ -1,6 +1,6 @@
-# Adding Teams
+# Add Teams
 
-Teams let you create subgroups within organizations. This recipe shows how to enable Better Auth's teams plugin.
+Teams let you create subgroups within organizations. This recipe enables Better Auth's [teams feature](https://www.better-auth.com/docs/plugins/organization#teams) and wires it into the existing schema.
 
 ## 1. Add the schema
 
@@ -84,50 +84,125 @@ export const teamMemberRelations = relations(teamMember, ({ one }) => ({
 Export it from `db/schema/index.ts`:
 
 ```typescript
-export * from "./team";
+export * from "./team"; // [!code ++]
 ```
 
-## 2. Add session and invitation fields
+## 2. Extend session and invitation tables
 
 Add `activeTeamId` to the session table in `db/schema/user.ts`:
 
 ```typescript
-// In the session table definition
-activeTeamId: text(),
+export const session = pgTable(
+  "session",
+  {
+    // ...existing columns
+    activeOrganizationId: text(),
+    activeTeamId: text(), // [!code ++]
+  },
+  // ...
+);
 ```
 
-Optionally add `teamId` to the invitation table in `db/schema/invitation.ts` if you want team-scoped invitations:
+Add `teamId` to the invitation table in `db/schema/invitation.ts` for team-scoped invitations:
 
 ```typescript
-teamId: text().references(() => team.id, { onDelete: "cascade" }),
+export const invitation = pgTable(
+  "invitation",
+  {
+    // ...existing columns
+    teamId: text().references(() => team.id, { onDelete: "cascade" }), // [!code ++]
+  },
+  // ...
+);
 ```
 
 ## 3. Enable the teams plugin
 
-In `apps/api/lib/auth.ts`, enable teams in the organization plugin and add the schema mapping:
+In `apps/api/lib/auth.ts`, add the new tables to the Drizzle adapter schema and enable teams in the organization plugin:
 
 ```typescript
-// Add to the drizzle adapter schema mapping
-schema: {
-  // ...existing mappings
-  team: Db.team,
-  teamMember: Db.teamMember,
-},
-
-// Enable teams in the organization plugin
-organization({
-  // ...existing config
-  teams: { enabled: true },
+database: drizzleAdapter(db, {
+  provider: "pg",
+  schema: {
+    // ...existing mappings
+    team: Db.team, // [!code ++]
+    teamMember: Db.teamMember, // [!code ++]
+  },
 }),
+
+// ...
+
+plugins: [
+  organization({
+    allowUserToCreateOrganization: true,
+    organizationLimit: 5,
+    creatorRole: "owner",
+    teams: { enabled: true }, // [!code ++]
+  }),
+],
+```
+
+In `apps/app/lib/auth.ts`, enable teams on the client:
+
+```typescript
+export const auth = createAuthClient({
+  // ...
+  plugins: [
+    organizationClient({
+      teams: { enabled: true }, // [!code ++]
+    }),
+    // ...other plugins
+  ],
+});
 ```
 
 ## 4. Apply the migration
 
 ```bash
 bun db:generate
-bun db:push  # or bun db:migrate
+bun db:push
 ```
+
+## 5. Use the teams API
+
+Create a team within the active organization:
+
+```ts
+await auth.organization.createTeam({
+  name: "Engineering",
+});
+```
+
+Set the active team for the current session:
+
+```ts
+await auth.organization.setActiveTeam({
+  teamId: "tea_...",
+});
+```
+
+List teams and manage members:
+
+```ts
+// List teams in the active organization
+const { data: teams } = await auth.organization.listTeams();
+
+// Add a member to a team
+await auth.organization.addTeamMember({
+  teamId: "tea_...",
+  userId: "usr_...",
+});
+
+// Remove a member from a team
+await auth.organization.removeTeamMember({
+  teamId: "tea_...",
+  userId: "usr_...",
+});
+```
+
+The active team ID is available in the session as `session.activeTeamId`, alongside the existing `session.activeOrganizationId`.
 
 ## Reference
 
-- [Better Auth organization plugin — Teams](https://www.better-auth.com/docs/plugins/organization#teams)
+- [Better Auth organization plugin – Teams](https://www.better-auth.com/docs/plugins/organization#teams)
+- [Organizations & Roles](/auth/organizations) – base organization setup

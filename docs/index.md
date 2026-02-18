@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Getting Started
-      link: /getting-started
+      link: /getting-started/
     - theme: alt
       text: View on GitHub
       link: https://github.com/kriasoft/react-starter-kit
@@ -23,7 +23,7 @@ hero:
 features:
   - icon: 🤖
     title: AI-First Development
-    details: Code with AI from day one - LLM instructions, tool configurations, and project context pre-built for Claude Code, Cursor, and Gemini CLI
+    details: Code with AI from day one – LLM instructions, tool configurations, and project context pre-built for Claude Code, Cursor, and Gemini CLI
   - icon: 🚀
     title: Edge-First Architecture
     details: Built for Cloudflare Workers with optimized performance, global distribution, and instant deployment

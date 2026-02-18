@@ -1,4 +1,5 @@
 import { defineConfig } from "vitepress";
+import llmstxt from "vitepress-plugin-llms";
 
 /**
  * VitePress configuration.
@@ -14,7 +15,7 @@ export default defineConfig({
       md.renderer.rules.fence = (tokens, idx, options, env, self) => {
         const token = tokens[idx];
         if (token.info === "mermaid") {
-          const code = token.content.trim().replace(/"/g, "&quot;");
+          const code = md.utils.escapeHtml(token.content.trim());
           return `<Mermaid code="${code}" />`;
         }
         return fence(tokens, idx, options, env, self);
@@ -29,19 +30,41 @@ export default defineConfig({
 
   sitemap: {
     hostname: "https://reactstarter.com",
+    transformItems: (items) => {
+      items.push({ url: "llms.txt" }, { url: "llms-full.txt" });
+      return items;
+    },
   },
 
   head: [
     ["meta", { name: "theme-color", content: "#6366f1" }],
     ["meta", { property: "og:type", content: "website" }],
     ["meta", { property: "og:site_name", content: "React Starter Kit" }],
+    [
+      "link",
+      {
+        rel: "alternate",
+        type: "text/plain",
+        href: "/llms.txt",
+        title: "LLM context",
+      },
+    ],
+    [
+      "link",
+      {
+        rel: "alternate",
+        type: "text/plain",
+        href: "/llms-full.txt",
+        title: "LLM context (full)",
+      },
+    ],
   ],
 
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
-      { text: "Docs", link: "/getting-started" },
+      { text: "Docs", link: "/getting-started/" },
     ],
 
     search: {
@@ -55,28 +78,124 @@ export default defineConfig({
     },
 
     footer: {
-      message: "Released under the MIT License.",
+      message:
+        'LLM context: <a href="/llms.txt">llms.txt</a> · <a href="/llms-full.txt">llms-full.txt</a><br>Released under the MIT License.',
       copyright: "Copyright © 2014-present Kriasoft",
     },
 
     sidebar: [
       {
-        text: "Documentation",
+        text: "Getting Started",
         items: [
-          { text: "Getting Started", link: "/getting-started" },
-          { text: "UI Components", link: "/ui-components" },
-          { text: "Database Schema", link: "/database-schema" },
-          { text: "Deployment", link: "/deployment" },
+          { text: "Introduction", link: "/getting-started/" },
+          { text: "Quick Start", link: "/getting-started/quick-start" },
+          {
+            text: "Project Structure",
+            link: "/getting-started/project-structure",
+          },
+          {
+            text: "Environment Variables",
+            link: "/getting-started/environment-variables",
+          },
+        ],
+      },
+      {
+        text: "Architecture",
+        items: [
+          { text: "Overview", link: "/architecture/" },
+          { text: "Edge", link: "/architecture/edge" },
+        ],
+      },
+      {
+        text: "Frontend",
+        collapsed: true,
+        items: [
+          { text: "Routing", link: "/frontend/routing" },
+          { text: "State & Data Fetching", link: "/frontend/state" },
+          { text: "UI", link: "/frontend/ui" },
+          { text: "Forms & Validation", link: "/frontend/forms" },
+        ],
+      },
+      {
+        text: "API",
+        collapsed: true,
+        items: [
+          { text: "Overview", link: "/api/" },
+          { text: "Procedures", link: "/api/procedures" },
+          { text: "Validation & Errors", link: "/api/validation-errors" },
+          { text: "Context & Middleware", link: "/api/context" },
+        ],
+      },
+      {
+        text: "Authentication",
+        collapsed: true,
+        items: [
+          { text: "Overview", link: "/auth/" },
+          { text: "Email & OTP", link: "/auth/email-otp" },
+          { text: "Social Providers", link: "/auth/social-providers" },
+          { text: "Passkeys", link: "/auth/passkeys" },
+          { text: "Organizations & Roles", link: "/auth/organizations" },
+          { text: "Sessions & Protected Routes", link: "/auth/sessions" },
+        ],
+      },
+      {
+        text: "Database",
+        collapsed: true,
+        items: [
+          { text: "Overview", link: "/database/" },
+          { text: "Schema", link: "/database/schema" },
+          { text: "Migrations", link: "/database/migrations" },
+          { text: "Seeding", link: "/database/seeding" },
+          { text: "Query Patterns", link: "/database/queries" },
+        ],
+      },
+      {
+        text: "Billing",
+        collapsed: true,
+        items: [
+          { text: "Overview", link: "/billing/" },
+          { text: "Plans & Pricing", link: "/billing/plans" },
+          { text: "Checkout Flow", link: "/billing/checkout" },
+          { text: "Webhooks", link: "/billing/webhooks" },
+        ],
+      },
+      { text: "Email", link: "/email" },
+      { text: "Testing", link: "/testing" },
+      {
+        text: "Deployment",
+        collapsed: true,
+        items: [
+          { text: "Overview", link: "/deployment/" },
+          { text: "Cloudflare Workers", link: "/deployment/cloudflare" },
+          {
+            text: "Production Database",
+            link: "/deployment/production-database",
+          },
+          { text: "CI/CD", link: "/deployment/ci-cd" },
+          { text: "Monitoring", link: "/deployment/monitoring" },
+        ],
+      },
+      {
+        text: "Recipes",
+        collapsed: true,
+        items: [
+          { text: "Add a Page", link: "/recipes/new-page" },
+          { text: "Add a tRPC Procedure", link: "/recipes/new-procedure" },
+          { text: "Add a Database Table", link: "/recipes/new-table" },
+          { text: "Add Teams", link: "/recipes/teams" },
+          { text: "WebSockets", link: "/recipes/websockets" },
+          { text: "File Uploads", link: "/recipes/file-uploads" },
         ],
       },
       {
         text: "Security",
+        collapsed: true,
         items: [
           { text: "Security Checklist", link: "/security/checklist" },
           { text: "Incident Playbook", link: "/security/incident-playbook" },
           {
             text: "Security Policy Template",
-            link: "/security/SECURITY.template",
+            link: "/security/policy-template",
           },
         ],
       },
@@ -99,5 +218,9 @@ export default defineConfig({
         link: "https://github.com/kriasoft/react-starter-kit",
       },
     ],
+  },
+
+  vite: {
+    plugins: [llmstxt()],
   },
 });

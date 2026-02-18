@@ -4,10 +4,10 @@ Target UX inspired by Linear's authentication flow.
 
 ## Design Principles
 
-1. **Progressive disclosure** - Show only what's needed at each step
-2. **Method selection first** - Let users choose their auth method before showing inputs
-3. **Minimal friction** - Reduce cognitive load with focused, single-purpose views
-4. **Clear navigation** - Easy to go back and switch methods
+1. **Progressive disclosure** – Show only what's needed at each step
+2. **Method selection first** – Let users choose their auth method before showing inputs
+3. **Minimal friction** – Reduce cognitive load with focused, single-purpose views
+4. **Clear navigation** – Easy to go back and switch methods
 
 ## Flow Structure
 
@@ -190,7 +190,7 @@ interface AuthFormProps {
 - **Layout**: Centered, max-width ~400px, no card wrapper
 - **Logo**: Centered above heading
 - **Buttons**: Full-width, stacked vertically with consistent spacing
-- **Typography**: Clear hierarchy - heading (h1), body text, links
+- **Typography**: Clear hierarchy – heading (h1), body text, links
 - **Back link**: Left-aligned, subtle styling, positioned below form
 
 ## Transitions

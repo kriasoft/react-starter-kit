@@ -1,6 +1,8 @@
-# @repo/email
+# Email Templates
 
-A collection of transactional email templates built with React Email.
+Transactional email templates built with React Email.
+
+[Documentation](https://reactstarter.com/email)
 
 ## Templates
 
@@ -38,15 +40,11 @@ const component = EmailVerification({
 const html = await renderEmailToHtml(component);
 ```
 
-## Template Structure
+## Structure
 
-- `templates/` - React Email component templates
-- `components/` - Shared components (BaseTemplate)
-- `utils/` - Rendering utilities
-- `emails/` - Preview files for development server
-
-## References
-
-- [React Email Documentation](https://react.email/docs/introduction) - Official React Email guide
-- [React Email Components](https://react.email/components) - Available email components
-- [Better Auth Email Integration](https://better-auth.com/docs/concepts/email) - Authentication email setup
+```bash
+templates/        # React Email component templates
+components/       # Shared components (BaseTemplate)
+utils/            # Rendering utilities
+emails/           # Preview files for development server
+```

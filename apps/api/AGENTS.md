@@ -26,7 +26,7 @@
 ## Request Context
 
 - `ctx.cache: Map<string | symbol, unknown>` — request-scoped cache.
-- DataLoaders use Symbol keys to avoid collisions. Pattern: check `cache.has()`, create loader on miss, return typed cast.
+- DataLoaders use `defineLoader(symbol, batchFn)` helper — handles cache check, instance creation, and typing. See `lib/loaders.ts`.
 - AI provider instances (OpenAI) also cached per-request via same pattern.
 
 ## Environment

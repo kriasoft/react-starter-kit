@@ -1,6 +1,8 @@
-# Infra
+# Infrastructure
 
 Terraform configuration for deploying to Cloudflare (edge) or GCP (hybrid).
+
+[Documentation](https://reactstarter.com/deployment/cloudflare) | [CI/CD](https://reactstarter.com/deployment/ci-cd)
 
 ## Design Goals
 

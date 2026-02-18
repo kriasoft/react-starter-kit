@@ -68,9 +68,9 @@ Is remote code execution possible?
 
 **Decision Points:**
 
-- If cannot reproduce � Request clarification
-- If critical � Immediately notify maintainers
-- If valid � Proceed to Phase 2
+- If cannot reproduce – Request clarification
+- If critical – Immediately notify maintainers
+- If valid – Proceed to Phase 2
 
 ### Step 1.3: Form Response Team
 

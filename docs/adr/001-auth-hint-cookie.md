@@ -22,8 +22,8 @@ This cookie is NOT a security boundary. It is a routing hint only. False positiv
 
 ## Alternatives Considered
 
-1. **Validate session in web via API** — Couples edge to auth, adds latency/failure modes.
-2. **Read Better Auth session cookie directly** — Brittle to auth library changes and cookie formats.
+1. **Validate session in web via API** – Couples edge to auth, adds latency/failure modes.
+2. **Read Better Auth session cookie directly** – Brittle to auth library changes and cookie formats.
 
 ## Consequences
 
