@@ -7,8 +7,9 @@ Teams let you create subgroups within organizations. This recipe shows how to en
 Create `db/schema/team.ts`:
 
 ```typescript
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { index, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
+import { generateId } from "./id";
 import { organization } from "./organization";
 import { user } from "./user";
 
@@ -17,7 +18,7 @@ export const team = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateId("tea")),
     name: text().notNull(),
     organizationId: text()
       .notNull()
@@ -38,7 +39,7 @@ export const teamMember = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateId("tmb")),
     teamId: text()
       .notNull()
       .references(() => team.id, { onDelete: "cascade" }),

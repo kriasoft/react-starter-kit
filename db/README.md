@@ -90,16 +90,6 @@ import { organization, member } from "@/db/schema/organization";
 - Wrong environment: confirm `ENVIRONMENT`/`NODE_ENV` matches the target and the corresponding `.env.*` file exists.
 - Drift/conflicts: run `bun --filter @repo/db check`; regenerate migrations if schema and migrations diverge.
 
-## UUID v7
+## ID Generation
 
-The schema uses `gen_random_uuid()` by default for maximum compatibility. For time-ordered UUIDs (better index locality), replace with:
-
-- **PostgreSQL 18+**: `uuidv7()` (native)
-- **Earlier versions**: `uuid_generate_v7()` (requires [pg_uuidv7](https://github.com/fboulnois/pg_uuidv7) extension
-
-```typescript
-// Example: enable UUID v7 in schema
-id: text()
-  .primaryKey()
-  .default(sql`uuidv7()`);
-```
+All primary keys use application-generated prefixed CUID2 IDs (e.g. `usr_ght4k2jxm7pqbv01`). IDs are generated at the application level via `$defaultFn()` — no database-level defaults. See `db/schema/id.ts` for the prefix map and `docs/specs/prefixed-ids.md` for design rationale.

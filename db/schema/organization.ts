@@ -1,7 +1,8 @@
 // Multi-tenant organizations and memberships with role-based access control
 
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { index, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
+import { generateAuthId } from "./id";
 import { user } from "./user";
 
 /**
@@ -11,7 +12,7 @@ import { user } from "./user";
 export const organization = pgTable("organization", {
   id: text()
     .primaryKey()
-    .default(sql`gen_random_uuid()`),
+    .$defaultFn(() => generateAuthId("organization")),
   name: text().notNull(),
   slug: text().notNull().unique(),
   logo: text(),
@@ -45,7 +46,7 @@ export const member = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateAuthId("member")),
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),

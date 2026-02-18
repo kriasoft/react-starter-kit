@@ -1,7 +1,8 @@
 // Better Auth invitation system for organization invites
 
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { index, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
+import { generateAuthId } from "./id";
 import { organization } from "./organization";
 import { user } from "./user";
 
@@ -18,7 +19,7 @@ export const invitation = pgTable(
   {
     id: text()
       .primaryKey()
-      .default(sql`gen_random_uuid()`),
+      .$defaultFn(() => generateAuthId("invitation")),
     email: text().notNull(),
     inviterId: text()
       .notNull()
