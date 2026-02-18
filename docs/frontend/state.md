@@ -175,4 +175,4 @@ function Sidebar() {
 }
 ```
 
-For more on these libraries, see the [TanStack Query docs](https://tanstack.com/query/latest/docs/framework/react/overview), [tRPC docs](https://trpc.io/docs/client/react), and [Jotai docs](https://jotai.org/docs/introduction).
+See [Forms & Validation](./forms.md) for mutation patterns in form submissions. For library reference, see the [TanStack Query docs](https://tanstack.com/query/latest/docs/framework/react/overview), [tRPC docs](https://trpc.io/docs/client/react), and [Jotai docs](https://jotai.org/docs/introduction).

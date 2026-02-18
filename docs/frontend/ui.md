@@ -23,7 +23,7 @@ bun ui:list
 bun ui:update
 ```
 
-There are 14 components installed by default: avatar, button, card, checkbox, dialog, input, label, radio-group, scroll-area, select, separator, skeleton, switch, and textarea.
+Run `bun ui:list` to see which components are currently installed.
 
 ## Component Structure
 
