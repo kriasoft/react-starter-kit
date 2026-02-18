@@ -65,6 +65,8 @@ Manages pending invitations, defined in `db/schema/invitation.ts`:
 | `role`           | `text`      | Role assigned upon acceptance                            |
 | `status`         | `text`      | `"pending"`, `"accepted"`, `"rejected"`, or `"canceled"` |
 | `expiresAt`      | `timestamp` | Invitation expiration                                    |
+| `acceptedAt`     | `timestamp` | When the invite was accepted                             |
+| `rejectedAt`     | `timestamp` | When the invite was rejected or canceled                 |
 
 A unique constraint on `(organizationId, email)` prevents duplicate invitations to the same person.
 

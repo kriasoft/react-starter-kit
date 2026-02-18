@@ -139,17 +139,23 @@ The `signOut` function clears the server session, updates the cache, and perform
 
 ```ts
 // apps/app/lib/queries/session.ts
-export async function signOut(queryClient: QueryClient) {
+export async function signOut(
+  queryClient: QueryClient,
+  options?: { redirect?: boolean },
+) {
   try {
     await auth.signOut();
   } finally {
     queryClient.setQueryData(sessionQueryKey, null);
-    window.location.href = "/login";
+
+    if (options?.redirect !== false) {
+      window.location.href = "/login";
+    }
   }
 }
 ```
 
-The hard redirect (`window.location.href`) resets all in-memory state – Jotai atoms, component state, TanStack Query cache – ensuring a clean slate between user sessions. `setQueryData(null)` is used instead of `invalidateQueries` to avoid a wasted refetch of a session that no longer exists.
+The hard redirect (`window.location.href`) resets all in-memory state – Jotai atoms, component state, TanStack Query cache – ensuring a clean slate between user sessions. Pass `{ redirect: false }` for programmatic sign-out without navigation. `setQueryData(null)` is used instead of `invalidateQueries` to avoid a wasted refetch of a session that no longer exists.
 
 ## Auth Error Boundary
 
