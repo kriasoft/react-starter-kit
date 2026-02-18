@@ -82,7 +82,7 @@ This starts three services concurrently:
 | ------- | ----------------------- | ------------------------- |
 | App     | `http://localhost:5173` | React SPA with hot reload |
 | API     | `http://localhost:8787` | Hono + tRPC server        |
-| Web     | Astro dev server        | Marketing / landing pages |
+| Web     | `http://localhost:4321` | Astro marketing site      |
 
 You can also start services individually:
 
@@ -103,7 +103,7 @@ bun email:dev   # Email template preview at http://localhost:3001
 ## Make It Yours
 
 1. Update branding in `apps/app/index.html`
-2. Edit the homepage at `apps/app/routes/index.tsx`
+2. Edit the homepage at `apps/app/routes/(app)/index.tsx`
 3. Add API procedures in `apps/api/routers/`
 4. Define data models in `db/schema/`
 

@@ -41,12 +41,13 @@ For local development, Wrangler reads Hyperdrive connection strings from the `CL
 
 ### Application
 
-| Variable      | Required | Description                                     |
-| ------------- | -------- | ----------------------------------------------- |
-| `APP_NAME`    | Yes      | Display name used in emails and passkey prompts |
-| `APP_ORIGIN`  | Yes      | Full origin URL (e.g., `http://localhost:5173`) |
-| `API_ORIGIN`  | Yes      | API server URL (e.g., `http://localhost:8787`)  |
-| `ENVIRONMENT` | Yes      | `development`, `staging`, or `production`       |
+| Variable               | Required | Description                                     |
+| ---------------------- | -------- | ----------------------------------------------- |
+| `APP_NAME`             | Yes      | Display name used in emails and passkey prompts |
+| `APP_ORIGIN`           | Yes      | Full origin URL (e.g., `http://localhost:5173`) |
+| `API_ORIGIN`           | Yes      | API server URL (e.g., `http://localhost:8787`)  |
+| `ENVIRONMENT`          | Yes      | `development`, `staging`, or `production`       |
+| `GOOGLE_CLOUD_PROJECT` | Yes      | Google Cloud project ID (exposed to frontend)   |
 
 ### Database
 
@@ -65,6 +66,12 @@ For local development, Wrangler reads Hyperdrive connection strings from the `CL
 | `GOOGLE_CLIENT_SECRET` | Yes      | Google OAuth client secret                                                            |
 
 See [Authentication](/auth/) for provider setup details.
+
+### AI
+
+| Variable         | Required | Description                                             |
+| ---------------- | -------- | ------------------------------------------------------- |
+| `OPENAI_API_KEY` | Yes      | [OpenAI](https://platform.openai.com/) API key (AI SDK) |
 
 ### Email
 

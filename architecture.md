@@ -87,7 +87,8 @@ worker.use(logger());
 
 // Initialize shared context
 worker.use(async (c, next) => {
-  c.set("db", createDb(c.env.HYPERDRIVE_CACHED));
+  const db = createDb(c.env.HYPERDRIVE_CACHED);
+  c.set("db", db);
   c.set("dbDirect", createDb(c.env.HYPERDRIVE_DIRECT));
   c.set("auth", createAuth(db, c.env));
   await next();
@@ -96,12 +97,13 @@ worker.use(async (c, next) => {
 worker.route("/", app); // Mounts tRPC + auth + health routes
 ```
 
-Endpoints mounted in the core app:
+Primary endpoints:
 
 | Path          | Handler                                                |
 | ------------- | ------------------------------------------------------ |
 | `/api/auth/*` | Better Auth (login, signup, sessions, OAuth callbacks) |
 | `/api/trpc/*` | tRPC procedures (batching enabled)                     |
+| `/api`        | API info (name, version, endpoint list)                |
 | `/health`     | Health check                                           |
 
 ## Service Bindings
@@ -128,10 +130,10 @@ The API worker connects to [Neon PostgreSQL](https://neon.tech) via [Cloudflare 
 
 Two bindings are available:
 
-| Binding             | Cache | Use case                              |
-| ------------------- | ----- | ------------------------------------- |
-| `HYPERDRIVE_CACHED` | 60 s  | Default reads – most queries go here  |
-| `HYPERDRIVE_DIRECT` | None  | Writes and reads that need fresh data |
+| Binding             | Caching  | Use case                              |
+| ------------------- | -------- | ------------------------------------- |
+| `HYPERDRIVE_CACHED` | Enabled  | Default reads – most queries go here  |
+| `HYPERDRIVE_DIRECT` | Disabled | Writes and reads that need fresh data |
 
 Both bindings are initialized in the API worker middleware and available on every request context as `db` and `dbDirect`. See [Database](/database/) for schema and query patterns.
 

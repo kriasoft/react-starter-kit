@@ -843,7 +843,8 @@ worker.use(logger());
 
 // Initialize shared context
 worker.use(async (c, next) => {
-  c.set("db", createDb(c.env.HYPERDRIVE_CACHED));
+  const db = createDb(c.env.HYPERDRIVE_CACHED);
+  c.set("db", db);
   c.set("dbDirect", createDb(c.env.HYPERDRIVE_DIRECT));
   c.set("auth", createAuth(db, c.env));
   await next();
@@ -852,12 +853,13 @@ worker.use(async (c, next) => {
 worker.route("/", app); // Mounts tRPC + auth + health routes
 ```
 
-Endpoints mounted in the core app:
+Primary endpoints:
 
 | Path          | Handler                                                |
 | ------------- | ------------------------------------------------------ |
 | `/api/auth/*` | Better Auth (login, signup, sessions, OAuth callbacks) |
 | `/api/trpc/*` | tRPC procedures (batching enabled)                     |
+| `/api`        | API info (name, version, endpoint list)                |
 | `/health`     | Health check                                           |
 
 ## Service Bindings
@@ -884,10 +886,10 @@ The API worker connects to [Neon PostgreSQL](https://neon.tech) via [Cloudflare 
 
 Two bindings are available:
 
-| Binding             | Cache | Use case                              |
-| ------------------- | ----- | ------------------------------------- |
-| `HYPERDRIVE_CACHED` | 60 s  | Default reads – most queries go here  |
-| `HYPERDRIVE_DIRECT` | None  | Writes and reads that need fresh data |
+| Binding             | Caching  | Use case                              |
+| ------------------- | -------- | ------------------------------------- |
+| `HYPERDRIVE_CACHED` | Enabled  | Default reads – most queries go here  |
+| `HYPERDRIVE_DIRECT` | Disabled | Writes and reads that need fresh data |
 
 Both bindings are initialized in the API worker middleware and available on every request context as `db` and `dbDirect`. See [Database](/database/) for schema and query patterns.
 
@@ -2170,10 +2172,10 @@ Worker naming convention: `<project>-<worker>-<env>`. Production omits the envir
 
 [Cloudflare Hyperdrive](https://developers.cloudflare.com/hyperdrive/) provides connection pooling between Workers and Neon PostgreSQL. The API worker declares two bindings per environment:
 
-| Binding             | Caching        | Purpose                                |
-| ------------------- | -------------- | -------------------------------------- |
-| `HYPERDRIVE_CACHED` | Default (60 s) | Read-heavy queries                     |
-| `HYPERDRIVE_DIRECT` | Disabled       | Writes and consistency-sensitive reads |
+| Binding             | Caching  | Purpose                                |
+| ------------------- | -------- | -------------------------------------- |
+| `HYPERDRIVE_CACHED` | Enabled  | Read-heavy queries                     |
+| `HYPERDRIVE_DIRECT` | Disabled | Writes and consistency-sensitive reads |
 
 ```jsonc
 // apps/api/wrangler.jsonc
@@ -2200,6 +2202,7 @@ export function createDb(db: Hyperdrive) {
     idle_timeout: 20,
     max_lifetime: 60 * 30,
     transform: { undefined: null },
+    onnotice: () => {}, // Suppress PostgreSQL NOTICE messages
   });
   return drizzle(client, { schema, casing: "snake_case" });
 }
@@ -2282,7 +2285,7 @@ infra/
 ├── modules/
 │   ├── cloudflare/    # Worker, Hyperdrive, DNS modules
 │   └── gcp/
-├── envs/              # Per-environment variable files
+├── envs/              # Per-environment Terraform root modules
 └── templates/
 ```
 
@@ -2679,12 +2682,13 @@ For local development, Wrangler reads Hyperdrive connection strings from the `CL
 
 ### Application
 
-| Variable      | Required | Description                                     |
-| ------------- | -------- | ----------------------------------------------- |
-| `APP_NAME`    | Yes      | Display name used in emails and passkey prompts |
-| `APP_ORIGIN`  | Yes      | Full origin URL (e.g., `http://localhost:5173`) |
-| `API_ORIGIN`  | Yes      | API server URL (e.g., `http://localhost:8787`)  |
-| `ENVIRONMENT` | Yes      | `development`, `staging`, or `production`       |
+| Variable               | Required | Description                                     |
+| ---------------------- | -------- | ----------------------------------------------- |
+| `APP_NAME`             | Yes      | Display name used in emails and passkey prompts |
+| `APP_ORIGIN`           | Yes      | Full origin URL (e.g., `http://localhost:5173`) |
+| `API_ORIGIN`           | Yes      | API server URL (e.g., `http://localhost:8787`)  |
+| `ENVIRONMENT`          | Yes      | `development`, `staging`, or `production`       |
+| `GOOGLE_CLOUD_PROJECT` | Yes      | Google Cloud project ID (exposed to frontend)   |
 
 ### Database
 
@@ -2703,6 +2707,12 @@ For local development, Wrangler reads Hyperdrive connection strings from the `CL
 | `GOOGLE_CLIENT_SECRET` | Yes      | Google OAuth client secret                                                            |
 
 See [Authentication](/auth/) for provider setup details.
+
+### AI
+
+| Variable         | Required | Description                                             |
+| ---------------- | -------- | ------------------------------------------------------- |
+| `OPENAI_API_KEY` | Yes      | [OpenAI](https://platform.openai.com/) API key (AI SDK) |
 
 ### Email
 
@@ -4567,7 +4577,7 @@ This starts three services concurrently:
 | ------- | ----------------------- | ------------------------- |
 | App     | `http://localhost:5173` | React SPA with hot reload |
 | API     | `http://localhost:8787` | Hono + tRPC server        |
-| Web     | Astro dev server        | Marketing / landing pages |
+| Web     | `http://localhost:4321` | Astro marketing site      |
 
 You can also start services individually:
 
@@ -4588,7 +4598,7 @@ bun email:dev   # Email template preview at http://localhost:3001
 ## Make It Yours
 
 1. Update branding in `apps/app/index.html`
-2. Edit the homepage at `apps/app/routes/index.tsx`
+2. Edit the homepage at `apps/app/routes/(app)/index.tsx`
 3. Add API procedures in `apps/api/routers/`
 4. Define data models in `db/schema/`
 

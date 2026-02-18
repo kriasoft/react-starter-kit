@@ -1,4 +1,4 @@
-import{_ as a,I as t,o as n,c as h,a6 as i,J as r}from"./chunks/framework.BvqLMprX.js";const y=JSON.parse('{"title":"Architecture Overview","description":"","frontmatter":{},"headers":[],"relativePath":"architecture/index.md","filePath":"architecture/index.md","lastUpdated":1771429567000}'),l={name:"architecture/index.md"};function k(p,s,d,o,c,E){const e=t("Mermaid");return n(),h("div",null,[s[0]||(s[0]=i("",4)),r(e,{code:`sequenceDiagram
+import{_ as a,I as t,o as n,c as h,a6 as i,J as r}from"./chunks/framework.BvqLMprX.js";const y=JSON.parse('{"title":"Architecture Overview","description":"","frontmatter":{},"headers":[],"relativePath":"architecture/index.md","filePath":"architecture/index.md","lastUpdated":1771440753000}'),l={name:"architecture/index.md"};function k(p,s,d,o,c,E){const e=t("Mermaid");return n(),h("div",null,[s[0]||(s[0]=i("",4)),r(e,{code:`sequenceDiagram
     participant Browser
     participant Web as Web Worker
     participant App as App Worker

@@ -59,10 +59,10 @@ Worker naming convention: `<project>-<worker>-<env>`. Production omits the envir
 
 [Cloudflare Hyperdrive](https://developers.cloudflare.com/hyperdrive/) provides connection pooling between Workers and Neon PostgreSQL. The API worker declares two bindings per environment:
 
-| Binding             | Caching        | Purpose                                |
-| ------------------- | -------------- | -------------------------------------- |
-| `HYPERDRIVE_CACHED` | Default (60 s) | Read-heavy queries                     |
-| `HYPERDRIVE_DIRECT` | Disabled       | Writes and consistency-sensitive reads |
+| Binding             | Caching  | Purpose                                |
+| ------------------- | -------- | -------------------------------------- |
+| `HYPERDRIVE_CACHED` | Enabled  | Read-heavy queries                     |
+| `HYPERDRIVE_DIRECT` | Disabled | Writes and consistency-sensitive reads |
 
 ```jsonc
 // apps/api/wrangler.jsonc
@@ -89,6 +89,7 @@ export function createDb(db: Hyperdrive) {
     idle_timeout: 20,
     max_lifetime: 60 * 30,
     transform: { undefined: null },
+    onnotice: () => {}, // Suppress PostgreSQL NOTICE messages
   });
   return drizzle(client, { schema, casing: "snake_case" });
 }
@@ -171,7 +172,7 @@ infra/
 ├── modules/
 │   ├── cloudflare/    # Worker, Hyperdrive, DNS modules
 │   └── gcp/
-├── envs/              # Per-environment variable files
+├── envs/              # Per-environment Terraform root modules
 └── templates/
 ```
 
