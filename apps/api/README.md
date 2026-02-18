@@ -61,11 +61,20 @@ type TRPCContext = {
 
 ### Data Loading Strategy (`lib/loaders.ts`)
 
-We use [DataLoader](https://github.com/graphql/dataloader) to solve the N+1 query problem and provide intelligent caching:
+[DataLoader](https://github.com/graphql/dataloader) solves N+1 queries by batching `.load()` calls into single SQL `WHERE IN` queries. Loaders are defined with `defineLoader` and cached per-request in `ctx.cache`:
 
-- **Batch loading**: Multiple requests for the same resource type get batched
-- **Request-scoped caching**: Prevents duplicate queries within a single request
-- **Type-safe loaders**: Each loader is typed for specific database entities
+```typescript
+export const userById = defineLoader(
+  Symbol("userById"),
+  async (ctx, ids: readonly string[]) => {
+    const users = await ctx.db
+      .select()
+      .from(user)
+      .where(inArray(user.id, [...ids]));
+    return mapByKey(users, "id", ids);
+  },
+);
+```
 
 ## Router Architecture
 
@@ -220,29 +229,12 @@ Sessions are automatically validated and included in the context. The `protected
 
 ### DataLoader Usage
 
-DataLoaders are pre-configured for common queries:
-
 ```typescript
 // Efficient user loading with automatic batching
 const user = await userById(ctx).load(userId);
 
 // Multiple users loaded in a single query
 const users = await userById(ctx).loadMany([id1, id2, id3]);
-```
-
-### Request-Scoped Caching
-
-The context includes a cache Map for storing expensive computations:
-
-```typescript
-const cacheKey = `expensive-calculation-${input.id}`;
-if (ctx.cache.has(cacheKey)) {
-  return ctx.cache.get(cacheKey);
-}
-
-const result = await expensiveOperation(input);
-ctx.cache.set(cacheKey, result);
-return result;
 ```
 
 ## Deployment Architecture
