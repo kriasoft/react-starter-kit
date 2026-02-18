@@ -114,7 +114,7 @@ The OTP plugin returns specific error codes that map to user-friendly messages:
 | ------------------- | ------------------------------------------------------ | ----------------------------- |
 | `TOO_MANY_ATTEMPTS` | "Too many failed attempts. Please request a new code." | Returns to email step         |
 | `OTP_EXPIRED`       | "Code has expired. Please request a new one."          | Returns to email step         |
-| `INVALID_OTP`       | "Invalid verification code"                            | Stays on OTP step (can retry) |
+| `INVALID_OTP`       | Server message or "Invalid verification code" fallback | Stays on OTP step (can retry) |
 
 When `TOO_MANY_ATTEMPTS` or `OTP_EXPIRED` occurs, the form automatically returns to the email step so the user can request a fresh code.
 
@@ -137,8 +137,8 @@ AuthForm
 │   ├── "Continue with email" button
 │   └── PasskeyLogin         WebAuthn (login only)
 ├── EmailInput               Step 2: enter email, send OTP
-└── OtpStep
-    └── OtpVerification      Step 3: enter code, verify
+└── OtpStep                  Step 3: wraps OTP UI with back link (internal to AuthForm)
+    └── OtpVerification      Code entry and verification
 ```
 
 The `AuthForm` accepts a `mode` prop (`"login"` or `"signup"`) that controls copy and available methods. Both modes use the same OTP flow – the difference is cosmetic (headings, ToS display, passkey availability).

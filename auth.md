@@ -11,6 +11,7 @@ Authentication is handled by [Better Auth](https://www.better-auth.com/) – a T
 | Method                             | Description                               |
 | ---------------------------------- | ----------------------------------------- |
 | [Email & OTP](./email-otp)         | Passwordless 6-digit code via email       |
+| Email & Password                   | Traditional email/password with reset     |
 | [Google OAuth](./social-providers) | Social login with redirect flow           |
 | [Passkeys](./passkeys)             | WebAuthn biometric / security key         |
 | Anonymous                          | Guest sessions that can be upgraded later |
@@ -40,8 +41,22 @@ The auth instance is created per-request in `apps/api/lib/auth.ts`:
 export function createAuth(db: DB, env: AuthEnv) {
   return betterAuth({
     baseURL: `${env.APP_ORIGIN}/api/auth`,
+    trustedOrigins: [env.APP_ORIGIN],
     secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, { provider: "pg", schema: { ... } }),
+
+    emailAndPassword: {
+      enabled: true,
+      sendResetPassword: async ({ user, url }) => {
+        await sendPasswordReset(env, { user, url });
+      },
+    },
+
+    emailVerification: {
+      sendVerificationEmail: async ({ user, url }) => {
+        await sendVerificationEmail(env, { user, url });
+      },
+    },
 
     socialProviders: {
       google: {
@@ -52,7 +67,11 @@ export function createAuth(db: DB, env: AuthEnv) {
 
     plugins: [
       anonymous(),
-      organization({ organizationLimit: 5, creatorRole: "owner" }),
+      organization({
+        allowUserToCreateOrganization: true,
+        organizationLimit: 5,
+        creatorRole: "owner",
+      }),
       passkey({ rpID, rpName: env.APP_NAME, origin: env.APP_ORIGIN }),
       emailOTP({ otpLength: 6, expiresIn: 300, allowedAttempts: 3 }),
       ...stripePlugin(db, env),

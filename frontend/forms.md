@@ -51,28 +51,7 @@ function CreateProjectForm() {
 
 ## Zod Schema Sharing
 
-Zod schemas are defined on tRPC procedures and can be shared with the frontend for search param validation or client-side checks. The login route is a practical example:
-
-```tsx
-// apps/app/routes/(auth)/login.tsx
-const searchSchema = z.object({
-  returnTo: z
-    .string()
-    .optional()
-    .transform((val) => {
-      const safe = getSafeRedirectUrl(val);
-      return safe === "/" ? undefined : safe;
-    })
-    .catch(undefined),
-});
-
-export const Route = createFileRoute("/(auth)/login")({
-  validateSearch: searchSchema,
-  // ...
-});
-```
-
-TanStack Router validates and transforms search params at parse time, so the component always receives safe, typed values.
+Zod schemas are defined on tRPC procedures and can be shared with the frontend for search param validation or client-side checks. The login route uses a Zod schema with `validateSearch` to sanitize the `returnTo` param at parse time – see [Routing > Search Params](./routing.md#search-params) for the full example.
 
 ## Auth Form
 

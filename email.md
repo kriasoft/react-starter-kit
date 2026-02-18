@@ -7,7 +7,7 @@ Transactional emails are built with [React Email](https://react.email/) and deli
 
 ## Workspace Structure
 
-```
+```bash
 apps/email/
 ├── components/
 │   └── BaseTemplate.tsx       # Shared header, footer, and styling
@@ -80,7 +80,7 @@ Available sender functions:
 
 In development, `sendOTP()` prints the code to the terminal so you don't need a Resend API key to test auth flows:
 
-```
+```txt
 OTP code for user@example.com: 482901
 ```
 

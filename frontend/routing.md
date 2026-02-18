@@ -22,6 +22,7 @@ apps/app/routes/
     ├── users.tsx           → /users
     ├── analytics.tsx       → /analytics
     ├── reports.tsx         → /reports
+    ├── dashboard.tsx       → /dashboard (redirects to /)
     └── about.tsx           → /about
 ```
 
@@ -200,6 +201,6 @@ function Projects() {
 
 2. The route tree regenerates automatically during `bun app:dev`. The new page is available at `/projects` and protected by the `(app)` layout guard.
 
-3. Add navigation in the sidebar or header as needed.
+3. Add navigation in the sidebar or header as needed. See [State & Data Fetching](./state.md) for loading data in your new route.
 
 For more on TanStack Router, see the [official docs](https://tanstack.com/router/latest/docs/framework/react/overview).
