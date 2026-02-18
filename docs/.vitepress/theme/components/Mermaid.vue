@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
+import { useData } from "vitepress";
 
 const props = defineProps<{ code: string }>();
+const { isDark } = useData();
 const container = ref<HTMLElement | null>(null);
 const svg = ref("");
 
-// Generate mermaid.live URL for fullscreen view
+const theme = computed(() => (isDark.value ? "dark" : "default"));
+
 const liveUrl = computed(() => {
   const state = JSON.stringify({
     code: props.code,
-    mermaid: { theme: "default" },
+    mermaid: { theme: theme.value },
   });
   const bytes = new TextEncoder().encode(state);
   const binary = Array.from(bytes, (b) => String.fromCodePoint(b)).join("");
@@ -22,7 +25,7 @@ async function render() {
   const { default: mermaid } = await import("mermaid");
   mermaid.initialize({
     startOnLoad: false,
-    theme: "default",
+    theme: theme.value,
     securityLevel: "loose",
   });
 
@@ -32,7 +35,7 @@ async function render() {
 }
 
 onMounted(render);
-watch(() => props.code, render);
+watch([() => props.code, theme], render);
 </script>
 
 <template>

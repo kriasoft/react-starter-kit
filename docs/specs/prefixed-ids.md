@@ -2,7 +2,7 @@
 
 All database primary keys use application-generated, prefixed [CUID2](https://github.com/paralleldrive/cuid2) identifiers: `usr_ght4k2jxm7pqbv01`. The prefix encodes entity type, improving debuggability across logs, URLs, and support conversations. Same pattern as Stripe (`cus_`, `sub_`), Clerk (`user_`, `org_`).
 
-IDs are opaque strings — clients must not parse or decode them.
+IDs are opaque strings – clients must not parse or decode them.
 
 ## Format
 
@@ -35,18 +35,18 @@ Defined in `db/schema/id.ts`. Keys are Better Auth model names (not table names)
 ```ts
 import { generateAuthId, generateId } from "@repo/db";
 
-// Auth tables — type-checked against the prefix map
+// Auth tables – type-checked against the prefix map
 generateAuthId("user"); // "usr_ght4k2jxm7pqbv01"
 
-// Non-auth tables — any 3-letter prefix
+// Non-auth tables – any 3-letter prefix
 generateId("upl"); // "upl_m8xk3jvqp2wnba09"
 ```
 
-Throws on unknown auth models or invalid prefixes. The CUID2 generator is lazy-initialized (no module-level side effects — safe for Workers isolates).
+Throws on unknown auth models or invalid prefixes. The CUID2 generator is lazy-initialized (no module-level side effects – safe for Workers isolates).
 
 ## Integration Points
 
-**Better Auth** — `apps/api/lib/auth.ts`:
+**Better Auth** – `apps/api/lib/auth.ts`:
 
 ```ts
 advanced: {
@@ -56,7 +56,7 @@ advanced: {
 },
 ```
 
-**Drizzle schema** — `db/schema/*.ts` use `.$defaultFn()` instead of `gen_random_uuid()`:
+**Drizzle schema** – `db/schema/*.ts` use `.$defaultFn()` instead of `gen_random_uuid()`:
 
 ```ts
 id: text().primaryKey().$defaultFn(() => generateAuthId("user")),

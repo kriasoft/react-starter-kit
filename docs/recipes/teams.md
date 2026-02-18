@@ -130,4 +130,4 @@ bun db:push  # or bun db:migrate
 
 ## Reference
 
-- [Better Auth organization plugin — Teams](https://www.better-auth.com/docs/plugins/organization#teams)
+- [Better Auth organization plugin – Teams](https://www.better-auth.com/docs/plugins/organization#teams)

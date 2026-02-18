@@ -384,10 +384,10 @@ For immediate security improvements:
 
 ### Tools
 
-- [OWASP ZAP](https://www.zaproxy.org/) - Security scanning
-- [Snyk](https://snyk.io/) - Dependency scanning
-- [GitHub Security](https://github.com/security) - Security features
-- [Mozilla Observatory](https://observatory.mozilla.org/) - Security assessment
+- [OWASP ZAP](https://www.zaproxy.org/) – Security scanning
+- [Snyk](https://snyk.io/) – Dependency scanning
+- [GitHub Security](https://github.com/security) – Security features
+- [Mozilla Observatory](https://observatory.mozilla.org/) – Security assessment
 
 ### Documentation
 
