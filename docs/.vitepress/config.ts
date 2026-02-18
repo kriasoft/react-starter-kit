@@ -1,4 +1,5 @@
 import { defineConfig } from "vitepress";
+import llmstxt from "vitepress-plugin-llms";
 
 /**
  * VitePress configuration.
@@ -29,12 +30,34 @@ export default defineConfig({
 
   sitemap: {
     hostname: "https://reactstarter.com",
+    transformItems: (items) => {
+      items.push({ url: "llms.txt" }, { url: "llms-full.txt" });
+      return items;
+    },
   },
 
   head: [
     ["meta", { name: "theme-color", content: "#6366f1" }],
     ["meta", { property: "og:type", content: "website" }],
     ["meta", { property: "og:site_name", content: "React Starter Kit" }],
+    [
+      "link",
+      {
+        rel: "alternate",
+        type: "text/plain",
+        href: "/llms.txt",
+        title: "LLM context",
+      },
+    ],
+    [
+      "link",
+      {
+        rel: "alternate",
+        type: "text/plain",
+        href: "/llms-full.txt",
+        title: "LLM context (full)",
+      },
+    ],
   ],
 
   themeConfig: {
@@ -55,7 +78,8 @@ export default defineConfig({
     },
 
     footer: {
-      message: "Released under the MIT License.",
+      message:
+        'LLM context: <a href="/llms.txt">llms.txt</a> · <a href="/llms-full.txt">llms-full.txt</a><br>Released under the MIT License.',
       copyright: "Copyright © 2014-present Kriasoft",
     },
 
@@ -194,5 +218,9 @@ export default defineConfig({
         link: "https://github.com/kriasoft/react-starter-kit",
       },
     ],
+  },
+
+  vite: {
+    plugins: [llmstxt()],
   },
 });
