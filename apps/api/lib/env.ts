@@ -23,6 +23,11 @@ export const envSchema = z.object({
   STRIPE_STARTER_PRICE_ID: z.string().startsWith("price_").optional(),
   STRIPE_PRO_PRICE_ID: z.string().startsWith("price_").optional(),
   STRIPE_PRO_ANNUAL_PRICE_ID: z.string().startsWith("price_").optional(),
+  // ActiveSoft integration is optional at boot. Runtime code enables only
+  // read-only probes unless a separate write flag is introduced and proven.
+  ACTIVESOFT_API_URL: z.url().optional(),
+  ACTIVESOFT_API_KEY: z.string().min(1).optional(),
+  ACTIVESOFT_USE_BEARER: z.enum(["true", "false"]).default("true"),
 });
 
 /**

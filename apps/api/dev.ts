@@ -73,6 +73,10 @@ function getEnvironment(): Env["ENVIRONMENT"] {
   return value;
 }
 
+function getActiveSoftBearerMode(): Env["ACTIVESOFT_USE_BEARER"] {
+  return process.env.ACTIVESOFT_USE_BEARER === "false" ? "false" : "true";
+}
+
 function getLocalHyperdrive(binding: string, fallbackConnectionString: string) {
   const connectionString =
     process.env[`CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_${binding}`] ||
@@ -140,6 +144,9 @@ function createLocalPlatformProxy(error: unknown): PlatformProxy {
       STRIPE_STARTER_PRICE_ID: process.env.STRIPE_STARTER_PRICE_ID,
       STRIPE_PRO_PRICE_ID: process.env.STRIPE_PRO_PRICE_ID,
       STRIPE_PRO_ANNUAL_PRICE_ID: process.env.STRIPE_PRO_ANNUAL_PRICE_ID,
+      ACTIVESOFT_API_URL: process.env.ACTIVESOFT_API_URL,
+      ACTIVESOFT_API_KEY: process.env.ACTIVESOFT_API_KEY,
+      ACTIVESOFT_USE_BEARER: getActiveSoftBearerMode(),
     },
   };
 }
@@ -195,6 +202,9 @@ app.use(async (c, next) => {
     "STRIPE_STARTER_PRICE_ID",
     "STRIPE_PRO_PRICE_ID",
     "STRIPE_PRO_ANNUAL_PRICE_ID",
+    "ACTIVESOFT_API_URL",
+    "ACTIVESOFT_API_KEY",
+    "ACTIVESOFT_USE_BEARER",
   ] as const;
 
   const env = {
