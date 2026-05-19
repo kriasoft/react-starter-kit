@@ -2,7 +2,7 @@ PRD — CLARA
 Assistente Pedagógica de Rotina Escolar
 
 Versão: 0.1
-Produto: Mônica
+Produto: Clara
 Público inicial: Ensino Fundamental II
 Sistema oficial externo: ActiveSoft/Activesoft
 Status: Draft para validação com direção, coordenação e engenharia
@@ -26,7 +26,7 @@ Como permitir que a professora registre a rotina da aula em poucos segundos, sem
 3. Objetivos
 Objetivo principal
 
-Criar uma assistente chamada Mônica para ajudar professoras a registrar chamada, tarefa e ocorrências de forma rápida, segura, pedagógica e compatível com a ActiveSoft.
+Criar uma assistente chamada Clara para ajudar professoras a registrar chamada, tarefa e ocorrências de forma rápida, segura, pedagógica e compatível com a ActiveSoft.
 
 Objetivos específicos
 Reduzir o tempo de registro da professora.
@@ -91,7 +91,7 @@ Devem receber apenas comunicações pedagógicas revisadas, claras, respeitosas 
 
 6. Premissas
 A ActiveSoft será o sistema oficial de histórico escolar.
-A Mônica será uma camada de captura, normalização e revisão.
+A Clara será uma camada de captura, normalização e revisão.
 Nem todo registro feito pela professora deve virar ocorrência oficial.
 Tarefa não realizada pode ser capturada em lote.
 Ocorrências disciplinares e sensíveis exigem revisão individual.
@@ -101,11 +101,11 @@ A documentação pública confirma API para frequência, mas não encontrei docu
 7. Produto proposto
 Nome
 
-Mônica — Assistente Pedagógica de Rotina Escolar
+Clara — Assistente Pedagógica de Rotina Escolar
 
 Descrição curta
 
-Mônica é uma assistente web/PWA com recursos de IA controlada, criada para ajudar professoras a registrar chamada, tarefa e ocorrências pedagógicas durante a rotina da aula, gerando textos seguros e padronizados para revisão da coordenação e posterior lançamento na ActiveSoft.
+Clara é uma assistente web/PWA com recursos de IA controlada, criada para ajudar professoras a registrar chamada, tarefa e ocorrências pedagógicas durante a rotina da aula, gerando textos seguros e padronizados para revisão da coordenação e posterior lançamento na ActiveSoft.
 
 8. Abordagem recomendada
 Recomendação
@@ -140,7 +140,7 @@ Depois:
 9. Escopo do MVP
 Módulo 1 — Login e perfil
 
-A professora acessa a Mônica com login seguro.
+A professora acessa a Clara com login seguro.
 
 Requisitos:
 
@@ -150,7 +150,7 @@ direção vê relatórios agregados;
 logs de acesso e ação.
 Módulo 2 — Aulas do dia
 
-A Mônica mostra as aulas da professora no dia.
+A Clara mostra as aulas da professora no dia.
 
 Exemplo:
 
@@ -190,7 +190,7 @@ A ActiveSoft já documenta frequência em lote no Portal do Professor, com opç�
 
 Módulo 4 — Tarefa de casa
 
-Depois da chamada, a Mônica pergunta:
+Depois da chamada, a Clara pergunta:
 
 Houve tarefa para hoje?
 
@@ -211,7 +211,7 @@ Selecione os alunos que não apresentaram a tarefa:
 
 [Registrar]
 
-A Mônica cria um evento em lote, mas gera registros individuais.
+A Clara cria um evento em lote, mas gera registros individuais.
 
 Texto individual sugerido:
 
@@ -238,9 +238,9 @@ Registrar algo nesta aula?
 [Registro positivo]
 [Outro]
 
-A professora não deve ver a lista completa A1, A2, B1, B2, C1 etc. Esses códigos ficam no motor interno da Mônica.
+A professora não deve ver a lista completa A1, A2, B1, B2, C1 etc. Esses códigos ficam no motor interno da Clara.
 
-A ActiveSoft permite criar tipos de ocorrência com categoria Pedagógica, Disciplinar, Financeira ou Psicológica, além de configurar se o tipo fica disponível no Portal do Professor e para quais perfis. Isso permite alinhar os tipos oficiais da ActiveSoft com a tipologia interna da Mônica.
+A ActiveSoft permite criar tipos de ocorrência com categoria Pedagógica, Disciplinar, Financeira ou Psicológica, além de configurar se o tipo fica disponível no Portal do Professor e para quais perfis. Isso permite alinhar os tipos oficiais da ActiveSoft com a tipologia interna da Clara.
 
 Módulo 6 — Texto pedagógico automático
 
@@ -248,11 +248,11 @@ A professora pode escrever rápido:
 
 Aluno xingou colega durante a atividade.
 
-A Mônica sugere:
+A Clara sugere:
 
 Durante a atividade em sala, o estudante utilizou linguagem inadequada dirigida a um colega. A professora realizou intervenção imediata e orientou o estudante quanto às regras de convivência e respeito no ambiente escolar. O caso foi encaminhado à coordenação para acompanhamento pedagógico.
 
-A Mônica deve manter os fatos, mas melhorar a linguagem.
+A Clara deve manter os fatos, mas melhorar a linguagem.
 
 Ela não pode inventar:
 
@@ -267,7 +267,7 @@ Módulo 7 — Fila de revisão da coordenação
 Todo registro terá status:
 
 Rascunho da professora
-Texto sugerido pela Mônica
+Texto sugerido pela Clara
 Aguardando revisão
 Aprovado para ActiveSoft
 Lançado na ActiveSoft
@@ -281,16 +281,16 @@ Revisão obrigatória da coordenação
 Módulo 8 — Integração ActiveSoft
 MVP
 
-No MVP, a Mônica gera texto aprovado para copiar/lançar na ActiveSoft.
+No MVP, a Clara gera texto aprovado para copiar/lançar na ActiveSoft.
 
 Fluxo:
 
-Mônica → texto aprovado → coordenação lança na ActiveSoft
+Clara → texto aprovado → coordenação lança na ActiveSoft
 Futuro
 
 Se a ActiveSoft confirmar API/importação de ocorrências:
 
-Mônica → payload aprovado → ActiveSoft API/importação
+Clara → payload aprovado → ActiveSoft API/importação
 
 A integração automática só pode enviar:
 
@@ -301,11 +301,11 @@ tipo de ocorrência;
 observação pedagógica aprovada;
 “Exibir na internet”: não, por padrão;
 usuário aprovador;
-origem: Mônica.
+origem: Clara.
 10. Regras de envio para ActiveSoft
 Nunca enviar
 
-A Mônica nunca deve enviar automaticamente para ActiveSoft:
+A Clara nunca deve enviar automaticamente para ActiveSoft:
 
 texto bruto da professora;
 áudio original;
@@ -392,7 +392,7 @@ necessita acompanhamento da rotina de estudos
 foi encaminhado à coordenação para orientação pedagógica
 14. Segurança, LGPD e proteção de menores
 
-A Mônica lidará com dados de crianças/adolescentes. Pela LGPD, o tratamento de dados pessoais de crianças e adolescentes deve observar o melhor interesse do menor; a ANPD também vem tratando o tema como pauta regulatória específica.
+A Clara lidará com dados de crianças/adolescentes. Pela LGPD, o tratamento de dados pessoais de crianças e adolescentes deve observar o melhor interesse do menor; a ANPD também vem tratando o tema como pauta regulatória específica.
 
 O ECA protege o direito ao respeito, incluindo integridade física, psíquica e moral, imagem, identidade, autonomia, valores, ideias, crenças e espaços pessoais da criança e do adolescente.
 
@@ -468,11 +468,11 @@ sent_to_activesoft_at
 Fluxo 1 — Chamada
 Professora inicia aula
 ↓
-Mônica puxa lista de alunos
+Clara puxa lista de alunos
 ↓
 Professora marca ausentes ou “todos presentes”
 ↓
-Mônica salva chamada
+Clara salva chamada
 ↓
 Se houver API confirmada, sincroniza frequência
 ↓
@@ -482,9 +482,9 @@ Professora escolhe “Alguns não fizeram”
 ↓
 Seleciona alunos
 ↓
-Mônica cria evento em lote
+Clara cria evento em lote
 ↓
-Mônica gera registros individuais
+Clara gera registros individuais
 ↓
 Texto não cita outros alunos
 ↓
@@ -494,11 +494,11 @@ Registro aprovado pode ser lançado na ActiveSoft
 Fluxo 3 — Ocorrência disciplinar individual
 Professora registra por botão, texto ou áudio
 ↓
-Mônica transcreve/estrutura
+Clara transcreve/estrutura
 ↓
-Mônica sugere tipo, eixo e gravidade
+Clara sugere tipo, eixo e gravidade
 ↓
-Mônica gera texto pedagógico
+Clara gera texto pedagógico
 ↓
 Caso vai para revisão obrigatória
 ↓
@@ -520,7 +520,7 @@ Nenhum registro individual cita nome de outro aluno.
 Texto gerado usa linguagem pedagógica.
 Ocorrência individual
 Professora consegue registrar ocorrência por texto curto.
-Mônica gera sugestão de texto limpo.
+Clara gera sugestão de texto limpo.
 Caso sensível exige aprovação da coordenação.
 Texto bruto não é enviado para ActiveSoft.
 “Exibir na internet” fica desativado por padrão.
@@ -569,7 +569,7 @@ alerta de caso sensível;
 checagem de nomes de outros alunos.
 Fase 3 — Voz dentro da PWA
 professora dita;
-Mônica transcreve;
+Clara transcreve;
 professora confirma;
 coordenação revisa.
 Fase 4 — WhatsApp opcional
@@ -592,11 +592,11 @@ Quem na coordenação pode aprovar registros?
 Em quais casos a família deve ver a ocorrência no portal?
 Qual será o prazo de retenção de áudio/transcrição?
 A escola quer piloto com quais turmas?
-A Mônica será usada no celular, tablet, computador ou todos?
+A Clara será usada no celular, tablet, computador ou todos?
 A escola quer WhatsApp apenas depois do MVP web?
 22. Recomendação final
 
-A Mônica deve ser construída como:
+A Clara deve ser construída como:
 
 Modo Aula + Checklist rápido + IA controlada + Revisão da coordenação + ActiveSoft como sistema oficial
 

@@ -23,21 +23,21 @@ Service bindings are **non-inheritable** in Wrangler – the top-level declarati
 {
   // Production (top-level)
   "services": [
-    { "binding": "APP_SERVICE", "service": "example-app" },
-    { "binding": "API_SERVICE", "service": "example-api" },
+    { "binding": "APP_SERVICE", "service": "clara-app" },
+    { "binding": "API_SERVICE", "service": "clara-api" },
   ],
 
   "env": {
     "staging": {
       "services": [
-        { "binding": "APP_SERVICE", "service": "example-app-staging" },
-        { "binding": "API_SERVICE", "service": "example-api-staging" },
+        { "binding": "APP_SERVICE", "service": "clara-app-staging" },
+        { "binding": "API_SERVICE", "service": "clara-api-staging" },
       ],
     },
     "preview": {
       "services": [
-        { "binding": "APP_SERVICE", "service": "example-app-preview" },
-        { "binding": "API_SERVICE", "service": "example-api-preview" },
+        { "binding": "APP_SERVICE", "service": "clara-app-preview" },
+        { "binding": "API_SERVICE", "service": "clara-api-preview" },
       ],
     },
   },
@@ -46,11 +46,11 @@ Service bindings are **non-inheritable** in Wrangler – the top-level declarati
 
 Worker naming convention: `<project>-<worker>-<env>`. Production omits the environment suffix.
 
-| Environment | Web                   | App                   | API                   |
-| ----------- | --------------------- | --------------------- | --------------------- |
-| Production  | `example-web`         | `example-app`         | `example-api`         |
-| Staging     | `example-web-staging` | `example-app-staging` | `example-api-staging` |
-| Preview     | `example-web-preview` | `example-app-preview` | `example-api-preview` |
+| Environment | Web                 | App                 | API                 |
+| ----------- | ------------------- | ------------------- | ------------------- |
+| Production  | `clara-web`         | `clara-app`         | `clara-api`         |
+| Staging     | `clara-web-staging` | `clara-app-staging` | `clara-api-staging` |
+| Preview     | `clara-web-preview` | `clara-app-preview` | `clara-api-preview` |
 
 ## Hyperdrive
 
@@ -193,15 +193,21 @@ The `worker_suffix` local resolves to `""` for production and `"-${var.environme
 
 ## Local Development
 
-`bun dev` starts all three workers concurrently with Wrangler's dev mode:
+`bun dev` starts the local development servers concurrently:
 
-| Worker | Port   | Notes                                   |
-| ------ | ------ | --------------------------------------- |
-| web    | `5173` | Entry point – open this in your browser |
-| app    | `5174` | Accessed via service binding from web   |
-| api    | `5175` | Accessed via service binding from web   |
+| Process | Port   | Notes                        |
+| ------- | ------ | ---------------------------- |
+| web     | `4321` | Astro marketing site         |
+| app     | `5173` | React SPA and Vite API proxy |
+| api     | `8787` | Hono API server by default   |
 
-In development, Wrangler simulates service bindings locally – requests between workers happen in-process rather than over the network. The `dev` environment in each `wrangler.jsonc` provides development-specific variables (`APP_ORIGIN: http://localhost:5173`, etc.).
+In local development, the app server proxies `/api/*` to `API_ORIGIN`. If another process is already using `8787`, start with an alternate API port and override the proxy target:
+
+```bash
+PORT=8788 API_ORIGIN=http://localhost:8788 bun dev
+```
+
+On hosts where the local Cloudflare `workerd` binary cannot run, `apps/api/dev.ts` falls back to direct local Hyperdrive connection strings from the environment. That fallback is for local development only and does not emulate every Cloudflare runtime behavior.
 
 ::: tip
 Email templates must be built before starting the API dev server. The `bun dev` script handles this automatically by running `bun email:build` first.

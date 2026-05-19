@@ -1,6 +1,6 @@
 # Architecture Overview
 
-React Starter Kit runs on three Cloudflare Workers connected by [service bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/). A single domain receives all traffic – the **web** worker routes each request to the right destination without any cross-worker public URLs.
+Clara runs on three Cloudflare Workers connected by [service bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/). A single production domain will receive all traffic after the real Clara domain is selected; the **web** worker routes each request to the right destination without any public cross-worker URLs.
 
 ## Request Flow
 
@@ -42,7 +42,7 @@ sequenceDiagram
 
 ### Web Worker
 
-The web worker is the only worker with a public route (`example.com/*`). It decides where each request goes:
+The web worker is the only worker with a public route. It decides where each request goes:
 
 - `/api/*` – forwarded to the API worker
 - `/login`, `/signup`, `/settings`, `/analytics`, `/reports`, `/_app/*` – forwarded to the app worker
@@ -110,8 +110,8 @@ Service bindings let workers call each other directly over Cloudflare's internal
 ```jsonc
 // apps/web/wrangler.jsonc
 "services": [
-  { "binding": "APP_SERVICE", "service": "example-app" },
-  { "binding": "API_SERVICE", "service": "example-api" }
+  { "binding": "APP_SERVICE", "service": "clara-app" },
+  { "binding": "API_SERVICE", "service": "clara-api" }
 ]
 ```
 
@@ -119,7 +119,7 @@ Service bindings let workers call each other directly over Cloudflare's internal
 Service bindings are **non-inheritable** in Wrangler – they must be declared in every environment block. Forgetting this causes staging/preview workers to bind to production services.
 :::
 
-Naming convention: `<project>-<worker>-<env>` (e.g. `example-api-staging`). See [Edge > Service Bindings](./edge#service-bindings) for the full per-environment config.
+Naming convention: `<project>-<worker>-<env>` (e.g. `clara-api-staging`). See [Edge > Service Bindings](./edge#service-bindings) for the full per-environment config.
 
 ## Database Connection
 
@@ -150,14 +150,14 @@ See [ADR-001](/adr/001-auth-hint-cookie) for the full decision record and [Sessi
 
 ## Environments
 
-| Environment | Workers         | Domain                | Database       | Deploy command                  |
-| ----------- | --------------- | --------------------- | -------------- | ------------------------------- |
-| Development | `wrangler dev`  | `localhost:5173`      | Dev branch     | `bun dev`                       |
-| Preview     | `*-preview`     | `preview.example.com` | Preview branch | `wrangler deploy --env preview` |
-| Staging     | `*-staging`     | `staging.example.com` | Staging branch | `wrangler deploy --env staging` |
-| Production  | `*` (no suffix) | `example.com`         | Main branch    | `wrangler deploy`               |
+| Environment | Workers         | Domain                  | Database       | Deploy command                  |
+| ----------- | --------------- | ----------------------- | -------------- | ------------------------------- |
+| Development | local dev       | `localhost:5173/4321`   | Dev branch     | `bun dev`                       |
+| Preview     | `*-preview`     | Clara preview domain    | Preview branch | `wrangler deploy --env preview` |
+| Staging     | `*-staging`     | Clara staging domain    | Staging branch | `wrangler deploy --env staging` |
+| Production  | `*` (no suffix) | Clara production domain | Main branch    | `wrangler deploy`               |
 
-Each environment has its own Hyperdrive bindings, service binding targets, and `APP_ORIGIN` / `ALLOWED_ORIGINS` variables. See [Edge > Service Bindings](./edge#service-bindings) for the full wrangler config.
+Each environment has its own Hyperdrive bindings, service binding targets, and `APP_ORIGIN` / `ALLOWED_ORIGINS` variables. The checked-in `example.com` values are placeholders until the Clara domains are selected. See [Edge > Service Bindings](./edge#service-bindings) for the full wrangler config.
 
 ## Build Order
 
