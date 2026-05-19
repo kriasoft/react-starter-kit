@@ -11,5 +11,9 @@
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["**/dist/**/*", "**/node_modules/**/*"],
-  "references": [{ "path": "../../packages/core" }, { "path": "../../db" }]
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../db" },
+    { "path": "../email" }
+  ]
 }

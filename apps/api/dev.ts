@@ -29,6 +29,139 @@ type CloudflareEnv = {
   HYPERDRIVE_DIRECT: Hyperdrive;
 } & Env;
 
+type PlatformProxy = {
+  env: CloudflareEnv;
+};
+
+type ProcessReport = {
+  header?: {
+    glibcVersionRuntime?: string;
+  };
+};
+
+const WORKERD_MIN_GLIBC_VERSION = "2.35";
+
+const requiredLocalEnvKeys = [
+  "APP_ORIGIN",
+  "DATABASE_URL",
+  "BETTER_AUTH_SECRET",
+  "GOOGLE_CLIENT_ID",
+  "GOOGLE_CLIENT_SECRET",
+  "OPENAI_API_KEY",
+  "RESEND_API_KEY",
+  "RESEND_EMAIL_FROM",
+] as const;
+
+function getRequiredProcessEnv(key: string) {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required local environment variable: ${key}`);
+  }
+  return value;
+}
+
+function getEnvironment(): Env["ENVIRONMENT"] {
+  const value = process.env.ENVIRONMENT ?? "development";
+  if (
+    value !== "production" &&
+    value !== "staging" &&
+    value !== "preview" &&
+    value !== "development"
+  ) {
+    throw new Error(`Invalid ENVIRONMENT value: ${value}`);
+  }
+  return value;
+}
+
+function getLocalHyperdrive(binding: string, fallbackConnectionString: string) {
+  const connectionString =
+    process.env[`CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_${binding}`] ||
+    fallbackConnectionString;
+
+  return { connectionString } as Hyperdrive;
+}
+
+function compareVersions(left: string, right: string) {
+  const leftParts = left.split(".").map(Number);
+  const rightParts = right.split(".").map(Number);
+  const length = Math.max(leftParts.length, rightParts.length);
+
+  for (let index = 0; index < length; index += 1) {
+    const leftPart = leftParts[index] ?? 0;
+    const rightPart = rightParts[index] ?? 0;
+
+    if (leftPart > rightPart) return 1;
+    if (leftPart < rightPart) return -1;
+  }
+
+  return 0;
+}
+
+function getUnsupportedGlibcError() {
+  const report = process.report?.getReport?.() as ProcessReport | undefined;
+  const glibcVersion = report?.header?.glibcVersionRuntime;
+
+  if (
+    glibcVersion &&
+    compareVersions(glibcVersion, WORKERD_MIN_GLIBC_VERSION) < 0
+  ) {
+    return new Error(
+      `local glibc ${glibcVersion} is older than workerd requirement ${WORKERD_MIN_GLIBC_VERSION}`,
+    );
+  }
+
+  return null;
+}
+
+function createLocalPlatformProxy(error: unknown): PlatformProxy {
+  const databaseUrl = getRequiredProcessEnv("DATABASE_URL");
+  const requiredEnv = Object.fromEntries(
+    requiredLocalEnvKeys.map((key) => [key, getRequiredProcessEnv(key)]),
+  ) as Pick<Env, (typeof requiredLocalEnvKeys)[number]>;
+
+  const reason = error instanceof Error ? error.message : String(error);
+  console.warn(
+    [
+      "Wrangler platform proxy is unavailable; using direct local Hyperdrive connection strings.",
+      `Reason: ${reason}`,
+      "Cloudflare-only runtime behavior is not emulated in this fallback.",
+    ].join("\n"),
+  );
+
+  return {
+    env: {
+      ...requiredEnv,
+      ENVIRONMENT: getEnvironment(),
+      APP_NAME: process.env.APP_NAME || "Clara",
+      HYPERDRIVE_CACHED: getLocalHyperdrive("HYPERDRIVE_CACHED", databaseUrl),
+      HYPERDRIVE_DIRECT: getLocalHyperdrive("HYPERDRIVE_DIRECT", databaseUrl),
+      STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+      STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+      STRIPE_STARTER_PRICE_ID: process.env.STRIPE_STARTER_PRICE_ID,
+      STRIPE_PRO_PRICE_ID: process.env.STRIPE_PRO_PRICE_ID,
+      STRIPE_PRO_ANNUAL_PRICE_ID: process.env.STRIPE_PRO_ANNUAL_PRICE_ID,
+    },
+  };
+}
+
+async function createPlatformProxy(): Promise<PlatformProxy> {
+  const unsupportedGlibcError = getUnsupportedGlibcError();
+  if (unsupportedGlibcError) {
+    return createLocalPlatformProxy(unsupportedGlibcError);
+  }
+
+  try {
+    // persist:true maintains state across restarts in .wrangler directory
+    return await getPlatformProxy<CloudflareEnv>({
+      configPath: "./wrangler.jsonc",
+      environment: args.env ?? "dev",
+      persist: true,
+    });
+  } catch (error) {
+    return createLocalPlatformProxy(error);
+  }
+}
+
 const app = new Hono<AppContext>();
 
 // Error and 404 handlers (must be on top-level app)
@@ -40,12 +173,7 @@ app.use(secureHeaders());
 app.use(requestId());
 app.use(logger());
 
-// persist:true maintains state across restarts in .wrangler directory
-const cf = await getPlatformProxy<CloudflareEnv>({
-  configPath: "./wrangler.jsonc",
-  environment: args.env ?? "dev",
-  persist: true,
-});
+const cf = await createPlatformProxy();
 
 // Inject context with two database connections:
 // - db: Hyperdrive caching for read-heavy queries
@@ -74,7 +202,7 @@ app.use(async (c, next) => {
     ...Object.fromEntries(
       secretKeys.map((key) => [key, process.env[key] || cf.env[key]]),
     ),
-    APP_NAME: process.env.APP_NAME || cf.env.APP_NAME || "Example",
+    APP_NAME: process.env.APP_NAME || cf.env.APP_NAME || "Clara",
     APP_ORIGIN:
       c.req.header("x-forwarded-origin") ||
       process.env.APP_ORIGIN ||

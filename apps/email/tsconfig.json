@@ -7,11 +7,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true,
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "outDir": "dist",
     "rootDir": ".",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "tsBuildInfoFile": "../../.cache/tsconfig/email.tsbuildinfo"
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["dist", "node_modules", ".email"]
