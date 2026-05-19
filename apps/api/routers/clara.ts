@@ -15,7 +15,7 @@ import {
   member,
 } from "@repo/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import {
   getActiveSoftProbeSummary,
@@ -25,6 +25,12 @@ import {
   buildMissingHomeworkEventDraft,
   CLARA_REVIEW_STATUS,
 } from "../lib/clara-records.js";
+import {
+  getDuplicateStudentIds,
+  getMissingEnrolledStudentIds,
+  selectEnrolledStudentsById,
+  type ClaraEnrolledStudent,
+} from "../lib/clara-students.js";
 import { protectedProcedure, router } from "../lib/trpc.js";
 import type { TRPCContext } from "../lib/context.js";
 
@@ -173,7 +179,19 @@ export const claraRouter = router({
       )
       .mutation(async ({ ctx, input }) => {
         const access = await requireClaraAccess(ctx);
-        await requireLessonAccess(ctx, access, input.lessonSessionId);
+        const lesson = await requireLessonAccess(
+          ctx,
+          access,
+          input.lessonSessionId,
+        );
+        const enrolledStudents = await listStudentsForClass(
+          ctx,
+          lesson.classId,
+        );
+        requireEnrolledUniqueStudents(
+          input.records.map((record) => record.studentId),
+          enrolledStudents,
+        );
 
         await ctx.dbDirect.transaction(async (tx) => {
           for (const record of input.records) {
@@ -220,20 +238,17 @@ export const claraRouter = router({
           access,
           input.lessonSessionId,
         );
-        const students = await ctx.db
-          .select({
-            id: claraStudent.id,
-            displayName: claraStudent.displayName,
-          })
-          .from(claraStudent)
-          .where(inArray(claraStudent.id, input.studentIds));
+        const enrolledStudents = await listStudentsForClass(
+          ctx,
+          lesson.classId,
+        );
 
-        if (students.length !== input.studentIds.length) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "One or more selected students were not found",
-          });
-        }
+        requireEnrolledUniqueStudents(input.studentIds, enrolledStudents);
+
+        const students = selectEnrolledStudentsById(
+          input.studentIds,
+          enrolledStudents,
+        );
 
         const draft = buildMissingHomeworkEventDraft({
           schoolId: access.schoolId,
@@ -576,6 +591,32 @@ function requireCoordinator(access: ClaraAccess) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Coordination access required",
+    });
+  }
+}
+
+function requireEnrolledUniqueStudents(
+  requestedStudentIds: string[],
+  enrolledStudents: ClaraEnrolledStudent[],
+) {
+  const duplicateStudentIds = getDuplicateStudentIds(requestedStudentIds);
+
+  if (duplicateStudentIds.length > 0) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Student IDs must be unique for a lesson action",
+    });
+  }
+
+  const missingStudentIds = getMissingEnrolledStudentIds(
+    requestedStudentIds,
+    enrolledStudents,
+  );
+
+  if (missingStudentIds.length > 0) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Selected students must be enrolled in this class",
     });
   }
 }
