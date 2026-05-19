@@ -8,8 +8,8 @@ export interface Props {
 }
 
 const { 
-  title = 'React Starter Kit - Modern Full-Stack Web Application', 
-  description = 'Modern full-stack web application template optimized for serverless deployment to CDN edge locations. Built with React, TypeScript, and the latest web technologies.',
+  title = 'Clara - Assistente Pedagógica de Rotina Escolar', 
+  description = 'Clara helps schools capture attendance, homework follow-up, and pedagogical records with coordination review before ActiveSoft launch.',
   image = '/og-image.png'
 } = Astro.props;
 ---
@@ -48,21 +48,15 @@ const {
           <div class="flex h-16 items-center justify-between">
             <div class="flex items-center space-x-4">
               <a href="/" class="text-xl font-bold text-primary">
-                React Starter Kit
+                Clara
               </a>
             </div>
             <nav class="hidden md:flex items-center space-x-6">
               <a href="/" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Home
               </a>
-              <a href="/features" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Features
-              </a>
-              <a href="/pricing" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Pricing
-              </a>
-              <a href="/about" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                About
+              <a href="/login" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Open Clara
               </a>
             </nav>
             <div class="flex items-center space-x-2">
@@ -75,7 +69,7 @@ const {
                 GitHub
               </a>
               <a 
-                href="https://github.com/kriasoft/react-starter-kit"
+                href="/login"
                 class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-8 px-3"
               >
                 Get Started
@@ -95,10 +89,10 @@ const {
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="space-y-3">
-              <h3 class="font-semibold">React Starter Kit</h3>
+              <h3 class="font-semibold">Clara</h3>
               <p class="text-sm text-muted-foreground">
-                Modern full-stack web application template optimized for
-                serverless deployment.
+                Assistente pedagógica para rotina escolar, revisão da
+                coordenação e lançamento assistido no ActiveSoft.
               </p>
             </div>
             <div class="space-y-3">
@@ -106,17 +100,12 @@ const {
               <ul class="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="https://github.com/kriasoft/react-starter-kit#readme" class="hover:text-foreground transition-colors">
-                    Documentation
+                    Foundation docs
                   </a>
                 </li>
                 <li>
-                  <a href="/features" class="hover:text-foreground transition-colors">
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href="/pricing" class="hover:text-foreground transition-colors">
-                    Pricing
+                  <a href="/login" class="hover:text-foreground transition-colors">
+                    Open Clara
                   </a>
                 </li>
               </ul>

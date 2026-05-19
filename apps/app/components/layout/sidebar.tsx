@@ -15,7 +15,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
     >
       <div className="h-full flex flex-col">
         <div className="h-14 flex items-center px-4 border-b">
-          <h2 className="font-semibold text-lg">Console</h2>
+          <h2 className="font-semibold text-lg">Clara</h2>
         </div>
         <SidebarNav items={sidebarItems} />
         <UserMenu />

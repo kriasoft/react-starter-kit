@@ -3,7 +3,7 @@
 
   // [METADATA]
   // API worker accessed via service binding from web worker (no routes needed).
-  "name": "example-api",
+  "name": "clara-api",
   "main": "./worker.ts",
   "compatibility_date": "2025-08-15",
   "compatibility_flags": ["nodejs_compat"],
@@ -14,7 +14,7 @@
   // Command: bun wrangler deploy
   "vars": {
     "ENVIRONMENT": "production",
-    "APP_NAME": "Example",
+    "APP_NAME": "Clara",
     "APP_ORIGIN": "https://example.com",
     "ALLOWED_ORIGINS": "https://example.com",
     "RESEND_EMAIL_FROM": "onboarding@resend.dev"
@@ -32,7 +32,7 @@
     "dev": {
       "vars": {
         "ENVIRONMENT": "development",
-        "APP_NAME": "Example",
+        "APP_NAME": "Clara",
         "APP_ORIGIN": "http://localhost:5173",
         "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173",
         "RESEND_EMAIL_FROM": "onboarding@resend.dev"
@@ -50,7 +50,7 @@
     "staging": {
       "vars": {
         "ENVIRONMENT": "staging",
-        "APP_NAME": "Example",
+        "APP_NAME": "Clara",
         "APP_ORIGIN": "https://staging.example.com",
         "ALLOWED_ORIGINS": "https://staging.example.com",
         "RESEND_EMAIL_FROM": "onboarding@resend.dev"
@@ -68,7 +68,7 @@
     "preview": {
       "vars": {
         "ENVIRONMENT": "preview",
-        "APP_NAME": "Example",
+        "APP_NAME": "Clara",
         "APP_ORIGIN": "https://preview.example.com",
         "ALLOWED_ORIGINS": "https://preview.example.com",
         "RESEND_EMAIL_FROM": "onboarding@resend.dev"

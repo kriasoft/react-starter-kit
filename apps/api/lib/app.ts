@@ -27,7 +27,7 @@ app.get("/", (c) => c.redirect("/api"));
 // Root endpoint with API information
 app.get("/api", (c) => {
   return c.json({
-    name: "@repo/api",
+    name: "Clara API",
     version: "0.0.0",
     endpoints: {
       trpc: "/api/trpc",

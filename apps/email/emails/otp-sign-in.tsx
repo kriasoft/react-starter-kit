@@ -5,7 +5,7 @@ export default function OTPSignInPreview() {
     <OTPEmail
       otp="123456"
       type="sign-in"
-      appName="React Starter Kit"
+      appName="Clara"
       appUrl="https://example.com"
     />
   );

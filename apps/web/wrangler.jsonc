@@ -3,7 +3,7 @@
 
   // [METADATA]
   // Edge router that receives all traffic and routes to api/app via service bindings.
-  "name": "example-web",
+  "name": "clara-web",
   "main": "./worker.ts",
   "compatibility_date": "2025-08-15",
   "compatibility_flags": [],
@@ -22,10 +22,10 @@
   // [SERVICE BINDINGS]
   // Connect to other workers for dynamic routing.
   // NOTE: services is non-inheritable — must be specified per environment.
-  // Use naming convention: <worker>-<env> (e.g., example-app-staging)
+  // Use naming convention: <worker>-<env> (e.g., clara-app-staging)
   "services": [
-    { "binding": "APP_SERVICE", "service": "example-app" },
-    { "binding": "API_SERVICE", "service": "example-api" }
+    { "binding": "APP_SERVICE", "service": "clara-app" },
+    { "binding": "API_SERVICE", "service": "clara-api" }
   ],
 
   // [ENV:PRODUCTION]
@@ -51,8 +51,8 @@
     // Command: bun wrangler deploy --env staging
     "staging": {
       "services": [
-        { "binding": "APP_SERVICE", "service": "example-app-staging" },
-        { "binding": "API_SERVICE", "service": "example-api-staging" }
+        { "binding": "APP_SERVICE", "service": "clara-app-staging" },
+        { "binding": "API_SERVICE", "service": "clara-api-staging" }
       ],
       "vars": {
         "ENVIRONMENT": "staging"
@@ -67,8 +67,8 @@
     // Command: bun wrangler deploy --env preview
     "preview": {
       "services": [
-        { "binding": "APP_SERVICE", "service": "example-app-preview" },
-        { "binding": "API_SERVICE", "service": "example-api-preview" }
+        { "binding": "APP_SERVICE", "service": "clara-app-preview" },
+        { "binding": "API_SERVICE", "service": "clara-api-preview" }
       ],
       "vars": {
         "ENVIRONMENT": "preview"

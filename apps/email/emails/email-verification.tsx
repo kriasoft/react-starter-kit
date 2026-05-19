@@ -5,7 +5,7 @@ export default function EmailVerificationPreview() {
     <EmailVerification
       userName="John Doe"
       verificationUrl="https://example.com/verify?token=abc123"
-      appName="React Starter Kit"
+      appName="Clara"
       appUrl="https://example.com"
     />
   );

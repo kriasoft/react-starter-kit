@@ -5,7 +5,7 @@ export default function PasswordResetPreview() {
     <PasswordReset
       userName="John Doe"
       resetUrl="https://example.com/reset?token=xyz789"
-      appName="React Starter Kit"
+      appName="Clara"
       appUrl="https://example.com"
     />
   );
