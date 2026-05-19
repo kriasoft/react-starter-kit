@@ -1,5 +1,5 @@
 {
-  "id": "371008ed-af76-4e33-a21e-d8dc7b9dfdd8",
+  "id": "aeee3d59-a616-497a-81f8-468f0bcd7b7b",
   "prevId": "2f162304-a16e-4ba9-bf5b-dac3c1e4f6c0",
   "version": "7",
   "dialect": "postgresql",
@@ -198,7 +198,7 @@
           "name": "launched_by_user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "launched_at": {
           "name": "launched_at",
@@ -314,6 +314,15 @@
           "tableTo": "user",
           "columnsFrom": ["launched_by_user_id"],
           "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "clara_activesoft_launch_record_school_fk": {
+          "name": "clara_activesoft_launch_record_school_fk",
+          "tableFrom": "clara_activesoft_launch_log",
+          "tableTo": "clara_individual_student_record",
+          "columnsFrom": ["individual_record_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -587,6 +596,24 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "clara_attendance_record_lesson_school_fk": {
+          "name": "clara_attendance_record_lesson_school_fk",
+          "tableFrom": "clara_attendance_record",
+          "tableTo": "clara_lesson_session",
+          "columnsFrom": ["lesson_session_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_attendance_record_student_school_fk": {
+          "name": "clara_attendance_record_student_school_fk",
+          "tableFrom": "clara_attendance_record",
+          "tableTo": "clara_student",
+          "columnsFrom": ["student_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -712,10 +739,24 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "clara_class_term_school_fk": {
+          "name": "clara_class_term_school_fk",
+          "tableFrom": "clara_class",
+          "tableTo": "clara_term",
+          "columnsFrom": ["term_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "clara_class_id_school_unique": {
+          "name": "clara_class_id_school_unique",
+          "nullsNotDistinct": false,
+          "columns": ["id", "school_id"]
+        },
         "clara_class_school_term_name_unique": {
           "name": "clara_class_school_term_name_unique",
           "nullsNotDistinct": false,
@@ -850,6 +891,24 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "clara_enrollment_class_school_fk": {
+          "name": "clara_enrollment_class_school_fk",
+          "tableFrom": "clara_enrollment",
+          "tableTo": "clara_class",
+          "columnsFrom": ["class_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_enrollment_student_school_fk": {
+          "name": "clara_enrollment_student_school_fk",
+          "tableFrom": "clara_enrollment",
+          "tableTo": "clara_student",
+          "columnsFrom": ["student_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -872,6 +931,12 @@
           "name": "id",
           "type": "text",
           "primaryKey": true,
+          "notNull": true
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true
         },
         "event_id": {
@@ -915,6 +980,21 @@
         }
       },
       "indexes": {
+        "clara_event_participant_school_id_idx": {
+          "name": "clara_event_participant_school_id_idx",
+          "columns": [
+            {
+              "expression": "school_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "clara_event_participant_event_id_idx": {
           "name": "clara_event_participant_event_id_idx",
           "columns": [
@@ -947,6 +1027,15 @@
         }
       },
       "foreignKeys": {
+        "clara_event_participant_school_id_clara_school_id_fk": {
+          "name": "clara_event_participant_school_id_clara_school_id_fk",
+          "tableFrom": "clara_event_participant",
+          "tableTo": "clara_school",
+          "columnsFrom": ["school_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "clara_event_participant_event_id_clara_pedagogical_event_id_fk": {
           "name": "clara_event_participant_event_id_clara_pedagogical_event_id_fk",
           "tableFrom": "clara_event_participant",
@@ -962,6 +1051,24 @@
           "tableTo": "clara_student",
           "columnsFrom": ["student_id"],
           "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_event_participant_event_school_fk": {
+          "name": "clara_event_participant_event_school_fk",
+          "tableFrom": "clara_event_participant",
+          "tableTo": "clara_pedagogical_event",
+          "columnsFrom": ["event_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_event_participant_student_school_fk": {
+          "name": "clara_event_participant_student_school_fk",
+          "tableFrom": "clara_event_participant",
+          "tableTo": "clara_student",
+          "columnsFrom": ["student_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1188,6 +1295,24 @@
           "tableTo": "user",
           "columnsFrom": ["approved_by_user_id"],
           "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "clara_individual_record_event_school_fk": {
+          "name": "clara_individual_record_event_school_fk",
+          "tableFrom": "clara_individual_student_record",
+          "tableTo": "clara_pedagogical_event",
+          "columnsFrom": ["event_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_individual_record_student_school_fk": {
+          "name": "clara_individual_record_student_school_fk",
+          "tableFrom": "clara_individual_student_record",
+          "tableTo": "clara_student",
+          "columnsFrom": ["student_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1198,6 +1323,11 @@
           "name": "clara_individual_student_record_event_student_unique",
           "nullsNotDistinct": false,
           "columns": ["event_id", "student_id"]
+        },
+        "clara_individual_student_record_id_school_unique": {
+          "name": "clara_individual_student_record_id_school_unique",
+          "nullsNotDistinct": false,
+          "columns": ["id", "school_id"]
         }
       },
       "policies": {},
@@ -1391,10 +1521,43 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "clara_lesson_session_class_school_fk": {
+          "name": "clara_lesson_session_class_school_fk",
+          "tableFrom": "clara_lesson_session",
+          "tableTo": "clara_class",
+          "columnsFrom": ["class_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_lesson_session_subject_school_fk": {
+          "name": "clara_lesson_session_subject_school_fk",
+          "tableFrom": "clara_lesson_session",
+          "tableTo": "clara_subject",
+          "columnsFrom": ["subject_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_lesson_session_teacher_school_fk": {
+          "name": "clara_lesson_session_teacher_school_fk",
+          "tableFrom": "clara_lesson_session",
+          "tableTo": "clara_teacher_profile",
+          "columnsFrom": ["teacher_profile_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "clara_lesson_session_id_school_unique": {
+          "name": "clara_lesson_session_id_school_unique",
+          "nullsNotDistinct": false,
+          "columns": ["id", "school_id"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1582,10 +1745,25 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "clara_pedagogical_event_lesson_school_fk": {
+          "name": "clara_pedagogical_event_lesson_school_fk",
+          "tableFrom": "clara_pedagogical_event",
+          "tableTo": "clara_lesson_session",
+          "columnsFrom": ["lesson_session_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "clara_pedagogical_event_id_school_unique": {
+          "name": "clara_pedagogical_event_id_school_unique",
+          "nullsNotDistinct": false,
+          "columns": ["id", "school_id"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1640,7 +1818,7 @@
           "name": "acted_by_user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "acted_at": {
           "name": "acted_at",
@@ -1736,6 +1914,15 @@
           "tableTo": "user",
           "columnsFrom": ["acted_by_user_id"],
           "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "clara_review_action_record_school_fk": {
+          "name": "clara_review_action_record_school_fk",
+          "tableFrom": "clara_review_action",
+          "tableTo": "clara_individual_student_record",
+          "columnsFrom": ["individual_record_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1902,7 +2089,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "clara_student_id_school_unique": {
+          "name": "clara_student_id_school_unique",
+          "nullsNotDistinct": false,
+          "columns": ["id", "school_id"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1980,6 +2173,11 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "clara_subject_id_school_unique": {
+          "name": "clara_subject_id_school_unique",
+          "nullsNotDistinct": false,
+          "columns": ["id", "school_id"]
+        },
         "clara_subject_school_name_unique": {
           "name": "clara_subject_school_name_unique",
           "nullsNotDistinct": false,
@@ -2137,6 +2335,33 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "clara_teacher_assignment_teacher_school_fk": {
+          "name": "clara_teacher_assignment_teacher_school_fk",
+          "tableFrom": "clara_teacher_assignment",
+          "tableTo": "clara_teacher_profile",
+          "columnsFrom": ["teacher_profile_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_teacher_assignment_class_school_fk": {
+          "name": "clara_teacher_assignment_class_school_fk",
+          "tableFrom": "clara_teacher_assignment",
+          "tableTo": "clara_class",
+          "columnsFrom": ["class_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "clara_teacher_assignment_subject_school_fk": {
+          "name": "clara_teacher_assignment_subject_school_fk",
+          "tableFrom": "clara_teacher_assignment",
+          "tableTo": "clara_subject",
+          "columnsFrom": ["subject_id", "school_id"],
+          "columnsTo": ["id", "school_id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2254,6 +2479,11 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "clara_teacher_profile_id_school_unique": {
+          "name": "clara_teacher_profile_id_school_unique",
+          "nullsNotDistinct": false,
+          "columns": ["id", "school_id"]
+        },
         "clara_teacher_profile_school_user_unique": {
           "name": "clara_teacher_profile_school_user_unique",
           "nullsNotDistinct": false,
@@ -2349,9 +2579,20 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "clara_term_id_school_unique": {
+          "name": "clara_term_id_school_unique",
+          "nullsNotDistinct": false,
+          "columns": ["id", "school_id"]
+        }
+      },
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "clara_term_valid_date_range": {
+          "name": "clara_term_valid_date_range",
+          "value": "\"clara_term\".\"ends_on\" >= \"clara_term\".\"starts_on\""
+        }
+      },
       "isRLSEnabled": false
     },
     "public.identity": {

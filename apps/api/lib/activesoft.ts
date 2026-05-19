@@ -6,6 +6,9 @@ const activeSoftConfigInput = z.object({
   ACTIVESOFT_USE_BEARER: z.enum(["true", "false"]).default("true"),
 });
 
+const DEFAULT_TIMEOUT_MS = 10_000;
+const absoluteUrlPattern = /^[a-zA-Z][a-zA-Z0-9+.-]*:|^\/\//;
+
 export type ActiveSoftConfig = {
   baseUrl: URL;
   apiKey: string;
@@ -36,6 +39,13 @@ export class ActiveSoftHTTPError extends Error {
     this.status = status;
     this.statusText = statusText;
     this.redactedBody = redactedBody;
+  }
+}
+
+export class ActiveSoftRequestError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ActiveSoftRequestError";
   }
 }
 
@@ -86,10 +96,11 @@ export function getActiveSoftProbeSummary(
 export function createActiveSoftClient(
   config: ActiveSoftConfig,
   fetchImpl: ActiveSoftFetch = fetch,
+  options: { timeoutMs?: number } = {},
 ) {
   return {
     async getJson<T = unknown>(endpoint: string): Promise<T> {
-      const url = new URL(endpoint.replace(/^\/+/, ""), config.baseUrl);
+      const url = buildActiveSoftEndpointUrl(endpoint, config.baseUrl);
       const headers = new Headers({
         accept: "application/json",
         "user-agent": "Clara/0.1 ActiveSoft read-only probe",
@@ -101,8 +112,29 @@ export function createActiveSoftClient(
         headers.set("x-api-key", config.apiKey);
       }
 
-      const response = await fetchImpl(url, { headers, method: "GET" });
-      const body = await response.text();
+      const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+      let response: Response;
+      let body: string;
+
+      try {
+        response = await fetchImpl(url, {
+          headers,
+          method: "GET",
+          signal: controller.signal,
+        });
+        body = await response.text();
+      } catch (error) {
+        if (controller.signal.aborted) {
+          throw new ActiveSoftRequestError(
+            `ActiveSoft request timed out after ${timeoutMs}ms`,
+          );
+        }
+        throw new ActiveSoftRequestError(getErrorMessage(error));
+      } finally {
+        clearTimeout(timeout);
+      }
 
       if (!response.ok) {
         throw new ActiveSoftHTTPError(
@@ -119,6 +151,31 @@ export function createActiveSoftClient(
       return JSON.parse(body) as T;
     },
   };
+}
+
+function buildActiveSoftEndpointUrl(endpoint: string, baseUrl: URL) {
+  if (absoluteUrlPattern.test(endpoint)) {
+    throw new ActiveSoftRequestError(
+      "ActiveSoft endpoints must be relative paths",
+    );
+  }
+
+  const url = new URL(endpoint.replace(/^\/+/, ""), baseUrl);
+  if (url.origin !== baseUrl.origin) {
+    throw new ActiveSoftRequestError(
+      "ActiveSoft endpoints must stay on the configured host",
+    );
+  }
+
+  return url;
+}
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "ActiveSoft request failed before receiving a response";
 }
 
 function redactSecrets(body: string, secrets: string[]): string {

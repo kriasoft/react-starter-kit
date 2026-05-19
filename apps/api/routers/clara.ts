@@ -26,6 +26,10 @@ import {
   CLARA_REVIEW_STATUS,
 } from "../lib/clara-records.js";
 import {
+  canApproveForActivesoft,
+  canLogActivesoftLaunch,
+} from "../lib/clara-review-workflow.js";
+import {
   getDuplicateStudentIds,
   getMissingEnrolledStudentIds,
   selectEnrolledStudentsById,
@@ -271,6 +275,7 @@ export const claraRouter = router({
 
           await tx.insert(claraEventParticipant).values(
             draft.participants.map((participant) => ({
+              schoolId: access.schoolId,
               eventId: event.id,
               ...participant,
             })),
@@ -390,6 +395,13 @@ export const claraRouter = router({
           });
         }
 
+        if (!canApproveForActivesoft(current.reviewStatus)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Record is not eligible for approval in current status",
+          });
+        }
+
         await ctx.dbDirect.transaction(async (tx) => {
           await tx
             .update(claraIndividualStudentRecord)
@@ -402,7 +414,15 @@ export const claraRouter = router({
               approvedByUserId: ctx.user.id,
               approvedAt: new Date(),
             })
-            .where(eq(claraIndividualStudentRecord.id, input.recordId));
+            .where(
+              and(
+                eq(claraIndividualStudentRecord.id, input.recordId),
+                eq(
+                  claraIndividualStudentRecord.reviewStatus,
+                  CLARA_REVIEW_STATUS.awaitingReview,
+                ),
+              ),
+            );
 
           await tx.insert(claraReviewAction).values({
             schoolId: access.schoolId,
@@ -455,6 +475,13 @@ export const claraRouter = router({
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Only approved records can be launched in ActiveSoft",
+          });
+        }
+
+        if (!canLogActivesoftLaunch(current.reviewStatus)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Record must be approved before launch logging",
           });
         }
 
@@ -519,9 +546,12 @@ async function resolveClaraAccess(
 ): Promise<ClaraAccess | null> {
   const activeOrganizationId = ctx.session.activeOrganizationId;
 
-  const membershipConditions = [eq(member.userId, ctx.user.id)];
-  if (activeOrganizationId) {
-    membershipConditions.push(eq(member.organizationId, activeOrganizationId));
+  if (!activeOrganizationId) {
+    if (options.allowMissing) return null;
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Active organization is required",
+    });
   }
 
   const [membership] = await ctx.db
@@ -530,7 +560,12 @@ async function resolveClaraAccess(
       role: member.role,
     })
     .from(member)
-    .where(and(...membershipConditions))
+    .where(
+      and(
+        eq(member.userId, ctx.user.id),
+        eq(member.organizationId, activeOrganizationId),
+      ),
+    )
     .limit(1);
 
   if (!membership) {

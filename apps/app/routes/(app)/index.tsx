@@ -1,4 +1,5 @@
 import { trpcClient } from "@/lib/trpc";
+import { getErrorMessage } from "@/lib/errors";
 import {
   Button,
   Card,
@@ -57,6 +58,7 @@ function ClaraDashboard() {
   const [reviewTextById, setReviewTextById] = useState<Record<string, string>>(
     {},
   );
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
   const todayQuery = useQuery({
     queryKey: [...claraQueryKey, "teacher", "today", today],
@@ -91,23 +93,36 @@ function ClaraDashboard() {
   const refreshClara = async () => {
     await queryClient.invalidateQueries({ queryKey: claraQueryKey });
   };
+  const handleMutationError = (error: unknown) => {
+    setMutationError(getErrorMessage(error));
+  };
 
   const startLessonMutation = useMutation({
     mutationFn: (lessonSessionId: string) =>
       trpcClient.clara.teacher.startLesson.mutate({ lessonSessionId }),
-    onSuccess: refreshClara,
+    onError: handleMutationError,
+    onSuccess: async () => {
+      setMutationError(null);
+      await refreshClara();
+    },
   });
   const recordAttendanceMutation = useMutation({
     mutationFn: (input: {
       lessonSessionId: string;
       records: { studentId: string; status: AttendanceStatus }[];
     }) => trpcClient.clara.teacher.recordAttendance.mutate(input),
-    onSuccess: refreshClara,
+    onError: handleMutationError,
+    onSuccess: async () => {
+      setMutationError(null);
+      await refreshClara();
+    },
   });
   const homeworkMutation = useMutation({
     mutationFn: (input: { lessonSessionId: string; studentIds: string[] }) =>
       trpcClient.clara.teacher.recordMissingHomework.mutate(input),
+    onError: handleMutationError,
     onSuccess: async (_data, variables) => {
+      setMutationError(null);
       setMissingHomeworkByLesson((current) => {
         const next = { ...current };
         delete next[variables.lessonSessionId];
@@ -122,7 +137,11 @@ function ClaraDashboard() {
       approvedActivesoftObservation: string;
       visibilityToFamily: boolean;
     }) => trpcClient.clara.coordination.approveRecord.mutate(input),
-    onSuccess: refreshClara,
+    onError: handleMutationError,
+    onSuccess: async () => {
+      setMutationError(null);
+      await refreshClara();
+    },
   });
   const launchMutation = useMutation({
     mutationFn: (recordId: string) =>
@@ -130,7 +149,11 @@ function ClaraDashboard() {
         recordId,
         internetVisible: false,
       }),
-    onSuccess: refreshClara,
+    onError: handleMutationError,
+    onSuccess: async () => {
+      setMutationError(null);
+      await refreshClara();
+    },
   });
 
   const markAllPresent = () => {
@@ -194,6 +217,12 @@ function ClaraDashboard() {
         </div>
         <ActiveSoftStatus probe={activeSoftProbeQuery.data} />
       </section>
+      {mutationError ? (
+        <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <p>{mutationError}</p>
+        </div>
+      ) : null}
 
       <section className="grid gap-4 lg:grid-cols-[minmax(260px,0.8fr)_minmax(0,1.2fr)]">
         <LessonList
@@ -508,6 +537,7 @@ function AttendanceRow(props: {
     <div className="flex items-center justify-between gap-3 rounded-md border p-3">
       <span className="text-sm font-medium">{props.student.displayName}</span>
       <select
+        aria-label={`Chamada de ${props.student.displayName}`}
         value={props.status}
         onChange={(event) =>
           props.onChange(event.target.value as AttendanceStatus)

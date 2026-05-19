@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ActiveSoftHTTPError,
+  ActiveSoftRequestError,
   createActiveSoftClient,
   getActiveSoftProbeSummary,
   parseActiveSoftConfig,
@@ -60,6 +61,73 @@ describe("ActiveSoft integration client", () => {
     expect(requests[0].headers.get("authorization")).toBe(
       "Bearer secret-active-soft-key",
     );
+  });
+
+  it("uses x-api-key when bearer mode is disabled", async () => {
+    const requests: Request[] = [];
+    const client = createActiveSoftClient(
+      parseActiveSoftConfig({
+        ACTIVESOFT_API_URL: "https://siga01.activesoft.com.br/",
+        ACTIVESOFT_API_KEY: "secret-active-soft-key",
+        ACTIVESOFT_USE_BEARER: "false",
+      }),
+      async (input, init) => {
+        const request = new Request(input, init);
+        requests.push(request);
+
+        return new Response(JSON.stringify({ result: "ok" }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      },
+    );
+
+    await client.getJson("api/v1/listar_frequencia_aluno/?aluno_id=123");
+
+    expect(requests).toHaveLength(1);
+    expect(requests[0].method).toBe("GET");
+    expect(requests[0].url).toBe(
+      "https://siga01.activesoft.com.br/api/v1/listar_frequencia_aluno/?aluno_id=123",
+    );
+    expect(requests[0].headers.get("authorization")).toBeNull();
+    expect(requests[0].headers.get("x-api-key")).toBe("secret-active-soft-key");
+  });
+
+  it("rejects absolute endpoint URLs", async () => {
+    const client = createActiveSoftClient(
+      parseActiveSoftConfig({
+        ACTIVESOFT_API_URL: "https://siga01.activesoft.com.br/",
+        ACTIVESOFT_API_KEY: "secret-active-soft-key",
+        ACTIVESOFT_USE_BEARER: "true",
+      }),
+      async () => new Response(),
+    );
+
+    await expect(
+      client.getJson("https://evil.example/frequencia"),
+    ).rejects.toThrow("ActiveSoft endpoints must be relative paths");
+  });
+
+  it("aborts read-only requests after the configured timeout", async () => {
+    const client = createActiveSoftClient(
+      parseActiveSoftConfig({
+        ACTIVESOFT_API_URL: "https://siga01.activesoft.com.br/",
+        ACTIVESOFT_API_KEY: "secret-active-soft-key",
+        ACTIVESOFT_USE_BEARER: "true",
+      }),
+      async (_input, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(new DOMException("Aborted", "AbortError"));
+          });
+        }),
+      { timeoutMs: 1 },
+    );
+
+    await expect(client.getJson("api/v1/ping")).rejects.toMatchObject({
+      name: "ActiveSoftRequestError",
+      message: "ActiveSoft request timed out after 1ms",
+    } satisfies Partial<ActiveSoftRequestError>);
   });
 
   it("returns structured HTTP errors with redacted response bodies", async () => {

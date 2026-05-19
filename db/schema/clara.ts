@@ -1,7 +1,9 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   date,
+  foreignKey,
   index,
   pgTable,
   text,
@@ -58,7 +60,14 @@ export const claraTerm = pgTable(
     status: text().notNull().default("active"),
     ...timestamps,
   },
-  (table) => [index("clara_term_school_id_idx").on(table.schoolId)],
+  (table) => [
+    index("clara_term_school_id_idx").on(table.schoolId),
+    unique("clara_term_id_school_unique").on(table.id, table.schoolId),
+    check(
+      "clara_term_valid_date_range",
+      sql`${table.endsOn} >= ${table.startsOn}`,
+    ),
+  ],
 );
 
 export const claraSubject = pgTable(
@@ -76,6 +85,7 @@ export const claraSubject = pgTable(
   },
   (table) => [
     index("clara_subject_school_id_idx").on(table.schoolId),
+    unique("clara_subject_id_school_unique").on(table.id, table.schoolId),
     unique("clara_subject_school_name_unique").on(table.schoolId, table.name),
   ],
 );
@@ -101,11 +111,17 @@ export const claraClass = pgTable(
   (table) => [
     index("clara_class_school_id_idx").on(table.schoolId),
     index("clara_class_term_id_idx").on(table.termId),
+    unique("clara_class_id_school_unique").on(table.id, table.schoolId),
     unique("clara_class_school_term_name_unique").on(
       table.schoolId,
       table.termId,
       table.name,
     ),
+    foreignKey({
+      name: "clara_class_term_school_fk",
+      columns: [table.termId, table.schoolId],
+      foreignColumns: [claraTerm.id, claraTerm.schoolId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -128,6 +144,10 @@ export const claraTeacherProfile = pgTable(
   (table) => [
     index("clara_teacher_profile_school_id_idx").on(table.schoolId),
     index("clara_teacher_profile_user_id_idx").on(table.userId),
+    unique("clara_teacher_profile_id_school_unique").on(
+      table.id,
+      table.schoolId,
+    ),
     unique("clara_teacher_profile_school_user_unique").on(
       table.schoolId,
       table.userId,
@@ -167,6 +187,21 @@ export const claraTeacherAssignment = pgTable(
       table.classId,
       table.subjectId,
     ),
+    foreignKey({
+      name: "clara_teacher_assignment_teacher_school_fk",
+      columns: [table.teacherProfileId, table.schoolId],
+      foreignColumns: [claraTeacherProfile.id, claraTeacherProfile.schoolId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "clara_teacher_assignment_class_school_fk",
+      columns: [table.classId, table.schoolId],
+      foreignColumns: [claraClass.id, claraClass.schoolId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "clara_teacher_assignment_subject_school_fk",
+      columns: [table.subjectId, table.schoolId],
+      foreignColumns: [claraSubject.id, claraSubject.schoolId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -184,7 +219,10 @@ export const claraStudent = pgTable(
     status: text().notNull().default("active"),
     ...timestamps,
   },
-  (table) => [index("clara_student_school_id_idx").on(table.schoolId)],
+  (table) => [
+    index("clara_student_school_id_idx").on(table.schoolId),
+    unique("clara_student_id_school_unique").on(table.id, table.schoolId),
+  ],
 );
 
 export const claraEnrollment = pgTable(
@@ -213,6 +251,16 @@ export const claraEnrollment = pgTable(
       table.classId,
       table.studentId,
     ),
+    foreignKey({
+      name: "clara_enrollment_class_school_fk",
+      columns: [table.classId, table.schoolId],
+      foreignColumns: [claraClass.id, claraClass.schoolId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "clara_enrollment_student_school_fk",
+      columns: [table.studentId, table.schoolId],
+      foreignColumns: [claraStudent.id, claraStudent.schoolId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -248,6 +296,25 @@ export const claraLessonSession = pgTable(
       table.teacherProfileId,
     ),
     index("clara_lesson_session_scheduled_date_idx").on(table.scheduledDate),
+    unique("clara_lesson_session_id_school_unique").on(
+      table.id,
+      table.schoolId,
+    ),
+    foreignKey({
+      name: "clara_lesson_session_class_school_fk",
+      columns: [table.classId, table.schoolId],
+      foreignColumns: [claraClass.id, claraClass.schoolId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "clara_lesson_session_subject_school_fk",
+      columns: [table.subjectId, table.schoolId],
+      foreignColumns: [claraSubject.id, claraSubject.schoolId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "clara_lesson_session_teacher_school_fk",
+      columns: [table.teacherProfileId, table.schoolId],
+      foreignColumns: [claraTeacherProfile.id, claraTeacherProfile.schoolId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -289,6 +356,16 @@ export const claraAttendanceRecord = pgTable(
       table.lessonSessionId,
       table.studentId,
     ),
+    foreignKey({
+      name: "clara_attendance_record_lesson_school_fk",
+      columns: [table.lessonSessionId, table.schoolId],
+      foreignColumns: [claraLessonSession.id, claraLessonSession.schoolId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "clara_attendance_record_student_school_fk",
+      columns: [table.studentId, table.schoolId],
+      foreignColumns: [claraStudent.id, claraStudent.schoolId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -326,6 +403,15 @@ export const claraPedagogicalEvent = pgTable(
       table.createdByUserId,
     ),
     index("clara_pedagogical_event_review_status_idx").on(table.reviewStatus),
+    unique("clara_pedagogical_event_id_school_unique").on(
+      table.id,
+      table.schoolId,
+    ),
+    foreignKey({
+      name: "clara_pedagogical_event_lesson_school_fk",
+      columns: [table.lessonSessionId, table.schoolId],
+      foreignColumns: [claraLessonSession.id, claraLessonSession.schoolId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -335,6 +421,9 @@ export const claraEventParticipant = pgTable(
     id: text()
       .primaryKey()
       .$defaultFn(() => generateId("ept")),
+    schoolId: text()
+      .notNull()
+      .references(() => claraSchool.id, { onDelete: "cascade" }),
     eventId: text()
       .notNull()
       .references(() => claraPedagogicalEvent.id, { onDelete: "cascade" }),
@@ -346,8 +435,22 @@ export const claraEventParticipant = pgTable(
     ...timestamps,
   },
   (table) => [
+    index("clara_event_participant_school_id_idx").on(table.schoolId),
     index("clara_event_participant_event_id_idx").on(table.eventId),
     index("clara_event_participant_student_id_idx").on(table.studentId),
+    foreignKey({
+      name: "clara_event_participant_event_school_fk",
+      columns: [table.eventId, table.schoolId],
+      foreignColumns: [
+        claraPedagogicalEvent.id,
+        claraPedagogicalEvent.schoolId,
+      ],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "clara_event_participant_student_school_fk",
+      columns: [table.studentId, table.schoolId],
+      foreignColumns: [claraStudent.id, claraStudent.schoolId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -375,7 +478,7 @@ export const claraIndividualStudentRecord = pgTable(
     visibilityToFamily: boolean().default(false).notNull(),
     reviewStatus: text().notNull().default("awaiting_review"),
     approvedByUserId: text().references(() => user.id, {
-      onDelete: "cascade",
+      onDelete: "set null",
     }),
     approvedAt: timestamp({ withTimezone: true, mode: "date" }),
     ...timestamps,
@@ -394,6 +497,23 @@ export const claraIndividualStudentRecord = pgTable(
       table.eventId,
       table.studentId,
     ),
+    unique("clara_individual_student_record_id_school_unique").on(
+      table.id,
+      table.schoolId,
+    ),
+    foreignKey({
+      name: "clara_individual_record_event_school_fk",
+      columns: [table.eventId, table.schoolId],
+      foreignColumns: [
+        claraPedagogicalEvent.id,
+        claraPedagogicalEvent.schoolId,
+      ],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "clara_individual_record_student_school_fk",
+      columns: [table.studentId, table.schoolId],
+      foreignColumns: [claraStudent.id, claraStudent.schoolId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -415,9 +535,9 @@ export const claraReviewAction = pgTable(
     fromStatus: text().notNull(),
     toStatus: text().notNull(),
     note: text(),
-    actedByUserId: text()
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+    actedByUserId: text().references(() => user.id, {
+      onDelete: "set null",
+    }),
     actedAt: timestamp({ withTimezone: true, mode: "date" })
       .defaultNow()
       .notNull(),
@@ -429,6 +549,14 @@ export const claraReviewAction = pgTable(
       table.individualRecordId,
     ),
     index("clara_review_action_acted_by_user_id_idx").on(table.actedByUserId),
+    foreignKey({
+      name: "clara_review_action_record_school_fk",
+      columns: [table.individualRecordId, table.schoolId],
+      foreignColumns: [
+        claraIndividualStudentRecord.id,
+        claraIndividualStudentRecord.schoolId,
+      ],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -470,9 +598,9 @@ export const claraActivesoftLaunchLog = pgTable(
       .references(() => claraIndividualStudentRecord.id, {
         onDelete: "cascade",
       }),
-    launchedByUserId: text()
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+    launchedByUserId: text().references(() => user.id, {
+      onDelete: "set null",
+    }),
     launchedAt: timestamp({ withTimezone: true, mode: "date" })
       .defaultNow()
       .notNull(),
@@ -489,6 +617,14 @@ export const claraActivesoftLaunchLog = pgTable(
     index("clara_activesoft_launch_log_launched_by_user_id_idx").on(
       table.launchedByUserId,
     ),
+    foreignKey({
+      name: "clara_activesoft_launch_record_school_fk",
+      columns: [table.individualRecordId, table.schoolId],
+      foreignColumns: [
+        claraIndividualStudentRecord.id,
+        claraIndividualStudentRecord.schoolId,
+      ],
+    }).onDelete("cascade"),
   ],
 );
 
