@@ -15,7 +15,7 @@ import {
   member,
 } from "@repo/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import {
   getActiveSoftProbeSummary,
@@ -344,7 +344,15 @@ export const claraRouter = router({
           claraSubject,
           eq(claraLessonSession.subjectId, claraSubject.id),
         )
-        .where(eq(claraIndividualStudentRecord.schoolId, access.schoolId))
+        .where(
+          and(
+            eq(claraIndividualStudentRecord.schoolId, access.schoolId),
+            inArray(claraIndividualStudentRecord.reviewStatus, [
+              CLARA_REVIEW_STATUS.awaitingReview,
+              CLARA_REVIEW_STATUS.approvedForActivesoft,
+            ]),
+          ),
+        )
         .orderBy(asc(claraIndividualStudentRecord.createdAt));
     }),
 
@@ -403,7 +411,7 @@ export const claraRouter = router({
         }
 
         await ctx.dbDirect.transaction(async (tx) => {
-          await tx
+          const [updated] = await tx
             .update(claraIndividualStudentRecord)
             .set({
               approvedActivesoftObservation:
@@ -417,12 +425,21 @@ export const claraRouter = router({
             .where(
               and(
                 eq(claraIndividualStudentRecord.id, input.recordId),
+                eq(claraIndividualStudentRecord.schoolId, access.schoolId),
                 eq(
                   claraIndividualStudentRecord.reviewStatus,
                   CLARA_REVIEW_STATUS.awaitingReview,
                 ),
               ),
-            );
+            )
+            .returning({ id: claraIndividualStudentRecord.id });
+
+          if (!updated) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Record approval status changed before update",
+            });
+          }
 
           await tx.insert(claraReviewAction).values({
             schoolId: access.schoolId,
@@ -493,6 +510,30 @@ export const claraRouter = router({
         }
 
         await ctx.dbDirect.transaction(async (tx) => {
+          const [updated] = await tx
+            .update(claraIndividualStudentRecord)
+            .set({
+              reviewStatus: CLARA_REVIEW_STATUS.launchedInActivesoft,
+            })
+            .where(
+              and(
+                eq(claraIndividualStudentRecord.id, input.recordId),
+                eq(claraIndividualStudentRecord.schoolId, access.schoolId),
+                eq(
+                  claraIndividualStudentRecord.reviewStatus,
+                  CLARA_REVIEW_STATUS.approvedForActivesoft,
+                ),
+              ),
+            )
+            .returning({ id: claraIndividualStudentRecord.id });
+
+          if (!updated) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Record launch status changed before update",
+            });
+          }
+
           await tx.insert(claraActivesoftLaunchLog).values({
             schoolId: access.schoolId,
             individualRecordId: input.recordId,
@@ -500,13 +541,6 @@ export const claraRouter = router({
             activesoftReference: input.activesoftReference,
             internetVisible: input.internetVisible,
           });
-
-          await tx
-            .update(claraIndividualStudentRecord)
-            .set({
-              reviewStatus: CLARA_REVIEW_STATUS.launchedInActivesoft,
-            })
-            .where(eq(claraIndividualStudentRecord.id, input.recordId));
 
           await tx.insert(claraReviewAction).values({
             schoolId: access.schoolId,

@@ -1,4 +1,5 @@
 import { trpcClient } from "@/lib/trpc";
+import { formatLocalDateKey } from "@/lib/dates";
 import { getErrorMessage } from "@/lib/errors";
 import {
   Button,
@@ -47,7 +48,7 @@ const claraQueryKey = ["clara"] as const;
 
 function ClaraDashboard() {
   const queryClient = useQueryClient();
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const today = useMemo(() => formatLocalDateKey(new Date()), []);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [attendanceByLesson, setAttendanceByLesson] = useState<
     Record<string, Record<string, AttendanceStatus>>
@@ -588,9 +589,8 @@ function CoordinationQueue(props: {
             props.reviewTextById[item.id] ??
             item.approvedActivesoftObservation ??
             item.activesoftObservationDraft;
-          const canLaunch =
-            item.reviewStatus === "approved_for_activesoft" ||
-            Boolean(item.approvedActivesoftObservation);
+          const canApprove = item.reviewStatus === "awaiting_review";
+          const canLaunch = item.reviewStatus === "approved_for_activesoft";
 
           return (
             <Card key={item.id}>
@@ -616,6 +616,7 @@ function CoordinationQueue(props: {
                 </div>
                 <Textarea
                   value={approvedText}
+                  disabled={!canApprove}
                   onChange={(event) =>
                     props.onTextChange(item.id, event.target.value)
                   }
@@ -625,7 +626,7 @@ function CoordinationQueue(props: {
                   <Button
                     type="button"
                     onClick={() => props.onApprove(item)}
-                    disabled={props.approvingId === item.id}
+                    disabled={!canApprove || props.approvingId === item.id}
                   >
                     Aprovar ActiveSoft
                   </Button>
