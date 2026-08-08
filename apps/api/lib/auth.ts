@@ -1,7 +1,7 @@
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { schema as Db, generateAuthId, type AuthModel } from "@repo/db";
-import { betterAuth } from "better-auth";
+import { betterAuth, type BetterAuthOptions } from "better-auth";
 import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
@@ -118,15 +118,15 @@ function stripePlugin(db: DB, env: AuthEnv) {
  * });
  * ```
  */
-export function createAuth(
-  db: DB,
-  env: AuthEnv,
-): ReturnType<typeof betterAuth> {
+export function createAuth(db: DB, env: AuthEnv): Auth {
   // Extract domain from APP_ORIGIN for passkey rpID
   const appUrl = new URL(env.APP_ORIGIN);
   const rpID = appUrl.hostname;
 
-  return betterAuth({
+  // Widen options to prevent declaration emit from inferring `Auth<O>` through
+  // non-portable Stripe internals (TS2742). Plugin factories remain typechecked;
+  // AuthSession below restores the organization field omitted by widening.
+  const options: BetterAuthOptions = {
     baseURL: `${env.APP_ORIGIN}/api/auth`,
     trustedOrigins: [env.APP_ORIGIN],
     secret: env.BETTER_AUTH_SECRET,
@@ -245,7 +245,9 @@ export function createAuth(
         }
       }),
     },
-  });
+  };
+
+  return betterAuth(options);
 }
 
 export type Auth = ReturnType<typeof betterAuth>;

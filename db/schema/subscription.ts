@@ -33,6 +33,9 @@ export const subscription = pgTable(
     endedAt: timestamp({ withTimezone: true, mode: "date" }),
     seats: integer(),
     billingInterval: text(),
+    // Stripe schedule ID for a plan change deferred to period end; cleared
+    // when the change is applied or canceled.
+    stripeScheduleId: text(),
     groupId: text(),
     createdAt: timestamp({ withTimezone: true, mode: "date" })
       .defaultNow()

@@ -3,7 +3,7 @@ import { BaseTemplate, colors } from "../components/BaseTemplate";
 
 interface OTPEmailProps {
   otp: string;
-  type: "sign-in" | "email-verification" | "forget-password";
+  type: "sign-in" | "email-verification" | "forget-password" | "change-email";
   appName?: string;
   appUrl?: string;
   expiresInMinutes?: number;
@@ -21,12 +21,14 @@ export function OTPEmail({
     "sign-in": "Sign In",
     "email-verification": "Email Verification",
     "forget-password": "Password Reset",
+    "change-email": "Email Change",
   };
 
   const typeDescriptions = {
     "sign-in": "complete your sign in",
     "email-verification": "verify your email address",
     "forget-password": "reset your password",
+    "change-email": "confirm your new email address",
   };
 
   const typeLabel = typeLabels[type];

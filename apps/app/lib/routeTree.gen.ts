@@ -11,14 +11,14 @@
 import { Route as rootRouteImport } from './../routes/__root'
 import { Route as appRouteRouteImport } from './../routes/(app)/route'
 import { Route as appIndexRouteImport } from './../routes/(app)/index'
-import { Route as authSignupRouteImport } from './../routes/(auth)/signup'
-import { Route as authLoginRouteImport } from './../routes/(auth)/login'
-import { Route as appUsersRouteImport } from './../routes/(app)/users'
-import { Route as appSettingsRouteImport } from './../routes/(app)/settings'
-import { Route as appReportsRouteImport } from './../routes/(app)/reports'
-import { Route as appDashboardRouteImport } from './../routes/(app)/dashboard'
-import { Route as appAnalyticsRouteImport } from './../routes/(app)/analytics'
 import { Route as appAboutRouteImport } from './../routes/(app)/about'
+import { Route as appAnalyticsRouteImport } from './../routes/(app)/analytics'
+import { Route as appDashboardRouteImport } from './../routes/(app)/dashboard'
+import { Route as appReportsRouteImport } from './../routes/(app)/reports'
+import { Route as appSettingsRouteImport } from './../routes/(app)/settings'
+import { Route as appUsersRouteImport } from './../routes/(app)/users'
+import { Route as authLoginRouteImport } from './../routes/(auth)/login'
+import { Route as authSignupRouteImport } from './../routes/(auth)/signup'
 
 const appRouteRoute = appRouteRouteImport.update({
   id: '/(app)',
@@ -29,34 +29,9 @@ const appIndexRoute = appIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appRouteRoute,
 } as any)
-const authSignupRoute = authSignupRouteImport.update({
-  id: '/(auth)/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authLoginRoute = authLoginRouteImport.update({
-  id: '/(auth)/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const appUsersRoute = appUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => appRouteRoute,
-} as any)
-const appSettingsRoute = appSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => appRouteRoute,
-} as any)
-const appReportsRoute = appReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => appRouteRoute,
-} as any)
-const appDashboardRoute = appDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const appAboutRoute = appAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appAnalyticsRoute = appAnalyticsRouteImport.update({
@@ -64,10 +39,35 @@ const appAnalyticsRoute = appAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appAboutRoute = appAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const appDashboardRoute = appDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => appRouteRoute,
+} as any)
+const appReportsRoute = appReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appSettingsRoute = appSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appUsersRoute = appUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authSignupRoute = authSignupRouteImport.update({
+  id: '/(auth)/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -164,46 +164,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(auth)/signup': {
-      id: '/(auth)/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof authSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/login': {
-      id: '/(auth)/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof authLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(app)/users': {
-      id: '/(app)/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof appUsersRouteImport
-      parentRoute: typeof appRouteRoute
-    }
-    '/(app)/settings': {
-      id: '/(app)/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof appSettingsRouteImport
-      parentRoute: typeof appRouteRoute
-    }
-    '/(app)/reports': {
-      id: '/(app)/reports'
-      path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof appReportsRouteImport
-      parentRoute: typeof appRouteRoute
-    }
-    '/(app)/dashboard': {
-      id: '/(app)/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof appDashboardRouteImport
+    '/(app)/about': {
+      id: '/(app)/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof appAboutRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/analytics': {
@@ -213,12 +178,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAnalyticsRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/about': {
-      id: '/(app)/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof appAboutRouteImport
+    '/(app)/dashboard': {
+      id: '/(app)/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof appDashboardRouteImport
       parentRoute: typeof appRouteRoute
+    }
+    '/(app)/reports': {
+      id: '/(app)/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof appReportsRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/settings': {
+      id: '/(app)/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof appSettingsRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/users': {
+      id: '/(app)/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof appUsersRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/signup': {
+      id: '/(auth)/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof authSignupRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }

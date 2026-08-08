@@ -171,7 +171,7 @@ export async function sendOTP(
   options: {
     email: string;
     otp: string;
-    type: "sign-in" | "email-verification" | "forget-password";
+    type: "sign-in" | "email-verification" | "forget-password" | "change-email";
   },
 ) {
   if (env.ENVIRONMENT === "development") {
@@ -192,6 +192,7 @@ export async function sendOTP(
     "sign-in": "Sign In",
     "email-verification": "Email Verification",
     "forget-password": "Password Reset",
+    "change-email": "Email Change",
   };
 
   return sendEmail(env, {

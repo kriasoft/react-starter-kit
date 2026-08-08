@@ -374,9 +374,7 @@ For immediate security improvements:
 
    ```typescript
    // Use Zod everywhere
-   const schema = z.object({
-     /* ... */
-   });
+   const schema = z.object({/* ... */});
    const validated = schema.parse(input);
    ```
 
