@@ -50,7 +50,7 @@ Before starting work on a significant change, open an issue to discuss your prop
 4. Verify your setup:
 
    ```bash
-   bun test               # Run tests (Vitest)
+   bun run test --run     # Run tests (Vitest)
    bun lint               # ESLint
    bun typecheck          # TypeScript
    ```
@@ -74,7 +74,7 @@ See [`AGENTS.md`](../AGENTS.md) for the full monorepo layout, tech stack, and av
 3. **Verify before pushing:**
 
    ```bash
-   bun test && bun lint && bun typecheck
+   bun run test --run && bun lint && bun typecheck
    ```
 
 4. **Write clear commit messages** using [conventional commits](https://www.conventionalcommits.org/):

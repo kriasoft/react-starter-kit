@@ -12,12 +12,6 @@ interface ImportMetaEnv {
   readonly VITE_GA_MEASUREMENT_ID: string;
 }
 
-declare module "relay-runtime" {
-  interface PayloadError {
-    errors?: Record<string, string[] | undefined>;
-  }
-}
-
 declare module "*.css";
 
 declare module "*.svg" {

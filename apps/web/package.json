@@ -13,22 +13,22 @@
     "logs": "wrangler tail --env-file ../../.env --env-file ../../.env.local"
   },
   "dependencies": {
-    "@astrojs/react": "^4.4.2",
+    "@astrojs/react": "^6.0.2",
     "@repo/ui": "workspace:*",
-    "astro": "^5.18.2",
+    "astro": "^7.2.0",
     "hono": "^4.13.1",
-    "react-dom": "^19.2.8",
-    "react": "^19.2.8"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@cloudflare/workers-types": "^5.20260808.1",
     "@repo/typescript-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
-    "typescript": "~5.9.3",
+    "typescript": "~6.0.3",
     "wrangler": "^4.120.0"
   }
 }

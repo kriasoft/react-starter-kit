@@ -106,7 +106,7 @@ const env = z
 - [ ] Check dependency licenses
 - [ ] Enable Dependabot alerts
 - [ ] Keep dependencies up to date
-- [ ] Use lock files (`bun.lockb`)
+- [ ] Commit the lock file (`bun.lock`)
 
 ```bash
 # Security audit commands
@@ -127,25 +127,23 @@ bun pm ls                    # List all dependencies
 
 ### Security Headers
 
-#### Configure Headers
+Security headers are configured per response source. `_headers` applies only to
+static assets; API responses use Hono's `secureHeaders()` middleware.
 
-- [ ] Content Security Policy (CSP)
-- [ ] X-Frame-Options
-- [ ] X-Content-Type-Options
-- [ ] Strict-Transport-Security (HSTS)
-- [ ] Referrer-Policy
-- [ ] Permissions-Policy
+| Worker | Mechanism                  | CSP                      |
+| ------ | -------------------------- | ------------------------ |
+| web    | `apps/web/public/_headers` | `default-src 'self'`     |
+| app    | `apps/app/public/_headers` | Missing — see below      |
+| api    | Hono `secureHeaders()`     | Not set (JSON responses) |
 
-```typescript
-// Example: Security headers in Hono
-app.use("*", async (c, next) => {
-  await next();
-  c.header("X-Frame-Options", "DENY");
-  c.header("X-Content-Type-Options", "nosniff");
-  c.header("Strict-Transport-Security", "max-age=31536000");
-  c.header("Content-Security-Policy", "default-src 'self'");
-});
-```
+Keep `_headers` in `public/` so Astro and Vite copy it into the deployed asset
+directory.
+
+#### Remaining work
+
+- [ ] Add a CSP to `apps/app`. Its inline theme script and Google-hosted Inter require a script hash and explicit style/font origins; avoid `'unsafe-inline'`.
+- [ ] Revisit the web CSP when adding third-party scripts, embeds, or remote images.
+- [ ] Verify the expected headers on deployed responses.
 
 ### API Security
 
@@ -227,16 +225,8 @@ function SafeHTML({ content }: { content: string }) {
 - [ ] Enable bot protection
 - [ ] Monitor security events
 
-```toml
-# Example: wrangler.toml security config
-[env.production]
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
-
-[env.production.rate_limiting]
-enabled = true
-requests_per_minute = 60
-```
+Wrangler has no switch that automatically rate-limits requests. Configure a WAF
+rule, or add a `ratelimits` binding and call `limit()` in Worker code.
 
 #### CI/CD Security
 
@@ -250,9 +240,7 @@ requests_per_minute = 60
 ```yaml
 # Example: GitHub Actions security
 - name: Run security audit
-  run: |
-    bun audit
-    bun test:security
+  run: bun audit
 
 - name: SAST Scan
   uses: github/super-linter@v5

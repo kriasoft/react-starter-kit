@@ -1,13 +1,19 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
+// Better Auth already exposes organization operations through
+// `auth.organization.*`. These optional tRPC scaffolds throw until implemented
+// so they cannot report false success. See docs/auth/organizations.md.
+const notImplemented = (procedure: string, authMethod = procedure): never => {
+  throw new TRPCError({
+    code: "NOT_IMPLEMENTED",
+    message: `organization.${procedure} is not implemented. Use auth.organization.${authMethod} from @repo/app/lib/auth, or implement this procedure.`,
+  });
+};
+
 export const organizationRouter = router({
-  list: protectedProcedure.query(() => {
-    // TODO: Implement organization listing logic
-    return {
-      organizations: [],
-    };
-  }),
+  list: protectedProcedure.query(() => notImplemented("list")),
 
   create: protectedProcedure
     .input(
@@ -16,15 +22,7 @@ export const organizationRouter = router({
         description: z.string().optional(),
       }),
     )
-    .mutation(({ input, ctx }) => {
-      // TODO: Implement organization creation logic
-      return {
-        id: "org_" + Date.now(),
-        name: input.name,
-        description: input.description,
-        ownerId: ctx.user.id,
-      };
-    }),
+    .mutation(() => notImplemented("create")),
 
   update: protectedProcedure
     .input(
@@ -34,28 +32,15 @@ export const organizationRouter = router({
         description: z.string().optional(),
       }),
     )
-    .mutation(({ input }) => {
-      // TODO: Implement organization update logic
-      return {
-        ...input,
-      };
-    }),
+    .mutation(() => notImplemented("update")),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(({ input }) => {
-      // TODO: Implement organization deletion logic
-      return { success: true, id: input.id };
-    }),
+    .mutation(() => notImplemented("delete")),
 
   members: protectedProcedure
     .input(z.object({ organizationId: z.string() }))
-    .query(() => {
-      // TODO: Implement organization members listing
-      return {
-        members: [],
-      };
-    }),
+    .query(() => notImplemented("members", "listMembers")),
 
   invite: protectedProcedure
     .input(
@@ -65,11 +50,5 @@ export const organizationRouter = router({
         role: z.enum(["admin", "member"]).default("member"),
       }),
     )
-    .mutation(() => {
-      // TODO: Implement organization invite logic
-      return {
-        success: true,
-        inviteId: "invite_" + Date.now(),
-      };
-    }),
+    .mutation(() => notImplemented("invite", "inviteMember")),
 });

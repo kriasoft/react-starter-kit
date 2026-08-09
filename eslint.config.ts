@@ -18,6 +18,7 @@ export default defineConfig(
       ".venv",
       "**/.astro",
       "**/.react-email",
+      "**/.wrangler",
       "**/dist",
       "**/node_modules",
       "docs/.vitepress/cache",

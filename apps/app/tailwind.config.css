@@ -5,6 +5,10 @@
 
 @import "tailwindcss";
 
+/* Provides the enter/exit utilities used by shadcn dialogs and selects;
+   without it, those classes generate no CSS and open/close animations vanish. */
+@import "tw-animate-css";
+
 /* Content paths for Tailwind to scan */
 @source "./lib/**/*.{js,ts,jsx,tsx}";
 @source "./routes/**/*.{js,ts,jsx,tsx}";

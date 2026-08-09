@@ -8,6 +8,18 @@
     "outDir": "./dist",
     "types": ["bun", "node"]
   },
-  "include": ["schema/**/*.ts", "*.ts", "*.json"],
-  "exclude": ["**/dist/**/*", "**/node_modules/**/*", "scripts/**/*"]
+  "include": [
+    "schema/**/*.ts",
+    "seeds/**/*.ts",
+    "scripts/**/*.ts",
+    "*.ts",
+    "*.json"
+  ],
+  // This script imports API auth code and Better Auth directly, crossing the
+  // database workspace's dependency boundary.
+  "exclude": [
+    "**/dist/**/*",
+    "**/node_modules/**/*",
+    "scripts/generate-auth-schema.ts"
+  ]
 }

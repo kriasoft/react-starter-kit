@@ -1,7 +1,7 @@
 import { Button, Input, cn } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail } from "lucide-react";
-import type { ComponentProps, FormEvent } from "react";
+import type { ComponentProps, SubmitEvent } from "react";
 import { GoogleLogin } from "./google-login";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
@@ -238,7 +238,7 @@ interface EmailInputProps {
   isSignup: boolean;
   isDisabled: boolean;
   onEmailChange: (email: string) => void;
-  onSubmit: (e?: FormEvent) => void;
+  onSubmit: (e?: SubmitEvent) => void;
   onBack: () => void;
 }
 

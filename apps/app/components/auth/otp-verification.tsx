@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { Button, Input } from "@repo/ui";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 const RESEND_COOLDOWN_SECONDS = 30;
@@ -48,7 +48,7 @@ export function OtpVerification({
     return () => clearTimeout(timer);
   }, [resendCooldown]);
 
-  const handleOtpVerification = async (e: FormEvent) => {
+  const handleOtpVerification = async (e: SubmitEvent) => {
     e.preventDefault();
     e.stopPropagation();
 

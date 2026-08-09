@@ -5,7 +5,7 @@
   // Edge router that receives all traffic and routes to api/app via service bindings.
   "name": "example-web",
   "main": "./worker.ts",
-  "compatibility_date": "2025-08-15",
+  "compatibility_date": "2026-08-08",
   "compatibility_flags": [],
   "workers_dev": false,
 
@@ -42,6 +42,10 @@
     // [ENV:DEVELOPMENT]
     // Command: bun wrangler dev
     "dev": {
+      "services": [
+        { "binding": "APP_SERVICE", "service": "example-app-dev" },
+        { "binding": "API_SERVICE", "service": "example-api-dev" }
+      ],
       "vars": {
         "ENVIRONMENT": "development"
       }

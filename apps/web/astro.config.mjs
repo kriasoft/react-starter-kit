@@ -1,4 +1,5 @@
 import react from "@astrojs/react";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 
@@ -12,4 +13,6 @@ export default defineConfig({
   outDir: "./dist",
   output: "static",
   integrations: [react()],
+  // Astro recommends Tailwind v4's dedicated Vite plugin.
+  vite: { plugins: [tailwindcss()] },
 });

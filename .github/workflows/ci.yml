@@ -45,6 +45,8 @@ jobs:
       # Type checking (email templates must be built first for types)
       - run: bun email:build
       - run: bun tsc --build
+      # tsc cannot parse .astro templates; astro check covers apps/web
+      - run: bun --filter @repo/web check
 
       # Tests
       - run: bun run test -- --run

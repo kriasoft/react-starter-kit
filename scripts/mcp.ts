@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { fileURLToPath } from "bun";
 import { execa } from "execa";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 const rootDir = fileURLToPath(new URL("..", import.meta.url));
 const $ = execa({ cwd: rootDir });
@@ -20,10 +20,12 @@ const server = new McpServer({
 
 // This is just an example of a custom command that can be executed
 // from the MCP client (e.g., VS Code, GitHub Copilot, etc.).
-server.tool(
+server.registerTool(
   "eslint",
-  "Lint JavaScript and TypeScript files with ESLint",
-  { filename: z.string() },
+  {
+    description: "Lint JavaScript and TypeScript files with ESLint",
+    inputSchema: { filename: z.string() },
+  },
   async ({ filename }) => {
     const cmd = await $`bun run eslint ${filename}`;
     return { content: [{ type: "text", text: cmd.stdout }] };

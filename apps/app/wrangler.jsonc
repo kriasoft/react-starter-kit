@@ -4,7 +4,7 @@
   // [METADATA]
   // App worker accessed via service binding from web worker (no routes needed).
   "name": "example-app",
-  "compatibility_date": "2025-08-15",
+  "compatibility_date": "2026-08-08",
   "compatibility_flags": [],
   "workers_dev": false,
 
@@ -18,8 +18,7 @@
   // [ENV:PRODUCTION]
   // Command: bun wrangler deploy
   "vars": {
-    "ENVIRONMENT": "production",
-    "ALLOWED_ORIGINS": "https://example.com"
+    "ENVIRONMENT": "production"
   },
 
   "env": {
@@ -27,8 +26,7 @@
     // Command: bun wrangler dev
     "dev": {
       "vars": {
-        "ENVIRONMENT": "development",
-        "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173"
+        "ENVIRONMENT": "development"
       }
     },
 
@@ -36,8 +34,7 @@
     // Command: bun wrangler deploy --env staging
     "staging": {
       "vars": {
-        "ENVIRONMENT": "staging",
-        "ALLOWED_ORIGINS": "https://staging.example.com"
+        "ENVIRONMENT": "staging"
       }
     },
 
@@ -45,8 +42,7 @@
     // Command: bun wrangler deploy --env preview
     "preview": {
       "vars": {
-        "ENVIRONMENT": "preview",
-        "ALLOWED_ORIGINS": "https://preview.example.com"
+        "ENVIRONMENT": "preview"
       }
     }
   }

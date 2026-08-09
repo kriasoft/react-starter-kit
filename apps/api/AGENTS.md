@@ -31,7 +31,9 @@
 
 ## Environment
 
-- Zod schema validates env vars in `lib/env.ts` (Bun reads `Bun.env`; Workers get bindings via Hono context).
+- `lib/env.ts` exports the Zod schema and inferred `Env` type; it does not validate on import. Validate the assembled environment at the entry point: `worker.ts` receives `c.env`, while `dev.ts` combines the Wrangler proxy with `process.env`.
+- `dev.ts` derives its generic local-env overlay from `envSchema`, excluding fields with special precedence. New schema fields therefore join the local merge automatically.
+- Do not add generated Wrangler types. They create a competing global `Env`, omit secrets not visible in `wrangler.jsonc`, and narrow placeholder vars to literals such as `APP_NAME: "Example"`. The local `CloudflareEnv` types combine the schema-derived `Env` with Hyperdrive bindings.
 - `nodejs_compat` compatibility flag required — web and app workers do NOT have it.
 
 ## Worker Entry

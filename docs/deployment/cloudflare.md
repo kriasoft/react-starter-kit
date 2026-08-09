@@ -39,7 +39,11 @@ The **api** worker has `nodejs_compat` enabled and connects to Neon through two 
 The **app** worker serves the SPA with `not_found_handling: "single-page-application"` so all routes resolve to `index.html`.
 
 ::: info
-Service bindings are non-inheritable in Wrangler – each environment (`staging`, `preview`) must declare its own `services` array with the correct worker names (e.g., `example-app-staging`).
+Service bindings are non-inheritable in Wrangler – each environment (`dev`, `staging`, `preview`) must declare its own `services` array with the correct worker names (e.g., `example-app-staging`).
+:::
+
+::: warning
+Worker names are configured independently. Wrangler uses each app's `name` (adding `-{environment}` for named environments), while Terraform builds `{project_slug}-{api,app,web}` with the same suffix outside prod. Keep `project_slug`, all three Wrangler names, and the web worker's service targets aligned. Otherwise, Terraform manages different workers or a service binding targets the wrong worker. All defaults use `example`; rename them together.
 :::
 
 See [Architecture: Edge](/architecture/edge) for details on the service binding model.
@@ -48,13 +52,23 @@ See [Architecture: Edge](/architecture/edge) for details on the service binding 
 
 Each worker declares `vars` per environment in `wrangler.jsonc`. The API worker has the most:
 
-| Variable            | Worker   | Description                                       |
-| ------------------- | -------- | ------------------------------------------------- |
-| `ENVIRONMENT`       | all      | `development`, `preview`, `staging`, `production` |
-| `APP_NAME`          | api      | Display name used in emails                       |
-| `APP_ORIGIN`        | api      | Full origin URL (e.g., `https://example.com`)     |
-| `ALLOWED_ORIGINS`   | api, app | Comma-separated list for CORS                     |
-| `RESEND_EMAIL_FROM` | api      | Sender address for transactional emails           |
+| Variable            | Worker | Description                                       |
+| ------------------- | ------ | ------------------------------------------------- |
+| `ENVIRONMENT`       | all    | `development`, `preview`, `staging`, `production` |
+| `APP_NAME`          | api    | Display name used in emails                       |
+| `APP_ORIGIN`        | api    | Full origin URL (e.g., `https://example.com`)     |
+| `RESEND_EMAIL_FROM` | api    | Sender address for transactional emails           |
+
+There is no CORS configuration because there are no cross-origin requests: the
+browser only ever talks to the web worker, which reaches the API over a service
+binding. Sending no CORS headers is what keeps another origin from reading API
+responses – the browser's same-origin policy does the work.
+
+Better Auth additionally validates `Origin` and `callbackURL` against
+`trustedOrigins` (set from `APP_ORIGIN`), but only for its own `/api/auth/*`
+endpoints. tRPC routes have no origin check of their own. If you move the API to
+a separate hostname, adding CORS is not sufficient – the tRPC routes then need
+CSRF protection too, since they rely on being same-origin today.
 
 See [Environment Variables](/getting-started/environment-variables) for the complete reference.
 
@@ -71,9 +85,18 @@ wrangler secret put BETTER_AUTH_SECRET
 wrangler secret put GOOGLE_CLIENT_ID
 wrangler secret put GOOGLE_CLIENT_SECRET
 wrangler secret put RESEND_API_KEY
+wrangler secret put OPENAI_API_KEY
+
+# Billing — the Stripe plugin only activates when all four are present
 wrangler secret put STRIPE_SECRET_KEY
 wrangler secret put STRIPE_WEBHOOK_SECRET
+wrangler secret put STRIPE_STARTER_PRICE_ID
+wrangler secret put STRIPE_PRO_PRICE_ID
 ```
+
+::: warning
+Setting only some of the four Stripe values disables billing without an error – `createAuth` skips the plugin, so `/api/auth/subscription/*` returns 404. See [Billing: Plans](/billing/plans).
+:::
 
 ::: warning
 Run `wrangler secret put` from the workspace directory (e.g., `apps/api/`) or pass `--config apps/api/wrangler.jsonc` so secrets bind to the correct worker.

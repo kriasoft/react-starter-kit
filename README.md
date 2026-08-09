@@ -31,7 +31,7 @@ React Starter Kit is proudly supported by these amazing sponsors:
 
 | Layer         | Technologies                                                                                                                                                                                  |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Runtime**   | [Bun](https://bun.sh/), [Cloudflare Workers](https://workers.cloudflare.com/), [TypeScript](https://www.typescriptlang.org/) 5.9                                                              |
+| **Runtime**   | [Bun](https://bun.sh/), [Cloudflare Workers](https://workers.cloudflare.com/), [TypeScript](https://www.typescriptlang.org/) 6.0                                                              |
 | **Frontend**  | [React 19](https://react.dev/), [TanStack Router](https://tanstack.com/router), [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Jotai](https://jotai.org/) |
 | **Marketing** | [Astro](https://astro.build/)                                                                                                                                                                 |
 | **Backend**   | [Hono](https://hono.dev/), [tRPC](https://trpc.io/), [Better Auth](https://www.better-auth.com/), [Stripe](https://stripe.com/)                                                               |

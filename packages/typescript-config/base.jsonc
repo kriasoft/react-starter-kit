@@ -13,17 +13,18 @@
     /* Modules */
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "baseUrl": "../../",
+    // `baseUrl` is deprecated in TypeScript 6 and removed in 7. `paths` resolve
+    // from this config, so "../../" anchors them at the repository root.
     "paths": {
-      "@repo/api": ["apps/api"],
-      "@repo/api/*": ["apps/api/*"],
-      "@repo/core": ["packages/core"],
-      "@repo/core/*": ["packages/core/*"],
-      "@repo/db": ["db"],
-      "@repo/db/*": ["db/*"],
-      "@repo/ws-protocol": ["packages/ws-protocol"],
-      "@repo/ws-protocol/*": ["packages/ws-protocol/*"],
-      "@/*": ["apps/web/*"]
+      "@repo/api": ["../../apps/api"],
+      "@repo/api/*": ["../../apps/api/*"],
+      "@repo/core": ["../../packages/core"],
+      "@repo/core/*": ["../../packages/core/*"],
+      "@repo/db": ["../../db"],
+      "@repo/db/*": ["../../db/*"],
+      "@repo/ws-protocol": ["../../packages/ws-protocol"],
+      "@repo/ws-protocol/*": ["../../packages/ws-protocol/*"],
+      "@/*": ["../../apps/web/*"]
     },
     "resolveJsonModule": true,
     "allowImportingTsExtensions": false,

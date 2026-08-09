@@ -102,10 +102,10 @@ See [Billing](/billing/) for Stripe configuration.
 | `CLOUDFLARE_ZONE_ID`    | Deploy only | DNS zone ID for custom domains     |
 | `CLOUDFLARE_API_TOKEN`  | Deploy only | API token for Wrangler deployments |
 
-### Analytics and Search
+### Analytics
 
-| Variable                | Required | Description                       |
-| ----------------------- | -------- | --------------------------------- |
-| `GA_MEASUREMENT_ID`     | No       | Google Analytics 4 measurement ID |
-| `ALGOLIA_APP_ID`        | No       | Algolia application ID            |
-| `ALGOLIA_ADMIN_API_KEY` | No       | Algolia admin API key             |
+| Variable            | Required | Description                       |
+| ------------------- | -------- | --------------------------------- |
+| `GA_MEASUREMENT_ID` | No       | Google Analytics 4 measurement ID |
+
+Docs search needs no configuration – VitePress builds a local index at build time.

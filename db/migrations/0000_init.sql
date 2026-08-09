@@ -102,7 +102,6 @@ CREATE TABLE "subscription" (
 	"seats" integer,
 	"billing_interval" text,
 	"stripe_schedule_id" text,
-	"group_id" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "subscription_stripeSubscriptionId_unique" UNIQUE("stripe_subscription_id")

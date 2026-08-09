@@ -1,7 +1,10 @@
 import { getAuthTables } from "better-auth/db";
 import type { BetterAuthOptions } from "better-auth/types";
 import { createAuth } from "../../apps/api/lib/auth";
-import { env } from "../../apps/api/lib/env";
+
+// Read Bun.env directly: parsing the full API environment would require
+// unrelated runtime variables before the mock defaults below can apply.
+const env = Bun.env;
 
 /**
  * Generates the complete database structure from Better Auth configuration

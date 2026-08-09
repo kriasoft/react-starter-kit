@@ -32,12 +32,20 @@ import "@testing-library/jest-dom/vitest";
 ## Running Tests
 
 ```bash
-bun test                       # All projects, watch mode
-bun test --run                 # Single run (no watch)
-bun test --project @repo/api   # API tests only
-bun test --project @repo/app   # Frontend tests only
-bun test billing               # Filter by filename
+bun run test                       # All projects, watch mode
+bun run test --run                 # Single run (no watch)
+bun run test --project @repo/api   # API tests only
+bun run test --project @repo/app   # Frontend tests only
+bun run test billing               # Filter by filename
 ```
+
+::: warning
+Use `bun run test`, not `bun test`. The latter invokes Bun's test runner instead
+of the root Vitest script, so it ignores the Happy DOM environment and
+`vitest.setup.ts`; DOM-dependent frontend tests fail with `document is not
+defined`. The `bun api:test` and `bun app:test` shorthands are safe because both
+names resolve to package scripts.
+:::
 
 ## File Conventions
 

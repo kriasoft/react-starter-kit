@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 
 export type AuthStep = "method" | "email" | "otp";
@@ -91,7 +91,7 @@ export function useAuthForm({
   // Go back to email step, preserving error message
   const resetToEmail = () => transitionTo("email", false);
 
-  const sendOtp = async (e?: FormEvent) => {
+  const sendOtp = async (e?: SubmitEvent) => {
     e?.preventDefault();
 
     // Normalize before auth calls to prevent case/whitespace mismatches

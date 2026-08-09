@@ -1,9 +1,9 @@
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
-import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import { TLSSocket } from "node:tls";
 import { URL, fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineProject } from "vitest/config";
 
 const publicEnvVars = [
@@ -30,19 +30,26 @@ export default defineProject(({ mode }) => {
     cacheDir: fileURLToPath(new URL("../../.cache/vite-app", import.meta.url)),
 
     build: {
-      rollupOptions: {
+      rolldownOptions: {
         output: {
           assetFileNames: "_app/assets/[name]-[hash][extname]",
           chunkFileNames: "_app/assets/[name]-[hash].js",
           entryFileNames: "_app/assets/[name]-[hash].js",
-          manualChunks: {
-            react: ["react", "react-dom"],
-            tanstack: ["@tanstack/react-router"],
-            ui: [
-              "@radix-ui/react-slot",
-              "class-variance-authority",
-              "clsx",
-              "tailwind-merge",
+          // Rolldown matches modules by resolved path, not package name.
+          // Groups are evaluated in order, so keep them mutually exclusive.
+          codeSplitting: {
+            groups: [
+              {
+                name: "react",
+                test: /node_modules\/(react|react-dom|scheduler)\//,
+              },
+              { name: "tanstack", test: /node_modules\/@tanstack\// },
+              {
+                // Not "ui": Rolldown also names source chunks after their
+                // directory, and packages/ui would collide.
+                name: "vendor-ui",
+                test: /node_modules\/(@radix-ui|class-variance-authority|clsx|tailwind-merge|lucide-react)\//,
+              },
             ],
           },
         },
@@ -51,14 +58,12 @@ export default defineProject(({ mode }) => {
 
     resolve: {
       conditions: ["module", "browser", "development|production"],
-    },
-
-    css: {
-      postcss: "./postcss.config.js",
+      // Native replacement for vite-tsconfig-paths (Vite 8+).
+      tsconfigPaths: true,
     },
 
     plugins: [
-      tsconfigPaths(),
+      tailwindcss(),
       tanstackRouter({
         routesDirectory: "./routes",
         generatedRouteTree: "./lib/routeTree.gen.ts",
@@ -68,7 +73,8 @@ export default defineProject(({ mode }) => {
         autoCodeSplitting: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as any,
-      // https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react-swc
+      // Oxc-based; Vite 8 recommends it over plugin-react-swc when no SWC
+      // plugins are in use (one less toolchain in the build).
       react(),
     ],
 

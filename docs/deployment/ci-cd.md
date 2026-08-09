@@ -39,6 +39,7 @@ steps:
   # Build and test
   - run: bun email:build # Email templates (needed for types)
   - run: bun tsc --build # Type checking
+  - run: bun --filter @repo/web check # .astro templates (tsc can't parse them)
   - run: bun run test -- --run # Vitest
   - run: bun --filter @repo/web build
   - run: bun --filter @repo/api build
@@ -76,10 +77,15 @@ steps:
   - uses: actions/download-artifact@v6
   - uses: oven-sh/setup-bun@v2
   - run: bun install --frozen-lockfile
-  # Deploy each worker
-  - run: bun wrangler deploy --config apps/api/wrangler.jsonc --env ${{ inputs.environment }}
-  - run: bun wrangler deploy --config apps/app/wrangler.jsonc --env ${{ inputs.environment }}
-  - run: bun wrangler deploy --config apps/web/wrangler.jsonc --env ${{ inputs.environment }}
+  # Deploy each worker. Production is the top-level wrangler config and takes
+  # no --env; only staging and preview pass one.
+  - name: Deploy workers
+    env:
+      ENV_FLAG: ${{ inputs.environment != 'production' && format('--env {0}', inputs.environment) || '' }}
+    run: |
+      bun wrangler deploy --config apps/api/wrangler.jsonc $ENV_FLAG
+      bun wrangler deploy --config apps/app/wrangler.jsonc $ENV_FLAG
+      bun wrangler deploy --config apps/web/wrangler.jsonc $ENV_FLAG
 ```
 
 ::: warning

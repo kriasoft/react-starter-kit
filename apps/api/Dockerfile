@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends dumb-init jq &&
 
 # Set environment variables
 ENV NODE_ENV=production
+ENV PORT=8080
 
 # Set working directory
 WORKDIR /usr/src/app
@@ -44,7 +45,7 @@ RUN test -f ./dist/index.js || (echo "Error: dist/index.js not found" && exit 1)
 # Switch to non-root user
 USER bun
 
-# Expose the port your server runs on (default: 8080)
+# Matches the PORT set above
 EXPOSE 8080
 
 # Run the server using dumb-init for proper signal handling

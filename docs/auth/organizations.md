@@ -85,7 +85,7 @@ Three built-in roles with hierarchical permissions:
 Use the session's `activeOrganizationId` with a membership query to check roles:
 
 ```ts
-// apps/api/routers/organization.ts
+// Inside a protected tRPC procedure
 const [row] = await ctx.db
   .select({ role: Db.member.role })
   .from(Db.member)

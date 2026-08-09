@@ -7,6 +7,8 @@ shadcn/ui component library (new-york style, Radix primitives, Tailwind v4). Con
 - `@/` is only safe for `@/lib/utils`. It resolves via each _consumer's_ tsconfig (both apps map `@/*` to their own root), and it works solely because every consumer keeps a `lib/utils` re-export shim. Keep that form — the CLI regenerates it, and rewriting it to `@repo/ui` creates a cycle.
 - Import one component from another **relatively** (`./toggle`). The CLI emits `@/components/toggle`, which resolves into the consuming app and fails the build there — `apps/web` has no `components/toggle`. Fix it after every `bun ui:add`/`ui:update`.
 
+- `scripts/` is intentionally outside the tsconfig `include`. These are Bun CLI tools, while the library's declaration build uses the browser-only React preset (`types: ["vite/client"]`). Including them would require Bun/Node types and emit declarations for tooling. Smoke-test changed commands deliberately; `bun ui:list` covers only the read-only inventory command.
+
 ## Adding and Updating Components
 
 - Use `bun ui:add <component>`; don't hand-write files the registry already has. `bun ui:add` with no arguments prints help and exits non-zero.
@@ -16,6 +18,7 @@ shadcn/ui component library (new-york style, Radix primitives, Tailwind v4). Con
 - Registry output is not uniform — read what it generated. `packages/ui` lints with `--max-warnings 0`, so convert React 18 patterns before committing:
   - `<Context.Provider value={x}>` → `<Context value={x}>` (`@eslint-react/no-context-provider`)
   - `React.useContext(C)` → `React.use(C)` (`@eslint-react/no-use-context`)
+  - `React.ElementRef<T>` → `React.ComponentRef<T>` — `ElementRef` is a deprecated alias in `@types/react` 19. ESLint does not flag it; `bun --cwd apps/web check` reports it as a hint.
 - Strip the `"use client"` directive when it appears — no RSC here, so it is inert.
 - `no-forward-ref` is off for this package — generated `forwardRef` usage is fine.
 
@@ -25,6 +28,7 @@ shadcn/ui component library (new-york style, Radix primitives, Tailwind v4). Con
 - Use theme tokens (`bg-primary`, `text-muted-foreground`), never raw colors. Each consumer defines the values in its own `styles/globals.css` — `apps/app` and `apps/web` keep separate copies, so a palette change means editing both. `styles.css` here exists only to satisfy the shadcn CLI.
 - Class names must appear as complete literals — Tailwind scans text, so `` `bg-${color}-500` `` produces nothing.
 - Consuming apps must `@source` every directory here that holds class names, or those classes are stripped from their build.
+- Enter/exit utilities (`animate-in`, `fade-in-0`, `zoom-in-95`, `slide-in-from-*`) come from `tw-animate-css`, which each consumer imports separately — `apps/app` does, `apps/web` does not, because nothing it renders is animated. Adding an animated component to a consumer that lacks the import fails silently: Tailwind does not recognise the class names, drops them, and reports nothing, so the component simply renders without transitions.
 
 ## Conventions
 

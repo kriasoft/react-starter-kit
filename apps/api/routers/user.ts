@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
@@ -18,12 +19,15 @@ export const userRouter = router({
         email: z.email({ error: "Invalid email address" }).optional(),
       }),
     )
-    .mutation(({ input, ctx }) => {
-      // TODO: Implement user profile update logic
-      return {
-        id: ctx.user.id,
-        ...input,
-      };
+    .mutation(() => {
+      // Better Auth owns profile changes: use `auth.updateUser` for `name` and
+      // enable/use `auth.changeEmail` for `email`. Throwing prevents this stub
+      // from reporting a successful save.
+      throw new TRPCError({
+        code: "NOT_IMPLEMENTED",
+        message:
+          "user.updateProfile is not implemented. Use the Better Auth profile APIs from @repo/app/lib/auth, or implement this procedure.",
+      });
     }),
 
   list: protectedProcedure
@@ -34,10 +38,12 @@ export const userRouter = router({
       }),
     )
     .query(() => {
-      // TODO: Implement user listing logic
-      return {
-        users: [],
-        nextCursor: null,
-      };
+      // Prefer `auth.organization.listMembers`. A custom implementation must
+      // verify the caller's active-organization membership, then paginate
+      // `Db.member` joined with `Db.user`. Throwing avoids a false empty page.
+      throw new TRPCError({
+        code: "NOT_IMPLEMENTED",
+        message: "user.list is not implemented.",
+      });
     }),
 });

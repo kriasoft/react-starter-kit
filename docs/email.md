@@ -9,7 +9,7 @@ apps/email/
 ├── components/
 │   └── BaseTemplate.tsx       # Shared header, footer, and styling
 ├── templates/
-│   ├── otp-email.tsx          # OTP codes (sign-in, verification, password reset)
+│   ├── otp-email.tsx          # OTP codes (sign-in, verification, password reset, email change)
 │   ├── email-verification.tsx # Link-based email verification
 │   └── password-reset.tsx     # Link-based password reset
 ├── emails/                    # Preview files for dev server (sample data)
@@ -29,7 +29,7 @@ Three templates ship out of the box, all wrapped in `BaseTemplate` for consisten
 | `EmailVerification` | Link-based email verification            | `sendVerificationEmail()`  |
 | `PasswordReset`     | Password reset flow                      | `sendPasswordReset()`      |
 
-`OTPEmail` handles three types via a single `type` prop – `"sign-in"`, `"email-verification"`, and `"forget-password"` – each with different copy. Password resets include an additional security warning. The separate `PasswordReset` template uses a red button to emphasize the security-sensitive action.
+`OTPEmail` handles four types via a single `type` prop – `"sign-in"`, `"email-verification"`, `"forget-password"`, and `"change-email"` – each with different copy. Password resets include an additional security warning. The separate `PasswordReset` template uses a red button to emphasize the security-sensitive action.
 
 ## Development
 

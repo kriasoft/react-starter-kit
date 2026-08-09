@@ -14,7 +14,7 @@ import api from "./index.js";
 import { createAuth } from "./lib/auth.js";
 import type { AppContext } from "./lib/context.js";
 import { createDb } from "./lib/db.js";
-import type { Env } from "./lib/env.js";
+import { envSchema, type Env } from "./lib/env.js";
 import { errorHandler, notFoundHandler } from "./lib/middleware.js";
 
 const { values: args } = parseArgs({
@@ -28,6 +28,21 @@ type CloudflareEnv = {
   HYPERDRIVE_CACHED: Hyperdrive;
   HYPERDRIVE_DIRECT: Hyperdrive;
 } & Env;
+
+/**
+ * Fields whose precedence is handled separately from the generic local-env
+ * overlay below.
+ */
+const SPECIAL_ENV_KEYS = new Set([
+  "ENVIRONMENT",
+  "APP_NAME",
+  "APP_ORIGIN",
+  "DATABASE_URL",
+]);
+
+const localEnvKeys = Object.keys(envSchema.shape).filter(
+  (key) => !SPECIAL_ENV_KEYS.has(key),
+);
 
 const app = new Hono<AppContext>();
 
@@ -54,25 +69,15 @@ app.use(async (c, next) => {
   const db = createDb(cf.env.HYPERDRIVE_CACHED);
   const dbDirect = createDb(cf.env.HYPERDRIVE_DIRECT);
 
-  // Merge secrets from process.env (local dev) with Cloudflare bindings
-  const secretKeys = [
-    "BETTER_AUTH_SECRET",
-    "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET",
-    "OPENAI_API_KEY",
-    "RESEND_API_KEY",
-    "RESEND_EMAIL_FROM",
-    "STRIPE_SECRET_KEY",
-    "STRIPE_WEBHOOK_SECRET",
-    "STRIPE_STARTER_PRICE_ID",
-    "STRIPE_PRO_PRICE_ID",
-    "STRIPE_PRO_ANNUAL_PRICE_ID",
-  ] as const;
-
+  // Prefer local .env values for the remaining schema fields, falling back to
+  // Cloudflare bindings. Deriving the keys keeps new fields in this merge.
   const env = {
     ...cf.env,
     ...Object.fromEntries(
-      secretKeys.map((key) => [key, process.env[key] || cf.env[key]]),
+      localEnvKeys.map((key) => [
+        key,
+        process.env[key] || cf.env[key as keyof typeof cf.env],
+      ]),
     ),
     APP_NAME: process.env.APP_NAME || cf.env.APP_NAME || "Example",
     APP_ORIGIN:

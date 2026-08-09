@@ -12,7 +12,7 @@
 
 ## Tech Stack
 
-- **Runtime:** Bun >=1.3.0, TypeScript 5.9, ESM (`"type": "module"`)
+- **Runtime:** Bun >=1.3.0, TypeScript 6.0, ESM (`"type": "module"`)
 - **Frontend:** React 19, TanStack Router, TanStack Query, Jotai, shadcn/ui (new-york), Tailwind CSS v4
 - **Backend:** Hono, tRPC 11, Better Auth (email OTP, passkey, Google OAuth, organizations)
 - **Database:** Neon PostgreSQL, Drizzle ORM (`snake_case` casing), Cloudflare Hyperdrive
@@ -25,12 +25,12 @@
 ```bash
 bun dev                        # Start web + api + app concurrently
 bun build                      # Build email → web → api → app (in order)
-bun test                       # Vitest (watch mode; --run for single run)
+bun run test                   # Vitest (watch mode; --run for single run)
 bun lint                       # ESLint with cache
 bun typecheck                  # tsc --build
 bun ui:add <component>         # Add shadcn/ui component to packages/ui
 
-# Per-app: bun {web,app,api}:{dev,build,test,deploy}
+# Per-app: bun {web,app,api}:{dev,build,deploy}; test for app/api, check for web
 # Database: bun db:{push,generate,migrate,studio,seed} (append :staging or :prod)
 ```
 

@@ -45,14 +45,21 @@ sequenceDiagram
 The web worker is the only worker with a public route (`example.com/*`). It decides where each request goes:
 
 - `/api/*` – forwarded to the API worker
-- `/login`, `/signup`, `/settings`, `/analytics`, `/reports`, `/_app/*` – forwarded to the app worker
+- The SPA paths listed in `APP_PATHS` (`/dashboard`, `/users`, `/settings`, `/analytics`, `/reports`, `/login`, `/signup`) and `/_app/*` – forwarded to the app worker
 - `/` – routed by [auth hint cookie](#auth-hint-cookie) (app if signed in, marketing site if not)
 - Everything else – served from the web worker's own static assets (marketing pages)
 
 ```ts
 // apps/web/worker.ts (simplified)
 app.all("/api/*", (c) => c.env.API_SERVICE.fetch(c.req.raw));
-app.all("/login*", (c) => c.env.APP_SERVICE.fetch(c.req.raw));
+
+// Exact path plus descendants — never a bare prefix, which would send
+// /users-guide to the SPA fallback. `apps/app/lib/edge-routing.test.ts`
+// checks this list against the route files.
+for (const path of APP_PATHS) {
+  app.all(`/${path}`, (c) => c.env.APP_SERVICE.fetch(c.req.raw));
+  app.all(`/${path}/*`, (c) => c.env.APP_SERVICE.fetch(c.req.raw));
+}
 
 app.on(["GET", "HEAD"], "/", async (c) => {
   const hasAuthHint =
@@ -157,7 +164,7 @@ See [ADR-001](/adr/001-auth-hint-cookie) for the full decision record and [Sessi
 | Staging     | `*-staging`     | `staging.example.com` | Staging branch | `wrangler deploy --env staging` |
 | Production  | `*` (no suffix) | `example.com`         | Main branch    | `wrangler deploy`               |
 
-Each environment has its own Hyperdrive bindings, service binding targets, and `APP_ORIGIN` / `ALLOWED_ORIGINS` variables. See [Edge > Service Bindings](./edge#service-bindings) for the full wrangler config.
+Each environment has its own Hyperdrive bindings, service binding targets, and `APP_ORIGIN`. See [Edge > Service Bindings](./edge#service-bindings) for the full wrangler config.
 
 ## Build Order
 

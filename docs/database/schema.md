@@ -141,8 +141,12 @@ erDiagram
         timestamp trial_start
         timestamp trial_end
         boolean cancel_at_period_end
+        timestamp cancel_at
+        timestamp canceled_at
+        timestamp ended_at
         integer seats
         text billing_interval
+        text stripe_schedule_id
     }
 ```
 

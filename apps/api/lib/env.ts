@@ -26,22 +26,10 @@ export const envSchema = z.object({
 });
 
 /**
- * Runtime environment variables accessor.
- *
- * @remarks
- * - In Bun runtime: Variables are accessed via `Bun.env`
- * - In Cloudflare Workers: Variables must be accessed via request context
- * - Falls back to empty object when Bun global is unavailable
- *
- * @example
- * // In Bun runtime
- * const dbUrl = env.DATABASE_URL;
- *
- * // In Cloudflare Workers (must use context)
- * const dbUrl = context.env.DATABASE_URL;
+ * Do not parse `Bun.env` at module load: production bindings arrive on `c.env`,
+ * while local development combines Wrangler bindings with `process.env`.
+ * Validate the assembled environment at the entry point instead.
  */
-export const env =
-  typeof Bun === "undefined" ? ({} as Env) : envSchema.parse(Bun.env);
 
 /**
  * Type-safe environment variables interface.

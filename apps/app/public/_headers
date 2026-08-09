@@ -1,0 +1,20 @@
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: DENY
+
+# CSP is intentionally deferred. Copying apps/web's `default-src 'self'` policy
+# would block the inline theme script, Google Fonts stylesheet, and font files.
+# When adding one, hash the script and allow fonts.googleapis.com for styles and
+# fonts.gstatic.com for fonts; avoid `script-src 'unsafe-inline'`.
+
+# Every SPA route falls back to index.html. It contains no user data, so shared
+# caches may store it, but must revalidate to pick up new hashed bundle URLs.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Vite emits content-hashed filenames under /_app/assets.
+/_app/*
+  Cache-Control: public, max-age=31536000, immutable

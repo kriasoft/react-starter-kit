@@ -17,7 +17,7 @@ variable "hostname" {
 
 variable "project_slug" {
   type        = string
-  description = "Short identifier for resource naming (e.g., myapp)"
+  description = "Short identifier for resource naming. Must match the worker name prefix in apps/*/wrangler.jsonc (e.g. \"example\" for example-api)."
 }
 
 variable "environment" {
