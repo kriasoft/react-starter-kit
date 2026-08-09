@@ -14,18 +14,18 @@ React Starter Kit is a production-ready monorepo for building SaaS web applicati
 
 ## Tech Stack
 
-| Layer      | Technology                                                                                                                                                                                          |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Runtime    | [Bun](https://bun.sh) 1.3+, TypeScript 6.0, ESM                                                                                                                                                     |
-| Frontend   | [React](https://react.dev) 19, [TanStack Router](https://tanstack.com/router), [TanStack Query](https://tanstack.com/query), [Jotai](https://jotai.org), [Tailwind CSS](https://tailwindcss.com) v4 |
-| UI         | [shadcn/ui](https://ui.shadcn.com) (new-york style)                                                                                                                                                 |
-| Backend    | [Hono](https://hono.dev), [tRPC](https://trpc.io) 11                                                                                                                                                |
-| Auth       | [Better Auth](https://www.better-auth.com/) – email OTP, passkeys, Google OAuth, organizations                                                                                                      |
-| Billing    | [Stripe](https://stripe.com) subscriptions via Better Auth plugin                                                                                                                                   |
-| Database   | [Neon](https://neon.tech) PostgreSQL, [Drizzle ORM](https://orm.drizzle.team)                                                                                                                       |
-| Email      | [React Email](https://react.email), [Resend](https://resend.com)                                                                                                                                    |
-| Deployment | [Cloudflare Workers](https://developers.cloudflare.com/workers/), Terraform                                                                                                                         |
-| Testing    | [Vitest](https://vitest.dev) 4, Happy DOM                                                                                                                                                           |
+| Layer | Technology |
+| --- | --- |
+| Runtime | [Bun](https://bun.sh) 1.3+, TypeScript 6.0, ESM |
+| Frontend | [React](https://react.dev) 19, [TanStack Router](https://tanstack.com/router), [TanStack Query](https://tanstack.com/query), [Jotai](https://jotai.org), [Tailwind CSS](https://tailwindcss.com) v4 |
+| UI | [shadcn/ui](https://ui.shadcn.com) (new-york style) |
+| Backend | [Hono](https://hono.dev), [tRPC](https://trpc.io) 11 |
+| Auth | [Better Auth](https://www.better-auth.com/) – email OTP, passkeys, Google OAuth, organizations |
+| Billing | [Stripe](https://stripe.com) subscriptions via Better Auth plugin |
+| Database | [Neon](https://neon.tech) PostgreSQL, [Drizzle ORM](https://orm.drizzle.team) |
+| Email | [React Email](https://react.email), [Resend](https://resend.com) |
+| Deployment | [Cloudflare Workers](https://developers.cloudflare.com/workers/), Terraform |
+| Testing | [Vitest](https://vitest.dev) 4, Happy DOM |
 
 ## What's Included
 

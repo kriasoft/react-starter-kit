@@ -16,9 +16,14 @@ export function getOpenAI(ctx: OpenAIContext): OpenAIProvider {
     return ctx.cache.get(OPENAI_PROVIDER) as OpenAIProvider;
   }
 
-  const provider = createOpenAI({
-    apiKey: ctx.env.OPENAI_API_KEY,
-  });
+  // Optional integration: fail here with the fix rather than letting the SDK
+  // report an opaque auth error on the first completion.
+  const apiKey = ctx.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is not set — AI features are unavailable");
+  }
+
+  const provider = createOpenAI({ apiKey });
 
   ctx.cache.set(OPENAI_PROVIDER, provider);
 

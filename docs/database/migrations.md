@@ -30,33 +30,34 @@ bun db:studio
 
 ## Push vs Migrate
 
-| Command          | What it does                              | Use when                              |
-| ---------------- | ----------------------------------------- | ------------------------------------- |
-| `bun db:migrate` | Applies pending migration files in order  | Production, staging, shared databases |
-| `bun db:push`    | Syncs schema directly, no migration files | Local development, rapid prototyping  |
+| Command | What it does | Use when |
+| --- | --- | --- |
+| `bun db:migrate` | Applies pending migrations to local DB | Local and shared development |
+| `bun db:migrate:<env>` | Applies pending migrations to named DB | Staging and production |
+| `bun db:push` | Syncs schema directly, no migration files | Local development, rapid prototyping |
 
 `push` is faster during development since it skips migration file generation. Switch to `migrate` when you need reproducible, reviewable changes.
 
 ## Targeting Environments
 
-Append `:staging` or `:prod` to run against other databases:
+Append `:staging` or `:production` to run against other databases:
 
 ```bash
 bun db:migrate:staging
-bun db:migrate:prod
+bun db:migrate:production
 ```
 
-These set `ENVIRONMENT` internally, which controls which `.env.{env}.local` file is loaded. Double-check the target before running migrations against production.
+These set `ENVIRONMENT` internally and load only the matching `.env.{env}.local` file. They fail when that file is missing instead of falling back to a local URL, and its `DATABASE_URL` overrides an inherited shell value.
 
-## Drift Detection
+## Migration History Checks
 
-If schema files and migration snapshots diverge (e.g., after a manual DB change or a merge conflict), run:
+After merging branches that both generated migrations, run:
 
 ```bash
 bun db:check
 ```
 
-This reports discrepancies between your TypeScript schema and the migration history. Resolve by either updating the schema to match or generating a new migration to cover the gap.
+This checks the generated migration history for conflicting branches. It does not connect to or detect drift in a live database; use introspection and a deliberate reconciliation migration for out-of-band database changes.
 
 ## Tips
 

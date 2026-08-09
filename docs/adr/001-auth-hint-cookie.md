@@ -1,8 +1,6 @@
 # ADR-001 Auth Hint Cookie For Edge Routing
 
-**Status:** Accepted
-**Date:** 2025-12-28
-**Tags:** auth, routing, edge
+**Status:** Accepted **Date:** 2025-12-28 **Tags:** auth, routing, edge
 
 ## Problem
 
@@ -10,7 +8,7 @@ The web edge needs a fast signal to route `/` without owning auth logic.
 
 ## Decision
 
-Use a dedicated auth-hint cookie set on login and cleared on logout or invalid session. The web worker checks only cookie presence to route, while the app remains the authority. No API calls or session validation in `web`.
+Use a dedicated auth-hint cookie set on login and cleared on logout or invalid session. The web worker routes to the app only when the value is `1`, while the app remains the authority. No API calls or session validation in `web`.
 
 This cookie is NOT a security boundary. It is a routing hint only. False positives are acceptable and result in one extra redirect to `/login`.
 
@@ -18,7 +16,7 @@ This cookie is NOT a security boundary. It is a routing hint only. False positiv
 
 - Cookie name: `__Host-auth` in HTTPS; `auth` in HTTP dev (browsers reject `__Host-` without Secure).
 - Cookie lifecycle: set on new session; clear on sign-out; clear on session-check failure.
-- Web routing: check for either cookie name; never read session cookies.
+- Web routing: accept value `1` under either cookie name; never read session cookies.
 
 ## Alternatives Considered
 

@@ -1,161 +1,65 @@
 # TanStack Queries
 
-This folder contains TanStack Query implementations for managing server state and data fetching in the application.
+This directory owns reusable server-state queries. Components and route loaders share the same `queryOptions()` factories so cache keys, fetch functions, and freshness rules cannot diverge.
 
-## Overview
+## Modules
 
-TanStack Query provides powerful asynchronous state management for TypeScript/JavaScript applications. All query definitions in this folder follow a consistent pattern that enables:
+| Module | Cache key | Purpose |
+| --- | --- | --- |
+| `session.ts` | `['auth', 'session']` | Better Auth session and auth-state helpers |
+| `billing.ts` | `['billing', 'subscription', activeOrgId]` | Subscription state scoped to the active organization |
+| `config.ts` | `['config', 'socialProviders']` | Server-derived deployment capabilities |
 
-- **Automatic caching** - Data is cached and reused across components
-- **Background refetching** - Stale data is automatically refreshed
-- **Request deduplication** - Multiple components requesting the same data result in a single network request
-- **Optimistic updates** - UI updates immediately while mutations are in-flight
-- **Smart refetching** - Automatic refetch on window focus, network reconnect, and at configurable intervals
+Tests live beside the query modules.
 
-## File Structure
+## Module Shape
 
-Each query module typically exports:
+A query module normally exports a stable key, an options factory, and only the hooks or cache helpers its callers use:
 
-1. **Query Keys** - Unique identifiers for cache entries
-2. **Query Options** - Factory functions returning query configurations
-3. **Custom Hooks** - React hooks for consuming queries
-4. **Utility Functions** - Helpers for prefetching, invalidation, and manual updates
+```ts
+export const widgetQueryKey = ["widget", "detail"] as const;
 
-## Pattern Example
-
-```typescript
-// user.ts - Example query module structure
-
-import {
-  queryOptions,
-  useQuery,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-import type { QueryClient } from "@tanstack/react-query";
-
-// 1. Define query keys with consistent naming
-export const userQueryKey = ["users", "detail"] as const;
-export const usersListQueryKey = ["users", "list"] as const;
-
-// 2. Create query options factory functions
-export function userQueryOptions(userId: string) {
+export function widgetQueryOptions(id: string) {
   return queryOptions({
-    queryKey: [...userQueryKey, userId],
-    queryFn: async () => {
-      const response = await fetch(`/api/users/${userId}`);
-      if (!response.ok) throw new Error("Failed to fetch user");
-      return response.json();
-    },
-    staleTime: 5 * 60_000, // Consider data fresh for 5 minutes
-    gcTime: 10 * 60_000, // Keep in cache for 10 minutes
+    queryKey: [...widgetQueryKey, id] as const,
+    queryFn: () => trpcClient.widget.byId.query({ id }),
   });
 }
 
-// 3. Export convenient hooks
-export function useUser(userId: string) {
-  return useQuery(userQueryOptions(userId));
-}
-
-export function useSuspenseUser(userId: string) {
-  return useSuspenseQuery(userQueryOptions(userId));
-}
-
-// 4. Provide utility functions
-export async function prefetchUser(queryClient: QueryClient, userId: string) {
-  return queryClient.prefetchQuery(userQueryOptions(userId));
-}
-
-export function invalidateUser(queryClient: QueryClient, userId: string) {
-  return queryClient.invalidateQueries({
-    queryKey: [...userQueryKey, userId],
-  });
+export function useWidget(id: string) {
+  return useQuery(widgetQueryOptions(id));
 }
 ```
 
-## Query Key Conventions
+Use the same options factory in route `beforeLoad`, component hooks, prefetches, and tests. Do not repeat an equivalent key or fetch function at each call site.
 
-Query keys should follow a hierarchical structure:
+## Current Decisions
 
-```typescript
-["resource"][("resource", "list")][
-  ("resource", "list", { filters })
-] // All queries for a resource // List queries // List with filters
-[("resource", "detail", id)][("resource", "detail", id, "related")]; // Single item queries // Nested resources
-```
+- Session data is fresh for 30 seconds. It does not retry authorization errors, and it inherits focus/reconnect behavior from the root `QueryClient`.
+- Sign-out writes `null` directly instead of invalidating a session known to be gone, then performs a hard redirect to clear all in-memory application state.
+- After sign-in, `revalidateSession()` removes the cached value and invalidates the router so auth guards fetch a new session.
+- Billing includes `activeOrgId` in its key even though the server derives the active organization from the session. Changing organizations must select a different cache entry.
+- Social-provider configuration is fixed for a deployment, so it uses infinite `staleTime`. The auth pages prefetch it before rendering method buttons.
 
-## Configuration Guidelines
+## Key Rules
 
-### staleTime
-
-- How long data is considered fresh
-- During this time, no background refetches occur
-- Set based on data volatility (user sessions: 30s, static content: hours)
-
-### gcTime (garbage collection time)
-
-- How long to keep unused data in cache
-- Should be >= staleTime
-- Prevents refetching when navigating back quickly
-
-### refetchOnWindowFocus
-
-- Ensures data is fresh when users return
-- Disable for rarely-changing data
-- Critical for authentication state
-
-### retry
-
-- Number of retry attempts for failed queries
-- Use exponential backoff with retryDelay
-- Consider disabling for 4xx errors
-
-## Current Implementations
-
-### `session.ts`
-
-Manages authentication session state with Better Auth integration:
-
-- Automatic session refresh before expiry
-- Optimistic updates during auth state changes
-- Cache invalidation on login/logout
-- Prefetching for protected routes
-
-## Best Practices
-
-1. **Colocate queries with their domain** - Keep related queries in the same file
-2. **Export query options** - Allows usage in loaders and prefetching
-3. **Use TypeScript** - Define return types for better type safety
-4. **Handle errors gracefully** - Queries should throw meaningful errors
-5. **Optimize cache times** - Balance freshness with performance
-6. **Leverage suspense** - Use `useSuspenseQuery` with error boundaries
-7. **Prefetch critical data** - Load data before users need it
+- Include every value that changes the result in the query key.
+- Use a stable prefix for intentional bulk invalidation.
+- Normalize optional key parts when `undefined` and `null` mean the same thing.
+- Let query functions throw meaningful errors; components and route boundaries decide how to present them.
+- Override global freshness, retry, or refetch behavior only when the domain has a concrete reason.
+- Do not put sessions or other server state in local storage.
 
 ## Testing
 
-When testing components that use queries:
+Tests that inspect cache behavior should create an isolated client with retries disabled:
 
-```typescript
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const createTestQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: { retry: false, staleTime: Infinity },
-    mutations: { retry: false },
-  },
+```ts
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false } },
 });
-
-// In your test
-const queryClient = createTestQueryClient();
-render(
-  <QueryClientProvider client={queryClient}>
-    <YourComponent />
-  </QueryClientProvider>
-);
 ```
 
-## Resources
+Test key composition and cache helpers directly. Procedure response mapping belongs in API router tests; TanStack Query itself does not need to be retested.
 
-- [TanStack Query Documentation](https://tanstack.com/query/latest)
-- [Query Keys](https://tanstack.com/query/latest/docs/framework/react/guides/query-keys)
-- [Query Functions](https://tanstack.com/query/latest/docs/framework/react/guides/query-functions)
-- [Suspense](https://tanstack.com/query/latest/docs/framework/react/guides/suspense)
+See [Frontend State and Data Fetching](/frontend/state) and [Testing](/testing) for application-level patterns.

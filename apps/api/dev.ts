@@ -1,7 +1,7 @@
 /**
  * @file Local development server emulating Cloudflare Workers runtime.
  *
- * Requires wrangler.jsonc with HYPERDRIVE_CACHED and HYPERDRIVE_DIRECT bindings.
+ * Requires wrangler.jsonc with HYPERDRIVE_CACHED and HYPERDRIVE_UNCACHED bindings.
  */
 
 import { Hono } from "hono";
@@ -26,19 +26,14 @@ const { values: args } = parseArgs({
 
 type CloudflareEnv = {
   HYPERDRIVE_CACHED: Hyperdrive;
-  HYPERDRIVE_DIRECT: Hyperdrive;
+  HYPERDRIVE_UNCACHED: Hyperdrive;
 } & Env;
 
 /**
  * Fields whose precedence is handled separately from the generic local-env
  * overlay below.
  */
-const SPECIAL_ENV_KEYS = new Set([
-  "ENVIRONMENT",
-  "APP_NAME",
-  "APP_ORIGIN",
-  "DATABASE_URL",
-]);
+const SPECIAL_ENV_KEYS = new Set(["ENVIRONMENT", "APP_NAME", "APP_ORIGIN"]);
 
 const localEnvKeys = Object.keys(envSchema.shape).filter(
   (key) => !SPECIAL_ENV_KEYS.has(key),
@@ -63,11 +58,11 @@ const cf = await getPlatformProxy<CloudflareEnv>({
 });
 
 // Inject context with two database connections:
-// - db: Hyperdrive caching for read-heavy queries
-// - dbDirect: No cache for writes and transactions
+// - db: always fresh, the default for everything
+// - dbCached: Hyperdrive query caching, opt-in for read-heavy queries
 app.use(async (c, next) => {
-  const db = createDb(cf.env.HYPERDRIVE_CACHED);
-  const dbDirect = createDb(cf.env.HYPERDRIVE_DIRECT);
+  const db = createDb(cf.env.HYPERDRIVE_UNCACHED);
+  const dbCached = createDb(cf.env.HYPERDRIVE_CACHED);
 
   // Prefer local .env values for the remaining schema fields, falling back to
   // Cloudflare bindings. Deriving the keys keeps new fields in this merge.
@@ -88,8 +83,8 @@ app.use(async (c, next) => {
   };
 
   c.set("db", db);
-  c.set("dbDirect", dbDirect);
-  c.set("auth", createAuth(db, env));
+  c.set("dbCached", dbCached);
+  c.set("auth", createAuth(db, env)); // Uncached, as in worker.ts
   await next();
 });
 

@@ -21,7 +21,7 @@ import {
 
 type CloudflareEnv = {
   HYPERDRIVE_CACHED: Hyperdrive;
-  HYPERDRIVE_DIRECT: Hyperdrive;
+  HYPERDRIVE_UNCACHED: Hyperdrive;
 } & Env;
 
 const worker = new Hono<{
@@ -40,12 +40,15 @@ worker.use(logger());
 
 // Initialize shared context for all requests
 worker.use(async (c, next) => {
-  const db = createDb(c.env.HYPERDRIVE_CACHED);
-  const dbDirect = createDb(c.env.HYPERDRIVE_DIRECT);
+  const db = createDb(c.env.HYPERDRIVE_UNCACHED);
+  const dbCached = createDb(c.env.HYPERDRIVE_CACHED);
+  // Better Auth owns its own SQL, so it gets the default client: a session or
+  // permission row read from cache could be seconds behind a sign-out or a
+  // role change.
   const auth = createAuth(db, c.env);
 
   c.set("db", db);
-  c.set("dbDirect", dbDirect);
+  c.set("dbCached", dbCached);
   c.set("auth", auth);
 
   await next();

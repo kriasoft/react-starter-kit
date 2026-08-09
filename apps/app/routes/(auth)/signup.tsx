@@ -1,5 +1,6 @@
 import { AuthForm } from "@/components/auth";
 import { getSafeRedirectUrl } from "@/lib/auth-config";
+import { socialProvidersQueryOptions } from "@/lib/queries/config";
 import { revalidateSession, sessionQueryOptions } from "@/lib/queries/session";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -25,6 +26,11 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/(auth)/signup")({
   validateSearch: searchSchema,
   beforeLoad: async ({ context, search }) => {
+    // Overlap this request with the session check, then render the form once.
+    const socialProviders = context.queryClient.prefetchQuery(
+      socialProvidersQueryOptions(),
+    );
+
     try {
       const session = await context.queryClient.fetchQuery(
         sessionQueryOptions(),
@@ -38,6 +44,8 @@ export const Route = createFileRoute("/(auth)/signup")({
       // Re-throw redirects, show signup form for fetch errors
       if (isRedirect(error)) throw error;
     }
+
+    await socialProviders;
   },
   component: SignupPage,
 });

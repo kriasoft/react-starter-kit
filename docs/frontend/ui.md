@@ -6,12 +6,12 @@ The project uses [shadcn/ui](https://ui.shadcn.com/) (new-york style) with [Tail
 
 There are two homes for components, and the split matters:
 
-|               | `packages/ui/components/`               | `apps/app/components/`                  |
-| ------------- | --------------------------------------- | --------------------------------------- |
-| What          | shadcn/ui primitives – `Button`, `Card` | Product parts – `AuthForm`, `UserMenu`  |
-| Knows about   | React, Radix, and styling utilities     | Routes, queries, session, product rules |
-| Maintained by | The shadcn CLI (`bun ui:add`)           | You                                     |
-| Imported from | `@repo/ui`                              | `@/components/...`                      |
+|  | `packages/ui/components/` | `apps/app/components/` |
+| --- | --- | --- |
+| What | shadcn/ui primitives – `Button`, `Card` | Product parts – `AuthForm`, `UserMenu` |
+| Knows about | React, Radix, and styling utilities | Routes, queries, session, product rules |
+| Maintained by | The shadcn CLI (`bun ui:add`) | You |
+| Imported from | `@repo/ui` | `@/components/...` |
 
 A component belongs in `packages/ui` only if it would still make sense in a different app. Anything that reaches for a route, a query, or the session belongs in `apps/app/components`.
 
@@ -35,9 +35,7 @@ export * from "./components/toggle-group";
 
 Without it, `import { ToggleGroup } from "@repo/ui"` won't resolve.
 
-::: warning Review what the CLI generates
-`bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`).
-:::
+::: warning Review what the CLI generates `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`). :::
 
 ## Package Structure
 

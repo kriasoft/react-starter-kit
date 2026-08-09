@@ -6,8 +6,8 @@
   "name": "example-web",
   "main": "./worker.ts",
   "compatibility_date": "2026-08-08",
-  "compatibility_flags": [],
   "workers_dev": false,
+  "observability": { "enabled": true },
 
   // [ASSETS]
   // Serves bundled JavaScript, CSS, images, and other static assets.
@@ -21,7 +21,7 @@
 
   // [SERVICE BINDINGS]
   // Connect to other workers for dynamic routing.
-  // NOTE: services is non-inheritable — must be specified per environment.
+  // NOTE: services is non-inheritable – must be specified per environment.
   // Use naming convention: <worker>-<env> (e.g., example-app-staging)
   "services": [
     { "binding": "APP_SERVICE", "service": "example-app" },
@@ -30,9 +30,13 @@
 
   // [ENV:PRODUCTION]
   // Command: bun wrangler deploy
+  //
+  // Custom domain: this worker is the origin for the whole hostname, so Wrangler
+  // creates the DNS record and certificate and Terraform owns no DNS at all.
+  // The pattern must be a bare hostname – no "/*", no zone_name.
   // prettier-ignore
   "routes": [
-    { "pattern": "example.com/*", "zone_name": "example.com" }
+    { "pattern": "example.com", "custom_domain": true }
   ],
   "vars": {
     "ENVIRONMENT": "production"
@@ -40,7 +44,7 @@
 
   "env": {
     // [ENV:DEVELOPMENT]
-    // Command: bun wrangler dev
+    // Named Wrangler development environment; `bun dev` uses Astro instead.
     "dev": {
       "services": [
         { "binding": "APP_SERVICE", "service": "example-app-dev" },
@@ -63,23 +67,7 @@
       },
       // prettier-ignore
       "routes": [
-        { "pattern": "staging.example.com/*", "zone_name": "example.com" }
-      ]
-    },
-
-    // [ENV:PREVIEW]
-    // Command: bun wrangler deploy --env preview
-    "preview": {
-      "services": [
-        { "binding": "APP_SERVICE", "service": "example-app-preview" },
-        { "binding": "API_SERVICE", "service": "example-api-preview" }
-      ],
-      "vars": {
-        "ENVIRONMENT": "preview"
-      },
-      // prettier-ignore
-      "routes": [
-        { "pattern": "preview.example.com/*", "zone_name": "example.com" }
+        { "pattern": "staging.example.com", "custom_domain": true }
       ]
     }
   }

@@ -4,20 +4,21 @@ outline: [2, 3]
 
 # Social Providers
 
-Google OAuth is configured out of the box. The flow redirects users to Google's consent screen, then back to your app where Better Auth creates or links the account.
+Google OAuth ships wired up but **off** until you supply credentials. The flow redirects users to Google's consent screen, then back to your app where Better Auth creates or links the account.
+
+Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` together or not at all. With neither, the provider stays disabled and the sign-in form hides its button; with only one, `createAuth` throws naming the missing variable, because a half-configured provider is a mistake rather than a choice.
 
 ## Server Configuration
 
 Google OAuth credentials are set in `apps/api/lib/auth.ts`:
 
 ```ts
-socialProviders: {
-  google: {
-    clientId: env.GOOGLE_CLIENT_ID,
-    clientSecret: env.GOOGLE_CLIENT_SECRET,
-  },
-},
+// Returns {} when neither credential is set, so Better Auth registers no
+// social provider at all.
+socialProviders: googleProvider(env),
 ```
+
+The same function backs the `config.socialProviders` tRPC query, which the sign-in form reads to decide which buttons to render. The client still needs a button for each supported provider, but it does not maintain a second enabled-provider list that can drift from server credentials.
 
 ### Setting Up Google OAuth
 
@@ -86,28 +87,19 @@ Only same-origin relative paths are accepted – absolute URLs and protocol-rela
 
 Better Auth supports [30+ OAuth providers](https://www.better-auth.com/docs/concepts/oauth). To add one:
 
-**1. Add server config** in `apps/api/lib/auth.ts`:
+**1. Add both credentials** to `apps/api/lib/env.ts` and `.env.local`, keeping them optional so deployments that do not use the provider still work.
+
+**2. Extend the server provider helper** in `apps/api/lib/auth.ts`, including the same both-or-neither check used for Google:
 
 ```ts
-socialProviders: {
+return {
   google: { ... },
-  github: {  // [!code ++]
-    clientId: env.GITHUB_CLIENT_ID,  // [!code ++]
-    clientSecret: env.GITHUB_CLIENT_SECRET,  // [!code ++]
-  },  // [!code ++]
-},
+  github: { clientId: githubId, clientSecret: githubSecret }, // [!code ++]
+};
 ```
 
-**2. Add env vars** to `apps/api/lib/env.ts` and your `.env.local`.
+`config.socialProviders` returns the helper's keys, so there is no separate client-side provider list to update.
 
-**3. Update the providers list** in `apps/app/lib/auth-config.ts`:
+**3. Create a login button component** following the `GoogleLogin` pattern – clear session cache, call `auth.signIn.social({ provider: "github" })`, and handle errors.
 
-```ts
-oauth: {
-  providers: ["google", "github"] as const,  // [!code ++]
-},
-```
-
-**4. Create a login button component** following the `GoogleLogin` pattern – clear session cache, call `auth.signIn.social({ provider: "github" })`, handle errors.
-
-**5. Add the button** to the `MethodSelection` component in `auth-form.tsx`.
+**4. Render the button** in `MethodSelection` only when `socialProviders.includes("github")`.

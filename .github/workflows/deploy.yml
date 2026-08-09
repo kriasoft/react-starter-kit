@@ -15,37 +15,52 @@ on:
         required: true
         type: string
 
+# A caller's workflow-level `env` does not reach a reusable workflow, so this
+# is repeated rather than inherited from ci.yml. Deploy runners have no use for
+# Git hooks.
+env:
+  HUSKY: 0
+
 jobs:
   deploy:
     name: ${{ inputs.name }}
     runs-on: ubuntu-latest
     permissions:
+      contents: read # for actions/checkout
       deployments: write
-      pull-requests: read
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ steps.pr.outputs.formatted || inputs.url }}
+      url: ${{ inputs.url }}
     steps:
       - uses: actions/checkout@v6
+      # `upload-artifact` roots the archive at the least common ancestor of the
+      # uploaded paths – `apps/` here – so restore it there, not at the
+      # workspace root. Otherwise each `dist` lands one level too high and
+      # Wrangler resolves `./dist` relative to apps/*/wrangler.jsonc to nothing.
       - uses: actions/download-artifact@v6
         with:
           name: build
+          path: apps
+      # `apps/email/dist` is not deployed directly – the API worker imports
+      # `@repo/email`, whose package exports point there, so Wrangler fails to
+      # bundle `worker.ts` without it.
+      - name: Verify build artifacts
+        run: |
+          test -d apps/email/dist
+          test -d apps/web/dist
+          test -d apps/app/dist
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - uses: kriasoft/pr-codename@v1
-        id: pr
-        if: contains(inputs.url, '{codename}')
-        with:
-          template: ${{ inputs.url }}
-          token: ${{ github.token }}
-      # TODO: Enable after provisioning Cloudflare and configuring the deploy
-      # credentials in each GitHub environment.
+      # Disabled in the starter kit. Enable after provisioning Cloudflare and
+      # configuring deploy credentials in each GitHub environment.
       #
-      # Production uses the top-level Wrangler config; staging and preview are
-      # named environments. Wrangler rejects `--env production`.
+      # Production uses the top-level Wrangler config; staging is a named
+      # environment. Wrangler rejects `--env production`.
       # - name: Deploy workers
       #   env:
-      #     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      #     # Account ID is not a secret, so it is a variable. Set it explicitly:
+      #     # a token with access to more than one account cannot infer which.
+      #     CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       #     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       #     DEPLOY_ENV: ${{ inputs.environment }}
       #   run: |

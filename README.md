@@ -2,13 +2,7 @@
 
 # React Starter Kit
 
-<a href="https://reactstarter.com/getting-started/"><img src="https://img.shields.io/badge/Docs-007ec6" height="20"></a>
-<a href="https://github.com/kriasoft/react-starter-kit?sponsor=1"><img src="https://img.shields.io/badge/-GitHub-%23555.svg?logo=github-sponsors" height="20"></a>
-<a href="https://discord.gg/2nKEnKq"><img src="https://img.shields.io/discord/643523529131950086?label=Chat" height="20"></a>
-<a href="https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant"><img src="https://img.shields.io/badge/Ask_ChatGPT-10a37f?logo=openai&logoColor=white" height="20"></a>
-<a href="https://gemini.google.com/gem/1IXFElQ2UvvZY86iL6uZLeoC-r8mp-OB-?usp=sharing"><img src="https://img.shields.io/badge/Ask_Gemini-8E75B2?logo=googlegemini&logoColor=white" height="20"></a>
-<a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a>
-<a href="https://x.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
+<a href="https://reactstarter.com/getting-started/"><img src="https://img.shields.io/badge/Docs-007ec6" height="20"></a> <a href="https://github.com/kriasoft/react-starter-kit?sponsor=1"><img src="https://img.shields.io/badge/-GitHub-%23555.svg?logo=github-sponsors" height="20"></a> <a href="https://discord.gg/2nKEnKq"><img src="https://img.shields.io/discord/643523529131950086?label=Chat" height="20"></a> <a href="https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant"><img src="https://img.shields.io/badge/Ask_ChatGPT-10a37f?logo=openai&logoColor=white" height="20"></a> <a href="https://gemini.google.com/gem/1IXFElQ2UvvZY86iL6uZLeoC-r8mp-OB-?usp=sharing"><img src="https://img.shields.io/badge/Ask_Gemini-8E75B2?logo=googlegemini&logoColor=white" height="20"></a> <a href="https://github.com/kriasoft/react-starter-kit/stargazers"><img src="https://img.shields.io/github/stars/kriasoft/react-starter-kit.svg?style=social&label=Star&maxAge=3600" height="20"></a> <a href="https://x.com/ReactStarter"><img src="https://img.shields.io/twitter/follow/ReactStarter.svg?style=social&label=Follow&maxAge=3600" height="20"></a>
 
 </div>
 
@@ -29,14 +23,14 @@ React Starter Kit is proudly supported by these amazing sponsors:
 
 ## Technology Stack
 
-| Layer         | Technologies                                                                                                                                                                                  |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Runtime**   | [Bun](https://bun.sh/), [Cloudflare Workers](https://workers.cloudflare.com/), [TypeScript](https://www.typescriptlang.org/) 6.0                                                              |
-| **Frontend**  | [React 19](https://react.dev/), [TanStack Router](https://tanstack.com/router), [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Jotai](https://jotai.org/) |
-| **Marketing** | [Astro](https://astro.build/)                                                                                                                                                                 |
-| **Backend**   | [Hono](https://hono.dev/), [tRPC](https://trpc.io/), [Better Auth](https://www.better-auth.com/), [Stripe](https://stripe.com/)                                                               |
-| **Database**  | [Drizzle ORM](https://orm.drizzle.team/), [Neon PostgreSQL](https://get.neon.com/HD157BR)                                                                                                     |
-| **Tooling**   | [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)                                                                   |
+| Layer | Technologies |
+| --- | --- |
+| **Runtime** | [Bun](https://bun.sh/), [Cloudflare Workers](https://workers.cloudflare.com/), [TypeScript](https://www.typescriptlang.org/) 6.0 |
+| **Frontend** | [React 19](https://react.dev/), [TanStack Router](https://tanstack.com/router), [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Jotai](https://jotai.org/) |
+| **Marketing** | [Astro](https://astro.build/) |
+| **Backend** | [Hono](https://hono.dev/), [tRPC](https://trpc.io/), [Better Auth](https://www.better-auth.com/), [Stripe](https://stripe.com/) |
+| **Database** | [Drizzle ORM](https://orm.drizzle.team/), [Neon PostgreSQL](https://get.neon.com/HD157BR) |
+| **Tooling** | [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/) |
 
 ## Monorepo Architecture
 
@@ -51,7 +45,7 @@ React Starter Kit is proudly supported by these amazing sponsors:
 │   ├── core/         Shared types and utilities
 │   └── ws-protocol/  WebSocket protocol with type-safe messaging
 ├── db/               Drizzle ORM schemas, migrations, and seed data
-├── infra/            Terraform (Cloudflare Workers, DNS, Hyperdrive)
+├── infra/            Terraform (Hyperdrive connection pools, R2 storage)
 ├── docs/             VitePress documentation
 └── scripts/          Build automation and dev tools
 ```
@@ -118,7 +112,7 @@ bun db:seed              # Seed with sample data (optional)
 bun db:studio            # Open database GUI
 ```
 
-For production, use `bun db:migrate` to apply migrations instead of `db:push`.
+`db:push` is for local prototyping only. Staging and production apply migrations instead: `bun db:migrate:staging`, `bun db:migrate:production`.
 
 | App            | URL                     |
 | -------------- | ----------------------- |
@@ -128,46 +122,62 @@ For production, use `bun db:migrate` to apply migrations instead of `db:push`.
 
 ## Production Deployment
 
-### 1. Environment Setup
+The short version. The [deployment guide](https://reactstarter.com/deployment/) covers each step in full.
+
+### 1. Provision Infrastructure
+
+Terraform creates the Hyperdrive configurations the API worker connects through:
+
+```bash
+bun infra:production apply
+```
+
+Paste the two IDs it prints into the `hyperdrive` block of `apps/api/wrangler.jsonc`.
+
+### 2. Environment Setup
 
 Configure your production secrets in Cloudflare Workers:
 
 ```bash
-# Required secrets
-bun wrangler secret put BETTER_AUTH_SECRET
+# Required — the API refuses to deploy without these
+bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc
+bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc
 
-# Stripe billing (optional — first 4 required to enable, annual is optional)
-bun wrangler secret put STRIPE_SECRET_KEY
-bun wrangler secret put STRIPE_WEBHOOK_SECRET
-bun wrangler secret put STRIPE_STARTER_PRICE_ID
-bun wrangler secret put STRIPE_PRO_PRICE_ID
-bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID  # optional
-
-# OAuth providers (as needed)
-bun wrangler secret put GOOGLE_CLIENT_ID
-bun wrangler secret put GOOGLE_CLIENT_SECRET
-
-# Email service
-bun wrangler secret put RESEND_API_KEY
+# Google sign-in (optional — email OTP and passkeys work without it)
+bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc
+bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc
 
 # AI features (optional)
-bun wrangler secret put OPENAI_API_KEY
+bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc
+
+# Stripe billing (optional — set all four to enable, or none; annual is extra)
+bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_PRO_PRICE_ID --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID --config apps/api/wrangler.jsonc  # optional
 ```
 
-Run these commands from the target app directory or pass `--config apps/<app>/wrangler.jsonc`. Non-sensitive vars like `RESEND_EMAIL_FROM` go in `wrangler.jsonc` directly.
+All of these belong to the API worker, which is what `--config` selects – without it Wrangler has no worker to attach the secret to. Add `--env staging` for staging; production is the top-level config and takes no `--env`. Non-sensitive vars like `RESEND_EMAIL_FROM` go in `wrangler.jsonc` directly.
 
-### 2. Build and Deploy
+Set `RESEND_EMAIL_FROM` to an address on a domain you have verified with Resend. The default `onboarding@resend.dev` only delivers to your own inbox, and sign-in is email OTP – leave it and no one else can sign in.
+
+### 3. Migrate the Production Database
 
 ```bash
-# Build packages that require compilation (order matters!)
-bun email:build    # Build email templates first
-bun web:build      # Build marketing site
-bun app:build      # Build main React app
+bun db:migrate:production   # reads .env.production.local, and only that file
+```
 
-# Deploy all applications
-bun web:deploy     # Deploy marketing site
-bun api:deploy     # Deploy API server
-bun app:deploy     # Deploy main React app
+### 4. Build and Deploy
+
+```bash
+# Build all workspaces in dependency order
+bun build          # email → web → api → app
+
+# Deploy service-binding targets before the web router
+bun api:deploy
+bun app:deploy
+bun web:deploy
 ```
 
 ## Backers
@@ -198,10 +208,8 @@ See the [Contributing Guide](.github/CONTRIBUTING.md) to get started. Check [goo
 
 ## License
 
-Copyright © 2014-present Kriasoft. This source code is licensed under the MIT license found in the
-[LICENSE](https://github.com/kriasoft/react-starter-kit/blob/main/LICENSE) file.
+Copyright © 2014-present Kriasoft. This source code is licensed under the MIT license found in the [LICENSE](https://github.com/kriasoft/react-starter-kit/blob/main/LICENSE) file.
 
 ---
 
-<sup>Made with ♥ by Konstantin Tarkus ([@koistya](https://twitter.com/koistya), [blog](https://medium.com/@koistya))
-and [contributors](https://github.com/kriasoft/react-starter-kit/graphs/contributors).</sup>
+<sup>Made with ♥ by Konstantin Tarkus ([@koistya](https://twitter.com/koistya), [blog](https://medium.com/@koistya)) and [contributors](https://github.com/kriasoft/react-starter-kit/graphs/contributors).</sup>

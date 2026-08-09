@@ -40,10 +40,12 @@ function defineLoader<K, V>(
   };
 }
 
+// These display-data lookups opt into the configured query-cache window.
+// Anything that gates access reads `ctx.db` instead.
 export const userById = defineLoader(
   Symbol("userById"),
   async (ctx, ids: readonly string[]) => {
-    const users = await ctx.db
+    const users = await ctx.dbCached
       .select()
       .from(user)
       .where(inArray(user.id, [...ids]));
@@ -54,7 +56,7 @@ export const userById = defineLoader(
 export const userByEmail = defineLoader(
   Symbol("userByEmail"),
   async (ctx, emails: readonly string[]) => {
-    const users = await ctx.db
+    const users = await ctx.dbCached
       .select()
       .from(user)
       .where(inArray(user.email, [...emails]));

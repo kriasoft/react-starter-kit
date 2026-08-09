@@ -1,393 +1,91 @@
-# Security Best Practices Checklist
+# Security Checklist
 
-A comprehensive security checklist for React Starter Kit applications. Review this checklist during development, before deployment, and regularly in production.
+Use this checklist when changing authentication, authorization, data access, or deployment configuration. It records the safeguards this repository actually has and the gaps an application owner must close before production.
 
-## Development Phase
+## Existing Safeguards
 
-### Code Security
+- The browser uses one public origin. The web worker forwards API requests over a service binding, so the default deployment needs no CORS policy.
+- Better Auth validates its own requests against `APP_ORIGIN`; sessions use HTTP-only cookies.
+- `protectedProcedure` rejects requests without both a session and user.
+- Better Auth, authorization, billing, and read-after-write paths use the uncached database binding. Cached reads are opt-in and may be 75 seconds old with the default Hyperdrive settings.
+- API responses pass through Hono's `secureHeaders()` middleware. Static web assets have a CSP and other headers in `apps/web/public/_headers`.
+- Wrangler requires `BETTER_AUTH_SECRET` and `RESEND_API_KEY` before a deployed API version is accepted. Optional integrations validate complete credential sets at their feature boundary.
+- CI runs formatting, linting, type checking, tests, builds, and Terraform validation. Application deployment remains disabled in the starter kit until credentials are configured.
 
-#### Input Validation
+The auth-hint cookie is routing metadata, not authentication. A protected route must always trust the Better Auth session from the API, never the hint.
 
-- [ ] Validate all user inputs on both client and server
-- [ ] Use Zod schemas for type-safe validation
-- [ ] Sanitize HTML content to prevent XSS
-- [ ] Validate file uploads (type, size, content)
-- [ ] Implement rate limiting on forms and APIs
+## Code Review
 
-```typescript
-// Example: tRPC input validation with Zod
-export const userRouter = router({
-  create: publicProcedure
-    .input(
-      z.object({
-        email: z.string().email(),
-        name: z.string().min(1).max(100),
-        age: z.number().int().positive().max(120),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      // Input is already validated
-    }),
-});
-```
+### Inputs and outputs
 
-#### Authentication & Authorization
+- [ ] Give every tRPC procedure that accepts data a bounded Zod input schema.
+- [ ] Validate upload type, size, ownership, and object key on the server. The client-provided MIME type and filename are not authoritative.
+- [ ] Do not render untrusted HTML. If a feature genuinely needs HTML, select a maintained sanitizer and test the allowed markup explicitly.
+- [ ] Return public response shapes rather than database rows containing fields the caller does not need.
 
-- [ ] Use Better Auth for authentication
-- [ ] Implement proper session management
-- [ ] Use secure session storage (httpOnly cookies)
-- [ ] Implement CSRF protection
-- [ ] Check permissions on every protected route
-- [ ] Log authentication events
+### Authentication and authorization
 
-```typescript
-// Example: Protected tRPC procedure
-export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  return next({ ctx: { ...ctx, user: ctx.session.user } });
-});
-```
+- [ ] Use `protectedProcedure` for signed-in operations.
+- [ ] Check ownership, organization membership, and role for the specific resource inside every protected read and mutation. Authentication alone is not authorization.
+- [ ] Keep auth, permission, billing, and read-after-write queries on `ctx.db`, not `ctx.dbCached`.
+- [ ] Treat Google and Stripe as complete sets: both Google credentials, or all four required Stripe values. Do not reintroduce silent partial setup.
+- [ ] Do not log OTPs, session cookies, authorization headers, API keys, full database URLs, or unnecessary personal data in production.
 
-#### Data Protection
+### Browser and API boundaries
 
-- [ ] Never log sensitive data (passwords, tokens, PII)
-- [ ] Use parameterized queries (Drizzle ORM)
-- [ ] Encrypt sensitive data at rest
-- [ ] Implement proper error handling without data leaks
-- [ ] Use HTTPS for all communications
-- [ ] Validate and sanitize database queries
+- [ ] Keep redirect destinations relative and pass them through `getSafeRedirectUrl()`.
+- [ ] Keep the API same-origin unless the move includes an explicit CORS and CSRF design. Better Auth's origin checks do not protect arbitrary tRPC mutations.
+- [ ] Revisit both static header files when adding third-party scripts, fonts, images, frames, or network origins.
+- [ ] Avoid storing session material or other secrets in `localStorage`.
 
-```typescript
-// Example: Safe database query with Drizzle
-const users = await db
-  .select()
-  .from(usersTable)
-  .where(eq(usersTable.email, email)); // Parameterized, prevents SQL injection
-```
+## Before Deployment
 
-### Secret Management
+### Configuration
 
-#### Environment Variables
+- [ ] Replace placeholder Worker names, domains, Hyperdrive IDs, database URLs, and application names.
+- [ ] Generate a unique `BETTER_AUTH_SECRET` for each environment and store it with Wrangler, never in a committed env file.
+- [ ] Set `RESEND_EMAIL_FROM` to a sender on a verified domain. The default `onboarding@resend.dev` cannot deliver OTPs to normal users.
+- [ ] Set Google credentials together, Stripe's four required values together, and leave unused optional integrations unset.
+- [ ] Confirm `APP_ORIGIN`, Google callback URLs, Stripe webhook URLs, and service-binding targets all use the intended environment.
+- [ ] Apply reviewed migrations with `db:migrate:staging` or `db:migrate:production`; do not use `db:push` outside local development.
 
-- [ ] Store secrets in `.env.local` (never commit)
-- [ ] Use `.env` only for non-sensitive defaults
-- [ ] Document required variables in `.env`
-- [ ] Validate environment variables at startup
-- [ ] Use different secrets for each environment
+### Edge controls
 
-```typescript
-// Example: Environment validation
-const env = z
-  .object({
-    DATABASE_URL: z.string().url(),
-    JWT_SECRET: z.string().min(32),
-    SMTP_PASSWORD: z.string(),
-    PUBLIC_API_URL: z.string().url(), // Safe for client
-  })
-  .parse(process.env);
-```
+- [ ] Add and test a CSP for `apps/app`. It is intentionally deferred because the current inline theme script and Google Fonts need explicit handling.
+- [ ] Configure Cloudflare rate limiting for authentication and other abuse-prone endpoints. No in-process map can enforce a global limit across Worker isolates; use a WAF rule or a Rate Limiting binding.
+- [ ] Verify headers on deployed web, app, and API responses rather than only in local builds.
+- [ ] Keep preview URLs disabled unless their authentication, service bindings, and data isolation have been reviewed.
 
-#### Production Secrets
+### Repository and operations
 
-- [ ] Use Cloudflare Workers secrets for production
-- [ ] Rotate secrets regularly
-- [ ] Never hardcode secrets in code
-- [ ] Audit secret access logs
-- [ ] Use secret scanning in CI/CD
+- [ ] Enable branch protection, dependency alerts, and secret scanning on the hosting repository.
+- [ ] Give GitHub and HCP Terraform tokens only the scopes documented in [CI/CD](/deployment/ci-cd) and [Infrastructure](/specs/infra-terraform).
+- [ ] Configure log retention and alerts without recording secrets or sensitive request bodies.
+- [ ] Test database restoration and Worker rollback. A Worker rollback does not reverse a database migration.
+- [ ] Assign an incident contact and rehearse the [incident playbook](./incident-playbook) with application-specific details.
 
-### Dependencies
+## Verification
 
-#### Package Management
-
-- [ ] Run `bun audit` regularly
-- [ ] Review new dependencies before adding
-- [ ] Check dependency licenses
-- [ ] Enable Dependabot alerts
-- [ ] Keep dependencies up to date
-- [ ] Commit the lock file (`bun.lock`)
+Run the repository checks before deployment:
 
 ```bash
-# Security audit commands
-bun audit                    # Check for vulnerabilities
-bun update --latest          # Update dependencies
-bun pm ls                    # List all dependencies
+bun prettier --check .
+bun lint
+bun typecheck
+bun run test -- --run
+bun web:check
+bun docs:build
+terraform fmt -check -recursive infra/
 ```
 
-#### Supply Chain Security
-
-- [ ] Verify package authenticity
-- [ ] Use specific versions (not wildcards)
-- [ ] Review dependency source code for critical packages
-- [ ] Monitor for dependency hijacking
-- [ ] Use SubResource Integrity (SRI) for CDN resources
-
-## Pre-Deployment Phase
-
-### Security Headers
-
-Security headers are configured per response source. `_headers` applies only to
-static assets; API responses use Hono's `secureHeaders()` middleware.
-
-| Worker | Mechanism                  | CSP                      |
-| ------ | -------------------------- | ------------------------ |
-| web    | `apps/web/public/_headers` | `default-src 'self'`     |
-| app    | `apps/app/public/_headers` | Missing — see below      |
-| api    | Hono `secureHeaders()`     | Not set (JSON responses) |
-
-Keep `_headers` in `public/` so Astro and Vite copy it into the deployed asset
-directory.
-
-#### Remaining work
-
-- [ ] Add a CSP to `apps/app`. Its inline theme script and Google-hosted Inter require a script hash and explicit style/font origins; avoid `'unsafe-inline'`.
-- [ ] Revisit the web CSP when adding third-party scripts, embeds, or remote images.
-- [ ] Verify the expected headers on deployed responses.
-
-### API Security
-
-#### tRPC Security
-
-- [ ] Validate all inputs with Zod
-- [ ] Implement rate limiting
-- [ ] Use proper error codes
-- [ ] Don't expose internal errors
-- [ ] Log suspicious activities
-- [ ] Implement request timeouts
-
-```typescript
-// Example: Rate limiting middleware
-const rateLimiter = new Map();
-
-export const rateLimit = middleware(async ({ ctx, next }) => {
-  const key = ctx.ip;
-  const limit = rateLimiter.get(key) || 0;
-
-  if (limit > 10) {
-    throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-  }
-
-  rateLimiter.set(key, limit + 1);
-  setTimeout(() => rateLimiter.delete(key), 60000);
-
-  return next();
-});
-```
-
-#### CORS Configuration
-
-- [ ] Configure allowed origins explicitly
-- [ ] Don't use wildcard (\*) in production
-- [ ] Validate Origin header
-- [ ] Configure allowed methods and headers
-- [ ] Use credentials carefully
-
-### Client Security
-
-#### React Security
-
-- [ ] Avoid dangerouslySetInnerHTML
-- [ ] Sanitize user-generated content
-- [ ] Use Content Security Policy
-- [ ] Validate URLs before navigation
-- [ ] Implement proper error boundaries
-- [ ] Don't expose sensitive data in state
-
-```typescript
-// Example: Safe HTML rendering
-import DOMPurify from 'isomorphic-dompurify'
-
-function SafeHTML({ content }: { content: string }) {
-  const sanitized = DOMPurify.sanitize(content)
-  return <div dangerouslySetInnerHTML={{ __html: sanitized }} />
-}
-```
-
-#### Browser Storage
-
-- [ ] Don't store sensitive data in localStorage
-- [ ] Use httpOnly cookies for sessions
-- [ ] Encrypt sensitive client-side data
-- [ ] Clear storage on logout
-- [ ] Implement storage quotas
-
-## Deployment Phase
-
-### Infrastructure Security
-
-#### Cloudflare Workers
-
-- [ ] Configure WAF rules
-- [ ] Enable DDoS protection
-- [ ] Set up rate limiting
-- [ ] Configure security headers
-- [ ] Enable bot protection
-- [ ] Monitor security events
-
-Wrangler has no switch that automatically rate-limits requests. Configure a WAF
-rule, or add a `ratelimits` binding and call `limit()` in Worker code.
-
-#### CI/CD Security
-
-- [ ] Use least privilege for CI/CD tokens
-- [ ] Store secrets securely (GitHub Secrets)
-- [ ] Enable branch protection
-- [ ] Require code reviews
-- [ ] Run security checks in pipeline
-- [ ] Sign commits and releases
-
-```yaml
-# Example: GitHub Actions security
-- name: Run security audit
-  run: bun audit
-
-- name: SAST Scan
-  uses: github/super-linter@v5
-  env:
-    VALIDATE_JAVASCRIPT_ES: true
-    VALIDATE_TYPESCRIPT_ES: true
-```
-
-### Monitoring & Logging
-
-#### Security Monitoring
-
-- [ ] Log authentication attempts
-- [ ] Monitor for suspicious patterns
-- [ ] Set up security alerts
-- [ ] Track rate limit violations
-- [ ] Monitor dependency vulnerabilities
-- [ ] Review logs regularly
-
-```typescript
-// Example: Security event logging
-function logSecurityEvent(event: {
-  type: string;
-  user?: string;
-  ip: string;
-  details: Record<string, any>;
-}) {
-  console.log(
-    JSON.stringify({
-      timestamp: new Date().toISOString(),
-      severity: "SECURITY",
-      ...event,
-    }),
-  );
-}
-```
-
-#### Incident Response
-
-- [ ] Have incident response plan ready
-- [ ] Configure security notifications
-- [ ] Set up backup and recovery
-- [ ] Document security contacts
-- [ ] Test incident procedures
-- [ ] Keep security playbook updated
-
-## Production Phase
-
-### Ongoing Security
-
-#### Regular Tasks
-
-- [ ] Weekly: Review security alerts
-- [ ] Monthly: Run dependency audits
-- [ ] Quarterly: Security assessment
-- [ ] Annually: Penetration testing
-- [ ] Ongoing: Security training
-
-#### Security Updates
-
-- [ ] Monitor security advisories
-- [ ] Apply patches promptly
-- [ ] Test updates in staging
-- [ ] Document security changes
-- [ ] Communicate with users about security
-
-### Compliance
-
-#### Data Protection
-
-- [ ] Implement GDPR compliance (if applicable)
-- [ ] Add privacy policy
-- [ ] Implement data deletion
-- [ ] Log data access
-- [ ] Encrypt personal data
-
-#### Security Documentation
-
-- [ ] Maintain SECURITY.md
-- [ ] Document security procedures
-- [ ] Keep incident log
-- [ ] Update security checklist
-- [ ] Train team on security
-
-## Quick Security Wins
-
-For immediate security improvements:
-
-1. **Run Security Audit**
-
-   ```bash
-   bun audit
-   ```
-
-2. **Add Security Headers**
-
-   ```typescript
-   // apps/api/src/index.ts
-   app.use(securityHeaders());
-   ```
-
-3. **Implement Rate Limiting**
-
-   ```typescript
-   // apps/api/src/middleware.ts
-   app.use(rateLimit({ limit: 100, window: "1m" }));
-   ```
-
-4. **Enable HTTPS Redirect**
-
-   ```typescript
-   // apps/web/src/index.ts
-   if (location.protocol === "http:") {
-     location.replace("https:" + window.location.href.substring(5));
-   }
-   ```
-
-5. **Add Input Validation**
-
-   ```typescript
-   // Use Zod everywhere
-   const schema = z.object({/* ... */});
-   const validated = schema.parse(input);
-   ```
-
-## Security Resources
-
-### Tools
-
-- [OWASP ZAP](https://www.zaproxy.org/) – Security scanning
-- [Snyk](https://snyk.io/) – Dependency scanning
-- [GitHub Security](https://github.com/security) – Security features
-- [Mozilla Observatory](https://observatory.mozilla.org/) – Security assessment
-
-### Documentation
-
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [React Security](https://react.dev/learn/security)
-- [Cloudflare Security](https://developers.cloudflare.com/workers/platform/security/)
-- [Better Auth Docs](https://better-auth.com/docs/security)
-
-### Emergency Contacts
-
-- Security Issues: `security@kriasoft.com`
-- GitHub Security: [Security Advisories](https://github.com/kriasoft/react-starter-kit/security)
-- CVE Database: [MITRE CVE](https://cve.mitre.org/)
-
----
-
-_Review this checklist regularly and update based on new threats and best practices._
+Then test the deployed environment:
+
+- [ ] Email OTP delivery, expiry, and failed-attempt handling
+- [ ] Sign-out and protected-route rejection
+- [ ] Each enabled OAuth callback
+- [ ] Organization role boundaries
+- [ ] Stripe webhook signature rejection and a test-mode checkout, when enabled
+- [ ] Rate-limit behavior and recovery
+- [ ] Security headers and CSP in a browser
+
+See [Authentication](/auth/), [Cloudflare deployment](/deployment/cloudflare), [Production database](/deployment/production-database), and the [incident playbook](./incident-playbook) for the corresponding procedures.

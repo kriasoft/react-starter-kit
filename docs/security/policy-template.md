@@ -58,12 +58,12 @@ Report to: **`[SECURITY_EMAIL]`**
 
 ### Severity Classification
 
-| Level             | Description                   | Examples                                                  |
-| ----------------- | ----------------------------- | --------------------------------------------------------- |
+| Level | Description | Examples |
+| --- | --- | --- |
 | **Critical (P0)** | Immediate threat to all users | Remote code execution, authentication bypass, data breach |
-| **High (P1)**     | Significant security impact   | Privilege escalation, data exposure, XSS in auth flows    |
-| **Medium (P2)**   | Limited security impact       | XSS in non-critical areas, CSRF vulnerabilities           |
-| **Low (P3)**      | Minor security issues         | Information disclosure, security misconfigurations        |
+| **High (P1)** | Significant security impact | Privilege escalation, data exposure, XSS in auth flows |
+| **Medium (P2)** | Limited security impact | XSS in non-critical areas, CSRF vulnerabilities |
+| **Low (P3)** | Minor security issues | Information disclosure, security misconfigurations |
 
 ### Response Timeline
 
@@ -181,8 +181,6 @@ We value security researchers' contributions:
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Project Documentation]([DOCS_URL])
 - [Security Checklist]([CHECKLIST_URL])
-
----
 
 ---
 

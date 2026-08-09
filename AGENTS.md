@@ -7,7 +7,7 @@
 - `packages/ui/` — shadcn/ui components (new-york style)
 - `packages/core/` — Shared utilities
 - `db/` — Drizzle ORM schemas and migrations (Neon PostgreSQL)
-- `infra/` — Terraform (Cloudflare Workers, Hyperdrive, DNS)
+- `infra/` — Terraform (Hyperdrive and optional R2 storage; Wrangler owns Workers and DNS)
 - `docs/` — VitePress docs; `docs/adr/` for architecture decision records
 
 ## Tech Stack
@@ -31,7 +31,9 @@ bun typecheck                  # tsc --build
 bun ui:add <component>         # Add shadcn/ui component to packages/ui
 
 # Per-app: bun {web,app,api}:{dev,build,deploy}; test for app/api, check for web
-# Database: bun db:{push,generate,migrate,studio,seed} (append :staging or :prod)
+# Database: bun db:{push,generate,migrate,studio,seed,export}
+#   :staging / :production on migrate, studio, export; seed stops at :staging;
+#   push and generate are local-only
 ```
 
 ## Architecture

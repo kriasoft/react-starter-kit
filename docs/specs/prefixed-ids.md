@@ -18,17 +18,17 @@ IDs are opaque strings – clients must not parse or decode them.
 
 Defined in `db/schema/id.ts`. Keys are Better Auth model names (not table names).
 
-| Model          | Prefix | Notes                                                   |
-| -------------- | ------ | ------------------------------------------------------- |
-| `user`         | `usr`  |                                                         |
-| `session`      | `ses`  |                                                         |
-| `account`      | `idn`  | Maps to `identity` table via `account.modelName` config |
-| `verification` | `vfy`  |                                                         |
-| `organization` | `org`  |                                                         |
-| `member`       | `mem`  |                                                         |
-| `invitation`   | `inv`  |                                                         |
-| `passkey`      | `pky`  |                                                         |
-| `subscription` | `sub`  |                                                         |
+| Model | Prefix | Notes |
+| --- | --- | --- |
+| `user` | `usr` |  |
+| `session` | `ses` |  |
+| `account` | `idn` | Maps to `identity` table via `account.modelName` config |
+| `verification` | `vfy` |  |
+| `organization` | `org` |  |
+| `member` | `mem` |  |
+| `invitation` | `inv` |  |
+| `passkey` | `pky` |  |
+| `subscription` | `sub` |  |
 
 ## API
 

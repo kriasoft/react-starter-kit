@@ -1,7 +1,7 @@
 {
   "name": "@repo/root",
   "version": "0.0.0",
-  "packageManager": "bun@1.3.9",
+  "packageManager": "bun@1.3.14",
   "private": true,
   "type": "module",
   "engines": {
@@ -46,41 +46,22 @@
     "email:build": "bun --cwd apps/email build",
     "email:export": "bun --cwd apps/email export",
     "db:generate": "bun --cwd db generate",
-    "db:generate:staging": "bun --cwd db generate:staging",
-    "db:generate:prod": "bun --cwd db generate:prod",
     "db:migrate": "bun --cwd db migrate",
     "db:migrate:staging": "bun --cwd db migrate:staging",
-    "db:migrate:prod": "bun --cwd db migrate:prod",
+    "db:migrate:production": "bun --cwd db migrate:production",
     "db:push": "bun --cwd db push",
-    "db:push:staging": "bun --cwd db push:staging",
-    "db:push:prod": "bun --cwd db push:prod",
     "db:studio": "bun --cwd db studio",
     "db:studio:staging": "bun --cwd db studio:staging",
-    "db:studio:prod": "bun --cwd db studio:prod",
+    "db:studio:production": "bun --cwd db studio:production",
     "db:seed": "bun --cwd db seed",
     "db:seed:staging": "bun --cwd db seed:staging",
-    "db:seed:prod": "bun --cwd db seed:prod",
     "db:export": "bun --cwd db export",
     "db:export:staging": "bun --cwd db export:staging",
-    "db:export:prod": "bun --cwd db export:prod",
+    "db:export:production": "bun --cwd db export:production",
     "db:check": "bun --cwd db check",
     "db:typecheck": "bun --cwd db typecheck",
-    "infra:dev": "bun run infra:dev:edge:apply",
-    "infra:dev:edge:plan": "terraform -chdir=infra/envs/dev/edge plan",
-    "infra:dev:edge:apply": "terraform -chdir=infra/envs/dev/edge apply -auto-approve",
-    "infra:dev:edge:destroy": "terraform -chdir=infra/envs/dev/edge destroy -auto-approve",
-    "infra:preview": "bun run infra:preview:edge:apply",
-    "infra:preview:edge:plan": "terraform -chdir=infra/envs/preview/edge plan",
-    "infra:preview:edge:apply": "terraform -chdir=infra/envs/preview/edge apply -auto-approve",
-    "infra:preview:edge:destroy": "terraform -chdir=infra/envs/preview/edge destroy -auto-approve",
-    "infra:staging": "bun run infra:staging:edge:apply",
-    "infra:staging:edge:plan": "terraform -chdir=infra/envs/staging/edge plan",
-    "infra:staging:edge:apply": "terraform -chdir=infra/envs/staging/edge apply",
-    "infra:staging:edge:destroy": "terraform -chdir=infra/envs/staging/edge destroy",
-    "infra:prod": "bun run infra:prod:edge:apply",
-    "infra:prod:edge:plan": "terraform -chdir=infra/envs/prod/edge plan",
-    "infra:prod:edge:apply": "terraform -chdir=infra/envs/prod/edge apply",
-    "infra:prod:edge:destroy": "terraform -chdir=infra/envs/prod/edge destroy"
+    "infra:staging": "bun --env-file=.env.terraform.staging --env-file=.env.terraform.staging.local run terraform -chdir=infra/envs/staging",
+    "infra:production": "bun --env-file=.env.terraform.production --env-file=.env.terraform.production.local run terraform -chdir=infra/envs/production"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.18.3",
@@ -130,6 +111,12 @@
     "arrowParens": "always",
     "endOfLine": "lf",
     "overrides": [
+      {
+        "files": "**/*.md",
+        "options": {
+          "proseWrap": "never"
+        }
+      },
       {
         "files": "*.jsonc",
         "options": {

@@ -34,11 +34,18 @@ export type TRPCContext = {
   /** tRPC request metadata (headers, connection info) */
   info: CreateHTTPContextOptions["info"];
 
-  /** Drizzle ORM database instance (PostgreSQL via Hyperdrive cached connection) */
+  /**
+   * Database client. Reads are always fresh – reach for this one by default.
+   */
   db: PostgresJsDatabase<DatabaseSchema>;
 
-  /** Drizzle ORM database instance (PostgreSQL via Hyperdrive direct connection) */
-  dbDirect: PostgresJsDatabase<DatabaseSchema>;
+  /**
+   * Database client whose reads use Hyperdrive's configured cache window
+   * (60s `max_age` plus 15s `stale_while_revalidate` by default) and are not
+   * invalidated on write. Opt in only where that staleness is acceptable –
+   * never for auth, permissions, billing state, or a read after a write.
+   */
+  dbCached: PostgresJsDatabase<DatabaseSchema>;
 
   /** Authenticated user session (null if not authenticated) */
   session: AuthSession | null;
@@ -75,7 +82,7 @@ export type AppContext = {
   Bindings: Env;
   Variables: {
     db: PostgresJsDatabase<DatabaseSchema>;
-    dbDirect: PostgresJsDatabase<DatabaseSchema>;
+    dbCached: PostgresJsDatabase<DatabaseSchema>;
     auth: Auth;
     resend?: Resend;
     session: AuthSession | null;

@@ -1,7 +1,9 @@
 /**
  * @file Database client using Neon PostgreSQL via Cloudflare Hyperdrive.
  *
- * Two bindings available: HYPERDRIVE_CACHED (60s cache) and HYPERDRIVE_DIRECT (no cache).
+ * Two bindings available: HYPERDRIVE_UNCACHED (always fresh, the default) and
+ * HYPERDRIVE_CACHED (60s `max_age` plus a 15s `stale_while_revalidate` window
+ * by default; deployments can tune both).
  */
 
 import { schema } from "@repo/db";
@@ -15,9 +17,14 @@ import postgres from "postgres";
  */
 export function createDb(db: Hyperdrive) {
   const client = postgres(db.connectionString, {
+    // Each request builds two clients (cached + uncached), and Workers caps
+    // concurrent external connections. One apiece stays well inside that.
     max: 1,
     connect_timeout: 10,
-    prepare: false, // Avoids prepared statement caching issues in Workers
+    // Prepared statements left on (postgres.js default). Hyperdrive only caches
+    // queries it sees prepared; `prepare: false` would cost it the cache and an
+    // extra round-trip. This is why the origin must be an unpooled host – a
+    // transaction-mode pooler in front of Postgres breaks prepared statements.
     idle_timeout: 20,
     max_lifetime: 60 * 30,
     transform: {

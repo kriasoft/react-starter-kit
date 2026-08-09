@@ -18,11 +18,11 @@ organization({
 }),
 ```
 
-| Setting                         | Value     | Description                               |
-| ------------------------------- | --------- | ----------------------------------------- |
-| `allowUserToCreateOrganization` | `true`    | Any user can create organizations         |
-| `organizationLimit`             | `5`       | Max organizations per user                |
-| `creatorRole`                   | `"owner"` | Creator automatically gets the owner role |
+| Setting | Value | Description |
+| --- | --- | --- |
+| `allowUserToCreateOrganization` | `true` | Any user can create organizations |
+| `organizationLimit` | `5` | Max organizations per user |
+| `creatorRole` | `"owner"` | Creator automatically gets the owner role |
 
 ## Database Tables
 
@@ -56,17 +56,17 @@ A unique constraint on `(userId, organizationId)` prevents duplicate memberships
 
 Manages pending invitations, defined in `db/schema/invitation.ts`:
 
-| Column           | Type        | Description                                              |
-| ---------------- | ----------- | -------------------------------------------------------- |
-| `id`             | `text`      | Prefixed CUID2 (`inv_cm...`)                             |
-| `email`          | `text`      | Invitee's email address                                  |
-| `inviterId`      | `text`      | References `user.id`                                     |
-| `organizationId` | `text`      | References `organization.id`                             |
-| `role`           | `text`      | Role assigned upon acceptance                            |
-| `status`         | `text`      | `"pending"`, `"accepted"`, `"rejected"`, or `"canceled"` |
-| `expiresAt`      | `timestamp` | Invitation expiration                                    |
-| `acceptedAt`     | `timestamp` | When the invite was accepted                             |
-| `rejectedAt`     | `timestamp` | When the invite was rejected or canceled                 |
+| Column | Type | Description |
+| --- | --- | --- |
+| `id` | `text` | Prefixed CUID2 (`inv_cm...`) |
+| `email` | `text` | Invitee's email address |
+| `inviterId` | `text` | References `user.id` |
+| `organizationId` | `text` | References `organization.id` |
+| `role` | `text` | Role assigned upon acceptance |
+| `status` | `text` | `"pending"`, `"accepted"`, `"rejected"`, or `"canceled"` |
+| `expiresAt` | `timestamp` | Invitation expiration |
+| `acceptedAt` | `timestamp` | When the invite was accepted |
+| `rejectedAt` | `timestamp` | When the invite was rejected or canceled |
 
 A unique constraint on `(organizationId, email)` prevents duplicate invitations to the same person.
 
@@ -145,7 +145,7 @@ authorizeReference: async ({ user, referenceId }) => {
 3. **Invitee accepts** – Better Auth creates a `member` record and updates invitation status
 4. **Or invitee rejects / invitation expires** – invitation status is updated, no member created
 
-Each organization can only have one pending invitation per email address.
+The `(organizationId, email)` unique constraint keeps one invitation record per address in an organization; lifecycle changes update that record's status.
 
 ## Client API
 

@@ -14,6 +14,9 @@ The auth client handles the redirect to Stripe Checkout:
 // apps/app/routes/(app)/settings.tsx
 async function handleUpgrade(plan: "starter" | "pro") {
   await auth.subscription.upgrade({
+    ...(activeOrgId
+      ? { referenceId: activeOrgId, customerType: "organization" }
+      : {}),
     plan,
     successUrl: returnUrl,
     cancelUrl: returnUrl,
@@ -32,7 +35,12 @@ Existing subscribers manage their subscription (cancel, change payment method, s
 ```ts
 // apps/app/routes/(app)/settings.tsx
 async function handleManageBilling() {
-  await auth.subscription.billingPortal({ returnUrl });
+  await auth.subscription.billingPortal({
+    ...(activeOrgId
+      ? { referenceId: activeOrgId, customerType: "organization" }
+      : {}),
+    returnUrl,
+  });
 }
 ```
 
@@ -72,12 +80,12 @@ Regular org members see the billing status but cannot modify the subscription.
 
 The `BillingCard` component in `apps/app/routes/(app)/settings.tsx` handles all billing states:
 
-| State           | UI                                                             |
-| --------------- | -------------------------------------------------------------- |
-| Loading         | Muted loading text                                             |
-| Free plan       | "You are on the Free plan" + upgrade buttons                   |
+| State | UI |
+| --- | --- |
+| Loading | Muted loading text |
+| Free plan | "You are on the Free plan" + upgrade buttons |
 | Active/trialing | Plan name, status badge, renewal date, "Manage Billing" button |
-| Canceling       | Amber warning with access end date, portal link to restore     |
+| Canceling | Amber warning with access end date, portal link to restore |
 
 ## Data Fetching
 

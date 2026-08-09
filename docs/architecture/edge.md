@@ -6,11 +6,11 @@ Implementation details for the Cloudflare Workers deployment. Read the [Architec
 
 Each worker has its own `wrangler.jsonc` in its workspace directory:
 
-| Worker | Config                    | `nodejs_compat` |  Static assets  |     Service bindings     |
-| ------ | ------------------------- | :-------------: | :-------------: | :----------------------: |
-| web    | `apps/web/wrangler.jsonc` |       No        | Marketing pages | APP_SERVICE, API_SERVICE |
-| app    | `apps/app/wrangler.jsonc` |       No        |   SPA bundle    |            –             |
-| api    | `apps/api/wrangler.jsonc` |       Yes       |        –        |            –             |
+| Worker | Config | `nodejs_compat` | Static assets | Service bindings |
+| --- | --- | :-: | :-: | :-: |
+| web | `apps/web/wrangler.jsonc` | No | Marketing pages | APP_SERVICE, API_SERVICE |
+| app | `apps/app/wrangler.jsonc` | No | SPA bundle | – |
+| api | `apps/api/wrangler.jsonc` | Yes | – | – |
 
 The API worker enables `nodejs_compat` for packages that depend on Node.js built-ins (e.g. `postgres`, `crypto`). The web and app workers don't need it – they only serve static assets and proxy requests.
 
@@ -34,38 +34,31 @@ Service bindings are **non-inheritable** in Wrangler – the top-level declarati
         { "binding": "API_SERVICE", "service": "example-api-staging" },
       ],
     },
-    "preview": {
-      "services": [
-        { "binding": "APP_SERVICE", "service": "example-app-preview" },
-        { "binding": "API_SERVICE", "service": "example-api-preview" },
-      ],
-    },
   },
 }
 ```
 
 Worker naming convention: `<project>-<worker>-<env>`. Production omits the environment suffix.
 
-| Environment | Web                   | App                   | API                   |
-| ----------- | --------------------- | --------------------- | --------------------- |
-| Production  | `example-web`         | `example-app`         | `example-api`         |
-| Staging     | `example-web-staging` | `example-app-staging` | `example-api-staging` |
-| Preview     | `example-web-preview` | `example-app-preview` | `example-api-preview` |
+| Environment | Web | App | API |
+| --- | --- | --- | --- |
+| Production | `example-web` | `example-app` | `example-api` |
+| Staging | `example-web-staging` | `example-app-staging` | `example-api-staging` |
 
 ## Hyperdrive
 
 [Cloudflare Hyperdrive](https://developers.cloudflare.com/hyperdrive/) provides connection pooling between Workers and Neon PostgreSQL. The API worker declares two bindings per environment:
 
-| Binding             | Caching  | Purpose                                |
-| ------------------- | -------- | -------------------------------------- |
-| `HYPERDRIVE_CACHED` | Enabled  | Read-heavy queries                     |
-| `HYPERDRIVE_DIRECT` | Disabled | Writes and consistency-sensitive reads |
+| Binding               | Caching  | Purpose                                |
+| --------------------- | -------- | -------------------------------------- |
+| `HYPERDRIVE_CACHED`   | Enabled  | Read-heavy queries                     |
+| `HYPERDRIVE_UNCACHED` | Disabled | Writes and consistency-sensitive reads |
 
 ```jsonc
 // apps/api/wrangler.jsonc
 "hyperdrive": [
   { "binding": "HYPERDRIVE_CACHED", "id": "your-hyperdrive-cached-id-here" },
-  { "binding": "HYPERDRIVE_DIRECT", "id": "your-hyperdrive-direct-id-here" }
+  { "binding": "HYPERDRIVE_UNCACHED", "id": "your-hyperdrive-uncached-id-here" }
 ]
 ```
 
@@ -80,8 +73,7 @@ import postgres from "postgres";
 
 export function createDb(db: Hyperdrive) {
   const client = postgres(db.connectionString, {
-    max: 1, // Workers are single-request; one connection is enough
-    prepare: false, // Avoids prepared statement caching issues in Workers
+    max: 1, // Two clients per request share the connection budget
     connect_timeout: 10,
     idle_timeout: 20,
     max_lifetime: 60 * 30,
@@ -92,7 +84,7 @@ export function createDb(db: Hyperdrive) {
 }
 ```
 
-Key settings: `max: 1` because each Worker invocation handles a single request. `prepare: false` prevents issues with Hyperdrive's connection reuse where prepared statements from a previous request may not exist on the pooled connection.
+Key settings: `max: 1` per client, because every request builds two of them and Workers caps concurrent external connections. Prepared statements are left enabled – [Hyperdrive only caches queries it sees prepared](https://developers.cloudflare.com/hyperdrive/examples/connect-to-postgres/postgres-drivers-and-libraries/postgres-js/), so turning them off would cost the cache and add a round-trip. That is also why the origin must be an unpooled host: a transaction-mode pooler in front of Postgres breaks prepared statements.
 
 ## Static Assets
 
@@ -156,53 +148,42 @@ The `Cache-Control: private, no-store` and `Vary: Cookie` headers prevent CDN an
 
 ## Infrastructure
 
-Worker metadata and Hyperdrive bindings are provisioned with Terraform. Wrangler handles code deployment and route configuration.
+Terraform provisions what the workers consume. Wrangler owns the workers themselves – names, code, routes, custom domains and bindings. Nothing is configured by both tools, so the two can never disagree. See [ADR-002](/adr/002-terraform-wrangler-boundary).
 
 ```
 infra/
-├── stacks/
-│   ├── edge/          # Workers, Hyperdrive, DNS
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   └── hybrid/        # Database and other resources
 ├── modules/
-│   ├── cloudflare/    # Worker, Hyperdrive, DNS modules
-│   └── gcp/
-├── envs/              # Per-environment Terraform root modules
-└── templates/
+│   └── cloudflare/    # Hyperdrive pair, optional R2 bucket
+└── envs/              # One root = one HCP Terraform workspace = one state
+    ├── staging/
+    └── production/
 ```
 
-The edge stack (`infra/stacks/edge/main.tf`) creates all three workers, a Hyperdrive binding pair, and DNS records:
+Each environment gets a cached and an uncached Hyperdrive configuration:
 
 ```hcl
-module "worker_api" {
-  source = "../../modules/cloudflare/worker"
-  name   = "${var.project_slug}-api${local.worker_suffix}"
-  # ...
-}
+module "edge" {
+  source = "../../modules/cloudflare"
 
-module "hyperdrive" {
-  source       = "../../modules/cloudflare/hyperdrive"
-  name         = "${var.project_slug}-${var.environment}"
-  database_url = var.neon_database_url
+  account_id   = var.cloudflare_account_id
+  project_slug = var.project_slug
+  environment  = "staging"       # hard-coded: the directory already decided
+  database_url = var.database_url
 }
 ```
 
-The `worker_suffix` local resolves to `""` for production and `"-${var.environment}"` for other environments, matching the naming convention used in service bindings.
+Applying it outputs the two IDs, which you paste into the matching environment block of `apps/api/wrangler.jsonc`. Worker names come from `wrangler.jsonc` alone: the top-level config deploys production, and `--env <name>` appends `-<name>`, which is what service bindings resolve against.
 
 ## Local Development
 
-`bun dev` starts all three workers concurrently with Wrangler's dev mode:
+`bun dev` starts three local development servers:
 
-| Worker | Port   | Notes                                   |
-| ------ | ------ | --------------------------------------- |
-| web    | `5173` | Entry point – open this in your browser |
-| app    | `5174` | Accessed via service binding from web   |
-| api    | `5175` | Accessed via service binding from web   |
+| Service | Runtime | Port   | Notes                                      |
+| ------- | ------- | ------ | ------------------------------------------ |
+| app     | Vite    | `5173` | Main development entry point               |
+| web     | Astro   | `4321` | Marketing site                             |
+| api     | Bun     | `8787` | Hono server; the app proxies `/api/*` here |
 
-In development, Wrangler simulates service bindings locally – requests between workers happen in-process rather than over the network. The `dev` environment in each `wrangler.jsonc` provides development-specific variables (`APP_ORIGIN: http://localhost:5173`, etc.).
+The deployed service-binding topology is not reproduced locally. Vite proxies `/api/*` to the Bun server, while `apps/api/dev.ts` uses Wrangler's `getPlatformProxy()` only to emulate the two Hyperdrive bindings, which it resolves from the `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_*` variables – not from `DATABASE_URL`, which belongs to the Drizzle tooling in `db/`.
 
-::: tip
-Email templates must be built before starting the API dev server. The `bun dev` script handles this automatically by running `bun email:build` first.
-:::
+::: tip Email templates must be built before starting the API dev server. The `bun dev` script handles this automatically by running `bun email:build` first. :::

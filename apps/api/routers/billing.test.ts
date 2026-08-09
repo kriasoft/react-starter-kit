@@ -7,6 +7,7 @@ const createCaller = createCallerFactory(billingRouter);
 
 // Minimal context mock — only fields the billing procedure accesses.
 function testCtx({
+  billingEnabled = true,
   userId = "user-1",
   activeOrgId = undefined as string | undefined,
   subscription = undefined as Record<string, unknown> | undefined,
@@ -38,9 +39,16 @@ function testCtx({
         },
       },
     } as unknown as TRPCContext["db"],
-    dbDirect: {} as TRPCContext["dbDirect"],
+    dbCached: {} as TRPCContext["dbCached"],
     cache: new Map(),
-    env: {} as TRPCContext["env"],
+    env: (billingEnabled
+      ? {
+          STRIPE_SECRET_KEY: "sk_test",
+          STRIPE_WEBHOOK_SECRET: "whsec_test",
+          STRIPE_STARTER_PRICE_ID: "price_starter",
+          STRIPE_PRO_PRICE_ID: "price_pro",
+        }
+      : {}) as TRPCContext["env"],
   };
 
   return ctx;
@@ -51,6 +59,7 @@ describe("billing.subscription", () => {
     const result = await createCaller(testCtx()).subscription();
 
     expect(result).toEqual({
+      enabled: true,
       plan: "free",
       status: null,
       periodEnd: null,
@@ -73,11 +82,27 @@ describe("billing.subscription", () => {
     ).subscription();
 
     expect(result).toEqual({
+      enabled: true,
       plan: "pro",
       status: "active",
       periodEnd,
       cancelAtPeriodEnd: false,
       limits: { members: 50 },
+    });
+  });
+
+  it("reports billing disabled without Stripe configuration", async () => {
+    const result = await createCaller(
+      testCtx({ billingEnabled: false }),
+    ).subscription();
+
+    expect(result).toEqual({
+      enabled: false,
+      plan: "free",
+      status: null,
+      periodEnd: null,
+      cancelAtPeriodEnd: false,
+      limits: { members: 1 },
     });
   });
 

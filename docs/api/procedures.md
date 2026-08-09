@@ -45,17 +45,19 @@ Each domain gets its own router file in `apps/api/routers/`:
 ```
 routers/
 ├── billing.ts         # billing.subscription
-├── organization.ts    # organization.list, .create, .update, .delete, ...
-└── user.ts            # user.me, .updateProfile, .list
+├── config.ts          # config.socialProviders
+└── user.ts            # user.me plus extension stubs
 ```
+
+`user.me` is implemented. `user.updateProfile` and `user.list` deliberately throw `NOT_IMPLEMENTED`: profile changes belong in Better Auth's profile APIs, while a custom member list must add organization authorization and pagination. They are explicit extension points, not successful placeholder responses.
 
 Routers are merged into the root `appRouter` in `apps/api/lib/app.ts`:
 
 ```ts
 const appRouter = router({
   billing: billingRouter,
+  config: configRouter,
   user: userRouter,
-  organization: organizationRouter,
 });
 ```
 
@@ -68,17 +70,16 @@ Define inputs with Zod schemas. tRPC validates them automatically and returns st
 ```ts
 import { z } from "zod";
 
-export const userRouter = router({
-  updateProfile: protectedProcedure
+export const postRouter = router({
+  create: protectedProcedure
     .input(
       z.object({
-        name: z.string().min(1).optional(),
-        email: z.email({ error: "Invalid email address" }).optional(),
+        title: z.string().min(1).max(200),
+        body: z.string().max(10_000),
       }),
     )
-    .mutation(({ input, ctx }) => {
-      // `input` is fully typed: { name?: string; email?: string }
-      return { id: ctx.user.id, ...input };
+    .mutation(({ input }) => {
+      // `input` is fully typed from the schema.
     }),
 });
 ```
@@ -130,8 +131,8 @@ import { postRouter } from "../routers/post.js";
 
 const appRouter = router({
   billing: billingRouter,
+  config: configRouter,
   user: userRouter,
-  organization: organizationRouter,
   post: postRouter, // [!code ++]
 });
 ```
@@ -144,10 +145,10 @@ const { data } = useSuspenseQuery(api.post.list.queryOptions({ limit: 10 }));
 
 ## Naming Conventions
 
-- **Router files**: singular noun matching the domain (`user.ts`, `billing.ts`, `organization.ts`)
+- **Router files**: singular noun matching the domain (`user.ts`, `billing.ts`, `post.ts`)
 - **Router variables**: `{domain}Router` – `userRouter`, `billingRouter`
 - **Procedure names**: verb or short phrase – `me`, `list`, `create`, `updateProfile`
-- **Namespace key**: matches the domain – `user:`, `billing:`, `organization:`
+- **Namespace key**: matches the domain – `user:`, `billing:`, `config:`
 
 ## Testing Procedures
 
@@ -166,4 +167,4 @@ it("returns free plan defaults", async () => {
 });
 ```
 
-<!-- See Testing docs for mock context patterns and more examples. -->
+See [Testing](/testing) for the test boundary and commands.

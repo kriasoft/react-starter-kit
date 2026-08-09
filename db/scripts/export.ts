@@ -10,8 +10,8 @@
  *   bun scripts/export.ts -- --inserts       # Pass pg_dump flags directly
  *
  * Environment:
- *   bun --env ENVIRONMENT=staging scripts/export.ts
- *   bun --env ENVIRONMENT=prod scripts/export.ts
+ *   ENVIRONMENT=staging bun scripts/export.ts
+ *   ENVIRONMENT=production bun scripts/export.ts
  *
  * REQUIREMENTS:
  * - DATABASE_URL environment variable must be set and valid PostgreSQL connection string

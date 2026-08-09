@@ -23,11 +23,11 @@ apps/email/
 
 Three templates ship out of the box, all wrapped in `BaseTemplate` for consistent branding:
 
-| Template            | Used By                                  | Trigger                    |
-| ------------------- | ---------------------------------------- | -------------------------- |
-| `OTPEmail`          | [Email & OTP](/auth/email-otp) auth flow | `emailOTP` plugin callback |
-| `EmailVerification` | Link-based email verification            | `sendVerificationEmail()`  |
-| `PasswordReset`     | Password reset flow                      | `sendPasswordReset()`      |
+| Template | Used By | Trigger |
+| --- | --- | --- |
+| `OTPEmail` | [Email & OTP](/auth/email-otp) auth flow | `emailOTP` plugin callback |
+| `EmailVerification` | Link-based email verification | `sendVerificationEmail()` |
+| `PasswordReset` | Password reset flow | `sendPasswordReset()` |
 
 `OTPEmail` handles four types via a single `type` prop – `"sign-in"`, `"email-verification"`, `"forget-password"`, and `"change-email"` – each with different copy. Password resets include an additional security warning. The separate `PasswordReset` template uses a red button to emphasize the security-sensitive action.
 
@@ -41,9 +41,7 @@ bun email:dev
 
 This starts the React Email preview server at `http://localhost:3001`. Files in `emails/` provide sample data for each template – edit them to test different states.
 
-::: tip
-The email workspace must be built before the API can import templates. The root `bun dev` handles this automatically, but if you run the API standalone, run `bun email:build` first.
-:::
+::: tip The email workspace must be built before the API can import templates. The root `bun dev` handles this automatically, but if you run the API standalone, run `bun email:build` first. :::
 
 ## Sending Emails
 
@@ -72,16 +70,14 @@ await sendEmail(env, {
 
 Available sender functions:
 
-| Function                  | Purpose                                                                        |
-| ------------------------- | ------------------------------------------------------------------------------ |
-| `sendOTP()`               | OTP codes for all auth flows                                                   |
-| `sendVerificationEmail()` | Link-based email verification                                                  |
-| `sendPasswordReset()`     | Password reset links                                                           |
-| `sendEmail()`             | Low-level sender (validates recipients, requires plain text fallback for HTML) |
+| Function | Purpose |
+| --- | --- |
+| `sendOTP()` | OTP codes for all auth flows |
+| `sendVerificationEmail()` | Link-based email verification |
+| `sendPasswordReset()` | Password reset links |
+| `sendEmail()` | Low-level sender (validates recipients, requires plain text fallback for HTML) |
 
-::: warning
-`sendEmail()` throws if you provide HTML without a plain text fallback. Always render both versions using `renderEmailToHtml()` and `renderEmailToText()`.
-:::
+::: warning `sendEmail()` throws if you provide HTML without a plain text fallback. Always render both versions using `renderEmailToHtml()` and `renderEmailToText()`. :::
 
 ### Development Shortcut
 
@@ -149,14 +145,14 @@ export { Invitation } from "./templates/invitation.js";
 
 ## Environment Variables
 
-| Variable            | Required  | Description                                                        |
-| ------------------- | --------- | ------------------------------------------------------------------ |
-| `RESEND_API_KEY`    | For email | Resend API key (`re_...`)                                          |
-| `RESEND_EMAIL_FROM` | For email | Sender address (e.g., `noreply@example.com`)                       |
-| `APP_NAME`          | No        | Used in email subject lines and branding (defaults to `"Example"`) |
-| `APP_ORIGIN`        | Yes       | Used for links in email footer                                     |
+| Variable | Required | Description |
+| --- | --- | --- |
+| `RESEND_API_KEY` | Yes | Resend API key (`re_...`) |
+| `RESEND_EMAIL_FROM` | Yes | Sender address (e.g., `noreply@example.com`) |
+| `APP_NAME` | No | Used in email subject lines and branding (defaults to `"Example"`) |
+| `APP_ORIGIN` | Yes | Used for links in email footer |
 
-Set in `.env.local` for development, Cloudflare secrets for staging/production. See [Environment Variables](/getting-started/environment-variables).
+Set both in `.env.local` for development. In deployed environments, store `RESEND_API_KEY` as a Worker secret and `RESEND_EMAIL_FROM` as a non-secret Wrangler variable. See [Environment Variables](/getting-started/environment-variables).
 
 ## File Map
 

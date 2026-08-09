@@ -1,13 +1,14 @@
 .terraform/
+.terraform.tfstate.lock.info
+
+# State lives in HCP Terraform. A local copy only appears after a migration or
+# a run with local execution – it holds the database password, so never commit it.
 *.tfstate
 *.tfstate.*
+
+# Only needed with local execution; values normally live in the workspace.
 *.tfvars
 *.tfvars.json
-backend.hcl
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-.terraform.tfstate.lock.info
+
 crash.log
 crash.*.log

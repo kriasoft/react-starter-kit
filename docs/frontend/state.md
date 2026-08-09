@@ -20,13 +20,13 @@ The client sends requests to `/api/trpc` with batched HTTP transport and include
 
 The `QueryClient` in `apps/app/lib/query.ts` is configured with sensible defaults:
 
-| Option                 | Value      | Rationale                                            |
-| ---------------------- | ---------- | ---------------------------------------------------- |
-| `staleTime`            | 2 min      | Prevents redundant API calls during typical sessions |
-| `gcTime`               | 5 min      | Balances memory with instant data on back-navigation |
-| `retry`                | 3          | Exponential backoff: 1s, 2s, 4s (capped at 30s)      |
-| `refetchOnWindowFocus` | `true`     | Keeps data current after tab switches                |
-| `refetchOnReconnect`   | `"always"` | Overrides `staleTime` after connectivity loss        |
+| Option | Value | Rationale |
+| --- | --- | --- |
+| `staleTime` | 2 min | Prevents redundant API calls during typical sessions |
+| `gcTime` | 5 min | Balances memory with instant data on back-navigation |
+| `retry` | 3 | Exponential backoff: 1s, 2s, 4s (capped at 30s) |
+| `refetchOnWindowFocus` | `true` | Keeps data current after tab switches |
+| `refetchOnReconnect` | `"always"` | Overrides `staleTime` after connectivity loss |
 
 Mutations retry once with a 1s delay.
 
@@ -57,14 +57,14 @@ export function sessionQueryOptions() {
 
 Returns `null` when unauthenticated – not an error. The module also exports helpers for cache access:
 
-| Export                                   | Purpose                                                     |
-| ---------------------------------------- | ----------------------------------------------------------- |
-| `useSessionQuery()`                      | Basic hook                                                  |
-| `useSuspenseSessionQuery()`              | Suspense-enabled version                                    |
-| `getCachedSession(queryClient)`          | Sync cache read (no network)                                |
-| `isAuthenticated(queryClient)`           | Binary check – requires both `user` and `session`           |
-| `signOut(queryClient)`                   | Clears server session, sets cache to `null`, hard redirects |
-| `revalidateSession(queryClient, router)` | Removes cached query so `beforeLoad` fetches fresh          |
+| Export | Purpose |
+| --- | --- |
+| `useSessionQuery()` | Basic hook |
+| `useSuspenseSessionQuery()` | Suspense-enabled version |
+| `getCachedSession(queryClient)` | Sync cache read (no network) |
+| `isAuthenticated(queryClient)` | Binary check – requires both `user` and `session` |
+| `signOut(queryClient)` | Clears server session, sets cache to `null`, hard redirects |
+| `revalidateSession(queryClient, router)` | Removes cached query so `beforeLoad` fetches fresh |
 
 ## Billing Query
 
@@ -99,43 +99,32 @@ Use the `api` proxy to create query options, then pass them to TanStack Query ho
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/lib/trpc";
 
-function UserList() {
-  const { data: users } = useSuspenseQuery(api.user.list.queryOptions());
-
-  return (
-    <ul>
-      {users.map((user) => (
-        <li key={user.id}>{user.name}</li>
-      ))}
-    </ul>
-  );
+function ProfileName() {
+  const { data: user } = useSuspenseQuery(api.user.me.queryOptions());
+  return <p>{user.name}</p>;
 }
 ```
 
-For mutations:
+No working tRPC mutation ships in the starter. After adding a `project.create` procedure, for example, call and invalidate it like this:
 
 ```tsx
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { trpcClient } from "@/lib/trpc";
 
-function CreateUserButton() {
+function CreateProjectButton() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (input: { name: string; email: string }) =>
-      trpcClient.user.create.mutate(input),
+    mutationFn: (input: { name: string; description?: string }) =>
+      trpcClient.project.create.mutate(input),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
 
   return (
-    <button
-      onClick={() =>
-        mutation.mutate({ name: "Alice", email: "alice@example.com" })
-      }
-    >
-      Create User
+    <button onClick={() => mutation.mutate({ name: "Roadmap" })}>
+      Create Project
     </button>
   );
 }
@@ -146,8 +135,8 @@ function CreateUserButton() {
 Invalidate by query key prefix to refresh related data after mutations:
 
 ```tsx
-// Invalidate all user queries
-queryClient.invalidateQueries({ queryKey: ["user"] });
+// Invalidate all project queries
+queryClient.invalidateQueries({ queryKey: ["projects"] });
 
 // Invalidate all billing queries (any org)
 queryClient.invalidateQueries({ queryKey: ["billing", "subscription"] });

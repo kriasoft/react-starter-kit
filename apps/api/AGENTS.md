@@ -6,9 +6,9 @@
 
 ## Database
 
-- Two Hyperdrive connections: `db` (cached, for reads) and `dbDirect` (no cache, for writes and transactions).
-- `prepare: false` required for Cloudflare Workers — avoids statement caching issues with connection pooling.
-- `max: 1` connection per instance (Workers cold-start model).
+- Two Hyperdrive connections: `db` (uncached, always fresh) and `dbCached` (query cache, 75s default maximum staleness). Deployments can tune the cache window. Default to `db`; reach for `dbCached` only when you can say why staleness is acceptable. Never use it for auth, permissions, billing state, or a read after a write — Hyperdrive does not invalidate on write.
+- Prepared statements stay enabled; Hyperdrive only caches queries it sees prepared. Requires an unpooled origin.
+- `max: 1` connection per client, because each request builds two.
 - `transform: { undefined: null }` converts JS `undefined` to SQL `NULL`.
 
 ## tRPC
@@ -31,7 +31,7 @@
 
 ## Environment
 
-- `lib/env.ts` exports the Zod schema and inferred `Env` type; it does not validate on import. Validate the assembled environment at the entry point: `worker.ts` receives `c.env`, while `dev.ts` combines the Wrangler proxy with `process.env`.
+- `lib/env.ts` exports the environment contract and inferred `Env` type. The current entrypoints do not call `parse`; do not claim runtime Zod validation unless that changes. `worker.ts` receives Cloudflare bindings through `c.env`, while `dev.ts` combines the Wrangler proxy with `process.env`.
 - `dev.ts` derives its generic local-env overlay from `envSchema`, excluding fields with special precedence. New schema fields therefore join the local merge automatically.
 - Do not add generated Wrangler types. They create a competing global `Env`, omit secrets not visible in `wrangler.jsonc`, and narrow placeholder vars to literals such as `APP_NAME: "Example"`. The local `CloudflareEnv` types combine the schema-derived `Env` with Hyperdrive bindings.
 - `nodejs_compat` compatibility flag required — web and app workers do NOT have it.

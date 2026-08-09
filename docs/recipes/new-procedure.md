@@ -10,13 +10,21 @@ Add a new router in `apps/api/routers/`:
 // apps/api/routers/project.ts
 import { z } from "zod";
 import { schema } from "@repo/db";
+import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 export const projectRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
+    const organizationId = ctx.session.activeOrganizationId;
+    if (!organizationId) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: "Select an organization first",
+      });
+    }
+
     const projects = await ctx.db.query.project.findMany({
-      where: (p, { eq }) =>
-        eq(p.organizationId, ctx.session.activeOrganizationId!),
+      where: (p, { eq }) => eq(p.organizationId, organizationId),
       orderBy: (p, { desc }) => desc(p.createdAt),
     });
     return { projects };
@@ -30,11 +38,19 @@ export const projectRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const organizationId = ctx.session.activeOrganizationId;
+      if (!organizationId) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Select an organization first",
+        });
+      }
+
       const [project] = await ctx.db
         .insert(schema.project)
         .values({
           ...input,
-          organizationId: ctx.session.activeOrganizationId!,
+          organizationId,
         })
         .returning();
       return project;
@@ -53,8 +69,8 @@ import { projectRouter } from "../routers/project.js";
 
 const appRouter = router({
   billing: billingRouter,
+  config: configRouter,
   user: userRouter,
-  organization: organizationRouter,
   project: projectRouter, // [!code ++]
 });
 ```

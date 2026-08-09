@@ -22,7 +22,7 @@ const AUTH_HINT_VALUE = "1";
  * Environment variables required for authentication configuration.
  * Extracted from the main Env type for better type safety and documentation.
  */
-type AuthEnv = Pick<
+export type AuthEnv = Pick<
   Env,
   | "ENVIRONMENT"
   | "APP_NAME"
@@ -40,35 +40,94 @@ type AuthEnv = Pick<
 >;
 
 /**
- * Stripe billing plugin — only enabled when all required env vars are set.
- * Without Stripe config, the app works but billing endpoints return 404.
+ * Google OAuth — enabled only when both credentials are present. Sign-in works
+ * without it via email OTP and passkeys.
+ *
+ * Setting only one credential signals a broken deployment, so fail instead of
+ * silently hiding the Google button.
+ */
+function googleProvider(env: AuthEnv) {
+  const { GOOGLE_CLIENT_ID: clientId, GOOGLE_CLIENT_SECRET: clientSecret } =
+    env;
+
+  if (!clientId && !clientSecret) return {};
+
+  if (!clientId || !clientSecret) {
+    throw new Error(
+      `Google OAuth needs both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (missing ${
+        clientId ? "GOOGLE_CLIENT_SECRET" : "GOOGLE_CLIENT_ID"
+      }). Set both to enable it, or neither to disable it.`,
+    );
+  }
+
+  return { google: { clientId, clientSecret } };
+}
+
+/**
+ * Social provider names this deployment can actually complete a sign-in with.
+ *
+ * Read by the SPA so it renders only buttons that work. Derived from the same
+ * call that configures Better Auth, so the button and the provider cannot
+ * disagree – a separate flag would eventually drift from the credentials.
+ */
+export function configuredSocialProviders(env: AuthEnv): string[] {
+  return Object.keys(googleProvider(env));
+}
+
+/**
+ * Stripe billing plugin. Set all four required values to turn billing on, or
+ * none to leave it off.
+ *
+ * Partial configuration fails loudly; otherwise missing subscription routes
+ * would look like an application bug rather than a missing Stripe value.
  */
 function stripePlugin(db: DB, env: AuthEnv) {
-  if (
-    !env.STRIPE_SECRET_KEY ||
-    !env.STRIPE_WEBHOOK_SECRET ||
-    !env.STRIPE_STARTER_PRICE_ID ||
-    !env.STRIPE_PRO_PRICE_ID
-  ) {
-    return [];
+  const {
+    STRIPE_WEBHOOK_SECRET: webhookSecret,
+    STRIPE_STARTER_PRICE_ID: starterPriceId,
+    STRIPE_PRO_PRICE_ID: proPriceId,
+    STRIPE_SECRET_KEY: secretKey,
+  } = env;
+
+  if (!secretKey && !webhookSecret && !starterPriceId && !proPriceId) return [];
+
+  if (!secretKey || !webhookSecret || !starterPriceId || !proPriceId) {
+    const missing = (
+      [
+        ["STRIPE_SECRET_KEY", secretKey],
+        ["STRIPE_WEBHOOK_SECRET", webhookSecret],
+        ["STRIPE_STARTER_PRICE_ID", starterPriceId],
+        ["STRIPE_PRO_PRICE_ID", proPriceId],
+      ] as const
+    )
+      .filter(([, value]) => !value)
+      .map(([name]) => name)
+      .join(", ");
+
+    throw new Error(
+      `Stripe billing needs all four of STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, ` +
+        `STRIPE_STARTER_PRICE_ID and STRIPE_PRO_PRICE_ID (missing ${missing}). ` +
+        `Set all four to enable billing, or none to disable it. ` +
+        `STRIPE_PRO_ANNUAL_PRICE_ID stays optional either way.`,
+    );
   }
 
   return [
     stripe({
       stripeClient: createStripeClient(env),
-      stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+      stripeWebhookSecret: webhookSecret,
       createCustomerOnSignUp: true,
       subscription: {
         enabled: true,
         plans: [
           {
             name: "starter",
-            priceId: env.STRIPE_STARTER_PRICE_ID,
+            priceId: starterPriceId,
             limits: planLimits.starter,
           },
           {
             name: "pro",
-            priceId: env.STRIPE_PRO_PRICE_ID,
+            priceId: proPriceId,
             annualDiscountPriceId: env.STRIPE_PRO_ANNUAL_PRICE_ID,
             limits: planLimits.pro,
             freeTrial: { days: 14 },
@@ -102,21 +161,12 @@ function stripePlugin(db: DB, env: AuthEnv) {
  * - Uses custom 'identity' table instead of default 'account' model for OAuth accounts
  * - Allows users to create up to 5 organizations with 'owner' role as creator
  * - Generates prefixed CUID2 IDs at application level (e.g. usr_..., ses_...)
- * - Supports anonymous authentication alongside email/password and Google OAuth
+ * - Supports anonymous, email/password, email OTP, passkeys, and optional Google OAuth
  *
  * @param db Drizzle database instance - must include all required auth tables (user, session, identity, organization, member, invitation, verification)
- * @param env Environment variables containing auth secrets and OAuth credentials
- * @returns Configured Better Auth instance with email/password and Google OAuth
+ * @param env Authentication and integration configuration
+ * @returns Configured Better Auth instance
  * @remarks Missing database tables will cause runtime errors when auth endpoints are called.
- *
- * @example
- * ```ts
- * const auth = createAuth(database, {
- *   BETTER_AUTH_SECRET: "your-secret",
- *   GOOGLE_CLIENT_ID: "google-id",
- *   GOOGLE_CLIENT_SECRET: "google-secret"
- * });
- * ```
  */
 export function createAuth(db: DB, env: AuthEnv): Auth {
   // Extract domain from APP_ORIGIN for passkey rpID
@@ -166,12 +216,7 @@ export function createAuth(db: DB, env: AuthEnv): Auth {
     },
 
     // OAuth providers
-    socialProviders: {
-      google: {
-        clientId: env.GOOGLE_CLIENT_ID,
-        clientSecret: env.GOOGLE_CLIENT_SECRET,
-      },
-    },
+    socialProviders: googleProvider(env),
 
     plugins: [
       anonymous(),

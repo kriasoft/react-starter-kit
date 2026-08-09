@@ -1,137 +1,34 @@
-# Terraform Infrastructure Review Checklist
+# Review Terraform Infrastructure
 
-## Structure & Organization
+Review the Terraform changes against the repository's actual ownership boundary and environment model. Read `infra/README.md`, `docs/specs/infra-terraform.md`, ADR-002, and ADR-003 before reporting findings.
 
-### Module Structure
+Check that:
 
-- [ ] Each module has separate `main.tf`, `variables.tf`, `outputs.tf`, and `provider.tf` files
-- [ ] Module dependencies are clearly defined and minimal
-- [ ] Modules are reusable across environments (preview, staging, prod)
+- Terraform owns only the two Hyperdrive configurations and the opt-in R2 uploads bucket; Wrangler remains the sole owner of Workers, routes, custom domains, bindings, variables, secrets, and assets.
+- `infra/envs/staging` and `infra/envs/production` stay equivalent except for their hard-coded environment and workspace suffix guard.
+- Shared resource logic stays in `infra/modules/cloudflare`; provider constraints and the `cloud {}` block stay in each root.
+- Resource names follow `{project_slug}-{environment}[-role]`, inputs fail clearly, secrets are marked sensitive, and no state, credentials, local env files, or `.terraform/` data are committed.
+- HCP Terraform setup, GitHub workflow variables, package scripts, Wrangler bindings, and documentation agree on environment names and output handoff.
+- Changes preserve the Terraform/Wrangler ownership boundary and do not revive removed `dev`, `preview`, `prod`, `edge`, `stack`, GCP, or object-storage-backend layouts.
 
-### Directory Layout
-
-- [ ] Clear separation between modules (`modules/`) and environments (`environments/`)
-- [ ] Consistent file naming conventions across all modules and environments
-- [ ] No hardcoded environment-specific values in modules
-
-## Configuration Standards
-
-### Provider Configuration
-
-- [ ] All modules specify required providers with correct source (`cloudflare/cloudflare`)
-- [ ] Provider version constraints are consistent across modules (`~> 5.0`)
-- [ ] No legacy provider references (`hashicorp/cloudflare`)
-
-### Variable Management
-
-- [ ] All variables have proper descriptions and type definitions
-- [ ] Input validation rules are implemented where appropriate
-- [ ] Variables follow naming conventions (snake_case)
-- [ ] `terraform.tfvars.example` files exist and are up-to-date
-
-### Resource Naming
-
-- [ ] Resources use consistent naming: `${var.project_name}-${var.environment}`
-- [ ] Names comply with Cloudflare resource naming requirements
-- [ ] No hardcoded resource names
-
-## Security & Best Practices
-
-### State Management
-
-- [ ] Backend configuration is appropriate for each environment:
-  - Preview: Local backend
-  - Staging/Prod: Remote backend (S3)
-- [ ] State files are not committed to version control
-- [ ] Backend encryption is enabled for remote state
-
-### Secrets & Sensitive Data
-
-- [ ] No hardcoded API keys, tokens, or sensitive values
-- [ ] Sensitive outputs are marked as `sensitive = true`
-- [ ] `terraform.tfvars` files are git-ignored
-
-### Access Control
-
-- [ ] Cloudflare account ID validation is in place
-- [ ] Resource permissions follow least-privilege principle
-
-## Environment-Specific Configuration
-
-### Environment Consistency
-
-- [ ] All environments use the same module versions
-- [ ] Environment-specific differences are minimal and documented
-- [ ] Module calls are consistent across environments
-
-### Resource Allocation
-
-- [ ] Preview environment has appropriate resource limits
-- [ ] Production environment includes additional resources (KV namespace)
-- [ ] Staging environment matches production configuration
-
-## Testing & Validation
-
-### Code Quality
-
-- [ ] Terraform formatting is consistent (`terraform fmt`)
-- [ ] Configuration is valid (`terraform validate`)
-- [ ] No unused variables or outputs
-- [ ] Clear documentation for complex logic
-
-### Deployment Testing
-
-- [ ] `terraform plan` runs successfully for all environments
-- [ ] Module interdependencies work correctly
-- [ ] Resource creation order is optimized
-
-## Monitoring & Maintenance
-
-### Documentation
-
-- [ ] Module purposes and usage are documented
-- [ ] Environment setup instructions are clear
-- [ ] Variable requirements are documented
-
-### Version Management
-
-- [ ] Provider versions are pinned appropriately
-- [ ] Module versions are tracked if using external modules
-- [ ] Upgrade paths are documented
-
-## Deployment Readiness
-
-### Infrastructure as Code
-
-- [ ] All infrastructure is defined in Terraform
-- [ ] Manual changes are avoided
-- [ ] Drift detection strategies are in place
-
-### Automation
-
-- [ ] CI/CD pipeline integration is considered
-- [ ] Automated testing for infrastructure changes
-- [ ] Rollback procedures are documented
-
----
-
-## Review Commands
+Validate without contacting remote state:
 
 ```bash
-# Navigate to environment
-cd infra/environments/{preview|staging|prod}
+terraform fmt -check -recursive infra/
 
-# Basic validation
-terraform fmt -check
-terraform validate
-terraform plan
+validation_dir="$(mktemp -d)"
+trap 'rm -rf "$validation_dir"' EXIT
+tar -C infra --exclude='.terraform' -cf - envs modules \
+  | tar -C "$validation_dir" -xf -
 
-# Security checks
-terraform providers
-grep -r "hardcoded" .
-grep -r "TODO\|FIXME" .
-
-# State inspection
-terraform state list
-terraform show
+for root in "$validation_dir"/envs/*/; do
+  env_name="$(basename "$root")"
+  perl -0pi -e 's/^\h*cloud \{\}\R//m' "$root/main.tf"
+  terraform -chdir="$root" init -backend=false -input=false
+  TF_WORKSPACE="validate-$env_name" terraform -chdir="$root" validate
+done
 ```
+
+The temporary copy is necessary because `init -backend=false` still initializes HCP Terraform when a `cloud {}` block is present.
+
+Do not run `plan`, `apply`, `destroy`, `import`, or state mutation commands as part of a review.

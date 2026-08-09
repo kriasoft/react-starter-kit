@@ -1,0 +1,72 @@
+name: Infrastructure
+
+# Terraform runs on its own cadence, never as part of an application deploy.
+# Manual dispatch only: infrastructure changes are rare, and an accidental apply
+# is far more expensive than an accidental redeploy.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        type: choice
+        options: [staging, production]
+        required: true
+      apply:
+        description: "Apply changes (recomputes the plan; leave off to plan only)"
+        type: boolean
+        default: false
+
+# Serialise per environment. HCP Terraform locks the workspace as well; this
+# just avoids queuing runs that would only wait on that lock.
+concurrency:
+  group: infra-${{ inputs.environment }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: ${{ inputs.apply && 'Apply' || 'Plan' }} (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    # Supplies the environment's TF_WORKSPACE and, where required reviewers are
+    # configured, gates the run. Note this gates plan-only dispatches too:
+    # protection rules apply to any job naming the environment.
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: infra/envs/${{ inputs.environment }}
+    env:
+      # The only credential this workflow needs. Cloudflare and database
+      # credentials are workspace variables in HCP Terraform, so they never
+      # reach GitHub. Runs execute in HCP; this job drives and streams them.
+      TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+      TF_CLOUD_ORGANIZATION: ${{ vars.TF_CLOUD_ORGANIZATION }}
+      TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: hashicorp/setup-terraform@v4
+        with:
+          # Stream Terraform's own output instead of the wrapper's summary.
+          terraform_wrapper: false
+
+      - run: terraform init -input=false
+
+      - name: Plan
+        if: ${{ !inputs.apply }}
+        run: terraform plan -input=false
+
+      # A single apply rather than plan-then-apply: the run is recorded in HCP
+      # Terraform, and the GitHub environment gate already ran before this job.
+      #
+      # Note the reviewer approves the job, not a plan they have read — the plan
+      # is computed inside this run. The intended procedure is to dispatch once
+      # with apply off, read that plan, then dispatch again to apply.
+      - name: Apply
+        if: ${{ inputs.apply }}
+        run: terraform apply -input=false -auto-approve
+
+      # Hyperdrive IDs are non-secret and belong in apps/api/wrangler.jsonc.
+      - name: Hyperdrive bindings
+        if: ${{ inputs.apply }}
+        run: terraform output -raw wrangler_hyperdrive_bindings >> "$GITHUB_STEP_SUMMARY"

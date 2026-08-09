@@ -1,188 +1,114 @@
 # Infrastructure Terraform Specification
 
-## Overview
+## Scope
 
-Two deployment stacks with clear separation of concerns.
+Terraform provisions the durable Cloudflare resources the workers consume. It does not manage workers. See [ADR-002](/adr/002-terraform-wrangler-boundary) for the decision.
 
-**Non-goals:** Multi-region orchestration, blue-green deployments, auto-scaling policies. These belong in CI/CD or dedicated tooling.
+| Owned by Terraform | Owned by Wrangler |
+| --- | --- |
+| `cloudflare_hyperdrive_config` × 2/env | Worker names, code, versions, deployments |
+| `cloudflare_r2_bucket` + `_cors` (opt-in) | Routes, custom domains, service bindings, vars, secrets, assets |
 
-| Stack               | Components                                  | Use Case                |
-| ------------------- | ------------------------------------------- | ----------------------- |
-| **edge** (default)  | Hyperdrive, DNS (Workers via Wrangler)      | Most SaaS apps          |
-| **hybrid** (opt-in) | Cloud Run, Cloud SQL, GCS + optional CF DNS | GCP services, Vertex AI |
+The uploads bucket carries its own CORS policy: browsers reject a presigned `PUT` to a bucket without one, so the policy belongs with the Terraform-owned bucket rather than as a dashboard step. It allows `PUT` with `Content-Type` from `uploads_cors_origins`, which must be explicit – a `*` origin is rejected at plan time.
 
-## Directory Structure
+**Invariant:** no field is configured by both tools. The only values crossing the boundary are stable, non-secret resource identifiers – the two Hyperdrive IDs, plus the R2 bucket name when uploads are enabled.
+
+**Non-goals:** worker deployment, DNS, multi-region orchestration, blue-green deploys, autoscaling.
+
+## Layout
 
 ```bash
 infra/
-  modules/           # Atomic resources (no credentials)
-    cloudflare/
-      hyperdrive/    # Database connection pooling
-      r2-bucket/     # Object storage
-      dns/           # Proxied DNS records
-    gcp/
-      cloud-run/     # Container deployment
-      cloud-sql/     # Managed PostgreSQL
-      gcs/           # Object storage
-
-  stacks/            # Architectural compositions
-    edge/            # Hyperdrive + DNS (Workers via Wrangler)
-    hybrid/          # GCP + optional CF DNS
-
-  envs/              # Terraform roots (providers + backend + state)
-    dev/edge/
-    preview/edge/
-    staging/edge/
-    prod/edge/
-
-  templates/
-    env-roots/hybrid/        # Copy to enable hybrid
-    backend-r2.example.hcl   # Remote state for edge
-    backend-gcs.example.hcl  # Remote state for hybrid
+  modules/cloudflare/   # Resources, connection parsing, naming
+  envs/{staging,production}/
 ```
 
-## Module Contract
+One root per environment, one HCP Terraform workspace per root. Each root hard-codes its own `environment`, so no state can create another environment's resources.
 
-Modules must NOT define `provider` blocks. Non-HashiCorp providers require `required_providers` to specify the source:
+There is no `dev` root. Local development uses `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_<BINDING>` and provisions nothing.
 
-```hcl
-# Cloudflare modules declare source only (no version):
-terraform {
-  required_providers {
-    cloudflare = {
-      source = "cloudflare/cloudflare"
-    }
-  }
-}
-```
+There is no `preview` root either. A single shared preview environment is not per-PR isolation – concurrent pull requests would overwrite each other's deployment and share one database – and it duplicates staging's role. Add an environment by copying a root and adding a matching `wrangler.jsonc` block.
 
-Version constraints live exclusively in env roots. This keeps modules reusable while centralizing version management.
+## Versions
 
-## Provider Versions
-
-Canonical versions (single source of truth):
-
-| Provider   | Version        |
+| Component  | Constraint     |
 | ---------- | -------------- |
 | terraform  | `>= 1.12, < 2` |
 | cloudflare | `~> 5.0`       |
-| google     | `~> 7.0`       |
 
-## Design Decisions
+Version constraints live in env roots; the module declares `source` only. Lock files are committed and cover linux, macOS and Windows.
 
-### Explicit Roots Over Dispatcher
+## Hyperdrive
 
-Each `(environment, stack)` pair gets its own Terraform root with isolated state.
+Two configurations per environment, matching the two bindings in `apps/api/`:
 
-```bash
-terraform -chdir=infra/envs/prod/edge apply
+| Name                    | `caching.disabled` | Binding               |
+| ----------------------- | ------------------ | --------------------- |
+| `<slug>-<env>-cached`   | `false`            | `HYPERDRIVE_CACHED`   |
+| `<slug>-<env>-uncached` | `true`             | `HYPERDRIVE_UNCACHED` |
+
+`cache_max_age_seconds` (60) and `cache_stale_while_revalidate_seconds` (15) are set explicitly rather than inherited, so the staleness window is reviewable in the configuration.
+
+`origin_connection_limit` is a soft maximum per configuration – Cloudflare may briefly exceed it. It defaults to 20, Cloudflare's ceiling on the Workers Free plan and low enough that both configurations together stay within a small Neon compute's `max_connections`. Both env roots expose it so it can be raised per deployment; the origin sees twice the value.
+
+### Connection URL
+
+`database_url` is split by one anchored regex into the discrete fields Hyperdrive stores. Accepted shape:
+
+```
+postgres[ql]://USER:PASSWORD@HOST[:PORT]/DATABASE[?params]
 ```
 
-**Why not a dispatcher?** A `variable "stack"` that switches configs:
+The port defaults to `5432`; query parameters are ignored, since TLS to the origin is Hyperdrive's setting rather than the client's.
 
-- Destroys one stack when switching to another
-- Requires separate backends anyway
-- Creates awkward `module.edge[0].x` references
+Three failures are rejected at plan time rather than surfacing later as connection errors:
 
-### No Backend by Default
+| Rejected | Why |
+| --- | --- |
+| Malformed URL | Nothing to parse. |
+| Percent-encoded credentials | Terraform has no `urldecode`, so the escape sequence would be stored verbatim. |
+| A `-pooler` host | Hyperdrive is the pool; stacking two exhausts connections. |
 
-Terraform uses local state when no backend is configured. Remote backends require pre-existing buckets and credentials.
+## State
 
-**Rationale:** Zero-friction onboarding. Add remote backend when ready for team collaboration.
+HCP Terraform, via a `cloud` block – state, locking and version history in one place, with no bucket to provision first. See [ADR-003](/adr/003-hcp-terraform-state).
 
-### Providers in Env Roots Only
+Each root declares an empty `cloud {}` block. The organization and existing workspace are selected with `TF_CLOUD_ORGANIZATION` and `TF_WORKSPACE`, so a fork carries no one else's deployment targets.
 
-Only env roots define `provider` blocks with credentials. Modules declare `required_providers` for source resolution only (no versions, no credentials).
+Workspace names must end in `-staging` or `-production`. Each root asserts the suffix in an output `precondition`, failing at plan time otherwise. The reason is that `TF_WORKSPACE` selects the state while the directory selects only the resource names, and an exported `TF_WORKSPACE` takes precedence over the value in `.env.terraform.<env>.local` – Bun's `--env-file` does not overwrite variables already present in the environment. Unguarded, a stale export would point the staging root at production state, where it would rename the Hyperdrive configurations and invalidate their IDs.
 
-**Rationale:** Keeps modules reusable. Version constraints and credentials stay in one place per environment.
+The check runs wherever the configuration is evaluated – `plan`, `apply`, `destroy`, and `validate`. It does not run for `import` or the `state` subcommands, which write state without consulting the configuration, nor for `output`, which returns values already stored in state rather than recomputing them. `output` is the consequential one: it can print another environment's Hyperdrive IDs for pasting into a `wrangler.jsonc`, wiring a worker to the wrong database without touching state. The gap is inherent to Terraform, so it is documented and paired with a `workspace show` step rather than worked around.
 
-### Preview Uses Edge Only
+Terraform is invoked through two package scripts, `infra:staging` and `infra:production`, which load the matching env file and forward all arguments. Calling `terraform` directly skips workspace selection.
 
-PR previews need fast spin-up and low cost. Cloudflare Workers: no cold starts, instant deploys, minimal cost.
+Each workspace must also set **Terraform Working Directory** to `envs/<env>`. Remote runs upload the configuration, and a root referencing `../../modules/cloudflare` reaches outside its own directory; Terraform uploads parent directories only when a working directory is set, to the depth of that setting. There is no `cloud` block argument for it, so it is the one workspace setting the repository cannot declare.
 
-## Secrets
+**State is credential-bearing.** Hyperdrive stores the origin password as a discrete field, so it is written to state. `sensitive = true` hides values from output; it does not encrypt them. HCP Terraform encrypts state at rest and retains every version.
 
-```bash
-# Via environment variables (CI/CD)
-export TF_VAR_cloudflare_api_token="..."
-terraform -chdir=infra/envs/prod/edge apply
+## Credentials
 
-# Or local terraform.tfvars (gitignored)
-```
+Runs execute in HCP Terraform, so values come from workspace variables rather than a developer's shell.
 
-Mark sensitive variables:
+| Kind                | Supplied as                                      |
+| ------------------- | ------------------------------------------------ |
+| Cloudflare provider | `CLOUDFLARE_API_TOKEN` workspace environment var |
+| Origin database     | `database_url` workspace variable, sensitive     |
+| Application secrets | `wrangler secret put` – never Terraform          |
 
-```hcl
-variable "cloudflare_api_token" {
-  type      = string
-  sensitive = true
-}
-```
+The Cloudflare token needs **Account → Hyperdrive → Edit**, plus **Account → Workers R2 Storage → Edit** only when the uploads bucket is enabled. It needs no zone or worker scopes.
 
-## Switching to Remote Backend
+The infrastructure workflow holds one credential: `TF_API_TOKEN`, an HCP Terraform team token. Terraform's Cloudflare and database credentials are never stored in GitHub. The separate worker-deploy workflow does hold a `CLOUDFLARE_API_TOKEN` – Cloudflare's **Edit Cloudflare Workers** template, which grants the worker, route and DNS scopes Terraform deliberately lacks.
 
-### Edge Stack (R2)
+Setting a workspace's execution mode to **Local** stores state remotely but runs Terraform on the caller's machine; HCP then ignores workspace variables, so values come from `TF_VAR_*` or a gitignored `terraform.tfvars`.
 
-```bash
-cp infra/templates/backend-r2.example.hcl infra/envs/prod/edge/backend.hcl
-terraform -chdir=infra/envs/prod/edge init -backend-config=backend.hcl -migrate-state
-```
+## Naming
 
-### Hybrid Stack (GCS)
+Resource values use `{project_slug}-{environment}[-role]`, lowercase `^[a-z0-9-]+$`. `project_slug` must match the worker name prefix in `apps/*/wrangler.jsonc`.
 
-```bash
-cp infra/templates/backend-gcs.example.hcl infra/envs/prod/hybrid/backend.hcl
-terraform -chdir=infra/envs/prod/hybrid init -backend-config=backend.hcl -migrate-state
-```
+Resource identifiers name the concrete thing (`cloudflare_hyperdrive_config.cached`); module names describe the architectural role (`module.edge`).
 
-## Multi-Region
+## CI
 
-Use separate roots: `envs/prod-eu/edge`, `envs/prod-us/edge`. Each manages its own state.
+`.github/workflows/ci.yml` runs `terraform fmt -check` and `terraform validate` on every push. Because `init -backend=false` still initializes an HCP `cloud {}` block, CI validates a disposable copy with that block removed and a correctly suffixed local workspace. No HCP or Cloudflare credentials are needed.
 
-## Naming Conventions
-
-### Resource values
-
-Cloud resources use `{project_slug}-{environment}`; lowercase alphanumeric and hyphens only: `^[a-z0-9-]+$`.
-
-### Resource identifiers
-
-One simple set of rules:
-
-1. Name the thing being created (provider-native noun, singular).
-
-   ```hcl
-   resource "cloudflare_hyperdrive_config" "hyperdrive" {}
-   resource "cloudflare_r2_bucket"         "bucket"     {}
-   resource "cloudflare_dns_record"        "record"     {}
-   resource "google_cloud_run_v2_service"  "service"    {}
-   resource "google_sql_database_instance" "instance"   {}
-   ```
-
-2. If you have multiples, suffix with the role.
-
-   ```hcl
-   resource "cloudflare_r2_bucket" "uploads" {}
-   resource "cloudflare_r2_bucket" "backups" {}
-   ```
-
-3. Module names describe architectural role; resource names describe the concrete thing.
-
-   ```hcl
-   module "hyperdrive" {
-     # contains: cloudflare_hyperdrive_config.hyperdrive
-   }
-   # → module.hyperdrive.id
-   ```
-
-## Known Limitations
-
-### Hyperdrive Database URL Parsing
-
-The hyperdrive module parses `database_url` via regex to extract individual connection parameters. This works reliably with Neon URLs (which use URL-safe generated credentials) but has limitations:
-
-- Port must be explicitly specified (e.g., `:5432`)
-- Credentials must not contain unencoded `@` or `:` characters
-- Validation fails fast with a descriptive error message
-
-For non-Neon databases with special characters in credentials, consider modifying the module to accept individual connection parameters instead.
+`.github/workflows/infra.yml` plans and applies, on manual dispatch only, serialised per environment and gated by GitHub Environment reviewers. Application deploys never run Terraform.

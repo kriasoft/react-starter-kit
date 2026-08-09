@@ -1,4 +1,5 @@
 import { getSafeRedirectUrl } from "@/lib/auth-config";
+import { socialProvidersQueryOptions } from "@/lib/queries/config";
 import { revalidateSession } from "@/lib/queries/session";
 import {
   Dialog,
@@ -9,7 +10,7 @@ import {
 } from "@repo/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useRouterState } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthForm } from "./auth-form";
 
 interface LoginDialogProps {
@@ -32,6 +33,11 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
       return getSafeRedirectUrl(pathname + search + hash);
     },
   });
+
+  // Prefetch before opening so social buttons do not shift the dialog contents.
+  useEffect(() => {
+    void queryClient.prefetchQuery(socialProvidersQueryOptions());
+  }, [queryClient]);
 
   async function handleSuccess() {
     await revalidateSession(queryClient, router);

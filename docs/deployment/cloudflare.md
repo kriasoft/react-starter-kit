@@ -10,7 +10,7 @@ The **web** worker is the edge router. It receives all traffic via route pattern
 // apps/web/wrangler.jsonc (simplified)
 {
   "name": "example-web",
-  "routes": [{ "pattern": "example.com/*", "zone_name": "example.com" }],
+  "routes": [{ "pattern": "example.com", "custom_domain": true }],
   "services": [
     { "binding": "APP_SERVICE", "service": "example-app" },
     { "binding": "API_SERVICE", "service": "example-api" },
@@ -22,7 +22,7 @@ The **web** worker is the edge router. It receives all traffic via route pattern
 }
 ```
 
-The **api** worker has `nodejs_compat` enabled and connects to Neon through two Hyperdrive bindings (cached and direct):
+The **api** worker has `nodejs_compat` enabled and connects to Neon through two Hyperdrive bindings (cached and uncached):
 
 ```jsonc
 // apps/api/wrangler.jsonc (simplified)
@@ -31,20 +31,16 @@ The **api** worker has `nodejs_compat` enabled and connects to Neon through two 
   "compatibility_flags": ["nodejs_compat"],
   "hyperdrive": [
     { "binding": "HYPERDRIVE_CACHED", "id": "your-hyperdrive-cached-id" },
-    { "binding": "HYPERDRIVE_DIRECT", "id": "your-hyperdrive-direct-id" },
+    { "binding": "HYPERDRIVE_UNCACHED", "id": "your-hyperdrive-uncached-id" },
   ],
 }
 ```
 
 The **app** worker serves the SPA with `not_found_handling: "single-page-application"` so all routes resolve to `index.html`.
 
-::: info
-Service bindings are non-inheritable in Wrangler – each environment (`dev`, `staging`, `preview`) must declare its own `services` array with the correct worker names (e.g., `example-app-staging`).
-:::
+::: info Service bindings are non-inheritable in Wrangler – each environment (`dev`, `staging`) must declare its own `services` array with the correct worker names (e.g., `example-app-staging`). :::
 
-::: warning
-Worker names are configured independently. Wrangler uses each app's `name` (adding `-{environment}` for named environments), while Terraform builds `{project_slug}-{api,app,web}` with the same suffix outside prod. Keep `project_slug`, all three Wrangler names, and the web worker's service targets aligned. Otherwise, Terraform manages different workers or a service binding targets the wrong worker. All defaults use `example`; rename them together.
-:::
+::: warning Wrangler is the only source of worker names – each app's `name`, plus `-{environment}` for named environments. Keep all three names and the web worker's service targets aligned, or a service binding will resolve to the wrong worker. Terraform's `project_slug` names the Hyperdrive configurations, so it should match the same prefix. All defaults use `example`; rename them together. :::
 
 See [Architecture: Edge](/architecture/edge) for details on the service binding model.
 
@@ -52,23 +48,18 @@ See [Architecture: Edge](/architecture/edge) for details on the service binding 
 
 Each worker declares `vars` per environment in `wrangler.jsonc`. The API worker has the most:
 
-| Variable            | Worker | Description                                       |
-| ------------------- | ------ | ------------------------------------------------- |
-| `ENVIRONMENT`       | all    | `development`, `preview`, `staging`, `production` |
-| `APP_NAME`          | api    | Display name used in emails                       |
-| `APP_ORIGIN`        | api    | Full origin URL (e.g., `https://example.com`)     |
-| `RESEND_EMAIL_FROM` | api    | Sender address for transactional emails           |
+| Variable            | Worker | Description                                   |
+| ------------------- | ------ | --------------------------------------------- |
+| `ENVIRONMENT`       | all    | `development`, `staging`, `production`        |
+| `APP_NAME`          | api    | Display name used in emails                   |
+| `APP_ORIGIN`        | api    | Full origin URL (e.g., `https://example.com`) |
+| `RESEND_EMAIL_FROM` | api    | Sender address for transactional emails       |
 
-There is no CORS configuration because there are no cross-origin requests: the
-browser only ever talks to the web worker, which reaches the API over a service
-binding. Sending no CORS headers is what keeps another origin from reading API
-responses – the browser's same-origin policy does the work.
+::: danger Change `RESEND_EMAIL_FROM` before your first real users Every environment ships with `onboarding@resend.dev`, Resend's shared testing sender. It only delivers to the address that owns your API key – any other recipient gets a `403`. Because sign-in is email OTP, a deploy that leaves it in place looks completely healthy while nobody but you can actually sign in. [Verify a domain](https://resend.com/domains), then set the sender to an address on it. :::
 
-Better Auth additionally validates `Origin` and `callbackURL` against
-`trustedOrigins` (set from `APP_ORIGIN`), but only for its own `/api/auth/*`
-endpoints. tRPC routes have no origin check of their own. If you move the API to
-a separate hostname, adding CORS is not sufficient – the tRPC routes then need
-CSRF protection too, since they rely on being same-origin today.
+There is no CORS configuration because there are no cross-origin requests: the browser only ever talks to the web worker, which reaches the API over a service binding. Sending no CORS headers is what keeps another origin from reading API responses – the browser's same-origin policy does the work.
+
+Better Auth additionally validates `Origin` and `callbackURL` against `trustedOrigins` (set from `APP_ORIGIN`), but only for its own `/api/auth/*` endpoints. tRPC routes have no origin check of their own. If you move the API to a separate hostname, adding CORS is not sufficient – the tRPC routes then need CSRF protection too, since they rely on being same-origin today.
 
 See [Environment Variables](/getting-started/environment-variables) for the complete reference.
 
@@ -78,29 +69,33 @@ Secrets are set per worker via the Wrangler CLI. For the API worker:
 
 ```bash
 # Generate a secret for Better Auth
-openssl rand -hex 32
+bunx auth@latest secret
 
-# Set secrets (repeat for each environment: --env staging, --env preview)
-wrangler secret put BETTER_AUTH_SECRET
-wrangler secret put GOOGLE_CLIENT_ID
-wrangler secret put GOOGLE_CLIENT_SECRET
-wrangler secret put RESEND_API_KEY
-wrangler secret put OPENAI_API_KEY
+# Required. Add --env staging for that environment; production is the
+# top-level config and takes no --env.
+bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc
+bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc
 
-# Billing — the Stripe plugin only activates when all four are present
-wrangler secret put STRIPE_SECRET_KEY
-wrangler secret put STRIPE_WEBHOOK_SECRET
-wrangler secret put STRIPE_STARTER_PRICE_ID
-wrangler secret put STRIPE_PRO_PRICE_ID
+# Google sign-in — optional, but set both or neither
+bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc
+bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc
+
+# AI features — optional
+bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc
+
+# Billing — optional, but set all four or none
+bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_PRO_PRICE_ID --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID --config apps/api/wrangler.jsonc # optional
 ```
 
-::: warning
-Setting only some of the four Stripe values disables billing without an error – `createAuth` skips the plugin, so `/api/auth/subscription/*` returns 404. See [Billing: Plans](/billing/plans).
-:::
+::: warning Set all four Stripe values or none. A partial configuration throws when authentication initializes, naming the missing keys, rather than quietly leaving `/api/auth/subscription/*` on 404. `STRIPE_PRO_ANNUAL_PRICE_ID` is independently optional. See [Billing: Plans](/billing/plans). :::
 
-::: warning
-Run `wrangler secret put` from the workspace directory (e.g., `apps/api/`) or pass `--config apps/api/wrangler.jsonc` so secrets bind to the correct worker.
-:::
+Every command carries `--config` because a secret binds to whichever worker the config names – run one from the repository root without it and Wrangler has no worker to attach it to.
+
+Only `BETTER_AUTH_SECRET` and `RESEND_API_KEY` are mandatory – the app cannot sign anyone in without them. `apps/api/wrangler.jsonc` lists exactly those two under `secrets.required`, so a deploy missing either fails immediately. Google sign-in, OpenAI and Stripe are optional and stay out of that list, because requiring them would block deploys for anyone not using them. Running `secret put` against a worker that does not exist yet is fine – Wrangler offers to create an empty placeholder to hold the secret, which the deploy then overwrites.
 
 ## Build and Deploy
 
@@ -128,18 +123,27 @@ bun wrangler deploy --config apps/web/wrangler.jsonc --env staging
 3. Set SSL/TLS encryption mode to **Full (strict)** in the Cloudflare dashboard
 4. Enable **Always Use HTTPS**
 
-Routes are declared in `wrangler.jsonc` and applied automatically on deploy. Terraform manages DNS records if `cloudflare_zone_id` and `hostname` are set in your environment variables.
+The `web` worker is the origin for the whole hostname, so it uses a [Custom Domain](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) rather than a route:
+
+```jsonc
+"routes": [{ "pattern": "example.com", "custom_domain": true }]
+```
+
+Wrangler creates the DNS record and certificate on deploy, so Terraform owns no DNS and its API token needs no zone permissions. The pattern must be a bare hostname – no `/*` and no `zone_name`. Wrangler refuses to attach a custom domain while a conflicting DNS record exists, so remove any record you created for that hostname first.
+
+To serve a second worker from a path on the same hostname, switch back to plain `routes` with `zone_name` and create a proxied placeholder record yourself. See [ADR-002](/adr/002-terraform-wrangler-boundary).
 
 ## Infrastructure with Terraform
 
-Terraform creates worker metadata, Hyperdrive configs, and DNS records. Worker code is deployed separately via Wrangler.
+Terraform creates the Hyperdrive configurations. Everything about the workers themselves – names, code, routes, custom domains – belongs to Wrangler ([ADR-002](/adr/002-terraform-wrangler-boundary)).
 
 ```bash
-# Plan changes for staging
-bun infra:staging:edge:plan
+# One-time, per environment
+bun infra:staging init
 
-# Apply changes
-bun infra:staging:edge:apply
+# Plan, then apply
+bun infra:staging plan
+bun infra:staging apply
 ```
 
-Each environment has its own Terraform state in `infra/envs/{dev,preview,staging,prod}/edge/`.
+Each environment is its own Terraform root and HCP Terraform workspace, in `infra/envs/{staging,production}/`. There is no `dev` root – local development provisions nothing. See [`infra/README.md`](https://github.com/kriasoft/react-starter-kit/blob/main/infra/README.md) for workspace setup and API token scopes.

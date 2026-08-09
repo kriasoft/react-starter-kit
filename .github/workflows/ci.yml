@@ -6,19 +6,23 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    # Manual runs can deploy only production; staging deploys on merge to main.
     inputs:
-      environment:
-        description: "Environment"
-        type: environment
-        default: "test"
-        required: true
+      deploy_production:
+        description: "Deploy to production after the build"
+        type: boolean
+        default: false
 
 env:
   HUSKY: 0
 
+# Keyed on the event as well as the ref, so a manual production run and ordinary
+# CI on `main` land in different groups. Without that split, merging to main
+# mid-deploy cancels the deploy and leaves the three workers on mixed versions.
+# Successive PR and push runs still supersede each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 
 permissions:
   contents: read
@@ -32,15 +36,32 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
 
-      # Code style (PRs only — merged code was already checked)
+      # Every run, not just PRs: whether `main` only receives reviewed commits
+      # is a branch-protection setting this repository cannot assert, and a
+      # deployed commit should meet the same bar however it arrived.
       - run: bun prettier --check .
-        if: github.event_name == 'pull_request'
       - run: bun lint
-        if: github.event_name == 'pull_request'
 
-      # Validate Terraform formatting
-      - uses: hashicorp/setup-terraform@v3
+      # Validate Terraform without remote-state or provider credentials.
+      - uses: hashicorp/setup-terraform@v4
       - run: terraform fmt -check -recursive infra/
+      - name: Validate Terraform roots
+        run: |
+          validation_dir="$(mktemp -d)"
+          trap 'rm -rf "$validation_dir"' EXIT
+          tar -C infra --exclude='.terraform' -cf - envs modules \
+            | tar -C "$validation_dir" -xf -
+
+          for root in "$validation_dir"/envs/*/; do
+            # Each root asserts its workspace name ends in its environment.
+            # Use a matching local workspace and remove the cloud block from
+            # this disposable copy: `init -backend=false` still initializes
+            # HCP Terraform when a cloud block is present.
+            env_name="$(basename "$root")"
+            perl -0pi -e 's/^\h*cloud \{\}\R//m' "$root/main.tf"
+            terraform -chdir="$root" init -backend=false -input=false
+            TF_WORKSPACE="validate-$env_name" terraform -chdir="$root" validate
+          done
 
       # Type checking (email templates must be built first for types)
       - run: bun email:build
@@ -51,33 +72,24 @@ jobs:
       # Tests
       - run: bun run test -- --run
 
-      # Build all workspaces
+      # Build all workspaces. The API build targets the container image
+      # (apps/api/Dockerfile) – Wrangler bundles `worker.ts` from source – so it
+      # runs here as a compile check but is not part of the deploy artifact.
       - run: bun --filter @repo/web build
       - run: bun --filter @repo/api build
       - run: bun --filter @repo/app build
 
-      # Upload build artifacts for deploy jobs
+      # Exactly what the deploy job consumes: static assets for the web and app
+      # workers, plus the compiled email workspace. `apps/api` deploys from
+      # source, and `@repo/email` resolves through `./dist`, so Wrangler cannot
+      # bundle the API worker without it on a fresh checkout.
       - uses: actions/upload-artifact@v6
         with:
           name: build
           path: |
+            apps/email/dist
             apps/web/dist
             apps/app/dist
-            apps/api/dist
-
-  deploy-preview:
-    name: "Deploy"
-    needs: [build]
-    if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/deploy.yml
-    with:
-      name: Preview
-      environment: preview
-      url: https://{codename}.example.com
-    secrets: inherit
-    permissions:
-      deployments: write
-      pull-requests: read
 
   deploy-staging:
     name: "Deploy"
@@ -89,14 +101,22 @@ jobs:
       environment: staging
       url: https://staging.example.com
     secrets: inherit
+    # A called workflow can never hold more than its caller grants, and naming
+    # any permission drops the rest to `none` – so `contents: read` has to be
+    # repeated here for the checkout inside deploy.yml to work on a private repo.
     permissions:
+      contents: read
       deployments: write
-      pull-requests: read
 
-  deploy-prod:
+  deploy-production:
     name: "Deploy"
     needs: [build]
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    # The dispatch UI offers a branch picker, so pin production to `main`
+    # rather than trusting whatever ref the run was started from.
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.deploy_production &&
+      github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yml
     with:
       name: Production
@@ -104,5 +124,5 @@ jobs:
       url: https://example.com
     secrets: inherit
     permissions:
+      contents: read
       deployments: write
-      pull-requests: read

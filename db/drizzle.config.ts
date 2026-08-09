@@ -2,18 +2,58 @@ import { configDotenv } from "dotenv";
 import { defineConfig } from "drizzle-kit";
 import { resolve } from "node:path";
 
-// Environment detection: ENVIRONMENT var takes priority, then NODE_ENV mapping
-const envName = (() => {
-  if (process.env.ENVIRONMENT) return process.env.ENVIRONMENT;
-  if (process.env.NODE_ENV === "production") return "prod";
+const ENVIRONMENTS = ["dev", "test", "staging", "production"] as const;
+type Environment = (typeof ENVIRONMENTS)[number];
+
+// Validate the explicit selector so a typo cannot fall through to development
+// and target the wrong database. Unknown NODE_ENV values remain development
+// because tooling uses that variable for unrelated modes.
+const envName: Environment = (() => {
+  const requested = process.env.ENVIRONMENT;
+
+  if (requested) {
+    const name = requested === "development" ? "dev" : requested;
+    if (!ENVIRONMENTS.includes(name as Environment)) {
+      throw new Error(
+        `Unknown ENVIRONMENT "${requested}". Expected one of: ${ENVIRONMENTS.join(", ")}.`,
+      );
+    }
+    return name as Environment;
+  }
+
+  if (process.env.NODE_ENV === "production") return "production";
   if (process.env.NODE_ENV === "staging") return "staging";
   if (process.env.NODE_ENV === "test") return "test";
   return "dev";
 })();
 
-// Load .env files in priority order: environment-specific → local → base
-for (const file of [`.env.${envName}.local`, ".env.local", ".env"]) {
-  configDotenv({ path: resolve(__dirname, "..", file), quiet: true });
+const envFile = (name: string) => resolve(__dirname, "..", name);
+
+// Staging and production fail closed: read that environment's file and nothing
+// else, and let it win over an inherited `DATABASE_URL`. The cascade below is
+// convenient locally but dangerous here – a missing file or a value left
+// exported by an earlier command would silently point an environment-named
+// migration at a different database, with no output saying so.
+if (envName === "staging" || envName === "production") {
+  const { error } = configDotenv({
+    path: envFile(`.env.${envName}.local`),
+    override: true,
+    quiet: true,
+  });
+
+  if (error) {
+    throw new Error(
+      `Missing .env.${envName}.local – refusing to target ${envName}. ` +
+        `Create it with that environment's DATABASE_URL rather than letting ` +
+        `the command fall through to another database.`,
+    );
+  }
+} else {
+  // Development: first value wins, so an explicit shell variable still beats
+  // the files, matching Vite's convention.
+  for (const name of [`.env.${envName}.local`, ".env.local", ".env"]) {
+    configDotenv({ path: envFile(name), quiet: true });
+  }
 }
 
 if (!process.env.DATABASE_URL) {

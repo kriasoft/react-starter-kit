@@ -1,414 +1,105 @@
-# Security Incident Response Playbook
+# Security Incident Playbook
 
-This playbook provides step-by-step procedures for handling security incidents in React Starter Kit projects. Each procedure includes specific actions, tools, and decision criteria.
+This is an operational starting point for applications built from React Starter Kit. It deliberately does not invent a security address, response-time promise, team structure, or disclosure policy. Define those for your organization before launch.
 
-## Quick Reference
+## Prepare Before an Incident
 
-- **Security Email**: `security@kriasoft.com`
-- **Incident Tracking**: GitHub Security Advisories
-- **Communication Channel**: Email (encrypted when possible)
-- **Escalation**: Project maintainers via GitHub
+Record this information somewhere responders can reach when the application or primary repository is unavailable:
 
-## Incident Classification
+| Item | Owner or location |
+| --- | --- |
+| Security report channel | _Define before launch_ |
+| Incident lead and backup | _Define before launch_ |
+| Cloudflare account and audit logs | _Define before launch_ |
+| Neon project and restore procedure | _Define before launch_ |
+| Resend, Google, Stripe, and OpenAI accounts | _Define as enabled_ |
+| GitHub private vulnerability reporting | _Enable or document an alternative_ |
+| User notification and legal contacts | _Define before launch_ |
 
-### Determining Severity
+Also keep tested access for at least two responders, require MFA on provider accounts, and store recovery codes outside the systems they recover.
 
-Use this decision tree to classify incidents:
+## 1. Receive and Triage
 
-```
-Is remote code execution possible?
-├─ Yes → CRITICAL (P0)
-└─ No → Can authentication be bypassed?
-    ├─ Yes → CRITICAL (P0)
-    └─ No → Is sensitive data exposed?
-        ├─ Yes (all users) → CRITICAL (P0)
-        ├─ Yes (subset) → HIGH (P1)
-        └─ No → Is privilege escalation possible?
-            ├─ Yes → HIGH (P1)
-            └─ No → Is XSS present?
-                ├─ Yes (auth flow) → HIGH (P1)
-                ├─ Yes (other) → MEDIUM (P2)
-                └─ No → Is CSRF possible?
-                    ├─ Yes → MEDIUM (P2)
-                    └─ No → LOW (P3)
-```
+1. Move the report to the approved confidential channel. Do not discuss an unpatched vulnerability in a public issue or pull request.
+2. Preserve the original report, timestamps, relevant request IDs, logs, and provider audit events. Restrict access to people working the incident.
+3. Reproduce in an isolated environment with synthetic data when possible.
+4. Identify affected environments, versions, tenants, data, credentials, and time range.
+5. Assign severity from demonstrated impact and exploitability. Treat active exploitation, authentication bypass, remote code execution, exposed signing secrets, or broad sensitive-data access as urgent.
+6. Name one incident lead and one person responsible for the activity log.
 
-## Phase 1: Initial Response
+The activity log should distinguish verified facts from hypotheses and record who made each containment or recovery change.
 
-### Step 1.1: Acknowledge Report (0-2 hours)
+## 2. Contain
 
-**Actions:**
+Choose the smallest action that stops further harm without destroying evidence:
 
-1. Send acknowledgment email with template:
+- Disable or restrict the affected route, integration, account, or Worker.
+- Add a temporary Cloudflare WAF rule when traffic can be identified safely.
+- Revoke exposed credentials at their issuing provider, then replace the Worker secret in every affected environment. Changing a secret creates a new Worker version; verify which version receives traffic.
+- Invalidate sessions or rotate `BETTER_AUTH_SECRET` only when the impact warrants signing everyone out. Rotation invalidates existing signed state.
+- For database exposure, rotate the Neon role password, update both Hyperdrive configurations, and verify direct migration credentials separately.
+- For a malicious dependency or build credential, stop deployments until the build inputs and artifacts are trusted again.
 
-   ```
-   Subject: [RSK-SEC-YYYY-NNN] Security Report Received
+Do not run destructive cleanup merely to make the system look normal. Preserve the data needed to determine scope, and record every emergency change that must later be reconciled with version-controlled configuration.
 
-   Thank you for your security report. We have received your submission
-   and assigned tracking ID: RSK-SEC-YYYY-NNN
+## 3. Investigate
 
-   We will begin our initial assessment and respond within [TIMEFRAME].
+- [ ] Establish the earliest known exploitation and the last known safe state.
+- [ ] Trace the request path through web, app, API, provider, and database logs.
+- [ ] Check sibling endpoints and repeated code patterns, not only the reported URL.
+- [ ] Determine whether cached results, queues, webhooks, object storage, logs, backups, or third parties contain affected data.
+- [ ] Identify which credentials and sessions existed during the affected window and whether they were used unexpectedly.
+- [ ] Write a minimal proof of concept and a regression test without retaining real secrets or personal data.
+- [ ] Document the root cause and why existing controls did not catch it.
 
-   Please keep this vulnerability confidential while we investigate.
-   ```
+Cloudflare request IDs and the API request ID are useful correlation keys. Avoid copying full authorization headers, cookies, OTPs, or database URLs into the incident log.
 
-2. Create private GitHub issue for tracking
-3. Assign initial responder
+## 4. Eradicate and Recover
 
-**Tools:** Email client, GitHub Issues (private)
+1. Fix the root cause and close equivalent paths.
+2. Add tests that fail for the original exploit and pass for legitimate use.
+3. Run the checks in the [security checklist](./checklist).
+4. Deploy to staging and verify the containment still holds.
+5. Apply production database changes only after reviewing compatibility with the currently deployed Worker versions.
+6. Deploy service-binding targets before the web router: API, app, then web.
+7. Verify authentication, authorization, enabled integrations, headers, rate-limits, logs, and key user flows in production.
+8. Remove temporary controls only after the permanent fix is confirmed.
+9. Reconcile dashboard changes with Wrangler, Terraform, and documentation so a later deploy cannot undo the response.
 
-### Step 1.2: Initial Assessment (2-24 hours)
+A Worker rollback changes code and configuration version; it does not reverse a database migration or restore deleted data. Use the Neon restore procedure when data recovery is required, and test the restored branch before cutover.
 
-**Actions:**
+## 5. Notify and Disclose
 
-1. Review report for completeness
-2. Attempt to reproduce vulnerability
-3. Determine affected components
-4. Classify severity using decision tree
+Coordinate notification with the application owner's legal and privacy obligations. Communicate confirmed facts, affected scope, containment status, required user action, and the next update time. Do not promise a patch date or claim no data was accessed until evidence supports it.
 
-**Decision Points:**
+For a vulnerability in the upstream starter kit:
 
-- If cannot reproduce – Request clarification
-- If critical – Immediately notify maintainers
-- If valid – Proceed to Phase 2
+1. Use the repository's private vulnerability reporting channel when enabled.
+2. Prepare a GitHub Security Advisory with affected versions, impact, fix, and workarounds.
+3. Coordinate public disclosure after a fix is available or when continued secrecy no longer reduces harm.
+4. Request a CVE through the advisory only when the project and issue qualify.
 
-### Step 1.3: Form Response Team
+For an application-specific incident, notify that application's users and operators rather than the starter-kit repository.
 
-**For Critical/High severity:**
+## 6. Review
 
-- Lead: Project maintainer
-- Developer: Fix implementation
-- Reviewer: Code review and testing
-- Communicator: External updates
+After recovery, produce a short record containing:
 
-**For Medium/Low severity:**
+- the factual timeline;
+- root cause and contributing conditions;
+- affected data, users, environments, and integrations;
+- containment and recovery actions;
+- detection gaps;
+- durable follow-up items, owners, and due dates.
 
-- Lead: Available maintainer
-- Developer: Fix implementation
+Update this playbook only with lessons that generalize. Keep incident-specific names, credentials, evidence, and internal contacts in the restricted incident record, not in public repository documentation.
 
-## Phase 2: Investigation & Containment
+## Useful References
 
-### Step 2.1: Deep Dive Analysis (Day 1-2)
-
-**Actions:**
-
-1. Set up isolated test environment
-2. Reproduce vulnerability with minimal test case
-3. Identify root cause
-4. Document attack vectors
-5. Check for similar vulnerabilities
-
-**Checklist:**
-
-- [ ] Vulnerability reproduced
-- [ ] Root cause identified
-- [ ] Attack surface mapped
-- [ ] Similar code patterns checked
-- [ ] Impact assessment complete
-
-### Step 2.2: Temporary Mitigation (If Critical)
-
-**Actions:**
-
-1. Develop temporary workaround
-2. Test workaround doesn't break functionality
-3. Document workaround for users
-4. Publish security bulletin with mitigation
-
-**Template for Security Bulletin:**
-
-```markdown
-## Security Bulletin: [TITLE]
-
-**Date**: [DATE]
-**Severity**: [CRITICAL/HIGH]
-**Status**: Under Investigation
-
-### Summary
-
-We are investigating a security vulnerability in React Starter Kit.
-
-### Temporary Mitigation
-
-Until a patch is available, users should:
-
-1. [Specific mitigation steps]
-2. [Additional steps]
-
-### Timeline
-
-- Patch expected: [DATE]
-- Full disclosure: After patch
-
-### Contact
-
-Report issues to: `security@kriasoft.com`
-```
-
-## Phase 3: Development & Testing
-
-### Step 3.1: Develop Fix (Varies by severity)
-
-**Actions:**
-
-1. Create private branch for fix
-2. Implement minimal fix (no refactoring)
-3. Add regression tests
-4. Document code changes
-
-**Code Review Checklist:**
-
-- [ ] Fix addresses root cause
-- [ ] No new vulnerabilities introduced
-- [ ] Tests cover vulnerability scenario
-- [ ] Changes are minimal and focused
-- [ ] No sensitive info in comments/commits
-
-### Step 3.2: Testing Protocol
-
-**Test Environments:**
-
-1. Local development
-2. Isolated staging
-3. Integration testing
-4. Performance impact
-
-**Test Cases:**
-
-- [ ] Original PoC no longer works
-- [ ] Legitimate functionality preserved
-- [ ] No performance regression
-- [ ] No new error conditions
-- [ ] Edge cases handled
-
-### Step 3.3: Prepare Release
-
-**Actions:**
-
-1. Update version numbers
-2. Write release notes
-3. Prepare security advisory
-4. Request CVE (if applicable)
-
-**CVE Request Template:**
-
-```
-[Contact GitHub Security for CVE]
-Repository: react-starter-kit
-Vulnerability Type: [TYPE]
-Affected Versions: < X.Y.Z
-Fixed Version: X.Y.Z
-Description: [DESCRIPTION]
-```
-
-## Phase 4: Release & Disclosure
-
-### Step 4.1: Coordinated Release
-
-**Release Checklist:**
-
-- [ ] Code merged to main branch
-- [ ] Version tagged and released
-- [ ] Security advisory drafted
-- [ ] Reporter notified of release date
-- [ ] Release notes prepared
-
-### Step 4.2: Public Disclosure
-
-**Actions:**
-
-1. Publish GitHub Security Advisory
-2. Update SECURITY.md if needed
-3. Send notification to users (if critical)
-4. Credit reporter
-
-**Security Advisory Template:**
-
-```markdown
-## [CVE-YYYY-NNNNN] [Vulnerability Title]
-
-**Severity**: [Critical/High/Medium/Low]
-**Affected Versions**: < X.Y.Z
-**Patched Version**: X.Y.Z
-
-### Description
-
-[Clear description of vulnerability]
-
-### Impact
-
-[Potential impact on users]
-
-### Patches
-
-Update to version X.Y.Z or later.
-
-### Workarounds
-
-[If any temporary workarounds exist]
-
-### References
-
-- [Links to fixes]
-- [Links to documentation]
-
-### Credit
-
-Reported by [Name] ([Organization])
-```
-
-### Step 4.3: User Communication
-
-**For Critical vulnerabilities:**
-
-1. Email registered users (if applicable)
-2. Post on project blog/website
-3. Social media announcement
-4. Update documentation
-
-**Communication Template:**
-
-```
-Subject: [ACTION REQUIRED] Security Update for React Starter Kit
-
-A critical security vulnerability has been discovered and patched.
-
-Action Required:
-1. Update to version X.Y.Z immediately
-2. Review security advisory: [LINK]
-3. Apply any additional mitigations
-
-Details: [BRIEF DESCRIPTION]
-
-Questions: `security@kriasoft.com`
-```
-
-## Phase 5: Post-Incident Review
-
-### Step 5.1: Incident Retrospective (Within 1 week)
-
-**Meeting Agenda:**
-
-1. Timeline review
-2. What went well
-3. What could improve
-4. Action items
-5. Policy updates needed
-
-**Questions to Answer:**
-
-- How was the vulnerability introduced?
-- Why wasn't it caught earlier?
-- How can we prevent similar issues?
-- Was our response adequate?
-- What tools/processes need improvement?
-
-### Step 5.2: Implement Improvements
-
-**Common Improvements:**
-
-- Add security linting rules
-- Enhance test coverage
-- Update coding guidelines
-- Improve dependency management
-- Add security checkpoints to CI/CD
-
-### Step 5.3: Documentation Updates
-
-**Update as needed:**
-
-- This playbook
-- SECURITY.md
-- Development guidelines
-- CI/CD configurations
-- Security checklist
-
-## Appendix A: Tools & Resources
-
-### Security Tools
-
-- **Dependency Scanning**: `bun audit`, Dependabot
-- **Static Analysis**: ESLint security plugins
-- **Secret Scanning**: GitHub secret scanning, truffleHog
-- **SAST**: Semgrep, CodeQL
-- **Testing**: Vitest for security tests
-
-### Communication Tools
-
-- **Encrypted Email**: PGP/GPG
-- **Secure File Transfer**: Age encryption
-- **Private Issues**: GitHub Security Advisories
-
-### External Resources
-
+- [Security checklist](./checklist)
+- [Authentication](/auth/)
+- [Cloudflare deployment](/deployment/cloudflare)
+- [CI/CD and rollback](/deployment/ci-cd)
+- [Production database](/deployment/production-database)
 - [GitHub Security Advisories](https://docs.github.com/en/code-security/security-advisories)
-- [CVE Request Process](https://cve.mitre.org/cve/request_id.html)
-- [OWASP Incident Response](https://owasp.org/www-project-incident-response)
-- [NIST Incident Handling Guide](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)
-
-## Appendix B: Contact Templates
-
-### Reporter Follow-up
-
-```
-Subject: Re: [RSK-SEC-YYYY-NNN] Status Update
-
-Thank you for your patience. Here's an update on your report:
-
-Status: [In Progress/Testing Fix/Ready for Release]
-Severity: [Confirmed as X]
-Timeline: [Expected resolution date]
-
-[Any questions for reporter]
-
-We'll notify you before public disclosure.
-```
-
-### Maintainer Escalation
-
-```
-Subject: [URGENT] Critical Security Issue - Immediate Action Required
-
-A critical vulnerability has been reported:
-
-Tracking: RSK-SEC-YYYY-NNN
-Type: [Vulnerability type]
-Impact: [Brief impact description]
-Status: [Confirmed/Under Investigation]
-
-Required Actions:
-1. [Immediate actions needed]
-2. [Review assignments]
-
-Details in private issue: [Link]
-```
-
-### Release Notification
-
-```
-Subject: Security Release Scheduled - [DATE]
-
-Security release details:
-
-Version: X.Y.Z
-Release Date: [DATE TIME UTC]
-Severity: [Level]
-CVE: [If assigned]
-
-Pre-release checklist:
-- [ ] Code reviewed and tested
-- [ ] Advisory prepared
-- [ ] Reporter notified
-- [ ] Release notes ready
-
-Please confirm readiness by [DATE].
-```
-
-## Revision History
-
-- v1.0.0 - Initial playbook creation
-- Updates logged in commit history
-
----
-
-_This playbook is a living document. Update it based on lessons learned from each incident._
+- [Cloudflare Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/)

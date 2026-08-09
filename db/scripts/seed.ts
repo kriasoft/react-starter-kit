@@ -1,5 +1,8 @@
 #!/usr/bin/env bun
-// Usage: bun scripts/seed.ts [--env ENVIRONMENT=staging|prod]
+// Usage: bun scripts/seed.ts        (ENVIRONMENT=staging to target staging)
+//
+// Development and staging only. These seeds create test accounts, so there is
+// no production variant – put real reference data in a migration instead.
 
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";

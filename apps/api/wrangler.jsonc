@@ -9,9 +9,15 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "upload_source_maps": true,
+  "observability": { "enabled": true },
 
   // [ENV:PRODUCTION]
   // Command: bun wrangler deploy
+  //
+  // Replace RESEND_EMAIL_FROM before going live. `onboarding@resend.dev` is
+  // Resend's shared testing sender: it can only deliver to the address that
+  // owns the API key, and every other recipient gets a 403. Sign-in is email
+  // OTP, so leaving it here means nobody but you can sign in.
   "vars": {
     "ENVIRONMENT": "production",
     "APP_NAME": "Example",
@@ -21,13 +27,29 @@
   // prettier-ignore
   "hyperdrive": [
     { "binding": "HYPERDRIVE_CACHED", "id": "your-hyperdrive-cached-id-here" },
-    { "binding": "HYPERDRIVE_DIRECT", "id": "your-hyperdrive-direct-id-here" }
+    { "binding": "HYPERDRIVE_UNCACHED", "id": "your-hyperdrive-uncached-id-here" }
   ],
-  "kv_namespaces": [],
+  // Deploy fails fast when one of these is unset. Values live in Cloudflare
+  // (`wrangler secret put`); only the required-name contract is versioned.
+  //
+  // Only genuinely mandatory secrets belong here: listing an optional
+  // integration would block deploys for anyone not using it. Google, OpenAI and
+  // Stripe are gated at their feature boundaries instead — see `lib/env.ts`.
+  //
+  // Not inheritable, so every deployed environment repeats it. `dev` omits it
+  // on purpose: where this is set, local dev loads *only* these keys from
+  // `.env`, which would hide optional development secrets such as Stripe's.
+  "secrets": {
+    "required": ["BETTER_AUTH_SECRET", "RESEND_API_KEY"]
+  },
 
   "env": {
     // [ENV:DEVELOPMENT]
-    // Command: bun wrangler dev
+    // Command: bun dev (apps/api/dev.ts selects this env via getPlatformProxy)
+    //
+    // Local development provisions nothing: the IDs below are placeholders that
+    // Wrangler never resolves. Point the bindings at any Postgres instance with
+    // CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_{CACHED,UNCACHED}.
     "dev": {
       "vars": {
         "ENVIRONMENT": "development",
@@ -37,10 +59,9 @@
       },
       // prettier-ignore
       "hyperdrive": [
-        { "binding": "HYPERDRIVE_CACHED", "id": "your-dev-hyperdrive-cached-id-here" },
-        { "binding": "HYPERDRIVE_DIRECT", "id": "your-dev-hyperdrive-direct-id-here" }
-      ],
-      "kv_namespaces": []
+        { "binding": "HYPERDRIVE_CACHED", "id": "local-dev-placeholder" },
+        { "binding": "HYPERDRIVE_UNCACHED", "id": "local-dev-placeholder" }
+      ]
     },
 
     // [ENV:STAGING]
@@ -55,26 +76,11 @@
       // prettier-ignore
       "hyperdrive": [
         { "binding": "HYPERDRIVE_CACHED", "id": "your-staging-hyperdrive-cached-id-here" },
-        { "binding": "HYPERDRIVE_DIRECT", "id": "your-staging-hyperdrive-direct-id-here" }
+        { "binding": "HYPERDRIVE_UNCACHED", "id": "your-staging-hyperdrive-uncached-id-here" }
       ],
-      "kv_namespaces": []
-    },
-
-    // [ENV:PREVIEW]
-    // Command: bun wrangler deploy --env preview
-    "preview": {
-      "vars": {
-        "ENVIRONMENT": "preview",
-        "APP_NAME": "Example",
-        "APP_ORIGIN": "https://preview.example.com",
-        "RESEND_EMAIL_FROM": "onboarding@resend.dev"
-      },
-      // prettier-ignore
-      "hyperdrive": [
-        { "binding": "HYPERDRIVE_CACHED", "id": "your-preview-hyperdrive-cached-id-here" },
-        { "binding": "HYPERDRIVE_DIRECT", "id": "your-preview-hyperdrive-direct-id-here" }
-      ],
-      "kv_namespaces": []
+      "secrets": {
+        "required": ["BETTER_AUTH_SECRET", "RESEND_API_KEY"]
+      }
     }
   }
 }

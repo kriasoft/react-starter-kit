@@ -5,8 +5,8 @@
   // App worker accessed via service binding from web worker (no routes needed).
   "name": "example-app",
   "compatibility_date": "2026-08-08",
-  "compatibility_flags": [],
   "workers_dev": false,
+  "observability": { "enabled": true },
 
   // [ASSETS]
   // Serves bundled JavaScript, CSS, images, and other static assets.
@@ -23,7 +23,7 @@
 
   "env": {
     // [ENV:DEVELOPMENT]
-    // Command: bun wrangler dev
+    // Named Wrangler development environment; `bun dev` uses Vite instead.
     "dev": {
       "vars": {
         "ENVIRONMENT": "development"
@@ -35,14 +35,6 @@
     "staging": {
       "vars": {
         "ENVIRONMENT": "staging"
-      }
-    },
-
-    // [ENV:PREVIEW]
-    // Command: bun wrangler deploy --env preview
-    "preview": {
-      "vars": {
-        "ENVIRONMENT": "preview"
       }
     }
   }

@@ -39,16 +39,15 @@ Stripe billing via `@better-auth/stripe` plugin. Billing is tightly coupled with
 3. User completes payment – Stripe sends webhook to `/api/auth/stripe/webhook`
 4. Plugin verifies signature, updates `subscription` table – client refetches via tRPC
 
-**Why tRPC for reads, Better Auth client for mutations:**
-Subscription queries benefit from TanStack Query caching, batching, and stale-while-revalidate. Mutations (upgrade, cancel, portal) go through the auth client because the plugin handles Stripe API calls, session validation, and org authorization internally.
+**Why tRPC for reads, Better Auth client for mutations:** Subscription queries benefit from TanStack Query caching, batching, and stale-while-revalidate. Mutations (upgrade, cancel, portal) go through the auth client because the plugin handles Stripe API calls, session validation, and org authorization internally.
 
 ## Billing Reference
 
-Billing is tied to `session.activeOrganizationId` when present; otherwise falls back to `user.id` for personal use. The plugin enforces one active subscription per reference ID.
+Billing reads use `session.activeOrganizationId` when present and otherwise fall back to `user.id`. Stripe mutations pass the active organization explicitly as `referenceId` with `customerType: "organization"`; without one, the plugin defaults to the user. The plugin enforces one active subscription per reference ID.
 
 - **Organization context:** `referenceId = activeOrganizationId` – only org owner/admin can manage billing
 - **No organization:** `referenceId = user.id` – user manages their own subscription
-- The server derives `referenceId` from the session – no client-side param needed
+- The plugin authorizes explicit organization references against membership role
 - The billing query key includes `activeOrgId`, so switching organizations automatically fetches fresh billing data via TanStack Query
 
 ## Database Schema
@@ -77,7 +76,7 @@ Config-as-code is the simplest correct approach – plans rarely change and this
 | `STRIPE_PRO_PRICE_ID`        | `price_` |
 | `STRIPE_PRO_ANNUAL_PRICE_ID` | `price_` |
 
-Set in `.env.local` (local dev), Cloudflare secrets (staging/prod).
+Set in `.env.local` (local development), Cloudflare secrets (staging/production).
 
 ## Webhook Setup
 
@@ -114,18 +113,18 @@ Stripe webhook verification requires the raw request body. The plugin handles th
 
 The plugin tests its own internals (webhooks, checkout, subscription lifecycle, authorization). App tests cover the seams we own:
 
-- **Router** (`apps/api/routers/billing.test.ts`) – free plan fallback, plan limits mapping, unknown plan rejection, response shape
+- **Router** (`apps/api/routers/billing.test.ts`) – disabled integration, free plan fallback, plan limits mapping, unknown plan rejection, response shape
 - **Query** (`apps/app/lib/queries/billing.test.ts`) – cache key includes org ID, null normalization, distinct keys per org, prefix for bulk invalidation
 
 Checkout and webhook flows are not retested at app level – verified via `stripe listen` during development.
 
 ## File Map
 
-| Layer  | Files                                                                                                  |
-| ------ | ------------------------------------------------------------------------------------------------------ |
+| Layer | Files |
+| --- | --- |
 | Schema | `db/schema/subscription.ts`, `stripeCustomerId` in `db/schema/user.ts` and `db/schema/organization.ts` |
-| Server | `apps/api/lib/plans.ts`, `apps/api/lib/stripe.ts`, stripe plugin in `apps/api/lib/auth.ts`             |
-| Router | `apps/api/routers/billing.ts`, registered in `apps/api/lib/app.ts`                                     |
-| Client | `stripeClient` in `apps/app/lib/auth.ts`, `apps/app/lib/queries/billing.ts`                            |
-| UI     | Billing card in `apps/app/routes/(app)/settings.tsx`                                                   |
-| Tests  | `apps/api/routers/billing.test.ts`, `apps/app/lib/queries/billing.test.ts`                             |
+| Server | `apps/api/lib/plans.ts`, `apps/api/lib/stripe.ts`, stripe plugin in `apps/api/lib/auth.ts` |
+| Router | `apps/api/routers/billing.ts`, registered in `apps/api/lib/app.ts` |
+| Client | `stripeClient` in `apps/app/lib/auth.ts`, `apps/app/lib/queries/billing.ts` |
+| UI | Billing card in `apps/app/routes/(app)/settings.tsx` |
+| Tests | `apps/api/routers/billing.test.ts`, `apps/app/lib/queries/billing.test.ts` |

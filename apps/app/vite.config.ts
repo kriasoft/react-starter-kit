@@ -6,12 +6,7 @@ import { URL, fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
 import { defineProject } from "vitest/config";
 
-const publicEnvVars = [
-  "APP_NAME",
-  "APP_ORIGIN",
-  "GOOGLE_CLOUD_PROJECT",
-  "GA_MEASUREMENT_ID",
-];
+const publicEnvVars = ["APP_NAME", "APP_ORIGIN"];
 
 /**
  * Vite configuration.

@@ -89,14 +89,14 @@ create: protectedProcedure
 
 Common tRPC error codes:
 
-| Code                    | HTTP Status | When to Use                                             |
-| ----------------------- | ----------- | ------------------------------------------------------- |
-| `BAD_REQUEST`           | 400         | Invalid input (automatic from Zod)                      |
-| `UNAUTHORIZED`          | 401         | Not authenticated (automatic from `protectedProcedure`) |
-| `FORBIDDEN`             | 403         | Authenticated but lacking permission                    |
-| `NOT_FOUND`             | 404         | Resource doesn't exist                                  |
-| `CONFLICT`              | 409         | Duplicate or conflicting state                          |
-| `INTERNAL_SERVER_ERROR` | 500         | Unexpected server error                                 |
+| Code | HTTP Status | When to Use |
+| --- | --- | --- |
+| `BAD_REQUEST` | 400 | Invalid input (automatic from Zod) |
+| `UNAUTHORIZED` | 401 | Not authenticated (automatic from `protectedProcedure`) |
+| `FORBIDDEN` | 403 | Authenticated but lacking permission |
+| `NOT_FOUND` | 404 | Resource doesn't exist |
+| `CONFLICT` | 409 | Duplicate or conflicting state |
+| `INTERNAL_SERVER_ERROR` | 500 | Unexpected server error |
 
 See the full list in the [tRPC error codes reference](https://trpc.io/docs/server/error-handling#error-codes).
 
@@ -145,7 +145,7 @@ Extracts the HTTP status code from various error shapes:
 import { getErrorStatus } from "~/lib/errors";
 
 try {
-  await trpcClient.organization.create.mutate({ name: "" });
+  await trpcClient.user.updateProfile.mutate({ email: "not-an-email" });
 } catch (err) {
   const status = getErrorStatus(err); // 400
 }
@@ -163,9 +163,7 @@ if (isUnauthenticatedError(error)) {
 }
 ```
 
-::: tip
-`isUnauthenticatedError` checks for HTTP 401 and tRPC `UNAUTHORIZED` code. It does **not** match 403 (Forbidden) – that means authenticated but lacking permission.
-:::
+::: tip `isUnauthenticatedError` checks for HTTP 401 and tRPC `UNAUTHORIZED` code. It does **not** match 403 (Forbidden) – that means authenticated but lacking permission. :::
 
 ### `getErrorMessage(error)`
 

@@ -39,13 +39,7 @@ bun run test --project @repo/app   # Frontend tests only
 bun run test billing               # Filter by filename
 ```
 
-::: warning
-Use `bun run test`, not `bun test`. The latter invokes Bun's test runner instead
-of the root Vitest script, so it ignores the Happy DOM environment and
-`vitest.setup.ts`; DOM-dependent frontend tests fail with `document is not
-defined`. The `bun api:test` and `bun app:test` shorthands are safe because both
-names resolve to package scripts.
-:::
+::: warning Use `bun run test`, not `bun test`. The latter invokes Bun's test runner instead of the root Vitest script, so it ignores the Happy DOM environment and `vitest.setup.ts`; DOM-dependent frontend tests fail with `document is not defined`. The `bun api:test` and `bun app:test` shorthands are safe because both names resolve to package scripts. :::
 
 ## File Conventions
 
@@ -70,6 +64,7 @@ import { billingRouter } from "./billing";
 const createCaller = createCallerFactory(billingRouter);
 
 function testCtx({
+  billingEnabled = true,
   userId = "user-1",
   activeOrgId = undefined as string | undefined,
   subscription = undefined as Record<string, unknown> | undefined,
@@ -101,9 +96,16 @@ function testCtx({
         },
       },
     } as unknown as TRPCContext["db"],
-    dbDirect: {} as TRPCContext["dbDirect"],
+    dbCached: {} as TRPCContext["dbCached"],
     cache: new Map(),
-    env: {} as TRPCContext["env"],
+    env: (billingEnabled
+      ? {
+          STRIPE_SECRET_KEY: "sk_test",
+          STRIPE_WEBHOOK_SECRET: "whsec_test",
+          STRIPE_STARTER_PRICE_ID: "price_starter",
+          STRIPE_PRO_PRICE_ID: "price_pro",
+        }
+      : {}) as TRPCContext["env"],
   };
 
   return ctx;
@@ -113,6 +115,7 @@ describe("billing.subscription", () => {
   it("returns free plan defaults when no subscription exists", async () => {
     const result = await createCaller(testCtx()).subscription();
     expect(result).toEqual({
+      enabled: true,
       plan: "free",
       status: null,
       periodEnd: null,
@@ -133,7 +136,7 @@ describe("billing.subscription", () => {
 
 Key points:
 
-- `createCallerFactory(router)` from `@trpc/server` – calls procedures in-process, no network layer
+- `createCallerFactory(router)` from `lib/trpc` – calls procedures in-process with the same tRPC configuration and no network layer
 - Cast partial DB mocks with `as unknown as TRPCContext["db"]` – only stub the methods your procedure actually calls
 - Use `vi.fn().mockResolvedValue()` for async Drizzle query methods
 
@@ -218,9 +221,7 @@ describe("MyComponent", () => {
 });
 ```
 
-::: tip
-Use `userEvent` over `fireEvent` for user interactions – it simulates real browser behavior (focus, keyboard events, pointer events) rather than dispatching synthetic events.
-:::
+::: tip Use `userEvent` over `fireEvent` for user interactions – it simulates real browser behavior (focus, keyboard events, pointer events) rather than dispatching synthetic events. :::
 
 ## Mocking
 
@@ -262,9 +263,7 @@ vi.mock(import("./some-module.js"), async (importOriginal) => {
 });
 ```
 
-::: warning
-Module mocks are hoisted – they run before imports regardless of where you write them. See [Vitest mocking docs](https://vitest.dev/guide/mocking) for details.
-:::
+::: warning Module mocks are hoisted – they run before imports regardless of where you write them. See [Vitest mocking docs](https://vitest.dev/guide/mocking) for details. :::
 
 ## Where Tests Live
 

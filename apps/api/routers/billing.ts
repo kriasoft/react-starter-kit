@@ -6,6 +6,24 @@ export const billingRouter = router({
   // referenceId is derived from session — org billing when an org is active,
   // personal billing otherwise. No client-side param needed.
   subscription: protectedProcedure.query(async ({ ctx }) => {
+    const enabled = Boolean(
+      ctx.env.STRIPE_SECRET_KEY &&
+      ctx.env.STRIPE_WEBHOOK_SECRET &&
+      ctx.env.STRIPE_STARTER_PRICE_ID &&
+      ctx.env.STRIPE_PRO_PRICE_ID,
+    );
+
+    if (!enabled) {
+      return {
+        enabled,
+        plan: "free" as const,
+        status: null,
+        periodEnd: null,
+        cancelAtPeriodEnd: false,
+        limits: planLimits.free,
+      };
+    }
+
     const referenceId = ctx.session.activeOrganizationId ?? ctx.user.id;
 
     const sub = await ctx.db.query.subscription.findFirst({
@@ -23,6 +41,7 @@ export const billingRouter = router({
     }
 
     return {
+      enabled,
       plan,
       status: sub?.status ?? null,
       periodEnd: sub?.periodEnd ?? null,

@@ -7,10 +7,11 @@ Seed scripts populate your database with test data for development. They live in
 ```bash
 bun db:seed              # seed development database
 bun db:seed:staging      # seed staging
-bun db:seed:prod         # seed production
 ```
 
 Seeds use `onConflictDoNothing()`, so they're safe to rerun without duplicating data.
+
+There is deliberately no `db:seed:production`. These scripts create test accounts, and a command that inserts `alice@example.com` into a live database is a mistake waiting to happen. If you need real reference data in production – plan tiers, feature flags, a first admin account – write it as a migration, where it is reviewed and applied once.
 
 ## Project Structure
 

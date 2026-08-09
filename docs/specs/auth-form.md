@@ -1,234 +1,87 @@
-# Auth Flow UX Specification
+# Auth Form Specification
 
-Target UX inspired by Linear's authentication flow.
+The login and signup pages share `AuthForm`, a three-step passwordless flow. They differ only in copy, terms, the account-switch link, and passkey availability.
 
-## Design Principles
+## Methods
 
-1. **Progressive disclosure** – Show only what's needed at each step
-2. **Method selection first** – Let users choose their auth method before showing inputs
-3. **Minimal friction** – Reduce cognitive load with focused, single-purpose views
-4. **Clear navigation** – Easy to go back and switch methods
+| Method | Login | Signup | Availability |
+| --- | --- | --- | --- |
+| Email OTP | Yes | Yes | Always |
+| Passkey | Yes | No | Existing accounts only |
+| Google | Yes | Yes | Only when both server credentials are configured |
 
-## Flow Structure
+The API exposes `config.socialProviders`, derived from the same helper that configures Better Auth. Auth routes prefetch it and the login dialog warms it on mount, so the UI neither advertises a disabled provider nor keeps a duplicate client-side enablement flag.
 
-### Login (`/login`)
-
-```text
-Step 1: Method Selection
-┌─────────────────────────────┐
-│         [Logo]              │
-│                             │
-│    Log in to [App Name]     │
-│                             │
-│  ┌───────────────────────┐  │
-│  │ Continue with Google  │  │
-│  └───────────────────────┘  │
-│  ┌───────────────────────┐  │
-│  │ Continue with email   │  │
-│  └───────────────────────┘  │
-│  ┌───────────────────────┐  │
-│  │ Log in with passkey   │  │
-│  └───────────────────────┘  │
-│                             │
-│  Don't have an account?     │
-│  Sign up                    │
-└─────────────────────────────┘
-
-Step 2: Email Input (after clicking "Continue with email")
-┌─────────────────────────────┐
-│         [Logo]              │
-│                             │
-│  What's your email address? │
-│                             │
-│  ┌───────────────────────┐  │
-│  │ Enter your email...   │  │
-│  └───────────────────────┘  │
-│  ┌───────────────────────┐  │
-│  │ Continue with email   │  │
-│  └───────────────────────┘  │
-│                             │
-│  ← Back to login            │
-└─────────────────────────────┘
-
-Step 3: OTP Verification
-┌─────────────────────────────┐
-│         [Logo]              │
-│                             │
-│  Check your email           │
-│  We sent a code to          │
-│  user@example.com           │
-│                             │
-│  ┌─┬─┬─┬─┬─┬─┐              │
-│  │ │ │ │ │ │ │  (6 digits)  │
-│  └─┴─┴─┴─┴─┴─┘              │
-│                             │
-│  Resend code                │
-│  ← Back                     │
-└─────────────────────────────┘
-```
-
-### Signup (`/signup`)
+## Steps
 
 ```text
-Step 1: Method Selection
-┌─────────────────────────────┐
-│         [Logo]              │
-│                             │
-│    Create your account      │
-│                             │
-│  ┌───────────────────────┐  │
-│  │ Continue with Google  │  │
-│  └───────────────────────┘  │
-│  ┌───────────────────────┐  │
-│  │ Continue with email   │  │
-│  └───────────────────────┘  │
-│                             │
-│  By signing up, you agree   │
-│  to our Terms and Privacy   │
-│  Policy.                    │
-│                             │
-│  Already have an account?   │
-│  Log in                     │
-└─────────────────────────────┘
-
-Step 2: Email Input (after clicking "Continue with email")
-┌─────────────────────────────┐
-│         [Logo]              │
-│                             │
-│  What's your email address? │
-│                             │
-│  ┌───────────────────────┐  │
-│  │ Enter your email...   │  │
-│  └───────────────────────┘  │
-│  ┌───────────────────────┐  │
-│  │ Continue with email   │  │
-│  └───────────────────────┘  │
-│                             │
-│  By signing up, you agree   │
-│  to our Terms and Privacy   │
-│  Policy.                    │
-│                             │
-│  ← Back to sign up          │
-└─────────────────────────────┘
-
-Step 3: OTP Verification
-┌─────────────────────────────┐
-│         [Logo]              │
-│                             │
-│  Check your email           │
-│  We sent a code to          │
-│  user@example.com           │
-│                             │
-│  ┌─┬─┬─┬─┬─┬─┐              │
-│  │ │ │ │ │ │ │  (6 digits)  │
-│  └─┴─┴─┴─┴─┴─┘              │
-│                             │
-│  Resend code                │
-│  ← Back to email            │
-└─────────────────────────────┘
+method selection ── email chosen ──> email input ── code sent ──> OTP
+       ^                                  ^                         │
+       └──────────── back ────────────────┘──────── back ──────────┘
 ```
 
-Note: No passkey option on signup (passkeys require existing account).
-
-## Third-Party Auth Behavior
-
-- **Google**: On failure or user cancel, return to method selection with inline error.
-- **Passkey**: On failure (not supported, no credential, user cancel), return to method selection with inline error and a short hint to use email instead.
-- **Network/system errors**: Show a non-blocking toast and keep the user on the current step.
-
-## Key Differences from Current Implementation
-
-| Aspect       | Current                           | Target                                    |
-| ------------ | --------------------------------- | ----------------------------------------- |
-| Initial view | All methods + email input visible | Method selection buttons only             |
-| Email input  | Always visible with divider       | Separate step after clicking email button |
-| Layout       | Card with optional right panel    | Centered content, no card                 |
-| Headings     | "Welcome" / "Welcome back"        | "Create your account" / "Log in to [App]" |
-| Navigation   | None                              | "Back to login" link between steps        |
-| Terms        | Footer on both pages              | Inline on signup only                     |
-
-## Copy & Labels
-
-| Screen        | Heading                    | CTA                                                              | Helper                                                                                    |
-| ------------- | -------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Login method  | Log in to [App Name]       | Continue with Google / Continue with email / Log in with passkey | Don't have an account? Sign up                                                            |
-| Login email   | What's your email address? | Continue with email                                              | ← Back to login                                                                           |
-| Login OTP     | Check your email           | Verify code                                                      | Resend code / ← Back to email                                                             |
-| Signup method | Create your account        | Continue with Google / Continue with email                       | By signing up, you agree to our Terms and Privacy Policy. Already have an account? Log in |
-| Signup email  | What's your email address? | Continue with email                                              | By signing up, you agree to our Terms and Privacy Policy. ← Back to sign up               |
-| Signup OTP    | Check your email           | Verify code                                                      | Resend code / ← Back to email                                                             |
-
-## Component Architecture
-
-### State Machine
-
-```text
-┌─────────────┐     click email      ┌───────────┐    submit email    ┌──────────────┐
-│   METHOD    │ ──────────────────→  │   EMAIL   │ ────────────────→  │     OTP      │
-│  SELECTION  │                      │   INPUT   │                    │ VERIFICATION │
-└─────────────┘  ←───────────────    └───────────┘  ←───────────────  └──────────────┘
-                       back                            back/cancel
-```
-
-### Suggested Step Type
+The transition table in `use-auth-form.ts` permits only:
 
 ```ts
-type AuthStep = "method" | "email" | "otp";
+const VALID_TRANSITIONS = {
+  method: ["email"],
+  email: ["method", "otp"],
+  otp: ["email"],
+} as const;
 ```
 
-### Props
+Social and passkey flows complete outside this step sequence. A success guard prevents overlapping conditional-passkey and manual operations from completing authentication twice.
+
+### Method selection
+
+- Login shows configured social providers, email, and passkey.
+- Signup shows configured social providers and email, followed by the terms and privacy notice.
+- While any child flow is active, all methods and navigation are disabled.
+- Errors use the form's inline `role="alert"` region.
+
+### Email input
+
+- The field uses `type="email"`, `autocomplete="email"`, and autofocus.
+- Submission trims and lowercases the address.
+- Both login and signup request OTP type `"sign-in"`; Better Auth creates a user when the address is new.
+- Signup repeats the terms and privacy notice on this step.
+
+### OTP
+
+- Codes are six numeric digits, expire after five minutes, and are invalidated after three failed attempts.
+- The field uses `autocomplete="one-time-code"`, `inputmode="numeric"`, and autofocus.
+- `TOO_MANY_ATTEMPTS` and `OTP_EXPIRED` return the form to the email step while preserving the explanation. Other failures stay on the OTP step.
+- The resend button has a 30-second client-side cooldown. This is interface feedback, not server-side abuse protection; production deployments still need rate limiting at Cloudflare.
+
+## Props and completion
 
 ```ts
 interface AuthFormProps {
-  mode: "login" | "signup";
-  onSuccess?: () => void;
+  mode?: "login" | "signup";
+  onSuccess: () => Promise<void>;
+  isLoading?: boolean;
+  returnTo?: string;
 }
 ```
 
-## Visual Design
-
-- **Layout**: Centered, max-width ~400px, no card wrapper
-- **Logo**: Centered above heading
-- **Buttons**: Full-width, stacked vertically with consistent spacing
-- **Typography**: Clear hierarchy – heading (h1), body text, links
-- **Back link**: Left-aligned, subtle styling, positioned below form
-
-## Transitions
-
-- Smooth fade/slide between steps (optional enhancement)
-- Maintain scroll position when navigating back
-
-## Error Handling
-
-- Inline error messages below relevant input
-- Clear error state when user modifies input
-- Specific messages for common errors (invalid email, expired OTP, rate limit)
-- Third-party auth error surfaced on method selection with a one-line explanation
-
-## Loading & Empty States
-
-- Method selection: disable buttons and show spinner during third-party auth initiation
-- Email input: disable CTA while sending code; show spinner inside button
-- OTP: disable inputs while verifying; show progress indicator
-- Resend: disabled until cooldown expires; show countdown
-
-## OTP Constraints
-
-- 6 digits, numeric only
-- Expires after 10 minutes
-- Resend cooldown: 30 seconds
-- Rate limit: 5 attempts per hour per email
+The caller owns post-auth cache invalidation and navigation. `AuthForm` awaits `onSuccess` before clearing its busy state. `returnTo` must already have passed `getSafeRedirectUrl()`; OAuth embeds it in the callback URL so it survives the redirect round trip.
 
 ## Accessibility
 
-- Focus management: auto-focus first input when entering email/OTP steps
-- Keyboard navigation: Enter to submit, Escape to go back (optional)
-- Screen reader announcements for step changes
+- The active input receives focus on the email and OTP steps.
+- Native forms support Enter submission.
+- Busy states disable conflicting controls.
+- The logo link has an accessible name while its image remains decorative.
+- Errors are announced through `role="alert"`.
 
-## Open Questions
+## File Map
 
-- [ ] Should the logo link to home or be static?
-- [ ] Add "Remember me" checkbox?
-- [ ] Show password option as alternative to OTP?
-- [ ] Magic link option in addition to OTP?
-- [ ] Should login email step include a short notice about email delivery/usage?
+| Concern                   | File                                            |
+| ------------------------- | ----------------------------------------------- |
+| Shared form and step UI   | `apps/app/components/auth/auth-form.tsx`        |
+| OTP state machine         | `apps/app/components/auth/use-auth-form.ts`     |
+| Code entry and resend     | `apps/app/components/auth/otp-verification.tsx` |
+| Passkey flow              | `apps/app/components/auth/passkey-login.tsx`    |
+| Google redirect           | `apps/app/components/auth/google-login.tsx`     |
+| Server capabilities query | `apps/api/routers/config.ts`                    |
+| Client capabilities query | `apps/app/lib/queries/config.ts`                |

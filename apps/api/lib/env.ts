@@ -1,22 +1,22 @@
 import { z } from "zod";
 
-/**
- * Zod schema for validating environment variables.
- * Ensures all required configuration values are present and correctly formatted.
- *
- * @throws {ZodError} When environment variables don't match the schema
- */
+/** Environment contract and source for the inferred `Env` type. */
 export const envSchema = z.object({
-  ENVIRONMENT: z.enum(["production", "staging", "preview", "development"]),
+  // The database arrives via Hyperdrive bindings, not a connection string, so no
+  // DATABASE_URL here — that belongs to `db/`'s drizzle-kit process.
+  ENVIRONMENT: z.enum(["production", "staging", "development"]),
   APP_NAME: z.string().default("Example"),
   APP_ORIGIN: z.url(),
-  DATABASE_URL: z.url(),
   BETTER_AUTH_SECRET: z.string().min(32),
-  GOOGLE_CLIENT_ID: z.string(),
-  GOOGLE_CLIENT_SECRET: z.string(),
-  OPENAI_API_KEY: z.string(),
+  // Email OTP is the primary sign-in method, so mail delivery is not optional.
   RESEND_API_KEY: z.string(),
   RESEND_EMAIL_FROM: z.email(),
+  // Google OAuth (optional — both or neither; see `googleProvider` in auth.ts).
+  // Without them sign-in still works through email OTP and passkeys.
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  // OpenAI (optional — AI features are unavailable without it)
+  OPENAI_API_KEY: z.string().optional(),
   // Stripe billing (optional — app works without these, billing features disabled)
   STRIPE_SECRET_KEY: z.string().startsWith("sk_").optional(),
   STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_").optional(),
@@ -25,11 +25,8 @@ export const envSchema = z.object({
   STRIPE_PRO_ANNUAL_PRICE_ID: z.string().startsWith("price_").optional(),
 });
 
-/**
- * Do not parse `Bun.env` at module load: production bindings arrive on `c.env`,
- * while local development combines Wrangler bindings with `process.env`.
- * Validate the assembled environment at the entry point instead.
- */
+// Do not parse `Bun.env` at module load: production bindings arrive on `c.env`,
+// while local development combines Wrangler bindings with `process.env`.
 
 /**
  * Type-safe environment variables interface.

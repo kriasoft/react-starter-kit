@@ -2,6 +2,7 @@ import { Button, Input, cn } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail } from "lucide-react";
 import type { ComponentProps, SubmitEvent } from "react";
+import { useSocialProviders } from "@/lib/queries/config";
 import { GoogleLogin } from "./google-login";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
@@ -168,17 +169,21 @@ function MethodSelection({
 }: MethodSelectionProps) {
   const heading = isSignup ? "Create your account" : `Log in to ${APP_NAME}`;
 
+  const socialProviders = useSocialProviders();
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold text-center">{heading}</h1>
 
       <div className="flex flex-col gap-3">
-        <GoogleLogin
-          onError={onError}
-          isDisabled={isDisabled}
-          onLoadingChange={onLoadingChange}
-          returnTo={returnTo}
-        />
+        {socialProviders.includes("google") && (
+          <GoogleLogin
+            onError={onError}
+            isDisabled={isDisabled}
+            onLoadingChange={onLoadingChange}
+            returnTo={returnTo}
+          />
+        )}
 
         <Button
           type="button"
