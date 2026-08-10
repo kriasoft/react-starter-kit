@@ -163,7 +163,11 @@ if (isUnauthenticatedError(error)) {
 }
 ```
 
-::: tip `isUnauthenticatedError` checks for HTTP 401 and tRPC `UNAUTHORIZED` code. It does **not** match 403 (Forbidden) – that means authenticated but lacking permission. :::
+::: tip
+
+`isUnauthenticatedError` checks for HTTP 401 and tRPC `UNAUTHORIZED` code. It does **not** match 403 (Forbidden) – that means authenticated but lacking permission.
+
+:::
 
 ### `getErrorMessage(error)`
 

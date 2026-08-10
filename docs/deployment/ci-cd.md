@@ -126,7 +126,11 @@ steps:
 
 Order matters: a service binding resolves its target by name at deploy time, so `api` and `app` must exist before `web` binds to them.
 
-::: warning The `wrangler deploy` step in `deploy.yml` ships commented out. Uncomment it once your infrastructure is provisioned and the credentials below are set. :::
+::: warning
+
+The `wrangler deploy` step in `deploy.yml` ships commented out. Uncomment it once your infrastructure is provisioned and the credentials below are set.
+
+:::
 
 ## Verifying a Pull Request
 

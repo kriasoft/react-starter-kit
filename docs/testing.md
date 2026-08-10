@@ -39,7 +39,11 @@ bun run test --project @repo/app   # Frontend tests only
 bun run test billing               # Filter by filename
 ```
 
-::: warning Use `bun run test`, not `bun test`. The latter invokes Bun's test runner instead of the root Vitest script, so it ignores the Happy DOM environment and `vitest.setup.ts`; DOM-dependent frontend tests fail with `document is not defined`. The `bun api:test` and `bun app:test` shorthands are safe because both names resolve to package scripts. :::
+::: warning
+
+Use `bun run test`, not `bun test`. The latter invokes Bun's test runner instead of the root Vitest script, so it ignores the Happy DOM environment and `vitest.setup.ts`; DOM-dependent frontend tests fail with `document is not defined`. The `bun api:test` and `bun app:test` shorthands are safe because both names resolve to package scripts.
+
+:::
 
 ## File Conventions
 
@@ -221,7 +225,11 @@ describe("MyComponent", () => {
 });
 ```
 
-::: tip Use `userEvent` over `fireEvent` for user interactions – it simulates real browser behavior (focus, keyboard events, pointer events) rather than dispatching synthetic events. :::
+::: tip
+
+Use `userEvent` over `fireEvent` for user interactions – it simulates real browser behavior (focus, keyboard events, pointer events) rather than dispatching synthetic events.
+
+:::
 
 ## Mocking
 
@@ -263,7 +271,11 @@ vi.mock(import("./some-module.js"), async (importOriginal) => {
 });
 ```
 
-::: warning Module mocks are hoisted – they run before imports regardless of where you write them. See [Vitest mocking docs](https://vitest.dev/guide/mocking) for details. :::
+::: warning
+
+Module mocks are hoisted – they run before imports regardless of where you write them. See [Vitest mocking docs](https://vitest.dev/guide/mocking) for details.
+
+:::
 
 ## Where Tests Live
 

@@ -27,7 +27,11 @@ For normal local development, `.env.local` takes precedence over `.env`. Create 
 cp .env .env.local
 ```
 
-::: warning Never put real secrets in `.env` – it is committed to git. Use the applicable gitignored `.local` file for anything sensitive. Database commands named for staging or production read only their matching file and fail if it is absent. :::
+::: warning
+
+Never put real secrets in `.env` – it is committed to git. Use the applicable gitignored `.local` file for anything sensitive. Database commands named for staging or production read only their matching file and fail if it is absent.
+
+:::
 
 ## Cloudflare Worker Bindings
 

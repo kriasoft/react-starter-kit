@@ -39,7 +39,11 @@ export function createDb(hyperdrive: Hyperdrive) {
 }
 ```
 
-::: info In development, Wrangler's `getPlatformProxy()` emulates the Hyperdrive bindings locally, resolving each from its own `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_*` variable in `.env` – not from `DATABASE_URL`, which is read by the Drizzle tooling in `db/` and nothing else. Local bindings connect straight to Postgres, so neither pooling nor query caching is active. Your code uses the same `HYPERDRIVE_CACHED` / `HYPERDRIVE_UNCACHED` bindings in both environments – no conditional connection logic needed. :::
+::: info
+
+In development, Wrangler's `getPlatformProxy()` emulates the Hyperdrive bindings locally, resolving each from its own `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_*` variable in `.env` – not from `DATABASE_URL`, which is read by the Drizzle tooling in `db/` and nothing else. Local bindings connect straight to Postgres, so neither pooling nor query caching is active. Your code uses the same `HYPERDRIVE_CACHED` / `HYPERDRIVE_UNCACHED` bindings in both environments – no conditional connection logic needed.
+
+:::
 
 ## Commands
 

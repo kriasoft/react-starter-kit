@@ -42,7 +42,11 @@ The CLI prints a webhook signing secret (`whsec_...`) – copy it to your `.env.
 STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
-::: warning The local signing secret changes each time you restart `stripe listen`. Update `.env.local` and restart the dev server if webhook verification fails. :::
+::: warning
+
+The local signing secret changes each time you restart `stripe listen`. Update `.env.local` and restart the dev server if webhook verification fails.
+
+:::
 
 ## Raw Body Handling
 

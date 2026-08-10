@@ -123,7 +123,11 @@ Service bindings let workers call each other directly over Cloudflare's internal
 ]
 ```
 
-::: warning Service bindings are **non-inheritable** in Wrangler – they must be declared in every environment block. Forgetting this causes staging workers to bind to production services. :::
+::: warning
+
+Service bindings are **non-inheritable** in Wrangler – they must be declared in every environment block. Forgetting this causes staging workers to bind to production services.
+
+:::
 
 Naming convention: `<project>-<worker>-<env>` (e.g. `example-api-staging`). See [Edge > Service Bindings](./edge#service-bindings) for the full per-environment config.
 
@@ -148,7 +152,11 @@ The `/` route serves two different experiences – a marketing page for visitors
 
 This cookie is a **routing hint only**, not a security boundary. A false positive (stale cookie) results in one extra redirect to `/login` – the app worker validates the real session.
 
-::: info In local development the cookie is named `auth` (HTTP), since browsers reject the `__Host-` prefix without HTTPS. :::
+::: info
+
+In local development the cookie is named `auth` (HTTP), since browsers reject the `__Host-` prefix without HTTPS.
+
+:::
 
 See [ADR-001](/adr/001-auth-hint-cookie) for the full decision record and [Sessions & Protected Routes](/auth/sessions) for the auth flow.
 

@@ -65,7 +65,11 @@ For each paid plan, create a **Product** and **Price** in the [Stripe Dashboard]
 | Pro (monthly) | `STRIPE_PRO_PRICE_ID`        | "Pro Plan" – $29/month    |
 | Pro (annual)  | `STRIPE_PRO_ANNUAL_PRICE_ID` | "Pro Plan" – $290/year    |
 
-::: info Use Stripe **test mode** during development. The price IDs are different between test and live modes. :::
+::: info
+
+Use Stripe **test mode** during development. The price IDs are different between test and live modes.
+
+:::
 
 ## How Limits Are Exposed
 

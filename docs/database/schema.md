@@ -164,7 +164,11 @@ Managed by [Better Auth](https://www.better-auth.com/docs/concepts/database). Ex
 | `verification` | `schema/user.ts` | OTP codes, email verification tokens |
 | `passkey` | `schema/passkey.ts` | WebAuthn credentials for [passwordless auth](/auth/passkeys) |
 
-::: warning Authentication tables follow [Better Auth's schema requirements](https://www.better-auth.com/docs/concepts/database). When adding columns, register them in the auth config's `additionalFields` to ensure proper data handling. :::
+::: warning
+
+Authentication tables follow [Better Auth's schema requirements](https://www.better-auth.com/docs/concepts/database). When adding columns, register them in the auth config's `additionalFields` to ensure proper data handling.
+
+:::
 
 ::: details user table – TypeScript definition
 

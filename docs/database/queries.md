@@ -16,7 +16,11 @@ const products = await ctx.db.query.product.findMany({
 });
 ```
 
-::: warning Forgetting the organization filter leaks data across tenants. Treat this as a security invariant – every table with an `organizationId` column must filter by it. :::
+::: warning
+
+Forgetting the organization filter leaks data across tenants. Treat this as a security invariant – every table with an `organizationId` column must filter by it.
+
+:::
 
 ## Relations
 

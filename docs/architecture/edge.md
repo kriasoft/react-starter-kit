@@ -186,4 +186,8 @@ Applying it outputs the two IDs, which you paste into the matching environment b
 
 The deployed service-binding topology is not reproduced locally. Vite proxies `/api/*` to the Bun server, while `apps/api/dev.ts` uses Wrangler's `getPlatformProxy()` only to emulate the two Hyperdrive bindings, which it resolves from the `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_*` variables – not from `DATABASE_URL`, which belongs to the Drizzle tooling in `db/`.
 
-::: tip Email templates must be built before starting the API dev server. The `bun dev` script handles this automatically by running `bun email:build` first. :::
+::: tip
+
+Email templates must be built before starting the API dev server. The `bun dev` script handles this automatically by running `bun email:build` first.
+
+:::

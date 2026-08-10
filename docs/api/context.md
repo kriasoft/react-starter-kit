@@ -100,9 +100,17 @@ Request
         └── /api/trpc/*     ← tRPC (session resolved in createContext)
 ```
 
-::: info The `protectedProcedure` middleware (defined in `lib/trpc.ts`) adds another layer within tRPC. It checks that `session` and `user` are non-null and narrows their types – procedures using `protectedProcedure` never need null checks. See [Procedures](./procedures#protectedprocedure). :::
+::: info
 
-::: tip In production (`worker.ts`), the request ID generator uses the Cloudflare Ray ID when available. In local development (`dev.ts`), it falls back to the default UUID generator since `cf-ray` headers aren't present. :::
+The `protectedProcedure` middleware (defined in `lib/trpc.ts`) adds another layer within tRPC. It checks that `session` and `user` are non-null and narrows their types – procedures using `protectedProcedure` never need null checks. See [Procedures](./procedures#protectedprocedure).
+
+:::
+
+::: tip
+
+In production (`worker.ts`), the request ID generator uses the Cloudflare Ray ID when available. In local development (`dev.ts`), it falls back to the default UUID generator since `cf-ray` headers aren't present.
+
+:::
 
 ## Request ID
 

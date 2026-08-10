@@ -117,7 +117,11 @@ export const auth = createAuthClient({
 });
 ```
 
-::: warning Do not use `auth.useSession()` directly. Session state is managed exclusively through TanStack Query – see [Sessions & Protected Routes](./sessions). :::
+::: warning
+
+Do not use `auth.useSession()` directly. Session state is managed exclusively through TanStack Query – see [Sessions & Protected Routes](./sessions).
+
+:::
 
 ## Auth Routes
 

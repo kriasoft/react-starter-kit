@@ -41,7 +41,11 @@ bun email:dev
 
 This starts the React Email preview server at `http://localhost:3001`. Files in `emails/` provide sample data for each template – edit them to test different states.
 
-::: tip The email workspace must be built before the API can import templates. The root `bun dev` handles this automatically, but if you run the API standalone, run `bun email:build` first. :::
+::: tip
+
+The email workspace must be built before the API can import templates. The root `bun dev` handles this automatically, but if you run the API standalone, run `bun email:build` first.
+
+:::
 
 ## Sending Emails
 
@@ -77,7 +81,11 @@ Available sender functions:
 | `sendPasswordReset()` | Password reset links |
 | `sendEmail()` | Low-level sender (validates recipients, requires plain text fallback for HTML) |
 
-::: warning `sendEmail()` throws if you provide HTML without a plain text fallback. Always render both versions using `renderEmailToHtml()` and `renderEmailToText()`. :::
+::: warning
+
+`sendEmail()` throws if you provide HTML without a plain text fallback. Always render both versions using `renderEmailToHtml()` and `renderEmailToText()`.
+
+:::
 
 ### Development Shortcut
 

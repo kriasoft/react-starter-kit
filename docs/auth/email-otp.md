@@ -48,7 +48,11 @@ export async function sendOTP(env, { email, otp, type }) {
 }
 ```
 
-::: tip During local development, OTP codes are also logged to the terminal for convenience. The send callback still awaits Resend, so configure a valid API key even when you read the code from the terminal. :::
+::: tip
+
+During local development, OTP codes are also logged to the terminal for convenience. The send callback still awaits Resend, so configure a valid API key even when you read the code from the terminal.
+
+:::
 
 ## Client Flow
 
@@ -141,4 +145,8 @@ AuthForm
 
 The `AuthForm` accepts a `mode` prop (`"login"` or `"signup"`) that controls copy and available methods. Both modes use the same OTP flow – the difference is cosmetic (headings, ToS display, passkey availability).
 
-::: info Passkeys are only shown during login. They require an existing account with a registered passkey – see [Passkeys](./passkeys). :::
+::: info
+
+Passkeys are only shown during login. They require an existing account with a registered passkey – see [Passkeys](./passkeys).
+
+:::

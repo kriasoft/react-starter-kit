@@ -42,7 +42,11 @@ bun wrangler rollback --config apps/api/wrangler.jsonc \
 
 Repeat for each affected worker (`apps/app/`, `apps/web/`).
 
-::: warning Wrangler rollback reverts worker code but not database migrations. If a deploy included schema changes that the previous code depends on differently, you may need to deploy a fix-forward migration instead. See [Database: Migrations](/database/migrations). :::
+::: warning
+
+Wrangler rollback reverts worker code but not database migrations. If a deploy included schema changes that the previous code depends on differently, you may need to deploy a fix-forward migration instead. See [Database: Migrations](/database/migrations).
+
+:::
 
 ## Troubleshooting
 

@@ -35,7 +35,11 @@ export * from "./components/toggle-group";
 
 Without it, `import { ToggleGroup } from "@repo/ui"` won't resolve.
 
-::: warning Review what the CLI generates `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`). :::
+::: warning
+
+Review what the CLI generates `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`).
+
+:::
 
 ## Package Structure
 

@@ -38,9 +38,17 @@ The **api** worker has `nodejs_compat` enabled and connects to Neon through two 
 
 The **app** worker serves the SPA with `not_found_handling: "single-page-application"` so all routes resolve to `index.html`.
 
-::: info Service bindings are non-inheritable in Wrangler – each environment (`dev`, `staging`) must declare its own `services` array with the correct worker names (e.g., `example-app-staging`). :::
+::: info
 
-::: warning Wrangler is the only source of worker names – each app's `name`, plus `-{environment}` for named environments. Keep all three names and the web worker's service targets aligned, or a service binding will resolve to the wrong worker. Terraform's `project_slug` names the Hyperdrive configurations, so it should match the same prefix. All defaults use `example`; rename them together. :::
+Service bindings are non-inheritable in Wrangler – each environment (`dev`, `staging`) must declare its own `services` array with the correct worker names (e.g., `example-app-staging`).
+
+:::
+
+::: warning
+
+Wrangler is the only source of worker names – each app's `name`, plus `-{environment}` for named environments. Keep all three names and the web worker's service targets aligned, or a service binding will resolve to the wrong worker. Terraform's `project_slug` names the Hyperdrive configurations, so it should match the same prefix. All defaults use `example`; rename them together.
+
+:::
 
 See [Architecture: Edge](/architecture/edge) for details on the service binding model.
 
@@ -55,7 +63,11 @@ Each worker declares `vars` per environment in `wrangler.jsonc`. The API worker 
 | `APP_ORIGIN`        | api    | Full origin URL (e.g., `https://example.com`) |
 | `RESEND_EMAIL_FROM` | api    | Sender address for transactional emails       |
 
-::: danger Change `RESEND_EMAIL_FROM` before your first real users Every environment ships with `onboarding@resend.dev`, Resend's shared testing sender. It only delivers to the address that owns your API key – any other recipient gets a `403`. Because sign-in is email OTP, a deploy that leaves it in place looks completely healthy while nobody but you can actually sign in. [Verify a domain](https://resend.com/domains), then set the sender to an address on it. :::
+::: danger
+
+Change `RESEND_EMAIL_FROM` before your first real users Every environment ships with `onboarding@resend.dev`, Resend's shared testing sender. It only delivers to the address that owns your API key – any other recipient gets a `403`. Because sign-in is email OTP, a deploy that leaves it in place looks completely healthy while nobody but you can actually sign in. [Verify a domain](https://resend.com/domains), then set the sender to an address on it.
+
+:::
 
 There is no CORS configuration because there are no cross-origin requests: the browser only ever talks to the web worker, which reaches the API over a service binding. Sending no CORS headers is what keeps another origin from reading API responses – the browser's same-origin policy does the work.
 
@@ -91,7 +103,11 @@ bun wrangler secret put STRIPE_PRO_PRICE_ID --config apps/api/wrangler.jsonc
 bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID --config apps/api/wrangler.jsonc # optional
 ```
 
-::: warning Set all four Stripe values or none. A partial configuration throws when authentication initializes, naming the missing keys, rather than quietly leaving `/api/auth/subscription/*` on 404. `STRIPE_PRO_ANNUAL_PRICE_ID` is independently optional. See [Billing: Plans](/billing/plans). :::
+::: warning
+
+Set all four Stripe values or none. A partial configuration throws when authentication initializes, naming the missing keys, rather than quietly leaving `/api/auth/subscription/*` on 404. `STRIPE_PRO_ANNUAL_PRICE_ID` is independently optional. See [Billing: Plans](/billing/plans).
+
+:::
 
 Every command carries `--config` because a secret binds to whichever worker the config names – run one from the repository root without it and Wrangler has no worker to attach it to.
 

@@ -6,7 +6,11 @@ outline: [2, 3]
 
 Passkey authentication uses the [WebAuthn](https://webauthn.io/) standard to provide phishing-resistant sign-in with device biometrics or hardware security keys. The server stores a public key rather than a reusable password.
 
-::: info Passkeys are available for **login only** in the starter UI. Users must first create an account through email OTP or Google OAuth. Better Auth exposes the registration API, but this starter does not include passkey-management settings; add that authenticated UI before relying on passkeys as an end-user method. The sign-up form does not show the passkey option. :::
+::: info
+
+Passkeys are available for **login only** in the starter UI. Users must first create an account through email OTP or Google OAuth. Better Auth exposes the registration API, but this starter does not include passkey-management settings; add that authenticated UI before relying on passkeys as an end-user method. The sign-up form does not show the passkey option.
+
+:::
 
 ## Server Configuration
 

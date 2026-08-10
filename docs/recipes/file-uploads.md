@@ -56,7 +56,11 @@ Bind the bucket to the API worker for serving files, and add the two non-secret 
 
 Repeat both blocks in the `staging` environment with that environment's bucket name. The name appears twice because the binding serves files while the S3-compatible endpoint signs uploads, and signing needs the name as a string.
 
-::: tip `R2_S3_ENDPOINT` is the S3-compatible endpoint. Find it in the R2 dashboard under **Settings → S3 API**, or build it from your account ID. :::
+::: tip
+
+`R2_S3_ENDPOINT` is the S3-compatible endpoint. Find it in the R2 dashboard under **Settings → S3 API**, or build it from your account ID.
+
+:::
 
 Create an [R2 API token](https://developers.cloudflare.com/r2/api/s3/tokens/) with **Object Read & Write** permission, and choose **Apply to specific buckets only** – scope it to this environment's uploads bucket alone. The token signs every presigned URL the API hands out, so its blast radius is whatever it can reach. Then add the credentials as Worker secrets:
 
@@ -232,7 +236,9 @@ export const uploadRouter = router({
 });
 ```
 
-::: danger Never build the key from the filename An earlier version of this recipe used `` `${ownerId}/${uuid}/${input.filename}` ``. That is exploitable: `filename` is client input, and the `URL` constructor resolves `..` segments before the request is signed.
+::: danger Never build the key from the filename
+
+An earlier version of this recipe used `` `${ownerId}/${uuid}/${input.filename}` ``. That is exploitable: `filename` is client input, and the `URL` constructor resolves `..` segments before the request is signed.
 
 ```txt
 filename = "../../org_victim/steal.png"
@@ -242,15 +248,21 @@ filename = "../../../other-bucket/evil.jpg"
   → signed PUT for  /other-bucket/evil.jpg
 ```
 
-The second escapes the bucket entirely, reaching anything the R2 token can write. Deriving the extension from the allowlisted `contentType` removes the problem at the source rather than relying on sanitising filenames. Keep the original name in your own table alongside the key, where it is data rather than an identifier – which is why `createUrl` does not take a `filename` at all. :::
+The second escapes the bucket entirely, reaching anything the R2 token can write. Deriving the extension from the allowlisted `contentType` removes the problem at the source rather than relying on sanitising filenames. Keep the original name in your own table alongside the key, where it is data rather than an identifier – which is why `createUrl` does not take a `filename` at all.
 
-::: warning What the presigned URL does not enforce `MAX_UPLOAD_SIZE_BYTES` is **not** a hard storage limit. A presigned URL is a bearer token, valid until it expires and reusable within that window, and the signature covers the method, key and `Content-Type` but never the body length. An authenticated caller can request a URL claiming `sizeBytes: 1`, upload a gigabyte, and simply never call `confirm` – or let `confirm` delete it and re-`PUT` with the same URL.
+:::
+
+::: warning What the presigned URL does not enforce
+
+`MAX_UPLOAD_SIZE_BYTES` is **not** a hard storage limit. A presigned URL is a bearer token, valid until it expires and reusable within that window, and the signature covers the method, key and `Content-Type` but never the body length. An authenticated caller can request a URL claiming `sizeBytes: 1`, upload a gigabyte, and simply never call `confirm` – or let `confirm` delete it and re-`PUT` with the same URL.
 
 What the checks above do give you: only signed-in users get URLs, `confirm` rejects an oversized object and reclaims its space, and the short `UPLOAD_URL_TTL_SECONDS` keeps the reuse window small. Note that `confirm` records nothing – it reads the object back and returns its metadata, so the serving route below will hand over any correctly namespaced object whether or not it was ever confirmed. Persisting an upload record is left to you, and is what the cleanup note below assumes. Abandoned objects are not cleaned up: completed and abandoned uploads share the same `<owner>/<uuid>.<ext>` shape, so no lifecycle rule can tell them apart. If you need automatic cleanup, track upload state in your database and sweep objects that were never confirmed, or write pending uploads under a separate prefix that a lifecycle rule can expire.
 
 The allowlisted `Content-Type` is also still a browser claim; this recipe does not inspect file bytes. Before parsing files or serving user uploads inline, verify their signatures with a format-aware library and set a safe `Content-Disposition`. Keep unverified content on a separate origin when possible.
 
-If you need the limit to be genuinely hard, stop presigning and stream the upload through the API worker into its `UPLOADS_BUCKET` binding, rejecting the body past 10 MB. You lose the direct-to-R2 path but gain an enforceable ceiling – a reasonable trade at this file size. :::
+If you need the limit to be genuinely hard, stop presigning and stream the upload through the API worker into its `UPLOADS_BUCKET` binding, rejecting the body past 10 MB. You lose the direct-to-R2 path but gain an enforceable ceiling – a reasonable trade at this file size.
+
+:::
 
 Register it in `apps/api/lib/app.ts`:
 
@@ -363,13 +375,17 @@ app.route("/", uploads); // [!code ++]
 
 Files are served at `/api/uploads/<key>`.
 
-::: tip Serving public assets instead For genuinely public files – avatars, logos, marketing images – drop the session check and use `Cache-Control: public, max-age=31536000, immutable`. Once the response no longer depends on who asked, a long-lived cache is safe again.
+::: tip Serving public assets instead
+
+For genuinely public files – avatars, logos, marketing images – drop the session check and use `Cache-Control: public, max-age=31536000, immutable`. Once the response no longer depends on who asked, a long-lived cache is safe again.
 
 That header buys you browser caching only. The API worker sets no `cache` block, so Cloudflare does not cache its responses at the edge and every request still runs the worker. Do not switch caching on for the whole API to change that – with it enabled, a `200` carrying no `Cache-Control` picks up a two-hour heuristic TTL, which is the wrong default for tRPC and auth.
 
 To skip the worker entirely, an [R2 custom domain](https://developers.cloudflare.com/r2/buckets/public-buckets/) serves objects straight from the bucket. Use it only for a bucket whose **entire contents** are public: public access is a bucket-level switch with no per-prefix rules, so attaching a domain to the `-uploads` bucket above would publish every user's private files along with the avatars. Give public assets their own bucket.
 
-Serving a public prefix out of a mixed bucket means keeping the worker and dropping only the session check for that prefix. Either way, do not treat an unguessable key as the authorization mechanism – that works until a URL is pasted into a support ticket or leaks through a `Referer` header. :::
+Serving a public prefix out of a mixed bucket means keeping the worker and dropping only the session check for that prefix. Either way, do not treat an unguessable key as the authorization mechanism – that works until a URL is pasted into a support ticket or leaks through a `Referer` header.
+
+:::
 
 ## Reference
 
