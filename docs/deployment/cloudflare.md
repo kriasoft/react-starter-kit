@@ -65,7 +65,7 @@ Each worker declares `vars` per environment in `wrangler.jsonc`. The API worker 
 
 ::: danger
 
-Change `RESEND_EMAIL_FROM` before your first real users Every environment ships with `onboarding@resend.dev`, Resend's shared testing sender. It only delivers to the address that owns your API key – any other recipient gets a `403`. Because sign-in is email OTP, a deploy that leaves it in place looks completely healthy while nobody but you can actually sign in. [Verify a domain](https://resend.com/domains), then set the sender to an address on it.
+Change `RESEND_EMAIL_FROM` before your first real users. Every environment ships with `onboarding@resend.dev`, Resend's shared testing sender. It only delivers to the address that owns your API key – any other recipient gets a `403`. Because sign-in is email OTP, a deploy that leaves it in place looks completely healthy while nobody but you can actually sign in. [Verify a domain](https://resend.com/domains), then set the sender to an address on it.
 
 :::
 
@@ -84,23 +84,23 @@ Secrets are set per worker via the Wrangler CLI. For the API worker:
 bunx auth@latest secret
 
 # Required. Add --env staging for that environment; production is the
-# top-level config and takes no --env.
-bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc
-bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc
+# top-level config, selected explicitly with --env="".
+bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc --env=""
 
 # Google sign-in — optional, but set both or neither
-bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc
-bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc
+bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc --env=""
 
 # AI features — optional
-bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc
+bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc --env=""
 
 # Billing — optional, but set all four or none
-bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc
-bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc
-bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc
-bun wrangler secret put STRIPE_PRO_PRICE_ID --config apps/api/wrangler.jsonc
-bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID --config apps/api/wrangler.jsonc # optional
+bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put STRIPE_PRO_PRICE_ID --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID --config apps/api/wrangler.jsonc --env="" # optional
 ```
 
 ::: warning
@@ -115,16 +115,16 @@ Only `BETTER_AUTH_SECRET` and `RESEND_API_KEY` are mandatory – the app cannot 
 
 ## Build and Deploy
 
-Build order matters – email templates must compile before the API worker bundles them:
+Email templates must compile before the API worker bundles them. The root build script lets Bun order that workspace dependency while independent builds can run in parallel:
 
 ```bash
-# Build all workspaces in dependency order
-bun build              # email → web → api → app
+# Build every deployable workspace
+bun run build          # Build all deployable workspaces
 
 # Deploy each worker
-bun api:deploy
-bun app:deploy
-bun web:deploy
+bun api:deploy --env=""
+bun app:deploy --env=""
+bun web:deploy --env=""
 
 # Or deploy to a specific environment
 bun wrangler deploy --config apps/api/wrangler.jsonc --env staging

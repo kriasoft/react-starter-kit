@@ -140,25 +140,25 @@ Configure your production secrets in Cloudflare Workers:
 
 ```bash
 # Required — the API refuses to deploy without these
-bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc
-bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc
+bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc --env=""
 
 # Google sign-in (optional — email OTP and passkeys work without it)
-bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc
-bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc
+bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc --env=""
 
 # AI features (optional)
-bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc
+bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc --env=""
 
 # Stripe billing (optional — set all four to enable, or none; annual is extra)
-bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc
-bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc
-bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc
-bun wrangler secret put STRIPE_PRO_PRICE_ID --config apps/api/wrangler.jsonc
-bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID --config apps/api/wrangler.jsonc  # optional
+bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put STRIPE_PRO_PRICE_ID --config apps/api/wrangler.jsonc --env=""
+bun wrangler secret put STRIPE_PRO_ANNUAL_PRICE_ID --config apps/api/wrangler.jsonc --env="" # optional
 ```
 
-All of these belong to the API worker, which is what `--config` selects – without it Wrangler has no worker to attach the secret to. Add `--env staging` for staging; production is the top-level config and takes no `--env`. Non-sensitive vars like `RESEND_EMAIL_FROM` go in `wrangler.jsonc` directly.
+All of these belong to the API worker, which is what `--config` selects – without it Wrangler has no worker to attach the secret to. Use `--env staging` for staging; production is the top-level config, selected explicitly with `--env=""`. Non-sensitive vars like `RESEND_EMAIL_FROM` go in `wrangler.jsonc` directly.
 
 Set `RESEND_EMAIL_FROM` to an address on a domain you have verified with Resend. The default `onboarding@resend.dev` only delivers to your own inbox, and sign-in is email OTP – leave it and no one else can sign in.
 
@@ -171,13 +171,13 @@ bun db:migrate:production   # reads .env.production.local, and only that file
 ### 4. Build and Deploy
 
 ```bash
-# Build all workspaces in dependency order
-bun build          # email → web → api → app
+# Build every deployable workspace; Bun orders workspace dependencies
+bun run build      # Build all deployable workspaces
 
 # Deploy service-binding targets before the web router
-bun api:deploy
-bun app:deploy
-bun web:deploy
+bun api:deploy --env=""
+bun app:deploy --env=""
+bun web:deploy --env=""
 ```
 
 ## Backers

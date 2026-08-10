@@ -39,10 +39,10 @@ Staging and production each have their own Wrangler configuration, Hyperdrive bi
 4. **Build and deploy** – push code to workers. See [CI/CD](/deployment/ci-cd) or deploy manually:
 
 ```bash
-bun build            # email → web → api → app
-bun api:deploy       # Deploy API worker
-bun app:deploy       # Deploy App worker
-bun web:deploy       # Deploy Web worker
+bun run build        # Build all deployable workspaces
+bun api:deploy --env="" # Deploy production API worker
+bun app:deploy --env="" # Deploy production App worker
+bun web:deploy --env="" # Deploy production Web worker
 ```
 
 ## Section Pages

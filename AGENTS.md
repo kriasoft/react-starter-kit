@@ -24,7 +24,7 @@
 
 ```bash
 bun dev                        # Start web + api + app concurrently
-bun build                      # Build email → web → api → app (in order)
+bun run build                  # Build email, web, api, and app workspaces
 bun run test                   # Vitest (watch mode; --run for single run)
 bun lint                       # ESLint with cache
 bun typecheck                  # tsc --build

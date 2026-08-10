@@ -38,7 +38,7 @@ Never put real secrets in `.env` – it is committed to git. Use the applicable 
 In production, environment variables are set as Worker secrets or bindings – not from `.env` files. Configure them in the Cloudflare dashboard or via Wrangler:
 
 ```bash
-bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc
+bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc --env=""
 ```
 
 Database connections use [Hyperdrive](https://developers.cloudflare.com/hyperdrive/) bindings (`HYPERDRIVE_CACHED`, `HYPERDRIVE_UNCACHED`) instead of raw connection strings. See [Deployment](/deployment/) for production setup.

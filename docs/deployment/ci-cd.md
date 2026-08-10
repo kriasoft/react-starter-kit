@@ -66,7 +66,7 @@ steps:
         apps/app/dist
 ```
 
-The artifact carries what the deploy job consumes, which is not the same as everything the build produces. `apps/api` deploys from source – Wrangler bundles `worker.ts` – so it contributes no `dist` of its own, but it imports `@repo/email`, whose package exports resolve through `apps/email/dist`. Drop that directory and the deploy fails at bundling with `Could not resolve "@repo/email"`. The API's own `bun build` output targets the container image instead, so CI runs it as a compile check without shipping it.
+The artifact carries what the deploy job consumes, which is not the same as everything the build produces. `apps/api` deploys from source – Wrangler bundles `worker.ts` – so it contributes no `dist` of its own, but it imports `@repo/email`, whose package exports resolve through `apps/email/dist`. Drop that directory and the deploy fails at bundling with `Could not resolve "@repo/email"`. The API's own `bun api:build` output targets the container image instead, so CI runs it as a compile check without shipping it.
 
 Concurrency cancels superseded pull-request and push runs for the same ref. Manual production runs are kept separate from pushes to `main` and never cancel in progress.
 
@@ -106,8 +106,8 @@ steps:
       path: apps
   - uses: oven-sh/setup-bun@v2
   - run: bun install --frozen-lockfile
-  # Deploy each worker. Production is the top-level wrangler config and takes
-  # no --env; staging passes one.
+  # Deploy each worker. Production selects the top-level Wrangler config with
+  # an empty environment; staging passes its name.
   - name: Deploy workers
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
@@ -115,7 +115,7 @@ steps:
       DEPLOY_ENV: ${{ inputs.environment }}
     run: |
       if [[ "$DEPLOY_ENV" == "production" ]]; then
-        env_args=()
+        env_args=(--env "")
       else
         env_args=(--env "$DEPLOY_ENV")
       fi

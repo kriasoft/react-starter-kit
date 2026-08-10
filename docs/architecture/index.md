@@ -165,20 +165,14 @@ See [ADR-001](/adr/001-auth-hint-cookie) for the full decision record and [Sessi
 | Environment | Runtime | Domain | Database | Command |
 | --- | --- | --- | --- | --- |
 | Development | Vite/Astro/Bun | `localhost:5173` | Dev branch | `bun dev` |
-| Staging | `*-staging` | `staging.example.com` | Staging branch | `wrangler deploy --env staging` |
-| Production | `*` (no suffix) | `example.com` | Main branch | `wrangler deploy` |
+| Staging | `*-staging` | `staging.example.com` | Main branch | `wrangler deploy --env staging` |
+| Production | `*` (no suffix) | `example.com` | Main branch | `wrangler deploy --env=""` |
 
 Staging and production each have their own deployed Hyperdrive and service bindings. Local development maps each Hyperdrive binding to its `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_*` value, which connects straight to Postgres – so neither pooling nor query caching is active locally, and `DATABASE_URL` is not involved at all: that one belongs to the Drizzle tooling in `db/`. Vite proxies API requests directly to the Bun server.
 
 ## Build Order
 
-The workspaces must build in dependency order:
-
-```
-email → web → api → app
-```
-
-Email templates are compiled first because the API server imports them. The `bun build` command handles this automatically.
+The API server imports the compiled email package, so that workspace must build first. The web and app builds are independent. `bun run build` lets Bun order the email → API dependency while running independent work as soon as it is ready.
 
 ## Key Invariants
 

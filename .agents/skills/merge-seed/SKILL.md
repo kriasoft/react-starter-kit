@@ -58,7 +58,7 @@ Don't bring in upstream features that conflict with documented product scope.
 ## Verify
 
 ```bash
-bun install --frozen-lockfile && bun typecheck && bun lint && bun test --run && bun build
+bun install --frozen-lockfile && bun typecheck && bun lint && bun run test -- --run && bun run build
 ```
 
 `--frozen-lockfile` fails if the manifests and lockfile disagree, which is what verification should prove. Green checks are still necessary, not sufficient — they cannot see lost identity or copy. Compare the result against each endpoint, per conflicted file and overall:

@@ -57,7 +57,7 @@ Stripe webhook verification requires the raw (unparsed) request body. The plugin
 Store the webhook secret as a Cloudflare Worker secret:
 
 ```bash
-bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc
+bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc --env=""
 ```
 
 After deploying, send a test event from the Stripe Dashboard to verify the endpoint is reachable and the signature validates correctly.

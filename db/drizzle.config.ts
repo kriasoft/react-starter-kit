@@ -35,7 +35,7 @@ const envFile = (name: string) => resolve(__dirname, "..", name);
 // exported by an earlier command would silently point an environment-named
 // migration at a different database, with no output saying so.
 if (envName === "staging" || envName === "production") {
-  const { error } = configDotenv({
+  const { error, parsed } = configDotenv({
     path: envFile(`.env.${envName}.local`),
     override: true,
     quiet: true,
@@ -46,6 +46,13 @@ if (envName === "staging" || envName === "production") {
       `Missing .env.${envName}.local – refusing to target ${envName}. ` +
         `Create it with that environment's DATABASE_URL rather than letting ` +
         `the command fall through to another database.`,
+    );
+  }
+
+  if (!parsed?.DATABASE_URL) {
+    throw new Error(
+      `.env.${envName}.local must define DATABASE_URL – refusing to reuse ` +
+        `a value inherited from the shell or another tool.`,
     );
   }
 } else {

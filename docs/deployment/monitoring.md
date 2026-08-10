@@ -33,10 +33,11 @@ If a deploy introduces issues, roll back to the previous version:
 
 ```bash
 # List recent deployments
-bun wrangler deployments list --config apps/api/wrangler.jsonc
+bun wrangler deployments list --config apps/api/wrangler.jsonc --env=""
 
 # Roll back to the previous stable version
 bun wrangler rollback --config apps/api/wrangler.jsonc \
+  --env="" \
   --message="Reverting due to auth regression"
 ```
 
@@ -64,7 +65,7 @@ Wrangler rollback reverts worker code but not database migrations. If a deploy i
 
 **Authentication problems** – If sign-in fails in production:
 
-- Verify `BETTER_AUTH_SECRET` is set (`bun wrangler secret list --config apps/api/wrangler.jsonc`)
+- Verify `BETTER_AUTH_SECRET` is set (`bun wrangler secret list --config apps/api/wrangler.jsonc --env=""`)
 - Check `APP_ORIGIN` matches your actual domain (affects cookie domain)
 - Confirm OAuth redirect URIs include your production URL. See [Social Providers](/auth/social-providers)
 

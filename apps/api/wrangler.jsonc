@@ -12,7 +12,7 @@
   "observability": { "enabled": true },
 
   // [ENV:PRODUCTION]
-  // Command: bun wrangler deploy
+  // Command: bun wrangler deploy --env=""
   //
   // Replace RESEND_EMAIL_FROM before going live. `onboarding@resend.dev` is
   // Resend's shared testing sender: it can only deliver to the address that

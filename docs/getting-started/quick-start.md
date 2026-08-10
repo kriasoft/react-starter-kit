@@ -120,7 +120,7 @@ bun dev          # Start all services concurrently
 bun run test --run  # Run tests once (drop --run to watch)
 bun lint         # ESLint with cache
 bun typecheck    # TypeScript type checking (tsc --build)
-bun build        # Production build: email → web → api → app
+bun run build    # Production build for all deployable workspaces
 ```
 
 ::: info

@@ -54,8 +54,8 @@ jobs:
       # Disabled in the starter kit. Enable after provisioning Cloudflare and
       # configuring deploy credentials in each GitHub environment.
       #
-      # Production uses the top-level Wrangler config; staging is a named
-      # environment. Wrangler rejects `--env production`.
+      # Production uses the top-level Wrangler config, selected explicitly with
+      # an empty environment; staging is named. Wrangler rejects `--env production`.
       # - name: Deploy workers
       #   env:
       #     # Account ID is not a secret, so it is a variable. Set it explicitly:
@@ -65,7 +65,7 @@ jobs:
       #     DEPLOY_ENV: ${{ inputs.environment }}
       #   run: |
       #     if [[ "$DEPLOY_ENV" == "production" ]]; then
-      #       env_args=()
+      #       env_args=(--env "")
       #     else
       #       env_args=(--env "$DEPLOY_ENV")
       #     fi

@@ -29,7 +29,7 @@
   ],
 
   // [ENV:PRODUCTION]
-  // Command: bun wrangler deploy
+  // Command: bun wrangler deploy --env=""
   //
   // Custom domain: this worker is the origin for the whole hostname, so Wrangler
   // creates the DNS record and certificate and Terraform owns no DNS at all.
