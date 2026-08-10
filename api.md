@@ -15,10 +15,10 @@ Hono handles the HTTP surface. tRPC handles the typed contract between frontend 
 
 The API has two entrypoints – one for production (Cloudflare Workers) and one for local development (Bun):
 
-| File        | Runtime            | Description                                    |
-| ----------- | ------------------ | ---------------------------------------------- |
-| `worker.ts` | Cloudflare Workers | Production entrypoint                          |
-| `dev.ts`    | Bun                | Local dev server via `wrangler` platform proxy |
+| File | Runtime | Description |
+| --- | --- | --- |
+| `worker.ts` | Cloudflare Workers | Production entrypoint |
+| `dev.ts` | Bun | Local dev server via `wrangler` platform proxy |
 
 Both follow the same structure:
 
@@ -28,7 +28,7 @@ worker.ts / dev.ts
   ├── secureHeaders()
   ├── requestId()
   ├── logger()
-  ├── context init (db, dbDirect, auth)
+  ├── context init (db, dbCached, auth)
   └── mount app.ts
         ├── GET  /api          → API info (JSON)
         ├── GET  /health       → health check
@@ -50,12 +50,12 @@ worker.use(logger());
 
 // Initialize shared context
 worker.use(async (c, next) => {
-  const db = createDb(c.env.HYPERDRIVE_CACHED);
-  const dbDirect = createDb(c.env.HYPERDRIVE_DIRECT);
+  const db = createDb(c.env.HYPERDRIVE_UNCACHED);
+  const dbCached = createDb(c.env.HYPERDRIVE_CACHED);
 
   c.set("db", db);
-  c.set("dbDirect", dbDirect);
-  c.set("auth", createAuth(db, c.env));
+  c.set("dbCached", dbCached);
+  c.set("auth", createAuth(db, c.env)); // Sessions must not be stale
   await next();
 });
 
@@ -65,13 +65,13 @@ worker.route("/", app);
 
 ## Endpoints
 
-| Path          | Method    | Handler     | Description                                                                    |
-| ------------- | --------- | ----------- | ------------------------------------------------------------------------------ |
-| `/`           | GET       | Hono        | Redirects to `/api`                                                            |
-| `/api`        | GET       | Hono        | API metadata (name, version, endpoints)                                        |
-| `/health`     | GET       | Hono        | Health check – returns `{ status, timestamp }`                                 |
+| Path | Method | Handler | Description |
+| --- | --- | --- | --- |
+| `/` | GET | Hono | Redirects to `/api` |
+| `/api` | GET | Hono | API metadata (name, version, endpoints) |
+| `/health` | GET | Hono | Health check – returns `{ status, timestamp }` |
 | `/api/auth/*` | GET, POST | Better Auth | Authentication routes ([docs](https://www.better-auth.com/docs/api-reference)) |
-| `/api/trpc/*` | \*        | tRPC        | Type-safe RPC – all queries and mutations                                      |
+| `/api/trpc/*` | \* | tRPC | Type-safe RPC – all queries and mutations |
 
 ## tRPC Router
 
@@ -81,8 +81,8 @@ The root router merges domain-specific sub-routers:
 // apps/api/lib/app.ts
 const appRouter = router({
   billing: billingRouter,
+  config: configRouter,
   user: userRouter,
-  organization: organizationRouter,
 });
 ```
 
@@ -102,7 +102,7 @@ apps/api/
 │   ├── context.ts         # TRPCContext and AppContext types
 │   ├── db.ts              # Drizzle ORM database factory
 │   ├── email.ts           # Resend email utilities
-│   ├── env.ts             # Environment variable schema (Zod)
+│   ├── env.ts             # Environment contract and inferred type
 │   ├── loaders.ts         # DataLoader instances for N+1 prevention
 │   ├── middleware.ts       # Error handler, 404 handler, request ID
 │   ├── plans.ts           # Subscription plan limits
@@ -111,8 +111,8 @@ apps/api/
 ├── routers/
 │   ├── billing.ts         # Subscription queries
 │   ├── billing.test.ts    # Billing router tests
-│   ├── organization.ts    # Organization CRUD
-│   └── user.ts            # User profile queries
+│   ├── config.ts          # Public deployment capabilities
+│   └── user.ts            # Current-user query and extension stubs
 └── wrangler.jsonc         # Cloudflare Workers config
 ```
 

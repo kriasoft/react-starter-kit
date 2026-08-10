@@ -4,10 +4,12 @@ url: /auth/passkeys.md
 
 # Passkeys
 
-Passkey authentication uses the [WebAuthn](https://webauthn.io/) standard to let users sign in with biometrics (Touch ID, Face ID) or hardware security keys. It's the most secure sign-in method – no shared secrets leave the device.
+Passkey authentication uses the [WebAuthn](https://webauthn.io/) standard to provide phishing-resistant sign-in with device biometrics or hardware security keys. The server stores a public key rather than a reusable password.
 
 ::: info
-Passkeys are available for **login only**. Users must first create an account via email OTP or Google OAuth, then register a passkey from their account settings. The sign-up form does not show the passkey option.
+
+Passkeys are available for **login only** in the starter UI. Users must first create an account through email OTP or Google OAuth. Better Auth exposes the registration API, but this starter does not include passkey-management settings; add that authenticated UI before relying on passkeys as an end-user method. The sign-up form does not show the passkey option.
+
 :::
 
 ## Server Configuration
@@ -43,6 +45,7 @@ Passkey credentials are stored in `db/schema/passkey.ts`:
 | `deviceType`   | `"singleDevice"` or `"multiDevice"`                     |
 | `backedUp`     | Whether the credential is synced across devices         |
 | `transports`   | Communication methods (USB, BLE, NFC, internal)         |
+| `lastUsedAt`   | Last successful use, for security review                |
 | `deviceName`   | User-friendly label (e.g., "MacBook Pro")               |
 | `platform`     | `"platform"` (built-in) or `"cross-platform"` (USB key) |
 
@@ -76,9 +79,9 @@ const handlePasskeyLogin = async () => {
 };
 ```
 
-### Conditional UI (Autofill)
+### Conditional Mediation
 
-When enabled, passkey autofill shows saved credentials in the browser's autocomplete dropdown – similar to how password managers work. This runs passively on mount:
+When enabled, the component requests conditional mediation on mount in browsers that support it. The attempt is passive and does not surface errors because the user did not explicitly start authentication:
 
 ```ts
 useEffect(() => {
@@ -110,32 +113,20 @@ Passkey behavior is configured in `apps/app/lib/auth-config.ts`:
 ```ts
 passkey: {
   enableConditionalUI: true,
-  timeout: 60_000,          // 60 seconds for user interaction
-  userVerification: "preferred",
 },
 ```
 
-| Setting               | Default       | Description                                                 |
-| --------------------- | ------------- | ----------------------------------------------------------- |
-| `enableConditionalUI` | `true`        | Show passkeys in browser autocomplete                       |
-| `timeout`             | `60000`       | Max time (ms) for user to interact with the WebAuthn dialog |
-| `userVerification`    | `"preferred"` | Request biometric/PIN when available, but don't require it  |
+`enableConditionalUI` controls whether the component attempts conditional mediation. Other WebAuthn behavior uses Better Auth's defaults; configure the plugin or client explicitly if your application needs different verification requirements.
 
 ## Error Handling
 
-| Error                 | Cause                                              | Behavior                      |
-| --------------------- | -------------------------------------------------- | ----------------------------- |
-| `AUTH_CANCELLED`      | User dismissed the WebAuthn prompt or it timed out | Shows cancellation message    |
-| `passkeyNotSupported` | `window.PublicKeyCredential` is undefined          | Shows browser support message |
-| Network error         | Offline or DNS failure                             | Shows network error message   |
-| Server error          | No passkey found, invalid credential               | Shows server error message    |
+| Error | Cause | Behavior |
+| --- | --- | --- |
+| `AUTH_CANCELLED` | User dismissed the WebAuthn prompt or it timed out | Shows cancellation message |
+| `passkeyNotSupported` | `window.PublicKeyCredential` is undefined | Shows browser support message |
+| Network error | Offline or DNS failure | Shows network error message |
+| Server error | No passkey found, invalid credential | Shows server error message |
 
 ## Browser Support
 
-Passkeys require WebAuthn support. All modern browsers support it:
-
-* Chrome 67+, Edge 18+, Firefox 60+, Safari 13+
-* iOS 16+ (synced via iCloud Keychain)
-* Android 9+ (synced via Google Password Manager)
-
-The component checks `window.PublicKeyCredential` before attempting authentication and shows a clear message on unsupported browsers.
+Passkeys require WebAuthn support. The component checks `window.PublicKeyCredential` before explicit authentication and checks conditional-mediation support before starting autofill. Unsupported browsers keep the email and configured social-provider paths available.

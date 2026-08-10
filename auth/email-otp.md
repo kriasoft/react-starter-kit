@@ -49,7 +49,9 @@ export async function sendOTP(env, { email, otp, type }) {
 ```
 
 ::: tip
-During local development, OTP codes are logged to the terminal – you don't need a real Resend API key to test the flow.
+
+During local development, OTP codes are also logged to the terminal for convenience. The send callback still awaits Resend, so configure a valid API key even when you read the code from the terminal.
+
 :::
 
 ## Client Flow
@@ -62,11 +64,11 @@ method → email → otp
 
 Each step is a separate UI component orchestrated by `AuthForm`:
 
-| Step     | Component         | What Happens                                       |
-| -------- | ----------------- | -------------------------------------------------- |
-| `method` | `MethodSelection` | User picks sign-in method (Google, email, passkey) |
-| `email`  | `EmailInput`      | User enters email, OTP is sent                     |
-| `otp`    | `OtpVerification` | User enters 6-digit code to complete sign-in       |
+| Step | Component | What Happens |
+| --- | --- | --- |
+| `method` | `MethodSelection` | User picks email, passkey, or an enabled social provider |
+| `email` | `EmailInput` | User enters email, OTP is sent |
+| `otp` | `OtpVerification` | User enters 6-digit code to complete sign-in |
 
 ### State Machine
 
@@ -80,7 +82,7 @@ const VALID_TRANSITIONS: Record<AuthStep, AuthStep[]> = {
 };
 ```
 
-Transitions are validated – invalid step jumps are silently ignored. This prevents race conditions from concurrent auth operations (e.g., passkey conditional UI completing while the user clicks a button).
+Invalid step jumps are ignored, keeping navigation within the declared state machine. A separate success guard handles overlapping completions such as conditional passkey UI finishing during a manual auth attempt.
 
 ### Sending the OTP
 
@@ -110,11 +112,11 @@ The input field restricts to 6 numeric digits with `inputMode="numeric"` and `au
 
 The OTP plugin returns specific error codes that map to user-friendly messages:
 
-| Error Code          | User Message                                           | Behavior                      |
-| ------------------- | ------------------------------------------------------ | ----------------------------- |
-| `TOO_MANY_ATTEMPTS` | "Too many failed attempts. Please request a new code." | Returns to email step         |
-| `OTP_EXPIRED`       | "Code has expired. Please request a new one."          | Returns to email step         |
-| `INVALID_OTP`       | Server message or "Invalid verification code" fallback | Stays on OTP step (can retry) |
+| Error Code | User Message | Behavior |
+| --- | --- | --- |
+| `TOO_MANY_ATTEMPTS` | "Too many failed attempts. Please request a new code." | Returns to email step |
+| `OTP_EXPIRED` | "Code has expired. Please request a new one." | Returns to email step |
+| `INVALID_OTP` | Server message or "Invalid verification code" fallback | Stays on OTP step (can retry) |
 
 When `TOO_MANY_ATTEMPTS` or `OTP_EXPIRED` occurs, the form automatically returns to the email step so the user can request a fresh code.
 
@@ -133,7 +135,7 @@ The resend button shows a countdown timer and is disabled during the cooldown pe
 ```
 AuthForm
 ├── MethodSelection          Step 1: choose sign-in method
-│   ├── GoogleLogin          OAuth redirect
+│   ├── GoogleLogin          OAuth redirect (when configured)
 │   ├── "Continue with email" button
 │   └── PasskeyLogin         WebAuthn (login only)
 ├── EmailInput               Step 2: enter email, send OTP
@@ -144,5 +146,7 @@ AuthForm
 The `AuthForm` accepts a `mode` prop (`"login"` or `"signup"`) that controls copy and available methods. Both modes use the same OTP flow – the difference is cosmetic (headings, ToS display, passkey availability).
 
 ::: info
+
 Passkeys are only shown during login. They require an existing account with a registered passkey – see [Passkeys](./passkeys).
+
 :::

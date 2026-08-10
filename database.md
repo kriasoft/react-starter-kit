@@ -25,31 +25,32 @@ The API worker connects to Neon through Cloudflare Hyperdrive, which provides co
 
 Two Hyperdrive bindings are available:
 
-| Binding             | Cache            | Use for                                                 |
-| ------------------- | ---------------- | ------------------------------------------------------- |
-| `HYPERDRIVE_CACHED` | 60 s query cache | Read-heavy queries where slight staleness is acceptable |
-| `HYPERDRIVE_DIRECT` | None             | Writes, real-time reads, anything requiring fresh data  |
+| Binding | Cache | Use for |
+| --- | --- | --- |
+| `HYPERDRIVE_CACHED` | 60 s + 15 s stale by default | Read-heavy queries where staleness is acceptable |
+| `HYPERDRIVE_UNCACHED` | None | Writes and anything requiring fresh data |
 
-Both are exposed in [tRPC context](/api/context) as `ctx.db` (cached) and `ctx.dbDirect` (direct):
+Both are exposed in [tRPC context](/api/context) as `ctx.db` (uncached) and `ctx.dbCached` (cached). Better Auth uses `db`, since a stale session or role row would outlive a sign-out or permission change:
 
 ```ts
 // apps/api/lib/db.ts (simplified)
 export function createDb(hyperdrive: Hyperdrive) {
   const client = postgres(hyperdrive.connectionString, {
-    max: 1, // single connection per Worker isolate
-    prepare: false, // required for Hyperdrive compatibility
+    max: 1, // two clients per request share the connection budget
   });
   return drizzle(client, { schema, casing: "snake_case" });
 }
 ```
 
 ::: info
-In development, Wrangler's `getPlatformProxy()` emulates the Hyperdrive bindings locally, resolving them to your `DATABASE_URL`. Your code uses the same `HYPERDRIVE_CACHED` / `HYPERDRIVE_DIRECT` bindings in both environments – no conditional connection logic needed.
+
+In development, Wrangler's `getPlatformProxy()` emulates the Hyperdrive bindings locally, resolving each from its own `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_*` variable in `.env` – not from `DATABASE_URL`, which is read by the Drizzle tooling in `db/` and nothing else. Local bindings connect straight to Postgres, so neither pooling nor query caching is active. Your code uses the same `HYPERDRIVE_CACHED` / `HYPERDRIVE_UNCACHED` bindings in both environments – no conditional connection logic needed.
+
 :::
 
 ## Commands
 
-Run from the repo root. Append `:staging` or `:prod` to target other environments.
+Run from the repo root. Some take a `:staging` or `:production` suffix to target another environment – see [Environment Targeting](#environment-targeting) for which, and why the rest do not.
 
 | Command            | Description                                         |
 | ------------------ | --------------------------------------------------- |
@@ -58,19 +59,30 @@ Run from the repo root. Append `:staging` or `:prod` to target other environment
 | `bun db:push`      | Push schema directly (skips migration files)        |
 | `bun db:studio`    | Open Drizzle Studio browser UI                      |
 | `bun db:seed`      | Run seed scripts                                    |
-| `bun db:check`     | Check for drift between schema and migrations       |
+| `bun db:check`     | Check generated migration history for conflicts     |
 | `bun db:export`    | Export database via pg\_dump to `db/backups/`        |
 | `bun db:typecheck` | Run TypeScript type-checking on the `db/` workspace |
 
 ## Environment Targeting
 
-Database scripts select the environment through the `ENVIRONMENT` variable (falls back to `NODE_ENV`). Each environment loads env files in priority order:
+Database scripts select the environment through the `ENVIRONMENT` variable (falls back to `NODE_ENV`). Development cascades through env files, first value wins:
 
 ```
-.env.{env}.local  →  .env.local  →  .env
+.env.dev.local  →  .env.local  →  .env
 ```
 
-For example, `bun db:push:staging` loads `.env.staging.local` first. The `DATABASE_URL` variable must be a valid `postgres://` or `postgresql://` connection string.
+Staging and production do not cascade. `bun db:migrate:production` reads `.env.production.local` and only that file, and those values override anything already exported. If the file is missing the command fails instead of falling through, so an environment-named command can never end up on another environment's database.
+
+Not every command has `:staging` and `:production` variants, by design:
+
+| Command | Remote variants | Why |
+| --- | --- | --- |
+| `db:migrate`, `db:studio`, `db:export` | Yes | Applying migrations, inspecting and backing up are real remote operations |
+| `db:seed` | `:staging` only | Seeds create test accounts – they have no business in production |
+| `db:generate` | No | Reads the schema and existing migrations; it never connects to a database |
+| `db:push` | No | Syncs schema without a migration file – prototyping only, never deployed |
+
+The `DATABASE_URL` variable must be a valid `postgres://` or `postgresql://` connection string.
 
 See [Environment Variables](/getting-started/environment-variables) for full details.
 

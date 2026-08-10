@@ -37,25 +37,32 @@ sequenceDiagram
 
 ## Workers
 
-| Worker  | Workspace  | Purpose                                               | Has `nodejs_compat` |
-| ------- | ---------- | ----------------------------------------------------- | :-----------------: |
-| **web** | `apps/web` | Edge router – receives all traffic, routes to app/api |         No          |
-| **app** | `apps/app` | SPA static assets (React, TanStack Router)            |         No          |
-| **api** | `apps/api` | Hono server – tRPC, Better Auth, webhooks             |         Yes         |
+| Worker | Workspace | Purpose | Has `nodejs_compat` |
+| --- | --- | --- | :-: |
+| **web** | `apps/web` | Marketing site + edge router – receives all traffic, routes to app/api | No |
+| **app** | `apps/app` | SPA static assets (React, TanStack Router) | No |
+| **api** | `apps/api` | Hono server – tRPC, Better Auth, webhooks | Yes |
 
 ### Web Worker
 
-The web worker is the only worker with a public route (`example.com/*`). It decides where each request goes:
+The web worker is the only worker attached to a public hostname (`example.com`). It decides where each request goes:
 
 * `/api/*` – forwarded to the API worker
-* `/login`, `/signup`, `/settings`, `/analytics`, `/reports`, `/_app/*` – forwarded to the app worker
+* The SPA paths listed in `APP_PATHS` (`/dashboard`, `/users`, `/settings`, `/analytics`, `/reports`, `/login`, `/signup`) and `/_app/*` – forwarded to the app worker
 * `/` – routed by [auth hint cookie](#auth-hint-cookie) (app if signed in, marketing site if not)
 * Everything else – served from the web worker's own static assets (marketing pages)
 
 ```ts
 // apps/web/worker.ts (simplified)
 app.all("/api/*", (c) => c.env.API_SERVICE.fetch(c.req.raw));
-app.all("/login*", (c) => c.env.APP_SERVICE.fetch(c.req.raw));
+
+// Exact path plus descendants — never a bare prefix, which would send
+// /users-guide to the SPA fallback. `apps/app/lib/edge-routing.test.ts`
+// checks this list against the route files.
+for (const path of APP_PATHS) {
+  app.all(`/${path}`, (c) => c.env.APP_SERVICE.fetch(c.req.raw));
+  app.all(`/${path}/*`, (c) => c.env.APP_SERVICE.fetch(c.req.raw));
+}
 
 app.on(["GET", "HEAD"], "/", async (c) => {
   const hasAuthHint =
@@ -87,10 +94,11 @@ worker.use(logger());
 
 // Initialize shared context
 worker.use(async (c, next) => {
-  const db = createDb(c.env.HYPERDRIVE_CACHED);
+  const db = createDb(c.env.HYPERDRIVE_UNCACHED);
+  const dbCached = createDb(c.env.HYPERDRIVE_CACHED);
   c.set("db", db);
-  c.set("dbDirect", createDb(c.env.HYPERDRIVE_DIRECT));
-  c.set("auth", createAuth(db, c.env));
+  c.set("dbCached", dbCached);
+  c.set("auth", createAuth(db, c.env)); // Sessions must not be stale
   await next();
 });
 
@@ -119,7 +127,9 @@ Service bindings let workers call each other directly over Cloudflare's internal
 ```
 
 ::: warning
-Service bindings are **non-inheritable** in Wrangler – they must be declared in every environment block. Forgetting this causes staging/preview workers to bind to production services.
+
+Service bindings are **non-inheritable** in Wrangler – they must be declared in every environment block. Forgetting this causes staging workers to bind to production services.
+
 :::
 
 Naming convention: `<project>-<worker>-<env>` (e.g. `example-api-staging`). See [Edge > Service Bindings](./edge#service-bindings) for the full per-environment config.
@@ -130,47 +140,42 @@ The API worker connects to [Neon PostgreSQL](https://neon.tech) via [Cloudflare 
 
 Two bindings are available:
 
-| Binding             | Caching  | Use case                              |
-| ------------------- | -------- | ------------------------------------- |
-| `HYPERDRIVE_CACHED` | Enabled  | Default reads – most queries go here  |
-| `HYPERDRIVE_DIRECT` | Disabled | Writes and reads that need fresh data |
+| Binding               | Caching  | Use case                             |
+| --------------------- | -------- | ------------------------------------ |
+| `HYPERDRIVE_CACHED`   | Enabled  | Opt-in reads that tolerate staleness |
+| `HYPERDRIVE_UNCACHED` | Disabled | Default for writes and fresh reads   |
 
-Both bindings are initialized in the API worker middleware and available on every request context as `db` and `dbDirect`. See [Database](/database/) for schema and query patterns.
+Both bindings are initialized in the API worker middleware and available on every request context as `db` (uncached) and `dbCached` (cached). See [Database](/database/) for schema and query patterns.
 
 ## Auth Hint Cookie
 
 The `/` route serves two different experiences – a marketing page for visitors and the app dashboard for signed-in users. The web worker needs a fast signal to choose without owning auth logic.
 
-**How it works:** Better Auth sets a lightweight `__Host-auth=1` cookie on sign-in and clears it on sign-out. The web worker checks only for cookie *presence* – it never validates sessions. If the cookie exists, the request goes to the app worker; otherwise it serves the marketing page.
+**How it works:** Better Auth sets a lightweight `__Host-auth=1` cookie on sign-in and clears it on sign-out. The web worker checks only that its value is `1` – it never validates sessions. A match routes the request to the app worker; otherwise the worker serves the marketing page.
 
 This cookie is a **routing hint only**, not a security boundary. A false positive (stale cookie) results in one extra redirect to `/login` – the app worker validates the real session.
 
 ::: info
+
 In local development the cookie is named `auth` (HTTP), since browsers reject the `__Host-` prefix without HTTPS.
+
 :::
 
 See [ADR-001](/adr/001-auth-hint-cookie) for the full decision record and [Sessions & Protected Routes](/auth/sessions) for the auth flow.
 
 ## Environments
 
-| Environment | Workers         | Domain                | Database       | Deploy command                  |
-| ----------- | --------------- | --------------------- | -------------- | ------------------------------- |
-| Development | `wrangler dev`  | `localhost:5173`      | Dev branch     | `bun dev`                       |
-| Preview     | `*-preview`     | `preview.example.com` | Preview branch | `wrangler deploy --env preview` |
-| Staging     | `*-staging`     | `staging.example.com` | Staging branch | `wrangler deploy --env staging` |
-| Production  | `*` (no suffix) | `example.com`         | Main branch    | `wrangler deploy`               |
+| Environment | Runtime | Domain | Database | Command |
+| --- | --- | --- | --- | --- |
+| Development | Vite/Astro/Bun | `localhost:5173` | Dev branch | `bun dev` |
+| Staging | `*-staging` | `staging.example.com` | Main branch | `wrangler deploy --env staging` |
+| Production | `*` (no suffix) | `example.com` | Main branch | `wrangler deploy --env=""` |
 
-Each environment has its own Hyperdrive bindings, service binding targets, and `APP_ORIGIN` / `ALLOWED_ORIGINS` variables. See [Edge > Service Bindings](./edge#service-bindings) for the full wrangler config.
+Staging and production each have their own deployed Hyperdrive and service bindings. Local development maps each Hyperdrive binding to its `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_*` value, which connects straight to Postgres – so neither pooling nor query caching is active locally, and `DATABASE_URL` is not involved at all: that one belongs to the Drizzle tooling in `db/`. Vite proxies API requests directly to the Bun server.
 
 ## Build Order
 
-The workspaces must build in dependency order:
-
-```
-email → web → api → app
-```
-
-Email templates are compiled first because the API server imports them. The `bun build` command handles this automatically.
+The API server imports the compiled email package, so that workspace must build first. The web and app builds are independent. `bun run build` lets Bun order the email → API dependency while running independent work as soon as it is ready.
 
 ## Key Invariants
 

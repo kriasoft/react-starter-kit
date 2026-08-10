@@ -4,7 +4,7 @@ url: /database/queries.md
 
 # Query Patterns
 
-Common patterns for querying the database in tRPC procedures. All examples use Drizzle ORM's relational query API and assume access to `ctx.db` from [tRPC context](/api/context).
+Common patterns for querying the database in tRPC procedures. Use `ctx.db` by default; opt into `ctx.dbCached` only for reads whose configured staleness window is acceptable.
 
 ## Multi-tenant Queries
 
@@ -17,7 +17,9 @@ const products = await ctx.db.query.product.findMany({
 ```
 
 ::: warning
+
 Forgetting the organization filter leaks data across tenants. Treat this as a security invariant – every table with an `organizationId` column must filter by it.
+
 :::
 
 ## Relations
@@ -58,7 +60,7 @@ The API uses a [DataLoader](https://github.com/graphql/dataloader) pattern to ba
 export const userById = defineLoader(
   Symbol("userById"),
   async (ctx, ids: readonly string[]) => {
-    const users = await ctx.db
+    const users = await ctx.dbCached
       .select()
       .from(user)
       .where(inArray(user.id, [...ids]));

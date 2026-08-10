@@ -8,13 +8,13 @@ Authentication is handled by [Better Auth](https://www.better-auth.com/) – a T
 
 ## What's Included
 
-| Method                             | Description                               |
-| ---------------------------------- | ----------------------------------------- |
-| [Email & OTP](./email-otp)         | Passwordless 6-digit code via email       |
-| Email & Password                   | Traditional email/password with reset     |
-| [Google OAuth](./social-providers) | Social login with redirect flow           |
-| [Passkeys](./passkeys)             | WebAuthn biometric / security key         |
-| Anonymous                          | Guest sessions that can be upgraded later |
+| Method | Description |
+| --- | --- |
+| [Email & OTP](./email-otp) | Passwordless 6-digit code via email |
+| Email & Password | Enabled server-side with reset email; no password form ships in the starter UI |
+| [Google OAuth](./social-providers) | Social login with redirect flow (optional) |
+| [Passkeys](./passkeys) | WebAuthn biometric / security key |
+| Anonymous | Server/client capability for guest sessions; no guest-session control ships in the starter UI |
 
 All methods produce the same session format. Users can link multiple methods to one account.
 
@@ -22,15 +22,15 @@ All methods produce the same session format. Users can link multiple methods to 
 
 Better Auth's functionality is extended through plugins. The server and client must enable matching plugins:
 
-| Plugin         | Server           | Client                 | Purpose                     |
-| -------------- | ---------------- | ---------------------- | --------------------------- |
-| `emailOTP`     | `emailOTP()`     | `emailOTPClient()`     | Passwordless OTP sign-in    |
+| Plugin | Server | Client | Purpose |
+| --- | --- | --- | --- |
+| `emailOTP` | `emailOTP()` | `emailOTPClient()` | Passwordless OTP sign-in |
 | `organization` | `organization()` | `organizationClient()` | Multi-tenant orgs and roles |
-| `passkey`      | `passkey()`      | `passkeyClient()`      | WebAuthn authentication     |
-| `anonymous`    | `anonymous()`    | `anonymousClient()`    | Guest sessions              |
-| `stripe`       | `stripe()`       | `stripeClient()`       | Subscription billing        |
+| `passkey` | `passkey()` | `passkeyClient()` | WebAuthn authentication |
+| `anonymous` | `anonymous()` | `anonymousClient()` | Guest sessions |
+| `stripe` | `stripe()` | `stripeClient()` | Subscription billing |
 
-The Stripe plugin is conditionally loaded – it only activates when `STRIPE_SECRET_KEY` and related env vars are set. Without them, the app works normally but billing endpoints return 404.
+The Stripe plugin is conditionally loaded – it activates only when all four required `STRIPE_*` variables are set. With none of them the app works normally, the public billing read reports the integration disabled, and Stripe mutation endpoints return 404. With some of them `createAuth` throws, so a half-configured deployment fails loudly instead of looking like a missing feature.
 
 ## Server Configuration
 
@@ -58,12 +58,9 @@ export function createAuth(db: DB, env: AuthEnv) {
       },
     },
 
-    socialProviders: {
-      google: {
-        clientId: env.GOOGLE_CLIENT_ID,
-        clientSecret: env.GOOGLE_CLIENT_SECRET,
-      },
-    },
+    // Empty when neither credential is set, so Google stays off. Setting only
+    // one throws – see googleProvider() in apps/api/lib/auth.ts.
+    socialProviders: googleProvider(env),
 
     plugins: [
       anonymous(),
@@ -121,7 +118,9 @@ export const auth = createAuthClient({
 ```
 
 ::: warning
+
 Do not use `auth.useSession()` directly. Session state is managed exclusively through TanStack Query – see [Sessions & Protected Routes](./sessions).
+
 :::
 
 ## Auth Routes
@@ -145,17 +144,17 @@ See the [Better Auth API reference](https://www.better-auth.com/docs/api-referen
 
 Authentication uses 9 database tables defined in `db/schema/`:
 
-| Table          | File              | Description                                                |
-| -------------- | ----------------- | ---------------------------------------------------------- |
-| `user`         | `user.ts`         | User accounts with profile info                            |
-| `session`      | `user.ts`         | Active sessions with `activeOrganizationId`                |
-| `identity`     | `user.ts`         | OAuth provider credentials (Better Auth's `account` model) |
-| `verification` | `user.ts`         | Email verification and OTP tokens                          |
-| `organization` | `organization.ts` | Tenant organizations                                       |
-| `member`       | `organization.ts` | Organization memberships with roles                        |
-| `invitation`   | `invitation.ts`   | Pending org invitations                                    |
-| `passkey`      | `passkey.ts`      | WebAuthn credential store                                  |
-| `subscription` | `subscription.ts` | Stripe subscription state                                  |
+| Table | File | Description |
+| --- | --- | --- |
+| `user` | `user.ts` | User accounts with profile info |
+| `session` | `user.ts` | Active sessions with `activeOrganizationId` |
+| `identity` | `user.ts` | OAuth provider credentials (Better Auth's `account` model) |
+| `verification` | `user.ts` | Email verification and OTP tokens |
+| `organization` | `organization.ts` | Tenant organizations |
+| `member` | `organization.ts` | Organization memberships with roles |
+| `invitation` | `invitation.ts` | Pending org invitations |
+| `passkey` | `passkey.ts` | WebAuthn credential store |
+| `subscription` | `subscription.ts` | Stripe subscription state |
 
 ## Auth Hint Cookie
 
@@ -163,12 +162,12 @@ The API worker sets a lightweight cookie (`__Host-auth` in HTTPS, `auth` in HTTP
 
 ## Environment Variables
 
-| Variable               | Required | Description                                       |
-| ---------------------- | -------- | ------------------------------------------------- |
-| `BETTER_AUTH_SECRET`   | Yes      | Secret for signing sessions and tokens            |
-| `GOOGLE_CLIENT_ID`     | Yes      | Google OAuth client ID                            |
-| `GOOGLE_CLIENT_SECRET` | Yes      | Google OAuth client secret                        |
-| `RESEND_API_KEY`       | Yes      | API key for sending OTP emails                    |
-| `RESEND_EMAIL_FROM`    | Yes      | Sender address for auth emails                    |
-| `APP_NAME`             | Yes      | Display name (used in emails and passkey prompts) |
-| `APP_ORIGIN`           | Yes      | Full origin URL (e.g., `https://example.com`)     |
+| Variable | Required | Description |
+| --- | --- | --- |
+| `BETTER_AUTH_SECRET` | Yes | Secret for signing sessions and tokens |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth client ID – set with the secret, or not at all |
+| `GOOGLE_CLIENT_SECRET` | No | Google OAuth client secret |
+| `RESEND_API_KEY` | Yes | API key for sending OTP emails |
+| `RESEND_EMAIL_FROM` | Yes | Sender address for auth emails |
+| `APP_NAME` | Yes | Display name (used in emails and passkey prompts) |
+| `APP_ORIGIN` | Yes | Full origin URL (e.g., `https://example.com`) |

@@ -19,8 +19,10 @@ cd my-app && bun install && bun dev
 * **[Bun](https://bun.sh)** 1.3.0 or later
 * A **[Cloudflare](https://dash.cloudflare.com/sign-up)** account (free tier works)
 
-::: info Node.js Optional
-This project runs entirely on Bun. You don't need Node.js unless you're integrating with Node-specific tools.
+::: info
+
+Node.js Optional This project runs entirely on Bun. You don't need Node.js unless you're integrating with Node-specific tools.
+
 :::
 
 ## Create Your Project
@@ -38,7 +40,9 @@ bun install
 ```
 
 ::: tip
+
 This creates a clean repository without the template's commit history.
+
 :::
 
 ### Option B: Git Clone
@@ -67,7 +71,9 @@ git merge seed/main
 ```
 
 ::: warning
+
 Review template updates carefully before merging – schema or config changes may need manual resolution.
+
 :::
 
 ## Start the Dev Server
@@ -111,12 +117,14 @@ bun email:dev   # Email template preview at http://localhost:3001
 
 ```bash
 bun dev          # Start all services concurrently
-bun test         # Run tests (Vitest, single run)
+bun run test --run  # Run tests once (drop --run to watch)
 bun lint         # ESLint with cache
 bun typecheck    # TypeScript type checking (tsc --build)
-bun build        # Production build: email → web → api → app
+bun run build    # Production build for all deployable workspaces
 ```
 
 ::: info
+
 After modifying tRPC routes, types update automatically – no manual sync needed. After editing `db/schema/`, run `bun db:generate` then `bun db:push` to apply changes.
+
 :::

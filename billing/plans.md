@@ -66,7 +66,9 @@ For each paid plan, create a **Product** and **Price** in the [Stripe Dashboard]
 | Pro (annual)  | `STRIPE_PRO_ANNUAL_PRICE_ID` | "Pro Plan" – $290/year    |
 
 ::: info
+
 Use Stripe **test mode** during development. The price IDs are different between test and live modes.
+
 :::
 
 ## How Limits Are Exposed
@@ -84,6 +86,7 @@ const sub = await ctx.db.query.subscription.findFirst({
 });
 
 return {
+  enabled,
   plan,
   status: sub?.status ?? null,
   limits: planLimits[plan as PlanName],
@@ -91,7 +94,7 @@ return {
 };
 ```
 
-When no active subscription exists, it defaults to the `free` plan limits. Enforce limits in your application logic – tRPC middleware for server-side checks, UI guards for client-side gating.
+When Stripe is disabled, the query returns `enabled: false` with free limits and the settings page omits billing controls. When Stripe is enabled but no active subscription exists, it returns `enabled: true` with the same free limits. Enforce limits in application logic – tRPC middleware for server-side checks, UI guards for client-side gating.
 
 ## Adding or Modifying Plans
 

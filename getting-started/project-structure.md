@@ -19,7 +19,7 @@ my-app/
 │   ├── ws-protocol/   # WebSocket protocol template
 │   └── typescript-config/  # Shared tsconfig presets
 ├── db/                # Drizzle ORM schemas and migrations
-├── infra/             # Terraform (Cloudflare Workers, DNS)
+├── infra/             # Terraform (Hyperdrive, R2)
 ├── docs/              # Documentation (VitePress)
 ├── scripts/           # Build and utility scripts
 └── package.json       # Monorepo root
@@ -45,12 +45,12 @@ Cloudflare Worker running [Hono](https://hono.dev) for HTTP routing and [tRPC](h
 
 ## Packages
 
-| Package                      | Description                                                                                                                   |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `packages/ui`                | [shadcn/ui](https://ui.shadcn.com) components (new-york style) with Tailwind CSS v4. Add components with `bun ui:add <name>`. |
-| `packages/core`              | Shared utilities and constants used across apps.                                                                              |
-| `packages/ws-protocol`       | WebSocket message protocol template for real-time features.                                                                   |
-| `packages/typescript-config` | Shared `tsconfig.json` presets for consistent compiler settings.                                                              |
+| Package | Description |
+| --- | --- |
+| `packages/ui` | [shadcn/ui](https://ui.shadcn.com) components (new-york style) with Tailwind CSS v4. Add components with `bun ui:add <name>`. |
+| `packages/core` | Shared utilities and constants used across apps. |
+| `packages/ws-protocol` | WebSocket message protocol template for real-time features. |
+| `packages/typescript-config` | Shared `tsconfig.json` presets for consistent compiler settings. |
 
 ## Database Workspace
 
@@ -60,12 +60,12 @@ See [Database Overview](/database/) for details.
 
 ## Key Configuration Files
 
-| File                    | Purpose                                               |
-| ----------------------- | ----------------------------------------------------- |
-| `infra/`                | Terraform modules for Cloudflare resources            |
-| `apps/*/wrangler.jsonc` | Cloudflare Worker configuration per app               |
-| `db/drizzle.config.ts`  | Drizzle ORM migration configuration                   |
-| `.env`                  | Shared environment defaults (committed to git)        |
-| `.env.local`            | Local secrets and overrides (git-ignored)             |
-| `tsconfig.json`         | Root TypeScript project references                    |
-| `package.json`          | Monorepo root – workspaces, scripts, dev dependencies |
+| File | Purpose |
+| --- | --- |
+| `infra/` | Terraform for Hyperdrive and R2 (not the workers) |
+| `apps/*/wrangler.jsonc` | Cloudflare Worker configuration per app |
+| `db/drizzle.config.ts` | Drizzle ORM migration configuration |
+| `.env` | Shared environment defaults (committed to git) |
+| `.env.local` | Local secrets and overrides (git-ignored) |
+| `tsconfig.json` | Root TypeScript project references |
+| `package.json` | Monorepo root – workspaces, scripts, dev dependencies |

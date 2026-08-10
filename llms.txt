@@ -22,7 +22,7 @@ Skip months of setup and ship your AI-powered SaaS fast. Authentication, databas
 
 - [Routing](/frontend/routing.md)
 - [State & Data Fetching](/frontend/state.md)
-- [UI](/frontend/ui.md)
+- [UI Components & Theming](/frontend/ui.md)
 - [Forms & Validation](/frontend/forms.md)
 
 ### API
@@ -75,15 +75,17 @@ Skip months of setup and ship your AI-powered SaaS fast. Authentication, databas
 
 ### Security
 
-- [Security Best Practices Checklist](/security/checklist.md)
-- [Security Incident Response Playbook](/security/incident-playbook.md)
+- [Security Checklist](/security/checklist.md)
+- [Security Incident Playbook](/security/incident-playbook.md)
 - [Security Policy & Incident Response Plan](/security/policy-template.md)
 
 ### Other
 
 - [ADR-001 Auth Hint Cookie For Edge Routing](/adr/001-auth-hint-cookie.md)
+- [ADR-002 Terraform provisions dependencies, Wrangler owns Workers](/adr/002-terraform-wrangler-boundary.md)
+- [ADR-003 HCP Terraform for state](/adr/003-hcp-terraform-state.md)
 - [ADR-NNN Title](/adr/000-template.md)
-- [Auth Flow UX Specification](/specs/auth-form.md)
+- [Auth Form Specification](/specs/auth-form.md)
 - [Email](/email.md)
 - [Infrastructure Terraform Specification](/specs/infra-terraform.md)
 - [Prefixed CUID2 Database IDs](/specs/prefixed-ids.md)

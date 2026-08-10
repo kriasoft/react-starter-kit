@@ -141,8 +141,12 @@ erDiagram
         timestamp trial_start
         timestamp trial_end
         boolean cancel_at_period_end
+        timestamp cancel_at
+        timestamp canceled_at
+        timestamp ended_at
         integer seats
         text billing_interval
+        text stripe_schedule_id
     }
 ```
 
@@ -152,16 +156,18 @@ erDiagram
 
 Managed by [Better Auth](https://www.better-auth.com/docs/concepts/database). Extend with care – changes must stay compatible with the auth framework.
 
-| Table          | File                | Purpose                                                                                                       |
-| -------------- | ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `user`         | `schema/user.ts`    | User accounts – name, email, verification status, Stripe customer ID                                          |
-| `session`      | `schema/user.ts`    | Active sessions with device tracking and [active organization context](/auth/sessions)                        |
-| `identity`     | `schema/user.ts`    | OAuth credentials and email/password (Better Auth's `account` table, [renamed](/auth/#identity-table-rename)) |
-| `verification` | `schema/user.ts`    | OTP codes, email verification tokens                                                                          |
-| `passkey`      | `schema/passkey.ts` | WebAuthn credentials for [passwordless auth](/auth/passkeys)                                                  |
+| Table | File | Purpose |
+| --- | --- | --- |
+| `user` | `schema/user.ts` | User accounts – name, email, verification status, Stripe customer ID |
+| `session` | `schema/user.ts` | Active sessions with device tracking and [active organization context](/auth/sessions) |
+| `identity` | `schema/user.ts` | OAuth credentials and email/password (Better Auth's `account` table, [renamed](/auth/#identity-table-rename)) |
+| `verification` | `schema/user.ts` | OTP codes, email verification tokens |
+| `passkey` | `schema/passkey.ts` | WebAuthn credentials for [passwordless auth](/auth/passkeys) |
 
 ::: warning
+
 Authentication tables follow [Better Auth's schema requirements](https://www.better-auth.com/docs/concepts/database). When adding columns, register them in the auth config's `additionalFields` to ensure proper data handling.
+
 :::
 
 ::: details user table – TypeScript definition
@@ -194,11 +200,11 @@ export const user = pgTable("user", {
 
 Multi-tenancy via Better Auth's [organization plugin](https://www.better-auth.com/docs/plugins/organization).
 
-| Table          | File                     | Purpose                                                          |
-| -------------- | ------------------------ | ---------------------------------------------------------------- |
-| `organization` | `schema/organization.ts` | Tenants / workspaces – name, slug, logo, metadata                |
-| `member`       | `schema/organization.ts` | User ↔ organization membership with roles (owner, admin, member) |
-| `invitation`   | `schema/invitation.ts`   | Pending org invitations with status lifecycle                    |
+| Table | File | Purpose |
+| --- | --- | --- |
+| `organization` | `schema/organization.ts` | Tenants / workspaces – name, slug, logo, metadata |
+| `member` | `schema/organization.ts` | User ↔ organization membership with roles (owner, admin, member) |
+| `invitation` | `schema/invitation.ts` | Pending org invitations with status lifecycle |
 
 Key constraints:
 
@@ -211,8 +217,8 @@ Key constraints:
 
 Managed by the [`@better-auth/stripe`](https://www.better-auth.com/docs/plugins/stripe) plugin. Do not insert or update records manually – the plugin handles the subscription lifecycle via Stripe webhooks.
 
-| Table          | File                     | Purpose                                         |
-| -------------- | ------------------------ | ----------------------------------------------- |
+| Table | File | Purpose |
+| --- | --- | --- |
 | `subscription` | `schema/subscription.ts` | Stripe subscription state, plan, billing period |
 
 The `referenceId` column is polymorphic: it points to `user.id` for personal billing or `organization.id` for org-level billing.
@@ -230,33 +236,40 @@ Several tables include columns beyond Better Auth's defaults:
 
 ```ts
 // db/schema/product.ts
-import { pgTable, text, integer, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import { index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { generateId } from "./id";
 import { organization } from "./organization";
 import { user } from "./user";
 
-export const product = pgTable("product", {
-  id: text()
-    .primaryKey()
-    .$defaultFn(() => generateId("prd")),
-  name: text().notNull(),
-  description: text(),
-  price: integer().notNull(),
-  organizationId: text()
-    .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
-  createdBy: text()
-    .notNull()
-    .references(() => user.id),
-  createdAt: timestamp({ withTimezone: true, mode: "date" })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp({ withTimezone: true, mode: "date" })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
+export const product = pgTable(
+  "product",
+  {
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => generateId("prd")),
+    name: text().notNull(),
+    description: text(),
+    price: integer().notNull(),
+    organizationId: text()
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    createdBy: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp({ withTimezone: true, mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("product_organization_id_idx").on(table.organizationId),
+    index("product_created_by_idx").on(table.createdBy),
+  ],
+);
 
 export const productRelations = relations(product, ({ one }) => ({
   organization: one(organization, {
