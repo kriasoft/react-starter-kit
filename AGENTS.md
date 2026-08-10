@@ -53,3 +53,8 @@ bun ui:add <component>         # Add shadcn/ui component to packages/ui
 - Prefer explicit, readable code over clever or compressed patterns.
 - Use precise TypeScript types. Avoid `any` and unnecessary type assertions — let the compiler enforce correctness.
 - Document non-obvious trade-offs and decisions. Explain why, not what — every word must add value.
+
+## Markdown
+
+- Prose is not hard-wrapped: keep each paragraph on one line and use paragraphs, lists and headings for structure. Prettier enforces this with `proseWrap: "never"`.
+- Keep a blank line after a VitePress container's opening marker and before its closing `:::`. Prettier does not recognise `:::`, so an adjacent line gets folded into the marker, turning the body into the container title and swallowing everything up to the next `:::`.
