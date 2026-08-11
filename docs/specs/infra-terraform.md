@@ -23,7 +23,7 @@ infra/
   envs/{staging,production}/
 ```
 
-One root per environment, one HCP Terraform workspace per root. Each root hard-codes its own `environment`, so no state can create another environment's resources.
+One root per environment, one HCP Terraform workspace per root. Each root hard-codes its own `environment` and workspace name, so it cannot create another environment's resources or write its state.
 
 There is no `dev` root. Local development uses `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_<BINDING>` and provisions nothing.
 
@@ -49,7 +49,7 @@ Two configurations per environment, matching the two bindings in `apps/api/`:
 
 `cache_max_age_seconds` (60) and `cache_stale_while_revalidate_seconds` (15) are set explicitly rather than inherited, so the staleness window is reviewable in the configuration.
 
-`origin_connection_limit` is a soft maximum per configuration – Cloudflare may briefly exceed it. It defaults to 20, Cloudflare's ceiling on the Workers Free plan and low enough that both configurations together stay within a small Neon compute's `max_connections`. Both env roots expose it so it can be raised per deployment; the origin sees twice the value.
+`origin_connection_limit` is a soft maximum per configuration – Cloudflare may briefly exceed it. It defaults to 20, inside Cloudflare's Workers Free ceiling so the starter works on any plan. Both env roots expose it so it can be raised per deployment; the origin sees twice the value.
 
 ### Connection URL
 
@@ -67,27 +67,25 @@ Three failures are rejected at plan time rather than surfacing later as connecti
 | --- | --- |
 | Malformed URL | Nothing to parse. |
 | Percent-encoded credentials | Terraform has no `urldecode`, so the escape sequence would be stored verbatim. |
-| A `-pooler` host | Hyperdrive is the pool; stacking two exhausts connections. |
+| A `-pooler` host | Hyperdrive is the pool; Neon's transaction-mode pooler breaks its prepared statements. |
 
 ## State
 
 HCP Terraform, via a `cloud` block – state, locking and version history in one place, with no bucket to provision first. See [ADR-003](/adr/003-hcp-terraform-state).
 
-Each root declares an empty `cloud {}` block. The organization and existing workspace are selected with `TF_CLOUD_ORGANIZATION` and `TF_WORKSPACE`, so a fork carries no one else's deployment targets.
+Each root pins its own `cloud` block – `hostname`, organization and `workspaces { name = "example-<env>" }`. Adopters replace the organization and workspace placeholders during setup. One directory therefore selects both the resource names and the state.
 
-Workspace names must end in `-staging` or `-production`. Each root asserts the suffix in an output `precondition`, failing at plan time otherwise. The reason is that `TF_WORKSPACE` selects the state while the directory selects only the resource names, and an exported `TF_WORKSPACE` takes precedence over the value in `.env.terraform.<env>.local` – Bun's `--env-file` does not overwrite variables already present in the environment. Unguarded, a stale export would point the staging root at production state, where it would rename the Hyperdrive configurations and invalidate their IDs.
+Pinning the name rather than supplying `TF_WORKSPACE` is what makes the binding structural. Terraform refuses to run when `TF_WORKSPACE` disagrees with `workspaces.name`, and falls back to `TF_CLOUD_HOSTNAME` only when `hostname` is omitted, so no ambient shell state can point a root at another environment or host. That also covers `output`, `import` and the `state` subcommands, which never evaluate output preconditions and so could not be guarded by one.
 
-The check runs wherever the configuration is evaluated – `plan`, `apply`, `destroy`, and `validate`. It does not run for `import` or the `state` subcommands, which write state without consulting the configuration, nor for `output`, which returns values already stored in state rather than recomputing them. `output` is the consequential one: it can print another environment's Hyperdrive IDs for pasting into a `wrangler.jsonc`, wiring a worker to the wrong database without touching state. The gap is inherent to Terraform, so it is documented and paired with a `workspace show` step rather than worked around.
+Terraform is invoked through two package scripts, `infra:staging` and `infra:production`, which are shorthand for `terraform -chdir=infra/envs/<environment>`.
 
-Terraform is invoked through two package scripts, `infra:staging` and `infra:production`, which load the matching env file and forward all arguments. Calling `terraform` directly skips workspace selection.
-
-Each workspace must also set **Terraform Working Directory** to `envs/<env>`. Remote runs upload the configuration, and a root referencing `../../modules/cloudflare` reaches outside its own directory; Terraform uploads parent directories only when a working directory is set, to the depth of that setting. There is no `cloud` block argument for it, so it is the one workspace setting the repository cannot declare.
+Each workspace must also set **Terraform Working Directory** to `envs/<env>`. Remote runs upload the configuration, and a root referencing `../../modules/cloudflare` reaches outside its own directory; Terraform uploads parent directories only when a working directory is set, to the depth of that setting. There is no `cloud` block argument for it. It is one of five settings the repository cannot declare, alongside the CLI-driven workflow, Remote execution mode, the workspace Terraform version and the variables themselves – see [ADR-003](/adr/003-hcp-terraform-state) and `infra/README.md`.
 
 **State is credential-bearing.** Hyperdrive stores the origin password as a discrete field, so it is written to state. `sensitive = true` hides values from output; it does not encrypt them. HCP Terraform encrypts state at rest and retains every version.
 
 ## Credentials
 
-Runs execute in HCP Terraform, so values come from workspace variables rather than a developer's shell.
+Runs execute in HCP Terraform, which supplies these from the workspace. The two kinds behave differently under a CLI-driven run: a Terraform variable is a default that a local `TF_VAR_*` overrides for that run, while no other environment variable reaches the run, so the provider token can only come from the workspace.
 
 | Kind                | Supplied as                                      |
 | ------------------- | ------------------------------------------------ |
@@ -97,7 +95,9 @@ Runs execute in HCP Terraform, so values come from workspace variables rather th
 
 The Cloudflare token needs **Account → Hyperdrive → Edit**, plus **Account → Workers R2 Storage → Edit** only when the uploads bucket is enabled. It needs no zone or worker scopes.
 
-The infrastructure workflow holds one credential: `TF_API_TOKEN`, an HCP Terraform team token. Terraform's Cloudflare and database credentials are never stored in GitHub. The separate worker-deploy workflow does hold a `CLOUDFLARE_API_TOKEN` – Cloudflare's **Edit Cloudflare Workers** template, which grants the worker, route and DNS scopes Terraform deliberately lacks.
+The infrastructure workflow holds one credential: `TF_API_TOKEN`, an HCP Terraform team token whose team has Write access to both workspaces, since the workflow applies. It is an environment secret on `staging` and `production`, not a repository secret: the deployment-branch rule only binds jobs that name the environment, so a repository-scoped token would let a branch drop `environment:` and keep the credential. On HCP Terraform Europe the equivalent is a group token.
+
+Terraform's Cloudflare and database credentials are never stored in GitHub. The separate worker-deploy workflow does hold a `CLOUDFLARE_API_TOKEN` – Cloudflare's **Edit Cloudflare Workers** template, which grants the worker, route and DNS scopes Terraform deliberately lacks.
 
 Setting a workspace's execution mode to **Local** stores state remotely but runs Terraform on the caller's machine; HCP then ignores workspace variables, so values come from `TF_VAR_*` or a gitignored `terraform.tfvars`.
 
@@ -109,6 +109,6 @@ Resource identifiers name the concrete thing (`cloudflare_hyperdrive_config.cach
 
 ## CI
 
-`.github/workflows/ci.yml` runs `terraform fmt -check` and `terraform validate` on every push. Because `init -backend=false` still initializes an HCP `cloud {}` block, CI validates a disposable copy with that block removed and a correctly suffixed local workspace. No HCP or Cloudflare credentials are needed.
+`.github/workflows/ci.yml` runs `bun infra:check` – `terraform fmt -check`, then `init -backend=false` and `validate` for each root – on pull requests to `main`, on `main` itself, and on manual CI runs. `init -backend=false` installs providers and modules without accessing the configured HCP backend, which is the sequence HashiCorp documents for validation, so CI needs no HCP or Cloudflare credentials.
 
-`.github/workflows/infra.yml` plans and applies, on manual dispatch only, serialised per environment and gated by GitHub Environment reviewers. Application deploys never run Terraform.
+`.github/workflows/infra.yml` plans and applies, on manual dispatch only, serialised per environment and gated by GitHub Environment reviewers. Both plans and applies are restricted to `main` – by a first-step check in the workflow, and by a deployment-branch rule on each GitHub Environment, which is the half a branch cannot edit away. A speculative plan is not a read-only preview: HCP executes the configuration it is handed in the workspace's privileged run environment, with its variables and state, which is why HashiCorp treats plan permission as equivalent to write. Branch-level feedback comes from `bun infra:check` in `ci.yml`, which needs no credentials. Application deploys never run Terraform.

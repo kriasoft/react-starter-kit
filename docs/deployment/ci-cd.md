@@ -1,22 +1,16 @@
 # CI/CD
 
-GitHub Actions automates building and testing, and includes a disabled deployment scaffold. The pipeline uses two workflows: `ci.yml` for the build and conditional deployment jobs, and `deploy.yml` as the reusable deployment workflow.
+GitHub Actions automates building and testing, and includes a disabled deployment scaffold. The **application pipeline** uses `ci.yml` for the build and its conditional deployment jobs, and `deploy.yml` as the reusable deployment workflow. Infrastructure runs separately through `infra.yml`.
 
 ## Pipeline Overview
 
-```
-Pull request → build + lint + test
-Push to main  → build + test       → staging job (deploy step disabled)
-Manual dispatch (production)        → production job (deploy step disabled)
-```
+The `ci.yml` workflow runs one **build** job, followed by the applicable environment-specific deploy job. Pull requests are verified but not deployed:
 
-The `ci.yml` workflow runs a single **build** job, then conditionally triggers a **deploy** job depending on the event. Pull requests are verified but not deployed:
-
-| Trigger             | Condition                           | Environment |
-| ------------------- | ----------------------------------- | ----------- |
-| `pull_request`      | Any PR to `main`                    | None        |
-| `push`              | Merge to `main`                     | Staging     |
-| `workflow_dispatch` | Manual, `deploy_production` checked | Production  |
+| Trigger | Condition | Environment |
+| --- | --- | --- |
+| `pull_request` | Any PR to `main` | None |
+| `push` | Merge to `main` | Staging |
+| `workflow_dispatch` | Manual from `main`, `deploy_production` checked | Production |
 
 ## Build Job
 
@@ -33,23 +27,12 @@ steps:
   - run: bun prettier --check .
   - run: bun lint
 
-  # Validate Terraform formatting and both environment roots
-  - run: terraform fmt -check -recursive infra/
-  - run: |
-      validation_dir="$(mktemp -d)"
-      trap 'rm -rf "$validation_dir"' EXIT
-      tar -C infra --exclude='.terraform' -cf - envs modules \
-        | tar -C "$validation_dir" -xf -
-      for root in "$validation_dir"/envs/*/; do
-        env_name="$(basename "$root")"
-        perl -0pi -e 's/^\h*cloud \{\}\R//m' "$root/main.tf"
-        terraform -chdir="$root" init -backend=false -input=false
-        TF_WORKSPACE="validate-$env_name" terraform -chdir="$root" validate
-      done
+  # Terraform fmt + validate for both roots, without credentials or state
+  - uses: hashicorp/setup-terraform@v4
+  - run: bun infra:check
 
   # Build and test
-  - run: bun email:build # Email templates (needed for types)
-  - run: bun tsc --build # Type checking
+  - run: bun typecheck # tsc --build, which also builds apps/email
   - run: bun --filter @repo/web check # .astro templates (tsc can't parse them)
   - run: bun run test -- --run # Vitest
   - run: bun --filter @repo/web build
@@ -155,20 +138,28 @@ Once enabled, `versions upload` prints a URL for the new version. Service bindin
 
 ## Required Secrets and Variables
 
-Configure these under **Settings → Secrets and variables → Actions**. Secrets are masked in logs; variables are not, which is why the account and organization identifiers are variables rather than secrets.
+Configure these under **Settings → Secrets and variables → Actions**. Secrets are masked in logs; variables are not, which is why the Cloudflare account identifier is a variable rather than a secret.
+
+Store both secrets as **environment** secrets on `staging` and `production` – not as repository secrets – and do not add repository-level fallbacks under the same names.
+
+That is what gives the deployment-branch rule any force. A protection rule only gates jobs that name the environment, and a manual dispatch runs the workflow definition from the ref it was given, so a branch can delete both the `main` check and the `environment:` line. A repository secret survives that edit; an environment secret does not, because removing `environment:` is what removes the access.
 
 | Secret | Used by | Description |
 | --- | --- | --- |
 | `CLOUDFLARE_API_TOKEN` | `deploy.yml` | Cloudflare's **Edit Cloudflare Workers** API token template |
-| `TF_API_TOKEN` | `infra.yml` | HCP Terraform team token, for infrastructure |
+| `TF_API_TOKEN` | `infra.yml` | HCP Terraform team token with Write access to both workspaces (group token on HCP Europe) |
 
 | Variable | Used by | Description |
 | --- | --- | --- |
 | `CLOUDFLARE_ACCOUNT_ID` | `deploy.yml` | Target account – a multi-account token cannot infer it |
-| `TF_CLOUD_ORGANIZATION` | `infra.yml` | HCP Terraform organization |
-| `TF_WORKSPACE` | `infra.yml` | That environment's existing HCP Terraform workspace |
 
-Set `TF_WORKSPACE` per GitHub environment – it is what points staging and production at different Terraform state. The rest can be repository-wide unless you deploy the two environments to separate Cloudflare accounts.
+`CLOUDFLARE_ACCOUNT_ID` can stay a repository variable: an account identifier grants nothing on its own. Terraform needs no variables here at all – each root names its own HCP workspace, so staging and production reach different state by configuration rather than by environment wiring.
+
+::: warning
+
+Environments are a paid feature for private repositories; GitHub Free offers them on public repositories only. On a private Free repository there is no boundary to build, so do not put deployment credentials in the repository – run `bun infra:<environment> apply` and the `*:deploy` scripts from a trusted machine instead.
+
+:::
 
 Terraform's own Cloudflare and database credentials are workspace variables in HCP Terraform, so they are never stored in GitHub. See [`infra/README.md`](https://github.com/kriasoft/react-starter-kit/blob/main/infra/README.md).
 
@@ -176,7 +167,7 @@ Worker-level secrets (`BETTER_AUTH_SECRET`, `RESEND_API_KEY`, and any optional i
 
 ## Infrastructure Workflow
 
-`infra.yml` runs Terraform, on manual dispatch only – application deploys never touch it. Pick an environment and leave **apply** off for a plan-only run, then dispatch again with it on. Runs are serialised per environment. If an environment has required reviewers, they gate both dispatches because protection rules apply to any job naming it.
+`infra.yml` runs Terraform, on manual dispatch only – application deploys never touch it. Pick an environment and leave **apply** off for a plan-only run, then dispatch again with it on. Both dispatches must run from `main`, enforced by a check in the workflow and by the environment's deployment-branch rule – see [Required Secrets and Variables](#required-secrets-and-variables) for why the rule is the half that counts. Runs are serialised per environment. If an environment has required reviewers, they gate both dispatches because protection rules apply to any job naming it.
 
 ## Additional Workflow
 

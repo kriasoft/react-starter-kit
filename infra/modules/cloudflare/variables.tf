@@ -53,8 +53,9 @@ variable "database_url" {
     EOT
   }
 
-  # Hyperdrive is itself the connection pool. Pointing it at Neon's pooled
-  # endpoint stacks two poolers and exhausts connections under load.
+  # Hyperdrive is itself the connection pool. Neon's pooled endpoint runs in
+  # transaction mode, which breaks the prepared statements Hyperdrive caches on,
+  # and stacks a second pool competing for the same connection budget.
   validation {
     condition     = !can(regex("-pooler\\.", var.database_url))
     error_message = "Use Neon's unpooled connection string with Hyperdrive: remove \"-pooler\" from the hostname."

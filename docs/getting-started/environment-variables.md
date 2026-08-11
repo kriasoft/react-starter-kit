@@ -15,11 +15,8 @@ Different tools read different files; staging and production application Workers
 | `.env.dev.local` / `.env.test.local` | No | Optional Drizzle development/test overrides |
 | `.env.staging.local` | No | Staging `db:*` commands; must contain `DATABASE_URL` |
 | `.env.production.local` | No | Production `db:*` commands; must contain `DATABASE_URL` |
-| `.env.terraform.staging` / `.env.terraform.production` | Optional | Shared HCP organization and workspace, once the repo is yours |
-| `.env.terraform.staging.local` | No | Staging HCP organization and workspace selection |
-| `.env.terraform.production.local` | No | Production HCP organization and workspace selection |
 
-The Terraform pair cascades like `.env` and `.env.local`: `bun infra:staging` reads `.env.terraform.staging` then `.env.terraform.staging.local`, and the second wins. The starter commits neither, so a clone carries no deployment targets; add the committed file when you want your team to share one. Neither value is a secret – CI passes both as GitHub variables. See [Infrastructure](https://github.com/kriasoft/react-starter-kit/tree/main/infra#setup).
+Terraform needs no env file: each root in `infra/envs/` names its HCP organization and workspace inline. See [Infrastructure](https://github.com/kriasoft/react-starter-kit/tree/main/infra#setup).
 
 For normal local development, `.env.local` takes precedence over `.env`. Create it by copying `.env` and filling in real values:
 
@@ -49,22 +46,22 @@ For local development, Wrangler reads Hyperdrive connection strings from the `CL
 
 ### Application
 
-| Variable      | Required | Description                                       |
-| ------------- | -------- | ------------------------------------------------- |
-| `APP_NAME`    | Yes      | Display name used in emails and passkey prompts   |
-| `APP_ORIGIN`  | Yes      | Full origin URL (e.g., `http://localhost:5173`)   |
-| `API_ORIGIN`  | Dev only | Vite proxy target (e.g., `http://localhost:8787`) |
-| `ENVIRONMENT` | Yes      | `development`, `staging`, or `production`         |
+| Variable | Required | Description |
+| --- | --- | --- |
+| `APP_NAME` | No | Display name in emails and passkey prompts; defaults to `Example` |
+| `APP_ORIGIN` | Yes | Full origin URL (e.g., `http://localhost:5173`) |
+| `API_ORIGIN` | Dev only | Vite proxy target (e.g., `http://localhost:8787`) |
+| `ENVIRONMENT` | Yes | `development`, `staging`, or `production` |
 
 ### Database
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `DATABASE_URL` | `db:*` only | Connection string for Drizzle Kit; the Workers reach Postgres through the Hyperdrive bindings instead |
 | `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_CACHED` | Dev only | Hyperdrive cached connection for local dev |
 | `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_UNCACHED` | Dev only | Hyperdrive uncached connection for local dev |
 
-Use an **unpooled** connection string for all three – the Neon host without `-pooler`. The client keeps prepared statements enabled, and a transaction-mode pooler breaks them.
+Use an **unpooled** connection string for all three – the Neon host without `-pooler`. Prepared statements stay enabled, and a transaction-mode pooler breaks them.
 
 ### Authentication
 

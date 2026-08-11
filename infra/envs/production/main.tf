@@ -1,12 +1,10 @@
 # Production environment: the live target for app deploys.
 #
 # One directory = one Terraform root = one HCP Terraform workspace = one state.
-# `environment` is hard-coded rather than declared as a variable: the directory
-# already answers that question, and a variable would let this state create
-# resources named for a different environment.
-#
-# That pins the names, not the state – TF_WORKSPACE still selects which state is
-# written. The precondition on the first output closes that gap.
+# `environment` and the workspace name are hard-coded rather than variables:
+# making either configurable would let this root target another environment, and
+# Terraform refuses to run when TF_WORKSPACE disagrees with the name below.
+# See docs/adr/003-hcp-terraform-state.md.
 
 terraform {
   required_version = ">= 1.12, < 2.0"
@@ -18,14 +16,22 @@ terraform {
     }
   }
 
-  # State, locking and versioned history live in HCP Terraform. Both the
-  # organization and workspace are supplied out of band so a fork carries no
-  # deployment targets. See the root infra:* scripts.
-  cloud {}
+  # State, locking and versioned history live in HCP Terraform. All three
+  # coordinates are committed, so no environment variable can retarget this
+  # root – rename the `example` placeholders alongside the others.
+  cloud {
+    hostname     = "app.terraform.io"
+    organization = "example"
+
+    workspaces {
+      name = "example-production"
+    }
+  }
 }
 
-# Runs execute in HCP Terraform by default, so this token comes from the
-# workspace's environment variables rather than a developer's shell.
+# Runs execute in HCP Terraform under the Remote execution mode the setup
+# configures, so this token comes from the workspace's environment variables.
+# Terraform does not forward a local one.
 provider "cloudflare" {}
 
 variable "cloudflare_account_id" {
@@ -44,8 +50,6 @@ variable "database_url" {
   sensitive   = true
 }
 
-# Each of the two Hyperdrive configurations gets this limit. Tune it to the
-# origin database's capacity, leaving headroom for other clients.
 variable "origin_connection_limit" {
   description = "Soft maximum connections each Hyperdrive configuration opens to the origin; Cloudflare may briefly exceed it. Both configurations use this value, so budget at least twice it plus headroom."
   type        = number
@@ -65,13 +69,6 @@ module "edge" {
 output "hyperdrive_cached_id" {
   description = "Hyperdrive ID for the HYPERDRIVE_CACHED binding."
   value       = module.edge.hyperdrive_cached_id
-
-  # TF_WORKSPACE selects state, and an exported value overrides the local env
-  # file; require this suffix to keep the root on production state.
-  precondition {
-    condition     = endswith(terraform.workspace, "-production")
-    error_message = "Refusing to run: the production root requires an HCP workspace name ending in \"-production\", but TF_WORKSPACE resolved to \"${terraform.workspace}\". Check for an exported TF_WORKSPACE overriding .env.terraform.production.local."
-  }
 }
 
 output "hyperdrive_uncached_id" {

@@ -27,7 +27,8 @@ bun dev                        # Start web + api + app concurrently
 bun run build                  # Build email, web, api, and app workspaces
 bun run test                   # Vitest (watch mode; --run for single run)
 bun lint                       # ESLint with cache
-bun typecheck                  # tsc --build
+bun typecheck                  # tsc --build (builds apps/email for its types)
+bun infra:check                # Terraform fmt + validate, no credentials or state
 bun ui:add <component>         # Add shadcn/ui component to packages/ui
 
 # Per-app: bun {web,app,api}:{dev,build,deploy}; test for app/api, check for web
@@ -36,13 +37,26 @@ bun ui:add <component>         # Add shadcn/ui component to packages/ui
 #   push and generate are local-only
 ```
 
+## Verification
+
+- Run the narrowest checks covering what you changed, then report what you ran. Never imply verification you did not perform.
+- Do not run migrations, deployments, or Terraform `plan`/`apply` unless explicitly asked — they act on shared environments.
+
 ## Architecture
 
 - Three workers: web (marketing site + edge router), app (SPA assets), api (Hono server).
 - API worker has `nodejs_compat` enabled; web and app workers do NOT.
 - Web worker routes: `/api/*` → API worker, app routes → App worker, static → assets.
 - Service bindings connect workers internally (no public cross-worker URLs).
-- Per-workspace conventions live in subdirectory `AGENTS.md` files: `apps/api/`, `apps/app/`, `db/`, `packages/ui/`.
+- Per-workspace conventions live in subdirectory `AGENTS.md` files: `apps/api/`, `apps/app/`, `db/`, `infra/`, `packages/ui/`.
+
+## Agent Tooling
+
+- `AGENTS.md` files are the canonical instructions; per-tool files (`CLAUDE.md`, `.gemini/settings.json`) only point at them.
+- **Every directory with an `AGENTS.md` needs a sibling `CLAUDE.md` containing `@AGENTS.md`.** Codex scopes nested `AGENTS.md` to its directory tree natively; Claude Code's nested lookup matches only `CLAUDE.md`, so without the adapter it never loads the scoped file. Adding a scoped `AGENTS.md` without one is a silent no-op for Claude.
+- **Skills live in `.agents/skills/<name>/SKILL.md`, symlinked into `.claude/skills/<name>/`.** Both vendors build on the Agent Skills format, but only the discovery paths differ: Codex scans `.agents/skills/` from the repo root natively, Claude Code scans `.claude/skills/`. One canonical copy plus a symlink is what makes a skill visible to both. Third-party skills installed by the `skills` CLI are tracked in `skills-lock.json` — do not hand-edit those directories.
+- Skills are for workflows the model should recognise and reach for on its own; their `description` is the trigger. A prompt you invoke deliberately stays a Claude Code command in `.claude/commands/<name>.md`, which has no portable equivalent.
+- `*.local.md` and `*.local.json` are gitignored — personal prompts and settings stay out of the repo.
 
 ## Design Philosophy
 

@@ -29,21 +29,37 @@ jobs:
   terraform:
     name: ${{ inputs.apply && 'Apply' || 'Plan' }} (${{ inputs.environment }})
     runs-on: ubuntu-latest
-    # Supplies the environment's TF_WORKSPACE and, where required reviewers are
-    # configured, gates the run. Note this gates plan-only dispatches too:
-    # protection rules apply to any job naming the environment.
+    # Selects the GitHub Environment, not the Terraform workspace – that comes
+    # from the root's `cloud` block. Where required reviewers are configured
+    # this gates the run, including plan-only dispatches: protection rules
+    # apply to any job naming an environment.
     environment: ${{ inputs.environment }}
     defaults:
       run:
         working-directory: infra/envs/${{ inputs.environment }}
     env:
-      # The only credential this workflow needs. Cloudflare and database
-      # credentials are workspace variables in HCP Terraform, so they never
-      # reach GitHub. Runs execute in HCP; this job drives and streams them.
+      # The only credential needed: runs execute in HCP, so Cloudflare and
+      # database credentials stay workspace variables and never reach GitHub.
       TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
-      TF_CLOUD_ORGANIZATION: ${{ vars.TF_CLOUD_ORGANIZATION }}
-      TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
     steps:
+      # Dispatch offers a branch picker, and plans are not the safe half: HCP
+      # executes the configuration it is handed in the workspace's privileged
+      # run environment, with its variables and state, so planning an unmerged
+      # branch runs it against production's credentials – HashiCorp treats plan
+      # permission as equivalent to write. Branch-level feedback is
+      # `bun infra:check` in ci.yml.
+      #
+      # This catches the mistake, not an attacker: a dispatch runs the workflow
+      # definition from its own ref, so a branch can delete this step. The
+      # Environment's deployment-branch rule is the half that enforces.
+      - name: Restrict runs to main
+        if: ${{ github.ref != 'refs/heads/main' }}
+        # The job default points into a repository not yet checked out.
+        working-directory: ${{ github.workspace }}
+        run: |
+          echo "::error::Infrastructure runs must use main, not ${{ github.ref_name }}."
+          exit 1
+
       - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v4
         with:
@@ -56,12 +72,10 @@ jobs:
         if: ${{ !inputs.apply }}
         run: terraform plan -input=false
 
-      # A single apply rather than plan-then-apply: the run is recorded in HCP
-      # Terraform, and the GitHub environment gate already ran before this job.
-      #
-      # Note the reviewer approves the job, not a plan they have read — the plan
-      # is computed inside this run. The intended procedure is to dispatch once
-      # with apply off, read that plan, then dispatch again to apply.
+      # `-auto-approve` is intentional here: the environment gate ran before the
+      # job and HCP records the run. But the reviewer approved the job, not a
+      # plan they had read – this run computes its own. Dispatch once with apply
+      # off, read that plan, then dispatch again.
       - name: Apply
         if: ${{ inputs.apply }}
         run: terraform apply -input=false -auto-approve

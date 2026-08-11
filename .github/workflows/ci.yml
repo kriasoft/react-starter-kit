@@ -42,30 +42,13 @@ jobs:
       - run: bun prettier --check .
       - run: bun lint
 
-      # Validate Terraform without remote-state or provider credentials.
+      # Validates both roots without remote state or provider credentials.
       - uses: hashicorp/setup-terraform@v4
-      - run: terraform fmt -check -recursive infra/
-      - name: Validate Terraform roots
-        run: |
-          validation_dir="$(mktemp -d)"
-          trap 'rm -rf "$validation_dir"' EXIT
-          tar -C infra --exclude='.terraform' -cf - envs modules \
-            | tar -C "$validation_dir" -xf -
+      - run: bun infra:check
 
-          for root in "$validation_dir"/envs/*/; do
-            # Each root asserts its workspace name ends in its environment.
-            # Use a matching local workspace and remove the cloud block from
-            # this disposable copy: `init -backend=false` still initializes
-            # HCP Terraform when a cloud block is present.
-            env_name="$(basename "$root")"
-            perl -0pi -e 's/^\h*cloud \{\}\R//m' "$root/main.tf"
-            terraform -chdir="$root" init -backend=false -input=false
-            TF_WORKSPACE="validate-$env_name" terraform -chdir="$root" validate
-          done
-
-      # Type checking (email templates must be built first for types)
-      - run: bun email:build
-      - run: bun tsc --build
+      # `tsc --build` builds `apps/email` through the root project references,
+      # so it produces the template types it needs on a fresh checkout.
+      - run: bun typecheck
       # tsc cannot parse .astro templates; astro check covers apps/web
       - run: bun --filter @repo/web check
 

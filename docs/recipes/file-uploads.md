@@ -26,11 +26,8 @@ Apply it, and note the bucket name it prints:
 
 ```bash
 bun infra:staging apply
-bun infra:staging workspace show    # must end in -staging
 bun infra:staging output uploads_bucket_name
 ```
-
-`output` reads from state without re-running the workspace guard, so confirm the workspace before trusting the name – a stale `TF_WORKSPACE` prints the other environment's bucket.
 
 The Terraform API token needs **Account → Workers R2 Storage → Edit** for this.
 
@@ -41,20 +38,24 @@ Bind the bucket to the API worker for serving files, and add the two non-secret 
 ```jsonc
 // apps/api/wrangler.jsonc
 {
-  "r2_buckets": [
-    {
-      "binding": "UPLOADS_BUCKET",
-      "bucket_name": "example-production-uploads",
+  "env": {
+    "staging": {
+      "r2_buckets": [
+        {
+          "binding": "UPLOADS_BUCKET",
+          "bucket_name": "example-staging-uploads",
+        },
+      ],
+      "vars": {
+        "R2_S3_ENDPOINT": "https://<account-id>.r2.cloudflarestorage.com",
+        "R2_BUCKET_NAME": "example-staging-uploads",
+      },
     },
-  ],
-  "vars": {
-    "R2_S3_ENDPOINT": "https://<account-id>.r2.cloudflarestorage.com",
-    "R2_BUCKET_NAME": "example-production-uploads",
   },
 }
 ```
 
-Repeat both blocks in the `staging` environment with that environment's bucket name. The name appears twice because the binding serves files while the S3-compatible endpoint signs uploads, and signing needs the name as a string.
+Repeat both blocks at the top level – the production configuration – once you enable uploads there too, with that bucket's name. The name appears twice because the binding serves files while the S3-compatible endpoint signs uploads, and signing needs the name as a string.
 
 ::: tip
 
@@ -106,32 +107,63 @@ bun add --filter @repo/api aws4fetch
 
 ## 3. Create the upload procedure
 
-Add a router that generates presigned PUT URLs and confirms uploads:
+The allowlist is enforced on the server but the file picker and the client call have to agree with it, so put it in `@repo/core` where both sides import the same list:
+
+```ts
+// packages/core/uploads.ts
+export const UPLOAD_CONTENT_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "application/pdf",
+] as const;
+
+export type UploadContentType = (typeof UPLOAD_CONTENT_TYPES)[number];
+
+/** Value for `<input type="file" accept>`, so the picker offers exactly what the API accepts. */
+export const UPLOAD_ACCEPT = UPLOAD_CONTENT_TYPES.join(",");
+
+export const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+
+export function isUploadContentType(value: string): value is UploadContentType {
+  return (UPLOAD_CONTENT_TYPES as readonly string[]).includes(value);
+}
+```
+
+Re-export it from the package entrypoint:
+
+```ts
+// packages/core/index.ts
+export * from "./uploads.js"; // [!code ++]
+```
+
+Plain constants rather than a Zod schema: this file is imported by the browser bundle, and the API turns the same list into `z.enum(...)` at the boundary where validation belongs.
+
+Then add a router that generates presigned PUT URLs and confirms uploads:
 
 ```ts
 // apps/api/routers/upload.ts
 import { AwsClient } from "aws4fetch";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import {
+  MAX_UPLOAD_SIZE_BYTES,
+  UPLOAD_CONTENT_TYPES,
+  type UploadContentType,
+} from "@repo/core";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 // The enum is the allowlist, so the extension lookup is total and the parsed
 // type narrows to these four keys. The extension never comes from the filename.
-const contentTypeSchema = z.enum([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "application/pdf",
-]);
+const contentTypeSchema = z.enum(UPLOAD_CONTENT_TYPES);
 
 const EXTENSION_BY_CONTENT_TYPE = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
   "application/pdf": "pdf",
-} satisfies Record<z.infer<typeof contentTypeSchema>, string>;
+} satisfies Record<UploadContentType, string>;
 
-const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const UPLOAD_URL_TTL_SECONDS = 120; // see the note on reuse below
 
 export const uploadRouter = router({
@@ -176,7 +208,7 @@ export const uploadRouter = router({
       const key = `${ownerId}/${crypto.randomUUID()}.${EXTENSION_BY_CONTENT_TYPE[input.contentType]}`;
 
       const r2 = new AwsClient({
-        service: "s3", // Required by aws4fetch; R2 ignores both
+        service: "s3", // R2's S3 API: the service is `s3`, the region `auto`
         region: "auto",
         accessKeyId: R2_ACCESS_KEY_ID,
         secretAccessKey: R2_SECRET_ACCESS_KEY,
@@ -256,9 +288,11 @@ The second escapes the bucket entirely, reaching anything the R2 token can write
 
 `MAX_UPLOAD_SIZE_BYTES` is **not** a hard storage limit. A presigned URL is a bearer token, valid until it expires and reusable within that window, and the signature covers the method, key and `Content-Type` but never the body length. An authenticated caller can request a URL claiming `sizeBytes: 1`, upload a gigabyte, and simply never call `confirm` – or let `confirm` delete it and re-`PUT` with the same URL.
 
-What the checks above do give you: only signed-in users get URLs, `confirm` rejects an oversized object and reclaims its space, and the short `UPLOAD_URL_TTL_SECONDS` keeps the reuse window small. Note that `confirm` records nothing – it reads the object back and returns its metadata, so the serving route below will hand over any correctly namespaced object whether or not it was ever confirmed. Persisting an upload record is left to you, and is what the cleanup note below assumes. Abandoned objects are not cleaned up: completed and abandoned uploads share the same `<owner>/<uuid>.<ext>` shape, so no lifecycle rule can tell them apart. If you need automatic cleanup, track upload state in your database and sweep objects that were never confirmed, or write pending uploads under a separate prefix that a lifecycle rule can expire.
+What the checks above do give you: only signed-in users get URLs, `confirm` rejects an oversized object and reclaims its space, and the short `UPLOAD_URL_TTL_SECONDS` keeps the reuse window small. Note that `confirm` records nothing – it reads the object back and returns its metadata, so the serving route below hands over any correctly namespaced object whether or not it was ever confirmed. Persisting an upload record is left to you.
 
-The allowlisted `Content-Type` is also still a browser claim; this recipe does not inspect file bytes. Before parsing files or serving user uploads inline, verify their signatures with a format-aware library and set a safe `Content-Disposition`. Keep unverified content on a separate origin when possible.
+Abandoned objects are not cleaned up either: completed and abandoned uploads share the same `<owner>/<uuid>.<ext>` shape, so no lifecycle rule can tell them apart. If you want automatic cleanup, track upload state in your database and sweep objects that were never confirmed, or write pending uploads under a separate prefix that a lifecycle rule can expire.
+
+The allowlisted `Content-Type` is also still a browser claim; this recipe does not inspect file bytes. That is why the serving route below hands everything back as an attachment rather than echoing the stored type. To render uploads inline instead – previewing an image, embedding a PDF – verify signatures with a format-aware library first, store the type you verified, and serve only that. Keep unverified content on a separate origin when possible.
 
 If you need the limit to be genuinely hard, stop presigning and stream the upload through the API worker into its `UPLOADS_BUCKET` binding, rejecting the body past 10 MB. You lose the direct-to-R2 path but gain an enforceable ceiling – a reasonable trade at this file size.
 
@@ -278,9 +312,17 @@ const appRouter = router({
 ## 4. Upload from the frontend
 
 ```tsx
+import { isUploadContentType } from "@repo/core";
 import { trpcClient } from "@/lib/trpc";
 
 async function uploadFile(file: File) {
+  // `File.type` is an unvalidated `string` – and empty when the browser cannot
+  // guess the type. Narrow it here so the mutation typechecks and the user gets
+  // a real message instead of a rejected round-trip.
+  if (!isUploadContentType(file.type)) {
+    throw new Error(`Unsupported file type: ${file.type || "unknown"}`);
+  }
+
   // 1. Get a presigned URL from the API
   const { key, uploadUrl } = await trpcClient.upload.createUrl.mutate({
     contentType: file.type,
@@ -304,6 +346,8 @@ async function uploadFile(file: File) {
 Wire it to a file input:
 
 ```tsx
+import { UPLOAD_ACCEPT } from "@repo/core";
+
 function FileUpload() {
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -313,9 +357,11 @@ function FileUpload() {
     console.log("Uploaded:", result.key);
   }
 
-  return <input type="file" accept="image/*,.pdf" onChange={handleChange} />;
+  return <input type="file" accept={UPLOAD_ACCEPT} onChange={handleChange} />;
 }
 ```
+
+`accept` is a picker filter, not a check – it is trivially bypassed, and the server allowlist is what enforces the rule. Deriving it from the same constant just stops the dialog from offering files the API will reject.
 
 ## 5. Serve files
 
@@ -349,8 +395,15 @@ uploads.get("/api/uploads/:key{.+}", async (c) => {
 
   return new Response(object.body, {
     headers: {
-      "Content-Type":
-        object.httpMetadata?.contentType ?? "application/octet-stream",
+      // Downloads, not inline rendering. The stored `Content-Type` is whatever
+      // the uploader claimed and nothing here has read the bytes, so serving it
+      // back would let a file that passed the allowlist as an image render as
+      // HTML on your origin. `attachment` plus `nosniff` keeps the browser from
+      // deciding otherwise. Serve verified metadata inline only after checking
+      // signatures – see the note above.
+      "Content-Type": "application/octet-stream",
+      "Content-Disposition": "attachment",
+      "X-Content-Type-Options": "nosniff",
       // Whether this URL may be served depends on who is asking, so the
       // browser must ask again every time: `no-cache` still lets it store the
       // response, but never reuse one without revalidating, which re-runs the
@@ -378,6 +431,8 @@ Files are served at `/api/uploads/<key>`.
 ::: tip Serving public assets instead
 
 For genuinely public files – avatars, logos, marketing images – drop the session check and use `Cache-Control: public, max-age=31536000, immutable`. Once the response no longer depends on who asked, a long-lived cache is safe again.
+
+These are also the files you actually want rendered inline rather than downloaded, which means dropping the `attachment` disposition. Do that only once the route serves a type it verified from the bytes, not the one the uploader claimed – on a public URL the stored claim is exactly what an attacker controls.
 
 That header buys you browser caching only. The API worker sets no `cache` block, so Cloudflare does not cache its responses at the edge and every request still runs the worker. Do not switch caching on for the whole API to change that – with it enabled, a `200` carrying no `Cache-Control` picks up a two-hour heuristic TTL, which is the wrong default for tRPC and auth.
 

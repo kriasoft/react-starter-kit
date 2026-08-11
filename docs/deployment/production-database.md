@@ -26,20 +26,13 @@ bun infra:staging apply
 
 Use `HYPERDRIVE_CACHED` only where a result from the configured cache window is acceptable. With the defaults above, a result can be up to 75 seconds old and writes do not invalidate it. Read-after-write, session, and permission checks therefore belong on `HYPERDRIVE_UNCACHED`.
 
-Give Hyperdrive Neon's **unpooled** connection string – the host without `-pooler`. Hyperdrive is itself the pool, and stacking two exhausts connections under load. Both configurations open up to `origin_connection_limit` connections each, so the database must allow at least twice that.
+Give Hyperdrive Neon's **unpooled** connection string – the host without `-pooler`. Hyperdrive is itself the pool; Neon's runs in transaction mode, which breaks the prepared statements Hyperdrive caches on, and adds a second layer competing for the same connection budget. Both configurations open up to `origin_connection_limit` connections each, so the database must allow at least twice that.
 
 Then copy the IDs into `apps/api/wrangler.jsonc` for the matching environment:
 
 ```bash
-bun infra:staging workspace show    # must end in -staging
 bun infra:staging output -raw wrangler_hyperdrive_bindings
 ```
-
-::: warning
-
-`output` reads values out of state instead of recomputing them, so the workspace guard that protects `plan` and `apply` does not run here. With a stale `TF_WORKSPACE` exported, this prints the _other_ environment's IDs – and pasting those into a `wrangler.jsonc` points that worker at the wrong database. Confirm the workspace first.
-
-:::
 
 See [Database: Connection Architecture](/database/#connection-architecture) for how these bindings are used in application code.
 
@@ -55,17 +48,16 @@ bun db:migrate:staging
 bun db:migrate:production
 ```
 
-These commands read connection strings from `.env.staging.local` and `.env.production.local` respectively. See [Database: Migrations](/database/migrations) for the full workflow.
+Each command reads only its own file – `.env.staging.local` or `.env.production.local` – and fails if that file is missing or does not define `DATABASE_URL`, rather than falling back to another environment's connection string. See [Database: Migrations](/database/migrations) for the full workflow.
 
 ::: warning
 
-Always review generated migration SQL before running against production. Use `bun db:generate` to preview changes, then inspect the files in `db/migrations/` before applying.
+Review the SQL in `db/migrations/` before applying it to production. Those files are generated during development with `bun db:generate` and committed, so the exact statements are visible in the pull request that introduced them.
 
 :::
 
 ## Database Performance
 
-- **Connection pooling** – Hyperdrive maintains a pool at the edge, reducing cold-start latency
-- **Indexes** – add indexes for frequently queried columns, especially foreign keys used in multi-tenant filters
-- **Monitor slow queries** – use the Neon dashboard to identify and optimize slow queries
-- **Compute auto-suspend** – Neon suspends idle compute after inactivity; first request after suspend has higher latency
+Neon suspends idle compute after a period of inactivity, so the first request after a quiet spell pays a cold start. Expect it on staging and on low-traffic production deployments before attributing the latency to Hyperdrive or the worker.
+
+The shipped tables already index `organizationId` on `member` and `invitation`. Do the same on your own tenant-scoped tables: every scoped query filters on that column, so a missing index there costs more than anywhere else in the schema.
