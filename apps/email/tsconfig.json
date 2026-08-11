@@ -7,10 +7,14 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true,
+    // Composite so `apps/api` can reference this project: `tsc --build` then
+    // emits these declarations before compiling the code that imports them.
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "outDir": "dist",
     "rootDir": ".",
+    "tsBuildInfoFile": "../../.cache/tsconfig/email.tsbuildinfo",
     "jsx": "react-jsx"
   },
   "include": ["**/*.ts", "**/*.tsx"],

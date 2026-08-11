@@ -46,8 +46,9 @@ jobs:
       - uses: hashicorp/setup-terraform@v4
       - run: bun infra:check
 
-      # `tsc --build` builds `apps/email` through the root project references,
-      # so it produces the template types it needs on a fresh checkout.
+      # `apps/api` references `apps/email`, so `tsc --build` emits the template
+      # declarations before compiling the code that imports them – and leaves
+      # `apps/email/dist` in place for the artifact below.
       - run: bun typecheck
       # tsc cannot parse .astro templates; astro check covers apps/web
       - run: bun --filter @repo/web check

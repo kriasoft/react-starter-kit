@@ -32,7 +32,7 @@ steps:
   - run: bun infra:check
 
   # Build and test
-  - run: bun typecheck # tsc --build, which also builds apps/email
+  - run: bun typecheck # tsc --build; apps/api references apps/email, so it builds too
   - run: bun --filter @repo/web check # .astro templates (tsc can't parse them)
   - run: bun run test -- --run # Vitest
   - run: bun --filter @repo/web build
