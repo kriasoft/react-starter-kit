@@ -56,8 +56,13 @@ jobs:
         if: ${{ github.ref != 'refs/heads/main' }}
         # The job default points into a repository not yet checked out.
         working-directory: ${{ github.workspace }}
+        # Through `env`, never `${{ }}` in the script: expressions are pasted in
+        # before the shell parses it, and a branch name may legally contain
+        # `$(…)`. As a variable it stays data, in a job holding the HCP token.
+        env:
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          echo "::error::Infrastructure runs must use main, not ${{ github.ref_name }}."
+          echo "::error::Infrastructure runs must use main, not ${REF_NAME}."
           exit 1
 
       - uses: actions/checkout@v6
