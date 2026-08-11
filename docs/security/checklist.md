@@ -75,7 +75,7 @@ bun typecheck
 bun run test -- --run
 bun web:check
 bun docs:build
-terraform fmt -check -recursive infra/
+bun infra:check
 ```
 
 Then test the deployed environment:

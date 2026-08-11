@@ -2,10 +2,6 @@ import { getAuthTables } from "better-auth/db";
 import type { BetterAuthOptions } from "better-auth/types";
 import { createAuth } from "../../apps/api/lib/auth";
 
-// Read Bun.env directly: parsing the full API environment would require
-// unrelated runtime variables before the mock defaults below can apply.
-const env = Bun.env;
-
 /**
  * Generates the complete database structure from Better Auth configuration
  * Outputs the schema as formatted JSON showing all tables, fields, and relationships
@@ -14,13 +10,22 @@ async function generateAuthSchema() {
   // Mock database instance - Better Auth only needs this for type checking, not actual queries
   const mockDb = {} as Record<string, unknown>;
 
-  // Create the auth instance to get the configuration
+  // Fixed placeholders, never Bun.env. Every optional integration is switched
+  // on so the output covers each table Better Auth can require – Stripe's four
+  // keys are all-or-nothing, and without them the `subscription` table would be
+  // missing and a reviewer would read a valid schema as stale. Reading the
+  // ambient environment would also make the output differ per machine.
   const auth = createAuth(mockDb, {
-    APP_NAME: env.APP_NAME || "React Starter Kit",
-    APP_ORIGIN: env.APP_ORIGIN || "http://localhost:3000",
-    BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET || "mock-secret",
-    GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID || "mock-client-id",
-    GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET || "mock-client-secret",
+    APP_NAME: "React Starter Kit",
+    APP_ORIGIN: "http://localhost:3000",
+    BETTER_AUTH_SECRET: "mock-secret",
+    GOOGLE_CLIENT_ID: "mock-client-id",
+    GOOGLE_CLIENT_SECRET: "mock-client-secret",
+    STRIPE_SECRET_KEY: "sk_test_mock",
+    STRIPE_WEBHOOK_SECRET: "whsec_mock",
+    STRIPE_STARTER_PRICE_ID: "price_mock_starter",
+    STRIPE_PRO_PRICE_ID: "price_mock_pro",
+    STRIPE_PRO_ANNUAL_PRICE_ID: "price_mock_pro_annual",
   });
 
   // WARNING: Type assertion needed as Better Auth doesn't export the auth instance type
