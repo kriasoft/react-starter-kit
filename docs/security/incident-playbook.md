@@ -6,15 +6,15 @@ This is an operational starting point for applications built from React Starter 
 
 Record this information somewhere responders can reach when the application or primary repository is unavailable:
 
-| Item | Owner or location |
-| --- | --- |
-| Security report channel | _Define before launch_ |
-| Incident lead and backup | _Define before launch_ |
-| Cloudflare account and audit logs | _Define before launch_ |
-| Neon project and restore procedure | _Define before launch_ |
-| Resend, Google, Stripe, and OpenAI accounts | _Define as enabled_ |
+| Item                                   | Owner or location                   |
+| -------------------------------------- | ----------------------------------- |
+| Security report channel                | _Define before launch_              |
+| Incident lead and backup               | _Define before launch_              |
+| Cloudflare account and audit logs      | _Define before launch_              |
+| Neon project and restore procedure     | _Define before launch_              |
+| Resend, Google, and Stripe accounts    | _Define as enabled_                 |
 | GitHub private vulnerability reporting | _Enable or document an alternative_ |
-| User notification and legal contacts | _Define before launch_ |
+| User notification and legal contacts   | _Define before launch_              |
 
 Also keep tested access for at least two responders, require MFA on provider accounts, and store recovery codes outside the systems they recover.
 

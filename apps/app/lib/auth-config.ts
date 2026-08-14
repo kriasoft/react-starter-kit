@@ -1,10 +1,6 @@
 // Social providers come from `config.socialProviders`, which is derived from
 // server credentials. Keeping a client-side copy would let the two drift.
 export const authConfig = {
-  passkey: {
-    enableConditionalUI: true,
-  },
-
   api: {
     basePath: "/api/auth",
   },

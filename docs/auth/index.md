@@ -30,7 +30,7 @@ Better Auth's functionality is extended through plugins. The server and client m
 | `anonymous` | `anonymous()` | `anonymousClient()` | Guest sessions |
 | `stripe` | `stripe()` | `stripeClient()` | Subscription billing |
 
-The Stripe plugin is conditionally loaded – it activates only when all four required `STRIPE_*` variables are set. With none of them the app works normally, the public billing read reports the integration disabled, and Stripe mutation endpoints return 404. With some of them `createAuth` throws, so a half-configured deployment fails loudly instead of looking like a missing feature.
+The Stripe plugin is conditionally loaded – it activates only when all four required `STRIPE_*` variables are set. With none of them the app works normally, the protected `billing.subscription` query reports the integration disabled, and Stripe mutation endpoints return 404. With some of them `createAuth` throws, so a half-configured deployment fails loudly instead of looking like a missing feature.
 
 ## Server Configuration
 
@@ -38,7 +38,7 @@ The auth instance is created per-request in `apps/api/lib/auth.ts`:
 
 ```ts
 // apps/api/lib/auth.ts
-export function createAuth(db: DB, env: AuthEnv) {
+export function createAuth(db: Database, env: AuthEnv): Auth {
   return betterAuth({
     baseURL: `${env.APP_ORIGIN}/api/auth`,
     trustedOrigins: [env.APP_ORIGIN],
@@ -77,7 +77,9 @@ export function createAuth(db: DB, env: AuthEnv) {
 }
 ```
 
-The `account` model is renamed to `identity` to better describe its purpose (OAuth provider credentials):
+`Database` is the local alias for `PostgresJsDatabase<DatabaseSchema>`. Better Auth's own `DB` type is `{ [key: string]: any }`, which would leave every query in this file unchecked, so the typed Drizzle client is passed instead.
+
+The `account` model is renamed to `identity` to better describe its purpose – it holds every authentication identity, OAuth and password alike:
 
 ```ts
 account: { modelName: "identity" },
@@ -148,7 +150,7 @@ Authentication uses 9 database tables defined in `db/schema/`:
 | --- | --- | --- |
 | `user` | `user.ts` | User accounts with profile info |
 | `session` | `user.ts` | Active sessions with `activeOrganizationId` |
-| `identity` | `user.ts` | OAuth provider credentials (Better Auth's `account` model) |
+| `identity` | `user.ts` | Authentication identities: OAuth and password credentials (Better Auth's `account` model) |
 | `verification` | `user.ts` | Email verification and OTP tokens |
 | `organization` | `organization.ts` | Tenant organizations |
 | `member` | `organization.ts` | Organization memberships with roles |

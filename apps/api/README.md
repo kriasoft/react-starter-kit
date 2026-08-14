@@ -16,7 +16,7 @@ bun api:deploy    # Deploy to Cloudflare Workers
 
 ```bash
 routers/          # tRPC routers organized by domain
-lib/              # Context, middleware, DataLoaders, auth config
+lib/              # Context, middleware, auth config
 worker.ts         # Cloudflare Worker entry point
 index.ts          # Package exports
 ```

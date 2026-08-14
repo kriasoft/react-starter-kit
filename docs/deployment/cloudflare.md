@@ -88,14 +88,11 @@ bunx auth@latest secret
 bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc --env=""
 
-# Google sign-in — optional, but set both or neither
+# Google sign-in – optional, but set both or neither
 bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc --env=""
 
-# AI features — optional
-bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc --env=""
-
-# Billing — optional, but set all four or none
+# Billing – optional, but set all four or none
 bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc --env=""
@@ -111,7 +108,7 @@ Set all four Stripe values or none. A partial configuration throws when authenti
 
 Every command carries `--config` because a secret binds to whichever worker the config names – run one from the repository root without it and Wrangler has no worker to attach it to.
 
-Only `BETTER_AUTH_SECRET` and `RESEND_API_KEY` are mandatory – the app cannot sign anyone in without them. `apps/api/wrangler.jsonc` lists exactly those two under `secrets.required`, so a deploy missing either fails immediately. Google sign-in, OpenAI and Stripe are optional and stay out of that list, because requiring them would block deploys for anyone not using them. Running `secret put` against a worker that does not exist yet is fine – Wrangler offers to create an empty placeholder to hold the secret, which the deploy then overwrites.
+Only `BETTER_AUTH_SECRET` and `RESEND_API_KEY` are mandatory – the app cannot sign anyone in without them. `apps/api/wrangler.jsonc` lists exactly those two under `secrets.required`, so a deploy missing either fails immediately. Google sign-in and Stripe are optional and stay out of that list, because requiring them would block deploys for anyone not using them. Running `secret put` against a worker that does not exist yet is fine – Wrangler offers to create an empty placeholder to hold the secret, which the deploy then overwrites.
 
 ## Build and Deploy
 

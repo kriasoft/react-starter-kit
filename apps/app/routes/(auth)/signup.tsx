@@ -1,7 +1,11 @@
 import { AuthForm } from "@/components/auth";
 import { getSafeRedirectUrl } from "@/lib/auth-config";
 import { socialProvidersQueryOptions } from "@/lib/queries/config";
-import { revalidateSession, sessionQueryOptions } from "@/lib/queries/session";
+import {
+  isValidSession,
+  revalidateSession,
+  sessionQueryOptions,
+} from "@/lib/queries/session";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -37,7 +41,7 @@ export const Route = createFileRoute("/(auth)/signup")({
       );
 
       // Redirect authenticated users to their destination
-      if (session?.user && session?.session) {
+      if (isValidSession(session)) {
         throw redirect({ to: search.returnTo ?? "/" });
       }
     } catch (error) {

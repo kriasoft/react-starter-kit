@@ -1,9 +1,14 @@
-import { planLimits, type PlanName } from "../lib/plans.js";
+import { TRPCError } from "@trpc/server";
+import {
+  canManageOrgBilling,
+  planLimits,
+  type PlanName,
+} from "../lib/plans.js";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 export const billingRouter = router({
   // Active subscription + limits for the current billing reference.
-  // referenceId is derived from session — org billing when an org is active,
+  // referenceId is derived from session – org billing when an org is active,
   // personal billing otherwise. No client-side param needed.
   subscription: protectedProcedure.query(async ({ ctx }) => {
     const enabled = Boolean(
@@ -16,6 +21,8 @@ export const billingRouter = router({
     if (!enabled) {
       return {
         enabled,
+        // Nothing to manage while billing is off, so no caller may.
+        canManage: false,
         plan: "free" as const,
         status: null,
         periodEnd: null,
@@ -24,7 +31,36 @@ export const billingRouter = router({
       };
     }
 
-    const referenceId = ctx.session.activeOrganizationId ?? ctx.user.id;
+    const organizationId = ctx.session.activeOrganizationId;
+
+    // Personal billing: the caller is the subscriber, so nothing to look up.
+    let canManage = true;
+
+    // The active organization selects the billing scope; it does not prove the
+    // caller still belongs to it. A session outlives a membership removal, so
+    // without this an ex-member keeps reading their old organization's plan.
+    // `ctx.db`, never `dbCached` – a stale answer here is an authorization hole.
+    // The role rides along on the same lookup: every member may see the plan,
+    // but only owners and admins may change it, and the UI has no other way to
+    // know that before Better Auth rejects the checkout.
+    if (organizationId) {
+      const membership = await ctx.db.query.member.findFirst({
+        columns: { role: true },
+        where: (m, { and, eq }) =>
+          and(eq(m.organizationId, organizationId), eq(m.userId, ctx.user.id)),
+      });
+
+      if (!membership) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Not a member of the active organization",
+        });
+      }
+
+      canManage = canManageOrgBilling(membership.role);
+    }
+
+    const referenceId = organizationId ?? ctx.user.id;
 
     const sub = await ctx.db.query.subscription.findFirst({
       where: (s, { eq, and, inArray }) =>
@@ -42,6 +78,7 @@ export const billingRouter = router({
 
     return {
       enabled,
+      canManage,
       plan,
       status: sub?.status ?? null,
       periodEnd: sub?.periodEnd ?? null,

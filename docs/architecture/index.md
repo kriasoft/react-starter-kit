@@ -24,7 +24,7 @@ sequenceDiagram
     Web->>App: service binding
     App-->>Web: SPA assets
 
-    Browser->>Web: POST /api/trpc/user.me
+    Browser->>Web: POST /api/trpc/billing.subscription
     Web->>API: service binding
     API->>DB: Hyperdrive
     DB-->>API: query result
@@ -45,7 +45,7 @@ sequenceDiagram
 The web worker is the only worker attached to a public hostname (`example.com`). It decides where each request goes:
 
 - `/api/*` – forwarded to the API worker
-- The SPA paths listed in `APP_PATHS` (`/dashboard`, `/users`, `/settings`, `/analytics`, `/reports`, `/login`, `/signup`) and `/_app/*` – forwarded to the app worker
+- The SPA paths listed in `APP_PATHS` (`/login`, `/signup`, `/members`, `/settings`) and `/_app/*` – forwarded to the app worker
 - `/` – routed by [auth hint cookie](#auth-hint-cookie) (app if signed in, marketing site if not)
 - Everything else – served from the web worker's own static assets (marketing pages)
 
@@ -53,8 +53,8 @@ The web worker is the only worker attached to a public hostname (`example.com`).
 // apps/web/worker.ts (simplified)
 app.all("/api/*", (c) => c.env.API_SERVICE.fetch(c.req.raw));
 
-// Exact path plus descendants — never a bare prefix, which would send
-// /users-guide to the SPA fallback. `apps/app/lib/edge-routing.test.ts`
+// Exact path plus descendants – never a bare prefix, which would send
+// /members-only to the SPA fallback. `apps/app/lib/edge-routing.test.ts`
 // checks this list against the route files.
 for (const path of APP_PATHS) {
   app.all(`/${path}`, (c) => c.env.APP_SERVICE.fetch(c.req.raw));

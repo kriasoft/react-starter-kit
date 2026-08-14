@@ -51,7 +51,7 @@ Passkey credentials are stored in `db/schema/passkey.ts`:
 
 ## Client Component
 
-The `PasskeyLogin` component in `apps/app/components/auth/passkey-login.tsx` handles two modes:
+`PasskeyLogin` in `apps/app/components/auth/passkey-login.tsx` implements explicit passkey sign-in. Conditional mediation is deliberately not enabled:
 
 ### Explicit Login
 
@@ -81,42 +81,11 @@ const handlePasskeyLogin = async () => {
 
 ### Conditional Mediation
 
-When enabled, the component requests conditional mediation on mount in browsers that support it. The attempt is passive and does not surface errors because the user did not explicitly start authentication:
+Passkey autofill needs a mounted input whose `autocomplete` ends in `webauthn`, and the auth form shows no input until the user has already picked the email method – so a conditional request would have nothing to attach to.
 
-```ts
-useEffect(() => {
-  if (!authConfig.passkey.enableConditionalUI) return;
+To add it, put a persistent email field on the first step, mark it `autoComplete="email webauthn"`, and call `auth.signIn.passkey({ autoFill: true })` once `PublicKeyCredential.isConditionalMediationAvailable()` resolves true.
 
-  const setupConditionalUI = async () => {
-    if (!window.PublicKeyCredential?.isConditionalMediationAvailable) return;
-
-    const isAvailable =
-      await window.PublicKeyCredential.isConditionalMediationAvailable();
-    if (!isAvailable) return;
-
-    const result = await auth.signIn.passkey({ autoFill: true });
-    if (result.data && !aborted) {
-      onSuccessRef.current();
-    }
-  };
-
-  setupConditionalUI();
-}, []);
-```
-
-Conditional UI is controlled by the `authConfig.passkey.enableConditionalUI` flag (default: `true`). Errors from conditional UI are silently ignored since the user hasn't explicitly requested authentication.
-
-## Client Configuration
-
-Passkey behavior is configured in `apps/app/lib/auth-config.ts`:
-
-```ts
-passkey: {
-  enableConditionalUI: true,
-},
-```
-
-`enableConditionalUI` controls whether the component attempts conditional mediation. Other WebAuthn behavior uses Better Auth's defaults; configure the plugin or client explicitly if your application needs different verification requirements.
+WebAuthn behavior otherwise uses Better Auth's defaults; configure the plugin or client explicitly if your application needs different verification requirements.
 
 ## Error Handling
 
@@ -129,4 +98,4 @@ passkey: {
 
 ## Browser Support
 
-Passkeys require WebAuthn support. The component checks `window.PublicKeyCredential` before explicit authentication and checks conditional-mediation support before starting autofill. Unsupported browsers keep the email and configured social-provider paths available.
+Passkeys require WebAuthn support. The component checks `window.PublicKeyCredential` before authenticating. Unsupported browsers keep the email and configured social-provider paths available.

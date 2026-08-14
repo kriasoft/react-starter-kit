@@ -10,9 +10,8 @@ import { user } from "./user";
  * Invitations table for Better Auth organization plugin.
  * Manages pending invites to organizations.
  *
- * Lifecycle timestamps:
- * - acceptedAt: When the invite was accepted
- * - rejectedAt: When the invite was rejected or canceled
+ * `acceptedAt` and `rejectedAt` are available for application hooks. Better
+ * Auth updates `status` but does not populate these extra fields.
  */
 export const invitation = pgTable(
   "invitation",
@@ -41,6 +40,9 @@ export const invitation = pgTable(
       .notNull(),
   },
   (table) => [
+    // This starter allows one lifetime invitation per address and organization.
+    // Better Auth creates a new row when re-inviting after a completed invite,
+    // so remove this constraint before supporting that flow.
     unique("invitation_org_email_unique").on(table.organizationId, table.email),
     index("invitation_email_idx").on(table.email),
     index("invitation_inviter_id_idx").on(table.inviterId),

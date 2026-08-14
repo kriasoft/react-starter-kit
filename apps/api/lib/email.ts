@@ -12,17 +12,15 @@ import type { Env } from "./env";
 export interface EmailOptions {
   to: string | string[];
   subject: string;
+  /** Required so every email has a plain-text alternative. */
+  text: string;
   html?: string;
-  text?: string;
   from?: string;
 }
 
-export function createResendClient(apiKey: string): Resend {
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY is required");
-  }
-  return new Resend(apiKey);
-}
+type EmailEnv = Pick<Env, "RESEND_API_KEY" | "RESEND_EMAIL_FROM">;
+
+type TemplateEnv = EmailEnv & Pick<Env, "APP_NAME" | "APP_ORIGIN">;
 
 /**
  * Send an email using the Resend client.
@@ -30,10 +28,7 @@ export function createResendClient(apiKey: string): Resend {
  * @param env Environment variables containing Resend configuration
  * @param options Email configuration
  */
-export async function sendEmail(
-  env: Pick<Env, "RESEND_API_KEY" | "RESEND_EMAIL_FROM">,
-  options: EmailOptions,
-) {
+export async function sendEmail(env: EmailEnv, options: EmailOptions) {
   const emailSchema = z.email();
 
   // Validate all recipients before sending
@@ -45,21 +40,17 @@ export async function sendEmail(
     }
   }
 
+  if (!env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY environment variable is required");
+  }
+
   if (!env.RESEND_EMAIL_FROM) {
     throw new Error("RESEND_EMAIL_FROM environment variable is required");
   }
 
-  const resend = createResendClient(env.RESEND_API_KEY);
-
-  if (!options.text && !options.html) {
-    throw new Error("Either text or html content is required");
-  }
-
-  if (options.html && !options.text) {
-    throw new Error(
-      "Plain text version required when sending HTML email. Use renderEmailToText() from @repo/email.",
-    );
-  }
+  // A fresh client per send: the Workers runtime reuses an isolate across
+  // requests, and a module-level client would outlive the env it was built from.
+  const resend = new Resend(env.RESEND_API_KEY);
 
   try {
     const result = await resend.emails.send({
@@ -67,7 +58,7 @@ export async function sendEmail(
       to: options.to,
       subject: options.subject,
       html: options.html,
-      text: options.text as string,
+      text: options.text,
     });
 
     if (result.error) {
@@ -92,10 +83,7 @@ export async function sendEmail(
  * @param options User and verification URL (should be time-limited, signed token)
  */
 export async function sendVerificationEmail(
-  env: Pick<
-    Env,
-    "RESEND_API_KEY" | "RESEND_EMAIL_FROM" | "APP_NAME" | "APP_ORIGIN"
-  >,
+  env: TemplateEnv,
   options: {
     user: { email: string; name?: string };
     url: string;
@@ -126,10 +114,7 @@ export async function sendVerificationEmail(
  * @param options User and reset URL (must be single-use token with short expiration)
  */
 export async function sendPasswordReset(
-  env: Pick<
-    Env,
-    "RESEND_API_KEY" | "RESEND_EMAIL_FROM" | "APP_NAME" | "APP_ORIGIN"
-  >,
+  env: TemplateEnv,
   options: {
     user: { email: string; name?: string };
     url: string;
@@ -160,14 +145,7 @@ export async function sendPasswordReset(
  * @param options Email, OTP code (must be rate-limited, time-bound, single-use), and type
  */
 export async function sendOTP(
-  env: Pick<
-    Env,
-    | "ENVIRONMENT"
-    | "RESEND_API_KEY"
-    | "RESEND_EMAIL_FROM"
-    | "APP_NAME"
-    | "APP_ORIGIN"
-  >,
+  env: TemplateEnv & Pick<Env, "ENVIRONMENT">,
   options: {
     email: string;
     otp: string;

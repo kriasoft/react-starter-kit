@@ -2,11 +2,9 @@ import type { AppRouter } from "@repo/api";
 import {
   createTRPCClient,
   httpBatchLink,
-  type TRPCLink,
   loggerLink,
+  type TRPCLink,
 } from "@trpc/client";
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import { queryClient } from "./query";
 
 // Build links array conditionally based on environment
 const links: TRPCLink<AppRouter>[] = [];
@@ -25,7 +23,9 @@ if (import.meta.env.DEV) {
 // Add HTTP batch link for actual requests
 links.push(
   httpBatchLink({
-    url: `${import.meta.env.VITE_API_URL || "/api"}/trpc`,
+    // Always same-origin: the vite dev server proxies /api to API_ORIGIN, and
+    // in production the web worker forwards it over a service binding.
+    url: "/api/trpc",
     // Custom headers for request tracking
     headers() {
       return {
@@ -42,9 +42,6 @@ links.push(
   }),
 );
 
+// Query modules in `lib/queries/` wrap this client in `queryOptions()`
+// factories, so cache keys and freshness rules live in one place per concern.
 export const trpcClient = createTRPCClient<AppRouter>({ links });
-
-export const api = createTRPCOptionsProxy<AppRouter>({
-  client: trpcClient,
-  queryClient,
-});

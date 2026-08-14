@@ -2,6 +2,12 @@
 
 This recipe adds a new tRPC procedure with input validation and wires it up from the API to the frontend.
 
+::: tip Prerequisite
+
+The example continues the `project` table from [Add a Database Table](./new-table.md) – complete its steps 1–3 first, or the schema references below will not compile.
+
+:::
+
 ## 1. Create the router file
 
 Add a new router in `apps/api/routers/`:
@@ -22,6 +28,12 @@ export const projectRouter = router({
         message: "Select an organization first",
       });
     }
+
+    const membership = await ctx.db.query.member.findFirst({
+      where: (m, { and, eq }) =>
+        and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+    });
+    if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
 
     const projects = await ctx.db.query.project.findMany({
       where: (p, { eq }) => eq(p.organizationId, organizationId),
@@ -45,6 +57,12 @@ export const projectRouter = router({
           message: "Select an organization first",
         });
       }
+
+      const membership = await ctx.db.query.member.findFirst({
+        where: (m, { and, eq }) =>
+          and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+      });
+      if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
 
       const [project] = await ctx.db
         .insert(schema.project)
@@ -70,7 +88,6 @@ import { projectRouter } from "../routers/project.js";
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
-  user: userRouter,
   project: projectRouter, // [!code ++]
 });
 ```
@@ -85,20 +102,35 @@ Create a query options helper in `apps/app/lib/queries/`:
 // apps/app/lib/queries/project.ts
 import {
   queryOptions,
+  useMutation,
   useQuery,
-  useSuspenseQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { trpcClient } from "../trpc";
 
+// Stable prefix so every project query can be invalidated at once.
+export const projectQueryKey = ["project"] as const;
+
 export function projectListOptions() {
   return queryOptions({
-    queryKey: ["projects"],
+    queryKey: [...projectQueryKey, "list"] as const,
     queryFn: () => trpcClient.project.list.query(),
   });
 }
 
 export function useProjectList() {
   return useQuery(projectListOptions());
+}
+
+export function useCreateProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: { name: string; description?: string }) =>
+      trpcClient.project.create.mutate(input),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: projectQueryKey }),
+  });
 }
 ```
 
@@ -108,13 +140,14 @@ Use in a component:
 import { useProjectList } from "@/lib/queries/project";
 
 function ProjectList() {
-  const { data, isLoading } = useProjectList();
+  const { data, isPending, error } = useProjectList();
 
-  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Could not load projects.</p>;
+  if (isPending) return <p>Loading...</p>;
 
   return (
     <ul>
-      {data?.projects.map((p) => (
+      {data.projects.map((p) => (
         <li key={p.id}>{p.name}</li>
       ))}
     </ul>
@@ -124,22 +157,22 @@ function ProjectList() {
 
 ## 4. Call a mutation
 
+The module owns the invalidation, so the component only picks a hook:
+
 ```tsx
-import { trpcClient } from "@/lib/trpc";
-import { useQueryClient } from "@tanstack/react-query";
+import { useCreateProject } from "@/lib/queries/project";
 
 function CreateProjectButton() {
-  const queryClient = useQueryClient();
+  const createProject = useCreateProject();
 
-  async function handleCreate() {
-    await trpcClient.project.create.mutate({
-      name: "New Project",
-    });
-    // Invalidate the list so it refetches
-    await queryClient.invalidateQueries({ queryKey: ["projects"] });
-  }
-
-  return <button onClick={handleCreate}>Create Project</button>;
+  return (
+    <button
+      onClick={() => createProject.mutate({ name: "New Project" })}
+      disabled={createProject.isPending}
+    >
+      {createProject.isPending ? "Creating..." : "Create Project"}
+    </button>
+  );
 }
 ```
 

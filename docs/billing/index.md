@@ -49,16 +49,23 @@ Mutations (upgrade, portal) go through the auth client because the plugin handle
 
 The settings page reads `session.activeOrganizationId`. With an active organization it passes that ID and `customerType: "organization"` to Stripe mutations; otherwise the plugin defaults to the current user. The tRPC read derives the same reference from the session. One active subscription is allowed per reference ID.
 
-| Context             | `referenceId`          | Who can manage |
-| ------------------- | ---------------------- | -------------- |
-| Organization active | `activeOrganizationId` | Owner or admin |
-| No organization     | `user.id`              | The user       |
+| Context                | `referenceId`          | Who can manage |
+| ---------------------- | ---------------------- | -------------- |
+| Organization active    | `activeOrganizationId` | Owner or admin |
+| No active organization | `user.id`              | The user       |
 
-The plugin's `authorizeReference` callback verifies every explicit organization reference against current owner/admin membership. The billing query key includes `activeOrgId`, so switching organizations refetches automatically.
+Authorization is enforced twice, by two different owners:
+
+- **Stripe mutations** – the plugin's `authorizeReference` callback verifies every explicit organization reference against current owner/admin membership.
+- **The tRPC read** – `billing.subscription` is a procedure this project owns, so `authorizeReference` never runs for it. It verifies membership itself before reading the subscription and throws `FORBIDDEN` otherwise. Without that check a session outliving a membership removal would keep reporting the old organization's plan.
+
+That same membership lookup returns the caller's role, which the response carries as `canManage`. Every member sees the plan; only an owner or admin sees the upgrade and portal buttons, because those are exactly the callers `authorizeReference` would accept.
+
+The billing query key includes `activeOrgId`, so switching organizations refetches automatically.
 
 ## Plans
 
-Three tiers with enforced member limits:
+Three tiers. The member counts are configuration – the API returns them as `limits` alongside the subscription, and nothing enforces them. Check the limit wherever you add a member:
 
 | Plan    | Members | Trial   | Price ID env var          |
 | ------- | ------- | ------- | ------------------------- |
@@ -85,7 +92,7 @@ Set in `.env.local` for development, Cloudflare secrets for staging/production. 
 | Layer | Files |
 | --- | --- |
 | Schema | `db/schema/subscription.ts`, `stripeCustomerId` on user + organization tables |
-| Server | `apps/api/lib/plans.ts`, `apps/api/lib/stripe.ts`, stripe plugin in `apps/api/lib/auth.ts` |
+| Server | `apps/api/lib/plans.ts`, stripe plugin in `apps/api/lib/auth.ts` |
 | Router | `apps/api/routers/billing.ts` |
 | Client | `stripeClient` in `apps/app/lib/auth.ts`, `apps/app/lib/queries/billing.ts` |
 | UI | Billing card in `apps/app/routes/(app)/settings.tsx` |

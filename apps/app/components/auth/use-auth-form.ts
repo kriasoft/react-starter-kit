@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import type { SubmitEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 
-export type AuthStep = "method" | "email" | "otp";
+type AuthStep = "method" | "email" | "otp";
 
 // Minimal state machine for passwordless OTP flow. Intentionally shallow:
 // - Errors are orthogonal to steps (can occur at any step)
@@ -20,19 +20,11 @@ interface UseAuthFormOptions {
    * cache invalidation and navigation. Awaited before form state resets.
    */
   onSuccess: () => Promise<void>;
-  isExternallyLoading?: boolean;
-  /**
-   * UI mode affecting copy, ToS display, and available methods.
-   * Both modes use the same passwordless OTP flow that auto-creates accounts.
-   */
+  /** Copy and passkey availability. Both modes run the same OTP flow. */
   mode?: "login" | "signup";
 }
 
-export function useAuthForm({
-  onSuccess,
-  isExternallyLoading,
-  mode = "login",
-}: UseAuthFormOptions) {
+export function useAuthForm({ onSuccess, mode = "login" }: UseAuthFormOptions) {
   const [step, setStep] = useState<AuthStep>("method");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -40,9 +32,8 @@ export function useAuthForm({
   const [pendingOps, setPendingOps] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  // Guards against concurrent auth completion (e.g., passkey conditional UI + manual click).
-  // Conditional passkey autofill intentionally doesn't block UI - it's passive/background.
-  // Reset when returning to method step to allow retry after navigation back.
+  // Post-auth work runs once per form. Disabling is state-backed and therefore
+  // not synchronous, so two completions can still land before React rerenders.
   const hasSucceededRef = useRef(false);
   // Ref provides current step to memoized transitionTo callback (avoids stale closure)
   const stepRef = useRef(step);
@@ -54,7 +45,7 @@ export function useAuthForm({
   }, []);
 
   // Unified busy state: disables navigation and other auth methods while any flow is active
-  const isDisabled = isLoading || pendingOps > 0 || !!isExternallyLoading;
+  const isDisabled = isLoading || pendingOps > 0;
 
   const onAuthSuccess = async () => {
     if (hasSucceededRef.current) return;
@@ -130,7 +121,6 @@ export function useAuthForm({
     // State
     step,
     email,
-    isLoading,
     isDisabled,
     error,
     mode,

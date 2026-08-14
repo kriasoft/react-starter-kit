@@ -7,7 +7,7 @@ Use this checklist when changing authentication, authorization, data access, or 
 - The browser uses one public origin. The web worker forwards API requests over a service binding, so the default deployment needs no CORS policy.
 - Better Auth validates its own requests against `APP_ORIGIN`; sessions use HTTP-only cookies.
 - `protectedProcedure` rejects requests without both a session and user.
-- Better Auth, authorization, billing, and read-after-write paths use the uncached database binding. Cached reads are opt-in and may be 75 seconds old with the default Hyperdrive settings.
+- Better Auth, authorization, billing, and read-after-write paths use the uncached database binding. Cached reads are opt-in and may be as old as the Terraform-configured Hyperdrive window.
 - API responses pass through Hono's `secureHeaders()` middleware. Static web assets have a CSP and other headers in `apps/web/public/_headers`.
 - Wrangler requires `BETTER_AUTH_SECRET` and `RESEND_API_KEY` before a deployed API version is accepted. Optional integrations validate complete credential sets at their feature boundary.
 - CI runs formatting, linting, type checking, tests, builds, and Terraform validation. Application deployment remains disabled in the starter kit until credentials are configured.
@@ -48,6 +48,7 @@ The auth-hint cookie is routing metadata, not authentication. A protected route 
 - [ ] Set Google credentials together, Stripe's four required values together, and leave unused optional integrations unset.
 - [ ] Confirm `APP_ORIGIN`, Google callback URLs, Stripe webhook URLs, and service-binding targets all use the intended environment.
 - [ ] Apply reviewed migrations with `db:migrate:staging` or `db:migrate:production`; do not use `db:push` outside local development.
+- [ ] Publish the legal pages your product needs. `BaseTemplate.tsx` already links `/privacy` and `/unsubscribe` from every email footer; neither exists in the starter. The auth form ships no terms notice for the same reason – add one once the documents are real.
 
 ### Edge controls
 

@@ -1,5 +1,6 @@
 import { Button } from "@repo/ui";
-import { Menu, Settings, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { SIDEBAR_ID } from "./constants";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -14,6 +15,9 @@ export function Header({ isSidebarOpen, onMenuToggle }: HeaderProps) {
         size="icon"
         onClick={onMenuToggle}
         className="shrink-0"
+        aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+        aria-expanded={isSidebarOpen}
+        aria-controls={SIDEBAR_ID}
       >
         {isSidebarOpen ? (
           <X className="h-5 w-5" />
@@ -23,13 +27,9 @@ export function Header({ isSidebarOpen, onMenuToggle }: HeaderProps) {
       </Button>
 
       <div className="flex-1 flex items-center gap-4">
-        <h1 className="text-lg font-semibold">Application</h1>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon">
-          <Settings className="h-5 w-5" />
-        </Button>
+        <h1 className="text-lg font-semibold">
+          {import.meta.env.VITE_APP_NAME}
+        </h1>
       </div>
     </header>
   );

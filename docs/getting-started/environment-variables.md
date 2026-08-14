@@ -48,7 +48,7 @@ For local development, Wrangler reads Hyperdrive connection strings from the `CL
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `APP_NAME` | No | Display name in emails and passkey prompts; defaults to `Example` |
+| `APP_NAME` | Yes | Display name in emails, passkey prompts, and the app header |
 | `APP_ORIGIN` | Yes | Full origin URL (e.g., `http://localhost:5173`) |
 | `API_ORIGIN` | Dev only | Vite proxy target (e.g., `http://localhost:8787`) |
 | `ENVIRONMENT` | Yes | `development`, `staging`, or `production` |
@@ -74,12 +74,6 @@ Use an **unpooled** connection string for all three – the Neon host without `-
 Google sign-in is optional – email OTP and passkeys work without it. Set both variables or neither; supplying one is a configuration error rather than a silent half-enabled provider.
 
 See [Authentication](/auth/) for provider setup details.
-
-### AI
-
-| Variable | Required | Description |
-| --- | --- | --- |
-| `OPENAI_API_KEY` | No | [OpenAI](https://platform.openai.com/) API key (AI SDK) – AI features are unavailable without it |
 
 ### Email
 

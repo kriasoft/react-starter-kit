@@ -33,7 +33,7 @@ type CloudflareEnv = {
  * Fields whose precedence is handled separately from the generic local-env
  * overlay below.
  */
-const SPECIAL_ENV_KEYS = new Set(["ENVIRONMENT", "APP_NAME", "APP_ORIGIN"]);
+const SPECIAL_ENV_KEYS = new Set(["ENVIRONMENT", "APP_ORIGIN"]);
 
 const localEnvKeys = Object.keys(envSchema.shape).filter(
   (key) => !SPECIAL_ENV_KEYS.has(key),
@@ -74,7 +74,6 @@ app.use(async (c, next) => {
         process.env[key] || cf.env[key as keyof typeof cf.env],
       ]),
     ),
-    APP_NAME: process.env.APP_NAME || cf.env.APP_NAME || "Example",
     APP_ORIGIN:
       c.req.header("x-forwarded-origin") ||
       process.env.APP_ORIGIN ||

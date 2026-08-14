@@ -6,7 +6,9 @@ import { URL, fileURLToPath } from "node:url";
 import { loadEnv } from "vite";
 import { defineProject } from "vitest/config";
 
-const publicEnvVars = ["APP_NAME", "APP_ORIGIN"];
+// Inlined into the client bundle, so nothing secret belongs here. Each entry is
+// a hard build requirement – add one only once something reads it.
+const publicEnvVars = ["APP_NAME"];
 
 /**
  * Vite configuration.

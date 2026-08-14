@@ -83,7 +83,7 @@ Available sender functions:
 
 ::: warning
 
-`sendEmail()` throws if you provide HTML without a plain text fallback. Always render both versions using `renderEmailToHtml()` and `renderEmailToText()`.
+`EmailOptions.text` is required and `html` is optional, so the compiler rejects an HTML-only send. Render both with `renderEmailToHtml()` and `renderEmailToText()`.
 
 :::
 
@@ -157,7 +157,7 @@ export { Invitation } from "./templates/invitation.js";
 | --- | --- | --- |
 | `RESEND_API_KEY` | Yes | Resend API key (`re_...`) |
 | `RESEND_EMAIL_FROM` | Yes | Sender address (e.g., `noreply@example.com`) |
-| `APP_NAME` | No | Used in email subject lines and branding (defaults to `"Example"`) |
+| `APP_NAME` | Yes | Used in email subject lines and branding |
 | `APP_ORIGIN` | Yes | Used for links in email footer |
 
 Set both in `.env.local` for development. In deployed environments, store `RESEND_API_KEY` as a Worker secret and `RESEND_EMAIL_FROM` as a non-secret Wrangler variable. See [Environment Variables](/getting-started/environment-variables).

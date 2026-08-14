@@ -101,7 +101,6 @@ function testCtx({
       },
     } as unknown as TRPCContext["db"],
     dbCached: {} as TRPCContext["dbCached"],
-    cache: new Map(),
     env: (billingEnabled
       ? {
           STRIPE_SECRET_KEY: "sk_test",
@@ -174,7 +173,7 @@ Test TanStack Query option factories by inspecting query keys. Use a real `Query
 // apps/app/lib/queries/session.test.ts
 import { QueryClient } from "@tanstack/react-query";
 import { describe, expect, it } from "vitest";
-import { getCachedSession, isAuthenticated, sessionQueryKey } from "./session";
+import { getCachedSession, sessionQueryKey } from "./session";
 
 function createQueryClient() {
   return new QueryClient({
@@ -182,18 +181,16 @@ function createQueryClient() {
   });
 }
 
-describe("isAuthenticated", () => {
-  it("returns true when both user and session exist", () => {
+describe("getCachedSession", () => {
+  it("returns cached session data", () => {
     const queryClient = createQueryClient();
-    queryClient.setQueryData(sessionQueryKey, {
-      user: { id: "user-1", email: "test@example.com" },
-      session: { id: "session-1", expiresAt: new Date() },
-    });
-    expect(isAuthenticated(queryClient)).toBe(true);
+    const sessionData = { user: { id: "user-1" }, session: { id: "s-1" } };
+    queryClient.setQueryData(sessionQueryKey, sessionData);
+    expect(getCachedSession(queryClient)).toEqual(sessionData);
   });
 
-  it("returns false when no session data cached", () => {
-    expect(isAuthenticated(createQueryClient())).toBe(false);
+  it("returns undefined when nothing is cached", () => {
+    expect(getCachedSession(createQueryClient())).toBeUndefined();
   });
 });
 ```
@@ -273,7 +270,17 @@ vi.mock(import("./some-module.js"), async (importOriginal) => {
 
 ::: warning
 
-Module mocks are hoisted – they run before imports regardless of where you write them. See [Vitest mocking docs](https://vitest.dev/guide/mocking) for details.
+Module mocks are hoisted – they run before imports regardless of where you write them. A factory that closes over a normal `const` throws `Cannot access '...' before initialization`. Declare the shared mock with `vi.hoisted()` so it is lifted too:
+
+```ts
+const { signOut } = vi.hoisted(() => ({ signOut: vi.fn() }));
+
+vi.mock(import("../auth"), () => ({
+  auth: { signOut } as unknown as AuthModule["auth"],
+}));
+```
+
+See [Vitest mocking docs](https://vitest.dev/guide/mocking) for details.
 
 :::
 
@@ -289,7 +296,7 @@ apps/
         ├── errors.test.ts           # utility function tests
         └── queries/
             ├── billing.test.ts      # query option tests
-            └── session.test.ts      # cache helper tests
+            └── session.test.ts      # guards, cache helpers, sign-out mutation
 ```
 
 Place test files next to the source they test. No separate `__tests__` directories.

@@ -7,7 +7,7 @@
  * Tables defined:
  * - `user`: Core user accounts with profile information
  * - `session`: Active user sessions for authentication state
- * - `identity`: OAuth provider accounts (renamed from Better Auth's `account`)
+ * - `identity`: OAuth and password credentials (renamed from Better Auth's `account`)
  * - `verification`: Tokens for email verification and password resets
  *
  * @see https://www.better-auth.com/docs/concepts/database
@@ -87,7 +87,7 @@ export type Session = typeof session.$inferSelect;
 export type NewSession = typeof session.$inferInsert;
 
 /**
- * Stores OAuth provider account information.
+ * Authentication identities: OAuth provider accounts and password credentials.
  * Matches to the `account` table in Better Auth.
  */
 export const identity = pgTable(

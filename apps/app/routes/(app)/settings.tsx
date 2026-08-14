@@ -1,5 +1,8 @@
-import { auth } from "@/lib/auth";
-import { useBillingQuery } from "@/lib/queries/billing";
+import {
+  useBillingPortal,
+  useBillingQuery,
+  useUpgradeSubscription,
+} from "@/lib/queries/billing";
 import { useSessionQuery } from "@/lib/queries/session";
 import { type ThemePreference, useTheme } from "@/lib/theme";
 import {
@@ -13,7 +16,6 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@repo/ui";
-import { useId } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   CreditCard,
@@ -23,6 +25,7 @@ import {
   Palette,
   Sun,
 } from "lucide-react";
+import { useId } from "react";
 
 export const Route = createFileRoute("/(app)/settings")({
   component: Settings,
@@ -33,7 +36,7 @@ function Settings() {
     <div className="p-6 space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Settings</h2>
-        <p className="text-muted-foreground">Manage billing and appearance.</p>
+        <p className="text-muted-foreground">Manage application settings.</p>
       </div>
 
       <div className="grid gap-6">
@@ -45,45 +48,44 @@ function Settings() {
   );
 }
 
+/** Billing chrome without a claim about the subscription. */
+function BillingNotice({ children }: { children: string }) {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <CreditCard className="h-5 w-5" />
+          <CardTitle>Billing</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{children}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
 function BillingCard() {
   const { data: session } = useSessionQuery();
   const activeOrgId = session?.session?.activeOrganizationId;
-  const { data: billing, isLoading } = useBillingQuery(activeOrgId);
+  const { data: billing, isPending, error } = useBillingQuery(activeOrgId);
+  const upgrade = useUpgradeSubscription(activeOrgId);
+  const portal = useBillingPortal(activeOrgId);
 
-  if (!isLoading && billing && !billing.enabled) return null;
-
-  const returnUrl = window.location.href;
-  const billingReference = activeOrgId
-    ? ({ referenceId: activeOrgId, customerType: "organization" } as const)
-    : {};
-
-  async function handleUpgrade(plan: "starter" | "pro") {
-    try {
-      await auth.subscription.upgrade({
-        ...billingReference,
-        plan,
-        successUrl: returnUrl,
-        cancelUrl: returnUrl,
-      });
-    } catch (error) {
-      console.error("Failed to start upgrade:", error);
-    }
-  }
-
-  async function handleManageBilling() {
-    try {
-      await auth.subscription.billingPortal({
-        ...billingReference,
-        returnUrl,
-      });
-    } catch (error) {
-      console.error("Failed to open billing portal:", error);
-    }
-  }
+  // An unknown subscription must not fall through to the free-plan branch
+  // below: that is how a paying customer gets told they have no plan.
+  if (error) return <BillingNotice>Could not load billing.</BillingNotice>;
+  if (isPending) return <BillingNotice>Loading...</BillingNotice>;
+  if (!billing.enabled) return null;
 
   const hasSubscription =
-    billing?.status === "active" || billing?.status === "trialing";
+    billing.status === "active" || billing.status === "trialing";
   const isCanceling = hasSubscription && billing.cancelAtPeriodEnd;
+
+  // Success navigates to Stripe, so these stay pending until the page unloads
+  // and only ever settle by failing.
+  const redirecting = upgrade.isPending || portal.isPending;
+  const redirectError = upgrade.error ?? portal.error;
 
   return (
     <Card>
@@ -93,18 +95,17 @@ function BillingCard() {
           <CardTitle>Billing</CardTitle>
         </div>
         <CardDescription>
-          Manage your subscription and billing details.
+          {billing.canManage
+            ? "Manage your subscription and billing details."
+            : "View your organization's subscription."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">Loading...</p>
-        ) : hasSubscription ? (
+        {hasSubscription ? (
           <>
             <div className="space-y-1">
               <p className="text-sm font-medium">
-                {billing.plan.charAt(0).toUpperCase() + billing.plan.slice(1)}{" "}
-                plan
+                <span className="capitalize">{billing.plan}</span> plan
                 <span className="ml-2 text-xs text-muted-foreground">
                   ({billing.status})
                 </span>
@@ -117,32 +118,60 @@ function BillingCard() {
               )}
               {isCanceling && (
                 <p className="text-sm text-amber-600">
-                  Your subscription will not renew. You can restore it from the
-                  billing portal.
+                  Your subscription will not renew.{" "}
+                  {billing.canManage
+                    ? "You can restore it from the billing portal."
+                    : "An owner or admin can restore it from the billing portal."}
                 </p>
               )}
             </div>
-            <Button variant="outline" onClick={handleManageBilling}>
-              Manage Billing
-            </Button>
+            {billing.canManage && (
+              <Button
+                variant="outline"
+                onClick={() => portal.mutate()}
+                disabled={redirecting}
+              >
+                Manage Billing
+              </Button>
+            )}
           </>
         ) : (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
               You are on the Free plan.
             </p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => handleUpgrade("starter")}
-              >
-                Upgrade to Starter
-              </Button>
-              <Button onClick={() => handleUpgrade("pro")}>
-                Upgrade to Pro
-              </Button>
-            </div>
+            {billing.canManage && (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => upgrade.mutate("starter")}
+                  disabled={redirecting}
+                >
+                  Upgrade to Starter
+                </Button>
+                <Button
+                  onClick={() => upgrade.mutate("pro")}
+                  disabled={redirecting}
+                >
+                  Upgrade to Pro
+                </Button>
+              </div>
+            )}
           </div>
+        )}
+
+        {/* Mirrors `authorizeReference` in the Stripe plugin config. */}
+        {!billing.canManage && (
+          <p className="text-sm text-muted-foreground">
+            Only organization owners and admins can manage billing.
+          </p>
+        )}
+
+        {/* The failure arrives after the click, so it needs announcing. */}
+        {redirectError && (
+          <p role="alert" className="text-sm text-destructive">
+            {redirectError.message}
+          </p>
         )}
       </CardContent>
     </Card>

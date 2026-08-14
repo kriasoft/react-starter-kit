@@ -10,12 +10,12 @@ A full-stack monorepo template for building SaaS applications with React 19, tRP
 
 ## Highlights
 
-- **Type-safe full stack** — TypeScript, tRPC, and Drizzle ORM create a single type contract from database to UI
-- **Edge-native** — Three Cloudflare Workers (web, app, api) connected via service bindings
-- **Auth + billing included** — Better Auth with email OTP, passkey, Google OAuth, organizations, and Stripe subscriptions
-- **Modern React** — React 19, TanStack Router (file-based), TanStack Query, Jotai, Tailwind CSS v4, shadcn/ui
-- **Database ready** — Drizzle ORM with Neon PostgreSQL, migrations, and seed data
-- **Fast DX** — Bun runtime, Vite, Vitest, ESLint, Prettier, and pre-configured VS Code settings
+- **Type-safe full stack** – TypeScript, tRPC, and Drizzle ORM create a single type contract from database to UI
+- **Edge-native** – Three Cloudflare Workers (web, app, api) connected via service bindings
+- **Auth + billing included** – Better Auth with email OTP, passkey, Google OAuth, organizations, and Stripe subscriptions
+- **Modern React** – React 19, TanStack Router (file-based), TanStack Query, Jotai, Tailwind CSS v4, shadcn/ui
+- **Database ready** – Drizzle ORM with Neon PostgreSQL, migrations, and seed data
+- **Fast DX** – Bun toolchain, Vite, Vitest, ESLint, Prettier, and pre-configured VS Code settings
 
 React Starter Kit is proudly supported by these amazing sponsors:
 
@@ -25,12 +25,12 @@ React Starter Kit is proudly supported by these amazing sponsors:
 
 | Layer | Technologies |
 | --- | --- |
-| **Runtime** | [Bun](https://bun.sh/), [Cloudflare Workers](https://workers.cloudflare.com/), [TypeScript](https://www.typescriptlang.org/) 6.0 |
+| **Runtime** | [Cloudflare Workers](https://workers.cloudflare.com/) |
 | **Frontend** | [React 19](https://react.dev/), [TanStack Router](https://tanstack.com/router), [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Jotai](https://jotai.org/) |
 | **Marketing** | [Astro](https://astro.build/) |
 | **Backend** | [Hono](https://hono.dev/), [tRPC](https://trpc.io/), [Better Auth](https://www.better-auth.com/), [Stripe](https://stripe.com/) |
 | **Database** | [Drizzle ORM](https://orm.drizzle.team/), [Neon PostgreSQL](https://get.neon.com/HD157BR) |
-| **Tooling** | [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/) |
+| **Toolchain** | [Bun](https://bun.sh/), [TypeScript](https://www.typescriptlang.org/) 6.0, [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/) |
 
 ## Monorepo Architecture
 
@@ -120,6 +120,10 @@ bun db:studio            # Open database GUI
 | Marketing site | <http://localhost:4321> |
 | API server     | <http://localhost:8787> |
 
+## Keep Your Project Updated
+
+When you want to bring in newer React Starter Kit changes, ask your coding agent to run the `merge-seed` skill (`/merge-seed` in Claude Code or `$merge-seed` in Codex). It merges upstream changes while preserving your project's identity and configuration. Start with a clean working tree; the [Quick Start guide](https://reactstarter.com/getting-started/quick-start#keep-template-updates) explains the workflow and its safety boundary.
+
 ## Production Deployment
 
 The short version. The [deployment guide](https://reactstarter.com/deployment/) covers each step in full.
@@ -139,18 +143,15 @@ Paste the two IDs it prints into the `hyperdrive` block of `apps/api/wrangler.js
 Configure your production secrets in Cloudflare Workers:
 
 ```bash
-# Required — the API refuses to deploy without these
+# Required – the API refuses to deploy without these
 bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc --env=""
 
-# Google sign-in (optional — email OTP and passkeys work without it)
+# Google sign-in (optional – email OTP and passkeys work without it)
 bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc --env=""
 
-# AI features (optional)
-bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc --env=""
-
-# Stripe billing (optional — set all four to enable, or none; annual is extra)
+# Stripe billing (optional – set all four to enable, or none; annual is extra)
 bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc --env=""
@@ -192,7 +193,7 @@ bun web:deploy --env=""
 
 **[Documentation](https://reactstarter.com/)** covers auth, database, billing, deployment, and more.
 
-Our AI assistant is trained on this codebase — ask it anything on [ChatGPT](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant) or [Gemini](https://gemini.google.com/gem/1IXFElQ2UvvZY86iL6uZLeoC-r8mp-OB-?usp=sharing). Try these questions:
+Our AI assistant is trained on this codebase – ask it anything on [ChatGPT](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant) or [Gemini](https://gemini.google.com/gem/1IXFElQ2UvvZY86iL6uZLeoC-r8mp-OB-?usp=sharing). Try these questions:
 
 - [How do I add a new tRPC endpoint?](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant?prompt=How%20do%20I%20add%20a%20new%20tRPC%20endpoint%3F)
 - [Help me create a database table](https://chatgpt.com/g/g-69564f0a23088191846aa4072bd9397d-react-starter-kit-assistant?prompt=Help%20me%20create%20a%20database%20table)

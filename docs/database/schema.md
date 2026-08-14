@@ -209,7 +209,7 @@ Multi-tenancy via Better Auth's [organization plugin](https://www.better-auth.co
 Key constraints:
 
 - `member(userId, organizationId)` is unique – one membership per user per org
-- `invitation(organizationId, email)` is unique – one pending invite per email per org
+- `invitation(organizationId, email)` is unique – one lifetime invitation row per email per org; remove this starter constraint before supporting re-invites
 - `session.activeOrganizationId` has an index but no FK constraint (Better Auth design)
 - `organization.metadata` is `text`, not JSONB – Better Auth serializes it as a string
 
@@ -228,7 +228,7 @@ The `referenceId` column is polymorphic: it points to `user.id` for personal bil
 Several tables include columns beyond Better Auth's defaults:
 
 - **passkey:** `lastUsedAt` (security audits), `deviceName` (user-friendly label like "MacBook Pro"), `platform` ("platform" or "cross-platform")
-- **invitation:** `acceptedAt` / `rejectedAt` lifecycle timestamps
+- **invitation:** optional `acceptedAt` / `rejectedAt` fields for application hooks; Better Auth does not populate them
 
 ## Adding a New Table
 

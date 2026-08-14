@@ -1,46 +1,24 @@
+import { useSocialProviders } from "@/lib/queries/config";
 import { Button, Input, cn } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail } from "lucide-react";
 import type { ComponentProps, SubmitEvent } from "react";
-import { useSocialProviders } from "@/lib/queries/config";
 import { GoogleLogin } from "./google-login";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";
 import { useAuthForm } from "./use-auth-form";
 
-const APP_NAME = import.meta.env.VITE_APP_NAME || "your account";
-
-function SignupTerms() {
-  return (
-    <p className="text-xs text-muted-foreground text-center text-balance">
-      By signing up, you agree to our{" "}
-      <a
-        href="/terms"
-        className="underline underline-offset-4 hover:text-primary"
-      >
-        Terms of Service
-      </a>{" "}
-      and{" "}
-      <a
-        href="/privacy"
-        className="underline underline-offset-4 hover:text-primary"
-      >
-        Privacy Policy
-      </a>
-      .
-    </p>
-  );
-}
+const APP_NAME = import.meta.env.VITE_APP_NAME;
 
 interface AuthFormProps extends ComponentProps<"div"> {
   /**
-   * UI mode affecting copy, ToS display, and available methods.
-   * Both modes use the same passwordless OTP flow that auto-creates accounts.
+   * Copy and passkey availability – passkeys need an existing account. Both
+   * modes run the same OTP flow, which creates the account when the address
+   * is new.
    */
   mode?: "login" | "signup";
   /** Called after successful auth. Awaited before UI progresses. Caller handles cache invalidation and navigation. */
   onSuccess: () => Promise<void>;
-  isLoading?: boolean;
   /** Post-auth redirect destination. Must be a safe relative path (validated by caller). */
   returnTo?: string;
 }
@@ -48,7 +26,6 @@ interface AuthFormProps extends ComponentProps<"div"> {
 export function AuthForm({
   className,
   onSuccess,
-  isLoading,
   mode = "login",
   returnTo,
   ...props
@@ -67,11 +44,7 @@ export function AuthForm({
     resetToEmail,
     setChildBusy,
     mode: formMode,
-  } = useAuthForm({
-    onSuccess,
-    isExternallyLoading: isLoading,
-    mode,
-  });
+  } = useAuthForm({ onSuccess, mode });
 
   // Clear error when user changes email
   const handleEmailChange = (value: string) => {
@@ -89,11 +62,13 @@ export function AuthForm({
 
   return (
     <div className={cn("flex flex-col gap-6 w-full", className)} {...props}>
-      {/* Logo */}
+      {/* A document navigation, not a <Link>: "/" inside the SPA is the
+          protected dashboard, and only a request that reaches the edge router
+          can be answered with the marketing home page. */}
       <div className="flex justify-center">
-        <Link to="/" aria-label="Go to homepage">
+        <a href="/" aria-label="Go to homepage">
           <img src="/logo512.png" alt="" className="h-10 w-10" />
-        </Link>
+        </a>
       </div>
 
       {/* Error message - role="alert" ensures screen readers announce it */}
@@ -207,8 +182,6 @@ function MethodSelection({
         )}
       </div>
 
-      {isSignup && <SignupTerms />}
-
       {/* Account switch link */}
       <p className="text-sm text-muted-foreground text-center">
         {isSignup ? (
@@ -281,8 +254,6 @@ function EmailInput({
           Continue with email
         </Button>
       </form>
-
-      {isSignup && <SignupTerms />}
 
       {/* Back link */}
       <button

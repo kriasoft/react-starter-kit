@@ -106,13 +106,24 @@ await seedProjects(db);
 
 ```ts
 // apps/api/routers/project.ts
+import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 export const projectRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
+    const organizationId = ctx.session.activeOrganizationId;
+    if (!organizationId) {
+      throw new TRPCError({ code: "PRECONDITION_FAILED" });
+    }
+
+    const membership = await ctx.db.query.member.findFirst({
+      where: (m, { and, eq }) =>
+        and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+    });
+    if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
+
     return ctx.db.query.project.findMany({
-      where: (p, { eq }) =>
-        eq(p.organizationId, ctx.session.activeOrganizationId!),
+      where: (p, { eq }) => eq(p.organizationId, organizationId),
       orderBy: (p, { desc }) => desc(p.createdAt),
     });
   }),

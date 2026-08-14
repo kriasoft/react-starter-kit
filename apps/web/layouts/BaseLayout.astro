@@ -7,10 +7,10 @@ export interface Props {
   image?: string;
 }
 
-const { 
-  title = 'React Starter Kit - Modern Full-Stack Web Application', 
+const {
+  title = 'React Starter Kit - Modern Full-Stack Web Application',
   description = 'Modern full-stack web application template optimized for serverless deployment to CDN edge locations. Built with React, TypeScript, and the latest web technologies.',
-  image = '/og-image.png'
+  image = '/logo512.png'
 } = Astro.props;
 ---
 
@@ -21,12 +21,12 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-    
+
     <!-- Primary Meta Tags -->
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site ?? Astro.url)} />
@@ -66,15 +66,15 @@ const {
               </a>
             </nav>
             <div class="flex items-center space-x-2">
-              <a 
-                href="https://github.com/kriasoft/react-starter-kit" 
+              <a
+                href="https://github.com/kriasoft/react-starter-kit"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3"
               >
                 GitHub
               </a>
-              <a 
+              <a
                 href="https://github.com/kriasoft/react-starter-kit"
                 class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-8 px-3"
               >

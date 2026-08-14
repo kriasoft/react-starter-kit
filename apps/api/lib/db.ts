@@ -2,8 +2,7 @@
  * @file Database client using Neon PostgreSQL via Cloudflare Hyperdrive.
  *
  * Two bindings available: HYPERDRIVE_UNCACHED (always fresh, the default) and
- * HYPERDRIVE_CACHED (60s `max_age` plus a 15s `stale_while_revalidate` window
- * by default; deployments can tune both).
+ * HYPERDRIVE_CACHED (served from the cache window Terraform configures).
  */
 
 import { schema } from "@repo/db";

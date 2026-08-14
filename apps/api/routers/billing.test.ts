@@ -1,15 +1,25 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, type Mock } from "vitest";
 import type { TRPCContext } from "../lib/context";
 import { createCallerFactory } from "../lib/trpc";
 import { billingRouter } from "./billing";
 
 const createCaller = createCallerFactory(billingRouter);
 
-// Minimal context mock — only fields the billing procedure accesses.
+/** The membership `where` callback, reduced to what this test drives it with. */
+type MemberWhere = (
+  columns: Record<string, string>,
+  ops: {
+    and: (...parts: string[]) => string;
+    eq: (column: string, value: string) => string;
+  },
+) => string;
+
+// Minimal context mock – only fields the billing procedure accesses.
 function testCtx({
   billingEnabled = true,
   userId = "user-1",
   activeOrgId = undefined as string | undefined,
+  memberRole = "owner" as string | null,
   subscription = undefined as Record<string, unknown> | undefined,
 } = {}) {
   const ctx: TRPCContext = {
@@ -34,13 +44,16 @@ function testCtx({
     },
     db: {
       query: {
-        subscription: {
-          findFirst: vi.fn().mockResolvedValue(subscription),
+        // Drizzle's `findFirst` resolves undefined when nothing matches.
+        member: {
+          findFirst: vi
+            .fn()
+            .mockResolvedValue(memberRole ? { role: memberRole } : undefined),
         },
+        subscription: { findFirst: vi.fn().mockResolvedValue(subscription) },
       },
     } as unknown as TRPCContext["db"],
     dbCached: {} as TRPCContext["dbCached"],
-    cache: new Map(),
     env: (billingEnabled
       ? {
           STRIPE_SECRET_KEY: "sk_test",
@@ -60,6 +73,7 @@ describe("billing.subscription", () => {
 
     expect(result).toEqual({
       enabled: true,
+      canManage: true,
       plan: "free",
       status: null,
       periodEnd: null,
@@ -83,6 +97,7 @@ describe("billing.subscription", () => {
 
     expect(result).toEqual({
       enabled: true,
+      canManage: true,
       plan: "pro",
       status: "active",
       periodEnd,
@@ -98,6 +113,7 @@ describe("billing.subscription", () => {
 
     expect(result).toEqual({
       enabled: false,
+      canManage: false,
       plan: "free",
       status: null,
       periodEnd: null,
@@ -146,5 +162,76 @@ describe("billing.subscription", () => {
         }),
       ).subscription(),
     ).rejects.toThrow('Unknown plan "enterprise"');
+  });
+
+  it("reads the organization's subscription for a current member", async () => {
+    const ctx = testCtx({
+      activeOrgId: "org-1",
+      subscription: { plan: "pro", status: "active" },
+    });
+
+    await expect(createCaller(ctx).subscription()).resolves.toMatchObject({
+      plan: "pro",
+    });
+  });
+
+  // Driving the callback, not just the resolved value: a lookup that dropped
+  // either column would still find *a* membership and authorize the read.
+  it("looks the membership up by both organization and user", async () => {
+    const ctx = testCtx({ activeOrgId: "org-1" });
+    await createCaller(ctx).subscription();
+
+    const findMember = ctx.db.query.member.findFirst as unknown as Mock;
+    const { where } = findMember.mock.calls[0][0] as { where: MemberWhere };
+
+    expect(
+      where(
+        { organizationId: "organizationId", userId: "userId" },
+        {
+          and: (...parts) => parts.join(" AND "),
+          eq: (column, value) => `${column}=${value}`,
+        },
+      ),
+    ).toBe("organizationId=org-1 AND userId=user-1");
+  });
+
+  // A session outlives a membership removal, so the active organization ID on
+  // its own would let an ex-member keep reading that organization's billing.
+  it("refuses a session whose user is no longer a member", async () => {
+    const ctx = testCtx({ activeOrgId: "org-1", memberRole: null });
+
+    await expect(createCaller(ctx).subscription()).rejects.toThrow(
+      "Not a member of the active organization",
+    );
+    expect(ctx.db.query.subscription.findFirst).not.toHaveBeenCalled();
+  });
+
+  it("skips the membership check for personal billing", async () => {
+    const ctx = testCtx({ memberRole: null });
+
+    await expect(createCaller(ctx).subscription()).resolves.toMatchObject({
+      plan: "free",
+    });
+    expect(ctx.db.query.member.findFirst).not.toHaveBeenCalled();
+  });
+
+  // Better Auth rejects a plain member's checkout, so the answer has to reach
+  // the UI before it offers the button.
+  it.each([
+    ["owner", true],
+    ["admin", true],
+    ["member", false],
+  ] as const)("reports canManage %s -> %s", async (role, canManage) => {
+    const result = await createCaller(
+      testCtx({ activeOrgId: "org-1", memberRole: role }),
+    ).subscription();
+
+    expect(result.canManage).toBe(canManage);
+  });
+
+  it("lets a user manage their own personal billing", async () => {
+    const result = await createCaller(testCtx()).subscription();
+
+    expect(result.canManage).toBe(true);
   });
 });

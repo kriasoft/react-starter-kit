@@ -1,34 +1,30 @@
 # State & Data Fetching
 
-Server state is managed with [TanStack Query](https://tanstack.com/query/latest) through a tRPC integration. Client state uses [Jotai](https://jotai.org/) atoms when needed.
+Server state is managed with [TanStack Query](https://tanstack.com/query/latest). Query modules call either the tRPC client or the Better Auth client, depending on which system owns the operation. Client state uses [Jotai](https://jotai.org/) atoms when needed.
 
 ## tRPC Client
 
-The tRPC client in `apps/app/lib/trpc.ts` provides two exports:
+`apps/app/lib/trpc.ts` exports one thing – the tRPC client:
 
 ```tsx
-import { trpcClient } from "@/lib/trpc"; // Raw tRPC client
-import { api } from "@/lib/trpc"; // TanStack Query integration
+import { trpcClient } from "@/lib/trpc";
 ```
 
-- **`trpcClient`** – call procedures directly (useful in query functions, `beforeLoad`, and non-React code)
-- **`api`** – creates `queryOptions` objects for use with TanStack Query hooks
+It sends requests to `/api/trpc` with batched HTTP transport and includes credentials for cookie-based auth. A logger link is added in development.
 
-The client sends requests to `/api/trpc` with batched HTTP transport and includes credentials for cookie-based auth. A logger link is added in development.
+Call it from a query module rather than from a component, so each cache key is written once. That is the pattern the rest of this page follows.
 
-## TanStack Query Defaults
+## QueryClient Defaults
 
-The `QueryClient` in `apps/app/lib/query.ts` is configured with sensible defaults:
+`apps/app/lib/query.ts` sets only what this project decided differently from [TanStack Query's own defaults](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults), so nothing here goes stale when upstream changes its mind.
 
-| Option | Value | Rationale |
+| Option | Value | Why |
 | --- | --- | --- |
-| `staleTime` | 2 min | Prevents redundant API calls during typical sessions |
-| `gcTime` | 5 min | Balances memory with instant data on back-navigation |
-| `retry` | 3 | Exponential backoff: 1s, 2s, 4s (capped at 30s) |
-| `refetchOnWindowFocus` | `true` | Keeps data current after tab switches |
-| `refetchOnReconnect` | `"always"` | Overrides `staleTime` after connectivity loss |
+| `staleTime` | 2 min | Upstream defaults to `0`, which refetches on nearly every mount |
+| `refetchOnReconnect` | `"always"` | Default `true` still honours `staleTime`; after connectivity loss, data age says nothing about correctness |
+| `mutations.retry` | `false` | Matches upstream, stated because it is a safety invariant |
 
-Mutations retry once with a 1s delay.
+Mutations are never retried. A lost response looks exactly like a failed request, so retrying a create can run it twice on the server and still report failure. Opt in per mutation where the operation is idempotent.
 
 ## Session Query
 
@@ -60,70 +56,86 @@ Returns `null` when unauthenticated – not an error. The module also exports he
 | Export | Purpose |
 | --- | --- |
 | `useSessionQuery()` | Basic hook |
-| `useSuspenseSessionQuery()` | Suspense-enabled version |
 | `getCachedSession(queryClient)` | Sync cache read (no network) |
-| `isAuthenticated(queryClient)` | Binary check – requires both `user` and `session` |
-| `signOut(queryClient)` | Clears server session, sets cache to `null`, hard redirects |
+| `isValidSession(session)` | Type guard – requires both `user` and `session` |
+| `useSignOut()` | Mutation – ends the server session, then clears the cache and hard redirects |
 | `revalidateSession(queryClient, router)` | Removes cached query so `beforeLoad` fetches fresh |
 
-## Billing Query
+## Query Modules
 
-The billing query demonstrates multi-tenant key design – including `activeOrgId` in the key causes automatic refetch when the user switches organizations:
+A query module owns the cache key and the freshness rules for one slice of server state. Components consume the module, never `trpcClient` directly. The billing module is the one to copy:
 
 ```tsx
 // apps/app/lib/queries/billing.ts
+export const billingQueryKey = ["billing", "subscription"] as const;
+
 export function billingQueryOptions(activeOrgId?: string | null) {
   return queryOptions({
-    queryKey: ["billing", "subscription", activeOrgId ?? null],
+    queryKey: [...billingQueryKey, activeOrgId ?? null] as const,
     queryFn: () => trpcClient.billing.subscription.query(),
   });
 }
+
+export function useBillingQuery(activeOrgId?: string | null) {
+  return useQuery(billingQueryOptions(activeOrgId));
+}
 ```
 
-Usage in a component:
+`billingQueryKey` is the prefix for bulk invalidation; putting `activeOrgId` in the full key makes switching organizations refetch instead of showing another tenant's data. The same options factory works in a component, a route `beforeLoad`, a prefetch, and a test – which is what keeps the key from drifting.
+
+Not every module wraps tRPC. `apps/app/lib/queries/organization.ts` calls the Better Auth client, because the organization plugin already enforces membership and roles server-side.
+
+## Reading a Query in a Component
+
+Handle `error` and `isPending` before reading `data`, so a failed request never renders as a known answer. Without those guards `BillingCard` (`apps/app/routes/(app)/settings.tsx`) would tell a paying customer they are on the free plan:
 
 ```tsx
 function BillingCard() {
   const { data: session } = useSessionQuery();
   const activeOrgId = session?.session?.activeOrganizationId;
-  const { data: billing, isLoading } = useBillingQuery(activeOrgId);
-  // ...
+  const { data: billing, isPending, error } = useBillingQuery(activeOrgId);
+
+  if (error) return <BillingNotice>Could not load billing.</BillingNotice>;
+  if (isPending) return <BillingNotice>Loading...</BillingNotice>;
+  if (!billing.enabled) return null;
+
+  // `billing` is known from here on
 }
 ```
 
-## Calling Procedures from Components
+Guard on `isPending` rather than `isLoading`. `isLoading` is `isPending && isFetching`, so it reads false while a request is paused offline or skipped with `skipToken` – both cases where `data` is still unknown.
 
-Use the `api` proxy to create query options, then pass them to TanStack Query hooks:
+## Mutations
 
-```tsx
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { api } from "@/lib/trpc";
-
-function ProfileName() {
-  const { data: user } = useSuspenseQuery(api.user.me.queryOptions());
-  return <p>{user.name}</p>;
-}
-```
-
-No working tRPC mutation ships in the starter. After adding a `project.create` procedure, for example, call and invalidate it like this:
+Mutations live in the query module too, next to the queries they invalidate – that is why `useCreateOrganization` sits in `organization.ts` and the Stripe redirects sit in `billing.ts`. No working tRPC mutation ships in the starter; after adding a `project.create` procedure it would look like this:
 
 ```tsx
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { trpcClient } from "@/lib/trpc";
-
-function CreateProjectButton() {
+// apps/app/lib/queries/project.ts
+export function useCreateProject() {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  return useMutation({
     mutationFn: (input: { name: string; description?: string }) =>
       trpcClient.project.create.mutate(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: projectQueryKey }),
   });
+}
+```
+
+The component picks the hook and reads its state:
+
+```tsx
+import { useCreateProject } from "@/lib/queries/project";
+
+function CreateProjectButton() {
+  const createProject = useCreateProject();
 
   return (
-    <button onClick={() => mutation.mutate({ name: "Roadmap" })}>
+    <button
+      onClick={() => createProject.mutate({ name: "Roadmap" })}
+      disabled={createProject.isPending}
+    >
       Create Project
     </button>
   );
@@ -136,7 +148,7 @@ Invalidate by query key prefix to refresh related data after mutations:
 
 ```tsx
 // Invalidate all project queries
-queryClient.invalidateQueries({ queryKey: ["projects"] });
+queryClient.invalidateQueries({ queryKey: projectQueryKey });
 
 // Invalidate all billing queries (any org)
 queryClient.invalidateQueries({ queryKey: ["billing", "subscription"] });
@@ -151,17 +163,21 @@ await router.invalidate();
 
 ## Jotai Store
 
-A global Jotai store is set up in `apps/app/lib/store.ts` for cross-component client state. It's wired into the app via `StoreProvider` but not heavily used – TanStack Query handles most state needs. Use Jotai for UI state that doesn't belong in server cache (theme preference, sidebar open/closed, local filters).
+A global Jotai store is set up in `apps/app/lib/store.ts` and wired into the app via `StoreProvider`. Reach for it only when client state genuinely crosses a component or route boundary – TanStack Query owns server state, and `useState` handles the rest. The sidebar stays local in `components/layout/index.tsx` for exactly that reason: nothing outside that subtree reads it.
+
+Theme is the shipped case, in `apps/app/lib/theme.tsx` – an inline script, the settings page, and every component that renders differently in dark mode all read the same value:
 
 ```tsx
-import { atom, useAtom } from "jotai";
+import { atom, useAtomValue } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
-const sidebarOpenAtom = atom(true);
+const themePreferenceAtom = atomWithStorage<ThemePreference>("theme", "system");
 
-function Sidebar() {
-  const [open, setOpen] = useAtom(sidebarOpenAtom);
-  // ...
-}
+// Derived, never stored: "system" resolves against the OS setting.
+const themeAtom = atom<Theme>((get) => {
+  const preference = get(themePreferenceAtom);
+  return preference === "system" ? get(systemThemeAtom) : preference;
+});
 ```
 
 See [Forms & Validation](./forms.md) for mutation patterns in form submissions. For library reference, see the [TanStack Query docs](https://tanstack.com/query/latest/docs/framework/react/overview), [tRPC docs](https://trpc.io/docs/client/react), and [Jotai docs](https://jotai.org/docs/introduction).

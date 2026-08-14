@@ -39,15 +39,17 @@ Stripe billing via `@better-auth/stripe` plugin. Billing is tightly coupled with
 3. User completes payment – Stripe sends webhook to `/api/auth/stripe/webhook`
 4. Plugin verifies signature, updates `subscription` table – client refetches via tRPC
 
-**Why tRPC for reads, Better Auth client for mutations:** Subscription queries benefit from TanStack Query caching, batching, and stale-while-revalidate. Mutations (upgrade, cancel, portal) go through the auth client because the plugin handles Stripe API calls, session validation, and org authorization internally.
+**Why tRPC for reads, Better Auth client for mutations:** Subscription queries benefit from TanStack Query caching, batching, and stale-while-revalidate. The two mutations the app owns – upgrade and portal – go through the auth client because the plugin handles Stripe API calls, session validation, and org authorization internally. Cancellation happens inside the hosted portal, not through a procedure of ours.
 
 ## Billing Reference
 
 Billing reads use `session.activeOrganizationId` when present and otherwise fall back to `user.id`. Stripe mutations pass the active organization explicitly as `referenceId` with `customerType: "organization"`; without one, the plugin defaults to the user. The plugin enforces one active subscription per reference ID.
 
 - **Organization context:** `referenceId = activeOrganizationId` – only org owner/admin can manage billing
-- **No organization:** `referenceId = user.id` – user manages their own subscription
-- The plugin authorizes explicit organization references against membership role
+- **No active organization:** `referenceId = user.id` – user manages their own subscription
+- The plugin authorizes explicit organization references against membership role, but only for its own mutation endpoints
+- `billing.subscription` is application-owned, so it re-checks membership against `member` before reading, and throws `FORBIDDEN` for a session that outlived its membership
+- The same lookup returns the role, so the response carries `canManage`; settings shows the plan to every member but the management buttons only to those the plugin would accept
 - The billing query key includes `activeOrgId`, so switching organizations automatically fetches fresh billing data via TanStack Query
 
 ## Database Schema
@@ -113,7 +115,7 @@ Stripe webhook verification requires the raw request body. The plugin handles th
 
 The plugin tests its own internals (webhooks, checkout, subscription lifecycle, authorization). App tests cover the seams we own:
 
-- **Router** (`apps/api/routers/billing.test.ts`) – disabled integration, free plan fallback, plan limits mapping, unknown plan rejection, response shape
+- **Router** (`apps/api/routers/billing.test.ts`) – membership revalidation (both predicates, and a session that outlived its membership), `canManage` per role, disabled integration, free plan fallback, plan limits mapping, unknown plan rejection, response shape
 - **Query** (`apps/app/lib/queries/billing.test.ts`) – cache key includes org ID, null normalization, distinct keys per org, prefix for bulk invalidation
 
 Checkout and webhook flows are not retested at app level – verified via `stripe listen` during development.
@@ -123,7 +125,7 @@ Checkout and webhook flows are not retested at app level – verified via `strip
 | Layer | Files |
 | --- | --- |
 | Schema | `db/schema/subscription.ts`, `stripeCustomerId` in `db/schema/user.ts` and `db/schema/organization.ts` |
-| Server | `apps/api/lib/plans.ts`, `apps/api/lib/stripe.ts`, stripe plugin in `apps/api/lib/auth.ts` |
+| Server | `apps/api/lib/plans.ts`, stripe plugin in `apps/api/lib/auth.ts` |
 | Router | `apps/api/routers/billing.ts`, registered in `apps/api/lib/app.ts` |
 | Client | `stripeClient` in `apps/app/lib/auth.ts`, `apps/app/lib/queries/billing.ts` |
 | UI | Billing card in `apps/app/routes/(app)/settings.tsx` |

@@ -1,30 +1,23 @@
 import { QueryClient } from "@tanstack/react-query";
 
+// Only what this project decided differently from TanStack Query's defaults.
+// Restating a default invites someone to "tune" it, and goes stale the day
+// upstream changes its mind.
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Data remains fresh for 2 minutes - prevents redundant API calls during
-      // typical user sessions while ensuring data updates within reasonable time
+      // Navigating back to a page just loaded is free, without anyone
+      // staring at minutes-old data.
       staleTime: 2 * 60 * 1000,
-      // Garbage collection after 5 minutes - balances memory usage with instant
-      // data availability when navigating back to recently viewed pages
-      gcTime: 5 * 60 * 1000,
-      // Retry strategy: 3 attempts with exponential backoff (1s, 2s, 4s) capped at 30s
-      // Handles transient network issues without overwhelming the server
-      retry: 3,
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      // Auto-refetch when user returns to tab - ensures displayed data is current
-      // after context switches (critical for collaborative features)
-      refetchOnWindowFocus: true,
-      // Always refetch after network reconnection - prevents stale data after
-      // connectivity issues (overrides staleTime check)
+      // "always", not the default `true`: after connectivity loss the age of
+      // the data says nothing about whether it is still correct.
       refetchOnReconnect: "always",
     },
     mutations: {
-      // Single retry for mutations - prevents duplicate operations while handling
-      // momentary network blips (user can manually retry for persistent failures)
-      retry: 1,
-      retryDelay: 1000,
+      // Upstream default, restated because it is a safety invariant: a lost
+      // response is indistinguishable from a failed request, so a retried
+      // create can run twice. Opt in per mutation where it is idempotent.
+      retry: false,
       onError: (error) => console.error("Mutation failed:", error),
     },
   },

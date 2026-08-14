@@ -14,7 +14,6 @@ Defined in `apps/api/lib/context.ts`, the context provides:
 | `dbCached` | `PostgresJsDatabase` | Drizzle ORM instance via cached Hyperdrive |
 | `session` | `AuthSession \| null` | Authenticated session from Better Auth |
 | `user` | `AuthUser \| null` | Authenticated user data |
-| `cache` | `Map<string \| symbol, unknown>` | Request-scoped cache (for DataLoaders, computed values) |
 | `res?` | `Response` | Optional HTTP response from Hono context |
 | `resHeaders?` | `Headers` | Response headers (for setting cookies, etc.) |
 | `env` | `Env` | Environment variables and secrets |
@@ -24,7 +23,7 @@ Defined in `apps/api/lib/context.ts`, the context provides:
 The context provides two database connections with different caching behaviors:
 
 - **`ctx.db`** – the default, uncached connection. Use for writes, transactions, auth, permissions, billing, and reads that must see the latest data.
-- **`ctx.dbCached`** – opts into Hyperdrive's query cache. Its default window allows up to 75 seconds of staleness; deployments can tune it.
+- **`ctx.dbCached`** – opts into Hyperdrive's query cache. The staleness window is Terraform-owned; see [Production Database](/deployment/production-database).
 
 ```ts
 // Read with caching when staleness is acceptable
@@ -69,7 +68,6 @@ app.use("/api/trpc/*", (c) => {
         dbCached,
         session: sessionData?.session ?? null,
         user: sessionData?.user ?? null,
-        cache: new Map(),
       };
     },
     batching: { enabled: true },
@@ -77,7 +75,7 @@ app.use("/api/trpc/*", (c) => {
 });
 ```
 
-The `db`, `dbCached`, and `auth` values come from the Hono middleware layer (set in `worker.ts`). The tRPC context adds session resolution and a fresh `cache` Map.
+The `db`, `dbCached`, and `auth` values come from the Hono middleware layer (set in `worker.ts`). The tRPC context adds session resolution on top.
 
 ## Middleware Chain
 
@@ -123,56 +121,3 @@ export function requestIdGenerator(c: Context): string {
 ```
 
 The ID is available via the `X-Request-Id` response header for tracing requests across logs.
-
-## DataLoaders
-
-DataLoaders prevent N+1 queries by batching multiple `.load(id)` calls into a single SQL `WHERE IN (...)` query. They're defined in `apps/api/lib/loaders.ts` and cached per-request via `ctx.cache`.
-
-```ts
-import { userById } from "../lib/loaders.js";
-
-members: protectedProcedure
-  .input(z.object({ organizationId: z.string() }))
-  .query(async ({ ctx, input }) => {
-    const members = await ctx.db.query.member.findMany({
-      where: (m, { eq }) => eq(m.organizationId, input.organizationId),
-    });
-
-    // Batches all user lookups into one query
-    const users = await Promise.all(
-      members.map((m) => userById(ctx).load(m.userId)),
-    );
-
-    return members.map((m, i) => ({ ...m, user: users[i] }));
-  }),
-```
-
-Loaders are created with a `defineLoader` helper that handles per-request caching via `ctx.cache`:
-
-```ts
-function defineLoader<K, V>(
-  key: symbol,
-  batchFn: (ctx: TRPCContext, keys: readonly K[]) => Promise<(V | null)[]>,
-): (ctx: TRPCContext) => DataLoader<K, V | null>;
-```
-
-Each call returns a factory `(ctx) => DataLoader`. The first invocation per request creates the instance; subsequent calls return the cached one. Because `ctx.cache` is a `Map` created per-request, loaders are automatically scoped to the request lifecycle – no stale data across requests.
-
-### Adding a DataLoader
-
-Add a `defineLoader` call in `apps/api/lib/loaders.ts`:
-
-```ts
-export const postById = defineLoader(
-  Symbol("postById"),
-  async (ctx, ids: readonly string[]) => {
-    const posts = await ctx.dbCached
-      .select()
-      .from(post)
-      .where(inArray(post.id, [...ids]));
-    return mapByKey(posts, "id", ids);
-  },
-);
-```
-
-Then call `.load(key)` or `.loadMany(keys)` in your procedures.

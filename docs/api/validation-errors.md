@@ -7,11 +7,11 @@ Input validation and error handling follow one flow: Zod schemas validate proced
 Every tRPC procedure can define a Zod schema via `.input()`. tRPC runs validation automatically before the procedure body executes.
 
 ```ts
-updateProfile: protectedProcedure
+create: protectedProcedure
   .input(
     z.object({
-      name: z.string().min(1).optional(),
-      email: z.email({ error: "Invalid email address" }).optional(),
+      title: z.string().min(1),
+      notify: z.email({ error: "Invalid email address" }).optional(),
     }),
   )
   .mutation(({ input }) => {
@@ -54,7 +54,7 @@ Example error response for a failed validation:
       "zodError": {
         "formErrors": [],
         "fieldErrors": {
-          "email": ["Invalid email address"]
+          "notify": ["Invalid email address"]
         }
       }
     }
@@ -72,18 +72,18 @@ import { TRPCError } from "@trpc/server";
 create: protectedProcedure
   .input(z.object({ name: z.string().min(1) }))
   .mutation(async ({ ctx, input }) => {
-    const existing = await ctx.db.query.organization.findFirst({
-      where: (o, { eq }) => eq(o.name, input.name),
+    const existing = await ctx.db.query.project.findFirst({
+      where: (p, { eq }) => eq(p.name, input.name),
     });
 
     if (existing) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "Organization name already taken",
+        message: "Project name already taken",
       });
     }
 
-    // ... create organization
+    // ... create project
   }),
 ```
 
@@ -145,7 +145,7 @@ Extracts the HTTP status code from various error shapes:
 import { getErrorStatus } from "~/lib/errors";
 
 try {
-  await trpcClient.user.updateProfile.mutate({ email: "not-an-email" });
+  await trpcClient.post.create.mutate({ title: "", notify: "not-an-email" });
 } catch (err) {
   const status = getErrorStatus(err); // 400
 }
@@ -177,5 +177,5 @@ Safely extracts a human-readable message from any thrown value:
 import { getErrorMessage } from "~/lib/errors";
 
 const message = getErrorMessage(error);
-// "Organization name already taken" or "An unexpected error occurred"
+// "Project name already taken" or "An unexpected error occurred"
 ```

@@ -7,9 +7,11 @@ outline: [2, 3]
 The API server (`apps/api/`) runs as a Cloudflare Worker and handles all backend logic: authentication, data access, and billing webhooks. It combines two frameworks:
 
 - **[Hono](https://hono.dev/)** – lightweight HTTP router for auth endpoints, webhooks, and health checks
-- **[tRPC](https://trpc.io/)** – type-safe RPC layer for all client-facing queries and mutations
+- **[tRPC](https://trpc.io/)** – typed procedures for application-owned operations
 
-Hono handles the HTTP surface. tRPC handles the typed contract between frontend and backend. They share the same Worker and middleware stack.
+Hono composes the HTTP routes and middleware. tRPC provides the typed contract for application-owned procedures. They share the same Worker and middleware stack.
+
+Better Auth owns its own endpoints under `/api/auth/*` – sessions, organizations and the Stripe plugin. Those are called through its client, not wrapped in procedures, so tRPC covers what this application owns rather than everything the browser calls.
 
 ## How the Worker is Wired
 
@@ -71,7 +73,7 @@ worker.route("/", app);
 | `/api` | GET | Hono | API metadata (name, version, endpoints) |
 | `/health` | GET | Hono | Health check – returns `{ status, timestamp }` |
 | `/api/auth/*` | GET, POST | Better Auth | Authentication routes ([docs](https://www.better-auth.com/docs/api-reference)) |
-| `/api/trpc/*` | \* | tRPC | Type-safe RPC – all queries and mutations |
+| `/api/trpc/*` | \* | tRPC | Type-safe RPC – application-owned queries and mutations |
 
 ## tRPC Router
 
@@ -82,7 +84,6 @@ The root router merges domain-specific sub-routers:
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
-  user: userRouter,
 });
 ```
 
@@ -96,49 +97,40 @@ apps/api/
 ├── dev.ts                 # Local dev server (Bun)
 ├── index.ts               # Public package exports
 ├── lib/
-│   ├── ai.ts              # OpenAI provider factory
 │   ├── app.ts             # Hono app + tRPC router composition
 │   ├── auth.ts            # Better Auth configuration
 │   ├── context.ts         # TRPCContext and AppContext types
 │   ├── db.ts              # Drizzle ORM database factory
 │   ├── email.ts           # Resend email utilities
 │   ├── env.ts             # Environment contract and inferred type
-│   ├── loaders.ts         # DataLoader instances for N+1 prevention
 │   ├── middleware.ts       # Error handler, 404 handler, request ID
 │   ├── plans.ts           # Subscription plan limits
-│   ├── stripe.ts          # Stripe client factory
 │   └── trpc.ts            # tRPC init, procedures, error formatter
 ├── routers/
 │   ├── billing.ts         # Subscription queries
 │   ├── billing.test.ts    # Billing router tests
-│   ├── config.ts          # Public deployment capabilities
-│   └── user.ts            # Current-user query and extension stubs
+│   └── config.ts          # Public deployment capabilities
 └── wrangler.jsonc         # Cloudflare Workers config
 ```
 
 ## Calling the API from the Frontend
 
-The frontend app (`apps/app/`) uses `@trpc/client` with TanStack Query integration. The tRPC client is configured in `apps/app/lib/trpc.ts`:
+The frontend app (`apps/app/`) calls `@trpc/client` from TanStack Query options. The tRPC client is configured in `apps/app/lib/trpc.ts`:
 
 ```ts
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-
-export const api = createTRPCOptionsProxy<AppRouter>({
-  client: trpcClient,
-  queryClient,
-});
+export const trpcClient = createTRPCClient<AppRouter>({ links });
 ```
 
-Use `api` in components to call procedures with full type safety:
+Components never call `trpcClient` directly. Each concern gets a module in `apps/app/lib/queries/` that owns its cache key and freshness rules, so a key cannot be spelled two different ways in two components:
 
 ```ts
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { api } from "~/lib/trpc";
-
-function Profile() {
-  const { data } = useSuspenseQuery(api.user.me.queryOptions());
-  return <p>{data.name}</p>;
+// apps/app/lib/queries/billing.ts
+export function billingQueryOptions(activeOrgId?: string | null) {
+  return queryOptions({
+    queryKey: ["billing", "subscription", activeOrgId ?? null] as const,
+    queryFn: () => trpcClient.billing.subscription.query(),
+  });
 }
 ```
 
-See the [tRPC + TanStack Query docs](https://trpc.io/docs/client/react/tanstack-react-query) for the full client API.
+See [State & Data Fetching](/frontend/state) for the component side.

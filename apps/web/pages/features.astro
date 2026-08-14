@@ -33,20 +33,20 @@ const featureCategories = [
     icon: "⚡",
     features: [
       {
-        title: "Edge Rendering",
-        description: "Server-side rendering at CDN edge locations worldwide"
+        title: "Edge Delivery",
+        description: "Marketing pages, app assets, and API run on Cloudflare Workers"
       },
       {
         title: "Code Splitting",
         description: "Automatic route-based code splitting for optimal loading"
       },
       {
-        title: "Asset Optimization",
-        description: "Image optimization, lazy loading, and efficient bundling"
+        title: "Immutable Assets",
+        description: "Content-hashed bundles served with long-lived cache headers"
       },
       {
-        title: "Zero-Config CDN",
-        description: "Built-in CDN support with Cloudflare Workers"
+        title: "Connection Pooling",
+        description: "Hyperdrive keeps Postgres reachable from every region"
       }
     ]
   },
@@ -67,8 +67,8 @@ const featureCategories = [
         description: "PostgreSQL with Drizzle ORM and migrations"
       },
       {
-        title: "Real-time Support",
-        description: "WebSocket integration for live features"
+        title: "Real-time Ready",
+        description: "Typed WebSocket protocol package waiting to be wired up"
       }
     ]
   },
@@ -100,11 +100,11 @@ const featureCategories = [
     features: [
       {
         title: "Unit Testing",
-        description: "Vitest setup with coverage reporting"
+        description: "Vitest across the API and frontend workspaces"
       },
       {
-        title: "E2E Testing",
-        description: "Playwright integration for browser testing"
+        title: "Component Testing",
+        description: "React Testing Library on Happy DOM"
       },
       {
         title: "Type Checking",
@@ -161,7 +161,7 @@ const featureCategories = [
           <span class="text-4xl mr-4">{category.icon}</span>
           <h2 class="text-3xl font-bold tracking-tight">{category.title}</h2>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           {category.features.map((feature) => (
             <Card>
@@ -180,13 +180,13 @@ const featureCategories = [
       <h2 class="text-3xl font-bold tracking-tight mb-8 text-center">
         Built with Best-in-Class Technologies
       </h2>
-      
+
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
           { name: "React 19", category: "UI Framework" },
           { name: "TypeScript 6", category: "Language" },
           { name: "Astro", category: "Static Site Gen" },
-          { name: "Bun", category: "Runtime" },
+          { name: "Bun", category: "Toolchain" },
           { name: "Vite", category: "Build Tool" },
           { name: "TanStack Router", category: "Routing" },
           { name: "tRPC", category: "API Layer" },
@@ -213,34 +213,35 @@ const featureCategories = [
       <h2 class="text-3xl font-bold tracking-tight mb-8 text-center">
         Clean, Modern Code
       </h2>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>Example: Type-Safe API Route</CardTitle>
           <CardDescription>
-            Define your API with full type safety from backend to frontend
+            Adapted from the starter – the procedure's return type reaches the component with nothing declared in between
           </CardDescription>
         </CardHeader>
         <CardContent>
           <pre class="bg-muted p-4 rounded-lg overflow-x-auto">
-            <code class="text-sm">{`// api/router.ts
-export const appRouter = router({
-  user: {
-    get: publicProcedure
-      .input(z.object({ id: z.string() }))
-      .query(async ({ input }) => {
-        return await db.user.findUnique({
-          where: { id: input.id }
-        });
-      }),
-  },
+            <code class="text-sm">{`// apps/api/routers/config.ts – the server owns which providers exist
+export const configRouter = router({
+  socialProviders: publicProcedure.query(({ ctx }) =>
+    configuredSocialProviders(ctx.env),
+  ),
 });
 
-// app/page.tsx
-function UserProfile({ userId }: Props) {
-  const { data } = trpc.user.get.useQuery({ id: userId });
-  
-  return <div>{data?.name}</div>;
+// apps/app/lib/queries/config.ts – one cache key per concern
+export function socialProvidersQueryOptions() {
+  return queryOptions({
+    queryKey: ["config", "socialProviders"],
+    queryFn: () => trpcClient.config.socialProviders.query(),
+    staleTime: Infinity,
+  });
+}
+
+export function useSocialProviders(): string[] {
+  const { data } = useQuery(socialProvidersQueryOptions());
+  return data ?? []; // typed from the procedure – no shared interface to keep in sync
 }`}</code>
           </pre>
         </CardContent>
@@ -257,7 +258,7 @@ function UserProfile({ userId }: Props) {
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a 
+        <a
           href="https://github.com/kriasoft/react-starter-kit"
           target="_blank"
           rel="noopener noreferrer"
@@ -265,7 +266,7 @@ function UserProfile({ userId }: Props) {
         >
           Try It Now
         </a>
-        <a 
+        <a
           href="https://github.com/kriasoft/react-starter-kit#readme"
           target="_blank"
           rel="noopener noreferrer"

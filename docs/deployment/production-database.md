@@ -24,7 +24,7 @@ bun infra:staging apply
 | `HYPERDRIVE_CACHED` | 60s, 15s stale | Reads that tolerate being briefly stale |
 | `HYPERDRIVE_UNCACHED` | Disabled | Writes, and reads that must not be stale (auth, billing) |
 
-Use `HYPERDRIVE_CACHED` only where a result from the configured cache window is acceptable. With the defaults above, a result can be up to 75 seconds old and writes do not invalidate it. Read-after-write, session, and permission checks therefore belong on `HYPERDRIVE_UNCACHED`.
+Terraform sets both values explicitly rather than inheriting them, so the window above is the reviewable source – see [Infrastructure](/specs/infra-terraform). A cached result can therefore be 75 seconds old, and a write never invalidates it: read-after-write, session, and permission checks belong on `HYPERDRIVE_UNCACHED`.
 
 Give Hyperdrive Neon's **unpooled** connection string – the host without `-pooler`. Hyperdrive is itself the pool; Neon's runs in transaction mode, which breaks the prepared statements Hyperdrive caches on, and adds a second layer competing for the same connection budget. Both configurations open up to `origin_connection_limit` connections each, so the database must allow at least twice that.
 

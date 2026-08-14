@@ -33,12 +33,12 @@
   // (`wrangler secret put`); only the required-name contract is versioned.
   //
   // Only genuinely mandatory secrets belong here: listing an optional
-  // integration would block deploys for anyone not using it. Google, OpenAI and
-  // Stripe are gated at their feature boundaries instead — see `lib/env.ts`.
+  // integration would block deploys for anyone not using it. Google and Stripe
+  // are gated at their feature boundaries instead – see `lib/env.ts`.
   //
-  // Not inheritable, so every deployed environment repeats it. `dev` omits it
-  // on purpose: where this is set, local dev loads *only* these keys from
-  // `.env`, which would hide optional development secrets such as Stripe's.
+  // Not inheritable, so every environment repeats it. In `dev` it also tells
+  // Wrangler which keys to read from `process.env`; optional integrations reach
+  // the local server through the env overlay in `dev.ts` instead.
   "secrets": {
     "required": ["BETTER_AUTH_SECRET", "RESEND_API_KEY"]
   },
@@ -61,7 +61,10 @@
       "hyperdrive": [
         { "binding": "HYPERDRIVE_CACHED", "id": "local-dev-placeholder" },
         { "binding": "HYPERDRIVE_UNCACHED", "id": "local-dev-placeholder" }
-      ]
+      ],
+      "secrets": {
+        "required": ["BETTER_AUTH_SECRET", "RESEND_API_KEY"]
+      }
     },
 
     // [ENV:STAGING]

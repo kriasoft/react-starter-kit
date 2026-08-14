@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { authConfig } from "@/lib/auth-config";
 import { Button } from "@repo/ui";
 import { KeyRound } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 interface PasskeyLoginProps {
   onSuccess: () => void;
@@ -16,6 +16,10 @@ interface PasskeyLoginProps {
  *
  * WebAuthn handles credential discovery - no email input needed.
  * The browser prompts the user to select from their available passkeys.
+ *
+ * Sign-in is explicit rather than autofill-driven. Conditional mediation needs
+ * a mounted input whose `autocomplete` ends in `webauthn`, and this form shows
+ * no input until the user has already chosen the email method.
  */
 export function PasskeyLogin({
   onSuccess,
@@ -32,41 +36,6 @@ export function PasskeyLogin({
     },
     [onLoadingChange],
   );
-
-  const onSuccessRef = useRef(onSuccess);
-  onSuccessRef.current = onSuccess;
-
-  // Set up conditional UI for passkey autofill (gated by config)
-  useEffect(() => {
-    if (!authConfig.passkey.enableConditionalUI) return;
-
-    let aborted = false;
-
-    const setupConditionalUI = async () => {
-      try {
-        if (!window.PublicKeyCredential?.isConditionalMediationAvailable)
-          return;
-
-        const isAvailable =
-          await window.PublicKeyCredential.isConditionalMediationAvailable();
-        if (!isAvailable) return;
-
-        // Enable autofill for passkeys on input fields with autocomplete="webauthn"
-        const result = await auth.signIn.passkey({ autoFill: true });
-        if (result.data && !aborted) {
-          onSuccessRef.current();
-        }
-      } catch {
-        // Silently ignore errors from conditional UI (user hasn't explicitly requested auth)
-      }
-    };
-
-    setupConditionalUI();
-
-    return () => {
-      aborted = true;
-    };
-  }, []);
 
   const handlePasskeyLogin = async () => {
     // Check WebAuthn support before attempting

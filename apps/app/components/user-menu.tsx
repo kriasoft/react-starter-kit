@@ -1,12 +1,10 @@
-import { signOut, useSessionQuery } from "@/lib/queries/session";
+import { useSessionQuery, useSignOut } from "@/lib/queries/session";
 import { Avatar, AvatarFallback, Button } from "@repo/ui";
-import { useQueryClient } from "@tanstack/react-query";
 import { LogOut, RefreshCw, User } from "lucide-react";
 
-/** Displays current authenticated user and sign-out control. */
 export function UserMenu() {
-  const queryClient = useQueryClient();
   const { data: session, isPending, error, refetch } = useSessionQuery();
+  const signOut = useSignOut();
 
   if (isPending) {
     return (
@@ -57,12 +55,22 @@ export function UserMenu() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => signOut(queryClient)}
+          onClick={() => signOut.mutate()}
+          disabled={signOut.isPending}
           title="Sign out"
+          aria-label="Sign out"
         >
           <LogOut className="h-4 w-4" />
         </Button>
       </div>
+
+      {/* A failed sign-out leaves the user signed in, so saying nothing would
+          be the same lie as signing them out locally. */}
+      {signOut.error && (
+        <p role="alert" className="px-3 text-sm text-destructive">
+          Could not sign out: {signOut.error.message}
+        </p>
+      )}
     </div>
   );
 }

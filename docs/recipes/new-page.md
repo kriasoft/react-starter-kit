@@ -29,7 +29,24 @@ function Projects() {
 
 Run `bun app:dev` – TanStack Router regenerates `lib/routeTree.gen.ts` automatically and the page is available at `/projects`.
 
-## 2. Add navigation
+## 2. Let the edge route it
+
+The web worker forwards a fixed list of top-level paths to the app worker. Add every new top-level path to `APP_PATHS` in `apps/web/worker.ts`:
+
+```ts
+const APP_PATHS = [
+  "_app",
+  "login",
+  "members",
+  "projects", // [!code ++]
+  "settings",
+  "signup",
+] as const;
+```
+
+Skip this and the page works when you click a link but 404s on direct load or refresh – client-side navigation never reaches the edge. The path must also not collide with a marketing page in `apps/web/pages/`, which the web worker serves itself. `apps/app/lib/edge-routing.test.ts` fails on both mistakes.
+
+## 3. Add navigation
 
 Open the sidebar or header component and add a link:
 
@@ -43,24 +60,18 @@ import { Link } from "@tanstack/react-router";
 
 `<Link>` is type-safe – TypeScript will error if the route doesn't exist.
 
-## 3. Fetch data
+## 4. Fetch data
 
-Use a tRPC query hook inside the component:
+Call a query module rather than `trpcClient`, so the cache key has one owner. `useProjectList` comes from [Add a tRPC Procedure](/recipes/new-procedure), which builds both the procedure and the module:
 
 ```tsx
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { trpcClient } from "@/lib/trpc";
-import { queryOptions } from "@tanstack/react-query";
-
-function projectsQueryOptions() {
-  return queryOptions({
-    queryKey: ["projects"],
-    queryFn: () => trpcClient.project.list.query(),
-  });
-}
+import { useProjectList } from "@/lib/queries/project";
 
 function Projects() {
-  const { data } = useSuspenseQuery(projectsQueryOptions());
+  const { data, isPending, error } = useProjectList();
+
+  if (error) return <p className="p-6">Could not load projects.</p>;
+  if (isPending) return <p className="p-6">Loading...</p>;
 
   return (
     <div className="p-6">
@@ -75,9 +86,11 @@ function Projects() {
 }
 ```
 
+Handle `error` and `isPending` before reading `data` – the app mounts no Suspense boundary, so a suspending hook has nothing to fall back to.
+
 See [State & Data Fetching](/frontend/state) for more patterns.
 
-## 4. Add search params (optional)
+## 5. Add search params (optional)
 
 Validate query string parameters with Zod:
 
@@ -100,15 +113,17 @@ function Projects() {
 }
 ```
 
-## 5. Add a public page (optional)
+## 6. Add a public page (optional)
 
-To create a page that doesn't require authentication, place it under the `(auth)` layout group or directly in `routes/`:
+To create a page that doesn't require authentication, place it under the `(auth)` layout group:
 
 ```
-apps/app/routes/(auth)/pricing.tsx
+apps/app/routes/(auth)/invite.tsx
 ```
 
-Pages outside `(app)/` skip the auth guard and don't render the app shell layout.
+Pages outside `(app)/` skip the auth guard and don't render the app shell layout. They still need their path in `APP_PATHS`.
+
+Marketing pages are a different thing: `/`, `/about`, `/features` and `/pricing` are Astro pages in `apps/web/pages/`, served by the web worker. Adding an app route with one of those names shadows the marketing page, so pick a path the marketing site doesn't own.
 
 ## Reference
 

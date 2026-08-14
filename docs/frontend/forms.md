@@ -4,47 +4,49 @@ Forms use controlled React inputs with Zod for validation. There's no form libra
 
 ## Basic Pattern
 
-A typical form uses `useState` for input values and a tRPC mutation for submission:
+An application-owned form keeps input values in `useState` and calls a mutation hook from a query module. `useCreateProject` below comes from [Add a tRPC Procedure](/recipes/new-procedure) – no tRPC mutation ships in the starter, so build it first:
 
 ```tsx
+import { useCreateProject } from "@/lib/queries/project";
 import { Button, Input, Label } from "@repo/ui";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { trpcClient } from "@/lib/trpc";
+import { useId, useState } from "react";
 
 function CreateProjectForm() {
   const [name, setName] = useState("");
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: (input: { name: string }) =>
-      trpcClient.project.create.mutate(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["project"] });
-      setName("");
-    },
-  });
+  const nameId = useId();
+  const createProject = useCreateProject();
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        mutation.mutate({ name });
+        // Clearing the input belongs to this form, not to every caller of the
+        // hook, so it rides on the call rather than the module's onSuccess.
+        createProject.mutate({ name }, { onSuccess: () => setName("") });
       }}
     >
-      <Label htmlFor="name">Project name</Label>
+      <Label htmlFor={nameId}>Project name</Label>
       <Input
-        id="name"
+        id={nameId}
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
+        aria-invalid={Boolean(createProject.error)}
       />
-      <Button type="submit" disabled={mutation.isPending}>
-        Create
+      {createProject.error && (
+        <p role="alert" className="text-sm text-destructive">
+          {createProject.error.message}
+        </p>
+      )}
+      <Button type="submit" disabled={createProject.isPending}>
+        {createProject.isPending ? "Creating..." : "Create"}
       </Button>
     </form>
   );
 }
 ```
+
+The failure arrives after submit, so `role="alert"` announces it – the same pattern as the create-organization form in `apps/app/routes/(app)/members.tsx`.
 
 ## Zod Schema Sharing
 
@@ -101,7 +103,7 @@ export function AuthForm({ mode = "login", onSuccess, returnTo }) {
 
 Key design decisions in `useAuthForm`:
 
-- **Counter-based pending ops** – handles overlapping child operations (e.g., passkey conditional UI running alongside manual click)
+- **Counter-based pending ops** – handles overlapping child operations (e.g., a rapid double-click)
 - **Success guard** (`hasSucceededRef`) – prevents concurrent auth completion from multiple methods
 - **Email normalization** – trims whitespace and lowercases before API calls
 - **Error orthogonal to steps** – errors can occur at any step and are displayed at the form level
@@ -140,8 +142,8 @@ For mutation errors, check `mutation.error`:
 Coordinate disabled state across form elements to prevent double-submission:
 
 ```tsx
-// useAuthForm combines multiple sources into one flag
-const isDisabled = isLoading || pendingOps > 0 || !!isExternallyLoading;
+// useAuthForm folds its own request and every child's into one flag
+const isDisabled = isLoading || pendingOps > 0;
 ```
 
 Apply to all interactive elements:
@@ -175,4 +177,4 @@ async function handleSuccess() {
 <AuthForm mode="login" onSuccess={handleSuccess} returnTo={search.returnTo} />;
 ```
 
-This keeps the form reusable – `AuthForm` works in both the login page and a login dialog because the caller controls what happens after success.
+This keeps the form reusable – `AuthForm` backs both the login and signup pages because the caller controls what happens after success.

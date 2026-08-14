@@ -34,7 +34,7 @@ Key behaviors:
 - Returns `null` when unauthenticated (not an error)
 - 30-second stale time keeps auth state current without excessive requests
 - 401/403 errors are not retried – retrying won't help for auth failures
-- Inherits global `gcTime`, `refetchOnWindowFocus`, and `refetchOnReconnect` from QueryClient defaults
+- Everything else follows the shared `QueryClient` – see [State & Data Fetching](/frontend/state)
 
 ### Session Data Shape
 
@@ -53,12 +53,9 @@ Both `user` and `session` must be present for valid auth state. Partial data (on
 // In components – triggers fetch if stale
 const { data } = useSessionQuery();
 
-// With Suspense
-const { data } = useSuspenseSessionQuery();
-
 // Sync check of cache only – no network request
 const session = getCachedSession(queryClient);
-const loggedIn = isAuthenticated(queryClient);
+const loggedIn = isValidSession(session);
 ```
 
 ## Protected Route Guard
@@ -77,14 +74,12 @@ export const Route = createFileRoute("/(app)")({
       session = await context.queryClient.fetchQuery(sessionQueryOptions());
     }
 
-    if (!session?.user || !session?.session) {
+    if (!isValidSession(session)) {
       throw redirect({
         to: "/login",
         search: { returnTo: location.href },
       });
     }
-
-    return { user: session.user, session };
   },
   component: AppLayout,
 });
@@ -96,7 +91,47 @@ This pattern means:
 - **No cache** → fetches session, redirects to `/login` if unauthenticated
 - **`returnTo`** → preserves the original URL so users land back after login
 
-The session data is returned from `beforeLoad` and available to all child routes via `Route.useRouteContext()`.
+`beforeLoad` returns nothing: pages read the session through `useSessionQuery()`, and a copy placed in route context would go stale the moment the session is revalidated.
+
+`isValidSession()` is the single definition of "authenticated". `beforeLoad`, `SessionGate` below, and the login and signup guards all call it, so the partial-data rule can't drift between them.
+
+### Mounted-Session Gate
+
+`beforeLoad` runs when the router loads or invalidates a route, not when a mounted query changes on its own. That leaves a gap: `revalidateSession()` removes the cached session while the app stays mounted, and a background refetch can discover an expired one with no navigation in flight. Both leave mounted pages reading a missing session as a signed-out one. `SessionGate` closes that gap:
+
+```tsx
+function AppLayout() {
+  return (
+    <AuthErrorBoundary>
+      <Layout>
+        <SessionGate>
+          <Outlet />
+        </SessionGate>
+      </Layout>
+    </AuthErrorBoundary>
+  );
+}
+
+function SessionGate({ children }: { children: ReactNode }) {
+  const { data: session, isPending, error } = useSessionQuery();
+  const router = useRouter();
+  const valid = isValidSession(session);
+
+  // Nothing else would move the user off a page that is already mounted.
+  useEffect(() => {
+    if (!isPending && !valid) void router.invalidate();
+  }, [isPending, valid, router]);
+
+  if (error) throw error;
+  if (isPending || !valid) return <p>Loading...</p>;
+
+  return children;
+}
+```
+
+`beforeLoad` owns redirects; `SessionGate` owns the mounted subtree and hands an invalid session back to the router rather than redirecting itself, so `returnTo` is built in one place. Errors go to `AuthErrorBoundary`, which offers sign-in recovery on a 401.
+
+Because the gate withholds children until the session is known, pages below it read `useSessionQuery()` directly and never handle its pending or error state.
 
 ## Login Page
 
@@ -111,7 +146,7 @@ export const Route = createFileRoute("/(auth)/login")({
       const session = await context.queryClient.fetchQuery(
         sessionQueryOptions(),
       );
-      if (session?.user && session?.session) {
+      if (isValidSession(session)) {
         throw redirect({ to: search.returnTo ?? "/" });
       }
     } catch (error) {
@@ -135,27 +170,29 @@ async function handleSuccess() {
 
 ## Sign Out
 
-The `signOut` function clears the server session, updates the cache, and performs a hard redirect:
+`useSignOut()` ends the server session, then clears the cache and hard-redirects:
 
 ```ts
 // apps/app/lib/queries/session.ts
-export async function signOut(
-  queryClient: QueryClient,
-  options?: { redirect?: boolean },
-) {
-  try {
-    await auth.signOut();
-  } finally {
-    queryClient.setQueryData(sessionQueryKey, null);
+export function useSignOut() {
+  const queryClient = useQueryClient();
 
-    if (options?.redirect !== false) {
+  return useMutation({
+    mutationFn: async () => {
+      const { error } = await auth.signOut();
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(sessionQueryKey, null);
       window.location.href = "/login";
-    }
-  }
+    },
+  });
 }
 ```
 
-The hard redirect (`window.location.href`) resets all in-memory state – Jotai atoms, component state, TanStack Query cache – ensuring a clean slate between user sessions. Pass `{ redirect: false }` for programmatic sign-out without navigation. `setQueryData(null)` is used instead of `invalidateQueries` to avoid a wasted refetch of a session that no longer exists.
+Everything local happens in `onSuccess`, never unconditionally. Better Auth resolves with `{ error }` rather than throwing, so a discarded error would clear the session locally while the server still honours it – and the login guard would find that session and send the user straight back into the app. `UserMenu` renders `signOut.error` for the same reason.
+
+The hard redirect drops all in-memory state – Jotai atoms, component state, TanStack Query cache – so nothing carries over to the next user. `setQueryData(null)` beats `invalidateQueries` because a session is binary state: there is nothing worth refetching.
 
 ## Auth Error Boundary
 

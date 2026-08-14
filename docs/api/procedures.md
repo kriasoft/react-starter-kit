@@ -1,6 +1,6 @@
 # Procedures
 
-tRPC procedures are the primary way the frontend communicates with the API. Each procedure is either a **query** (read data) or a **mutation** (write data), with optional input validation via Zod.
+tRPC procedures expose application-owned operations to the frontend. Each procedure is either a **query** (read data) or a **mutation** (write data), with optional input validation via Zod. Better Auth operations use its client instead, as described in [API Overview](./index.md).
 
 ## Procedure Types
 
@@ -8,7 +8,7 @@ The project defines two base procedures in `apps/api/lib/trpc.ts`:
 
 ### `publicProcedure`
 
-Accessible to all callers, including unauthenticated users. Context includes `db`, `env`, and `cache` but `session` and `user` may be `null`.
+Accessible to all callers, including unauthenticated users. Context carries the database clients and `env`; `session` and `user` may be `null`.
 
 ```ts
 import { publicProcedure } from "../lib/trpc.js";
@@ -27,16 +27,16 @@ Requires an authenticated session. Throws `UNAUTHORIZED` if the user is not logg
 ```ts
 import { protectedProcedure } from "../lib/trpc.js";
 
-export const userRouter = router({
-  me: protectedProcedure.query(async ({ ctx }) => {
-    return {
-      id: ctx.user.id, // ✓ guaranteed non-null
-      email: ctx.user.email,
-      name: ctx.user.name,
-    };
+export const apiKeyRouter = router({
+  list: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.query.apiKey.findMany({
+      where: (k, { eq }) => eq(k.userId, ctx.user.id), // ✓ guaranteed non-null
+    });
   }),
 });
 ```
+
+An authenticated user is not an authorized tenant. Anything scoped to an organization must also verify membership – see [Query Patterns > Multi-tenant Queries](/database/queries#multi-tenant-queries). `billing.subscription` is the shipped example.
 
 ## Router Files
 
@@ -45,11 +45,12 @@ Each domain gets its own router file in `apps/api/routers/`:
 ```
 routers/
 ├── billing.ts         # billing.subscription
-├── config.ts          # config.socialProviders
-└── user.ts            # user.me plus extension stubs
+└── config.ts          # config.socialProviders
 ```
 
-`user.me` is implemented. `user.updateProfile` and `user.list` deliberately throw `NOT_IMPLEMENTED`: profile changes belong in Better Auth's profile APIs, while a custom member list must add organization authorization and pagination. They are explicit extension points, not successful placeholder responses.
+The router set is deliberately small. Mutations that Better Auth already owns – profile updates, organization membership, Stripe checkout – are called through its client rather than wrapped in a procedure, because a wrapper would only re-implement authorization the plugin already enforces.
+
+`billing.subscription` is the exception that shows where the line falls: reading subscription state joins the local `subscription` table with this deployment's plan limits, which is application data Better Auth knows nothing about. Add a router when you own the data.
 
 Routers are merged into the root `appRouter` in `apps/api/lib/app.ts`:
 
@@ -57,11 +58,10 @@ Routers are merged into the root `appRouter` in `apps/api/lib/app.ts`:
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
-  user: userRouter,
 });
 ```
 
-The client calls procedures using the namespace: `api.user.me`, `api.billing.subscription`, etc.
+The client calls procedures using the namespace: `trpcClient.billing.subscription`, `trpcClient.config.socialProviders`, etc.
 
 ## Input Validation
 
@@ -82,22 +82,6 @@ export const postRouter = router({
       // `input` is fully typed from the schema.
     }),
 });
-```
-
-For queries with pagination:
-
-```ts
-list: protectedProcedure
-  .input(
-    z.object({
-      limit: z.number().min(1).max(100).default(10),
-      cursor: z.string().optional(),
-    }),
-  )
-  .query(({ input }) => {
-    // input.limit defaults to 10 if not provided
-    return { users: [], nextCursor: null };
-  }),
 ```
 
 ## Adding a New Procedure
@@ -132,7 +116,6 @@ import { postRouter } from "../routers/post.js";
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
-  user: userRouter,
   post: postRouter, // [!code ++]
 });
 ```
@@ -140,15 +123,23 @@ const appRouter = router({
 **3. Call from the frontend** – the types propagate automatically:
 
 ```ts
-const { data } = useSuspenseQuery(api.post.list.queryOptions({ limit: 10 }));
+// apps/app/lib/queries/post.ts
+export function postsQueryOptions(limit: number) {
+  return queryOptions({
+    queryKey: ["post", "list", limit] as const,
+    queryFn: () => trpcClient.post.list.query({ limit }),
+  });
+}
 ```
+
+See [State & Data Fetching](/frontend/state) for why the query module owns the cache key.
 
 ## Naming Conventions
 
-- **Router files**: singular noun matching the domain (`user.ts`, `billing.ts`, `post.ts`)
-- **Router variables**: `{domain}Router` – `userRouter`, `billingRouter`
-- **Procedure names**: verb or short phrase – `me`, `list`, `create`, `updateProfile`
-- **Namespace key**: matches the domain – `user:`, `billing:`, `config:`
+- **Router files**: singular noun matching the domain (`billing.ts`, `post.ts`, `project.ts`)
+- **Router variables**: `{domain}Router` – `billingRouter`, `projectRouter`
+- **Procedure names**: verb or short phrase – `me`, `list`, `create`, `update`
+- **Namespace key**: matches the domain – `billing:`, `config:`, `post:`
 
 ## Testing Procedures
 

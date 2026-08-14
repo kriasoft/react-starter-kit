@@ -1,22 +1,30 @@
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
-import { schema as Db, generateAuthId, type AuthModel } from "@repo/db";
+import {
+  schema as Db,
+  generateAuthId,
+  type AuthModel,
+  type DatabaseSchema,
+} from "@repo/db";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
-import type { DB } from "better-auth/adapters/drizzle";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { anonymous, organization } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins/email-otp";
 import { and, eq } from "drizzle-orm";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import Stripe from "stripe";
 import { sendOTP, sendPasswordReset, sendVerificationEmail } from "./email";
 import type { Env } from "./env";
-import { planLimits } from "./plans";
-import { createStripeClient } from "./stripe";
+import { canManageOrgBilling, planLimits } from "./plans";
 
 // Auth hint cookie for edge routing (see docs/adr/001-auth-hint-cookie.md)
 // NOT a security boundary - false positives are acceptable (causes one redirect)
 // __Host- prefix requires Secure; use plain name in HTTP dev
 const AUTH_HINT_VALUE = "1";
+
+/** Drizzle client with this project's schema, as built by `createDb()`. */
+type Database = PostgresJsDatabase<DatabaseSchema>;
 
 /**
  * Environment variables required for authentication configuration.
@@ -40,7 +48,7 @@ export type AuthEnv = Pick<
 >;
 
 /**
- * Google OAuth — enabled only when both credentials are present. Sign-in works
+ * Google OAuth – enabled only when both credentials are present. Sign-in works
  * without it via email OTP and passkeys.
  *
  * Setting only one credential signals a broken deployment, so fail instead of
@@ -81,7 +89,7 @@ export function configuredSocialProviders(env: AuthEnv): string[] {
  * Partial configuration fails loudly; otherwise missing subscription routes
  * would look like an application bug rather than a missing Stripe value.
  */
-function stripePlugin(db: DB, env: AuthEnv) {
+function stripePlugin(db: Database, env: AuthEnv) {
   const {
     STRIPE_WEBHOOK_SECRET: webhookSecret,
     STRIPE_STARTER_PRICE_ID: starterPriceId,
@@ -114,7 +122,9 @@ function stripePlugin(db: DB, env: AuthEnv) {
 
   return [
     stripe({
-      stripeClient: createStripeClient(env),
+      stripeClient: new Stripe(secretKey, {
+        appInfo: { name: "React Starter Kit" },
+      }),
       stripeWebhookSecret: webhookSecret,
       createCustomerOnSignUp: true,
       subscription: {
@@ -133,8 +143,7 @@ function stripePlugin(db: DB, env: AuthEnv) {
             freeTrial: { days: 14 },
           },
         ],
-        // Personal billing: user can manage their own subscription.
-        // Organization billing: only owner/admin can manage.
+        // Personal billing is always self-managed; organization billing is not.
         authorizeReference: async ({ user, referenceId }) => {
           if (referenceId === user.id) return true;
           const [row] = await db
@@ -146,7 +155,7 @@ function stripePlugin(db: DB, env: AuthEnv) {
                 eq(Db.member.userId, user.id),
               ),
             );
-          return row?.role === "owner" || row?.role === "admin";
+          return canManageOrgBilling(row?.role);
         },
       },
       organization: { enabled: true },
@@ -155,23 +164,33 @@ function stripePlugin(db: DB, env: AuthEnv) {
 }
 
 /**
- * Creates a Better Auth instance configured for multi-tenant SaaS with organization support.
+ * Organization to make active on a newly created session, or null for a user
+ * who belongs to none. Oldest membership wins; `id` breaks `createdAt` ties so
+ * the choice cannot flip between sign-ins.
  *
- * Key behaviors:
- * - Uses custom 'identity' table instead of default 'account' model for OAuth accounts
- * - Allows users to create up to 5 organizations with 'owner' role as creator
- * - Generates prefixed CUID2 IDs at application level (e.g. usr_..., ses_...)
- * - Supports anonymous, email/password, email OTP, passkeys, and optional Google OAuth
- *
- * @param db Drizzle database instance - must include all required auth tables (user, session, identity, organization, member, invitation, verification)
- * @param env Authentication and integration configuration
- * @returns Configured Better Auth instance
- * @remarks Missing database tables will cause runtime errors when auth endpoints are called.
+ * Takes the Drizzle client rather than Better Auth's `DB`, which is typed
+ * `{ [key: string]: any }` and would leave this query unchecked.
  */
-export function createAuth(db: DB, env: AuthEnv): Auth {
-  // Extract domain from APP_ORIGIN for passkey rpID
-  const appUrl = new URL(env.APP_ORIGIN);
-  const rpID = appUrl.hostname;
+export async function findInitialOrganization(
+  db: Database,
+  userId: string,
+): Promise<string | null> {
+  const membership = await db.query.member.findFirst({
+    columns: { organizationId: true },
+    where: (m, { eq }) => eq(m.userId, userId),
+    orderBy: (m, { asc }) => [asc(m.createdAt), asc(m.id)],
+  });
+
+  return membership?.organizationId ?? null;
+}
+
+/**
+ * Better Auth for multi-tenant SaaS – the plugin list below is the feature set.
+ * `db` must carry the project's auth schema: a missing table surfaces as a
+ * runtime error on the first auth request, not here.
+ */
+export function createAuth(db: Database, env: AuthEnv): Auth {
+  const rpID = new URL(env.APP_ORIGIN).hostname;
 
   // Widen options to prevent declaration emit from inferring `Auth<O>` through
   // non-portable Stripe internals (TS2742). Plugin factories remain typechecked;
@@ -250,6 +269,24 @@ export function createAuth(db: DB, env: AuthEnv): Auth {
       },
     },
 
+    databaseHooks: {
+      session: {
+        create: {
+          before: async (session) => {
+            const organizationId = await findInitialOrganization(
+              db,
+              session.userId,
+            );
+            if (!organizationId) return;
+
+            return {
+              data: { ...session, activeOrganizationId: organizationId },
+            };
+          },
+        },
+      },
+    },
+
     // Set/clear auth hint cookie for edge routing
     hooks: {
       after: createAuthMiddleware(async (ctx) => {
@@ -300,7 +337,10 @@ export type Auth = ReturnType<typeof betterAuth>;
 // Base session types from Better Auth - plugin-specific fields added at runtime
 type SessionResponse = Auth["$Infer"]["Session"];
 export type AuthUser = SessionResponse["user"];
-// Organization plugin adds activeOrganizationId at runtime
+// The organization plugin declares this field optional and the column is
+// nullable, so both absent and null are normal: a user belonging to no
+// organization has no active one. Matches what the plugin would infer if
+// widening `BetterAuthOptions` above had not dropped it.
 export type AuthSession = SessionResponse["session"] & {
-  activeOrganizationId?: string;
+  activeOrganizationId?: string | null;
 };

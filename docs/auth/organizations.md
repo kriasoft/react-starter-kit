@@ -65,10 +65,10 @@ Manages pending invitations, defined in `db/schema/invitation.ts`:
 | `role` | `text` | Role assigned upon acceptance |
 | `status` | `text` | `"pending"`, `"accepted"`, `"rejected"`, or `"canceled"` |
 | `expiresAt` | `timestamp` | Invitation expiration |
-| `acceptedAt` | `timestamp` | When the invite was accepted |
-| `rejectedAt` | `timestamp` | When the invite was rejected or canceled |
+| `acceptedAt` | `timestamp` | Optional app-owned acceptance timestamp; the plugin does not populate it |
+| `rejectedAt` | `timestamp` | Optional app-owned rejection timestamp; the plugin does not populate it |
 
-A unique constraint on `(organizationId, email)` prevents duplicate invitations to the same person.
+The starter's unique constraint on `(organizationId, email)` permits one lifetime invitation row per address and organization. Better Auth updates an invitation's status but creates a new row for a later invitation, so remove this constraint before supporting re-invites after acceptance, rejection, or cancellation.
 
 ## Roles
 
@@ -82,17 +82,25 @@ Three built-in roles with hierarchical permissions:
 
 ### Role Checks in API Procedures
 
-Use the session's `activeOrganizationId` with a membership query to check roles:
+Use the session's `activeOrganizationId` with a membership query to check roles. Reject a missing ID before the query; it means the request has no organization scope.
 
 ```ts
 // Inside a protected tRPC procedure
+const organizationId = ctx.session.activeOrganizationId;
+if (!organizationId) {
+  throw new TRPCError({
+    code: "PRECONDITION_FAILED",
+    message: "No active organization",
+  });
+}
+
 const [row] = await ctx.db
   .select({ role: Db.member.role })
   .from(Db.member)
   .where(
     and(
-      eq(Db.member.organizationId, referenceId),
-      eq(Db.member.userId, user.id),
+      eq(Db.member.organizationId, organizationId),
+      eq(Db.member.userId, ctx.user.id),
     ),
   );
 
@@ -105,47 +113,40 @@ The session tracks which organization is currently active via `activeOrganizatio
 
 ```ts
 export type AuthSession = SessionResponse["session"] & {
-  activeOrganizationId?: string;
+  activeOrganizationId?: string | null;
 };
 ```
 
-This field is stored in the `session` table and persists across requests. When the user switches organizations, Better Auth updates this field.
+This field is stored in the `session` table and persists across requests. When the user switches organizations, Better Auth updates this field. It is nullable because belonging to no organization is a normal state – always narrow it before use.
+
+Better Auth leaves it null on every newly created session, so a `databaseHooks.session.create.before` hook in `apps/api/lib/auth.ts` seeds it through `findInitialOrganization()`. Without it every sign-in would start with no active organization, quietly emptying organization-scoped views and sending billing back to the personal reference.
+
+The oldest membership wins, with `id` breaking `createdAt` ties so the choice cannot flip between sign-ins. Change the ordering if you want a different default – "last used", for example, means storing that choice yourself.
+
+## Members Page
+
+`apps/app/routes/(app)/members.tsx` is the worked example. It reads `activeOrganizationId` from the session, lists members through `useMembersQuery()` in `apps/app/lib/queries/organization.ts`, and falls back to a create-organization form when no organization is active – sign-up deliberately does not create one, and the active organization can also be cleared.
+
+Inviting others is not wired up: `inviteMember` needs `sendInvitationEmail` on the organization plugin and an invitation template in `apps/email/`. See [Email](/email) for adding one.
 
 ## Billing Integration
 
-Subscriptions scope to the active organization. The billing router uses `activeOrganizationId` as the billing reference, falling back to the user's own ID for personal billing:
+Subscriptions scope to the active organization, and two different owners enforce that.
 
-```ts
-// apps/api/routers/billing.ts
-const referenceId = ctx.session.activeOrganizationId ?? ctx.user.id;
-```
+**Stripe mutations** – checkout, portal, plan changes – go through the Better Auth plugin, whose `authorizeReference` hook in `apps/api/lib/auth.ts` allows personal billing for the caller and organization billing only for an `owner` or `admin`.
 
-The Stripe plugin's `authorizeReference` hook enforces that only owners and admins can manage an organization's subscription:
+**Application reads** are not covered by that hook. `ctx.session.activeOrganizationId` selects the billing scope; it does not prove the caller still belongs to that organization, because a session outlives a membership removal. `apps/api/routers/billing.ts` is the shipped example: it revalidates the membership on `ctx.db` – never `dbCached` – before reading anything, and returns the caller's `canManage` from the same lookup so the UI does not offer actions the plugin will reject. See [Query Patterns > Multi-tenant Queries](/database/queries#multi-tenant-queries).
 
-```ts
-authorizeReference: async ({ user, referenceId }) => {
-  if (referenceId === user.id) return true; // Personal billing
-  const [row] = await db
-    .select({ role: Db.member.role })
-    .from(Db.member)
-    .where(
-      and(
-        eq(Db.member.organizationId, referenceId),
-        eq(Db.member.userId, user.id),
-      ),
-    );
-  return row?.role === "owner" || row?.role === "admin";
-},
-```
+Better Auth also supports switching and clearing the active organization. The starter UI does not expose either yet: it seeds one on session create and leaves it alone, so add a switcher when your app needs more than one active scope.
 
 ## Invitation Lifecycle
 
 1. **Owner/admin invites** – sends invitation to email with assigned role
 2. **Invitation pending** – stored in `invitation` table with `status: "pending"` and an expiration
 3. **Invitee accepts** – Better Auth creates a `member` record and updates invitation status
-4. **Or invitee rejects / invitation expires** – invitation status is updated, no member created
+4. **Or invitee rejects or the inviter cancels** – status is updated, no member is created. An expired pending invitation is refused when used; expiry alone does not rewrite its status.
 
-The `(organizationId, email)` unique constraint keeps one invitation record per address in an organization; lifecycle changes update that record's status.
+The plugin does not populate the optional `acceptedAt` or `rejectedAt` columns. Add organization hooks if the application needs those audit timestamps.
 
 ## Client API
 

@@ -1,6 +1,8 @@
 # Auth Form Specification
 
-The login and signup pages share `AuthForm`, a three-step passwordless flow. They differ only in copy, terms, the account-switch link, and passkey availability.
+The login and signup pages share `AuthForm`, a three-step passwordless flow. They differ only in copy, the account-switch link, and passkey availability.
+
+The form shows no terms-of-service notice. Either page can create an account, so a notice belongs on both – but the starter ships no legal pages to link to, and a link to a page that does not exist is worse on the account-creation path than no notice at all. Add both when you add the documents; the [security checklist](/security/checklist) carries it as a pre-launch item.
 
 ## Methods
 
@@ -10,7 +12,7 @@ The login and signup pages share `AuthForm`, a three-step passwordless flow. The
 | Passkey | Yes | No | Existing accounts only |
 | Google | Yes | Yes | Only when both server credentials are configured |
 
-The API exposes `config.socialProviders`, derived from the same helper that configures Better Auth. Auth routes prefetch it and the login dialog warms it on mount, so the UI neither advertises a disabled provider nor keeps a duplicate client-side enablement flag.
+The API exposes `config.socialProviders`, derived from the same helper that configures Better Auth. The login and signup routes prefetch it before rendering the form, so the UI neither advertises a disabled provider nor keeps a duplicate client-side enablement flag.
 
 ## Steps
 
@@ -30,12 +32,12 @@ const VALID_TRANSITIONS = {
 } as const;
 ```
 
-Social and passkey flows complete outside this step sequence. A success guard prevents overlapping conditional-passkey and manual operations from completing authentication twice.
+Passkey completes outside this step sequence. A success guard runs the post-auth work once per form, because disabling is state-backed and two completions can land before React rerenders. Google leaves the page entirely; the login route resolves the session when the browser returns.
 
 ### Method selection
 
 - Login shows configured social providers, email, and passkey.
-- Signup shows configured social providers and email, followed by the terms and privacy notice.
+- Signup shows configured social providers and email.
 - While any child flow is active, all methods and navigation are disabled.
 - Errors use the form's inline `role="alert"` region.
 
@@ -44,7 +46,6 @@ Social and passkey flows complete outside this step sequence. A success guard pr
 - The field uses `type="email"`, `autocomplete="email"`, and autofocus.
 - Submission trims and lowercases the address.
 - Both login and signup request OTP type `"sign-in"`; Better Auth creates a user when the address is new.
-- Signup repeats the terms and privacy notice on this step.
 
 ### OTP
 
@@ -59,7 +60,6 @@ Social and passkey flows complete outside this step sequence. A success guard pr
 interface AuthFormProps {
   mode?: "login" | "signup";
   onSuccess: () => Promise<void>;
-  isLoading?: boolean;
   returnTo?: string;
 }
 ```
@@ -71,7 +71,7 @@ The caller owns post-auth cache invalidation and navigation. `AuthForm` awaits `
 - The active input receives focus on the email and OTP steps.
 - Native forms support Enter submission.
 - Busy states disable conflicting controls.
-- The logo link has an accessible name while its image remains decorative.
+- The logo link has an accessible name while its image remains decorative. It is an `<a href="/">`, not a `<Link>`: `/` inside the SPA is the protected dashboard, so only a request reaching the edge router can answer with the marketing page.
 - Errors are announced through `role="alert"`.
 
 ## File Map

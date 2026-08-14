@@ -3,11 +3,12 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 
-// Load root .env variables for the Astro build process (side-effect: populates process.env)
-loadEnv(process.env.NODE_ENV || "development", "../..", "");
+// Astro does not expose the root .env to this config file, so load it explicitly.
+const env = loadEnv(process.env.NODE_ENV || "development", "../..", "");
 
 export default defineConfig({
-  site: process.env.PUBLIC_APP_ORIGIN,
+  // The edge worker serves marketing, app, and API routes on one public origin.
+  site: env.APP_ORIGIN,
   srcDir: ".",
   publicDir: "./public",
   outDir: "./dist",
