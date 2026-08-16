@@ -1,6 +1,5 @@
-import type { DatabaseSchema } from "@repo/db";
+import type { Database } from "@repo/db";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { Auth, AuthSession, AuthUser } from "./auth.js";
 import type { Env } from "./env.js";
 
@@ -12,14 +11,14 @@ export type TRPCContext = {
   info: CreateHTTPContextOptions["info"];
 
   /** Always-fresh reads. The default choice. */
-  db: PostgresJsDatabase<DatabaseSchema>;
+  db: Database;
 
   /**
    * Reads served from Hyperdrive's cache window and never invalidated on
    * write. Opt in only where that staleness is acceptable – never for auth,
    * permissions, billing state, or a read after a write.
    */
-  dbCached: PostgresJsDatabase<DatabaseSchema>;
+  dbCached: Database;
 
   /** Null until authenticated; `protectedProcedure` narrows both. */
   session: AuthSession | null;
@@ -41,8 +40,8 @@ export type TRPCContext = {
 export type AppContext = {
   Bindings: Env;
   Variables: {
-    db: PostgresJsDatabase<DatabaseSchema>;
-    dbCached: PostgresJsDatabase<DatabaseSchema>;
+    db: Database;
+    dbCached: Database;
     auth: Auth;
   };
 };

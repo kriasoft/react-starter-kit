@@ -31,11 +31,10 @@ The seed runner imports your Drizzle config for environment resolution, creates 
 
 ```ts
 // db/seeds/products.ts
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type * as schema from "../schema";
+import type { Database } from "../index";
 import { product } from "../schema";
 
-export async function seedProducts(db: PostgresJsDatabase<typeof schema>) {
+export async function seedProducts(db: Database) {
   const data = [
     { name: "Starter Plan Guide", price: 0, organizationId: "org_..." },
     { name: "Pro Onboarding Kit", price: 4900, organizationId: "org_..." },

@@ -11,6 +11,7 @@
 - Prepared statements stay enabled; Hyperdrive only caches queries it sees prepared. Requires an unpooled origin.
 - `max: 1` connection per client, because each request builds two.
 - `transform: { undefined: null }` converts JS `undefined` to SQL `NULL`.
+- `TRPCContext["db"]` is `Database` from `@repo/db` – bound to the schema, not to a driver. Tests pass a PGlite client from `@repo/db/testing` into the same field with no cast.
 
 ## tRPC
 
@@ -18,6 +19,7 @@
 - `protectedProcedure` throws `UNAUTHORIZED` if `ctx.session` or `ctx.user` is null, then narrows both to non-null in downstream context.
 - Authenticated is not authorized. `ctx.session.activeOrganizationId` selects a tenant scope; it does not prove membership, because a session outlives a membership removal. Any procedure reading org-scoped data must verify `member(organizationId, userId)` against `ctx.db` first – `routers/billing.ts` is the shipped example. The Stripe plugin's `authorizeReference` covers only its own endpoints, never ours.
 - Router in `lib/app.ts` combines routers from `routers/`. Input validation with Zod.
+- Test procedures whose behavior depends on query scoping with `createCallerFactory` and `@repo/db/testing`; a mocked `db.query.*` lookup cannot catch a wrong `where`. See `routers/billing.test.ts`.
 
 ## Email
 

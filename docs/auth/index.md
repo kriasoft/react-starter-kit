@@ -77,7 +77,7 @@ export function createAuth(db: Database, env: AuthEnv): Auth {
 }
 ```
 
-`Database` is the local alias for `PostgresJsDatabase<DatabaseSchema>`. Better Auth's own `DB` type is `{ [key: string]: any }`, which would leave every query in this file unchecked, so the typed Drizzle client is passed instead.
+`Database` comes from `@repo/db` and names the schema rather than the driver. Better Auth's own `DB` type is `{ [key: string]: any }`, which would leave every query in this file unchecked, so the typed Drizzle client is passed instead.
 
 The `account` model is renamed to `identity` to better describe its purpose – it holds every authentication identity, OAuth and password alike:
 

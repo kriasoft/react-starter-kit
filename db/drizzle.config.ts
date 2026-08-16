@@ -2,7 +2,11 @@ import { configDotenv } from "dotenv";
 import { defineConfig } from "drizzle-kit";
 import { resolve } from "node:path";
 
-const ENVIRONMENTS = ["dev", "test", "staging", "production"] as const;
+// No "test": tests run against PGlite in-process (`@repo/db/testing`), so
+// there is no test connection string to resolve. Leaving the name accepted
+// would have `ENVIRONMENT=test bun db:push` fall through to `.env.local` and
+// reshape whichever database that points at.
+const ENVIRONMENTS = ["dev", "staging", "production"] as const;
 type Environment = (typeof ENVIRONMENTS)[number];
 
 // Validate the explicit selector so a typo cannot fall through to development
@@ -23,7 +27,6 @@ const envName: Environment = (() => {
 
   if (process.env.NODE_ENV === "production") return "production";
   if (process.env.NODE_ENV === "staging") return "staging";
-  if (process.env.NODE_ENV === "test") return "test";
   return "dev";
 })();
 

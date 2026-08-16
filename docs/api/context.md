@@ -10,8 +10,8 @@ Defined in `apps/api/lib/context.ts`, the context provides:
 | --- | --- | --- |
 | `req` | `Request` | The incoming HTTP request |
 | `info` | `CreateHTTPContextOptions["info"]` | tRPC request metadata (headers, connection info) |
-| `db` | `PostgresJsDatabase` | Drizzle ORM instance via uncached Hyperdrive |
-| `dbCached` | `PostgresJsDatabase` | Drizzle ORM instance via cached Hyperdrive |
+| `db` | [`Database`](/database/#importing-schemas) | Drizzle client via uncached Hyperdrive |
+| `dbCached` | [`Database`](/database/#importing-schemas) | Drizzle client via cached Hyperdrive |
 | `session` | `AuthSession \| null` | Authenticated session from Better Auth |
 | `user` | `AuthUser \| null` | Authenticated user data |
 | `res?` | `Response` | Optional HTTP response from Hono context |

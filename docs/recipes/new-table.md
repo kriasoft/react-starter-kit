@@ -76,11 +76,10 @@ Create a seed function:
 
 ```ts
 // db/seeds/projects.ts
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type * as schema from "../schema";
+import type { Database } from "../index";
 import { project } from "../schema";
 
-export async function seedProjects(db: PostgresJsDatabase<typeof schema>) {
+export async function seedProjects(db: Database) {
   const projects = [
     { name: "Acme Dashboard", organizationId: "org_..." },
     { name: "Mobile App", organizationId: "org_..." },

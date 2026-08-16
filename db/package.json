@@ -6,7 +6,8 @@
   "exports": {
     ".": "./index.ts",
     "./schema": "./schema/index.ts",
-    "./schema/*": "./schema/*"
+    "./schema/*": "./schema/*",
+    "./testing": "./testing.ts"
   },
   "scripts": {
     "generate": "bun --bun drizzle-kit generate",
@@ -26,12 +27,14 @@
     "up": "bun --bun drizzle-kit up",
     "check": "bun --bun drizzle-kit check",
     "drop": "bun --bun drizzle-kit drop",
+    "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "drizzle-orm": "^0.45.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.5",
     "@repo/typescript-config": "workspace:*",
     "@types/bun": "^1.3.14",
     "@types/node": "^26.2.0",
@@ -39,7 +42,8 @@
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "vitest": "~4.1.10"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^3.3.0",

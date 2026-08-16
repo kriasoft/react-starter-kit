@@ -25,7 +25,7 @@ React Starter Kit is a production-ready monorepo for building SaaS web applicati
 | Database | [Neon](https://neon.tech) PostgreSQL, [Drizzle ORM](https://orm.drizzle.team) |
 | Email | [React Email](https://react.email), [Resend](https://resend.com) |
 | Deployment | [Cloudflare Workers](https://developers.cloudflare.com/workers/), Terraform |
-| Testing | [Vitest](https://vitest.dev) 4, Happy DOM |
+| Testing | [Vitest](https://vitest.dev) 4, Happy DOM, [PGlite](https://pglite.dev) |
 
 ## What's Included
 

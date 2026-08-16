@@ -18,7 +18,7 @@
 - **Backend:** Hono, tRPC 11, Better Auth (email OTP, passkey, Google OAuth, organizations)
 - **Database:** Neon PostgreSQL, Drizzle ORM (`snake_case` casing), Cloudflare Hyperdrive
 - **Email:** React Email, Resend
-- **Testing:** Vitest, Happy DOM
+- **Testing:** Vitest, Happy DOM, PGlite (in-process Postgres, no service to start)
 - **Deployment:** Cloudflare Workers (Wrangler), Terraform
 
 ## Commands

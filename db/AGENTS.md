@@ -24,6 +24,13 @@
 
 - Use `onConflictDoNothing()` for idempotent seeds (safe to rerun).
 
+## Testing
+
+- `createTestDatabase()` from `@repo/db/testing` boots PGlite and applies `migrations/`, so tests run on the schema production receives. No connection string, no service, no `.env.test` – there is deliberately no `test` environment in `drizzle.config.ts`.
+- When a file uses the test database: one instance at module scope (`await createTestDatabase()`), `reset()` between tests, `close()` in `afterAll`. `reset()` truncates every table in the schema.
+- Use the test database when behavior depends on query scoping or database constraints. A mocked lookup cannot fail on a wrong `where`. See `docs/testing.md`.
+- `Database` (exported from `@repo/db`) is the driver-agnostic client type – postgres-js in production, PGlite in tests. Type parameters and helpers against it, not `PostgresJsDatabase`. Selected rows, relational queries and `.returning()` stay schema-typed; `execute()` and mutations without `.returning()` resolve to `unknown` (the command result belongs to the driver), and `$client` is not exposed. Add `.returning()` when a write needs to report anything.
+
 ## Environment
 
 - `ENVIRONMENT` overrides `NODE_ENV` for env file selection. Database scripts use `production`, `staging`, and `dev`; the API runtime uses `production`, `staging`, and `development`.

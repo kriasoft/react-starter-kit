@@ -1,11 +1,10 @@
-import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import * as schema from "../schema";
+import type { Database } from "../index";
 import { type NewUser, user } from "../schema";
 
 /**
  * Seeds the database with test user accounts.
  */
-export async function seedUsers(db: PostgresJsDatabase<typeof schema>) {
+export async function seedUsers(db: Database) {
   console.log("Seeding users...");
 
   // Test user data with realistic names and email addresses

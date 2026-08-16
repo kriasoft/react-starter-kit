@@ -4,7 +4,7 @@ import {
   schema as Db,
   generateAuthId,
   type AuthModel,
-  type DatabaseSchema,
+  type Database,
 } from "@repo/db";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -12,7 +12,6 @@ import { createAuthMiddleware } from "better-auth/api";
 import { anonymous, organization } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins/email-otp";
 import { and, eq } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import Stripe from "stripe";
 import { sendOTP, sendPasswordReset, sendVerificationEmail } from "./email";
 import type { Env } from "./env";
@@ -22,9 +21,6 @@ import { canManageOrgBilling, planLimits } from "./plans";
 // NOT a security boundary - false positives are acceptable (causes one redirect)
 // __Host- prefix requires Secure; use plain name in HTTP dev
 const AUTH_HINT_VALUE = "1";
-
-/** Drizzle client with this project's schema, as built by `createDb()`. */
-type Database = PostgresJsDatabase<DatabaseSchema>;
 
 /**
  * Environment variables required for authentication configuration.
