@@ -18,12 +18,8 @@ apps/app/routes/
 └── (app)/
     ├── route.tsx           → Layout for all (app) routes
     ├── index.tsx           → / (dashboard)
-    ├── settings.tsx        → /settings
-    ├── users.tsx           → /users
-    ├── analytics.tsx       → /analytics
-    ├── reports.tsx         → /reports
-    ├── dashboard.tsx       → /dashboard (redirects to /)
-    └── about.tsx           → /about
+    ├── members.tsx         → /members
+    └── settings.tsx        → /settings
 ```
 
 Parenthesized directories like `(app)` and `(auth)` are **route groups** – they create layout boundaries without affecting the URL. `/settings` is the URL, not `/(app)/settings`.
@@ -41,7 +37,7 @@ The two route groups serve different auth requirements:
 
 ## Root Route
 
-The root route (`__root.tsx`) creates the router context and wraps everything in an error boundary:
+The root route (`__root.tsx`) creates the router context and wraps the outlet in an error boundary:
 
 ```tsx
 // apps/app/routes/__root.tsx
@@ -53,15 +49,31 @@ export const Route = createRootRouteWithContext<{
 
 function Root() {
   return (
-    <AppErrorBoundary>
-      <Outlet />
-      {import.meta.env.DEV && <TanStackRouterDevtools />}
-    </AppErrorBoundary>
+    <>
+      <AppErrorBoundary>
+        <Outlet />
+      </AppErrorBoundary>
+      <Devtools />
+    </>
   );
 }
 ```
 
 The `queryClient` in context is what makes `beforeLoad` guards possible – route guards can prefetch or read cached data before rendering.
+
+## Devtools
+
+`components/devtools.tsx` mounts [TanStack Devtools](https://tanstack.com/devtools/latest) with the Router and Query panels as plugins of one shell. It renders `null` outside development, so nothing reaches your production bundle.
+
+::: tip
+
+The trigger is invisible until you hover the bottom-right corner. `Ctrl+Shift+X` opens the panel without it.
+
+:::
+
+Position, theme, panel side, and the hotkey are settings the shell persists per browser. The `config` prop only seeds them – once you change one from the panel's settings tab, that value wins.
+
+`Devtools` sits outside `AppErrorBoundary` and carries its own boundary, so a render failure in either subtree can't take down the other.
 
 ## Auth Guards
 
@@ -82,20 +94,18 @@ export const Route = createFileRoute("/(app)")({
     }
 
     // Both user and session must exist for valid auth state
-    if (!session?.user || !session?.session) {
+    if (!isValidSession(session)) {
       throw redirect({
         to: "/login",
         search: { returnTo: location.href },
       });
     }
-
-    return { user: session.user, session };
   },
   component: AppLayout,
 });
 ```
 
-This pattern makes subsequent navigations between protected routes instant – the session is already cached from the first load.
+This pattern makes subsequent navigations between protected routes instant – the session is already cached from the first load. Nothing is returned into route context: pages read the session through `useSessionQuery()`, so there is no second copy to go stale after a revalidation.
 
 ### Redirecting authenticated users
 
@@ -110,7 +120,7 @@ export const Route = createFileRoute("/(auth)/login")({
       const session = await context.queryClient.fetchQuery(
         sessionQueryOptions(),
       );
-      if (session?.user && session?.session) {
+      if (isValidSession(session)) {
         throw redirect({ to: search.returnTo ?? "/" });
       }
     } catch (error) {
@@ -201,6 +211,8 @@ function Projects() {
 
 2. The route tree regenerates automatically during `bun app:dev`. The new page is available at `/projects` and protected by the `(app)` layout guard.
 
-3. Add navigation in the sidebar or header as needed. See [State & Data Fetching](./state.md) for loading data in your new route.
+3. Add `projects` to `APP_PATHS` in `apps/web/worker.ts`. The web worker forwards only the paths listed there, so an unlisted route reaches the app on client-side navigation but 404s on direct load. The path must not collide with a marketing page in `apps/web/pages/` – `apps/app/lib/edge-routing.test.ts` fails on either mistake.
+
+4. Add navigation in the sidebar or header as needed. See [State & Data Fetching](./state.md) for loading data in your new route.
 
 For more on TanStack Router, see the [official docs](https://tanstack.com/router/latest/docs/framework/react/overview).

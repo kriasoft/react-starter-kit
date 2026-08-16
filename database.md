@@ -14,10 +14,11 @@ db/
 ├── seeds/              # Seed data scripts
 ├── scripts/            # Utilities (seed runner, export)
 ├── drizzle.config.ts   # Drizzle Kit configuration
-└── index.ts            # Re-exports schema + DatabaseSchema type
+├── testing.ts          # createTestDatabase() – PGlite for tests
+└── index.ts            # Re-exports schema, DatabaseSchema and Database types
 ```
 
-Schema files are organized by domain – one file per entity group (e.g., `user.ts` contains the user, session, identity, and verification tables). All tables are re-exported from `schema/index.ts`.
+Schema files are organized by domain – one file per entity group (e.g., `user.ts` contains the user, session, identity, and verification tables). All tables are re-exported from `schema/index.ts`, and that barrel is the only file Drizzle Kit reads: a table missing from it is invisible to `bun db:generate`, which then reports no changes rather than an error.
 
 ## Connection Architecture
 
@@ -65,7 +66,7 @@ Run from the repo root. Some take a `:staging` or `:production` suffix to target
 
 ## Environment Targeting
 
-Database scripts select the environment through the `ENVIRONMENT` variable (falls back to `NODE_ENV`). Development cascades through env files, first value wins:
+Database scripts select the environment through the `ENVIRONMENT` variable (falls back to `NODE_ENV`). There are three: `dev`, `staging` and `production`. Development cascades through env files, first value wins:
 
 ```
 .env.dev.local  →  .env.local  →  .env
@@ -84,13 +85,31 @@ Not every command has `:staging` and `:production` variants, by design:
 
 The `DATABASE_URL` variable must be a valid `postgres://` or `postgresql://` connection string.
 
+There is deliberately no `test` environment. Tests run against [PGlite](/testing#database-tests) in-process, so they never resolve a connection string – and `ENVIRONMENT=test` fails loudly rather than falling through to whichever database `.env.local` points at.
+
 See [Environment Variables](/getting-started/environment-variables) for full details.
 
 ## Importing Schemas
 
-The `@repo/db` package exports two entry points:
+The `@repo/db` package exports three entry points:
 
 ```ts
-import * as schema from "@repo/db"; // full schema + DatabaseSchema type
+import * as schema from "@repo/db"; // full schema + type exports
 import { user, session } from "@repo/db/schema"; // individual tables
+import { createTestDatabase } from "@repo/db/testing"; // test database
 ```
+
+The root entry also exports `Database`, the schema-bound client type:
+
+```ts
+import type { Database } from "@repo/db";
+
+async function findMembership(db: Database, userId: string, orgId: string) {
+  return db.query.member.findFirst({
+    where: (m, { and, eq }) =>
+      and(eq(m.userId, userId), eq(m.organizationId, orgId)),
+  });
+}
+```
+
+It names the schema, not the driver – postgres-js over Hyperdrive in production, PGlite in tests – so a helper written against it works in both without a cast.

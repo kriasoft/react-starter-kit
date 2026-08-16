@@ -8,17 +8,28 @@ Common patterns for querying the database in tRPC procedures. Use `ctx.db` by de
 
 ## Multi-tenant Queries
 
-Every query that returns user data must be scoped to the current organization. The active organization ID is available on the session:
+Every query that returns tenant data must be scoped to the current organization. The active ID selects the scope; it does not prove the user is still a member, because an older session can outlive a membership change. Resolve both before reading tenant data:
 
 ```ts
+const organizationId = ctx.session.activeOrganizationId;
+if (!organizationId) {
+  throw new TRPCError({ code: "PRECONDITION_FAILED" });
+}
+
+const membership = await ctx.db.query.member.findFirst({
+  where: (m, { and, eq }) =>
+    and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+});
+if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
+
 const products = await ctx.db.query.product.findMany({
-  where: eq(product.organizationId, ctx.session.activeOrganizationId),
+  where: eq(product.organizationId, organizationId),
 });
 ```
 
 ::: warning
 
-Forgetting the organization filter leaks data across tenants. Treat this as a security invariant – every table with an `organizationId` column must filter by it.
+Forgetting either the membership check or the organization filter leaks data across tenants. Treat both as security invariants – every table with an `organizationId` column must filter by it.
 
 :::
 
@@ -51,31 +62,22 @@ const products = await ctx.db.query.product.findMany({
 });
 ```
 
-## DataLoader Pattern
+## Avoiding N+1 Queries
 
-The API uses a [DataLoader](https://github.com/graphql/dataloader) pattern to batch lookups and prevent N+1 queries. Loaders are defined with `defineLoader` and cached per-request in `ctx.cache`:
-
-```ts
-// apps/api/lib/loaders.ts (simplified)
-export const userById = defineLoader(
-  Symbol("userById"),
-  async (ctx, ids: readonly string[]) => {
-    const users = await ctx.dbCached
-      .select()
-      .from(user)
-      .where(inArray(user.id, [...ids]));
-    return mapByKey(users, "id", ids);
-  },
-);
-```
-
-Use loaders when a procedure needs to fetch the same entity type for multiple IDs:
+Fetching related rows one at a time inside a loop issues one query per row. Drizzle's `with` clause (above) resolves relations in a single round trip, and a single `inArray` lookup covers the rest:
 
 ```ts
-const creator = await userById(ctx).load(product.createdBy);
+const creators = await ctx.db.query.user.findMany({
+  columns: { id: true, name: true },
+  where: (u, { inArray }) =>
+    inArray(
+      u.id,
+      products.map((p) => p.createdBy),
+    ),
+});
 ```
 
-See [Context & Middleware – DataLoaders](/api/context#dataloaders) for the full pattern and how to add new loaders.
+If a procedure grows past what those two cover, reach for a batching library such as [DataLoader](https://github.com/graphql/dataloader) then – not before.
 
 ## Access Control
 

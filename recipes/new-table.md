@@ -79,11 +79,10 @@ Create a seed function:
 
 ```ts
 // db/seeds/projects.ts
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type * as schema from "../schema";
+import type { Database } from "../index";
 import { project } from "../schema";
 
-export async function seedProjects(db: PostgresJsDatabase<typeof schema>) {
+export async function seedProjects(db: Database) {
   const projects = [
     { name: "Acme Dashboard", organizationId: "org_..." },
     { name: "Mobile App", organizationId: "org_..." },
@@ -109,13 +108,24 @@ await seedProjects(db);
 
 ```ts
 // apps/api/routers/project.ts
+import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 export const projectRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
+    const organizationId = ctx.session.activeOrganizationId;
+    if (!organizationId) {
+      throw new TRPCError({ code: "PRECONDITION_FAILED" });
+    }
+
+    const membership = await ctx.db.query.member.findFirst({
+      where: (m, { and, eq }) =>
+        and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+    });
+    if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
+
     return ctx.db.query.project.findMany({
-      where: (p, { eq }) =>
-        eq(p.organizationId, ctx.session.activeOrganizationId!),
+      where: (p, { eq }) => eq(p.organizationId, organizationId),
       orderBy: (p, { desc }) => desc(p.createdAt),
     });
   }),

@@ -63,16 +63,15 @@ git remote add origin https://github.com/YOUR_USERNAME/YOUR_PROJECT.git
 git push -u origin main
 ```
 
-To pull template updates later:
+## Keep Template Updates
 
-```bash
-git fetch seed
-git merge seed/main
-```
+Run the repository's `merge-seed` skill when you want to bring newer React Starter Kit changes into your project (`/merge-seed` in Claude Code or `$merge-seed` in Codex). It adds the `seed` remote if needed, reviews the upstream commits, merges them on a dedicated branch, preserves your product-specific behavior and configuration, and runs the project checks before landing the result.
+
+Commit or stash your work first – the workflow requires a clean working tree. This works whether you started from the GitHub template or cloned with `-o seed`.
 
 ::: warning
 
-Review template updates carefully before merging – schema or config changes may need manual resolution.
+Treat upstream migrations and changes to live-data semantics as decisions, not routine conflicts. The skill stops and asks for direction instead of guessing in those cases.
 
 :::
 

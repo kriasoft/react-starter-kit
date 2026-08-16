@@ -21,25 +21,27 @@ This is the single source of truth for what each plan includes. Add new limit fi
 
 ## Auth Plugin Configuration
 
-Plans are registered with the `@better-auth/stripe` plugin in `apps/api/lib/auth.ts`:
+Plans are registered with the `@better-auth/stripe` plugin in `apps/api/lib/auth.ts`. `stripePlugin()` proves the four required values are set first, so the config uses narrowed locals rather than the optional `env` fields:
 
 ```ts
 // apps/api/lib/auth.ts (stripe plugin config)
 stripe({
-  stripeClient: createStripeClient(env),
-  stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+  stripeClient: new Stripe(secretKey, {
+    appInfo: { name: "React Starter Kit" },
+  }),
+  stripeWebhookSecret: webhookSecret,
   createCustomerOnSignUp: true,
   subscription: {
     enabled: true,
     plans: [
       {
         name: "starter",
-        priceId: env.STRIPE_STARTER_PRICE_ID,
+        priceId: starterPriceId,
         limits: planLimits.starter,
       },
       {
         name: "pro",
-        priceId: env.STRIPE_PRO_PRICE_ID,
+        priceId: proPriceId,
         annualDiscountPriceId: env.STRIPE_PRO_ANNUAL_PRICE_ID,
         limits: planLimits.pro,
         freeTrial: { days: 14 },

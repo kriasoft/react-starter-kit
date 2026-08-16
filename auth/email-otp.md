@@ -82,7 +82,7 @@ const VALID_TRANSITIONS: Record<AuthStep, AuthStep[]> = {
 };
 ```
 
-Invalid step jumps are ignored, keeping navigation within the declared state machine. A separate success guard handles overlapping completions such as conditional passkey UI finishing during a manual auth attempt.
+Invalid step jumps are ignored, keeping navigation within the declared state machine. Passkey completes outside that sequence, so a separate success guard runs the post-auth work once per form – disabling is state-backed, and two completions can land before React rerenders. Google leaves the page entirely and resolves on return.
 
 ### Sending the OTP
 
@@ -143,7 +143,7 @@ AuthForm
     └── OtpVerification      Code entry and verification
 ```
 
-The `AuthForm` accepts a `mode` prop (`"login"` or `"signup"`) that controls copy and available methods. Both modes use the same OTP flow – the difference is cosmetic (headings, ToS display, passkey availability).
+The `AuthForm` accepts a `mode` prop (`"login"` or `"signup"`). Both modes run the same OTP flow; the difference is headings, the account-switch link, and passkey availability – see the [auth form spec](/specs/auth-form).
 
 ::: info
 

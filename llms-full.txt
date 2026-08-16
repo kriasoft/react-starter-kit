@@ -25,7 +25,7 @@ React Starter Kit is a production-ready monorepo for building SaaS web applicati
 | Database | [Neon](https://neon.tech) PostgreSQL, [Drizzle ORM](https://orm.drizzle.team) |
 | Email | [React Email](https://react.email), [Resend](https://resend.com) |
 | Deployment | [Cloudflare Workers](https://developers.cloudflare.com/workers/), Terraform |
-| Testing | [Vitest](https://vitest.dev) 4, Happy DOM |
+| Testing | [Vitest](https://vitest.dev) 4, Happy DOM, [PGlite](https://pglite.dev) |
 
 ## What's Included
 
@@ -110,16 +110,15 @@ git remote add origin https://github.com/YOUR_USERNAME/YOUR_PROJECT.git
 git push -u origin main
 ```
 
-To pull template updates later:
+## Keep Template Updates
 
-```bash
-git fetch seed
-git merge seed/main
-```
+Run the repository's `merge-seed` skill when you want to bring newer React Starter Kit changes into your project (`/merge-seed` in Claude Code or `$merge-seed` in Codex). It adds the `seed` remote if needed, reviews the upstream commits, merges them on a dedicated branch, preserves your product-specific behavior and configuration, and runs the project checks before landing the result.
+
+Commit or stash your work first – the workflow requires a clean working tree. This works whether you started from the GitHub template or cloned with `-o seed`.
 
 ::: warning
 
-Review template updates carefully before merging – schema or config changes may need manual resolution.
+Treat upstream migrations and changes to live-data semantics as decisions, not routine conflicts. The skill stops and asks for direction instead of guessing in those cases.
 
 :::
 
@@ -269,11 +268,8 @@ Different tools read different files; staging and production application Workers
 | `.env.dev.local` / `.env.test.local` | No | Optional Drizzle development/test overrides |
 | `.env.staging.local` | No | Staging `db:*` commands; must contain `DATABASE_URL` |
 | `.env.production.local` | No | Production `db:*` commands; must contain `DATABASE_URL` |
-| `.env.terraform.staging` / `.env.terraform.production` | Optional | Shared HCP organization and workspace, once the repo is yours |
-| `.env.terraform.staging.local` | No | Staging HCP organization and workspace selection |
-| `.env.terraform.production.local` | No | Production HCP organization and workspace selection |
 
-The Terraform pair cascades like `.env` and `.env.local`: `bun infra:staging` reads `.env.terraform.staging` then `.env.terraform.staging.local`, and the second wins. The starter commits neither, so a clone carries no deployment targets; add the committed file when you want your team to share one. Neither value is a secret – CI passes both as GitHub variables. See [Infrastructure](https://github.com/kriasoft/react-starter-kit/tree/main/infra#setup).
+Terraform needs no env file: each root in `infra/envs/` names its HCP organization and workspace inline. See [Infrastructure](https://github.com/kriasoft/react-starter-kit/tree/main/infra#setup).
 
 For normal local development, `.env.local` takes precedence over `.env`. Create it by copying `.env` and filling in real values:
 
@@ -303,22 +299,22 @@ For local development, Wrangler reads Hyperdrive connection strings from the `CL
 
 ### Application
 
-| Variable      | Required | Description                                       |
-| ------------- | -------- | ------------------------------------------------- |
-| `APP_NAME`    | Yes      | Display name used in emails and passkey prompts   |
-| `APP_ORIGIN`  | Yes      | Full origin URL (e.g., `http://localhost:5173`)   |
-| `API_ORIGIN`  | Dev only | Vite proxy target (e.g., `http://localhost:8787`) |
-| `ENVIRONMENT` | Yes      | `development`, `staging`, or `production`         |
+| Variable | Required | Description |
+| --- | --- | --- |
+| `APP_NAME` | Yes | Display name in emails, passkey prompts, and the app header |
+| `APP_ORIGIN` | Yes | Full origin URL (e.g., `http://localhost:5173`) |
+| `API_ORIGIN` | Dev only | Vite proxy target (e.g., `http://localhost:8787`) |
+| `ENVIRONMENT` | Yes | `development`, `staging`, or `production` |
 
 ### Database
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `DATABASE_URL` | `db:*` only | Connection string for Drizzle Kit; the Workers reach Postgres through the Hyperdrive bindings instead |
 | `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_CACHED` | Dev only | Hyperdrive cached connection for local dev |
 | `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_UNCACHED` | Dev only | Hyperdrive uncached connection for local dev |
 
-Use an **unpooled** connection string for all three – the Neon host without `-pooler`. The client keeps prepared statements enabled, and a transaction-mode pooler breaks them.
+Use an **unpooled** connection string for all three – the Neon host without `-pooler`. Prepared statements stay enabled, and a transaction-mode pooler breaks them.
 
 ### Authentication
 
@@ -331,12 +327,6 @@ Use an **unpooled** connection string for all three – the Neon host without `-
 Google sign-in is optional – email OTP and passkeys work without it. Set both variables or neither; supplying one is a configuration error rather than a silent half-enabled provider.
 
 See [Authentication](/auth/) for provider setup details.
-
-### AI
-
-| Variable | Required | Description |
-| --- | --- | --- |
-| `OPENAI_API_KEY` | No | [OpenAI](https://platform.openai.com/) API key (AI SDK) – AI features are unavailable without it |
 
 ### Email
 
@@ -397,7 +387,7 @@ sequenceDiagram
     Web->>App: service binding
     App-->>Web: SPA assets
 
-    Browser->>Web: POST /api/trpc/user.me
+    Browser->>Web: POST /api/trpc/billing.subscription
     Web->>API: service binding
     API->>DB: Hyperdrive
     DB-->>API: query result
@@ -418,7 +408,7 @@ sequenceDiagram
 The web worker is the only worker attached to a public hostname (`example.com`). It decides where each request goes:
 
 * `/api/*` – forwarded to the API worker
-* The SPA paths listed in `APP_PATHS` (`/dashboard`, `/users`, `/settings`, `/analytics`, `/reports`, `/login`, `/signup`) and `/_app/*` – forwarded to the app worker
+* The SPA paths listed in `APP_PATHS` (`/login`, `/signup`, `/members`, `/settings`) and `/_app/*` – forwarded to the app worker
 * `/` – routed by [auth hint cookie](#auth-hint-cookie) (app if signed in, marketing site if not)
 * Everything else – served from the web worker's own static assets (marketing pages)
 
@@ -426,8 +416,8 @@ The web worker is the only worker attached to a public hostname (`example.com`).
 // apps/web/worker.ts (simplified)
 app.all("/api/*", (c) => c.env.API_SERVICE.fetch(c.req.raw));
 
-// Exact path plus descendants — never a bare prefix, which would send
-// /users-guide to the SPA fallback. `apps/app/lib/edge-routing.test.ts`
+// Exact path plus descendants – never a bare prefix, which would send
+// /members-only to the SPA fallback. `apps/app/lib/edge-routing.test.ts`
 // checks this list against the route files.
 for (const path of APP_PATHS) {
   app.all(`/${path}`, (c) => c.env.APP_SERVICE.fetch(c.req.raw));
@@ -776,12 +766,8 @@ apps/app/routes/
 └── (app)/
     ├── route.tsx           → Layout for all (app) routes
     ├── index.tsx           → / (dashboard)
-    ├── settings.tsx        → /settings
-    ├── users.tsx           → /users
-    ├── analytics.tsx       → /analytics
-    ├── reports.tsx         → /reports
-    ├── dashboard.tsx       → /dashboard (redirects to /)
-    └── about.tsx           → /about
+    ├── members.tsx         → /members
+    └── settings.tsx        → /settings
 ```
 
 Parenthesized directories like `(app)` and `(auth)` are **route groups** – they create layout boundaries without affecting the URL. `/settings` is the URL, not `/(app)/settings`.
@@ -799,7 +785,7 @@ The two route groups serve different auth requirements:
 
 ## Root Route
 
-The root route (`__root.tsx`) creates the router context and wraps everything in an error boundary:
+The root route (`__root.tsx`) creates the router context and wraps the outlet in an error boundary:
 
 ```tsx
 // apps/app/routes/__root.tsx
@@ -811,15 +797,31 @@ export const Route = createRootRouteWithContext<{
 
 function Root() {
   return (
-    <AppErrorBoundary>
-      <Outlet />
-      {import.meta.env.DEV && <TanStackRouterDevtools />}
-    </AppErrorBoundary>
+    <>
+      <AppErrorBoundary>
+        <Outlet />
+      </AppErrorBoundary>
+      <Devtools />
+    </>
   );
 }
 ```
 
 The `queryClient` in context is what makes `beforeLoad` guards possible – route guards can prefetch or read cached data before rendering.
+
+## Devtools
+
+`components/devtools.tsx` mounts [TanStack Devtools](https://tanstack.com/devtools/latest) with the Router and Query panels as plugins of one shell. It renders `null` outside development, so nothing reaches your production bundle.
+
+::: tip
+
+The trigger is invisible until you hover the bottom-right corner. `Ctrl+Shift+X` opens the panel without it.
+
+:::
+
+Position, theme, panel side, and the hotkey are settings the shell persists per browser. The `config` prop only seeds them – once you change one from the panel's settings tab, that value wins.
+
+`Devtools` sits outside `AppErrorBoundary` and carries its own boundary, so a render failure in either subtree can't take down the other.
 
 ## Auth Guards
 
@@ -840,20 +842,18 @@ export const Route = createFileRoute("/(app)")({
     }
 
     // Both user and session must exist for valid auth state
-    if (!session?.user || !session?.session) {
+    if (!isValidSession(session)) {
       throw redirect({
         to: "/login",
         search: { returnTo: location.href },
       });
     }
-
-    return { user: session.user, session };
   },
   component: AppLayout,
 });
 ```
 
-This pattern makes subsequent navigations between protected routes instant – the session is already cached from the first load.
+This pattern makes subsequent navigations between protected routes instant – the session is already cached from the first load. Nothing is returned into route context: pages read the session through `useSessionQuery()`, so there is no second copy to go stale after a revalidation.
 
 ### Redirecting authenticated users
 
@@ -868,7 +868,7 @@ export const Route = createFileRoute("/(auth)/login")({
       const session = await context.queryClient.fetchQuery(
         sessionQueryOptions(),
       );
-      if (session?.user && session?.session) {
+      if (isValidSession(session)) {
         throw redirect({ to: search.returnTo ?? "/" });
       }
     } catch (error) {
@@ -959,7 +959,9 @@ function Projects() {
 
 2. The route tree regenerates automatically during `bun app:dev`. The new page is available at `/projects` and protected by the `(app)` layout guard.
 
-3. Add navigation in the sidebar or header as needed. See [State & Data Fetching](./state.md) for loading data in your new route.
+3. Add `projects` to `APP_PATHS` in `apps/web/worker.ts`. The web worker forwards only the paths listed there, so an unlisted route reaches the app on client-side navigation but 404s on direct load. The path must not collide with a marketing page in `apps/web/pages/` – `apps/app/lib/edge-routing.test.ts` fails on either mistake.
+
+4. Add navigation in the sidebar or header as needed. See [State & Data Fetching](./state.md) for loading data in your new route.
 
 For more on TanStack Router, see the [official docs](https://tanstack.com/router/latest/docs/framework/react/overview).
 
@@ -970,35 +972,31 @@ url: /frontend/state.md
 ---
 # State & Data Fetching
 
-Server state is managed with [TanStack Query](https://tanstack.com/query/latest) through a tRPC integration. Client state uses [Jotai](https://jotai.org/) atoms when needed.
+Server state is managed with [TanStack Query](https://tanstack.com/query/latest). Query modules call either the tRPC client or the Better Auth client, depending on which system owns the operation. Client state uses [Jotai](https://jotai.org/) atoms when needed.
 
 ## tRPC Client
 
-The tRPC client in `apps/app/lib/trpc.ts` provides two exports:
+`apps/app/lib/trpc.ts` exports one thing – the tRPC client:
 
 ```tsx
-import { trpcClient } from "@/lib/trpc"; // Raw tRPC client
-import { api } from "@/lib/trpc"; // TanStack Query integration
+import { trpcClient } from "@/lib/trpc";
 ```
 
-* **`trpcClient`** – call procedures directly (useful in query functions, `beforeLoad`, and non-React code)
-* **`api`** – creates `queryOptions` objects for use with TanStack Query hooks
+It sends requests to `/api/trpc` with batched HTTP transport and includes credentials for cookie-based auth. A logger link is added in development.
 
-The client sends requests to `/api/trpc` with batched HTTP transport and includes credentials for cookie-based auth. A logger link is added in development.
+Call it from a query module rather than from a component, so each cache key is written once. That is the pattern the rest of this page follows.
 
-## TanStack Query Defaults
+## QueryClient Defaults
 
-The `QueryClient` in `apps/app/lib/query.ts` is configured with sensible defaults:
+`apps/app/lib/query.ts` sets only what this project decided differently from [TanStack Query's own defaults](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults), so nothing here goes stale when upstream changes its mind.
 
-| Option | Value | Rationale |
+| Option | Value | Why |
 | --- | --- | --- |
-| `staleTime` | 2 min | Prevents redundant API calls during typical sessions |
-| `gcTime` | 5 min | Balances memory with instant data on back-navigation |
-| `retry` | 3 | Exponential backoff: 1s, 2s, 4s (capped at 30s) |
-| `refetchOnWindowFocus` | `true` | Keeps data current after tab switches |
-| `refetchOnReconnect` | `"always"` | Overrides `staleTime` after connectivity loss |
+| `staleTime` | 2 min | Upstream defaults to `0`, which refetches on nearly every mount |
+| `refetchOnReconnect` | `"always"` | Default `true` still honours `staleTime`; after connectivity loss, data age says nothing about correctness |
+| `mutations.retry` | `false` | Matches upstream, stated because it is a safety invariant |
 
-Mutations retry once with a 1s delay.
+Mutations are never retried. A lost response looks exactly like a failed request, so retrying a create can run it twice on the server and still report failure. Opt in per mutation where the operation is idempotent.
 
 ## Session Query
 
@@ -1030,70 +1028,86 @@ Returns `null` when unauthenticated – not an error. The module also exports he
 | Export | Purpose |
 | --- | --- |
 | `useSessionQuery()` | Basic hook |
-| `useSuspenseSessionQuery()` | Suspense-enabled version |
 | `getCachedSession(queryClient)` | Sync cache read (no network) |
-| `isAuthenticated(queryClient)` | Binary check – requires both `user` and `session` |
-| `signOut(queryClient)` | Clears server session, sets cache to `null`, hard redirects |
+| `isValidSession(session)` | Type guard – requires both `user` and `session` |
+| `useSignOut()` | Mutation – ends the server session, then clears the cache and hard redirects |
 | `revalidateSession(queryClient, router)` | Removes cached query so `beforeLoad` fetches fresh |
 
-## Billing Query
+## Query Modules
 
-The billing query demonstrates multi-tenant key design – including `activeOrgId` in the key causes automatic refetch when the user switches organizations:
+A query module owns the cache key and the freshness rules for one slice of server state. Components consume the module, never `trpcClient` directly. The billing module is the one to copy:
 
 ```tsx
 // apps/app/lib/queries/billing.ts
+export const billingQueryKey = ["billing", "subscription"] as const;
+
 export function billingQueryOptions(activeOrgId?: string | null) {
   return queryOptions({
-    queryKey: ["billing", "subscription", activeOrgId ?? null],
+    queryKey: [...billingQueryKey, activeOrgId ?? null] as const,
     queryFn: () => trpcClient.billing.subscription.query(),
   });
 }
+
+export function useBillingQuery(activeOrgId?: string | null) {
+  return useQuery(billingQueryOptions(activeOrgId));
+}
 ```
 
-Usage in a component:
+`billingQueryKey` is the prefix for bulk invalidation; putting `activeOrgId` in the full key makes switching organizations refetch instead of showing another tenant's data. The same options factory works in a component, a route `beforeLoad`, a prefetch, and a test – which is what keeps the key from drifting.
+
+Not every module wraps tRPC. `apps/app/lib/queries/organization.ts` calls the Better Auth client, because the organization plugin already enforces membership and roles server-side.
+
+## Reading a Query in a Component
+
+Handle `error` and `isPending` before reading `data`, so a failed request never renders as a known answer. Without those guards `BillingCard` (`apps/app/routes/(app)/settings.tsx`) would tell a paying customer they are on the free plan:
 
 ```tsx
 function BillingCard() {
   const { data: session } = useSessionQuery();
   const activeOrgId = session?.session?.activeOrganizationId;
-  const { data: billing, isLoading } = useBillingQuery(activeOrgId);
-  // ...
+  const { data: billing, isPending, error } = useBillingQuery(activeOrgId);
+
+  if (error) return <BillingNotice>Could not load billing.</BillingNotice>;
+  if (isPending) return <BillingNotice>Loading...</BillingNotice>;
+  if (!billing.enabled) return null;
+
+  // `billing` is known from here on
 }
 ```
 
-## Calling Procedures from Components
+Guard on `isPending` rather than `isLoading`. `isLoading` is `isPending && isFetching`, so it reads false while a request is paused offline or skipped with `skipToken` – both cases where `data` is still unknown.
 
-Use the `api` proxy to create query options, then pass them to TanStack Query hooks:
+## Mutations
 
-```tsx
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { api } from "@/lib/trpc";
-
-function ProfileName() {
-  const { data: user } = useSuspenseQuery(api.user.me.queryOptions());
-  return <p>{user.name}</p>;
-}
-```
-
-No working tRPC mutation ships in the starter. After adding a `project.create` procedure, for example, call and invalidate it like this:
+Mutations live in the query module too, next to the queries they invalidate – that is why `useCreateOrganization` sits in `organization.ts` and the Stripe redirects sit in `billing.ts`. No working tRPC mutation ships in the starter; after adding a `project.create` procedure it would look like this:
 
 ```tsx
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { trpcClient } from "@/lib/trpc";
-
-function CreateProjectButton() {
+// apps/app/lib/queries/project.ts
+export function useCreateProject() {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  return useMutation({
     mutationFn: (input: { name: string; description?: string }) =>
       trpcClient.project.create.mutate(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: projectQueryKey }),
   });
+}
+```
+
+The component picks the hook and reads its state:
+
+```tsx
+import { useCreateProject } from "@/lib/queries/project";
+
+function CreateProjectButton() {
+  const createProject = useCreateProject();
 
   return (
-    <button onClick={() => mutation.mutate({ name: "Roadmap" })}>
+    <button
+      onClick={() => createProject.mutate({ name: "Roadmap" })}
+      disabled={createProject.isPending}
+    >
       Create Project
     </button>
   );
@@ -1106,7 +1120,7 @@ Invalidate by query key prefix to refresh related data after mutations:
 
 ```tsx
 // Invalidate all project queries
-queryClient.invalidateQueries({ queryKey: ["projects"] });
+queryClient.invalidateQueries({ queryKey: projectQueryKey });
 
 // Invalidate all billing queries (any org)
 queryClient.invalidateQueries({ queryKey: ["billing", "subscription"] });
@@ -1121,17 +1135,21 @@ await router.invalidate();
 
 ## Jotai Store
 
-A global Jotai store is set up in `apps/app/lib/store.ts` for cross-component client state. It's wired into the app via `StoreProvider` but not heavily used – TanStack Query handles most state needs. Use Jotai for UI state that doesn't belong in server cache (theme preference, sidebar open/closed, local filters).
+A global Jotai store is set up in `apps/app/lib/store.ts` and wired into the app via `StoreProvider`. Reach for it only when client state genuinely crosses a component or route boundary – TanStack Query owns server state, and `useState` handles the rest. The sidebar stays local in `components/layout/index.tsx` for exactly that reason: nothing outside that subtree reads it.
+
+Theme is the shipped case, in `apps/app/lib/theme.tsx` – an inline script, the settings page, and every component that renders differently in dark mode all read the same value:
 
 ```tsx
-import { atom, useAtom } from "jotai";
+import { atom, useAtomValue } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
-const sidebarOpenAtom = atom(true);
+const themePreferenceAtom = atomWithStorage<ThemePreference>("theme", "system");
 
-function Sidebar() {
-  const [open, setOpen] = useAtom(sidebarOpenAtom);
-  // ...
-}
+// Derived, never stored: "system" resolves against the OS setting.
+const themeAtom = atom<Theme>((get) => {
+  const preference = get(themePreferenceAtom);
+  return preference === "system" ? get(systemThemeAtom) : preference;
+});
 ```
 
 See [Forms & Validation](./forms.md) for mutation patterns in form submissions. For library reference, see the [TanStack Query docs](https://tanstack.com/query/latest/docs/framework/react/overview), [tRPC docs](https://trpc.io/docs/client/react), and [Jotai docs](https://jotai.org/docs/introduction).
@@ -1163,24 +1181,23 @@ A component belongs in `packages/ui` only if it would still make sense in a diff
 ```bash
 bun ui:add button              # Add a single component
 bun ui:add dialog card select  # Add several at once
-bun ui:add --all               # Add everything in the registry
-bun ui:essentials              # Add a curated starter set
-bun ui:list                    # List what's installed
 bun ui:update                  # Re-fetch installed components from the registry
+bun ui:update button card      # Re-fetch selected components
 ```
 
-Adding a component writes the file and formats it with Prettier. It does **not** touch the barrel export, so add that line yourself:
+Both take shadcn item names only and reject CLI options. They always write to `packages/ui` and postprocess afterwards, so the CLI's read-only flags would not stay read-only. To inspect without writing – or to pull in a block or a custom registry – use the CLI directly, pointing it at the workspace so it picks up the right `components.json`:
 
-```ts
-// packages/ui/index.ts
-export * from "./components/toggle-group";
+```bash
+bunx shadcn@latest add button --dry-run --cwd packages/ui
 ```
 
-Without it, `import { ToggleGroup } from "@repo/ui"` won't resolve.
+`ui:update` refuses names that aren't installed, so a typo reports an error instead of quietly adding a component. It does not narrow what gets rewritten, though – registry items declare their own dependencies, so refreshing one component can rewrite the others it builds on. Read the diff, not the command.
+
+Postprocessing strips the `"use client"` directive, regenerates `index.ts`, and formats the result. A newly added component is importable from `@repo/ui` straight away, and `index.ts` is generated output rather than a file you maintain.
 
 ::: warning
 
-Review what the CLI generates `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`).
+Review what the CLI generates. `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Postprocessing is mechanical; it does not touch component APIs. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`).
 
 :::
 
@@ -1195,14 +1212,25 @@ packages/ui/
 ├── hooks/
 ├── lib/
 │   └── utils.ts          # cn() utility
-├── scripts/              # CLI tooling (add, list, update, essentials)
+├── scripts/              # ui:add / ui:update and their postprocessing
 ├── components.json       # shadcn CLI config – style, aliases, icon library
 ├── styles.css            # Exists for the shadcn CLI; real styles live in the app
-├── index.ts              # Barrel export
+├── index.ts              # Generated barrel export
 └── package.json
 ```
 
-Components import `cn` as `@/lib/utils`, which is what the shadcn CLI generates. That alias resolves through the *consuming* app's config rather than this package's, and it works only because every app keeps a `lib/utils` re-export shim. One component importing another must therefore use a relative path (`./toggle`) – the CLI's `@/components/…` form resolves into the app and fails the build there.
+Imports inside the package use Node subpath imports – `#lib/utils` for `cn`, `#components/toggle` for one component pulling in another. They're declared in `package.json`:
+
+```jsonc
+// packages/ui/package.json
+"imports": {
+  "#components/*": "./components/*.tsx",
+  "#hooks/*": "./hooks/*.ts",
+  "#lib/*": "./lib/*.ts"
+}
+```
+
+and mirrored by the `components.json` aliases, so the shadcn CLI generates them natively. Unlike a `@/` alias, they resolve against `packages/ui` itself no matter which workspace imports the component, so the package needs no cooperation from the app consuming it. This requires `moduleResolution: "bundler"`, which the shared TypeScript preset already sets.
 
 Components and `cn` are re-exported from the package root, so apps import from a single place:
 
@@ -1351,7 +1379,7 @@ Scanning is textual, so Tailwind only sees complete class names. `bg-red-500` is
 
 ## Troubleshooting
 
-**Import from `@repo/ui` fails.** Check the component is installed (`bun ui:list`) and exported from `packages/ui/index.ts` – `bun ui:add` does not add the export for you.
+**Import from `@repo/ui` fails.** Check the component is installed – `ls packages/ui/components`. If the file is there but missing from `index.ts`, the generation step failed rather than being skipped: both commands always regenerate the barrel, so re-read that command's output and `git diff`.
 
 **Styles missing in the built app but fine in dev.** The class lives in a file no `@source` covers, or it is assembled by string interpolation. See [Tailwind Content Scanning](#tailwind-content-scanning).
 
@@ -1385,47 +1413,49 @@ Forms use controlled React inputs with Zod for validation. There's no form libra
 
 ## Basic Pattern
 
-A typical form uses `useState` for input values and a tRPC mutation for submission:
+An application-owned form keeps input values in `useState` and calls a mutation hook from a query module. `useCreateProject` below comes from [Add a tRPC Procedure](/recipes/new-procedure) – no tRPC mutation ships in the starter, so build it first:
 
 ```tsx
+import { useCreateProject } from "@/lib/queries/project";
 import { Button, Input, Label } from "@repo/ui";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { trpcClient } from "@/lib/trpc";
+import { useId, useState } from "react";
 
 function CreateProjectForm() {
   const [name, setName] = useState("");
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: (input: { name: string }) =>
-      trpcClient.project.create.mutate(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["project"] });
-      setName("");
-    },
-  });
+  const nameId = useId();
+  const createProject = useCreateProject();
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        mutation.mutate({ name });
+        // Clearing the input belongs to this form, not to every caller of the
+        // hook, so it rides on the call rather than the module's onSuccess.
+        createProject.mutate({ name }, { onSuccess: () => setName("") });
       }}
     >
-      <Label htmlFor="name">Project name</Label>
+      <Label htmlFor={nameId}>Project name</Label>
       <Input
-        id="name"
+        id={nameId}
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
+        aria-invalid={Boolean(createProject.error)}
       />
-      <Button type="submit" disabled={mutation.isPending}>
-        Create
+      {createProject.error && (
+        <p role="alert" className="text-sm text-destructive">
+          {createProject.error.message}
+        </p>
+      )}
+      <Button type="submit" disabled={createProject.isPending}>
+        {createProject.isPending ? "Creating..." : "Create"}
       </Button>
     </form>
   );
 }
 ```
+
+The failure arrives after submit, so `role="alert"` announces it – the same pattern as the create-organization form in `apps/app/routes/(app)/members.tsx`.
 
 ## Zod Schema Sharing
 
@@ -1482,7 +1512,7 @@ export function AuthForm({ mode = "login", onSuccess, returnTo }) {
 
 Key design decisions in `useAuthForm`:
 
-* **Counter-based pending ops** – handles overlapping child operations (e.g., passkey conditional UI running alongside manual click)
+* **Counter-based pending ops** – handles overlapping child operations (e.g., a rapid double-click)
 * **Success guard** (`hasSucceededRef`) – prevents concurrent auth completion from multiple methods
 * **Email normalization** – trims whitespace and lowercases before API calls
 * **Error orthogonal to steps** – errors can occur at any step and are displayed at the form level
@@ -1521,8 +1551,8 @@ For mutation errors, check `mutation.error`:
 Coordinate disabled state across form elements to prevent double-submission:
 
 ```tsx
-// useAuthForm combines multiple sources into one flag
-const isDisabled = isLoading || pendingOps > 0 || !!isExternallyLoading;
+// useAuthForm folds its own request and every child's into one flag
+const isDisabled = isLoading || pendingOps > 0;
 ```
 
 Apply to all interactive elements:
@@ -1556,7 +1586,7 @@ async function handleSuccess() {
 <AuthForm mode="login" onSuccess={handleSuccess} returnTo={search.returnTo} />;
 ```
 
-This keeps the form reusable – `AuthForm` works in both the login page and a login dialog because the caller controls what happens after success.
+This keeps the form reusable – `AuthForm` backs both the login and signup pages because the caller controls what happens after success.
 
 ---
 
@@ -1569,9 +1599,11 @@ url: /api.md
 The API server (`apps/api/`) runs as a Cloudflare Worker and handles all backend logic: authentication, data access, and billing webhooks. It combines two frameworks:
 
 * **[Hono](https://hono.dev/)** – lightweight HTTP router for auth endpoints, webhooks, and health checks
-* **[tRPC](https://trpc.io/)** – type-safe RPC layer for all client-facing queries and mutations
+* **[tRPC](https://trpc.io/)** – typed procedures for application-owned operations
 
-Hono handles the HTTP surface. tRPC handles the typed contract between frontend and backend. They share the same Worker and middleware stack.
+Hono composes the HTTP routes and middleware. tRPC provides the typed contract for application-owned procedures. They share the same Worker and middleware stack.
+
+Better Auth owns its own endpoints under `/api/auth/*` – sessions, organizations and the Stripe plugin. Those are called through its client, not wrapped in procedures, so tRPC covers what this application owns rather than everything the browser calls.
 
 ## How the Worker is Wired
 
@@ -1633,7 +1665,7 @@ worker.route("/", app);
 | `/api` | GET | Hono | API metadata (name, version, endpoints) |
 | `/health` | GET | Hono | Health check – returns `{ status, timestamp }` |
 | `/api/auth/*` | GET, POST | Better Auth | Authentication routes ([docs](https://www.better-auth.com/docs/api-reference)) |
-| `/api/trpc/*` | \* | tRPC | Type-safe RPC – all queries and mutations |
+| `/api/trpc/*` | \* | tRPC | Type-safe RPC – application-owned queries and mutations |
 
 ## tRPC Router
 
@@ -1644,7 +1676,6 @@ The root router merges domain-specific sub-routers:
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
-  user: userRouter,
 });
 ```
 
@@ -1658,52 +1689,43 @@ apps/api/
 ├── dev.ts                 # Local dev server (Bun)
 ├── index.ts               # Public package exports
 ├── lib/
-│   ├── ai.ts              # OpenAI provider factory
 │   ├── app.ts             # Hono app + tRPC router composition
 │   ├── auth.ts            # Better Auth configuration
 │   ├── context.ts         # TRPCContext and AppContext types
 │   ├── db.ts              # Drizzle ORM database factory
 │   ├── email.ts           # Resend email utilities
 │   ├── env.ts             # Environment contract and inferred type
-│   ├── loaders.ts         # DataLoader instances for N+1 prevention
 │   ├── middleware.ts       # Error handler, 404 handler, request ID
 │   ├── plans.ts           # Subscription plan limits
-│   ├── stripe.ts          # Stripe client factory
 │   └── trpc.ts            # tRPC init, procedures, error formatter
 ├── routers/
 │   ├── billing.ts         # Subscription queries
 │   ├── billing.test.ts    # Billing router tests
-│   ├── config.ts          # Public deployment capabilities
-│   └── user.ts            # Current-user query and extension stubs
+│   └── config.ts          # Public deployment capabilities
 └── wrangler.jsonc         # Cloudflare Workers config
 ```
 
 ## Calling the API from the Frontend
 
-The frontend app (`apps/app/`) uses `@trpc/client` with TanStack Query integration. The tRPC client is configured in `apps/app/lib/trpc.ts`:
+The frontend app (`apps/app/`) calls `@trpc/client` from TanStack Query options. The tRPC client is configured in `apps/app/lib/trpc.ts`:
 
 ```ts
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-
-export const api = createTRPCOptionsProxy<AppRouter>({
-  client: trpcClient,
-  queryClient,
-});
+export const trpcClient = createTRPCClient<AppRouter>({ links });
 ```
 
-Use `api` in components to call procedures with full type safety:
+Components never call `trpcClient` directly. Each concern gets a module in `apps/app/lib/queries/` that owns its cache key and freshness rules, so a key cannot be spelled two different ways in two components:
 
 ```ts
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { api } from "~/lib/trpc";
-
-function Profile() {
-  const { data } = useSuspenseQuery(api.user.me.queryOptions());
-  return <p>{data.name}</p>;
+// apps/app/lib/queries/billing.ts
+export function billingQueryOptions(activeOrgId?: string | null) {
+  return queryOptions({
+    queryKey: ["billing", "subscription", activeOrgId ?? null] as const,
+    queryFn: () => trpcClient.billing.subscription.query(),
+  });
 }
 ```
 
-See the [tRPC + TanStack Query docs](https://trpc.io/docs/client/react/tanstack-react-query) for the full client API.
+See [State & Data Fetching](/frontend/state) for the component side.
 
 ---
 
@@ -1712,7 +1734,7 @@ url: /api/procedures.md
 ---
 # Procedures
 
-tRPC procedures are the primary way the frontend communicates with the API. Each procedure is either a **query** (read data) or a **mutation** (write data), with optional input validation via Zod.
+tRPC procedures expose application-owned operations to the frontend. Each procedure is either a **query** (read data) or a **mutation** (write data), with optional input validation via Zod. Better Auth operations use its client instead, as described in [API Overview](./index.md).
 
 ## Procedure Types
 
@@ -1720,7 +1742,7 @@ The project defines two base procedures in `apps/api/lib/trpc.ts`:
 
 ### `publicProcedure`
 
-Accessible to all callers, including unauthenticated users. Context includes `db`, `env`, and `cache` but `session` and `user` may be `null`.
+Accessible to all callers, including unauthenticated users. Context carries the database clients and `env`; `session` and `user` may be `null`.
 
 ```ts
 import { publicProcedure } from "../lib/trpc.js";
@@ -1739,16 +1761,16 @@ Requires an authenticated session. Throws `UNAUTHORIZED` if the user is not logg
 ```ts
 import { protectedProcedure } from "../lib/trpc.js";
 
-export const userRouter = router({
-  me: protectedProcedure.query(async ({ ctx }) => {
-    return {
-      id: ctx.user.id, // ✓ guaranteed non-null
-      email: ctx.user.email,
-      name: ctx.user.name,
-    };
+export const apiKeyRouter = router({
+  list: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.query.apiKey.findMany({
+      where: (k, { eq }) => eq(k.userId, ctx.user.id), // ✓ guaranteed non-null
+    });
   }),
 });
 ```
+
+An authenticated user is not an authorized tenant. Anything scoped to an organization must also verify membership – see [Query Patterns > Multi-tenant Queries](/database/queries#multi-tenant-queries). `billing.subscription` is the shipped example.
 
 ## Router Files
 
@@ -1757,11 +1779,12 @@ Each domain gets its own router file in `apps/api/routers/`:
 ```
 routers/
 ├── billing.ts         # billing.subscription
-├── config.ts          # config.socialProviders
-└── user.ts            # user.me plus extension stubs
+└── config.ts          # config.socialProviders
 ```
 
-`user.me` is implemented. `user.updateProfile` and `user.list` deliberately throw `NOT_IMPLEMENTED`: profile changes belong in Better Auth's profile APIs, while a custom member list must add organization authorization and pagination. They are explicit extension points, not successful placeholder responses.
+The router set is deliberately small. Mutations that Better Auth already owns – profile updates, organization membership, Stripe checkout – are called through its client rather than wrapped in a procedure, because a wrapper would only re-implement authorization the plugin already enforces.
+
+`billing.subscription` is the exception that shows where the line falls: reading subscription state joins the local `subscription` table with this deployment's plan limits, which is application data Better Auth knows nothing about. Add a router when you own the data.
 
 Routers are merged into the root `appRouter` in `apps/api/lib/app.ts`:
 
@@ -1769,11 +1792,10 @@ Routers are merged into the root `appRouter` in `apps/api/lib/app.ts`:
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
-  user: userRouter,
 });
 ```
 
-The client calls procedures using the namespace: `api.user.me`, `api.billing.subscription`, etc.
+The client calls procedures using the namespace: `trpcClient.billing.subscription`, `trpcClient.config.socialProviders`, etc.
 
 ## Input Validation
 
@@ -1794,22 +1816,6 @@ export const postRouter = router({
       // `input` is fully typed from the schema.
     }),
 });
-```
-
-For queries with pagination:
-
-```ts
-list: protectedProcedure
-  .input(
-    z.object({
-      limit: z.number().min(1).max(100).default(10),
-      cursor: z.string().optional(),
-    }),
-  )
-  .query(({ input }) => {
-    // input.limit defaults to 10 if not provided
-    return { users: [], nextCursor: null };
-  }),
 ```
 
 ## Adding a New Procedure
@@ -1844,7 +1850,6 @@ import { postRouter } from "../routers/post.js";
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
-  user: userRouter,
   post: postRouter, // [!code ++]
 });
 ```
@@ -1852,15 +1857,23 @@ const appRouter = router({
 **3. Call from the frontend** – the types propagate automatically:
 
 ```ts
-const { data } = useSuspenseQuery(api.post.list.queryOptions({ limit: 10 }));
+// apps/app/lib/queries/post.ts
+export function postsQueryOptions(limit: number) {
+  return queryOptions({
+    queryKey: ["post", "list", limit] as const,
+    queryFn: () => trpcClient.post.list.query({ limit }),
+  });
+}
 ```
+
+See [State & Data Fetching](/frontend/state) for why the query module owns the cache key.
 
 ## Naming Conventions
 
-* **Router files**: singular noun matching the domain (`user.ts`, `billing.ts`, `post.ts`)
-* **Router variables**: `{domain}Router` – `userRouter`, `billingRouter`
-* **Procedure names**: verb or short phrase – `me`, `list`, `create`, `updateProfile`
-* **Namespace key**: matches the domain – `user:`, `billing:`, `config:`
+* **Router files**: singular noun matching the domain (`billing.ts`, `post.ts`, `project.ts`)
+* **Router variables**: `{domain}Router` – `billingRouter`, `projectRouter`
+* **Procedure names**: verb or short phrase – `me`, `list`, `create`, `update`
+* **Namespace key**: matches the domain – `billing:`, `config:`, `post:`
 
 ## Testing Procedures
 
@@ -1895,11 +1908,11 @@ Input validation and error handling follow one flow: Zod schemas validate proced
 Every tRPC procedure can define a Zod schema via `.input()`. tRPC runs validation automatically before the procedure body executes.
 
 ```ts
-updateProfile: protectedProcedure
+create: protectedProcedure
   .input(
     z.object({
-      name: z.string().min(1).optional(),
-      email: z.email({ error: "Invalid email address" }).optional(),
+      title: z.string().min(1),
+      notify: z.email({ error: "Invalid email address" }).optional(),
     }),
   )
   .mutation(({ input }) => {
@@ -1942,7 +1955,7 @@ Example error response for a failed validation:
       "zodError": {
         "formErrors": [],
         "fieldErrors": {
-          "email": ["Invalid email address"]
+          "notify": ["Invalid email address"]
         }
       }
     }
@@ -1960,18 +1973,18 @@ import { TRPCError } from "@trpc/server";
 create: protectedProcedure
   .input(z.object({ name: z.string().min(1) }))
   .mutation(async ({ ctx, input }) => {
-    const existing = await ctx.db.query.organization.findFirst({
-      where: (o, { eq }) => eq(o.name, input.name),
+    const existing = await ctx.db.query.project.findFirst({
+      where: (p, { eq }) => eq(p.name, input.name),
     });
 
     if (existing) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "Organization name already taken",
+        message: "Project name already taken",
       });
     }
 
-    // ... create organization
+    // ... create project
   }),
 ```
 
@@ -2033,7 +2046,7 @@ Extracts the HTTP status code from various error shapes:
 import { getErrorStatus } from "~/lib/errors";
 
 try {
-  await trpcClient.user.updateProfile.mutate({ email: "not-an-email" });
+  await trpcClient.post.create.mutate({ title: "", notify: "not-an-email" });
 } catch (err) {
   const status = getErrorStatus(err); // 400
 }
@@ -2065,7 +2078,7 @@ Safely extracts a human-readable message from any thrown value:
 import { getErrorMessage } from "~/lib/errors";
 
 const message = getErrorMessage(error);
-// "Organization name already taken" or "An unexpected error occurred"
+// "Project name already taken" or "An unexpected error occurred"
 ```
 
 ---
@@ -2085,11 +2098,10 @@ Defined in `apps/api/lib/context.ts`, the context provides:
 | --- | --- | --- |
 | `req` | `Request` | The incoming HTTP request |
 | `info` | `CreateHTTPContextOptions["info"]` | tRPC request metadata (headers, connection info) |
-| `db` | `PostgresJsDatabase` | Drizzle ORM instance via uncached Hyperdrive |
-| `dbCached` | `PostgresJsDatabase` | Drizzle ORM instance via cached Hyperdrive |
+| `db` | [`Database`](/database/#importing-schemas) | Drizzle client via uncached Hyperdrive |
+| `dbCached` | [`Database`](/database/#importing-schemas) | Drizzle client via cached Hyperdrive |
 | `session` | `AuthSession \| null` | Authenticated session from Better Auth |
 | `user` | `AuthUser \| null` | Authenticated user data |
-| `cache` | `Map<string \| symbol, unknown>` | Request-scoped cache (for DataLoaders, computed values) |
 | `res?` | `Response` | Optional HTTP response from Hono context |
 | `resHeaders?` | `Headers` | Response headers (for setting cookies, etc.) |
 | `env` | `Env` | Environment variables and secrets |
@@ -2099,7 +2111,7 @@ Defined in `apps/api/lib/context.ts`, the context provides:
 The context provides two database connections with different caching behaviors:
 
 * **`ctx.db`** – the default, uncached connection. Use for writes, transactions, auth, permissions, billing, and reads that must see the latest data.
-* **`ctx.dbCached`** – opts into Hyperdrive's query cache. Its default window allows up to 75 seconds of staleness; deployments can tune it.
+* **`ctx.dbCached`** – opts into Hyperdrive's query cache. The staleness window is Terraform-owned; see [Production Database](/deployment/production-database).
 
 ```ts
 // Read with caching when staleness is acceptable
@@ -2144,7 +2156,6 @@ app.use("/api/trpc/*", (c) => {
         dbCached,
         session: sessionData?.session ?? null,
         user: sessionData?.user ?? null,
-        cache: new Map(),
       };
     },
     batching: { enabled: true },
@@ -2152,7 +2163,7 @@ app.use("/api/trpc/*", (c) => {
 });
 ```
 
-The `db`, `dbCached`, and `auth` values come from the Hono middleware layer (set in `worker.ts`). The tRPC context adds session resolution and a fresh `cache` Map.
+The `db`, `dbCached`, and `auth` values come from the Hono middleware layer (set in `worker.ts`). The tRPC context adds session resolution on top.
 
 ## Middleware Chain
 
@@ -2199,59 +2210,6 @@ export function requestIdGenerator(c: Context): string {
 
 The ID is available via the `X-Request-Id` response header for tracing requests across logs.
 
-## DataLoaders
-
-DataLoaders prevent N+1 queries by batching multiple `.load(id)` calls into a single SQL `WHERE IN (...)` query. They're defined in `apps/api/lib/loaders.ts` and cached per-request via `ctx.cache`.
-
-```ts
-import { userById } from "../lib/loaders.js";
-
-members: protectedProcedure
-  .input(z.object({ organizationId: z.string() }))
-  .query(async ({ ctx, input }) => {
-    const members = await ctx.db.query.member.findMany({
-      where: (m, { eq }) => eq(m.organizationId, input.organizationId),
-    });
-
-    // Batches all user lookups into one query
-    const users = await Promise.all(
-      members.map((m) => userById(ctx).load(m.userId)),
-    );
-
-    return members.map((m, i) => ({ ...m, user: users[i] }));
-  }),
-```
-
-Loaders are created with a `defineLoader` helper that handles per-request caching via `ctx.cache`:
-
-```ts
-function defineLoader<K, V>(
-  key: symbol,
-  batchFn: (ctx: TRPCContext, keys: readonly K[]) => Promise<(V | null)[]>,
-): (ctx: TRPCContext) => DataLoader<K, V | null>;
-```
-
-Each call returns a factory `(ctx) => DataLoader`. The first invocation per request creates the instance; subsequent calls return the cached one. Because `ctx.cache` is a `Map` created per-request, loaders are automatically scoped to the request lifecycle – no stale data across requests.
-
-### Adding a DataLoader
-
-Add a `defineLoader` call in `apps/api/lib/loaders.ts`:
-
-```ts
-export const postById = defineLoader(
-  Symbol("postById"),
-  async (ctx, ids: readonly string[]) => {
-    const posts = await ctx.dbCached
-      .select()
-      .from(post)
-      .where(inArray(post.id, [...ids]));
-    return mapByKey(posts, "id", ids);
-  },
-);
-```
-
-Then call `.load(key)` or `.loadMany(keys)` in your procedures.
-
 ---
 
 ---
@@ -2286,7 +2244,7 @@ Better Auth's functionality is extended through plugins. The server and client m
 | `anonymous` | `anonymous()` | `anonymousClient()` | Guest sessions |
 | `stripe` | `stripe()` | `stripeClient()` | Subscription billing |
 
-The Stripe plugin is conditionally loaded – it activates only when all four required `STRIPE_*` variables are set. With none of them the app works normally, the public billing read reports the integration disabled, and Stripe mutation endpoints return 404. With some of them `createAuth` throws, so a half-configured deployment fails loudly instead of looking like a missing feature.
+The Stripe plugin is conditionally loaded – it activates only when all four required `STRIPE_*` variables are set. With none of them the app works normally, the protected `billing.subscription` query reports the integration disabled, and Stripe mutation endpoints return 404. With some of them `createAuth` throws, so a half-configured deployment fails loudly instead of looking like a missing feature.
 
 ## Server Configuration
 
@@ -2294,7 +2252,7 @@ The auth instance is created per-request in `apps/api/lib/auth.ts`:
 
 ```ts
 // apps/api/lib/auth.ts
-export function createAuth(db: DB, env: AuthEnv) {
+export function createAuth(db: Database, env: AuthEnv): Auth {
   return betterAuth({
     baseURL: `${env.APP_ORIGIN}/api/auth`,
     trustedOrigins: [env.APP_ORIGIN],
@@ -2333,7 +2291,9 @@ export function createAuth(db: DB, env: AuthEnv) {
 }
 ```
 
-The `account` model is renamed to `identity` to better describe its purpose (OAuth provider credentials):
+`Database` comes from `@repo/db` and names the schema rather than the driver. Better Auth's own `DB` type is `{ [key: string]: any }`, which would leave every query in this file unchecked, so the typed Drizzle client is passed instead.
+
+The `account` model is renamed to `identity` to better describe its purpose – it holds every authentication identity, OAuth and password alike:
 
 ```ts
 account: { modelName: "identity" },
@@ -2404,7 +2364,7 @@ Authentication uses 9 database tables defined in `db/schema/`:
 | --- | --- | --- |
 | `user` | `user.ts` | User accounts with profile info |
 | `session` | `user.ts` | Active sessions with `activeOrganizationId` |
-| `identity` | `user.ts` | OAuth provider credentials (Better Auth's `account` model) |
+| `identity` | `user.ts` | Authentication identities: OAuth and password credentials (Better Auth's `account` model) |
 | `verification` | `user.ts` | Email verification and OTP tokens |
 | `organization` | `organization.ts` | Tenant organizations |
 | `member` | `organization.ts` | Organization memberships with roles |
@@ -2514,7 +2474,7 @@ const VALID_TRANSITIONS: Record<AuthStep, AuthStep[]> = {
 };
 ```
 
-Invalid step jumps are ignored, keeping navigation within the declared state machine. A separate success guard handles overlapping completions such as conditional passkey UI finishing during a manual auth attempt.
+Invalid step jumps are ignored, keeping navigation within the declared state machine. Passkey completes outside that sequence, so a separate success guard runs the post-auth work once per form – disabling is state-backed, and two completions can land before React rerenders. Google leaves the page entirely and resolves on return.
 
 ### Sending the OTP
 
@@ -2575,7 +2535,7 @@ AuthForm
     └── OtpVerification      Code entry and verification
 ```
 
-The `AuthForm` accepts a `mode` prop (`"login"` or `"signup"`) that controls copy and available methods. Both modes use the same OTP flow – the difference is cosmetic (headings, ToS display, passkey availability).
+The `AuthForm` accepts a `mode` prop (`"login"` or `"signup"`). Both modes run the same OTP flow; the difference is headings, the account-switch link, and passkey availability – see the [auth form spec](/specs/auth-form).
 
 ::: info
 
@@ -2746,7 +2706,7 @@ Passkey credentials are stored in `db/schema/passkey.ts`:
 
 ## Client Component
 
-The `PasskeyLogin` component in `apps/app/components/auth/passkey-login.tsx` handles two modes:
+`PasskeyLogin` in `apps/app/components/auth/passkey-login.tsx` implements explicit passkey sign-in. Conditional mediation is deliberately not enabled:
 
 ### Explicit Login
 
@@ -2776,42 +2736,11 @@ const handlePasskeyLogin = async () => {
 
 ### Conditional Mediation
 
-When enabled, the component requests conditional mediation on mount in browsers that support it. The attempt is passive and does not surface errors because the user did not explicitly start authentication:
+Passkey autofill needs a mounted input whose `autocomplete` ends in `webauthn`, and the auth form shows no input until the user has already picked the email method – so a conditional request would have nothing to attach to.
 
-```ts
-useEffect(() => {
-  if (!authConfig.passkey.enableConditionalUI) return;
+To add it, put a persistent email field on the first step, mark it `autoComplete="email webauthn"`, and call `auth.signIn.passkey({ autoFill: true })` once `PublicKeyCredential.isConditionalMediationAvailable()` resolves true.
 
-  const setupConditionalUI = async () => {
-    if (!window.PublicKeyCredential?.isConditionalMediationAvailable) return;
-
-    const isAvailable =
-      await window.PublicKeyCredential.isConditionalMediationAvailable();
-    if (!isAvailable) return;
-
-    const result = await auth.signIn.passkey({ autoFill: true });
-    if (result.data && !aborted) {
-      onSuccessRef.current();
-    }
-  };
-
-  setupConditionalUI();
-}, []);
-```
-
-Conditional UI is controlled by the `authConfig.passkey.enableConditionalUI` flag (default: `true`). Errors from conditional UI are silently ignored since the user hasn't explicitly requested authentication.
-
-## Client Configuration
-
-Passkey behavior is configured in `apps/app/lib/auth-config.ts`:
-
-```ts
-passkey: {
-  enableConditionalUI: true,
-},
-```
-
-`enableConditionalUI` controls whether the component attempts conditional mediation. Other WebAuthn behavior uses Better Auth's defaults; configure the plugin or client explicitly if your application needs different verification requirements.
+WebAuthn behavior otherwise uses Better Auth's defaults; configure the plugin or client explicitly if your application needs different verification requirements.
 
 ## Error Handling
 
@@ -2824,7 +2753,7 @@ passkey: {
 
 ## Browser Support
 
-Passkeys require WebAuthn support. The component checks `window.PublicKeyCredential` before explicit authentication and checks conditional-mediation support before starting autofill. Unsupported browsers keep the email and configured social-provider paths available.
+Passkeys require WebAuthn support. The component checks `window.PublicKeyCredential` before authenticating. Unsupported browsers keep the email and configured social-provider paths available.
 
 ---
 
@@ -2895,10 +2824,10 @@ Manages pending invitations, defined in `db/schema/invitation.ts`:
 | `role` | `text` | Role assigned upon acceptance |
 | `status` | `text` | `"pending"`, `"accepted"`, `"rejected"`, or `"canceled"` |
 | `expiresAt` | `timestamp` | Invitation expiration |
-| `acceptedAt` | `timestamp` | When the invite was accepted |
-| `rejectedAt` | `timestamp` | When the invite was rejected or canceled |
+| `acceptedAt` | `timestamp` | Optional app-owned acceptance timestamp; the plugin does not populate it |
+| `rejectedAt` | `timestamp` | Optional app-owned rejection timestamp; the plugin does not populate it |
 
-A unique constraint on `(organizationId, email)` prevents duplicate invitations to the same person.
+The starter's unique constraint on `(organizationId, email)` permits one lifetime invitation row per address and organization. Better Auth updates an invitation's status but creates a new row for a later invitation, so remove this constraint before supporting re-invites after acceptance, rejection, or cancellation.
 
 ## Roles
 
@@ -2912,17 +2841,25 @@ Three built-in roles with hierarchical permissions:
 
 ### Role Checks in API Procedures
 
-Use the session's `activeOrganizationId` with a membership query to check roles:
+Use the session's `activeOrganizationId` with a membership query to check roles. Reject a missing ID before the query; it means the request has no organization scope.
 
 ```ts
 // Inside a protected tRPC procedure
+const organizationId = ctx.session.activeOrganizationId;
+if (!organizationId) {
+  throw new TRPCError({
+    code: "PRECONDITION_FAILED",
+    message: "No active organization",
+  });
+}
+
 const [row] = await ctx.db
   .select({ role: Db.member.role })
   .from(Db.member)
   .where(
     and(
-      eq(Db.member.organizationId, referenceId),
-      eq(Db.member.userId, user.id),
+      eq(Db.member.organizationId, organizationId),
+      eq(Db.member.userId, ctx.user.id),
     ),
   );
 
@@ -2935,47 +2872,40 @@ The session tracks which organization is currently active via `activeOrganizatio
 
 ```ts
 export type AuthSession = SessionResponse["session"] & {
-  activeOrganizationId?: string;
+  activeOrganizationId?: string | null;
 };
 ```
 
-This field is stored in the `session` table and persists across requests. When the user switches organizations, Better Auth updates this field.
+This field is stored in the `session` table and persists across requests. When the user switches organizations, Better Auth updates this field. It is nullable because belonging to no organization is a normal state – always narrow it before use.
+
+Better Auth leaves it null on every newly created session, so a `databaseHooks.session.create.before` hook in `apps/api/lib/auth.ts` seeds it through `findInitialOrganization()`. Without it every sign-in would start with no active organization, quietly emptying organization-scoped views and sending billing back to the personal reference.
+
+The oldest membership wins, with `id` breaking `createdAt` ties so the choice cannot flip between sign-ins. Change the ordering if you want a different default – "last used", for example, means storing that choice yourself.
+
+## Members Page
+
+`apps/app/routes/(app)/members.tsx` is the worked example. It reads `activeOrganizationId` from the session, lists members through `useMembersQuery()` in `apps/app/lib/queries/organization.ts`, and falls back to a create-organization form when no organization is active – sign-up deliberately does not create one, and the active organization can also be cleared.
+
+Inviting others is not wired up: `inviteMember` needs `sendInvitationEmail` on the organization plugin and an invitation template in `apps/email/`. See [Email](/email) for adding one.
 
 ## Billing Integration
 
-Subscriptions scope to the active organization. The billing router uses `activeOrganizationId` as the billing reference, falling back to the user's own ID for personal billing:
+Subscriptions scope to the active organization, and two different owners enforce that.
 
-```ts
-// apps/api/routers/billing.ts
-const referenceId = ctx.session.activeOrganizationId ?? ctx.user.id;
-```
+**Stripe mutations** – checkout, portal, plan changes – go through the Better Auth plugin, whose `authorizeReference` hook in `apps/api/lib/auth.ts` allows personal billing for the caller and organization billing only for an `owner` or `admin`.
 
-The Stripe plugin's `authorizeReference` hook enforces that only owners and admins can manage an organization's subscription:
+**Application reads** are not covered by that hook. `ctx.session.activeOrganizationId` selects the billing scope; it does not prove the caller still belongs to that organization, because a session outlives a membership removal. `apps/api/routers/billing.ts` is the shipped example: it revalidates the membership on `ctx.db` – never `dbCached` – before reading anything, and returns the caller's `canManage` from the same lookup so the UI does not offer actions the plugin will reject. See [Query Patterns > Multi-tenant Queries](/database/queries#multi-tenant-queries).
 
-```ts
-authorizeReference: async ({ user, referenceId }) => {
-  if (referenceId === user.id) return true; // Personal billing
-  const [row] = await db
-    .select({ role: Db.member.role })
-    .from(Db.member)
-    .where(
-      and(
-        eq(Db.member.organizationId, referenceId),
-        eq(Db.member.userId, user.id),
-      ),
-    );
-  return row?.role === "owner" || row?.role === "admin";
-},
-```
+Better Auth also supports switching and clearing the active organization. The starter UI does not expose either yet: it seeds one on session create and leaves it alone, so add a switcher when your app needs more than one active scope.
 
 ## Invitation Lifecycle
 
 1. **Owner/admin invites** – sends invitation to email with assigned role
 2. **Invitation pending** – stored in `invitation` table with `status: "pending"` and an expiration
 3. **Invitee accepts** – Better Auth creates a `member` record and updates invitation status
-4. **Or invitee rejects / invitation expires** – invitation status is updated, no member created
+4. **Or invitee rejects or the inviter cancels** – status is updated, no member is created. An expired pending invitation is refused when used; expiry alone does not rewrite its status.
 
-The `(organizationId, email)` unique constraint keeps one invitation record per address in an organization; lifecycle changes update that record's status.
+The plugin does not populate the optional `acceptedAt` or `rejectedAt` columns. Add organization hooks if the application needs those audit timestamps.
 
 ## Client API
 
@@ -3039,7 +2969,7 @@ Key behaviors:
 * Returns `null` when unauthenticated (not an error)
 * 30-second stale time keeps auth state current without excessive requests
 * 401/403 errors are not retried – retrying won't help for auth failures
-* Inherits global `gcTime`, `refetchOnWindowFocus`, and `refetchOnReconnect` from QueryClient defaults
+* Everything else follows the shared `QueryClient` – see [State & Data Fetching](/frontend/state)
 
 ### Session Data Shape
 
@@ -3058,12 +2988,9 @@ Both `user` and `session` must be present for valid auth state. Partial data (on
 // In components – triggers fetch if stale
 const { data } = useSessionQuery();
 
-// With Suspense
-const { data } = useSuspenseSessionQuery();
-
 // Sync check of cache only – no network request
 const session = getCachedSession(queryClient);
-const loggedIn = isAuthenticated(queryClient);
+const loggedIn = isValidSession(session);
 ```
 
 ## Protected Route Guard
@@ -3082,14 +3009,12 @@ export const Route = createFileRoute("/(app)")({
       session = await context.queryClient.fetchQuery(sessionQueryOptions());
     }
 
-    if (!session?.user || !session?.session) {
+    if (!isValidSession(session)) {
       throw redirect({
         to: "/login",
         search: { returnTo: location.href },
       });
     }
-
-    return { user: session.user, session };
   },
   component: AppLayout,
 });
@@ -3101,7 +3026,47 @@ This pattern means:
 * **No cache** → fetches session, redirects to `/login` if unauthenticated
 * **`returnTo`** → preserves the original URL so users land back after login
 
-The session data is returned from `beforeLoad` and available to all child routes via `Route.useRouteContext()`.
+`beforeLoad` returns nothing: pages read the session through `useSessionQuery()`, and a copy placed in route context would go stale the moment the session is revalidated.
+
+`isValidSession()` is the single definition of "authenticated". `beforeLoad`, `SessionGate` below, and the login and signup guards all call it, so the partial-data rule can't drift between them.
+
+### Mounted-Session Gate
+
+`beforeLoad` runs when the router loads or invalidates a route, not when a mounted query changes on its own. That leaves a gap: `revalidateSession()` removes the cached session while the app stays mounted, and a background refetch can discover an expired one with no navigation in flight. Both leave mounted pages reading a missing session as a signed-out one. `SessionGate` closes that gap:
+
+```tsx
+function AppLayout() {
+  return (
+    <AuthErrorBoundary>
+      <Layout>
+        <SessionGate>
+          <Outlet />
+        </SessionGate>
+      </Layout>
+    </AuthErrorBoundary>
+  );
+}
+
+function SessionGate({ children }: { children: ReactNode }) {
+  const { data: session, isPending, error } = useSessionQuery();
+  const router = useRouter();
+  const valid = isValidSession(session);
+
+  // Nothing else would move the user off a page that is already mounted.
+  useEffect(() => {
+    if (!isPending && !valid) void router.invalidate();
+  }, [isPending, valid, router]);
+
+  if (error) throw error;
+  if (isPending || !valid) return <p>Loading...</p>;
+
+  return children;
+}
+```
+
+`beforeLoad` owns redirects; `SessionGate` owns the mounted subtree and hands an invalid session back to the router rather than redirecting itself, so `returnTo` is built in one place. Errors go to `AuthErrorBoundary`, which offers sign-in recovery on a 401.
+
+Because the gate withholds children until the session is known, pages below it read `useSessionQuery()` directly and never handle its pending or error state.
 
 ## Login Page
 
@@ -3116,7 +3081,7 @@ export const Route = createFileRoute("/(auth)/login")({
       const session = await context.queryClient.fetchQuery(
         sessionQueryOptions(),
       );
-      if (session?.user && session?.session) {
+      if (isValidSession(session)) {
         throw redirect({ to: search.returnTo ?? "/" });
       }
     } catch (error) {
@@ -3140,27 +3105,29 @@ async function handleSuccess() {
 
 ## Sign Out
 
-The `signOut` function clears the server session, updates the cache, and performs a hard redirect:
+`useSignOut()` ends the server session, then clears the cache and hard-redirects:
 
 ```ts
 // apps/app/lib/queries/session.ts
-export async function signOut(
-  queryClient: QueryClient,
-  options?: { redirect?: boolean },
-) {
-  try {
-    await auth.signOut();
-  } finally {
-    queryClient.setQueryData(sessionQueryKey, null);
+export function useSignOut() {
+  const queryClient = useQueryClient();
 
-    if (options?.redirect !== false) {
+  return useMutation({
+    mutationFn: async () => {
+      const { error } = await auth.signOut();
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(sessionQueryKey, null);
       window.location.href = "/login";
-    }
-  }
+    },
+  });
 }
 ```
 
-The hard redirect (`window.location.href`) resets all in-memory state – Jotai atoms, component state, TanStack Query cache – ensuring a clean slate between user sessions. Pass `{ redirect: false }` for programmatic sign-out without navigation. `setQueryData(null)` is used instead of `invalidateQueries` to avoid a wasted refetch of a session that no longer exists.
+Everything local happens in `onSuccess`, never unconditionally. Better Auth resolves with `{ error }` rather than throwing, so a discarded error would clear the session locally while the server still honours it – and the login guard would find that session and send the user straight back into the app. `UserMenu` renders `signOut.error` for the same reason.
+
+The hard redirect drops all in-memory state – Jotai atoms, component state, TanStack Query cache – so nothing carries over to the next user. `setQueryData(null)` beats `invalidateQueries` because a session is binary state: there is nothing worth refetching.
 
 ## Auth Error Boundary
 
@@ -3235,10 +3202,11 @@ db/
 ├── seeds/              # Seed data scripts
 ├── scripts/            # Utilities (seed runner, export)
 ├── drizzle.config.ts   # Drizzle Kit configuration
-└── index.ts            # Re-exports schema + DatabaseSchema type
+├── testing.ts          # createTestDatabase() – PGlite for tests
+└── index.ts            # Re-exports schema, DatabaseSchema and Database types
 ```
 
-Schema files are organized by domain – one file per entity group (e.g., `user.ts` contains the user, session, identity, and verification tables). All tables are re-exported from `schema/index.ts`.
+Schema files are organized by domain – one file per entity group (e.g., `user.ts` contains the user, session, identity, and verification tables). All tables are re-exported from `schema/index.ts`, and that barrel is the only file Drizzle Kit reads: a table missing from it is invisible to `bun db:generate`, which then reports no changes rather than an error.
 
 ## Connection Architecture
 
@@ -3286,7 +3254,7 @@ Run from the repo root. Some take a `:staging` or `:production` suffix to target
 
 ## Environment Targeting
 
-Database scripts select the environment through the `ENVIRONMENT` variable (falls back to `NODE_ENV`). Development cascades through env files, first value wins:
+Database scripts select the environment through the `ENVIRONMENT` variable (falls back to `NODE_ENV`). There are three: `dev`, `staging` and `production`. Development cascades through env files, first value wins:
 
 ```
 .env.dev.local  →  .env.local  →  .env
@@ -3305,16 +3273,34 @@ Not every command has `:staging` and `:production` variants, by design:
 
 The `DATABASE_URL` variable must be a valid `postgres://` or `postgresql://` connection string.
 
+There is deliberately no `test` environment. Tests run against [PGlite](/testing#database-tests) in-process, so they never resolve a connection string – and `ENVIRONMENT=test` fails loudly rather than falling through to whichever database `.env.local` points at.
+
 See [Environment Variables](/getting-started/environment-variables) for full details.
 
 ## Importing Schemas
 
-The `@repo/db` package exports two entry points:
+The `@repo/db` package exports three entry points:
 
 ```ts
-import * as schema from "@repo/db"; // full schema + DatabaseSchema type
+import * as schema from "@repo/db"; // full schema + type exports
 import { user, session } from "@repo/db/schema"; // individual tables
+import { createTestDatabase } from "@repo/db/testing"; // test database
 ```
+
+The root entry also exports `Database`, the schema-bound client type:
+
+```ts
+import type { Database } from "@repo/db";
+
+async function findMembership(db: Database, userId: string, orgId: string) {
+  return db.query.member.findFirst({
+    where: (m, { and, eq }) =>
+      and(eq(m.userId, userId), eq(m.organizationId, orgId)),
+  });
+}
+```
+
+It names the schema, not the driver – postgres-js over Hyperdrive in production, PGlite in tests – so a helper written against it works in both without a cast.
 
 ---
 
@@ -3529,7 +3515,7 @@ Multi-tenancy via Better Auth's [organization plugin](https://www.better-auth.co
 Key constraints:
 
 * `member(userId, organizationId)` is unique – one membership per user per org
-* `invitation(organizationId, email)` is unique – one pending invite per email per org
+* `invitation(organizationId, email)` is unique – one lifetime invitation row per email per org; remove this starter constraint before supporting re-invites
 * `session.activeOrganizationId` has an index but no FK constraint (Better Auth design)
 * `organization.metadata` is `text`, not JSONB – Better Auth serializes it as a string
 
@@ -3548,7 +3534,7 @@ The `referenceId` column is polymorphic: it points to `user.id` for personal bil
 Several tables include columns beyond Better Auth's defaults:
 
 * **passkey:** `lastUsedAt` (security audits), `deviceName` (user-friendly label like "MacBook Pro"), `platform` ("platform" or "cross-platform")
-* **invitation:** `acceptedAt` / `rejectedAt` lifecycle timestamps
+* **invitation:** optional `acceptedAt` / `rejectedAt` fields for application hooks; Better Auth does not populate them
 
 ## Adding a New Table
 
@@ -3755,11 +3741,10 @@ The seed runner imports your Drizzle config for environment resolution, creates 
 
 ```ts
 // db/seeds/products.ts
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type * as schema from "../schema";
+import type { Database } from "../index";
 import { product } from "../schema";
 
-export async function seedProducts(db: PostgresJsDatabase<typeof schema>) {
+export async function seedProducts(db: Database) {
   const data = [
     { name: "Starter Plan Guide", price: 0, organizationId: "org_..." },
     { name: "Pro Onboarding Kit", price: 4900, organizationId: "org_..." },
@@ -3802,17 +3787,28 @@ Common patterns for querying the database in tRPC procedures. Use `ctx.db` by de
 
 ## Multi-tenant Queries
 
-Every query that returns user data must be scoped to the current organization. The active organization ID is available on the session:
+Every query that returns tenant data must be scoped to the current organization. The active ID selects the scope; it does not prove the user is still a member, because an older session can outlive a membership change. Resolve both before reading tenant data:
 
 ```ts
+const organizationId = ctx.session.activeOrganizationId;
+if (!organizationId) {
+  throw new TRPCError({ code: "PRECONDITION_FAILED" });
+}
+
+const membership = await ctx.db.query.member.findFirst({
+  where: (m, { and, eq }) =>
+    and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+});
+if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
+
 const products = await ctx.db.query.product.findMany({
-  where: eq(product.organizationId, ctx.session.activeOrganizationId),
+  where: eq(product.organizationId, organizationId),
 });
 ```
 
 ::: warning
 
-Forgetting the organization filter leaks data across tenants. Treat this as a security invariant – every table with an `organizationId` column must filter by it.
+Forgetting either the membership check or the organization filter leaks data across tenants. Treat both as security invariants – every table with an `organizationId` column must filter by it.
 
 :::
 
@@ -3845,31 +3841,22 @@ const products = await ctx.db.query.product.findMany({
 });
 ```
 
-## DataLoader Pattern
+## Avoiding N+1 Queries
 
-The API uses a [DataLoader](https://github.com/graphql/dataloader) pattern to batch lookups and prevent N+1 queries. Loaders are defined with `defineLoader` and cached per-request in `ctx.cache`:
-
-```ts
-// apps/api/lib/loaders.ts (simplified)
-export const userById = defineLoader(
-  Symbol("userById"),
-  async (ctx, ids: readonly string[]) => {
-    const users = await ctx.dbCached
-      .select()
-      .from(user)
-      .where(inArray(user.id, [...ids]));
-    return mapByKey(users, "id", ids);
-  },
-);
-```
-
-Use loaders when a procedure needs to fetch the same entity type for multiple IDs:
+Fetching related rows one at a time inside a loop issues one query per row. Drizzle's `with` clause (above) resolves relations in a single round trip, and a single `inArray` lookup covers the rest:
 
 ```ts
-const creator = await userById(ctx).load(product.createdBy);
+const creators = await ctx.db.query.user.findMany({
+  columns: { id: true, name: true },
+  where: (u, { inArray }) =>
+    inArray(
+      u.id,
+      products.map((p) => p.createdBy),
+    ),
+});
 ```
 
-See [Context & Middleware – DataLoaders](/api/context#dataloaders) for the full pattern and how to add new loaders.
+If a procedure grows past what those two cover, reach for a batching library such as [DataLoader](https://github.com/graphql/dataloader) then – not before.
 
 ## Access Control
 
@@ -4007,16 +3994,23 @@ Mutations (upgrade, portal) go through the auth client because the plugin handle
 
 The settings page reads `session.activeOrganizationId`. With an active organization it passes that ID and `customerType: "organization"` to Stripe mutations; otherwise the plugin defaults to the current user. The tRPC read derives the same reference from the session. One active subscription is allowed per reference ID.
 
-| Context             | `referenceId`          | Who can manage |
-| ------------------- | ---------------------- | -------------- |
-| Organization active | `activeOrganizationId` | Owner or admin |
-| No organization     | `user.id`              | The user       |
+| Context                | `referenceId`          | Who can manage |
+| ---------------------- | ---------------------- | -------------- |
+| Organization active    | `activeOrganizationId` | Owner or admin |
+| No active organization | `user.id`              | The user       |
 
-The plugin's `authorizeReference` callback verifies every explicit organization reference against current owner/admin membership. The billing query key includes `activeOrgId`, so switching organizations refetches automatically.
+Authorization is enforced twice, by two different owners:
+
+* **Stripe mutations** – the plugin's `authorizeReference` callback verifies every explicit organization reference against current owner/admin membership.
+* **The tRPC read** – `billing.subscription` is a procedure this project owns, so `authorizeReference` never runs for it. It verifies membership itself before reading the subscription and throws `FORBIDDEN` otherwise. Without that check a session outliving a membership removal would keep reporting the old organization's plan.
+
+That same membership lookup returns the caller's role, which the response carries as `canManage`. Every member sees the plan; only an owner or admin sees the upgrade and portal buttons, because those are exactly the callers `authorizeReference` would accept.
+
+The billing query key includes `activeOrgId`, so switching organizations refetches automatically.
 
 ## Plans
 
-Three tiers with enforced member limits:
+Three tiers. The member counts are configuration – the API returns them as `limits` alongside the subscription, and nothing enforces them. Check the limit wherever you add a member:
 
 | Plan    | Members | Trial   | Price ID env var          |
 | ------- | ------- | ------- | ------------------------- |
@@ -4043,7 +4037,7 @@ Set in `.env.local` for development, Cloudflare secrets for staging/production. 
 | Layer | Files |
 | --- | --- |
 | Schema | `db/schema/subscription.ts`, `stripeCustomerId` on user + organization tables |
-| Server | `apps/api/lib/plans.ts`, `apps/api/lib/stripe.ts`, stripe plugin in `apps/api/lib/auth.ts` |
+| Server | `apps/api/lib/plans.ts`, stripe plugin in `apps/api/lib/auth.ts` |
 | Router | `apps/api/routers/billing.ts` |
 | Client | `stripeClient` in `apps/app/lib/auth.ts`, `apps/app/lib/queries/billing.ts` |
 | UI | Billing card in `apps/app/routes/(app)/settings.tsx` |
@@ -4073,25 +4067,27 @@ This is the single source of truth for what each plan includes. Add new limit fi
 
 ## Auth Plugin Configuration
 
-Plans are registered with the `@better-auth/stripe` plugin in `apps/api/lib/auth.ts`:
+Plans are registered with the `@better-auth/stripe` plugin in `apps/api/lib/auth.ts`. `stripePlugin()` proves the four required values are set first, so the config uses narrowed locals rather than the optional `env` fields:
 
 ```ts
 // apps/api/lib/auth.ts (stripe plugin config)
 stripe({
-  stripeClient: createStripeClient(env),
-  stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+  stripeClient: new Stripe(secretKey, {
+    appInfo: { name: "React Starter Kit" },
+  }),
+  stripeWebhookSecret: webhookSecret,
   createCustomerOnSignUp: true,
   subscription: {
     enabled: true,
     plans: [
       {
         name: "starter",
-        priceId: env.STRIPE_STARTER_PRICE_ID,
+        priceId: starterPriceId,
         limits: planLimits.starter,
       },
       {
         name: "pro",
-        priceId: env.STRIPE_PRO_PRICE_ID,
+        priceId: proPriceId,
         annualDiscountPriceId: env.STRIPE_PRO_ANNUAL_PRICE_ID,
         limits: planLimits.pro,
         freeTrial: { days: 14 },
@@ -4419,7 +4415,7 @@ Available sender functions:
 
 ::: warning
 
-`sendEmail()` throws if you provide HTML without a plain text fallback. Always render both versions using `renderEmailToHtml()` and `renderEmailToText()`.
+`EmailOptions.text` is required and `html` is optional, so the compiler rejects an HTML-only send. Render both with `renderEmailToHtml()` and `renderEmailToText()`.
 
 :::
 
@@ -4493,7 +4489,7 @@ export { Invitation } from "./templates/invitation.js";
 | --- | --- | --- |
 | `RESEND_API_KEY` | Yes | Resend API key (`re_...`) |
 | `RESEND_EMAIL_FROM` | Yes | Sender address (e.g., `noreply@example.com`) |
-| `APP_NAME` | No | Used in email subject lines and branding (defaults to `"Example"`) |
+| `APP_NAME` | Yes | Used in email subject lines and branding |
 | `APP_ORIGIN` | Yes | Used for links in email footer |
 
 Set both in `.env.local` for development. In deployed environments, store `RESEND_API_KEY` as a Worker secret and `RESEND_EMAIL_FROM` as a non-secret Wrangler variable. See [Environment Variables](/getting-started/environment-variables).
@@ -4515,26 +4511,30 @@ url: /testing.md
 ---
 # Testing
 
-The project uses [Vitest](https://vitest.dev/) for both API and frontend tests. Two test projects run from a single root config – API tests in Node, frontend tests in [Happy DOM](https://github.com/capricorn86/happy-dom).
+The project uses [Vitest](https://vitest.dev/) for API, database and frontend tests. Three test projects run from a single root config – API and database tests in Node, frontend tests in [Happy DOM](https://github.com/capricorn86/happy-dom).
+
+Database-backed tests run against PGlite in-process, with no server to start. `bun install && bun run test` works on a fresh clone.
 
 ## Configuration
 
-The root config defines both projects:
+The root config defines the projects:
 
 ```ts
 // vitest.config.ts
 export default defineConfig({
+  cacheDir: "./.cache/vite",
   test: {
-    projects: ["apps/api", "apps/app"],
+    projects: ["apps/api", "apps/app", "db"],
   },
 });
 ```
 
-`apps/api` has its own `vitest.config.ts`; `apps/app` uses an inline `test` block in `vite.config.ts`:
+`apps/api` and `db` have their own `vitest.config.ts`; `apps/app` uses an inline `test` block in `vite.config.ts`:
 
 | Project    | Environment    | Setup file        |
 | ---------- | -------------- | ----------------- |
 | `apps/api` | Node (default) | –                 |
+| `db`       | Node (default) | –                 |
 | `apps/app` | `happy-dom`    | `vitest.setup.ts` |
 
 The app setup file registers [jest-dom](https://github.com/testing-library/jest-dom) matchers like `toBeInTheDocument()`:
@@ -4546,17 +4546,22 @@ import "@testing-library/jest-dom/vitest";
 
 ## Running Tests
 
+From the repository root:
+
 ```bash
 bun run test                       # All projects, watch mode
 bun run test --run                 # Single run (no watch)
 bun run test --project @repo/api   # API tests only
 bun run test --project @repo/app   # Frontend tests only
+bun run test --project @repo/db    # Schema tests only
 bun run test billing               # Filter by filename
 ```
 
 ::: warning
 
 Use `bun run test`, not `bun test`. The latter invokes Bun's test runner instead of the root Vitest script, so it ignores the Happy DOM environment and `vitest.setup.ts`; DOM-dependent frontend tests fail with `document is not defined`. The `bun api:test` and `bun app:test` shorthands are safe because both names resolve to package scripts.
+
+Only the root, `apps/api`, `apps/app` and `db` define a `test` script. In a workspace that does not, `bun run test` may resolve a system command named `test` instead of reporting a missing script.
 
 :::
 
@@ -4569,36 +4574,101 @@ Use `bun run test`, not `bun test`. The latter invokes Bun's test runner instead
 import { describe, expect, it, vi } from "vitest";
 ```
 
+## Database Tests
+
+Use `@repo/db/testing` when behavior depends on query scoping, migrations, or database constraints:
+
+```ts
+import { createTestDatabase } from "@repo/db/testing";
+
+const { db, reset, close } = await createTestDatabase();
+
+afterAll(close);
+beforeEach(reset);
+```
+
+`createTestDatabase()` boots [PGlite](https://pglite.dev/) – Postgres compiled to WebAssembly – and applies the committed migrations from `db/migrations`. Migrations, constraints and queries execute in a Postgres engine rather than against a mock, with no container to start and no service to configure in CI.
+
+`db` is typed as `Database`, the same driver-agnostic client production code receives – so a test cannot depend on an API the code under test does not have.
+
+Each call returns its own in-memory instance, so test files never see one another's rows. Create it once per file and call `reset()` – a `truncate` across every table in the schema – between tests.
+
+Because it applies migrations rather than pushing the schema, a migration that will not apply fails here instead of on deploy. It does not comprehensively compare `db/schema` against the migrated result: an unmigrated table is caught when `reset()` tries to truncate it, but an existing column or constraint can drift unless a test exercises it. The suite covers the committed migrations and the invariants it asserts explicitly – not full schema-to-migration equivalence.
+
+::: tip Why not mock `db.query`?
+
+A mocked `findFirst` proves which lookups a procedure runs and what it does with the rows it gets back, but not that those were the right rows. For example, `billing.subscription` reads an organization's plan only after matching `member(organizationId, userId)`. Against a mock that check can pass even if the lookup forgets the user; against the test database it fails.
+
+:::
+
+Writes go through Drizzle, so `$defaultFn` fills in prefixed IDs and `.returning()` hands back what the database actually stored:
+
+```ts
+// db/schema/index.test.ts
+const [org] = await db
+  .insert(organization)
+  .values({ name: "Acme", slug: "acme" })
+  .returning();
+
+expect(org.id).toMatch(/^org_[a-z0-9]{16}$/);
+```
+
+Constraint violations surface as a Drizzle error wrapping the Postgres one. Assert on the constraint name so the test says which rule it depends on:
+
+```ts
+await expect(db.insert(member).values(values)).rejects.toMatchObject({
+  cause: { constraint: "member_user_org_unique" },
+});
+```
+
+::: warning What PGlite does not cover
+
+PGlite is one connection in one process, built with its own locale and extension set. It does not model multi-connection concurrency or advisory locks, the postgres-js and Hyperdrive path in front of the deployed database, ICU collation ordering, extensions, or behaviour specific to Neon's Postgres version. Those belong to a deployed environment.
+
+For the Postgres features these tests do exercise – schema, constraints, query scoping – it is high-fidelity in a way no mock can be.
+
+:::
+
 ## Testing tRPC Procedures
 
-Use `createCallerFactory` to invoke procedures directly without HTTP. Build a minimal context mock with only the fields the procedure accesses:
+Use `createCallerFactory` to invoke procedures directly without HTTP. When the procedure's behavior depends on query results, build its context around the test database:
 
 ```ts
 // apps/api/routers/billing.test.ts
-import { describe, expect, it, vi } from "vitest";
+import { user } from "@repo/db";
+import { createTestDatabase } from "@repo/db/testing";
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import type { TRPCContext } from "../lib/context";
 import { createCallerFactory } from "../lib/trpc";
 import { billingRouter } from "./billing";
 
 const createCaller = createCallerFactory(billingRouter);
+const { db, reset, close } = await createTestDatabase();
 
-function testCtx({
-  billingEnabled = true,
-  userId = "user-1",
-  activeOrgId = undefined as string | undefined,
-  subscription = undefined as Record<string, unknown> | undefined,
-} = {}) {
+afterAll(close);
+beforeEach(reset);
+
+async function insertUser(email = "test@example.com") {
+  const [row] = await db
+    .insert(user)
+    .values({ name: "Test User", email, emailVerified: true })
+    .returning();
+
+  return row.id;
+}
+
+function testCtx(userId: string) {
   const ctx: TRPCContext = {
     req: new Request("http://localhost"),
     info: {} as TRPCContext["info"],
     session: {
-      id: "s-1",
+      id: "ses_test",
       createdAt: new Date(),
       updatedAt: new Date(),
       userId,
       expiresAt: new Date(Date.now() + 60_000),
       token: "token",
-      activeOrganizationId: activeOrgId,
+      activeOrganizationId: undefined,
     },
     user: {
       id: userId,
@@ -4608,23 +4678,14 @@ function testCtx({
       emailVerified: true,
       name: "Test User",
     },
-    db: {
-      query: {
-        subscription: {
-          findFirst: vi.fn().mockResolvedValue(subscription),
-        },
-      },
-    } as unknown as TRPCContext["db"],
-    dbCached: {} as TRPCContext["dbCached"],
-    cache: new Map(),
-    env: (billingEnabled
-      ? {
-          STRIPE_SECRET_KEY: "sk_test",
-          STRIPE_WEBHOOK_SECRET: "whsec_test",
-          STRIPE_STARTER_PRICE_ID: "price_starter",
-          STRIPE_PRO_PRICE_ID: "price_pro",
-        }
-      : {}) as TRPCContext["env"],
+    db,
+    dbCached: db,
+    env: {
+      STRIPE_SECRET_KEY: "sk_test",
+      STRIPE_WEBHOOK_SECRET: "whsec_test",
+      STRIPE_STARTER_PRICE_ID: "price_starter",
+      STRIPE_PRO_PRICE_ID: "price_pro",
+    } as TRPCContext["env"],
   };
 
   return ctx;
@@ -4632,23 +4693,11 @@ function testCtx({
 
 describe("billing.subscription", () => {
   it("returns free plan defaults when no subscription exists", async () => {
-    const result = await createCaller(testCtx()).subscription();
-    expect(result).toEqual({
-      enabled: true,
-      plan: "free",
-      status: null,
-      periodEnd: null,
-      cancelAtPeriodEnd: false,
-      limits: { members: 1 },
-    });
-  });
+    const userId = await insertUser();
 
-  it("throws on unknown plan name", async () => {
     await expect(
-      createCaller(
-        testCtx({ subscription: { plan: "enterprise", status: "active" } }),
-      ).subscription(),
-    ).rejects.toThrow('Unknown plan "enterprise"');
+      createCaller(testCtx(userId)).subscription(),
+    ).resolves.toMatchObject({ plan: "free", status: null });
   });
 });
 ```
@@ -4656,8 +4705,8 @@ describe("billing.subscription", () => {
 Key points:
 
 * `createCallerFactory(router)` from `lib/trpc` – calls procedures in-process with the same tRPC configuration and no network layer
-* Cast partial DB mocks with `as unknown as TRPCContext["db"]` – only stub the methods your procedure actually calls
-* Use `vi.fn().mockResolvedValue()` for async Drizzle query methods
+* `db` and `dbCached` both point at the test database; the distinction between them is a Hyperdrive caching concern, not a query one
+* external dependencies still use focused fakes or mocks; the example supplies only the environment variables the procedure reads
 
 ## Testing Utility Functions
 
@@ -4689,7 +4738,7 @@ Test TanStack Query option factories by inspecting query keys. Use a real `Query
 // apps/app/lib/queries/session.test.ts
 import { QueryClient } from "@tanstack/react-query";
 import { describe, expect, it } from "vitest";
-import { getCachedSession, isAuthenticated, sessionQueryKey } from "./session";
+import { getCachedSession, sessionQueryKey } from "./session";
 
 function createQueryClient() {
   return new QueryClient({
@@ -4697,18 +4746,16 @@ function createQueryClient() {
   });
 }
 
-describe("isAuthenticated", () => {
-  it("returns true when both user and session exist", () => {
+describe("getCachedSession", () => {
+  it("returns cached session data", () => {
     const queryClient = createQueryClient();
-    queryClient.setQueryData(sessionQueryKey, {
-      user: { id: "user-1", email: "test@example.com" },
-      session: { id: "session-1", expiresAt: new Date() },
-    });
-    expect(isAuthenticated(queryClient)).toBe(true);
+    const sessionData = { user: { id: "user-1" }, session: { id: "s-1" } };
+    queryClient.setQueryData(sessionQueryKey, sessionData);
+    expect(getCachedSession(queryClient)).toEqual(sessionData);
   });
 
-  it("returns false when no session data cached", () => {
-    expect(isAuthenticated(createQueryClient())).toBe(false);
+  it("returns undefined when nothing is cached", () => {
+    expect(getCachedSession(createQueryClient())).toBeUndefined();
   });
 });
 ```
@@ -4762,12 +4809,10 @@ fn.mockImplementation((x) => x + 1);
 Cast partial mocks when you only need a subset of a typed interface:
 
 ```ts
-const db = {
-  query: {
-    user: { findFirst: vi.fn().mockResolvedValue({ id: "user-1" }) },
-  },
-} as unknown as TRPCContext["db"];
+const env = { STRIPE_SECRET_KEY: "sk_test" } as TRPCContext["env"];
 ```
+
+Mock third-party SDKs and anything that leaves the process. Use the [test database](#database-tests) when the behavior under test depends on SQL semantics or query scoping.
 
 ### Module mocks
 
@@ -4788,7 +4833,17 @@ vi.mock(import("./some-module.js"), async (importOriginal) => {
 
 ::: warning
 
-Module mocks are hoisted – they run before imports regardless of where you write them. See [Vitest mocking docs](https://vitest.dev/guide/mocking) for details.
+Module mocks are hoisted – they run before imports regardless of where you write them. A factory that closes over a normal `const` throws `Cannot access '...' before initialization`. Declare the shared mock with `vi.hoisted()` so it is lifted too:
+
+```ts
+const { signOut } = vi.hoisted(() => ({ signOut: vi.fn() }));
+
+vi.mock(import("../auth"), () => ({
+  auth: { signOut } as unknown as AuthModule["auth"],
+}));
+```
+
+See [Vitest mocking docs](https://vitest.dev/guide/mocking) for details.
 
 :::
 
@@ -4797,6 +4852,8 @@ Module mocks are hoisted – they run before imports regardless of where you wri
 ```
 apps/
 ├── api/
+│   ├── lib/
+│   │   └── auth.test.ts             # auth configuration
 │   └── routers/
 │       └── billing.test.ts          # tRPC procedure tests
 └── app/
@@ -4804,7 +4861,10 @@ apps/
         ├── errors.test.ts           # utility function tests
         └── queries/
             ├── billing.test.ts      # query option tests
-            └── session.test.ts      # cache helper tests
+            └── session.test.ts      # guards, cache helpers, sign-out mutation
+db/
+└── schema/
+    └── index.test.ts                # cascades, unique constraints, ID prefixes
 ```
 
 Place test files next to the source they test. No separate `__tests__` directories.
@@ -4845,21 +4905,42 @@ See [Architecture Overview](/architecture/) for how these components connect.
 | Staging | Push to `main` | `staging.example.com` | Pre-production validation |
 | Production | Manual dispatch | `example.com` | Live environment |
 
-Staging and production each have their own Wrangler configuration, Hyperdrive bindings, and Terraform workspace. Development is local and provisions no cloud resources. See [CI/CD](/deployment/ci-cd) for deployment triggers. The checked-in deployment step is disabled until Cloudflare credentials are configured.
+Staging and production each have their own Wrangler configuration, Hyperdrive bindings, and Terraform workspace. Development is local and provisions no cloud resources. See [CI/CD](/deployment/ci-cd) for deployment triggers. Automated deploys stay off until you set the `DEPLOY_ENABLED` repository variable, so a fresh clone runs CI only.
 
 ## Deployment Checklist
 
 1. **Provision infrastructure** – run Terraform to create the Hyperdrive configurations. Workers, routes and the custom domain's DNS come from Wrangler at deploy time ([ADR-002](/adr/002-terraform-wrangler-boundary))
 2. **Set secrets** – configure `BETTER_AUTH_SECRET` and `RESEND_API_KEY`, plus secrets for any optional integrations you enable, via Wrangler. See [Cloudflare Workers](/deployment/cloudflare) for the full list
-3. **Run migrations** – apply schema to your production database. See [Production Database](/deployment/production-database)
-4. **Build and deploy** – push code to workers. See [CI/CD](/deployment/ci-cd) or deploy manually:
+3. **Build and verify** – compile every workspace, prove each worker bundles, and confirm the Cloudflare identity and production account, all before anything changes
+4. **Run migrations** – apply the schema to your production database. See [Production Database](/deployment/production-database)
+5. **Deploy the workers** – `api`, then `app`, then `web`. Service bindings resolve by name at deploy time, and `web` holds the public route, so it flips last
+
+Steps 3 to 5 are what an automated release does; push to `main` or dispatch a production run and [CI/CD](/deployment/ci-cd) handles them. To do it by hand:
 
 ```bash
-bun run build        # Build all deployable workspaces
-bun api:deploy --env="" # Deploy production API worker
-bun app:deploy --env="" # Deploy production App worker
-bun web:deploy --env="" # Deploy production Web worker
+# Preflight – nothing here changes production
+bun run build
+
+bun wrangler deploy --config apps/api/wrangler.jsonc --env="" --dry-run
+bun wrangler deploy --config apps/app/wrangler.jsonc --env="" --dry-run
+bun wrangler deploy --config apps/web/wrangler.jsonc --env="" --dry-run
+
+# `--dry-run` never authenticates, so confirm the account separately
+bun wrangler whoami --account <production-account-id>
 ```
+
+Stop unless every command succeeded and `whoami` reports the account you meant. These are two blocks rather than one because an interactive shell does not stop on error – pasted together, a failed dry-run would scroll past and the migration would still run.
+
+```bash
+# Point of no return
+bun db:migrate:production
+
+bun api:deploy --env=""
+bun app:deploy --env=""
+bun web:deploy --env=""
+```
+
+The order matters for the same reason it does in CI: migrations run against workers that are still the old ones, so a schema change has to be [additive](/deployment/ci-cd#release-order) until the new workers are live.
 
 ## Section Pages
 
@@ -4963,14 +5044,11 @@ bunx auth@latest secret
 bun wrangler secret put BETTER_AUTH_SECRET --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put RESEND_API_KEY --config apps/api/wrangler.jsonc --env=""
 
-# Google sign-in — optional, but set both or neither
+# Google sign-in – optional, but set both or neither
 bun wrangler secret put GOOGLE_CLIENT_ID --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put GOOGLE_CLIENT_SECRET --config apps/api/wrangler.jsonc --env=""
 
-# AI features — optional
-bun wrangler secret put OPENAI_API_KEY --config apps/api/wrangler.jsonc --env=""
-
-# Billing — optional, but set all four or none
+# Billing – optional, but set all four or none
 bun wrangler secret put STRIPE_SECRET_KEY --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put STRIPE_WEBHOOK_SECRET --config apps/api/wrangler.jsonc --env=""
 bun wrangler secret put STRIPE_STARTER_PRICE_ID --config apps/api/wrangler.jsonc --env=""
@@ -4986,7 +5064,7 @@ Set all four Stripe values or none. A partial configuration throws when authenti
 
 Every command carries `--config` because a secret binds to whichever worker the config names – run one from the repository root without it and Wrangler has no worker to attach it to.
 
-Only `BETTER_AUTH_SECRET` and `RESEND_API_KEY` are mandatory – the app cannot sign anyone in without them. `apps/api/wrangler.jsonc` lists exactly those two under `secrets.required`, so a deploy missing either fails immediately. Google sign-in, OpenAI and Stripe are optional and stay out of that list, because requiring them would block deploys for anyone not using them. Running `secret put` against a worker that does not exist yet is fine – Wrangler offers to create an empty placeholder to hold the secret, which the deploy then overwrites.
+Only `BETTER_AUTH_SECRET` and `RESEND_API_KEY` are mandatory – the app cannot sign anyone in without them. `apps/api/wrangler.jsonc` lists exactly those two under `secrets.required`, so a deploy missing either fails immediately. Google sign-in and Stripe are optional and stay out of that list, because requiring them would block deploys for anyone not using them. Running `secret put` against a worker that does not exist yet is fine – Wrangler offers to create an empty placeholder to hold the secret, which the deploy then overwrites.
 
 ## Build and Deploy
 
@@ -5070,22 +5148,15 @@ bun infra:staging apply
 | `HYPERDRIVE_CACHED` | 60s, 15s stale | Reads that tolerate being briefly stale |
 | `HYPERDRIVE_UNCACHED` | Disabled | Writes, and reads that must not be stale (auth, billing) |
 
-Use `HYPERDRIVE_CACHED` only where a result from the configured cache window is acceptable. With the defaults above, a result can be up to 75 seconds old and writes do not invalidate it. Read-after-write, session, and permission checks therefore belong on `HYPERDRIVE_UNCACHED`.
+Terraform sets both values explicitly rather than inheriting them, so the window above is the reviewable source – see [Infrastructure](/specs/infra-terraform). A cached result can therefore be 75 seconds old, and a write never invalidates it: read-after-write, session, and permission checks belong on `HYPERDRIVE_UNCACHED`.
 
-Give Hyperdrive Neon's **unpooled** connection string – the host without `-pooler`. Hyperdrive is itself the pool, and stacking two exhausts connections under load. Both configurations open up to `origin_connection_limit` connections each, so the database must allow at least twice that.
+Give Hyperdrive Neon's **unpooled** connection string – the host without `-pooler`. Hyperdrive is itself the pool; Neon's runs in transaction mode, which breaks the prepared statements Hyperdrive caches on, and adds a second layer competing for the same connection budget. Both configurations open up to `origin_connection_limit` connections each, so the database must allow at least twice that.
 
 Then copy the IDs into `apps/api/wrangler.jsonc` for the matching environment:
 
 ```bash
-bun infra:staging workspace show    # must end in -staging
 bun infra:staging output -raw wrangler_hyperdrive_bindings
 ```
-
-::: warning
-
-`output` reads values out of state instead of recomputing them, so the workspace guard that protects `plan` and `apply` does not run here. With a stale `TF_WORKSPACE` exported, this prints the *other* environment's IDs – and pasting those into a `wrangler.jsonc` points that worker at the wrong database. Confirm the workspace first.
-
-:::
 
 See [Database: Connection Architecture](/database/#connection-architecture) for how these bindings are used in application code.
 
@@ -5101,20 +5172,19 @@ bun db:migrate:staging
 bun db:migrate:production
 ```
 
-These commands read connection strings from `.env.staging.local` and `.env.production.local` respectively. See [Database: Migrations](/database/migrations) for the full workflow.
+Each command reads only its own file – `.env.staging.local` or `.env.production.local` – and fails if that file is missing or does not define `DATABASE_URL`, rather than falling back to another environment's connection string. See [Database: Migrations](/database/migrations) for the full workflow.
 
 ::: warning
 
-Always review generated migration SQL before running against production. Use `bun db:generate` to preview changes, then inspect the files in `db/migrations/` before applying.
+Review the SQL in `db/migrations/` before applying it to production. Those files are generated during development with `bun db:generate` and committed, so the exact statements are visible in the pull request that introduced them.
 
 :::
 
 ## Database Performance
 
-* **Connection pooling** – Hyperdrive maintains a pool at the edge, reducing cold-start latency
-* **Indexes** – add indexes for frequently queried columns, especially foreign keys used in multi-tenant filters
-* **Monitor slow queries** – use the Neon dashboard to identify and optimize slow queries
-* **Compute auto-suspend** – Neon suspends idle compute after inactivity; first request after suspend has higher latency
+Neon suspends idle compute after a period of inactivity, so the first request after a quiet spell pays a cold start. Expect it on staging and on low-traffic production deployments before attributing the latency to Hyperdrive or the worker.
+
+The shipped tables already index `organizationId` on `member` and `invitation`. Do the same on your own tenant-scoped tables: every scoped query filters on that column, so a missing index there costs more than anywhere else in the schema.
 
 ---
 
@@ -5123,187 +5193,348 @@ url: /deployment/ci-cd.md
 ---
 # CI/CD
 
-GitHub Actions automates building and testing, and includes a disabled deployment scaffold. The pipeline uses two workflows: `ci.yml` for the build and conditional deployment jobs, and `deploy.yml` as the reusable deployment workflow.
+GitHub Actions builds and verifies every change. Once deployment is enabled, a push to `main` releases to staging, and a manual dispatch releases `main` to production. The **application pipeline** is `ci.yml` for the build and its conditional deploy jobs, plus `deploy.yml` as the reusable release workflow. Infrastructure runs separately through `infra.yml`.
 
 ## Pipeline Overview
 
-```
-Pull request → build + lint + test
-Push to main  → build + test       → staging job (deploy step disabled)
-Manual dispatch (production)        → production job (deploy step disabled)
-```
+`ci.yml` runs one **build** job, followed by the applicable deploy job. Pull requests are verified but never deployed:
 
-The `ci.yml` workflow runs a single **build** job, then conditionally triggers a **deploy** job depending on the event. Pull requests are verified but not deployed:
+| Trigger | Condition | Deploys to |
+| --- | --- | --- |
+| `pull_request` | Any PR to `main` | Nothing |
+| `merge_group` | Queued merge, if you enable a merge queue | Nothing |
+| `push` | Any push to `main` | Staging |
+| `workflow_dispatch` | Manual, `deploy_production` off | Nothing – build only |
+| `workflow_dispatch` | Manual from `main`, `deploy_production` on | Production |
 
-| Trigger             | Condition                           | Environment |
-| ------------------- | ----------------------------------- | ----------- |
-| `pull_request`      | Any PR to `main`                    | None        |
-| `push`              | Merge to `main`                     | Staging     |
-| `workflow_dispatch` | Manual, `deploy_production` checked | Production  |
+Deployment is **off until you turn it on**. Both deploy jobs require the `DEPLOY_ENABLED` repository variable to be `true`, so a fresh clone runs pure CI – no runner time spent on a release that cannot succeed, and no deployment records implying one happened. See [Enabling Deployments](#enabling-deployments).
+
+A production run builds `main` as of the dispatch and releases that. Two consequences worth being precise about: it is not a promotion of the build staging is running – nothing carries a release identity between runs – and if the deploy waits behind an approval, it still ships the commit that was dispatched and tested, not wherever `main` has moved to since.
 
 ## Build Job
 
-The build job runs in every trigger scenario:
+The build job runs for every trigger:
 
 ```yaml
 # .github/workflows/ci.yml – build job (simplified)
 steps:
-  - uses: actions/checkout@v6
-  - uses: oven-sh/setup-bun@v2
+  - uses: actions/checkout@... # v7.0.1
+  - uses: oven-sh/setup-bun@... # v2.2.0
   - run: bun install --frozen-lockfile
 
   # Formatting and linting run for every trigger
   - run: bun prettier --check .
   - run: bun lint
 
-  # Validate Terraform formatting and both environment roots
-  - run: terraform fmt -check -recursive infra/
-  - run: |
-      validation_dir="$(mktemp -d)"
-      trap 'rm -rf "$validation_dir"' EXIT
-      tar -C infra --exclude='.terraform' -cf - envs modules \
-        | tar -C "$validation_dir" -xf -
-      for root in "$validation_dir"/envs/*/; do
-        env_name="$(basename "$root")"
-        perl -0pi -e 's/^\h*cloud \{\}\R//m' "$root/main.tf"
-        terraform -chdir="$root" init -backend=false -input=false
-        TF_WORKSPACE="validate-$env_name" terraform -chdir="$root" validate
-      done
+  # Terraform fmt + validate for both roots, without credentials or state
+  - uses: hashicorp/setup-terraform@... # v4.0.1
+  - run: bun infra:check
 
   # Build and test
-  - run: bun email:build # Email templates (needed for types)
-  - run: bun tsc --build # Type checking
+  - run: bun typecheck # tsc --build; apps/api references apps/email, so it builds too
   - run: bun --filter @repo/web check # .astro templates (tsc can't parse them)
   - run: bun run test -- --run # Vitest
   - run: bun --filter @repo/web build
   - run: bun --filter @repo/api build
   - run: bun --filter @repo/app build
+  - run: bun docs:build # dead links, and errors VitePress only logs
 
-  # Upload artifacts for deploy jobs
-  - uses: actions/upload-artifact@v6
-    with:
-      name: build
-      path: |
-        apps/email/dist
-        apps/web/dist
-        apps/app/dist
+  # Fails the run if a deployable directory is missing or empty
+  - name: Verify build output
+  # Only on runs that can deploy
+  - uses: actions/upload-artifact@... # v7.0.1
 ```
 
-The artifact carries what the deploy job consumes, which is not the same as everything the build produces. `apps/api` deploys from source – Wrangler bundles `worker.ts` – so it contributes no `dist` of its own, but it imports `@repo/email`, whose package exports resolve through `apps/email/dist`. Drop that directory and the deploy fails at bundling with `Could not resolve "@repo/email"`. The API's own `bun api:build` output targets the container image instead, so CI runs it as a compile check without shipping it.
+The artifact carries what the deploy job consumes, which is not the same as everything the build produces: `apps/email/dist`, `apps/web/dist` and `apps/app/dist`. `apps/api` deploys from source – Wrangler bundles `worker.ts` – so it contributes no `dist` of its own, but it imports `@repo/email`, whose package exports resolve through `apps/email/dist`. Drop that directory and the deploy fails at bundling with `Could not resolve "@repo/email"`. The API's own `bun api:build` output targets the container image instead, so CI runs it as a compile check without shipping it.
 
-Concurrency cancels superseded pull-request and push runs for the same ref. Manual production runs are kept separate from pushes to `main` and never cancel in progress.
+Verifying and uploading are separate on purpose. When deployment is enabled, the upload runs only on deploy-capable runs – a push to `main` or a production dispatch – while the artifact contract itself is checked on every run, so a pull request that breaks it fails there rather than at the next release.
 
-## Deploy Workflow
+### Concurrency
 
-The reusable `deploy.yml` workflow is called by each deploy job with environment-specific inputs:
+A pull-request run supersedes the one already running. A push or manual run never does – it may already be midway through a release, staging or production, and cancelling it leaves the database migrated but the workers old, or the three workers on mixed versions:
+
+```yaml
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.deploy_production && 'deploy' || 'check' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+```
+
+Keying on the event keeps a manual production run and ordinary CI on `main` in separate groups, so a merge cannot cancel a production release. The `deploy`/`check` suffix separates the two things a manual dispatch can be – for pushes and pull requests it always resolves to `check`.
+
+Not cancelling is not the same as queueing everything. GitHub keeps one pending run per group and replaces it with each newer one, which is the behaviour you want: if A is deploying when B and C merge, A finishes and C follows – deploying B on the way to C buys nothing. That is also why the suffix earns its keep: without it, a build-only dispatch would count as the same operation and evict a production release still waiting its turn.
+
+## Release Workflow
+
+`deploy.yml` is called by each deploy job with environment-specific inputs:
 
 ```yaml
 # .github/workflows/ci.yml – deploy job example
 deploy-staging:
   needs: [build]
-  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  if: >-
+    vars.DEPLOY_ENABLED == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
   uses: ./.github/workflows/deploy.yml
   with:
-    name: Staging
     environment: staging
     url: https://staging.example.com
-  secrets: inherit
   permissions:
     contents: read
-    deployments: write
 ```
 
-Both permissions have to be listed here. Naming any permission drops every unnamed one to `none`, and a called workflow can never hold more than its caller grants – so omitting `contents: read` leaves the checkout inside `deploy.yml` unable to read a private repository.
+`environment` and `url` are the only inputs, and `contents: read` has to be repeated: naming any permission drops every unnamed one to `none`, and a called workflow never holds more than its caller grants – omit it and `deploy.yml`'s checkout cannot read a private repository.
 
-The deploy workflow downloads build artifacts. Its Wrangler step is shown below but ships commented out; once enabled, it deploys each worker in this order:
+Three things are deliberately absent. A display-name input would be a second spelling of `environment` that nothing keeps in agreement – `name: Staging` alongside `environment: production` would read as staging while holding production's credentials. `deployments: write` is unnecessary, because naming `environment:` is what records the deployment and GitHub creates that object itself. And `secrets: inherit` would hand the called workflow every secret the caller can see, where naming an environment gives it exactly that environment's secrets.
 
-```yaml
-# .github/workflows/deploy.yml (simplified)
-steps:
-  - uses: actions/checkout@v6
-  # `upload-artifact` roots the archive at the least common ancestor of its
-  # paths – `apps/` – so restore it there, not at the workspace root.
-  - uses: actions/download-artifact@v6
-    with:
-      name: build
-      path: apps
-  - uses: oven-sh/setup-bun@v2
-  - run: bun install --frozen-lockfile
-  # Deploy each worker. Production selects the top-level Wrangler config with
-  # an empty environment; staging passes its name.
-  - name: Deploy workers
-    env:
-      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      DEPLOY_ENV: ${{ inputs.environment }}
-    run: |
-      if [[ "$DEPLOY_ENV" == "production" ]]; then
-        env_args=(--env "")
-      else
-        env_args=(--env "$DEPLOY_ENV")
-      fi
-      bun wrangler deploy --config apps/api/wrangler.jsonc "${env_args[@]}"
-      bun wrangler deploy --config apps/app/wrangler.jsonc "${env_args[@]}"
-      bun wrangler deploy --config apps/web/wrangler.jsonc "${env_args[@]}"
+### Release Order
+
+One job, one order: preflight, migrations, then the three workers.
+
+The preflight is everything checkable before the first mutation. The migration is the point of no return, so a missing credential, invalid Cloudflare authentication or a worker that does not bundle should be found before it, not after. Each step is also scoped with `env:` to no more than it needs, which makes the release read as a capability ladder:
+
+| Step in `deploy.yml` | Cloudflare | Database | Changes |
+| --- | --- | --- | --- |
+| Preflight – credentials | ✓ | ✓ | nothing |
+| Preflight – Cloudflare authentication | ✓ |  | nothing |
+| Preflight – worker bundles |  |  | nothing |
+| Run database migrations |  | ✓ | the schema |
+| Deploy workers | ✓ |  | the three workers |
+
+Three preflight steps rather than one because each needs strictly less than the last, and `env:` is what enforces it – as one step, every Wrangler process would inherit the database URL for no reason.
+
+The bundle check is `wrangler deploy --dry-run`, which compiles each worker against its target environment without uploading or authenticating – hence no credentials in that step. The authentication check is `wrangler whoami --account "$CLOUDFLARE_ACCOUNT_ID" --json`, where `--json` is what makes an unauthenticated call exit non-zero instead of printing a friendly message.
+
+That is authentication, not authorization: `whoami` cannot show whether the token carries `Workers Scripts Write`, so a valid token with too few permissions still fails at the deploy. Cloudflare's **Edit Cloudflare Workers** template grants what the deploy needs. The preflight never promises the deploys will succeed, only that they will not fail for a reason it could have found.
+
+Both Wrangler steps derive their `--env` argument independently rather than passing one along, because the two environments are not spelled alike and the failure is silent:
+
+```bash
+# Production is the top-level config, selected with an empty environment;
+# staging is named. Wrangler rejects `--env production`.
+if [[ "$DEPLOY_ENV" == "production" ]]; then
+  env_args=(--env "")
+else
+  env_args=(--env "$DEPLOY_ENV")
+fi
 ```
 
-Order matters: a service binding resolves its target by name at deploy time, so `api` and `app` must exist before `web` binds to them.
+Deriving it twice is deliberate: an empty `--env` selects production, so a value that went missing in transit would deploy it.
+
+The migration step writes the secret to a file rather than exporting it:
+
+```bash
+env_file=".env.${DEPLOY_ENV}.local"
+trap 'rm -f "$env_file"' EXIT
+umask 077
+printf 'DATABASE_URL=%s\n' "$DATABASE_URL" > "$env_file"
+unset DATABASE_URL
+bun run "db:migrate:${DEPLOY_ENV}"
+```
+
+That is because `drizzle.config.ts` [fails closed](/database/#environment-targeting) for staging and production – it reads that one file and refuses a `DATABASE_URL` inherited from the shell, so a stale exported value cannot migrate the wrong database. Writing the file satisfies that check with the single value the environment is allowed to see, and the `trap` removes it when the step exits. Give it Neon's **unpooled** connection string: migrations take DDL locks, and Hyperdrive is for the request path.
+
+::: warning Migrations are additive by obligation
+
+Migrations run *before* the new workers, so the currently deployed workers keep serving traffic against the migrated schema. A rollback replaces workers but does not revert the schema.
+
+Expand first – add the column, backfill it, ship code that reads both shapes – and contract in a later release. A migration that drops or renames something the running workers still use breaks production between the two steps.
+
+:::
+
+Worker order matters too: a service binding resolves its target by name at deploy time, so `api` and `app` have to exist before `web` binds to them. `web` also holds the public route, so flipping it last means user traffic moves only after the workers behind it are new.
+
+The expand/contract rule applies to API responses as well, over a longer window than the deploy: every user still running the SPA they loaded an hour ago keeps calling the new API, and no deploy order reaches them. Add the new field, ship the clients that read it, drop the old shape in a later release.
+
+Both rules exist because nothing in the release is atomic. Ordering narrows each window, but a failed step, a timeout or a lost runner can still stop it midway – what makes a partial release safe is that each step survives on its own.
+
+## Enabling Deployments
+
+1. Provision infrastructure and rename the `example-*` placeholders in each `apps/*/wrangler.jsonc`. See [Cloudflare Workers](/deployment/cloudflare).
+2. Replace the two `example.com` deployment URLs in `.github/workflows/ci.yml` – they are what each environment links to from the Deployments view.
+3. Create the GitHub environments below and add their secrets.
+4. Set the `DEPLOY_ENABLED` repository variable to `true`.
+
+### Environments
+
+Configure these under **Settings → Environments**. Application deployment and infrastructure use separate environments so a Cloudflare token and an HCP Terraform token are never reachable from the same job.
+
+| Environment | Used by | Secrets | Protection |
+| --- | --- | --- | --- |
+| `staging` | `deploy.yml` | `CLOUDFLARE_API_TOKEN`, `DATABASE_URL` | Branch rule: `main` |
+| `production` | `deploy.yml` | `CLOUDFLARE_API_TOKEN`, `DATABASE_URL` | Branch rule: `main`, required reviewers\[^1] |
+| `infra-staging-plan` | `infra.yml` plan job | `TF_API_TOKEN` (plan) | Branch rule: `main` |
+| `infra-staging-apply` | `infra.yml` apply job | `TF_API_TOKEN` (write: staging) | Branch rule: `main` |
+| `infra-production-plan` | `infra.yml` plan job | `TF_API_TOKEN` (plan) | Branch rule: `main` |
+| `infra-production-apply` | `infra.yml` apply job | `TF_API_TOKEN` (write: production) | Branch rule: `main`, required reviewers\[^1] |
+
+\[^1]: Required reviewers are not available everywhere – see [Required Reviewers](#required-reviewers).
+
+#### Terraform Tokens
+
+`TF_API_TOKEN` is one secret name holding **three different tokens**, from three HCP teams:
+
+| HCP team | Workspace access | Used by |
+| --- | --- | --- |
+| `ci-plan` | Plan on staging **and** production | both `-plan` environments |
+| `ci-staging-apply` | Write on staging only | `infra-staging-apply` |
+| `ci-production-apply` | Write on production only | `infra-production-apply` |
+
+The apply tokens must be split per workspace, or the production gate is decorative: a single apply token needs Write on both workspaces, so `infra-staging-apply` – which deliberately has no reviewer – would hold a credential that can apply production. A workflow edit naming the staging environment while pointing at the production root would then skip `infra-production-apply` entirely.
+
+The plan token can be shared because it bypasses nothing: planning either environment is already a legitimate dispatch, so there is no gate in front of it. What the split does buy is that the credential reachable *before* an approval cannot perform the apply. It is not a sandbox – HashiCorp is explicit that plan permission is equivalent to write from a malicious-code standpoint, because planning executes the configuration.
+
+::: warning HCP Terraform Free has no team management
+
+Team management requires Essentials or above; on Free you have only the owners team, and an owners token carries owner permissions. Putting one in the `-plan` environments would collapse all three identities into one and defeat the split.
+
+Free is still fine for remote state and workspaces – just leave `TF_API_TOKEN` unset and run `bun infra:<environment> plan` and `apply` from a trusted machine instead. HCP Terraform Europe uses groups rather than teams; the topology is the same.
+
+:::
+
+Do not attach custom GitHub App deployment protection rules to the `-plan` environments: GitHub documents them as incompatible with the `deployment: false` those jobs set.
+
+Store these as **environment** secrets, not repository secrets, and do not add repository-level fallbacks under the same names. That is what gives the branch rule any force: a protection rule only gates jobs that name the environment, and a manual dispatch runs the workflow definition from the ref it was given, so a branch can delete both the `main` check and the `environment:` line. A repository secret survives that edit; an environment secret does not, because removing `environment:` is what removes the access.
+
+| Variable | Scope | Description |
+| --- | --- | --- |
+| `DEPLOY_ENABLED` | Repository | Set to `true` to enable both deploy jobs |
+| `CLOUDFLARE_ACCOUNT_ID` | Repository | Target account – a multi-account token cannot infer it |
+
+Repository scope is safe for both: an account identifier grants nothing on its own, and `DEPLOY_ENABLED` only decides whether jobs that still need environment credentials get to run.
+
+| Secret | Description |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare's **Edit Cloudflare Workers** API token template |
+| `DATABASE_URL` | Unpooled Neon connection string for that environment's database |
+| `TF_API_TOKEN` | HCP Terraform team token (group token on HCP Europe) |
+
+Two kinds of credential deliberately never appear here. Terraform's own Cloudflare and database credentials are workspace variables in HCP Terraform, so they never reach GitHub – see [`infra/README.md`](https://github.com/kriasoft/react-starter-kit/blob/main/infra/README.md). Worker-level secrets (`BETTER_AUTH_SECRET`, `RESEND_API_KEY`, and any optional integrations) are set with `wrangler secret put` – see [Cloudflare Workers: Secrets](/deployment/cloudflare#secrets).
+
+One limit worth stating plainly: with staging and production in the same Cloudflare account, the two `CLOUDFLARE_API_TOKEN` values are not a provider-level boundary. Worker uploads need account-scoped `Workers Scripts Write`, so the staging token is not intrinsically incapable of writing a production worker – a job naming the `staging` environment could target one without ever naming `production`.
+
+What the environment split does buy is control over which database credential is reachable and which release path normally runs. Required reviewers protect the `production` *workflow path*, not the Cloudflare resource from the staging credential. Structural isolation of the workers themselves needs separate Cloudflare accounts, which is not the starter's default.
+
+If you do use two accounts, move `CLOUDFLARE_ACCOUNT_ID` from a repository variable to an environment variable on `staging` and `production`. `deploy.yml` reads it from the `vars` context either way – naming the environment is what selects the value – so no workflow change is needed.
 
 ::: warning
 
-The `wrangler deploy` step in `deploy.yml` ships commented out. Uncomment it once your infrastructure is provisioned and the credentials below are set.
+Private repositories need Pro, Team or Enterprise for environments at all – see the matrix under [Required Reviewers](#required-reviewers). Without them there is no boundary to build, so do not fall back to repository secrets: run migrations and the `*:deploy` scripts from a trusted machine instead.
 
 :::
+
+### Required Reviewers
+
+Check whether your repository can actually pause a job before you rely on it:
+
+> If you are on a GitHub Free, GitHub Pro, or GitHub Team plan, required reviewers are only available for public repositories.
+
+Environments and reviewers have different availability:
+
+| Repository | Environments, secrets, branch rules | Required reviewers |
+| --- | --- | --- |
+| Public, any plan | Yes | Yes |
+| Private, Free | No | No |
+| Private, Pro or Team | Yes | No |
+| Private, eligible Enterprise | Yes | Yes |
+
+The two rows below "Public" fail in different ways, so they need different answers:
+
+**Private on Pro or Team.** Everything here works except the pause. The gate silently does not exist rather than failing loudly – a production deploy runs immediately, and an infrastructure dispatch with **apply** on plans and then applies without stopping. Verify under **Settings → Environments → production** before treating it as real, then get the effect by hand:
+
+* **Infrastructure** – dispatch with **apply** off, read the plan, and apply from a trusted machine with `bun infra:production apply`, which shows you the plan and prompts before touching anything.
+* **Production deploys** – no automated gate is a reason to keep the manual dispatch, not to add one. The dispatch is the deliberate step.
+
+**Private on Free.** This is not an ungated version of the same setup – without environments there is nowhere to put the credentials, so the workflows here cannot run a deploy at all. Leave `DEPLOY_ENABLED` unset and release from a trusted machine.
+
+Where reviewers are available, also enable **Prevent self-review**. GitHub offers it precisely so the person who started a deployment cannot approve their own job, which is the difference between a review and a formality. If the approval is meant to be mandatory, deselect **Allow administrators to bypass configured protection rules** on `production` and `infra-production-apply` too – it is on by default, and while it is, the gate binds everyone except the people most able to route around it.
+
+An approval can wait up to 30 days before GitHub fails the job. The production build artifact is retained for 31 days to cover that; a staging artifact expires the next day, since nothing gates it, and a saved Terraform plan after three.
+
+Those retentions are requests, not guarantees – a workflow cannot ask for longer than the applicable repository, organization or enterprise policy allows, and a repository cannot always override a stricter parent. The default cap is 90 days; check yours under **Settings → Actions → General → Artifact and log retention**, or a late approval finds nothing to download.
+
+## Infrastructure Workflow
+
+`infra.yml` runs Terraform on manual dispatch only – application deploys never touch it. One dispatch produces a plan; with **apply** checked it then applies that same saved plan, pausing first where required reviewers are configured and supported:
+
+```
+plan (infra-<env>-plan)  →  approval (infra-<env>-apply)  →  apply
+   terraform plan -out=tfplan         required reviewers        terraform apply tfplan
+```
+
+The approval step is only as real as your plan allows. On a private Pro or Team repository there is no reviewer pause and the apply follows the plan immediately; on a private Free repository this environment-secret workflow cannot run at all. See [Required Reviewers](#required-reviewers) before relying on it.
+
+The plan job prints the plan to the run summary, so a reviewer approves output they have read rather than authorising a second run to compute a plan nobody has seen. Plans over 900 KB are truncated to fit GitHub's summary limit; when that happens the summary says so and the complete run in HCP Terraform is the thing to read, since the tail of a plan is where destroys tend to appear.
+
+The saved plan travels between jobs as an artifact; with an HCP `cloud` block it is a reference to the run HCP is holding open, not the plan contents, so no state or variable values pass through GitHub. HCP discards the run if the workspace moves on, so a stale approval fails instead of applying something unexpected.
+
+That artifact is kept for three days, which bounds how long the plan stays usable – long enough to survive a weekend or a time zone, short enough that nobody applies a plan they read last month. It is not an approval deadline: GitHub still offers the approval afterwards, and the job then fails when it cannot download the plan. Cancel that run and dispatch a fresh one. As with the build artifact, your Actions retention policy has to permit those three days.
+
+The two environments exist for ordering. Protection rules gate *any* job naming an environment, so a single environment would put the approval before the plan. The `-plan` environment therefore carries the branch rule but no reviewers, and sets `deployment: false` so planning does not record a deployment. It also holds the plan-only token, so the credential available before the approval cannot apply.
+
+Leaving **apply** off gives a plan-only run. The apply job is also skipped when the plan reports no changes, so an unchanged environment never asks anyone to approve a no-op.
+
+Both jobs are restricted to `main` – by a first-step check in the workflow and by each environment's deployment-branch rule, which is the half a branch cannot edit away. Plan included, for the reason [above](#terraform-tokens): HCP executes the configuration in the workspace's privileged run environment, so planning an unmerged branch runs it against that environment's real credentials and state. Branch-level feedback is `bun infra:check` in `ci.yml`, which needs no credentials.
+
+## Pinned Actions
+
+Every action is pinned to a commit SHA with the version in a trailing comment:
+
+```yaml
+- uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+```
+
+A tag is mutable – its owner can move it to new code – so a commit SHA is the only reference that means the same thing tomorrow. That matters most in exactly these workflows, which hold deployment credentials.
+
+Pins do not expire on their own, so `.github/dependabot.yml` includes the `github-actions` ecosystem: Dependabot reads the version comment and updates the SHA and the comment together, in one weekly grouped PR.
 
 ## Verifying a Pull Request
 
 Pull requests are built, linted, type-checked and tested, but not deployed. A single shared preview environment would not give per-PR isolation – concurrent PRs overwrite each other and share one database – so it is not part of the default pipeline.
 
-To look at a change running on Cloudflare before merging, upload a version without promoting it to production traffic:
+To look at a change running on Cloudflare before merging, upload a version against **staging** without moving any traffic onto it:
 
 ```bash
-bun wrangler versions upload --config apps/web/wrangler.jsonc
+bun wrangler versions upload --config apps/web/wrangler.jsonc --env staging
 ```
 
-Preview URLs are **off** in this starter kit: `preview_urls` defaults to whatever `workers_dev` is, and all three workers set `workers_dev: false`. Opt in per worker when you want one:
+Use `--env staging`, not the top-level config. The top level *is* production, so a preview of it would carry production service bindings and a publicly reachable URL would serve production data.
+
+Preview URLs are **off** by default here: `preview_urls` follows `workers_dev`, which is `false`. Opt in inside the staging environment only, so the switch cannot reach production:
 
 ```jsonc
 // apps/web/wrangler.jsonc
-"preview_urls": true
+"env": {
+  "staging": {
+    "preview_urls": true
+  }
+}
 ```
 
-Left disabled on purpose. A preview URL is publicly reachable, and a preview of the top-level `web` config still carries production service bindings – so an unlisted URL would serve production data.
+Once enabled, `versions upload` prints a URL for the new version. Its service bindings resolve to the already-deployed staging `app` and `api`, so a frontend change previews fully and a full-stack change only partly – the API half is whatever staging last deployed.
 
-Once enabled, `versions upload` prints a URL for the new version. Service bindings still resolve to the deployed `app` and `api` workers, so this previews frontend changes fully and full-stack changes only partly.
+The environment has to exist first: Cloudflare documents that `versions upload` fails on a worker it would have to create, so deploy staging once with `bun wrangler deploy --config apps/web/wrangler.jsonc --env staging` before previewing against it.
 
-## Required Secrets and Variables
+## PR Title Check
 
-Configure these under **Settings → Secrets and variables → Actions**. Secrets are masked in logs; variables are not, which is why the account and organization identifiers are variables rather than secrets.
+`pr-title.yml` checks the pull request title against the [Conventional Commits](https://www.conventionalcommits.org/) spec using `amannn/action-semantic-pull-request`. The title, not the commits: with the repository configured for squash merging as below, that title becomes the commit title on `main`.
 
-| Secret | Used by | Description |
-| --- | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | `deploy.yml` | Cloudflare's **Edit Cloudflare Workers** API token template |
-| `TF_API_TOKEN` | `infra.yml` | HCP Terraform team token, for infrastructure |
+It runs on `pull_request_target`, which executes the workflow definition from the base branch and is the mode the action documents for pull requests from forks. That trigger deserves care, and it is safe here for two reasons that must both stay true: the job never checks out or executes the pull request's code, and its token is read-only.
 
-| Variable | Used by | Description |
-| --- | --- | --- |
-| `CLOUDFLARE_ACCOUNT_ID` | `deploy.yml` | Target account – a multi-account token cannot infer it |
-| `TF_CLOUD_ORGANIZATION` | `infra.yml` | HCP Terraform organization |
-| `TF_WORKSPACE` | `infra.yml` | That environment's existing HCP Terraform workspace |
+### Repository Settings
 
-Set `TF_WORKSPACE` per GitHub environment – it is what points staging and production at different Terraform state. The rest can be repository-wide unless you deploy the two environments to separate Cloudflare accounts.
+The check assumes the PR title ends up as the commit title, which is a repository setting a clone does not inherit. If you want Conventional Commits on `main`, configure under **Settings → General → Pull Requests**:
 
-Terraform's own Cloudflare and database credentials are workspace variables in HCP Terraform, so they are never stored in GitHub. See [`infra/README.md`](https://github.com/kriasoft/react-starter-kit/blob/main/infra/README.md).
+* Enable squash merging. If Conventional Commits on `main` is meant to be an invariant rather than a habit, disable merge commits and rebase merging – otherwise any contributor can bypass the convention by choosing another method.
+* Set the squash commit title to **Pull request title**.
+* If you enable a merge queue, set its merge method to squash as well.
 
-Worker-level secrets (`BETTER_AUTH_SECRET`, `RESEND_API_KEY`, and any optional integrations) are set via `wrangler secret put` – not GitHub secrets. See [Cloudflare Workers: Secrets](/deployment/cloudflare#secrets).
+Which checks to require depends on whether you run a merge queue:
 
-## Infrastructure Workflow
+* **Without a merge queue** – require **Build** and **PR Title**. Every pull request gets both, so both can block a merge.
+* **With a merge queue** – require **Build** only. A required check has to report on the `merge_group` event or the queue never completes, and `pr-title.yml` deliberately does not run there: a merge group can hold several pull requests and has no single title to validate. Requiring it would stall every merge.
 
-`infra.yml` runs Terraform, on manual dispatch only – application deploys never touch it. Pick an environment and leave **apply** off for a plan-only run, then dispatch again with it on. Runs are serialised per environment. If an environment has required reviewers, they gate both dispatches because protection rules apply to any job naming it.
+Note that a required check is matched by job name alone – GitHub ignores which workflow produced it – so rename a job and any rule naming the old identity silently stops matching.
 
-## Additional Workflow
-
-A separate `conventional-commits.yml` workflow validates PR titles against the [Conventional Commits](https://www.conventionalcommits.org/) spec using `amannn/action-semantic-pull-request`.
+Under a merge queue the title check becomes advisory. To enforce the format itself, add a **Metadata restrictions** rule to a ruleset – but read it as the stricter option it is: GitHub applies commit metadata rules to *every commit on the branch* when you squash merge, not just the squash commit GitHub creates. That holds contributors to a standard nothing in this repository lints locally.
 
 ---
 
@@ -5421,7 +5652,24 @@ function Projects() {
 
 Run `bun app:dev` – TanStack Router regenerates `lib/routeTree.gen.ts` automatically and the page is available at `/projects`.
 
-## 2. Add navigation
+## 2. Let the edge route it
+
+The web worker forwards a fixed list of top-level paths to the app worker. Add every new top-level path to `APP_PATHS` in `apps/web/worker.ts`:
+
+```ts
+const APP_PATHS = [
+  "_app",
+  "login",
+  "members",
+  "projects", // [!code ++]
+  "settings",
+  "signup",
+] as const;
+```
+
+Skip this and the page works when you click a link but 404s on direct load or refresh – client-side navigation never reaches the edge. The path must also not collide with a marketing page in `apps/web/pages/`, which the web worker serves itself. `apps/app/lib/edge-routing.test.ts` fails on both mistakes.
+
+## 3. Add navigation
 
 Open the sidebar or header component and add a link:
 
@@ -5435,24 +5683,18 @@ import { Link } from "@tanstack/react-router";
 
 `<Link>` is type-safe – TypeScript will error if the route doesn't exist.
 
-## 3. Fetch data
+## 4. Fetch data
 
-Use a tRPC query hook inside the component:
+Call a query module rather than `trpcClient`, so the cache key has one owner. `useProjectList` comes from [Add a tRPC Procedure](/recipes/new-procedure), which builds both the procedure and the module:
 
 ```tsx
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { trpcClient } from "@/lib/trpc";
-import { queryOptions } from "@tanstack/react-query";
-
-function projectsQueryOptions() {
-  return queryOptions({
-    queryKey: ["projects"],
-    queryFn: () => trpcClient.project.list.query(),
-  });
-}
+import { useProjectList } from "@/lib/queries/project";
 
 function Projects() {
-  const { data } = useSuspenseQuery(projectsQueryOptions());
+  const { data, isPending, error } = useProjectList();
+
+  if (error) return <p className="p-6">Could not load projects.</p>;
+  if (isPending) return <p className="p-6">Loading...</p>;
 
   return (
     <div className="p-6">
@@ -5467,9 +5709,11 @@ function Projects() {
 }
 ```
 
+Handle `error` and `isPending` before reading `data` – the app mounts no Suspense boundary, so a suspending hook has nothing to fall back to.
+
 See [State & Data Fetching](/frontend/state) for more patterns.
 
-## 4. Add search params (optional)
+## 5. Add search params (optional)
 
 Validate query string parameters with Zod:
 
@@ -5492,15 +5736,17 @@ function Projects() {
 }
 ```
 
-## 5. Add a public page (optional)
+## 6. Add a public page (optional)
 
-To create a page that doesn't require authentication, place it under the `(auth)` layout group or directly in `routes/`:
+To create a page that doesn't require authentication, place it under the `(auth)` layout group:
 
 ```
-apps/app/routes/(auth)/pricing.tsx
+apps/app/routes/(auth)/invite.tsx
 ```
 
-Pages outside `(app)/` skip the auth guard and don't render the app shell layout.
+Pages outside `(app)/` skip the auth guard and don't render the app shell layout. They still need their path in `APP_PATHS`.
+
+Marketing pages are a different thing: `/`, `/about`, `/features` and `/pricing` are Astro pages in `apps/web/pages/`, served by the web worker. Adding an app route with one of those names shadows the marketing page, so pick a path the marketing site doesn't own.
 
 ## Reference
 
@@ -5515,6 +5761,12 @@ url: /recipes/new-procedure.md
 # Add a tRPC Procedure
 
 This recipe adds a new tRPC procedure with input validation and wires it up from the API to the frontend.
+
+::: tip Prerequisite
+
+The example continues the `project` table from [Add a Database Table](./new-table.md) – complete its steps 1–3 first, or the schema references below will not compile.
+
+:::
 
 ## 1. Create the router file
 
@@ -5536,6 +5788,12 @@ export const projectRouter = router({
         message: "Select an organization first",
       });
     }
+
+    const membership = await ctx.db.query.member.findFirst({
+      where: (m, { and, eq }) =>
+        and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+    });
+    if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
 
     const projects = await ctx.db.query.project.findMany({
       where: (p, { eq }) => eq(p.organizationId, organizationId),
@@ -5559,6 +5817,12 @@ export const projectRouter = router({
           message: "Select an organization first",
         });
       }
+
+      const membership = await ctx.db.query.member.findFirst({
+        where: (m, { and, eq }) =>
+          and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+      });
+      if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
 
       const [project] = await ctx.db
         .insert(schema.project)
@@ -5584,7 +5848,6 @@ import { projectRouter } from "../routers/project.js";
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
-  user: userRouter,
   project: projectRouter, // [!code ++]
 });
 ```
@@ -5599,20 +5862,35 @@ Create a query options helper in `apps/app/lib/queries/`:
 // apps/app/lib/queries/project.ts
 import {
   queryOptions,
+  useMutation,
   useQuery,
-  useSuspenseQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { trpcClient } from "../trpc";
 
+// Stable prefix so every project query can be invalidated at once.
+export const projectQueryKey = ["project"] as const;
+
 export function projectListOptions() {
   return queryOptions({
-    queryKey: ["projects"],
+    queryKey: [...projectQueryKey, "list"] as const,
     queryFn: () => trpcClient.project.list.query(),
   });
 }
 
 export function useProjectList() {
   return useQuery(projectListOptions());
+}
+
+export function useCreateProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: { name: string; description?: string }) =>
+      trpcClient.project.create.mutate(input),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: projectQueryKey }),
+  });
 }
 ```
 
@@ -5622,13 +5900,14 @@ Use in a component:
 import { useProjectList } from "@/lib/queries/project";
 
 function ProjectList() {
-  const { data, isLoading } = useProjectList();
+  const { data, isPending, error } = useProjectList();
 
-  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Could not load projects.</p>;
+  if (isPending) return <p>Loading...</p>;
 
   return (
     <ul>
-      {data?.projects.map((p) => (
+      {data.projects.map((p) => (
         <li key={p.id}>{p.name}</li>
       ))}
     </ul>
@@ -5638,22 +5917,22 @@ function ProjectList() {
 
 ## 4. Call a mutation
 
+The module owns the invalidation, so the component only picks a hook:
+
 ```tsx
-import { trpcClient } from "@/lib/trpc";
-import { useQueryClient } from "@tanstack/react-query";
+import { useCreateProject } from "@/lib/queries/project";
 
 function CreateProjectButton() {
-  const queryClient = useQueryClient();
+  const createProject = useCreateProject();
 
-  async function handleCreate() {
-    await trpcClient.project.create.mutate({
-      name: "New Project",
-    });
-    // Invalidate the list so it refetches
-    await queryClient.invalidateQueries({ queryKey: ["projects"] });
-  }
-
-  return <button onClick={handleCreate}>Create Project</button>;
+  return (
+    <button
+      onClick={() => createProject.mutate({ name: "New Project" })}
+      disabled={createProject.isPending}
+    >
+      {createProject.isPending ? "Creating..." : "Create Project"}
+    </button>
+  );
 }
 ```
 
@@ -5746,11 +6025,10 @@ Create a seed function:
 
 ```ts
 // db/seeds/projects.ts
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type * as schema from "../schema";
+import type { Database } from "../index";
 import { project } from "../schema";
 
-export async function seedProjects(db: PostgresJsDatabase<typeof schema>) {
+export async function seedProjects(db: Database) {
   const projects = [
     { name: "Acme Dashboard", organizationId: "org_..." },
     { name: "Mobile App", organizationId: "org_..." },
@@ -5776,13 +6054,24 @@ await seedProjects(db);
 
 ```ts
 // apps/api/routers/project.ts
+import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 export const projectRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
+    const organizationId = ctx.session.activeOrganizationId;
+    if (!organizationId) {
+      throw new TRPCError({ code: "PRECONDITION_FAILED" });
+    }
+
+    const membership = await ctx.db.query.member.findFirst({
+      where: (m, { and, eq }) =>
+        and(eq(m.userId, ctx.user.id), eq(m.organizationId, organizationId)),
+    });
+    if (!membership) throw new TRPCError({ code: "FORBIDDEN" });
+
     return ctx.db.query.project.findMany({
-      where: (p, { eq }) =>
-        eq(p.organizationId, ctx.session.activeOrganizationId!),
+      where: (p, { eq }) => eq(p.organizationId, organizationId),
       orderBy: (p, { desc }) => desc(p.createdAt),
     });
   }),
@@ -6216,11 +6505,8 @@ Apply it, and note the bucket name it prints:
 
 ```bash
 bun infra:staging apply
-bun infra:staging workspace show    # must end in -staging
 bun infra:staging output uploads_bucket_name
 ```
-
-`output` reads from state without re-running the workspace guard, so confirm the workspace before trusting the name – a stale `TF_WORKSPACE` prints the other environment's bucket.
 
 The Terraform API token needs **Account → Workers R2 Storage → Edit** for this.
 
@@ -6231,20 +6517,24 @@ Bind the bucket to the API worker for serving files, and add the two non-secret 
 ```jsonc
 // apps/api/wrangler.jsonc
 {
-  "r2_buckets": [
-    {
-      "binding": "UPLOADS_BUCKET",
-      "bucket_name": "example-production-uploads",
+  "env": {
+    "staging": {
+      "r2_buckets": [
+        {
+          "binding": "UPLOADS_BUCKET",
+          "bucket_name": "example-staging-uploads",
+        },
+      ],
+      "vars": {
+        "R2_S3_ENDPOINT": "https://<account-id>.r2.cloudflarestorage.com",
+        "R2_BUCKET_NAME": "example-staging-uploads",
+      },
     },
-  ],
-  "vars": {
-    "R2_S3_ENDPOINT": "https://<account-id>.r2.cloudflarestorage.com",
-    "R2_BUCKET_NAME": "example-production-uploads",
   },
 }
 ```
 
-Repeat both blocks in the `staging` environment with that environment's bucket name. The name appears twice because the binding serves files while the S3-compatible endpoint signs uploads, and signing needs the name as a string.
+Repeat both blocks at the top level – the production configuration – once you enable uploads there too, with that bucket's name. The name appears twice because the binding serves files while the S3-compatible endpoint signs uploads, and signing needs the name as a string.
 
 ::: tip
 
@@ -6296,32 +6586,63 @@ bun add --filter @repo/api aws4fetch
 
 ## 3. Create the upload procedure
 
-Add a router that generates presigned PUT URLs and confirms uploads:
+The allowlist is enforced on the server but the file picker and the client call have to agree with it, so put it in `@repo/core` where both sides import the same list:
+
+```ts
+// packages/core/uploads.ts
+export const UPLOAD_CONTENT_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "application/pdf",
+] as const;
+
+export type UploadContentType = (typeof UPLOAD_CONTENT_TYPES)[number];
+
+/** Value for `<input type="file" accept>`, so the picker offers exactly what the API accepts. */
+export const UPLOAD_ACCEPT = UPLOAD_CONTENT_TYPES.join(",");
+
+export const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+
+export function isUploadContentType(value: string): value is UploadContentType {
+  return (UPLOAD_CONTENT_TYPES as readonly string[]).includes(value);
+}
+```
+
+Re-export it from the package entrypoint:
+
+```ts
+// packages/core/index.ts
+export * from "./uploads.js"; // [!code ++]
+```
+
+Plain constants rather than a Zod schema: this file is imported by the browser bundle, and the API turns the same list into `z.enum(...)` at the boundary where validation belongs.
+
+Then add a router that generates presigned PUT URLs and confirms uploads:
 
 ```ts
 // apps/api/routers/upload.ts
 import { AwsClient } from "aws4fetch";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import {
+  MAX_UPLOAD_SIZE_BYTES,
+  UPLOAD_CONTENT_TYPES,
+  type UploadContentType,
+} from "@repo/core";
 import { protectedProcedure, router } from "../lib/trpc.js";
 
 // The enum is the allowlist, so the extension lookup is total and the parsed
 // type narrows to these four keys. The extension never comes from the filename.
-const contentTypeSchema = z.enum([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "application/pdf",
-]);
+const contentTypeSchema = z.enum(UPLOAD_CONTENT_TYPES);
 
 const EXTENSION_BY_CONTENT_TYPE = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
   "application/pdf": "pdf",
-} satisfies Record<z.infer<typeof contentTypeSchema>, string>;
+} satisfies Record<UploadContentType, string>;
 
-const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const UPLOAD_URL_TTL_SECONDS = 120; // see the note on reuse below
 
 export const uploadRouter = router({
@@ -6366,7 +6687,7 @@ export const uploadRouter = router({
       const key = `${ownerId}/${crypto.randomUUID()}.${EXTENSION_BY_CONTENT_TYPE[input.contentType]}`;
 
       const r2 = new AwsClient({
-        service: "s3", // Required by aws4fetch; R2 ignores both
+        service: "s3", // R2's S3 API: the service is `s3`, the region `auto`
         region: "auto",
         accessKeyId: R2_ACCESS_KEY_ID,
         secretAccessKey: R2_SECRET_ACCESS_KEY,
@@ -6446,9 +6767,11 @@ The second escapes the bucket entirely, reaching anything the R2 token can write
 
 `MAX_UPLOAD_SIZE_BYTES` is **not** a hard storage limit. A presigned URL is a bearer token, valid until it expires and reusable within that window, and the signature covers the method, key and `Content-Type` but never the body length. An authenticated caller can request a URL claiming `sizeBytes: 1`, upload a gigabyte, and simply never call `confirm` – or let `confirm` delete it and re-`PUT` with the same URL.
 
-What the checks above do give you: only signed-in users get URLs, `confirm` rejects an oversized object and reclaims its space, and the short `UPLOAD_URL_TTL_SECONDS` keeps the reuse window small. Note that `confirm` records nothing – it reads the object back and returns its metadata, so the serving route below will hand over any correctly namespaced object whether or not it was ever confirmed. Persisting an upload record is left to you, and is what the cleanup note below assumes. Abandoned objects are not cleaned up: completed and abandoned uploads share the same `<owner>/<uuid>.<ext>` shape, so no lifecycle rule can tell them apart. If you need automatic cleanup, track upload state in your database and sweep objects that were never confirmed, or write pending uploads under a separate prefix that a lifecycle rule can expire.
+What the checks above do give you: only signed-in users get URLs, `confirm` rejects an oversized object and reclaims its space, and the short `UPLOAD_URL_TTL_SECONDS` keeps the reuse window small. Note that `confirm` records nothing – it reads the object back and returns its metadata, so the serving route below hands over any correctly namespaced object whether or not it was ever confirmed. Persisting an upload record is left to you.
 
-The allowlisted `Content-Type` is also still a browser claim; this recipe does not inspect file bytes. Before parsing files or serving user uploads inline, verify their signatures with a format-aware library and set a safe `Content-Disposition`. Keep unverified content on a separate origin when possible.
+Abandoned objects are not cleaned up either: completed and abandoned uploads share the same `<owner>/<uuid>.<ext>` shape, so no lifecycle rule can tell them apart. If you want automatic cleanup, track upload state in your database and sweep objects that were never confirmed, or write pending uploads under a separate prefix that a lifecycle rule can expire.
+
+The allowlisted `Content-Type` is also still a browser claim; this recipe does not inspect file bytes. That is why the serving route below hands everything back as an attachment rather than echoing the stored type. To render uploads inline instead – previewing an image, embedding a PDF – verify signatures with a format-aware library first, store the type you verified, and serve only that. Keep unverified content on a separate origin when possible.
 
 If you need the limit to be genuinely hard, stop presigning and stream the upload through the API worker into its `UPLOADS_BUCKET` binding, rejecting the body past 10 MB. You lose the direct-to-R2 path but gain an enforceable ceiling – a reasonable trade at this file size.
 
@@ -6468,9 +6791,17 @@ const appRouter = router({
 ## 4. Upload from the frontend
 
 ```tsx
+import { isUploadContentType } from "@repo/core";
 import { trpcClient } from "@/lib/trpc";
 
 async function uploadFile(file: File) {
+  // `File.type` is an unvalidated `string` – and empty when the browser cannot
+  // guess the type. Narrow it here so the mutation typechecks and the user gets
+  // a real message instead of a rejected round-trip.
+  if (!isUploadContentType(file.type)) {
+    throw new Error(`Unsupported file type: ${file.type || "unknown"}`);
+  }
+
   // 1. Get a presigned URL from the API
   const { key, uploadUrl } = await trpcClient.upload.createUrl.mutate({
     contentType: file.type,
@@ -6494,6 +6825,8 @@ async function uploadFile(file: File) {
 Wire it to a file input:
 
 ```tsx
+import { UPLOAD_ACCEPT } from "@repo/core";
+
 function FileUpload() {
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -6503,9 +6836,11 @@ function FileUpload() {
     console.log("Uploaded:", result.key);
   }
 
-  return <input type="file" accept="image/*,.pdf" onChange={handleChange} />;
+  return <input type="file" accept={UPLOAD_ACCEPT} onChange={handleChange} />;
 }
 ```
+
+`accept` is a picker filter, not a check – it is trivially bypassed, and the server allowlist is what enforces the rule. Deriving it from the same constant just stops the dialog from offering files the API will reject.
 
 ## 5. Serve files
 
@@ -6539,8 +6874,15 @@ uploads.get("/api/uploads/:key{.+}", async (c) => {
 
   return new Response(object.body, {
     headers: {
-      "Content-Type":
-        object.httpMetadata?.contentType ?? "application/octet-stream",
+      // Downloads, not inline rendering. The stored `Content-Type` is whatever
+      // the uploader claimed and nothing here has read the bytes, so serving it
+      // back would let a file that passed the allowlist as an image render as
+      // HTML on your origin. `attachment` plus `nosniff` keeps the browser from
+      // deciding otherwise. Serve verified metadata inline only after checking
+      // signatures – see the note above.
+      "Content-Type": "application/octet-stream",
+      "Content-Disposition": "attachment",
+      "X-Content-Type-Options": "nosniff",
       // Whether this URL may be served depends on who is asking, so the
       // browser must ask again every time: `no-cache` still lets it store the
       // response, but never reuse one without revalidating, which re-runs the
@@ -6568,6 +6910,8 @@ Files are served at `/api/uploads/<key>`.
 ::: tip Serving public assets instead
 
 For genuinely public files – avatars, logos, marketing images – drop the session check and use `Cache-Control: public, max-age=31536000, immutable`. Once the response no longer depends on who asked, a long-lived cache is safe again.
+
+These are also the files you actually want rendered inline rather than downloaded, which means dropping the `attachment` disposition. Do that only once the route serves a type it verified from the bytes, not the one the uploader claimed – on a public URL the stored claim is exactly what an attacker controls.
 
 That header buys you browser caching only. The API worker sets no `cache` block, so Cloudflare does not cache its responses at the edge and every request still runs the worker. Do not switch caching on for the whole API to change that – with it enabled, a `200` carrying no `Cache-Control` picks up a two-hour heuristic TTL, which is the wrong default for tRPC and auth.
 
@@ -6599,7 +6943,7 @@ Use this checklist when changing authentication, authorization, data access, or 
 * The browser uses one public origin. The web worker forwards API requests over a service binding, so the default deployment needs no CORS policy.
 * Better Auth validates its own requests against `APP_ORIGIN`; sessions use HTTP-only cookies.
 * `protectedProcedure` rejects requests without both a session and user.
-* Better Auth, authorization, billing, and read-after-write paths use the uncached database binding. Cached reads are opt-in and may be 75 seconds old with the default Hyperdrive settings.
+* Better Auth, authorization, billing, and read-after-write paths use the uncached database binding. Cached reads are opt-in and may be as old as the Terraform-configured Hyperdrive window.
 * API responses pass through Hono's `secureHeaders()` middleware. Static web assets have a CSP and other headers in `apps/web/public/_headers`.
 * Wrangler requires `BETTER_AUTH_SECRET` and `RESEND_API_KEY` before a deployed API version is accepted. Optional integrations validate complete credential sets at their feature boundary.
 * CI runs formatting, linting, type checking, tests, builds, and Terraform validation. Application deployment remains disabled in the starter kit until credentials are configured.
@@ -6640,6 +6984,7 @@ The auth-hint cookie is routing metadata, not authentication. A protected route 
 * \[ ] Set Google credentials together, Stripe's four required values together, and leave unused optional integrations unset.
 * \[ ] Confirm `APP_ORIGIN`, Google callback URLs, Stripe webhook URLs, and service-binding targets all use the intended environment.
 * \[ ] Apply reviewed migrations with `db:migrate:staging` or `db:migrate:production`; do not use `db:push` outside local development.
+* \[ ] Publish the legal pages your product needs. `BaseTemplate.tsx` already links `/privacy` and `/unsubscribe` from every email footer; neither exists in the starter. The auth form ships no terms notice for the same reason – add one once the documents are real.
 
 ### Edge controls
 
@@ -6667,7 +7012,7 @@ bun typecheck
 bun run test -- --run
 bun web:check
 bun docs:build
-terraform fmt -check -recursive infra/
+bun infra:check
 ```
 
 Then test the deployed environment:
@@ -6695,15 +7040,15 @@ This is an operational starting point for applications built from React Starter 
 
 Record this information somewhere responders can reach when the application or primary repository is unavailable:
 
-| Item | Owner or location |
-| --- | --- |
-| Security report channel | *Define before launch* |
-| Incident lead and backup | *Define before launch* |
-| Cloudflare account and audit logs | *Define before launch* |
-| Neon project and restore procedure | *Define before launch* |
-| Resend, Google, Stripe, and OpenAI accounts | *Define as enabled* |
+| Item                                   | Owner or location                   |
+| -------------------------------------- | ----------------------------------- |
+| Security report channel                | *Define before launch*              |
+| Incident lead and backup               | *Define before launch*              |
+| Cloudflare account and audit logs      | *Define before launch*              |
+| Neon project and restore procedure     | *Define before launch*              |
+| Resend, Google, and Stripe accounts    | *Define as enabled*                 |
 | GitHub private vulnerability reporting | *Enable or document an alternative* |
-| User notification and legal contacts | *Define before launch* |
+| User notification and legal contacts   | *Define before launch*              |
 
 Also keep tested access for at least two responders, require MFA on provider accounts, and store recovery codes outside the systems they recover.
 
@@ -7083,21 +7428,23 @@ url: /adr/003-hcp-terraform-state.md
 
 ## Decision
 
-* Use an empty `cloud {}` block against HCP Terraform. Supply the organization and existing workspace as `TF_CLOUD_ORGANIZATION` and `TF_WORKSPACE`, so a fork does not inherit someone else's deployment targets.
-* Keep the default remote execution mode. Cloudflare and database credentials become workspace variables, so they are never held on a developer's machine, and CI needs exactly one secret (`TF_API_TOKEN`).
+* Use a `cloud` block against HCP Terraform, with the host, organization and workspace committed in each root – `app.terraform.io` plus placeholder organization and workspace names that adopters replace with their own. A fork that has not renamed them cannot initialize against its own HCP setup, so it touches nothing by accident.
+* Commit the coordinates rather than passing `TF_WORKSPACE`. Terraform refuses to run when `TF_WORKSPACE` disagrees with `workspaces.name`, and consults `TF_CLOUD_HOSTNAME` only when `hostname` is omitted, so ambient shell state cannot retarget a root at another environment's state or another Terraform host. That covers commands an output `precondition` never could: `output`, `import` and the `state` subcommands do not evaluate output preconditions, whatever else they read.
+* Use Remote execution mode, with the Cloudflare token and Terraform inputs held as workspace variables. A remote run receives `TF_VAR_*` from the caller but no other environment variables, so the provider credential can only come from the workspace; CI needs exactly one secret (`TF_API_TOKEN`). Inputs such as `database_url` are defaults a caller can still override per run.
 * Ship one backend, not a choice of several. At two environments and four resources, options cost more than they give.
 
 ## Alternatives (brief)
 
-* **S3-compatible backend on Cloudflare R2** – keeps everything on one vendor, and `use_lockfile = true` works because R2 supports conditional writes. Rejected for the manual bucket bootstrap, ten lines of `skip_*` flags per environment, and no versioning for recovery.
+* **S3-compatible backend on Cloudflare R2** – keeps everything on one vendor, and `use_lockfile = true` works because R2 supports conditional writes. Rejected for the manual bucket bootstrap, a run of `skip_*` compatibility flags per environment, and no versioning for recovery.
 * **Local state** – untenable: both environments are shared, and the state carries a password.
 * **Local execution mode with HCP for state only** – still supported, and documented for anyone who wants it, but it puts production credentials back on developer machines for no gain here.
 
 ## Impact
 
-* Positive: no state-storage bootstrap – the workspaces are created once in the UI, but there is no chicken-and-egg bucket to provision first; state encrypted and versioned; locking built in; GitHub stores no infrastructure credentials.
-* Negative/Risks: adds a HashiCorp account to an otherwise Cloudflare-only stack, and workspace variables are configured in a web UI rather than the repository. Remote execution means `TF_VAR_*` in a local shell is ignored, which surprises people expecting a plain backend swap.
-* Remote execution also requires each workspace to set **Terraform Working Directory** to `envs/<env>`, or the uploaded configuration omits the shared `modules/` directory the roots reference. No `cloud` block argument sets it, so two workspace settings – working directory and variables – live outside version control. Local execution mode avoids both, at the cost of putting production credentials back on developer machines.
+* Positive: no state-storage bootstrap – the workspaces are created once in the UI, but there is no chicken-and-egg bucket to provision first; state encrypted and versioned; locking built in; GitHub stores no Cloudflare or database credentials, only the HCP token.
+* Negative/Risks: adds a HashiCorp account to an otherwise Cloudflare-only stack, and workspace variables are configured in a web UI rather than the repository.
+* Remote execution isolates less than it looks. Terraform forwards local `TF_VAR_*` values as run-specific variables, and those [outrank ordinary workspace variables](https://developer.hashicorp.com/terraform/cloud-docs/variables/managing-variables), so an exported `TF_VAR_project_slug` can propose renaming every resource. Priority variable sets would lock a value down; this starter does not use them: the CI workflow runs only committed `main` configuration and passes no `TF_VAR_*` of its own, and an interactive run shows the override in the plan before anyone confirms it.
+* Five workspace settings have no `cloud` block equivalent and so live outside version control: the CLI-driven workflow (a VCS-linked workspace refuses remote applies), Remote execution mode (Local mode ignores workspace variables), **Terraform Working Directory** set to `envs/<env>` (otherwise the uploaded configuration omits the shared `modules/` directory the roots reference), the **Terraform Version** (a new workspace pins whatever release was current when it was created, which `required_version` can only reject, not select), and the variables themselves. `infra/README.md` enumerates them.
 
 ## Links
 
@@ -7145,7 +7492,9 @@ url: /specs/auth-form.md
 ---
 # Auth Form Specification
 
-The login and signup pages share `AuthForm`, a three-step passwordless flow. They differ only in copy, terms, the account-switch link, and passkey availability.
+The login and signup pages share `AuthForm`, a three-step passwordless flow. They differ only in copy, the account-switch link, and passkey availability.
+
+The form shows no terms-of-service notice. Either page can create an account, so a notice belongs on both – but the starter ships no legal pages to link to, and a link to a page that does not exist is worse on the account-creation path than no notice at all. Add both when you add the documents; the [security checklist](/security/checklist) carries it as a pre-launch item.
 
 ## Methods
 
@@ -7155,7 +7504,7 @@ The login and signup pages share `AuthForm`, a three-step passwordless flow. The
 | Passkey | Yes | No | Existing accounts only |
 | Google | Yes | Yes | Only when both server credentials are configured |
 
-The API exposes `config.socialProviders`, derived from the same helper that configures Better Auth. Auth routes prefetch it and the login dialog warms it on mount, so the UI neither advertises a disabled provider nor keeps a duplicate client-side enablement flag.
+The API exposes `config.socialProviders`, derived from the same helper that configures Better Auth. The login and signup routes prefetch it before rendering the form, so the UI neither advertises a disabled provider nor keeps a duplicate client-side enablement flag.
 
 ## Steps
 
@@ -7175,12 +7524,12 @@ const VALID_TRANSITIONS = {
 } as const;
 ```
 
-Social and passkey flows complete outside this step sequence. A success guard prevents overlapping conditional-passkey and manual operations from completing authentication twice.
+Passkey completes outside this step sequence. A success guard runs the post-auth work once per form, because disabling is state-backed and two completions can land before React rerenders. Google leaves the page entirely; the login route resolves the session when the browser returns.
 
 ### Method selection
 
 * Login shows configured social providers, email, and passkey.
-* Signup shows configured social providers and email, followed by the terms and privacy notice.
+* Signup shows configured social providers and email.
 * While any child flow is active, all methods and navigation are disabled.
 * Errors use the form's inline `role="alert"` region.
 
@@ -7189,7 +7538,6 @@ Social and passkey flows complete outside this step sequence. A success guard pr
 * The field uses `type="email"`, `autocomplete="email"`, and autofocus.
 * Submission trims and lowercases the address.
 * Both login and signup request OTP type `"sign-in"`; Better Auth creates a user when the address is new.
-* Signup repeats the terms and privacy notice on this step.
 
 ### OTP
 
@@ -7204,7 +7552,6 @@ Social and passkey flows complete outside this step sequence. A success guard pr
 interface AuthFormProps {
   mode?: "login" | "signup";
   onSuccess: () => Promise<void>;
-  isLoading?: boolean;
   returnTo?: string;
 }
 ```
@@ -7216,7 +7563,7 @@ The caller owns post-auth cache invalidation and navigation. `AuthForm` awaits `
 * The active input receives focus on the email and OTP steps.
 * Native forms support Enter submission.
 * Busy states disable conflicting controls.
-* The logo link has an accessible name while its image remains decorative.
+* The logo link has an accessible name while its image remains decorative. It is an `<a href="/">`, not a `<Link>`: `/` inside the SPA is the protected dashboard, so only a request reaching the edge router can answer with the marketing page.
 * Errors are announced through `role="alert"`.
 
 ## File Map
@@ -7261,7 +7608,7 @@ infra/
   envs/{staging,production}/
 ```
 
-One root per environment, one HCP Terraform workspace per root. Each root hard-codes its own `environment`, so no state can create another environment's resources.
+One root per environment, one HCP Terraform workspace per root. Each root hard-codes its own `environment` and workspace name, so it cannot create another environment's resources or write its state.
 
 There is no `dev` root. Local development uses `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_<BINDING>` and provisions nothing.
 
@@ -7287,7 +7634,7 @@ Two configurations per environment, matching the two bindings in `apps/api/`:
 
 `cache_max_age_seconds` (60) and `cache_stale_while_revalidate_seconds` (15) are set explicitly rather than inherited, so the staleness window is reviewable in the configuration.
 
-`origin_connection_limit` is a soft maximum per configuration – Cloudflare may briefly exceed it. It defaults to 20, Cloudflare's ceiling on the Workers Free plan and low enough that both configurations together stay within a small Neon compute's `max_connections`. Both env roots expose it so it can be raised per deployment; the origin sees twice the value.
+`origin_connection_limit` is a soft maximum per configuration – Cloudflare may briefly exceed it. It defaults to 20, inside Cloudflare's Workers Free ceiling so the starter works on any plan. Both env roots expose it so it can be raised per deployment; the origin sees twice the value.
 
 ### Connection URL
 
@@ -7305,27 +7652,25 @@ Three failures are rejected at plan time rather than surfacing later as connecti
 | --- | --- |
 | Malformed URL | Nothing to parse. |
 | Percent-encoded credentials | Terraform has no `urldecode`, so the escape sequence would be stored verbatim. |
-| A `-pooler` host | Hyperdrive is the pool; stacking two exhausts connections. |
+| A `-pooler` host | Hyperdrive is the pool; Neon's transaction-mode pooler breaks its prepared statements. |
 
 ## State
 
 HCP Terraform, via a `cloud` block – state, locking and version history in one place, with no bucket to provision first. See [ADR-003](/adr/003-hcp-terraform-state).
 
-Each root declares an empty `cloud {}` block. The organization and existing workspace are selected with `TF_CLOUD_ORGANIZATION` and `TF_WORKSPACE`, so a fork carries no one else's deployment targets.
+Each root pins its own `cloud` block – `hostname`, organization and `workspaces { name = "example-<env>" }`. Adopters replace the organization and workspace placeholders during setup. One directory therefore selects both the resource names and the state.
 
-Workspace names must end in `-staging` or `-production`. Each root asserts the suffix in an output `precondition`, failing at plan time otherwise. The reason is that `TF_WORKSPACE` selects the state while the directory selects only the resource names, and an exported `TF_WORKSPACE` takes precedence over the value in `.env.terraform.<env>.local` – Bun's `--env-file` does not overwrite variables already present in the environment. Unguarded, a stale export would point the staging root at production state, where it would rename the Hyperdrive configurations and invalidate their IDs.
+Pinning the name rather than supplying `TF_WORKSPACE` is what makes the binding structural. Terraform refuses to run when `TF_WORKSPACE` disagrees with `workspaces.name`, and falls back to `TF_CLOUD_HOSTNAME` only when `hostname` is omitted, so no ambient shell state can point a root at another environment or host. That also covers `output`, `import` and the `state` subcommands, which never evaluate output preconditions and so could not be guarded by one.
 
-The check runs wherever the configuration is evaluated – `plan`, `apply`, `destroy`, and `validate`. It does not run for `import` or the `state` subcommands, which write state without consulting the configuration, nor for `output`, which returns values already stored in state rather than recomputing them. `output` is the consequential one: it can print another environment's Hyperdrive IDs for pasting into a `wrangler.jsonc`, wiring a worker to the wrong database without touching state. The gap is inherent to Terraform, so it is documented and paired with a `workspace show` step rather than worked around.
+Terraform is invoked through two package scripts, `infra:staging` and `infra:production`, which are shorthand for `terraform -chdir=infra/envs/<environment>`.
 
-Terraform is invoked through two package scripts, `infra:staging` and `infra:production`, which load the matching env file and forward all arguments. Calling `terraform` directly skips workspace selection.
-
-Each workspace must also set **Terraform Working Directory** to `envs/<env>`. Remote runs upload the configuration, and a root referencing `../../modules/cloudflare` reaches outside its own directory; Terraform uploads parent directories only when a working directory is set, to the depth of that setting. There is no `cloud` block argument for it, so it is the one workspace setting the repository cannot declare.
+Each workspace must also set **Terraform Working Directory** to `envs/<env>`. Remote runs upload the configuration, and a root referencing `../../modules/cloudflare` reaches outside its own directory; Terraform uploads parent directories only when a working directory is set, to the depth of that setting. There is no `cloud` block argument for it. It is one of five settings the repository cannot declare, alongside the CLI-driven workflow, Remote execution mode, the workspace Terraform version and the variables themselves – see [ADR-003](/adr/003-hcp-terraform-state) and `infra/README.md`.
 
 **State is credential-bearing.** Hyperdrive stores the origin password as a discrete field, so it is written to state. `sensitive = true` hides values from output; it does not encrypt them. HCP Terraform encrypts state at rest and retains every version.
 
 ## Credentials
 
-Runs execute in HCP Terraform, so values come from workspace variables rather than a developer's shell.
+Runs execute in HCP Terraform, which supplies these from the workspace. The two kinds behave differently under a CLI-driven run: a Terraform variable is a default that a local `TF_VAR_*` overrides for that run, while no other environment variable reaches the run, so the provider token can only come from the workspace.
 
 | Kind                | Supplied as                                      |
 | ------------------- | ------------------------------------------------ |
@@ -7335,7 +7680,13 @@ Runs execute in HCP Terraform, so values come from workspace variables rather th
 
 The Cloudflare token needs **Account → Hyperdrive → Edit**, plus **Account → Workers R2 Storage → Edit** only when the uploads bucket is enabled. It needs no zone or worker scopes.
 
-The infrastructure workflow holds one credential: `TF_API_TOKEN`, an HCP Terraform team token. Terraform's Cloudflare and database credentials are never stored in GitHub. The separate worker-deploy workflow does hold a `CLOUDFLARE_API_TOKEN` – Cloudflare's **Edit Cloudflare Workers** template, which grants the worker, route and DNS scopes Terraform deliberately lacks.
+The infrastructure workflow holds one credential: `TF_API_TOKEN`, an HCP Terraform team token (a group token on HCP Terraform Europe). It is an environment secret on all four infrastructure environments, not a repository secret: the deployment-branch rule only binds jobs that name the environment, so a repository-scoped token would let a branch drop `environment:` and keep the credential.
+
+One name, three tokens: a shared Plan token for both `-plan` environments, and one Write token per workspace for `infra-staging-apply` and `infra-production-apply`. Scoping the apply tokens per workspace is what makes the production gate real – a single apply token would need Write on both, letting the ungated staging environment apply production. The plan token is shared because planning either workspace bypasses no gate. Team management requires HCP Essentials or above; on Free, leave the token unset and run Terraform from a trusted machine.
+
+Application deploys use `staging` and `production`, so a Cloudflare token and an HCP token are never reachable from the same job.
+
+Terraform's Cloudflare and database credentials are never stored in GitHub. The separate worker-deploy workflow does hold a `CLOUDFLARE_API_TOKEN` – Cloudflare's **Edit Cloudflare Workers** template, which grants the worker, route and DNS scopes Terraform deliberately lacks.
 
 Setting a workspace's execution mode to **Local** stores state remotely but runs Terraform on the caller's machine; HCP then ignores workspace variables, so values come from `TF_VAR_*` or a gitignored `terraform.tfvars`.
 
@@ -7347,9 +7698,13 @@ Resource identifiers name the concrete thing (`cloudflare_hyperdrive_config.cach
 
 ## CI
 
-`.github/workflows/ci.yml` runs `terraform fmt -check` and `terraform validate` on every push. Because `init -backend=false` still initializes an HCP `cloud {}` block, CI validates a disposable copy with that block removed and a correctly suffixed local workspace. No HCP or Cloudflare credentials are needed.
+`.github/workflows/ci.yml` runs `bun infra:check` – `terraform fmt -check`, then `init -backend=false -lockfile=readonly` and `validate` for each root – on pull requests to `main`, on `main` itself, and on manual CI runs. `init -backend=false` installs providers and modules without accessing the configured HCP backend, which is the sequence HashiCorp documents for validation, so CI needs no HCP or Cloudflare credentials. `-lockfile=readonly` makes every automated `init`, here and in `infra.yml`, consume the committed provider selections rather than amend them on a runner: a provider change has to arrive as a reviewed lock-file diff.
 
-`.github/workflows/infra.yml` plans and applies, on manual dispatch only, serialised per environment and gated by GitHub Environment reviewers. Application deploys never run Terraform.
+Every workflow installs Terraform with `terraform_version: ">=1.12.0 <2.0.0"` – the roots' `>= 1.12, < 2` in the SemVer syntax the action uses, and the same range the HCP workspaces express as `~> 1.12`. HCP and `setup-terraform` each select a binary within it and may differ for a day after a release, while each root rejects anything outside it. No exact release is pinned, so a Terraform release needs no action; raising the floor means editing all four declarations.
+
+`.github/workflows/infra.yml` plans and applies, on manual dispatch only, serialised per environment. One dispatch runs a plan job that saves the plan and publishes it to the run summary, then an apply job that applies that saved plan rather than recomputing one – gated by required reviewers where the repository's GitHub subscription supports them. The plan job uses a reviewer-free `-plan` environment because protection rules gate any job naming an environment, so a shared one would place the approval before the plan existed. The apply job is skipped when the plan reports no changes.
+
+Both jobs are restricted to `main` – by a first-step check in the workflow, and by a deployment-branch rule on each GitHub Environment, which is the half a branch cannot edit away. A speculative plan is not a read-only preview: HCP executes the configuration it is handed in the workspace's privileged run environment, with its variables and state, which is why HashiCorp treats plan permission as equivalent to write. Branch-level feedback comes from `bun infra:check` in `ci.yml`, which needs no credentials. Application deploys never run Terraform.
 
 ---
 
@@ -7472,15 +7827,17 @@ Stripe billing via `@better-auth/stripe` plugin. Billing is tightly coupled with
 3. User completes payment – Stripe sends webhook to `/api/auth/stripe/webhook`
 4. Plugin verifies signature, updates `subscription` table – client refetches via tRPC
 
-**Why tRPC for reads, Better Auth client for mutations:** Subscription queries benefit from TanStack Query caching, batching, and stale-while-revalidate. Mutations (upgrade, cancel, portal) go through the auth client because the plugin handles Stripe API calls, session validation, and org authorization internally.
+**Why tRPC for reads, Better Auth client for mutations:** Subscription queries benefit from TanStack Query caching, batching, and stale-while-revalidate. The two mutations the app owns – upgrade and portal – go through the auth client because the plugin handles Stripe API calls, session validation, and org authorization internally. Cancellation happens inside the hosted portal, not through a procedure of ours.
 
 ## Billing Reference
 
 Billing reads use `session.activeOrganizationId` when present and otherwise fall back to `user.id`. Stripe mutations pass the active organization explicitly as `referenceId` with `customerType: "organization"`; without one, the plugin defaults to the user. The plugin enforces one active subscription per reference ID.
 
 * **Organization context:** `referenceId = activeOrganizationId` – only org owner/admin can manage billing
-* **No organization:** `referenceId = user.id` – user manages their own subscription
-* The plugin authorizes explicit organization references against membership role
+* **No active organization:** `referenceId = user.id` – user manages their own subscription
+* The plugin authorizes explicit organization references against membership role, but only for its own mutation endpoints
+* `billing.subscription` is application-owned, so it re-checks membership against `member` before reading, and throws `FORBIDDEN` for a session that outlived its membership
+* The same lookup returns the role, so the response carries `canManage`; settings shows the plan to every member but the management buttons only to those the plugin would accept
 * The billing query key includes `activeOrgId`, so switching organizations automatically fetches fresh billing data via TanStack Query
 
 ## Database Schema
@@ -7546,7 +7903,7 @@ Stripe webhook verification requires the raw request body. The plugin handles th
 
 The plugin tests its own internals (webhooks, checkout, subscription lifecycle, authorization). App tests cover the seams we own:
 
-* **Router** (`apps/api/routers/billing.test.ts`) – disabled integration, free plan fallback, plan limits mapping, unknown plan rejection, response shape
+* **Router** (`apps/api/routers/billing.test.ts`) – membership revalidation (both predicates, and a session that outlived its membership), `canManage` per role, disabled integration, free plan fallback, plan limits mapping, unknown plan rejection, response shape
 * **Query** (`apps/app/lib/queries/billing.test.ts`) – cache key includes org ID, null normalization, distinct keys per org, prefix for bulk invalidation
 
 Checkout and webhook flows are not retested at app level – verified via `stripe listen` during development.
@@ -7556,7 +7913,7 @@ Checkout and webhook flows are not retested at app level – verified via `strip
 | Layer | Files |
 | --- | --- |
 | Schema | `db/schema/subscription.ts`, `stripeCustomerId` in `db/schema/user.ts` and `db/schema/organization.ts` |
-| Server | `apps/api/lib/plans.ts`, `apps/api/lib/stripe.ts`, stripe plugin in `apps/api/lib/auth.ts` |
+| Server | `apps/api/lib/plans.ts`, stripe plugin in `apps/api/lib/auth.ts` |
 | Router | `apps/api/routers/billing.ts`, registered in `apps/api/lib/app.ts` |
 | Client | `stripeClient` in `apps/app/lib/auth.ts`, `apps/app/lib/queries/billing.ts` |
 | UI | Billing card in `apps/app/routes/(app)/settings.tsx` |
