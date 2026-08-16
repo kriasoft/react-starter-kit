@@ -7,10 +7,7 @@
     "emitDeclarationOnly": true,
     "outDir": "./dist",
     "rootDir": "./",
-    "tsBuildInfoFile": "../../.cache/tsconfig/ui.tsbuildinfo",
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "tsBuildInfoFile": "../../.cache/tsconfig/ui.tsbuildinfo"
   },
   "include": ["components", "hooks", "lib", "index.ts"],
   "exclude": ["dist", "node_modules"]

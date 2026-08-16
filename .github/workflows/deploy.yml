@@ -32,12 +32,12 @@ jobs:
       name: ${{ inputs.environment }}
       url: ${{ inputs.url }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       # `upload-artifact` roots the archive at the least common ancestor of the
       # uploaded paths – `apps/` here – so restore it there, not at the
       # workspace root. Otherwise each `dist` lands one level too high and
       # Wrangler resolves `./dist` relative to apps/*/wrangler.jsonc to nothing.
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: build
           path: apps

@@ -20,24 +20,23 @@ A component belongs in `packages/ui` only if it would still make sense in a diff
 ```bash
 bun ui:add button              # Add a single component
 bun ui:add dialog card select  # Add several at once
-bun ui:add --all               # Add everything in the registry
-bun ui:essentials              # Add a curated starter set
-bun ui:list                    # List what's installed
 bun ui:update                  # Re-fetch installed components from the registry
+bun ui:update button card      # Re-fetch selected components
 ```
 
-Adding a component writes the file and formats it with Prettier. It does **not** touch the barrel export, so add that line yourself:
+Both take shadcn item names only and reject CLI options. They always write to `packages/ui` and postprocess afterwards, so the CLI's read-only flags would not stay read-only. To inspect without writing – or to pull in a block or a custom registry – use the CLI directly, pointing it at the workspace so it picks up the right `components.json`:
 
-```ts
-// packages/ui/index.ts
-export * from "./components/toggle-group";
+```bash
+bunx shadcn@latest add button --dry-run --cwd packages/ui
 ```
 
-Without it, `import { ToggleGroup } from "@repo/ui"` won't resolve.
+`ui:update` refuses names that aren't installed, so a typo reports an error instead of quietly adding a component. It does not narrow what gets rewritten, though – registry items declare their own dependencies, so refreshing one component can rewrite the others it builds on. Read the diff, not the command.
+
+Postprocessing strips the `"use client"` directive, regenerates `index.ts`, and formats the result. A newly added component is importable from `@repo/ui` straight away, and `index.ts` is generated output rather than a file you maintain.
 
 ::: warning
 
-Review what the CLI generates `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`).
+Review what the CLI generates. `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Postprocessing is mechanical; it does not touch component APIs. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`).
 
 :::
 
@@ -52,14 +51,25 @@ packages/ui/
 ├── hooks/
 ├── lib/
 │   └── utils.ts          # cn() utility
-├── scripts/              # CLI tooling (add, list, update, essentials)
+├── scripts/              # ui:add / ui:update and their postprocessing
 ├── components.json       # shadcn CLI config – style, aliases, icon library
 ├── styles.css            # Exists for the shadcn CLI; real styles live in the app
-├── index.ts              # Barrel export
+├── index.ts              # Generated barrel export
 └── package.json
 ```
 
-Components import `cn` as `@/lib/utils`, which is what the shadcn CLI generates. That alias resolves through the _consuming_ app's config rather than this package's, and it works only because every app keeps a `lib/utils` re-export shim. One component importing another must therefore use a relative path (`./toggle`) – the CLI's `@/components/…` form resolves into the app and fails the build there.
+Imports inside the package use Node subpath imports – `#lib/utils` for `cn`, `#components/toggle` for one component pulling in another. They're declared in `package.json`:
+
+```jsonc
+// packages/ui/package.json
+"imports": {
+  "#components/*": "./components/*.tsx",
+  "#hooks/*": "./hooks/*.ts",
+  "#lib/*": "./lib/*.ts"
+}
+```
+
+and mirrored by the `components.json` aliases, so the shadcn CLI generates them natively. Unlike a `@/` alias, they resolve against `packages/ui` itself no matter which workspace imports the component, so the package needs no cooperation from the app consuming it. This requires `moduleResolution: "bundler"`, which the shared TypeScript preset already sets.
 
 Components and `cn` are re-exported from the package root, so apps import from a single place:
 
@@ -208,7 +218,7 @@ Scanning is textual, so Tailwind only sees complete class names. `bg-red-500` is
 
 ## Troubleshooting
 
-**Import from `@repo/ui` fails.** Check the component is installed (`bun ui:list`) and exported from `packages/ui/index.ts` – `bun ui:add` does not add the export for you.
+**Import from `@repo/ui` fails.** Check the component is installed – `ls packages/ui/components`. If the file is there but missing from `index.ts`, the generation step failed rather than being skipped: both commands always regenerate the barrel, so re-read that command's output and `git diff`.
 
 **Styles missing in the built app but fine in dev.** The class lives in a file no `@source` covers, or it is assembled by string interpolation. See [Tailwind Content Scanning](#tailwind-content-scanning).
 

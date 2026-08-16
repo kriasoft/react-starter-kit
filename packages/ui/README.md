@@ -14,9 +14,7 @@ import { Button, Card, Input, cn } from "@repo/ui";
 
 ```bash
 bun ui:add <component>    # Add a shadcn/ui component
-bun ui:list               # List installed components
 bun ui:update             # Re-fetch installed components
-bun ui:essentials         # Install curated essential set
 ```
 
 See [AGENTS.md](./AGENTS.md) for the conventions these commands assume.
@@ -27,7 +25,8 @@ See [AGENTS.md](./AGENTS.md) for the conventions these commands assume.
 components/       # shadcn/ui components
 hooks/            # Custom React hooks
 lib/              # Utilities (cn function)
-scripts/          # Component management tools
+scripts/          # ui:add / ui:update and their postprocessing
+index.ts          # Generated barrel export
 ```
 
 Consuming apps must `@source` every directory here that holds class names, or those classes are stripped from their build. See [apps/app/tailwind.config.css](../../apps/app/tailwind.config.css) for an example.

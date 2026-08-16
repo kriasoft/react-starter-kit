@@ -32,7 +32,7 @@ jobs:
     name: "Build"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
 
@@ -67,7 +67,7 @@ jobs:
       # workers, plus the compiled email workspace. `apps/api` deploys from
       # source, and `@repo/email` resolves through `./dist`, so Wrangler cannot
       # bundle the API worker without it on a fresh checkout.
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: build
           path: |

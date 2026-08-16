@@ -91,14 +91,6 @@ export default defineConfig(
     },
   },
 
-  // UI package specific overrides
-  {
-    files: ["packages/ui/**/*.tsx"],
-    rules: {
-      "@eslint-react/no-forward-ref": "off",
-    },
-  },
-
   // Prettier must be last to override any formatting rules
   prettierConfig,
 );

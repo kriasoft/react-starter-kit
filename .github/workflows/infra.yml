@@ -65,7 +65,7 @@ jobs:
           echo "::error::Infrastructure runs must use main, not ${REF_NAME}."
           exit 1
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: hashicorp/setup-terraform@v4
         with:
           # Stream Terraform's own output instead of the wrapper's summary.
