@@ -42,4 +42,5 @@ Client-side SPA – no SSR. All rendering happens in the browser.
 ## Error Handling
 
 - `AppErrorBoundary` (root) shows generic error UI. `AuthErrorBoundary` (protected routes) catches 401/UNAUTHORIZED and shows sign-in recovery UI; 403 falls through to generic handler.
+- `AppErrorBoundary` wraps the outlet only. `Devtools` mounts as its sibling with a silent boundary of its own, so neither dev tooling nor app UI can unmount the other – don't move it inside.
 - Utilities in `lib/errors.ts`: `getErrorStatus()`, `isUnauthenticatedError()`, `getErrorMessage()`.
