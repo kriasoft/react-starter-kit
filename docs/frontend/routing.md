@@ -60,9 +60,17 @@ The `queryClient` in context is what makes `beforeLoad` guards possible – rout
 
 ## Devtools
 
-`components/devtools.tsx` puts the Router and Query panels behind one TanStack Devtools shell, so development gets a single trigger instead of two floating logos. It renders `null` outside dev, and it mounts outside `AppErrorBoundary` with a silent boundary of its own – a render failure in either subtree can't replace or unmount the other.
+`components/devtools.tsx` mounts [TanStack Devtools](https://tanstack.com/devtools/latest) with the Router and Query panels as plugins of one shell. It renders `null` outside development, so nothing reaches your production bundle.
 
-The trigger stays hidden until you hover its corner, and `Ctrl+Shift+X` opens the panel without it. Router is the panel you land on whenever no other one is active. Position, theme, panel side, and the hotkey are settings the shell persists per browser – the `config` prop only seeds them, and the panel's settings tab wins from then on.
+::: tip
+
+The trigger is invisible until you hover the bottom-right corner. `Ctrl+Shift+X` opens the panel without it.
+
+:::
+
+Position, theme, panel side, and the hotkey are settings the shell persists per browser. The `config` prop only seeds them – once you change one from the panel's settings tab, that value wins.
+
+`Devtools` sits outside `AppErrorBoundary` and carries its own boundary, so a render failure in either subtree can't take down the other.
 
 ## Auth Guards
 
