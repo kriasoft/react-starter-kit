@@ -1,8 +1,19 @@
 name: Infrastructure
 
+# Both inputs are the whole story of a run – without this the Actions list is a
+# column of identical "Infrastructure" rows.
+run-name: ${{ inputs.apply && 'Apply' || 'Plan' }} infrastructure (${{ inputs.environment }})
+
 # Terraform runs on its own cadence, never as part of an application deploy.
 # Manual dispatch only: infrastructure changes are rare, and an accidental apply
 # is far more expensive than an accidental redeploy.
+#
+# One dispatch plans, publishes that plan to the run summary, and – with `apply`
+# on, and where the apply environment has required reviewers – waits for
+# approval before applying that exact saved plan. The reviewer approves what
+# they have read, rather than authorising a second run to compute a plan nobody
+# has seen. Not every GitHub subscription offers that gate;
+# docs/deployment/ci-cd.md says where it exists and what to do instead.
 on:
   workflow_dispatch:
     inputs:
@@ -12,80 +23,205 @@ on:
         options: [staging, production]
         required: true
       apply:
-        description: "Apply changes (recomputes the plan; leave off to plan only)"
+        description: "Apply the saved plan, behind the approval gate where available (leave off to plan only)"
         type: boolean
         default: false
 
 # Serialise per environment. HCP Terraform locks the workspace as well; this
-# just avoids queuing runs that would only wait on that lock.
+# just avoids queuing runs that would only wait on that lock. Never cancel an
+# in-flight apply: interrupting one can leave infrastructure partly changed and
+# needing recovery.
+#
+# `queue: max` because these dispatches are operator decisions, not
+# interchangeable snapshots of a branch. GitHub's `single` default keeps one
+# pending run per group and drops the older one, so a queued apply would
+# disappear the moment anyone asked for a plan. The group deliberately does not
+# distinguish the two – plan and apply must not run against one workspace at
+# once. Note that actionlint does not know the `queue` key yet and reports it
+# as unexpected: https://github.com/rhysd/actionlint/issues/657
 concurrency:
   group: infra-${{ inputs.environment }}
+  queue: max
   cancel-in-progress: false
 
 permissions:
   contents: read
 
 jobs:
-  terraform:
-    name: ${{ inputs.apply && 'Apply' || 'Plan' }} (${{ inputs.environment }})
+  plan:
+    name: Plan (${{ inputs.environment }})
     runs-on: ubuntu-latest
-    # Selects the GitHub Environment, not the Terraform workspace – that comes
-    # from the root's `cloud` block. Where required reviewers are configured
-    # this gates the run, including plan-only dispatches: protection rules
-    # apply to any job naming an environment.
-    environment: ${{ inputs.environment }}
+    timeout-minutes: 30
+    # Separate from the apply environment below, and with no required reviewers:
+    # protection rules gate any job naming an environment, so sharing one would
+    # put the approval before the plan the reviewer is meant to read.
+    #
+    # Its `TF_API_TOKEN` must be a token whose HCP team can plan but not apply –
+    # same secret name, different value from the apply environments, which hold
+    # one write token each, scoped to their own workspace. Given that planning
+    # executes the configuration, that is a boundary rather than a sandbox: what
+    # it buys is that the credential reachable before an approval cannot apply.
+    #
+    # `deployment: false` keeps the environment's secrets and branch rule while
+    # suppressing the deployment record – planning deploys nothing, and a green
+    # deployment would read as if it had.
+    environment:
+      name: infra-${{ inputs.environment }}-plan
+      deployment: false
+    outputs:
+      changes: ${{ steps.plan.outputs.changes }}
     defaults:
       run:
         working-directory: infra/envs/${{ inputs.environment }}
-    env:
-      # The only credential needed: runs execute in HCP, so Cloudflare and
-      # database credentials stay workspace variables and never reach GitHub.
-      TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
     steps:
-      # Dispatch offers a branch picker, and plans are not the safe half: HCP
-      # executes the configuration it is handed in the workspace's privileged
-      # run environment, with its variables and state, so planning an unmerged
-      # branch runs it against production's credentials – HashiCorp treats plan
-      # permission as equivalent to write. Branch-level feedback is
-      # `bun infra:check` in ci.yml.
+      # Dispatch offers a branch picker, and planning is not the safe half: HCP
+      # executes the configuration in the workspace's privileged run
+      # environment, so planning an unmerged branch runs it against production's
+      # credentials. Branch-level feedback is `bun infra:check` in ci.yml.
       #
-      # This catches the mistake, not an attacker: a dispatch runs the workflow
+      # This catches the mistake, not an attacker – a dispatch runs the workflow
       # definition from its own ref, so a branch can delete this step. The
-      # Environment's deployment-branch rule is the half that enforces.
+      # environment's deployment-branch rule is the half that enforces.
       - name: Restrict runs to main
         if: ${{ github.ref != 'refs/heads/main' }}
         # The job default points into a repository not yet checked out.
         working-directory: ${{ github.workspace }}
         # Through `env`, never `${{ }}` in the script: expressions are pasted in
         # before the shell parses it, and a branch name may legally contain
-        # `$(…)`. As a variable it stays data, in a job holding the HCP token.
+        # `$(…)`. Pass untrusted context as a variable so it stays data.
         env:
           REF_NAME: ${{ github.ref_name }}
         run: |
           echo "::error::Infrastructure runs must use main, not ${REF_NAME}."
           exit 1
 
-      - uses: actions/checkout@v7
-      - uses: hashicorp/setup-terraform@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          # The range the roots declare and the HCP workspaces use – see ci.yml.
+          terraform_version: ">=1.12.0 <2.0.0"
           # Stream Terraform's own output instead of the wrapper's summary.
           terraform_wrapper: false
 
-      - run: terraform init -input=false
+      # Scoped to the steps that talk to HCP rather than to the job, so the
+      # pinned actions never see it. It is the only credential needed here:
+      # runs execute in HCP, so Cloudflare and database credentials stay
+      # workspace variables and never reach GitHub.
+      - run: terraform init -input=false -lockfile=readonly
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
+      # `-detailed-exitcode` separates "no changes" (0) from "changes" (2), so
+      # an unchanged environment skips the apply job instead of asking a
+      # reviewer to approve a no-op.
       - name: Plan
-        if: ${{ !inputs.apply }}
-        run: terraform plan -input=false
+        id: plan
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: |
+          set +e
+          terraform plan -input=false -out=tfplan -detailed-exitcode
+          code=$?
+          set -e
+          case "$code" in
+            0) echo "changes=false" >> "$GITHUB_OUTPUT" ;;
+            2) echo "changes=true" >> "$GITHUB_OUTPUT" ;;
+            *) exit "$code" ;;
+          esac
 
-      # `-auto-approve` is intentional here: the environment gate ran before the
-      # job and HCP records the run. But the reviewer approved the job, not a
-      # plan they had read – this run computes its own. Dispatch once with apply
-      # off, read that plan, then dispatch again.
-      - name: Apply
-        if: ${{ inputs.apply }}
-        run: terraform apply -input=false -auto-approve
+      # What the reviewer reads before approving. Terraform redacts values from
+      # sensitive variables, and runs execute in HCP, so the plan describes
+      # resources rather than carrying the credentials that built them.
+      - name: Publish plan
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: |
+          # Rendered to a file first, not piped into `head`: GitHub runs each
+          # script with `-o pipefail`, and `head` closing the pipe early would
+          # kill `terraform show` with SIGPIPE – failing this step, and with it
+          # the apply, for exactly the large plans that most need reading.
+          terraform show -no-color tfplan > plan.txt
+
+          # The step summary caps at 1 MiB. Truncating silently is the one
+          # option not open to us: the tail of a plan is where destroys tend to
+          # be, so a reviewer who cannot see it must be sent to the HCP run
+          # rather than left believing they saw everything.
+          limit=900000
+          {
+            echo "### Terraform plan (${ENVIRONMENT})"
+            echo '```terraform'
+            head -c "$limit" plan.txt
+            # A cut at an arbitrary byte need not land on a line ending, which
+            # would otherwise weld the closing fence onto the last line.
+            echo
+            echo '```'
+            if [ "$(wc -c < plan.txt)" -gt "$limit" ]; then
+              echo
+              echo "> [!WARNING]"
+              echo "> Plan truncated at ${limit} bytes. Read the complete run in HCP Terraform before approving the apply."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # With `cloud`, the saved plan is a reference to the run HCP is holding
+      # open, not the plan itself – no state and no variable values travel
+      # through GitHub. HCP discards the run if the workspace moves on, so a
+      # stale approval fails instead of applying something unexpected.
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: ${{ inputs.apply && steps.plan.outputs.changes == 'true' }}
+        with:
+          name: tfplan-${{ inputs.environment }}
+          path: infra/envs/${{ inputs.environment }}/tfplan
+          if-no-files-found: error
+          # Bounds the saved plan's usable life: long enough to survive a
+          # weekend or a time zone, short enough that nobody applies a plan they
+          # read last month. GitHub will still offer the approval afterwards –
+          # the job then fails at download. Dispatch again and read the new plan.
+          retention-days: 3
+
+  apply:
+    name: Apply (${{ inputs.environment }})
+    needs: [plan]
+    if: ${{ inputs.apply && needs.plan.outputs.changes == 'true' }}
+    runs-on: ubuntu-latest
+    # Terraform waits on provider APIs; give it room without giving it a day.
+    timeout-minutes: 60
+    # Holds the apply-capable HCP token, and the required reviewers where the
+    # repository's GitHub subscription supports them – see
+    # docs/deployment/ci-cd.md. `needs: plan` means the main-only check above
+    # has already passed, so it is not repeated here.
+    environment: infra-${{ inputs.environment }}-apply
+    defaults:
+      run:
+        working-directory: infra/envs/${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: tfplan-${{ inputs.environment }}
+          path: infra/envs/${{ inputs.environment }}
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ">=1.12.0 <2.0.0"
+          terraform_wrapper: false
+
+      - run: terraform init -input=false -lockfile=readonly
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+
+      # No `-auto-approve`: a saved plan is already the approved answer, so
+      # Terraform applies exactly it and refuses if the workspace has changed
+      # underneath. Recomputing here is what the plan job exists to avoid.
+      - run: terraform apply -input=false tfplan
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
       # Hyperdrive IDs are non-secret and belong in apps/api/wrangler.jsonc.
       - name: Hyperdrive bindings
-        if: ${{ inputs.apply }}
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: terraform output -raw wrangler_hyperdrive_bindings >> "$GITHUB_STEP_SUMMARY"

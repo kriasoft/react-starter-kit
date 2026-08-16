@@ -29,21 +29,42 @@ See [Architecture Overview](/architecture/) for how these components connect.
 | Staging | Push to `main` | `staging.example.com` | Pre-production validation |
 | Production | Manual dispatch | `example.com` | Live environment |
 
-Staging and production each have their own Wrangler configuration, Hyperdrive bindings, and Terraform workspace. Development is local and provisions no cloud resources. See [CI/CD](/deployment/ci-cd) for deployment triggers. The checked-in deployment step is disabled until Cloudflare credentials are configured.
+Staging and production each have their own Wrangler configuration, Hyperdrive bindings, and Terraform workspace. Development is local and provisions no cloud resources. See [CI/CD](/deployment/ci-cd) for deployment triggers. Automated deploys stay off until you set the `DEPLOY_ENABLED` repository variable, so a fresh clone runs CI only.
 
 ## Deployment Checklist
 
 1. **Provision infrastructure** – run Terraform to create the Hyperdrive configurations. Workers, routes and the custom domain's DNS come from Wrangler at deploy time ([ADR-002](/adr/002-terraform-wrangler-boundary))
 2. **Set secrets** – configure `BETTER_AUTH_SECRET` and `RESEND_API_KEY`, plus secrets for any optional integrations you enable, via Wrangler. See [Cloudflare Workers](/deployment/cloudflare) for the full list
-3. **Run migrations** – apply schema to your production database. See [Production Database](/deployment/production-database)
-4. **Build and deploy** – push code to workers. See [CI/CD](/deployment/ci-cd) or deploy manually:
+3. **Build and verify** – compile every workspace, prove each worker bundles, and confirm the Cloudflare identity and production account, all before anything changes
+4. **Run migrations** – apply the schema to your production database. See [Production Database](/deployment/production-database)
+5. **Deploy the workers** – `api`, then `app`, then `web`. Service bindings resolve by name at deploy time, and `web` holds the public route, so it flips last
+
+Steps 3 to 5 are what an automated release does; push to `main` or dispatch a production run and [CI/CD](/deployment/ci-cd) handles them. To do it by hand:
 
 ```bash
-bun run build        # Build all deployable workspaces
-bun api:deploy --env="" # Deploy production API worker
-bun app:deploy --env="" # Deploy production App worker
-bun web:deploy --env="" # Deploy production Web worker
+# Preflight – nothing here changes production
+bun run build
+
+bun wrangler deploy --config apps/api/wrangler.jsonc --env="" --dry-run
+bun wrangler deploy --config apps/app/wrangler.jsonc --env="" --dry-run
+bun wrangler deploy --config apps/web/wrangler.jsonc --env="" --dry-run
+
+# `--dry-run` never authenticates, so confirm the account separately
+bun wrangler whoami --account <production-account-id>
 ```
+
+Stop unless every command succeeded and `whoami` reports the account you meant. These are two blocks rather than one because an interactive shell does not stop on error – pasted together, a failed dry-run would scroll past and the migration would still run.
+
+```bash
+# Point of no return
+bun db:migrate:production
+
+bun api:deploy --env=""
+bun app:deploy --env=""
+bun web:deploy --env=""
+```
+
+The order matters for the same reason it does in CI: migrations run against workers that are still the old ones, so a schema change has to be [additive](/deployment/ci-cd#release-order) until the new workers are live.
 
 ## Section Pages
 

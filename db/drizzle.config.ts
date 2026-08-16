@@ -83,7 +83,9 @@ if (!/^postgre(s|sql):\/\/.+/.test(process.env.DATABASE_URL)) {
  */
 export default defineConfig({
   out: "./migrations",
-  schema: "./schema",
+  // Point at the schema barrel explicitly. Drizzle Kit loads every TypeScript
+  // file in a directory, including colocated Vitest files.
+  schema: "./schema/index.ts",
   dialect: "postgresql",
   casing: "snake_case",
   dbCredentials: {

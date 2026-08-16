@@ -1,5 +1,6 @@
 ## Schema Conventions
 
+- Every new table file must be re-exported from `schema/index.ts`. `drizzle.config.ts` points at that barrel rather than the directory, so an unexported table is invisible to `db:generate`, which reports no changes instead of failing.
 - Drizzle `casing: "snake_case"` – use camelCase in TypeScript, columns map to snake_case in DB.
 - Primary keys use application-generated prefixed CUID2 IDs: `generateAuthId(model)` for Better Auth models and `generateId("xxx")` for domain tables. See `db/schema/id.ts` for the prefix map.
 - Timestamps: `timestamp({ withTimezone: true, mode: "date" })`. Every table has `createdAt` (`.defaultNow().notNull()`) and `updatedAt` (`.defaultNow().$onUpdate(() => new Date()).notNull()`).

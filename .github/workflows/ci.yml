@@ -5,45 +5,89 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # A merge queue reports required checks against the queued group rather than
+  # the pull request, so without this the merge never completes. Inert until
+  # someone enables one, and the deploy jobs below ignore it.
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
-    # Manual runs can deploy only production; staging deploys on merge to main.
+    # Manual deploys target production only; staging deploys on push to main.
+    # This builds `main` fresh rather than promoting the build staging is
+    # running – nothing carries a release identity between runs.
     inputs:
       deploy_production:
-        description: "Deploy to production after the build"
+        description: "Deploy current main to production after the build"
         type: boolean
         default: false
 
 env:
   HUSKY: 0
 
-# Keyed on the event as well as the ref, so a manual production run and ordinary
-# CI on `main` land in different groups. Without that split, merging to main
-# mid-deploy cancels the deploy and leaves the three workers on mixed versions.
-# Successive PR and push runs still supersede each other.
+# Keyed on the event and on whether a manual run deploys, so ordinary CI on
+# `main`, a manual check and a production release never share a group – GitHub
+# keeps one pending run per group, so a build-only dispatch would otherwise
+# evict a release waiting its turn.
+#
+# Only pull-request runs cancel the run in flight. A push may be midway through
+# staging and a production dispatch midway through production; killing either
+# leaves the database and the workers on mixed versions.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.deploy_production && 'deploy' || 'check' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
+# Actions are pinned to commit SHAs, the only immutable reference GitHub
+# offers: a tag can be moved to new code. Dependabot updates the SHA and its
+# `# vX.Y.Z` comment together; see .github/dependabot.yml.
 jobs:
   build:
     name: "Build"
     runs-on: ubuntu-latest
+    # The default is 6 hours, long enough for a hung step to burn a day of
+    # runner minutes.
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
-      - uses: oven-sh/setup-bun@v2
+      # A job skipped by its `if` reports success, so a production request that
+      # cannot be honoured would finish green having deployed nothing. Fail it
+      # where someone is watching; the deploy job keeps its own conditions.
+      - name: Validate production request
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_production }}
+        env:
+          DEPLOY_ENABLED: ${{ vars.DEPLOY_ENABLED }}
+        run: |
+          if [[ "$GITHUB_REF" != "refs/heads/main" ]]; then
+            echo "::error::Production deploys must run from main, not ${GITHUB_REF#refs/heads/}."
+            exit 1
+          fi
+          if [[ "$DEPLOY_ENABLED" != "true" ]]; then
+            echo "::error::Deployments are off. Set the DEPLOY_ENABLED repository variable to true."
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Checkout otherwise leaves its token behind for later Git commands.
+          # Nothing in this job runs one.
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
       - run: bun install --frozen-lockfile
 
       # Every run, not just PRs: whether `main` only receives reviewed commits
-      # is a branch-protection setting this repository cannot assert, and a
-      # deployed commit should meet the same bar however it arrived.
+      # is a branch-protection setting this repository cannot assert.
       - run: bun prettier --check .
       - run: bun lint
 
       # Validates both roots without remote state or provider credentials.
-      - uses: hashicorp/setup-terraform@v4
+      #
+      # The same range the roots and the HCP workspaces declare, each resolved
+      # independently – they may differ for a day after a release, which is
+      # harmless while none can leave the range. Raising the floor means editing
+      # all four: both roots, the HCP workspaces, here, and infra.yml.
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ">=1.12.0 <2.0.0"
       - run: bun infra:check
 
       # `apps/api` references `apps/email`, so `tsc --build` emits the template
@@ -53,44 +97,76 @@ jobs:
       # tsc cannot parse .astro templates; astro check covers apps/web
       - run: bun --filter @repo/web check
 
-      # Tests
       - run: bun run test -- --run
 
-      # Build all workspaces. The API build targets the container image
-      # (apps/api/Dockerfile) – Wrangler bundles `worker.ts` from source – so it
-      # runs here as a compile check but is not part of the deploy artifact.
+      # The API build targets the container image (apps/api/Dockerfile) –
+      # Wrangler bundles `worker.ts` from source – so it runs here as a compile
+      # check and contributes nothing to the deploy artifact.
       - run: bun --filter @repo/web build
       - run: bun --filter @repo/api build
       - run: bun --filter @repo/app build
 
-      # Exactly what the deploy job consumes: static assets for the web and app
-      # workers, plus the compiled email workspace. `apps/api` deploys from
-      # source, and `@repo/email` resolves through `./dist`, so Wrangler cannot
-      # bundle the API worker without it on a fresh checkout.
-      - uses: actions/upload-artifact@v7
+      # Catches dead relative links and unhandled SSR render errors; see the
+      # production error setting in docs/.vitepress/theme/index.ts.
+      - run: bun docs:build
+
+      # Exactly what the deploy job consumes. `apps/api` deploys from source,
+      # but imports `@repo/email`, which resolves through `./dist` – so Wrangler
+      # cannot bundle the API worker without it on a fresh checkout.
+      #
+      # Checked on every run, uploaded only on runs that can deploy, so a pull
+      # request fails here rather than at the next release. Hence looking for a
+      # file rather than the directory: an empty `dist` uploads nothing, and
+      # `if-no-files-found` would only catch it on a deploying run.
+      - name: Verify build output
+        run: |
+          for dir in apps/email/dist apps/web/dist apps/app/dist; do
+            if [[ -z "$(find "$dir" -type f -print -quit 2>/dev/null)" ]]; then
+              echo "::error::$dir holds no files – the deploy artifact would be empty."
+              exit 1
+            fi
+          done
+
+      # Must stay a superset of both deploy jobs' conditions, or a release
+      # passes CI and then dies at `download-artifact`.
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: >-
+          vars.DEPLOY_ENABLED == 'true' &&
+          (github.event_name == 'push' || inputs.deploy_production)
         with:
           name: build
           path: |
             apps/email/dist
             apps/web/dist
             apps/app/dist
+          if-no-files-found: error
+          # Staging deploys minutes later. Production may wait on a reviewer,
+          # and GitHub allows 30 days before failing the job – an artifact that
+          # expired first would turn a legitimate approval into a download error.
+          retention-days: ${{ inputs.deploy_production && 31 || 1 }}
 
+  # Both deploy jobs are opt-in: set the `DEPLOY_ENABLED` repository variable
+  # once Cloudflare is provisioned and each environment holds its credentials.
+  # Until then a clone runs pure CI, with no deployment records implying more.
   deploy-staging:
     name: "Deploy"
     needs: [build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >-
+      vars.DEPLOY_ENABLED == 'true' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yml
     with:
-      name: Staging
       environment: staging
       url: https://staging.example.com
-    secrets: inherit
-    # A called workflow can never hold more than its caller grants, and naming
-    # any permission drops the rest to `none` – so `contents: read` has to be
-    # repeated here for the checkout inside deploy.yml to work on a private repo.
+    # No `secrets: inherit` – it would hand the called workflow every secret
+    # this one can see, where deploy.yml names an environment and gets its
+    # credentials from there alone. `contents: read` must still be repeated: a
+    # called workflow never holds more than its caller grants, and naming any
+    # permission drops the rest to `none`, leaving its checkout unable to read
+    # a private repository.
     permissions:
       contents: read
-      deployments: write
 
   deploy-production:
     name: "Deploy"
@@ -98,15 +174,13 @@ jobs:
     # The dispatch UI offers a branch picker, so pin production to `main`
     # rather than trusting whatever ref the run was started from.
     if: >-
+      vars.DEPLOY_ENABLED == 'true' &&
       github.event_name == 'workflow_dispatch' &&
       inputs.deploy_production &&
       github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yml
     with:
-      name: Production
       environment: production
       url: https://example.com
-    secrets: inherit
     permissions:
       contents: read
-      deployments: write

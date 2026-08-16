@@ -80,12 +80,13 @@ See [`AGENTS.md`](../AGENTS.md) for the full monorepo layout, tech stack, and av
 4. **Write clear commit messages** using [conventional commits](https://www.conventionalcommits.org/):
 
    ```
+   type: description
    type(scope): description
    ```
 
-   Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+   The scope is optional. [`pr-title.yml`](workflows/pr-title.yml) lists the accepted types.
 
-5. **Open a pull request** against `main` with a clear description. Reference related issues and include screenshots for UI changes.
+5. **Open a pull request** against `main` with a clear description. Reference related issues and include screenshots for UI changes. Give the pull request a title in the same form – CI validates that one, and it is what a squash merge records on `main`.
 
 ### Review Process
 
@@ -114,7 +115,7 @@ All commits must include a sign-off line:
 git commit -s -m "feat(auth): add passkey support"
 ```
 
-Contributions without a sign-off may be rejected by automated checks.
+Nothing in this repository checks for it – install GitHub's [DCO app](https://github.com/apps/dco) and make its status required if you want it enforced – so until then a maintainer may ask you to amend a commit that is missing the line.
 
 ## AI-Assisted Contributions
 

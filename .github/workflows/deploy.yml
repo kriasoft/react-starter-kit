@@ -1,12 +1,14 @@
 name: Deploy
 
+# Called by ci.yml once the build succeeds. One job, in one order: preflight,
+# migrations, then the three workers.
+#
+# Nothing here is atomic. The order narrows each window, but a failure, timeout
+# or lost runner can still stop the release midway, so every step has to be
+# survivable alone – hence the expand/contract rules below.
 on:
   workflow_call:
     inputs:
-      name:
-        description: "Name of the deployment"
-        required: true
-        type: string
       environment:
         required: true
         type: string
@@ -15,60 +17,165 @@ on:
         required: true
         type: string
 
-# A caller's workflow-level `env` does not reach a reusable workflow, so this
-# is repeated rather than inherited from ci.yml. Deploy runners have no use for
-# Git hooks.
+# A caller's workflow-level `env` does not reach a reusable workflow, so this is
+# repeated rather than inherited from ci.yml. Runners have no use for Git hooks.
 env:
   HUSKY: 0
 
 jobs:
   deploy:
-    name: ${{ inputs.name }}
+    name: ${{ inputs.environment }}
     runs-on: ubuntu-latest
+    # Generous on purpose: a timeout firing partway through this job is itself a
+    # way into the mixed state everything here avoids. It bounds a runaway, it
+    # is not a latency target.
+    timeout-minutes: 45
+    # No `deployments: write` – naming `environment:` is what records the
+    # deployment, and GitHub creates it. The scope only governs code calling the
+    # deployments API, which nothing here does.
     permissions:
       contents: read # for actions/checkout
-      deployments: write
+    # Naming the environment is what grants the credentials below. They are
+    # environment secrets, never repository ones: a protection rule only gates
+    # jobs that name the environment, so scoping them there is what stops an
+    # edited workflow from reaching them.
     environment:
       name: ${{ inputs.environment }}
       url: ${{ inputs.url }}
     steps:
-      - uses: actions/checkout@v7
-      # `upload-artifact` roots the archive at the least common ancestor of the
-      # uploaded paths – `apps/` here – so restore it there, not at the
-      # workspace root. Otherwise each `dist` lands one level too high and
-      # Wrangler resolves `./dist` relative to apps/*/wrangler.jsonc to nothing.
-      - uses: actions/download-artifact@v8
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # This job holds deployment credentials; it has no use for a Git one.
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - run: bun install --frozen-lockfile
+
+      # Restored after `bun install`, whose lifecycle scripts could otherwise
+      # overwrite an already-verified `dist`.
+      #
+      # `upload-artifact` roots the archive at the least common ancestor of its
+      # paths – `apps/` here – so restore it there, not at the workspace root,
+      # or each `dist` lands a level too high and Wrangler resolves `./dist`
+      # relative to apps/*/wrangler.jsonc to nothing.
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: build
           path: apps
       # `apps/email/dist` is not deployed directly – the API worker imports
-      # `@repo/email`, whose package exports point there, so Wrangler fails to
-      # bundle `worker.ts` without it.
+      # `@repo/email`, whose exports point there, so `worker.ts` fails to bundle
+      # without it.
       - name: Verify build artifacts
         run: |
           test -d apps/email/dist
           test -d apps/web/dist
           test -d apps/app/dist
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      # Disabled in the starter kit. Enable after provisioning Cloudflare and
-      # configuring deploy credentials in each GitHub environment.
+
+      # Everything checkable before the first mutation, checked here: the
+      # migration below is the point of no return, and a missing credential or a
+      # worker that does not bundle should not surface after the schema moved.
       #
-      # Production uses the top-level Wrangler config, selected explicitly with
-      # an empty environment; staging is named. Wrangler rejects `--env production`.
-      # - name: Deploy workers
-      #   env:
-      #     # Account ID is not a secret, so it is a variable. Set it explicitly:
-      #     # a token with access to more than one account cannot infer which.
-      #     CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      #     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      #     DEPLOY_ENV: ${{ inputs.environment }}
-      #   run: |
-      #     if [[ "$DEPLOY_ENV" == "production" ]]; then
-      #       env_args=(--env "")
-      #     else
-      #       env_args=(--env "$DEPLOY_ENV")
-      #     fi
-      #     bun wrangler deploy --config apps/api/wrangler.jsonc "${env_args[@]}"
-      #     bun wrangler deploy --config apps/app/wrangler.jsonc "${env_args[@]}"
-      #     bun wrangler deploy --config apps/web/wrangler.jsonc "${env_args[@]}"
+      # Three steps rather than one because each needs strictly less than the
+      # last, and `env:` is what enforces it. As one step, every Wrangler
+      # process would inherit the database URL for no reason.
+      - name: Preflight – credentials
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+        run: |
+          # The account ID is a repository variable by default, and only moves
+          # to the environment when staging and production use different
+          # Cloudflare accounts – hence the separate message.
+          if [[ -z "$CLOUDFLARE_ACCOUNT_ID" ]]; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID is empty. Set it as a repository variable, or as a variable on the ${DEPLOY_ENV} environment if each environment uses its own Cloudflare account."
+            exit 1
+          fi
+          for name in CLOUDFLARE_API_TOKEN DATABASE_URL; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::${name} is empty. Set it as a secret on the ${DEPLOY_ENV} environment."
+              exit 1
+            fi
+          done
+
+      # Authentication, not authorisation: proves the token is valid and belongs
+      # to the target account, and `--json` is what makes an unauthenticated
+      # call exit non-zero rather than print a friendly message and pass. It
+      # cannot prove the token carries Workers Scripts Write – Cloudflare's
+      # **Edit Cloudflare Workers** template does.
+      - name: Preflight – Cloudflare authentication
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: bun wrangler whoami --account "$CLOUDFLARE_ACCOUNT_ID" --json > /dev/null
+
+      # `--dry-run` compiles each worker against its target environment without
+      # uploading or authenticating – hence no credentials in this step.
+      - name: Preflight – worker bundles
+        env:
+          DEPLOY_ENV: ${{ inputs.environment }}
+        run: |
+          # Production is the top-level config, selected with an empty
+          # environment; staging is named. Wrangler rejects `--env production`.
+          if [[ "$DEPLOY_ENV" == "production" ]]; then
+            env_args=(--env "")
+          else
+            env_args=(--env "$DEPLOY_ENV")
+          fi
+          for app in api app web; do
+            bun wrangler deploy --config "apps/${app}/wrangler.jsonc" "${env_args[@]}" --dry-run
+          done
+
+      # Migrations run before the workers, so new code never meets an old
+      # schema. The old workers keep serving against the migrated database until
+      # the next step replaces them, and a rollback restores workers without
+      # reverting the schema – so expand first (add, backfill, read both shapes)
+      # and contract in a later release.
+      #
+      # Use the unpooled connection string: migrations take DDL locks, and
+      # Hyperdrive is for the request path.
+      - name: Run database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+        run: |
+          # `drizzle.config.ts` fails closed for staging and production: it reads
+          # `.env.<environment>.local` and refuses a `DATABASE_URL` inherited
+          # from the shell, so a stale exported value cannot migrate the wrong
+          # database. The file exists for one command – unreadable to anyone
+          # else, removed however the step exits – and `unset` leaves it as the
+          # only place the migration can read the credential from.
+          env_file=".env.${DEPLOY_ENV}.local"
+          trap 'rm -f "$env_file"' EXIT
+          umask 077
+          printf 'DATABASE_URL=%s\n' "$DATABASE_URL" > "$env_file"
+          unset DATABASE_URL
+          bun run "db:migrate:${DEPLOY_ENV}"
+
+      # Order matters: a service binding resolves its target by name at deploy
+      # time, so `api` and `app` must exist before `web` binds to them. `web`
+      # also holds the only public route, so flipping it last moves user traffic
+      # after the workers behind it are new.
+      #
+      # That narrows the skew but cannot remove it, and does nothing for the
+      # browser – every user still running the SPA they loaded an hour ago keeps
+      # calling the new API. So API responses evolve like the schema: add the
+      # field, ship the clients that read it, drop the old shape later.
+      - name: Deploy workers
+        env:
+          # Set explicitly: a token with access to more than one account cannot
+          # infer which.
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+        run: |
+          # Recomputed rather than carried from the preflight: an empty `--env`
+          # selects production, so a value that went missing would deploy it.
+          if [[ "$DEPLOY_ENV" == "production" ]]; then
+            env_args=(--env "")
+          else
+            env_args=(--env "$DEPLOY_ENV")
+          fi
+          bun wrangler deploy --config apps/api/wrangler.jsonc "${env_args[@]}"
+          bun wrangler deploy --config apps/app/wrangler.jsonc "${env_args[@]}"
+          bun wrangler deploy --config apps/web/wrangler.jsonc "${env_args[@]}"

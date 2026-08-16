@@ -10,5 +10,11 @@
 *.tfvars
 *.tfvars.json
 
+# Saved plans from `terraform plan -out`. Against HCP these are a thin reference
+# to the remote run, but local execution writes the real plan, variables included.
+tfplan
+*.tfplan
+plan.txt
+
 crash.log
 crash.*.log

@@ -54,7 +54,7 @@ bun db:export:production
 
 ## Typical Workflow
 
-1. Update schema in `db/schema`.
+1. Update schema in `db/schema`, re-exporting any new file from `schema/index.ts` – that barrel is what Drizzle Kit reads.
 2. Generate a migration: `bun db:generate --name <migration-name>`.
 3. Apply locally: `bun db:migrate` (or `db:push` for schema sync).
 4. Validate in Drizzle Studio: `bun db:studio`.

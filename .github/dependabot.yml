@@ -1,5 +1,4 @@
-# Dependabot configuration for automated dependency updates
-# Creates weekly PRs with all dependency updates grouped together
+# Weekly grouped dependency updates.
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
@@ -14,8 +13,10 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
+    # `chore(deps): …`. The prefix has to be a type `pr-title.yml` accepts, or
+    # every Dependabot pull request opens with a failing check.
     commit-message:
-      prefix: "deps"
+      prefix: "chore"
       include: "scope"
     versioning-strategy: "increase-if-necessary"
     groups:
@@ -23,4 +24,24 @@ updates:
         patterns:
           - "*"
         # Allow security updates to be created separately
+        applies-to: version-updates
+
+  # Workflows pin actions to commit SHAs. Pins do not expire on their own, so
+  # this is what stops them ageing into unpatched versions: Dependabot rewrites
+  # the SHA and the trailing `# vX.Y.Z` comment together.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "UTC"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions:
+        patterns:
+          - "*"
         applies-to: version-updates

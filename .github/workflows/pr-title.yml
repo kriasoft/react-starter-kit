@@ -1,0 +1,49 @@
+name: PR Title
+
+# Checks the pull request title against Conventional Commits – not the commits
+# themselves, which nothing here lints. Under squash merge the title becomes the
+# commit title on `main`, which is a repository setting a clone does not
+# inherit; docs/deployment/ci-cd.md lists what to configure.
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+permissions:
+  pull-requests: read
+
+jobs:
+  # A required status check is matched by job name alone, ignoring which
+  # workflow produced it – so name it for what it checks, not "Validate".
+  validate:
+    name: "PR Title"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # `pull_request_target` runs the workflow definition from the base branch,
+      # which is how this check works on pull requests from forks and the mode
+      # the action documents for it. That trigger needs care: it is safe here
+      # because the job never checks out or runs the PR's code and its token is
+      # read-only. Both must stay true – a checkout of the head ref breaks them.
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # The action's own default, written out so a version bump cannot
+          # change the contribution rules silently. CONTRIBUTING.md points here,
+          # and dependabot.yml picks its commit prefixes from this list.
+          types: |
+            build
+            chore
+            ci
+            docs
+            feat
+            fix
+            perf
+            refactor
+            revert
+            style
+            test

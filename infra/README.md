@@ -75,6 +75,8 @@ Not the Version Control Workflow, tempting as that looks for a repository alread
 
 Check two more settings while you are there. **Execution Mode** must resolve to **Remote** – it defaults to the project's setting, and a project set to Local would leave HCP ignoring the workspace variables the next step adds. **Terraform Version** should be a constraint matching the roots, `~> 1.12`: a new workspace otherwise pins whichever release was current when you created it, and `required_version` can only reject that choice, never make it.
 
+Read that constraint carefully – `~>` lets the rightmost component increment, so `~> 1.12` means "the newest 1.x, at least 1.12", not "the 1.12 series". That is deliberate, and it is why `.github/workflows/*.yml` install Terraform with `>=1.12.0 <2.0.0`: the same range in the SemVer syntax the GitHub Action uses. Each side resolves it independently and may differ for a day after a release; neither can leave the range, so no ordinary release needs a coordinated bump – only raising the floor does. To pin the minor instead, mind the differing syntaxes: `~> 1.12.0` in the roots and the workspace, `~1.12.0` in the workflows.
+
 **3. Set the workspace's Terraform Working Directory.** In the workspace's **Settings → General**, set:
 
 | Workspace            | Terraform Working Directory |
@@ -94,7 +96,7 @@ The value is relative to `infra/`, the shared configuration directory uploaded b
 | `origin_connection_limit` | Terraform | no | _Optional._ Defaults to 20 |
 | `CLOUDFLARE_API_TOKEN` | Environment | **yes** | Token with Account → Hyperdrive → Edit |
 
-A variable set shared across both workspaces avoids entering the account ID and slug twice.
+With one Cloudflare account, a variable set shared across both workspaces avoids entering the account ID and slug twice. With separate accounts – the stronger isolation described in the [CI/CD docs](https://reactstarter.com/deployment/ci-cd) – keep `cloudflare_account_id` and `CLOUDFLARE_API_TOKEN` per workspace and share only what is genuinely common, such as `project_slug`.
 
 The **Kind** column is the difference between a default and a requirement. Terraform variables are defaults: Terraform forwards a local `TF_VAR_*` to the run and it [takes precedence over the workspace value](https://developer.hashicorp.com/terraform/cloud-docs/variables/managing-variables), so an exported `TF_VAR_project_slug` would propose renaming every resource. The remote plan shows that before anything is applied, and a priority variable set is what makes a value a caller cannot override. Environment variables other than `TF_VAR_*` never reach the run, so `CLOUDFLARE_API_TOKEN` can only come from the workspace.
 
@@ -124,17 +126,23 @@ bun infra:staging apply
 
 `terraform import` is the one exception. It runs locally rather than in HCP Terraform, so it cannot read the workspace variables and would need `TF_VAR_*` values and a Cloudflare token in your own shell. Adopt existing resources with an [`import` block](https://developer.hashicorp.com/terraform/language/import) in the root instead – that resolves during a normal remote `plan` and `apply`, with the credentials already configured.
 
-From CI, the same two steps are one workflow dispatched twice – **Infrastructure** in the Actions tab, both times from `main`:
+From CI, both steps are a single dispatch of **Infrastructure** in the Actions tab, from `main`:
 
-1. Dispatch with **Apply** off. This plans only.
-2. Read the plan in the HCP Terraform run it links to.
-3. Dispatch again with **Apply** on.
+1. Dispatch with **Apply** on.
+2. Read the plan, which the workflow prints to the run summary. Large plans are truncated there – the warning says so, and the HCP run has the rest.
+3. Approve the apply job. It applies that saved plan – not a freshly computed one.
 
-Both dispatches are restricted to `main`, plan included. A speculative plan sounds harmless, but HCP executes whatever configuration it is handed inside the workspace, alongside its variables and state – planning an unmerged branch means executing it in the production workspace's privileged run environment, which is why HashiCorp treats plan permission as equivalent to write. What you get before merging is `bun infra:check` in `ci.yml`, which needs no credentials.
+Leaving **Apply** off gives a plan-only run. The apply job is skipped either way when the plan reports no changes, so an unchanged environment never asks for a pointless approval.
 
-Restrict both environments to `main` under **Settings → Environments → Deployment branches and tags**, and store `TF_API_TOKEN` there as an _environment_ secret rather than a repository one. The check inside the workflow catches a mis-picked branch, but it cannot stop a determined one: a dispatch runs the workflow definition from the ref you select, so a branch can remove the check from its own copy. GitHub evaluates an environment's protection rules before the job starts, which is where the rule holds – and a branch that drops the `environment:` line to dodge it drops the credential with it, so long as the token is not also a repository secret.
+Both jobs are restricted to `main`, plan included – HCP executes the configuration inside the workspace, so planning an unmerged branch runs it against that workspace's real credentials and state. What you get before merging is `bun infra:check` in `ci.yml`, which needs no credentials.
 
-If you also configure required reviewers on those environments, they gate both dispatches. The apply dispatch computes its own plan and applies it without pausing, so it never applies the plan you read – `terraform plan` against HCP is speculative. If state or the target ref moved since the plan-only run, dispatch another plan-only run and read that before applying.
+The workflow uses two GitHub Environments per target: `infra-<environment>-plan` for the plan job and `infra-<environment>-apply` for the apply job. They are separate because protection rules gate any job that names an environment, so a shared environment would ask for approval before the plan exists – which is how the reviewer ends up approving a plan nobody has read.
+
+All four hold a secret named `TF_API_TOKEN`, but not the same token – a shared plan token, and one write token per workspace. Reviewer gates, where you configure them, belong on the apply environments; the default gates `infra-production-apply` and leaves staging ungated. Splitting the tokens is what makes that hold: the credential reachable before an approval cannot perform the apply. Given that a plan already executes the configuration, that is a boundary rather than a sandbox – but a structural one, not a matter of what this workflow happens to run. [Secrets](#secrets) covers the token topology.
+
+> **Check that the approval gate exists before relying on it.** Required reviewers are unavailable on several GitHub plans, and where they are missing the apply job does not pause – a dispatch with **Apply** on plans and applies in one go. [CI/CD](https://reactstarter.com/deployment/ci-cd#required-reviewers) has the availability matrix. Where the gate is absent, dispatch with **Apply** off and run `bun infra:production apply` from a trusted machine, which shows the plan and prompts before touching anything.
+
+Restrict all four environments to `main` under **Settings → Environments → Deployment branches and tags**, and store `TF_API_TOKEN` there as an _environment_ secret rather than a repository one. The check inside the workflow catches a mis-picked branch, but it cannot stop a determined one: a dispatch runs the workflow definition from the ref you select, so a branch can remove the check from its own copy. GitHub evaluates an environment's protection rules before the job starts, which is where the rule holds – and a branch that drops the `environment:` line to dodge it drops the credential with it, so long as the token is not also a repository secret.
 
 Then wire the IDs into the API worker:
 
@@ -154,13 +162,13 @@ Pass `--env` on every command, and pass the same one throughout: the flag select
 
 ## Secrets
 
-Three kinds, three homes. Keeping them straight is most of what goes wrong.
+Three homes, sorted by who reads the credential. Which one a secret belongs in is most of what goes wrong.
 
-| Kind | Example | Lives in |
+| Lives in | Read by | Example |
 | --- | --- | --- |
-| Terraform provider creds | `CLOUDFLARE_API_TOKEN` | HCP Terraform workspace variables |
-| Infrastructure creds | `database_url` | HCP Terraform workspace variables |
-| Application secrets | `BETTER_AUTH_SECRET`, `STRIPE_*` | `wrangler secret put` |
+| HCP Terraform workspace variables | Terraform, to create infrastructure | `CLOUDFLARE_API_TOKEN` (Hyperdrive scope), `database_url` |
+| `wrangler secret put` | The API worker, at runtime | `BETTER_AUTH_SECRET`, `STRIPE_*` |
+| GitHub environment secrets | CI, to deploy and to run Terraform | `CLOUDFLARE_API_TOKEN` (Workers scope), `DATABASE_URL`, `TF_API_TOKEN` |
 
 Application secrets never enter Terraform:
 
@@ -180,7 +188,19 @@ For the deploy token, use Cloudflare's [Edit Cloudflare Workers](https://develop
 
 Terraform's token stays narrow on purpose: it owns no workers, no routes and no DNS, so it needs none of those scopes.
 
-For the infrastructure workflow, CI needs a single credential and nothing else: `TF_API_TOKEN`, an HCP Terraform team token whose team holds **Write** access to both workspaces, stored as an environment secret on each. A team with only Plan access gets as far as the plan and then fails at apply. HCP Terraform Europe manages permissions with groups rather than teams – use a group token there. The workspace comes from the configuration, and no Cloudflare or database credentials are stored in GitHub for Terraform.
+For the infrastructure workflow, CI needs one kind of credential and nothing else: `TF_API_TOKEN`, an HCP Terraform team token, stored as an environment secret on each of the four environments. One secret name, three teams:
+
+| HCP team | Workspace access | Used by |
+| --- | --- | --- |
+| `ci-plan` | Plan on staging **and** production | both `-plan` environments |
+| `ci-staging-apply` | Write on staging only | `infra-staging-apply` |
+| `ci-production-apply` | Write on production only | `infra-production-apply` |
+
+The apply tokens are scoped per workspace on purpose. A single apply token would need Write on both, so `infra-staging-apply` – which has no reviewer – would be able to apply production, and the production gate would stop meaning anything. The plan token is shared because planning either workspace is already a legitimate dispatch, so it bypasses no gate.
+
+> **HCP Terraform Free has no team management** – it is available from Essentials up, and Free gives you only the owners team, whose token has owner permissions. That collapses all three identities into one. Free is still fine for remote state and workspaces: leave `TF_API_TOKEN` unset and run `bun infra:<environment> plan` and `apply` from a trusted machine. HCP Terraform Europe uses groups rather than teams, with the same topology.
+
+The workspace comes from the configuration, and no Cloudflare or database credentials are stored in GitHub for Terraform.
 
 Registering the Stripe webhook stays a manual dashboard step – it points at your public hostname, which Wrangler owns: `https://<your-domain>/api/auth/stripe/webhook`
 

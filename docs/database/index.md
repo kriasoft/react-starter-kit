@@ -15,7 +15,7 @@ db/
 └── index.ts            # Re-exports schema, DatabaseSchema and Database types
 ```
 
-Schema files are organized by domain – one file per entity group (e.g., `user.ts` contains the user, session, identity, and verification tables). All tables are re-exported from `schema/index.ts`.
+Schema files are organized by domain – one file per entity group (e.g., `user.ts` contains the user, session, identity, and verification tables). All tables are re-exported from `schema/index.ts`, and that barrel is the only file Drizzle Kit reads: a table missing from it is invisible to `bun db:generate`, which then reports no changes rather than an error.
 
 ## Connection Architecture
 
