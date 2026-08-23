@@ -23,6 +23,12 @@ emailOTP({
 
 OTP codes are stored in the `verification` table and automatically expire. After 3 failed attempts, the code is invalidated and the user must request a new one.
 
+::: warning Unverified accounts lose their password
+
+Proving control of the mailbox outranks anything set on an account that never confirmed its email. If someone signs up with a password, skips the verification email, then signs in with an OTP, Better Auth deletes that password and any linked social accounts, revokes existing sessions, and signs them in – they have to set a new password through reset. Verified accounts are untouched.
+
+:::
+
 ### Email Delivery
 
 OTP emails are sent via [React Email](https://react.email/) templates rendered to HTML + plain text, delivered through [Resend](https://resend.com/):

@@ -47,7 +47,8 @@ The auth-hint cookie is routing metadata, not authentication. A protected route 
 - [ ] Set `RESEND_EMAIL_FROM` to a sender on a verified domain. The default `onboarding@resend.dev` cannot deliver OTPs to normal users.
 - [ ] Set Google credentials together, Stripe's four required values together, and leave unused optional integrations unset.
 - [ ] Confirm `APP_ORIGIN`, Google callback URLs, Stripe webhook URLs, and service-binding targets all use the intended environment.
-- [ ] Apply reviewed migrations with `db:migrate:staging` or `db:migrate:production`; do not use `db:push` outside local development.
+- [ ] Apply reviewed migrations with `db:migrate:staging` or `db:migrate:production`. `db:push` already refuses a non-local database, so treat reaching for `ALLOW_REMOTE_DB_PUSH=1` as the exception it is.
+- [ ] Give Hyperdrive a [least-privilege database role](/database/#database-roles) rather than the owner credential, so a query-level bug cannot change the schema. `db/scripts/grant-app-role.sql` creates it and revokes `CONNECT` from `PUBLIC`.
 - [ ] Publish the legal pages your product needs. `BaseTemplate.tsx` already links `/privacy` and `/unsubscribe` from every email footer; neither exists in the starter. The auth form ships no terms notice for the same reason – add one once the documents are real.
 
 ### Edge controls

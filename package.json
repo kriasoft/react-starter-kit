@@ -1,11 +1,11 @@
 {
   "name": "@repo/root",
   "version": "0.0.0",
-  "packageManager": "bun@1.3.14",
+  "packageManager": "bun@1.4.0",
   "private": true,
   "type": "module",
   "engines": {
-    "bun": ">=1.3.0"
+    "bun": ">=1.4.0"
   },
   "workspaces": [
     "apps/*",
@@ -16,9 +16,12 @@
   "scripts": {
     "dev": "bun --filter @repo/web --filter @repo/api --filter @repo/app dev",
     "lint": "eslint --cache --report-unused-disable-directives .",
-    "test": "vitest",
+    "test": "bun --bun vitest",
+    "coverage": "vitest run --coverage",
     "typecheck": "tsc --build",
     "build": "bun --filter @repo/email --filter @repo/web --filter @repo/api --filter @repo/app build",
+    "deploy:staging": "bun scripts/deploy.ts staging",
+    "deploy:production": "bun scripts/deploy.ts production",
     "prepare": "husky",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
@@ -67,8 +70,9 @@
     "@types/eslint": "^9.6.1",
     "@typescript-eslint/eslint-plugin": "^8.67.0",
     "@typescript-eslint/parser": "^8.67.0",
+    "@vitest/coverage-v8": "~4.1.11",
     "@ws-kit/zod": "^0.10.2",
-    "eslint": "^10.8.1",
+    "eslint": "^10.9.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-import": "^2.32.0",
@@ -78,22 +82,22 @@
     "gh-pages": "^6.3.0",
     "globals": "^17.11.0",
     "graphql": "^17.0.2",
-    "happy-dom": "^20.11.2",
+    "happy-dom": "^20.11.6",
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
     "lint-staged": "^17.3.0",
-    "mermaid": "^11.16.1",
+    "mermaid": "^11.17.0",
     "prettier": "^3.9.6",
     "react": "^19.2.8",
     "srcpack": "^0.3.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.67.0",
-    "typescript-language-server": "^5.3.0",
-    "vite": "~8.2.1",
-    "vitepress": "2.0.0-alpha.19",
+    "typescript-language-server": "^6.0.0",
+    "vite": "~8.2.2",
+    "vitepress": "1.6.4",
     "vitepress-plugin-llms": "^1.13.5",
-    "vitest": "~4.1.10",
-    "wrangler": "^4.123.0"
+    "vitest": "~4.1.11",
+    "wrangler": "^4.125.0"
   },
   "prettier": {
     "printWidth": 80,

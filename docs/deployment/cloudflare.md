@@ -115,18 +115,22 @@ Only `BETTER_AUTH_SECRET` and `RESEND_API_KEY` are mandatory – the app cannot 
 Email templates must compile before the API worker bundles them. The root build script lets Bun order that workspace dependency while independent builds can run in parallel:
 
 ```bash
-# Build every deployable workspace
-bun run build          # Build all deployable workspaces
+# Build and deploy all three workers, in order
+bun deploy:staging
+bun deploy:production
 
-# Deploy each worker
+# Skip the build and deploy what is already in dist/
+bun deploy:staging --skip-build
+```
+
+`scripts/deploy.ts` builds, checks each `dist/` exists, then deploys `api` → `app` → `web`. CI calls the same script, so there is one deploy path rather than two that can drift. Production is Wrangler's top-level environment, selected by an empty `--env`; the script owns that mapping so nothing else has to remember that a missing value means production.
+
+The per-worker scripts stay for the cases the release path does not cover – redeploying one worker after a config change, or a dry run:
+
+```bash
+bun run build
 bun api:deploy --env=""
-bun app:deploy --env=""
-bun web:deploy --env=""
-
-# Or deploy to a specific environment
-bun wrangler deploy --config apps/api/wrangler.jsonc --env staging
-bun wrangler deploy --config apps/app/wrangler.jsonc --env staging
-bun wrangler deploy --config apps/web/wrangler.jsonc --env staging
+bun wrangler deploy --config apps/web/wrangler.jsonc --env staging --dry-run
 ```
 
 ## Custom Domain

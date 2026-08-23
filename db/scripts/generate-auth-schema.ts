@@ -54,19 +54,35 @@ async function generateAuthSchema() {
         type: field.type,
         required: field.required || false,
         unique: field.unique || false,
+        // Whether Better Auth queries this column often enough to want an index
+        // of its own. Composite indexes come from `indexes` below.
+        index: field.index || false,
       };
+
+      // A function default is generated per row and cannot be a column default,
+      // so only literals are worth comparing against the schema.
+      if (field.defaultValue !== undefined) {
+        processedFields[fieldKey].defaultValue =
+          typeof field.defaultValue === "function"
+            ? "<generated>"
+            : field.defaultValue;
+      }
 
       // Add references if they exist
       if (field.references) {
         processedFields[fieldKey].references = {
           model: field.references.model,
           field: field.references.field,
+          onDelete: field.references.onDelete ?? null,
         };
       }
     }
 
     (schemaOutput.tables as Record<string, unknown>)[tableKey] = {
       modelName: table.modelName,
+      // Table-level indexes a plugin declares across several fields – the
+      // account identity key is one, so this is not optional detail.
+      indexes: table.indexes ?? [],
       fields: processedFields,
     };
   }

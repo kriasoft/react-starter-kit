@@ -46,6 +46,30 @@ In development, Wrangler's `getPlatformProxy()` emulates the Hyperdrive bindings
 
 :::
 
+## Database Roles
+
+The starter connects with one role, which is fine locally and worth splitting before production. Two roles per environment, with different jobs:
+
+| Role | Used by | Privileges |
+| --- | --- | --- |
+| the database owner | Drizzle Kit (`DATABASE_URL`) | Owns every table; applies migrations |
+| `app_{environment}` | Hyperdrive, so every Worker query | `SELECT`/`INSERT`/`UPDATE`/`DELETE` only |
+
+The app role holds no DDL privileges – it cannot create, alter or drop anything, temporary tables included – so the schema only ever changes through a migration run with the owner credential. A SQL-injection bug that reaches the database can still read and write rows, but it cannot drop a table or add one to hide in.
+
+`CONNECT` is revoked from `PUBLIC` on the database as well. Postgres grants it to everyone by default, so on a Neon project holding both environments a leaked staging credential could otherwise open the production database.
+
+`db/scripts/grant-app-role.sql` creates the role and its grants, including the default privileges that cover tables future migrations add. It is idempotent, covers schema `public` only, and never rotates an existing password:
+
+```bash
+psql "$DATABASE_URL" -f db/scripts/grant-app-role.sql \
+  -v role=app_staging -v password='...'
+```
+
+Run it as the owner: `ALTER DEFAULT PRIVILEGES` binds to whoever runs it, so any other runner leaves the next migration's tables unreachable by the app. The script checks that rather than trusting it, because Postgres answers a `REVOKE` the caller is not entitled to make with a warning and a successful exit – the wrong runner would otherwise report a role that looks provisioned with none of the boundary around it. It also refuses a role name that already exists with privileges of its own, since it only ever grants.
+
+The app connection string is what Hyperdrive gets – see [Production Database](/deployment/production-database) – while `DATABASE_URL` keeps the owner credential for migrations.
+
 ## Commands
 
 Run from the repo root. Some take a `:staging` or `:production` suffix to target another environment – see [Environment Targeting](#environment-targeting) for which, and why the rest do not.
@@ -81,6 +105,14 @@ Not every command has `:staging` and `:production` variants, by design:
 | `db:push` | No | Syncs schema without a migration file – prototyping only, never deployed |
 
 The `DATABASE_URL` variable must be a valid `postgres://` or `postgresql://` connection string.
+
+`db:push` is enforced local, not merely documented as local. `db/scripts/guard-push.ts` resolves the same `DATABASE_URL` the command would use and refuses any host outside loopback, because `push` infers a schema change and applies it in place – against a database holding real rows that is a migration nobody reviewed, and it will drop a column, and its data, to make the shapes agree. The committed `.env` points at `localhost`, but the moment `.env.local` carries a hosted branch the dangerous thing becomes the easy thing.
+
+```bash
+ALLOW_REMOTE_DB_PUSH=1 bun db:push
+```
+
+That is the deliberate way past it, for a remote database that is genuinely disposable. Reaching for it by habit means it has stopped being a control.
 
 There is deliberately no `test` environment. Tests run against [PGlite](/testing#database-tests) in-process, so they never resolve a connection string – and `ENVIRONMENT=test` fails loudly rather than falling through to whichever database `.env.local` points at.
 

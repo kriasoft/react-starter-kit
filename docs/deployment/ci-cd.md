@@ -112,7 +112,7 @@ The bundle check is `wrangler deploy --dry-run`, which compiles each worker agai
 
 That is authentication, not authorization: `whoami` cannot show whether the token carries `Workers Scripts Write`, so a valid token with too few permissions still fails at the deploy. Cloudflare's **Edit Cloudflare Workers** template grants what the deploy needs. The preflight never promises the deploys will succeed, only that they will not fail for a reason it could have found.
 
-Both Wrangler steps derive their `--env` argument independently rather than passing one along, because the two environments are not spelled alike and the failure is silent:
+The preflight derives its `--env` argument itself rather than taking one from the deploy step, because the two environments are not spelled alike and the failure is silent:
 
 ```bash
 # Production is the top-level config, selected with an empty environment;
@@ -124,7 +124,9 @@ else
 fi
 ```
 
-Deriving it twice is deliberate: an empty `--env` selects production, so a value that went missing in transit would deploy it.
+Deriving it twice is deliberate: an empty `--env` selects production, so a value that went missing in transit would deploy it. The deploy step gets the same guarantee from the other side – it runs `bun scripts/deploy.ts "$DEPLOY_ENV" --skip-build`, and that script rejects anything other than `staging` or `production` before it maps production to the empty `--env`. A lost value fails the run rather than reaching Wrangler as a blank environment.
+
+Calling the script instead of three inline `wrangler deploy` lines is what makes `bun deploy:production` from a laptop and a release from Actions the same release: same order, same environment mapping, one place to change either. `--skip-build` because the artifact restored above is the build CI already verified.
 
 The migration step writes the secret to a file rather than exporting it:
 
@@ -224,7 +226,7 @@ If you do use two accounts, move `CLOUDFLARE_ACCOUNT_ID` from a repository varia
 
 ::: warning
 
-Private repositories need Pro, Team or Enterprise for environments at all – see the matrix under [Required Reviewers](#required-reviewers). Without them there is no boundary to build, so do not fall back to repository secrets: run migrations and the `*:deploy` scripts from a trusted machine instead.
+Private repositories need Pro, Team or Enterprise for environments at all – see the matrix under [Required Reviewers](#required-reviewers). Without them there is no boundary to build, so do not fall back to repository secrets: run `bun db:migrate:production` and `bun deploy:production` from a trusted machine instead. That is the same script this workflow calls, so a hand-run release still deploys in the same order.
 
 :::
 

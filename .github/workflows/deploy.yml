@@ -64,6 +64,10 @@ jobs:
       # `apps/email/dist` is not deployed directly – the API worker imports
       # `@repo/email`, whose exports point there, so `worker.ts` fails to bundle
       # without it.
+      #
+      # `scripts/deploy.ts` checks the same three, and this stays anyway: that
+      # check runs after the migration, and a restore that silently dropped a
+      # `dist` should fail before the point of no return, not after it.
       - name: Verify build artifacts
         run: |
           test -d apps/email/dist
@@ -168,14 +172,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           DEPLOY_ENV: ${{ inputs.environment }}
-        run: |
-          # Recomputed rather than carried from the preflight: an empty `--env`
-          # selects production, so a value that went missing would deploy it.
-          if [[ "$DEPLOY_ENV" == "production" ]]; then
-            env_args=(--env "")
-          else
-            env_args=(--env "$DEPLOY_ENV")
-          fi
-          bun wrangler deploy --config apps/api/wrangler.jsonc "${env_args[@]}"
-          bun wrangler deploy --config apps/app/wrangler.jsonc "${env_args[@]}"
-          bun wrangler deploy --config apps/web/wrangler.jsonc "${env_args[@]}"
+        # `bun deploy:{staging,production}` runs the same script locally, so a
+        # release from a laptop and one from CI cannot drift in order or in
+        # environment selection. It maps production to Wrangler's empty `--env`
+        # itself and rejects any other environment name outright, so a value
+        # lost in transit fails the run rather than deploying production.
+        # `--skip-build` because the restored artifact is the verified build.
+        run: bun scripts/deploy.ts "$DEPLOY_ENV" --skip-build

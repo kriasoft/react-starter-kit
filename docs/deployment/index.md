@@ -59,12 +59,12 @@ Stop unless every command succeeded and `whoami` reports the account you meant. 
 # Point of no return
 bun db:migrate:production
 
-bun api:deploy --env=""
-bun app:deploy --env=""
-bun web:deploy --env=""
+bun deploy:production --skip-build
 ```
 
-The order matters for the same reason it does in CI: migrations run against workers that are still the old ones, so a schema change has to be [additive](/deployment/ci-cd#release-order) until the new workers are live.
+`bun deploy:{staging,production}` is the same script CI runs, so a release from a laptop and one from Actions cannot disagree about the order or about which environment they hit. It maps production to Wrangler's empty `--env` itself and refuses any name that is not `staging` or `production`, which is the part worth not retyping: an empty `--env` is production, so a value that goes missing deploys it. `--skip-build` reuses the build the preflight above already verified; without the flag it builds first.
+
+The order matters for the same reason it does in CI: migrations run against workers that are still the old ones, so a schema change has to be [additive](/deployment/ci-cd#release-order) until the new workers are live. Deploying one worker at a time is not atomic – a failure partway leaves some workers new and some old, which the same additive rule is what makes survivable.
 
 ## Section Pages
 
