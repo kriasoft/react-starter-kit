@@ -54,7 +54,7 @@ Each app deploys independently to Cloudflare Workers. The web worker routes `/ap
 
 ## Prerequisites
 
-- [Bun](https://bun.sh/) v1.3+ (replaces Node.js and npm)
+- [Bun](https://bun.sh/) v1.4+ (replaces Node.js and npm)
 - [VS Code](https://code.visualstudio.com/) with our [recommended extensions](.vscode/extensions.json)
 - [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) browser extension (recommended)
 - [Cloudflare account](https://dash.cloudflare.com/sign-up) for deployment
@@ -172,14 +172,12 @@ bun db:migrate:production   # reads .env.production.local, and only that file
 ### 4. Build and Deploy
 
 ```bash
-# Build every deployable workspace; Bun orders workspace dependencies
-bun run build      # Build all deployable workspaces
-
-# Deploy service-binding targets before the web router
-bun api:deploy --env=""
-bun app:deploy --env=""
-bun web:deploy --env=""
+# Builds, then deploys api -> app -> web (service-binding targets first)
+bun deploy:staging
+bun deploy:production
 ```
+
+CI runs the same script, so a release from your machine and one from GitHub Actions cannot drift.
 
 ## Backers
 

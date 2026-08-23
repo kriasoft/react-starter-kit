@@ -36,6 +36,16 @@ export default defineConfig(
     languageOptions: {
       parser: tsParser,
     },
+    rules: {
+      // `const { password, ...rest } = user` is how a field is dropped from a
+      // response, and naming the field is the point of it. Without this the
+      // idiom is a lint error and the alternatives are worse: a disable
+      // comment, or rebuilding the object field by field.
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { ignoreRestSiblings: true },
+      ],
+    },
   },
 
   // Node.js environment (servers, scripts, config files)

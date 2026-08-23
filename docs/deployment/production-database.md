@@ -28,6 +28,8 @@ Terraform sets both values explicitly rather than inheriting them, so the window
 
 Give Hyperdrive Neon's **unpooled** connection string – the host without `-pooler`. Hyperdrive is itself the pool; Neon's runs in transaction mode, which breaks the prepared statements Hyperdrive caches on, and adds a second layer competing for the same connection budget. Both configurations open up to `origin_connection_limit` connections each, so the database must allow at least twice that.
 
+Use the [least-privilege app role](/database/#database-roles) in that string, not the owner. Hyperdrive holds the credential every Worker query runs under, and the app has no reason to be able to alter the schema; migrations keep the owner credential in `DATABASE_URL`.
+
 Then copy the IDs into `apps/api/wrangler.jsonc` for the matching environment:
 
 ```bash

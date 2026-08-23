@@ -12,7 +12,7 @@
 
 ## Tech Stack
 
-- **Toolchain:** Bun >=1.3.0 (package manager, scripts, local API server), TypeScript 6.0, ESM (`"type": "module"`)
+- **Toolchain:** Bun >=1.4.0 (package manager, scripts, local API server), TypeScript 6.0, ESM (`"type": "module"`)
 - **Production runtime:** Cloudflare Workers (workerd) – not Bun. Code that ships must run on Workers APIs.
 - **Frontend:** React 19, TanStack Router, TanStack Query, Jotai, shadcn/ui (new-york), Tailwind CSS v4
 - **Backend:** Hono, tRPC 11, Better Auth (email OTP, passkey, Google OAuth, organizations)
@@ -31,11 +31,12 @@ bun lint                       # ESLint with cache
 bun typecheck                  # tsc --build (builds apps/email for its types)
 bun infra:check                # Terraform fmt + validate, no credentials or state
 bun ui:add <component>         # Add shadcn/ui component to packages/ui
+bun deploy:{staging,production} # Build and deploy api → app → web; no migrations
 
 # Per-app: bun {web,app,api}:{dev,build,deploy}; test for app/api, check for web
 # Database: bun db:{push,generate,migrate,studio,seed,export}
 #   :staging / :production on migrate, studio, export; seed stops at :staging;
-#   push and generate are local-only
+#   generate is local-only, and push refuses a non-local database
 ```
 
 ## Verification

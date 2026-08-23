@@ -16,7 +16,7 @@ Before starting work on a significant change, open an issue to discuss your prop
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) >= 1.3.0
+- [Bun](https://bun.sh) >= 1.4.0
 - [Node.js](https://nodejs.org) >= 20 (for some tooling)
 - [Git](https://git-scm.com)
 

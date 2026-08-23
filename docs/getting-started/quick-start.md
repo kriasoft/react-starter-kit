@@ -16,7 +16,7 @@ cd my-app && bun install && bun dev
 
 ## Prerequisites
 
-- **[Bun](https://bun.sh)** 1.3.0 or later
+- **[Bun](https://bun.sh)** 1.4.0 or later
 - A **[Cloudflare](https://dash.cloudflare.com/sign-up)** account (free tier works)
 
 ::: info

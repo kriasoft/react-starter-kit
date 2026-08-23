@@ -44,11 +44,16 @@ bun run test --project @repo/api   # API tests only
 bun run test --project @repo/app   # Frontend tests only
 bun run test --project @repo/db    # Schema tests only
 bun run test billing               # Filter by filename
+bun run coverage                   # Coverage report (single run)
 ```
+
+Coverage uses the [V8 provider](https://vitest.dev/guide/coverage), printing a table and writing HTML to gitignored `coverage/`. The totals count every source file matched by `coverage.include`, not only the ones a test imported, so an untested module pulls the number down instead of disappearing from it.
 
 ::: warning
 
 Use `bun run test`, not `bun test`. The latter invokes Bun's test runner instead of the root Vitest script, so it ignores the Happy DOM environment and `vitest.setup.ts`; DOM-dependent frontend tests fail with `document is not defined`. The `bun api:test` and `bun app:test` shorthands are safe because both names resolve to package scripts.
+
+The script itself is `bun --bun vitest` – still Vitest, with `--bun` only choosing the faster runtime to run it on. `bun run coverage` is the exception and runs on Node, because merging v8 coverage for this suite overflows Bun's stack.
 
 Only the root, `apps/api`, `apps/app` and `db` define a `test` script. In a workspace that does not, `bun run test` may resolve a system command named `test` instead of reporting a missing script.
 

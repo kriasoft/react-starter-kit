@@ -14,7 +14,7 @@
     "migrate": "bun --bun drizzle-kit migrate",
     "migrate:staging": "ENVIRONMENT=staging bun --bun drizzle-kit migrate",
     "migrate:production": "ENVIRONMENT=production bun --bun drizzle-kit migrate",
-    "push": "bun --bun drizzle-kit push",
+    "push": "bun scripts/guard-push.ts && bun --bun drizzle-kit push",
     "studio": "bun --bun drizzle-kit studio",
     "studio:staging": "ENVIRONMENT=staging bun --bun drizzle-kit studio",
     "studio:production": "ENVIRONMENT=production bun --bun drizzle-kit studio",
@@ -27,23 +27,23 @@
     "up": "bun --bun drizzle-kit up",
     "check": "bun --bun drizzle-kit check",
     "drop": "bun --bun drizzle-kit drop",
-    "test": "vitest",
+    "test": "bun --bun vitest",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "drizzle-orm": "^0.45.2"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.5",
+    "@electric-sql/pglite": "^0.5.7",
     "@repo/typescript-config": "workspace:*",
-    "@types/bun": "^1.3.14",
+    "@types/bun": "^1.4.0",
     "@types/node": "^26.2.0",
-    "better-auth": "^1.6.29",
+    "better-auth": "^1.7.1",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
     "typescript": "~6.0.3",
-    "vitest": "~4.1.10"
+    "vitest": "~4.1.11"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^3.3.0",

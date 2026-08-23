@@ -78,6 +78,7 @@ describe("cascading deletes", () => {
       .values({ userId: owner.id, organizationId: org.id, role: "owner" });
     await db.insert(identity).values({
       userId: owner.id,
+      issuer: "https://accounts.google.com",
       providerId: "google",
       accountId: "google-1",
     });
@@ -188,17 +189,28 @@ describe("uniqueness", () => {
     });
   });
 
-  it("rejects a second identity for the same provider account", async () => {
+  // Better Auth keys an identity on (issuer, accountId), so the same subject
+  // from one issuer cannot end up on two users – whatever the local provider
+  // configuration that produced the row was called.
+  it("rejects a second identity for the same issuer account", async () => {
     const first = await insertUser("first@example.com");
     const second = await insertUser("second@example.com");
-    const values = { providerId: "google", accountId: "google-1" };
+    const values = {
+      issuer: "https://accounts.google.com",
+      providerId: "google",
+      accountId: "google-1",
+    };
 
     await db.insert(identity).values({ ...values, userId: first.id });
 
     await expect(
-      db.insert(identity).values({ ...values, userId: second.id }),
+      db.insert(identity).values({
+        ...values,
+        providerId: "google-workspace",
+        userId: second.id,
+      }),
     ).rejects.toMatchObject({
-      cause: { constraint: "identity_provider_account_unique" },
+      cause: { constraint: "identity_issuer_account_unique" },
     });
   });
 

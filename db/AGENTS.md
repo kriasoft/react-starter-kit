@@ -17,7 +17,7 @@
 ## Indexes and Constraints
 
 - Every foreign key column gets an index: `{table}_{column}_idx`.
-- Composite uniques: `member(userId, organizationId)`, `invitation(organizationId, email)`, `identity(providerId, accountId)`. The invitation unique is a starter limitation: Better Auth creates a new row for a later invitation, so remove the constraint before supporting re-invites after acceptance, rejection, or cancellation.
+- Composite uniques: `member(userId, organizationId)`, `invitation(organizationId, email)`, `identity(issuer, accountId)`. Better Auth keys an identity on `(issuer, accountId)`, not on `providerId`, which is only the local provider configuration. The invitation unique is a starter limitation: Better Auth creates a new row for a later invitation, so remove the constraint before supporting re-invites after acceptance, rejection, or cancellation.
 - `session.activeOrganizationId` has an index but no FK constraint (Better Auth design).
 - All foreign keys use `onDelete: "cascade"`.
 
@@ -36,4 +36,6 @@
 
 - `ENVIRONMENT` overrides `NODE_ENV` for env file selection. Database scripts use `production`, `staging`, and `dev`; the API runtime uses `production`, `staging`, and `development`.
 - `migrate`, `studio` and `export` have `:staging` / `:production` variants; `seed` stops at `:staging`; `generate` and `push` have none.
+- **`push` is enforced local, not merely documented as local.** `scripts/guard-push.ts` resolves the same `DATABASE_URL` the command would use and refuses a non-local host; `ALLOW_REMOTE_DB_PUSH=1` is the deliberate way past it. Reshaping in place is an unreviewed migration that can drop a column and its data.
+- `scripts/grant-app-role.sql` creates the least-privilege role Hyperdrive should use in staging and production. It is documentation-and-tooling only – nothing in the repo runs it.
 - Development loads `.env.{envName}.local` → `.env.local` → `.env`, first value wins. Staging and production load only `.env.{envName}.local`, override exported values, and throw if it is absent.

@@ -89,6 +89,11 @@ export type NewSession = typeof session.$inferInsert;
 /**
  * Authentication identities: OAuth provider accounts and password credentials.
  * Matches to the `account` table in Better Auth.
+ *
+ * Better Auth keys an identity on `(issuer, accountId)`, never on `providerId`,
+ * which names only the local provider configuration. `issuer` is the provider's
+ * published OIDC issuer, or a synthetic `local:credential` or
+ * `local:oauth:<providerId>` where it publishes none.
  */
 export const identity = pgTable(
   "identity",
@@ -96,6 +101,7 @@ export const identity = pgTable(
     id: text()
       .primaryKey()
       .$defaultFn(() => generateAuthId("account")),
+    issuer: text().notNull(),
     accountId: text().notNull(),
     providerId: text().notNull(),
     userId: text()
@@ -117,10 +123,7 @@ export const identity = pgTable(
       .notNull(),
   },
   (table) => [
-    unique("identity_provider_account_unique").on(
-      table.providerId,
-      table.accountId,
-    ),
+    unique("identity_issuer_account_unique").on(table.issuer, table.accountId),
     index("identity_user_id_idx").on(table.userId),
   ],
 );
