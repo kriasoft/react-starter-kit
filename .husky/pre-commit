@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
 set -e
 
+# Staged files only. Not for speed – Oxlint and Oxfmt would check the whole
+# tree in seconds – but because Git commits the index: checking the working
+# tree would pass a partially staged file on the strength of edits that are
+# not being committed, and fail on edits that are.
 bunx lint-staged

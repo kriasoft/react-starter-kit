@@ -71,7 +71,7 @@ The auth-hint cookie is routing metadata, not authentication. A protected route 
 Run the repository checks before deployment:
 
 ```bash
-bun prettier --check .
+bun run format:check
 bun lint
 bun typecheck
 bun run test -- --run

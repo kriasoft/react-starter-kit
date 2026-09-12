@@ -1,0 +1,56 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+
+  // `correctness` only. `suspicious` catches real bugs too, but a starter kit
+  // owes downstream projects a narrow, predictable baseline they can widen,
+  // not every heuristic Oxc classifies below `correctness`.
+  "categories": { "correctness": "error" },
+
+  "plugins": [
+    "eslint",
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import",
+    "react",
+    "jsx-a11y"
+  ],
+
+  "rules": {
+    // React 19's automatic JSX runtime: no component imports `React` itself.
+    "react/react-in-jsx-scope": "off",
+
+    // Not in `correctness`, but a violation is a bug by definition.
+    "react/rules-of-hooks": "error",
+
+    // `pedantic` in Oxlint, but these two rules are what holds the line
+    // AGENTS.md draws on precise types.
+    "typescript/no-explicit-any": "error",
+    "typescript/ban-ts-comment": "error",
+
+    // Every workspace is "type": "module" and addresses its own files with
+    // subpath imports, so a `require()` is not a style choice but a break
+    // with the module system. Oxlint files this under `restriction`.
+    "typescript/no-require-imports": "error",
+
+    "no-unused-vars": [
+      "error",
+      {
+        // `const { password, ...rest } = user` is how a field is dropped from
+        // a response, and naming the field is the point. The alternatives are
+        // a disable comment or rebuilding the object field by field.
+        "ignoreRestSiblings": true,
+        // A leading underscore is the conventional "deliberately unused",
+        // and the only way to keep a positional `infer` or callback argument.
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ]
+  },
+
+  // .gitignore is read automatically, so only tracked files belong here.
+  // routeTree.gen.ts is written by the TanStack Router plugin and carries
+  // `@ts-nocheck`; linting it reports on code nobody can edit.
+  "ignorePatterns": ["**/*.gen.ts"]
+}

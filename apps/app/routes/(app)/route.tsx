@@ -1,11 +1,11 @@
-import { AuthErrorBoundary } from "@/components/auth";
-import { Layout } from "@/components/layout";
+import { AuthErrorBoundary } from "#components/auth";
+import { Layout } from "#components/layout";
 import {
   getCachedSession,
   isValidSession,
   sessionQueryOptions,
   useSessionQuery,
-} from "@/lib/queries/session";
+} from "#lib/queries/session";
 import {
   createFileRoute,
   Outlet,

@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  // Everything else is an Oxfmt default; only the deltas belong here.
+  "printWidth": 80,
+  // .gitignore is read automatically. These are tracked files that are
+  // generated or machine-owned, so formatting them only creates diff noise.
+  "ignorePatterns": ["**/*.gen.ts", "bun.lock"],
+  "overrides": [
+    {
+      // Prose stays on one line per paragraph; structure comes from headings,
+      // lists and paragraphs. Re-wrapping would churn every edited sentence.
+      "files": ["**/*.md"],
+      "options": { "proseWrap": "never" }
+    },
+    {
+      // .json and .jsonc hold the same kind of configuration here and differ
+      // only in tolerating comments. Without this they would also differ in
+      // trailing commas, since strict JSON cannot take one.
+      "files": ["**/*.jsonc"],
+      "options": { "trailingComma": "none" }
+    }
+  ]
+}

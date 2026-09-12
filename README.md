@@ -15,7 +15,7 @@ A full-stack monorepo template for building SaaS applications with React 19, tRP
 - **Auth + billing included** – Better Auth with email OTP, passkey, Google OAuth, organizations, and Stripe subscriptions
 - **Modern React** – React 19, TanStack Router (file-based), TanStack Query, Jotai, Tailwind CSS v4, shadcn/ui
 - **Database ready** – Drizzle ORM with Neon PostgreSQL, migrations, and seed data
-- **Fast DX** – Bun toolchain, Vite, Vitest, ESLint, Prettier, and pre-configured VS Code settings
+- **Fast DX** – Bun toolchain, Vite, Vitest, Oxlint, Oxfmt, and pre-configured VS Code settings
 
 React Starter Kit is proudly supported by these amazing sponsors:
 
@@ -30,7 +30,7 @@ React Starter Kit is proudly supported by these amazing sponsors:
 | **Marketing** | [Astro](https://astro.build/) |
 | **Backend** | [Hono](https://hono.dev/), [tRPC](https://trpc.io/), [Better Auth](https://www.better-auth.com/), [Stripe](https://stripe.com/) |
 | **Database** | [Drizzle ORM](https://orm.drizzle.team/), [Neon PostgreSQL](https://get.neon.com/HD157BR) |
-| **Toolchain** | [Bun](https://bun.sh/), [TypeScript](https://www.typescriptlang.org/) 6.0, [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/) |
+| **Toolchain** | [Bun](https://bun.sh/), [TypeScript](https://www.typescriptlang.org/) 7.0, [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), [Oxlint](https://oxc.rs/docs/guide/usage/linter), [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) |
 
 ## Monorepo Architecture
 

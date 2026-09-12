@@ -4,7 +4,7 @@ shadcn/ui component library (new-york style, Radix primitives, Tailwind v4). Con
 
 - Only generic primitives belong here. If a component imports a route, a query, or the session, it belongs in `apps/app/components/` instead.
 - Nothing here imports application or domain code (`apps/`, `db/`). Consumers still have to supply Tailwind `@source` entries and the theme tokens.
-- Imports inside this package go through Node subpath imports — `#lib/utils`, `#components/toggle` — declared in `package.json#imports` and mirrored by the `components.json` aliases, so the CLI generates them natively. They resolve against _this_ package from every workspace; a `@/` alias would resolve through the consuming app instead and break any consumer without a matching file. Requires `moduleResolution: "bundler"`, which `packages/typescript-config/base.jsonc` already sets.
+- Imports inside this package go through Node subpath imports — `#lib/utils`, `#components/toggle` — declared in `package.json#imports` and mirrored by the `components.json` aliases, so the CLI generates them natively. They resolve against _this_ package from every workspace, so a consumer needs no matching file of its own. Requires `moduleResolution: "bundler"`, which `packages/typescript-config/base.jsonc` already sets.
 - `index.ts` exports the top-level primitives in `components/`. Nested files are implementation details — promote one deliberately if it should be public.
 
 - `scripts/` is intentionally outside the tsconfig `include`. These are Bun CLI tools, while the library's declaration build uses the browser-only React preset (`types: ["vite/client"]`). Including them would require Bun/Node types and emit declarations for tooling. Both commands hit the network and overwrite files, so smoke-test changes on a single component (`bun ui:update button`).
@@ -15,10 +15,10 @@ shadcn/ui component library (new-york style, Radix primitives, Tailwind v4). Con
 - Both run `scripts/postprocess.ts` afterwards: it strips `"use client"`, regenerates `index.ts`, and formats. `index.ts` is generated; add components with the CLI, not by editing it.
 - Components import primitives from the unified `radix-ui` package, not the per-primitive `@radix-ui/react-*` ones. The CLI adds whatever a component needs; review and commit the resulting `package.json` and `bun.lock` changes.
 - `bun ui:update` re-fetches every installed component in one `shadcn add` call, overwriting in place. Review `git diff` before committing; local edits are lost. Pass names (`bun ui:update button card`) to narrow it; unknown names are rejected rather than silently added, though a named component still pulls its registry dependencies.
-- Registry output is not uniform — read what it generated. Postprocessing is mechanical; API changes still need review. `packages/ui` lints with `--max-warnings 0`, so convert React 18 patterns before committing:
-  - `<Context.Provider value={x}>` → `<Context value={x}>` (`@eslint-react/no-context-provider`)
-  - `React.useContext(C)` → `React.use(C)` (`@eslint-react/no-use-context`)
-  - `React.ElementRef<T>` → `React.ComponentRef<T>` — `ElementRef` is a deprecated alias in `@types/react` 19. ESLint does not flag it; `bun --cwd apps/web check` reports it as a hint.
+- Registry output is not uniform — read what it generated. Postprocessing is mechanical; API changes still need review. Convert React 18 patterns before committing — no lint rule covers any of these, so they are a review step:
+  - `<Context.Provider value={x}>` → `<Context value={x}>`
+  - `React.useContext(C)` → `React.use(C)`
+  - `React.ElementRef<T>` → `React.ComponentRef<T>` — `ElementRef` is a deprecated alias in `@types/react` 19. `bun --cwd apps/web check` reports it as a hint.
 - `components.json` needs `tailwind.config: ""`. That empty string is how the CLI detects Tailwind v4; without it the registry silently serves the v3-era components (`forwardRef`, no `data-slot`) into a v4 project.
 
 ## Styling

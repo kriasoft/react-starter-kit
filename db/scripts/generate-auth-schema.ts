@@ -80,8 +80,7 @@ async function generateAuthSchema() {
 
     (schemaOutput.tables as Record<string, unknown>)[tableKey] = {
       modelName: table.modelName,
-      // Table-level indexes a plugin declares across several fields – the
-      // account identity key is one, so this is not optional detail.
+      // Table-level indexes a plugin declares across several fields.
       indexes: table.indexes ?? [],
       fields: processedFields,
     };

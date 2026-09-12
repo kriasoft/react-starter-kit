@@ -11,7 +11,7 @@ There are two homes for components, and the split matters:
 | What | shadcn/ui primitives – `Button`, `Card` | Product parts – `AuthForm`, `UserMenu` |
 | Knows about | React, Radix, and styling utilities | Routes, queries, session, product rules |
 | Maintained by | The shadcn CLI (`bun ui:add`) | You |
-| Imported from | `@repo/ui` | `@/components/...` |
+| Imported from | `@repo/ui` | `#components/...` |
 
 A component belongs in `packages/ui` only if it would still make sense in a different app. Anything that reaches for a route, a query, or the session belongs in `apps/app/components`.
 
@@ -36,7 +36,7 @@ Postprocessing strips the `"use client"` directive, regenerates `index.ts`, and 
 
 ::: warning
 
-Review what the CLI generates. `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Postprocessing is mechanical; it does not touch component APIs. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which this project's ESLint config rejects in favour of the React 19 forms (`<Context>` and `use()`).
+Review what the CLI generates. `bun ui:update` overwrites files in place, so local edits are lost – check `git diff` before committing. Postprocessing is mechanical; it does not touch component APIs. Registry output isn't uniform either: some components still emit `Context.Provider` and `useContext`, which should be converted to the React 19 forms (`<Context>` and `use()`). No lint rule catches this, so it is a review step.
 
 :::
 
@@ -48,7 +48,7 @@ packages/ui/
 │   ├── button.tsx
 │   ├── card.tsx
 │   └── ...
-├── hooks/
+├── hooks/                # Created by the CLI the first time a component needs one
 ├── lib/
 │   └── utils.ts          # cn() utility
 ├── scripts/              # ui:add / ui:update and their postprocessing
@@ -69,7 +69,7 @@ Imports inside the package use Node subpath imports – `#lib/utils` for `cn`, `
 }
 ```
 
-and mirrored by the `components.json` aliases, so the shadcn CLI generates them natively. Unlike a `@/` alias, they resolve against `packages/ui` itself no matter which workspace imports the component, so the package needs no cooperation from the app consuming it. This requires `moduleResolution: "bundler"`, which the shared TypeScript preset already sets.
+and mirrored by the `components.json` aliases, so the shadcn CLI generates them natively. `apps/app` uses the same `#` convention for its own files. The difference that matters here is scope: a subpath import resolves against the package that declares it, so a `packages/ui` component keeps working no matter which workspace imports it. This requires `moduleResolution: "bundler"`, which the shared TypeScript preset already sets.
 
 Components and `cn` are re-exported from the package root, so apps import from a single place:
 
@@ -175,7 +175,7 @@ Dark mode uses a custom Tailwind variant keyed on the `dark` class:
 `apps/app/lib/theme.tsx` owns that class. The user picks a `preference` – `light`, `dark`, or `system` – and the app renders the resolved `theme`, which is only ever `light` or `dark`:
 
 ```tsx
-import { useTheme } from "@/lib/theme";
+import { useTheme } from "#lib/theme";
 
 function ThemeButton() {
   const { theme, preference, setPreference } = useTheme();

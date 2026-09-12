@@ -2,9 +2,9 @@ import {
   useBillingPortal,
   useBillingQuery,
   useUpgradeSubscription,
-} from "@/lib/queries/billing";
-import { useSessionQuery } from "@/lib/queries/session";
-import { type ThemePreference, useTheme } from "@/lib/theme";
+} from "#lib/queries/billing";
+import { useSessionQuery } from "#lib/queries/session";
+import { type ThemePreference, useTheme } from "#lib/theme";
 import {
   Button,
   Card,

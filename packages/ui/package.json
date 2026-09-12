@@ -2,21 +2,7 @@
   "name": "@repo/ui",
   "version": "0.1.0",
   "description": "Reusable UI components for React Starter Kit (monorepo)",
-  "type": "module",
-  "main": "./index.ts",
-  "types": "./index.ts",
-  "exports": {
-    ".": "./index.ts",
-    "./lib/utils": "./lib/utils.ts",
-    "./components/*": "./components/*.tsx",
-    "./hooks/*": "./hooks/*.ts",
-    "./lib/*": "./lib/*.ts"
-  },
-  "imports": {
-    "#components/*": "./components/*.tsx",
-    "#hooks/*": "./hooks/*.ts",
-    "#lib/*": "./lib/*.ts"
-  },
+  "license": "MIT",
   "files": [
     "components",
     "hooks",
@@ -24,30 +10,42 @@
     "index.ts",
     "components.json"
   ],
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "imports": {
+    "#components/*": "./components/*.tsx",
+    "#hooks/*": "./hooks/*.ts",
+    "#lib/*": "./lib/*.ts"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./lib/utils": "./lib/utils.ts",
+    "./components/*": "./components/*.tsx",
+    "./hooks/*": "./hooks/*.ts",
+    "./lib/*": "./lib/*.ts"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint . --max-warnings 0",
-    "type-check": "tsc --noEmit",
     "add": "bun scripts/add.ts",
     "update": "bun scripts/update.ts"
-  },
-  "peerDependencies": {
-    "react": ">=19.2.4",
-    "react-dom": ">=19.2.4"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^1.33.0",
+    "lucide-react": "^1.44.0",
     "radix-ui": "^1.6.7",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@types/react-dom": "^19.2.4",
-    "@types/react": "^19.2.18",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
-  "license": "MIT"
+  "peerDependencies": {
+    "react": ">=19.2.4",
+    "react-dom": ">=19.2.4"
+  }
 }

@@ -117,7 +117,8 @@ bun email:dev   # Email template preview at http://localhost:3001
 ```bash
 bun dev          # Start all services concurrently
 bun run test --run  # Run tests once (drop --run to watch)
-bun lint         # ESLint with cache
+bun lint         # Oxlint
+bun run format:check # Oxfmt (bun run format writes)
 bun typecheck    # TypeScript type checking (tsc --build)
 bun run build    # Production build for all deployable workspaces
 ```

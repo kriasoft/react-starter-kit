@@ -1,4 +1,4 @@
-import { useSocialProviders } from "@/lib/queries/config";
+import { useSocialProviders } from "#lib/queries/config";
 import { Button, Input, cn } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail } from "lucide-react";
@@ -242,6 +242,8 @@ function EmailInput({
           onChange={(e) => onEmailChange(e.target.value)}
           disabled={isDisabled}
           autoComplete="email"
+          // Sole field of the email step; see otp-verification.tsx.
+          // oxlint-disable-next-line jsx-a11y/no-autofocus
           autoFocus
           required
         />

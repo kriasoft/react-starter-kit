@@ -68,8 +68,7 @@ export default defineProject(({ mode }) => {
         quoteStyle: "single",
         semicolons: false,
         autoCodeSplitting: true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      }) as any,
+      }),
       // Oxc-based; Vite 8 recommends it over plugin-react-swc when no SWC
       // plugins are in use (one less toolchain in the build).
       react(),

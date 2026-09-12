@@ -3,32 +3,34 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#*": "./*"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "typecheck": "tsc --noEmit",
     "deploy": "wrangler deploy --env-file ../../.env --env-file ../../.env.local",
     "logs": "wrangler tail --env-file ../../.env --env-file ../../.env.local"
   },
   "dependencies": {
-    "@astrojs/react": "^6.0.4",
+    "@astrojs/react": "^6.0.5",
     "@repo/ui": "workspace:*",
-    "astro": "^7.2.4",
-    "hono": "^4.13.3",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "astro": "^7.3.2",
+    "hono": "^4.13.7",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@cloudflare/workers-types": "^5.20260823.1",
+    "@cloudflare/workers-types": "^5.20260911.1",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
-    "typescript": "~6.0.3",
-    "wrangler": "^4.125.0"
+    "typescript": "npm:@typescript/typescript6@~6.0.2",
+    "wrangler": "^4.131.0"
   }
 }

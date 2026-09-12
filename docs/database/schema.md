@@ -66,7 +66,6 @@ erDiagram
 
     identity {
         text id PK "idn_..."
-        text issuer
         text account_id
         text provider_id
         text user_id FK
@@ -165,7 +164,7 @@ Managed by [Better Auth](https://www.better-auth.com/docs/concepts/database). Ex
 | `verification` | `schema/user.ts` | OTP codes, email verification tokens |
 | `passkey` | `schema/passkey.ts` | WebAuthn credentials for [passwordless auth](/auth/passkeys) |
 
-An identity is keyed on `(issuer, accountId)`, enforced by the `identity_issuer_account_unique` constraint. `issuer` is the provider's OIDC issuer where it publishes one (`https://accounts.google.com`), and a synthetic namespace where it does not – `local:credential` for email and password, `local:oauth:<providerId>` for a plain OAuth provider. `providerId` names the local provider configuration and is not part of the key, so two configurations pointing at the same issuer resolve to the same identity.
+An identity is keyed on `(providerId, accountId)`, enforced by the `identity_provider_account_unique` constraint. Better Auth refuses an account lookup that matches more than one row, so the pair has to be unique. The account ID alone is not the key: one person can hold the same subject identifier at two providers.
 
 ::: warning
 

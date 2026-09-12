@@ -22,7 +22,6 @@ if (!existsSync("./.env.local")) {
 
 try {
   await execa("bun", ["run", "tsc", "--build"], { stdin: "inherit" });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-} catch (err) {
-  // console.error(err);
+} catch {
+  // A fresh clone may not typecheck yet; post-install must not fail the install.
 }

@@ -113,5 +113,5 @@ export async function postprocessComponents(): Promise<void> {
 
   await stripUseClient(files);
   await syncBarrelExports();
-  await execCommand("bunx", ["prettier", "--write", ...files, indexFile]);
+  await execCommand("bunx", ["oxfmt", ...files, indexFile]);
 }

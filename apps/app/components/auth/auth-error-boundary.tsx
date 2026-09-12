@@ -1,5 +1,5 @@
-import { getErrorMessage, isUnauthenticatedError } from "@/lib/errors";
-import { sessionQueryKey } from "@/lib/queries/session";
+import { getErrorMessage, isUnauthenticatedError } from "#lib/errors";
+import { sessionQueryKey } from "#lib/queries/session";
 import { Button } from "@repo/ui";
 import {
   useQueryClient,

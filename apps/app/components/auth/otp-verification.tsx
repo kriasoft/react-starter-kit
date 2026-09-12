@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "#lib/auth";
 import { Button, Input } from "@repo/ui";
 import type { SubmitEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
@@ -125,6 +125,9 @@ export function OtpVerification({
         disabled={disabled}
         autoComplete="one-time-code"
         required
+        // The step exists only to collect this code, so focusing it is what
+        // a screen reader user expects on arrival, not a context change.
+        // oxlint-disable-next-line jsx-a11y/no-autofocus
         autoFocus
         maxLength={6}
         pattern="[0-9]{6}"

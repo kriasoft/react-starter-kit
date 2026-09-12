@@ -18,17 +18,34 @@ const server = new McpServer({
   version: "0.0.0",
 });
 
-// This is just an example of a custom command that can be executed
-// from the MCP client (e.g., VS Code, GitHub Copilot, etc.).
+// Example of a custom tool an MCP client (VS Code, Copilot, an agent) can
+// call. Named for the intent, not the binary: the caller gets the policy
+// `bun lint` enforces, flags included. `bun lint` takes no filename, so
+// Oxlint is invoked directly with the same flags.
 server.registerTool(
-  "eslint",
+  "lint",
   {
-    description: "Lint JavaScript and TypeScript files with ESLint",
+    description: "Lint a file with this repository's Oxlint policy",
     inputSchema: { filename: z.string() },
   },
   async ({ filename }) => {
-    const cmd = await $`bun run eslint ${filename}`;
-    return { content: [{ type: "text", text: cmd.stdout }] };
+    // `--` keeps a model-supplied `filename` positional: without it, `--fix`
+    // is an Oxlint option and the tool rewrites the repository.
+    //
+    // `reject: false`: Oxlint exits non-zero exactly when the file has
+    // problems, and execa would throw away the diagnostics the caller asked
+    // for. An ignored path lands here too and says so.
+    const cmd = await $({
+      reject: false,
+    })`bun run oxlint --deny-warnings --report-unused-disable-directives -- ${filename}`;
+    return {
+      content: [
+        {
+          type: "text",
+          text: cmd.stdout || cmd.stderr || "No problems found.",
+        },
+      ],
+    };
   },
 );
 

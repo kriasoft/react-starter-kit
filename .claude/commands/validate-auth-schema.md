@@ -6,7 +6,7 @@ Check that the Drizzle schema in `db/schema/` still satisfies what Better Auth e
 bun run db/scripts/generate-auth-schema.ts
 ```
 
-The script builds a real auth instance from `apps/api/lib/auth.ts` with fixed placeholder credentials, every optional integration switched on, so the output is the full set of tables rather than the subset your environment happens to enable. Per field it carries the `type`, the `required`, `unique` and `index` flags, any literal `defaultValue`, and the reference target with its `onDelete`. Per table it carries `indexes`: the composite indexes a plugin declares, which is how the account identity key `(issuer, accountId)` arrives.
+The script builds a real auth instance from `apps/api/lib/auth.ts` with fixed placeholder credentials, every optional integration switched on, so the output is the full set of tables rather than the subset your environment happens to enable. Per field it carries the `type`, the `required`, `unique` and `index` flags, any literal `defaultValue`, and the reference target with its `onDelete`. Per table it carries `indexes`: the composite indexes a plugin declares.
 
 Compare that output against `db/schema/` and report:
 

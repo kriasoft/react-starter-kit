@@ -4,17 +4,14 @@
   "compilerOptions": {
     /* Type Checking */
     "strict": true,
-    "noImplicitAny": true,
+    // Not implied by `strict`.
     "noImplicitOverride": true,
-    "noImplicitThis": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
 
     /* Modules */
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    // `baseUrl` is deprecated in TypeScript 6 and removed in 7. `paths` resolve
-    // from this config, so "../../" anchors them at the repository root.
+    // TypeScript 7 removed `baseUrl`. `paths` resolve relative to the config
+    // that declares them, so "../../" anchors these at the repository root.
     "paths": {
       "@repo/api": ["../../apps/api"],
       "@repo/api/*": ["../../apps/api/*"],
@@ -23,8 +20,7 @@
       "@repo/db": ["../../db"],
       "@repo/db/*": ["../../db/*"],
       "@repo/ws-protocol": ["../../packages/ws-protocol"],
-      "@repo/ws-protocol/*": ["../../packages/ws-protocol/*"],
-      "@/*": ["../../apps/web/*"]
+      "@repo/ws-protocol/*": ["../../packages/ws-protocol/*"]
     },
     "resolveJsonModule": true,
     "allowImportingTsExtensions": false,
