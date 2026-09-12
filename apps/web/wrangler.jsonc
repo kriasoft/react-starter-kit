@@ -34,7 +34,7 @@
   // Custom domain: this worker is the origin for the whole hostname, so Wrangler
   // creates the DNS record and certificate and Terraform owns no DNS at all.
   // The pattern must be a bare hostname – no "/*", no zone_name.
-  // prettier-ignore
+  // oxfmt-ignore
   "routes": [
     { "pattern": "example.com", "custom_domain": true }
   ],
@@ -65,7 +65,7 @@
       "vars": {
         "ENVIRONMENT": "staging"
       },
-      // prettier-ignore
+      // oxfmt-ignore
       "routes": [
         { "pattern": "staging.example.com", "custom_domain": true }
       ]

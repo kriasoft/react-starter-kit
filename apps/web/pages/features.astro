@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import BaseLayout from '#layouts/BaseLayout.astro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui';
 
 const title = "Features - React Starter Kit";
@@ -112,7 +112,7 @@ const featureCategories = [
       },
       {
         title: "Linting & Formatting",
-        description: "ESLint and Prettier pre-configured"
+        description: "Oxlint and Oxfmt pre-configured"
       }
     ]
   },
@@ -184,7 +184,7 @@ const featureCategories = [
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
           { name: "React 19", category: "UI Framework" },
-          { name: "TypeScript 6", category: "Language" },
+          { name: "TypeScript 7", category: "Language" },
           { name: "Astro", category: "Static Site Gen" },
           { name: "Bun", category: "Toolchain" },
           { name: "Vite", category: "Build Tool" },

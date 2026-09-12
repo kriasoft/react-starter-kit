@@ -44,8 +44,12 @@ app.get("/health", (c) => {
   return c.json({ status: "healthy", timestamp: new Date().toISOString() });
 });
 
-// Authentication routes
-app.on(["GET", "POST"], "/api/auth/*", (c) => {
+// Authentication routes.
+//
+// `async` is load-bearing: one branch returns `c.json(...)`, the other Better
+// Auth's `Promise<Response>`, and TypeScript cannot pick a Hono `.on()`
+// overload from that mixed union. `async` collapses it to one promise.
+app.on(["GET", "POST"], "/api/auth/*", async (c) => {
   const auth = c.get("auth");
   if (!auth) {
     return c.json({ error: "Authentication service not initialized" }, 503);

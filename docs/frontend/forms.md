@@ -7,7 +7,7 @@ Forms use controlled React inputs with Zod for validation. There's no form libra
 An application-owned form keeps input values in `useState` and calls a mutation hook from a query module. `useCreateProject` below comes from [Add a tRPC Procedure](/recipes/new-procedure) – no tRPC mutation ships in the starter, so build it first:
 
 ```tsx
-import { useCreateProject } from "@/lib/queries/project";
+import { useCreateProject } from "#lib/queries/project";
 import { Button, Input, Label } from "@repo/ui";
 import { useId, useState } from "react";
 

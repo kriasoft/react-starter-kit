@@ -1,4 +1,4 @@
-import type { FileRoutesByTo } from "@/lib/routeTree.gen";
+import type { FileRoutesByTo } from "#lib/routeTree.gen";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 

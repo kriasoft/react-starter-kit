@@ -16,7 +16,7 @@ React Starter Kit is a production-ready monorepo for building SaaS web applicati
 
 | Layer | Technology |
 | --- | --- |
-| Runtime | [Bun](https://bun.sh) 1.3+, TypeScript 6.0, ESM |
+| Runtime | [Bun](https://bun.sh) 1.4+, TypeScript 7.0, ESM |
 | Frontend | [React](https://react.dev) 19, [TanStack Router](https://tanstack.com/router), [TanStack Query](https://tanstack.com/query), [Jotai](https://jotai.org), [Tailwind CSS](https://tailwindcss.com) v4 |
 | UI | [shadcn/ui](https://ui.shadcn.com) (new-york style) |
 | Backend | [Hono](https://hono.dev), [tRPC](https://trpc.io) 11 |
@@ -25,7 +25,7 @@ React Starter Kit is a production-ready monorepo for building SaaS web applicati
 | Database | [Neon](https://neon.tech) PostgreSQL, [Drizzle ORM](https://orm.drizzle.team) |
 | Email | [React Email](https://react.email), [Resend](https://resend.com) |
 | Deployment | [Cloudflare Workers](https://developers.cloudflare.com/workers/), Terraform |
-| Testing | [Vitest](https://vitest.dev) 4, Happy DOM, [PGlite](https://pglite.dev) |
+| Testing | [Vitest](https://vitest.dev) 5, Happy DOM, [PGlite](https://pglite.dev) |
 
 ## What's Included
 

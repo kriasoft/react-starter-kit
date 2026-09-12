@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { authConfig } from "@/lib/auth-config";
+import { auth } from "#lib/auth";
+import { authConfig } from "#lib/auth-config";
 import { Button } from "@repo/ui";
 import { KeyRound } from "lucide-react";
 import { useCallback, useState } from "react";

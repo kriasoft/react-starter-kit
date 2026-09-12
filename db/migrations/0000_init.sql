@@ -1,6 +1,5 @@
 CREATE TABLE "identity" (
 	"id" text PRIMARY KEY NOT NULL,
-	"issuer" text NOT NULL,
 	"account_id" text NOT NULL,
 	"provider_id" text NOT NULL,
 	"user_id" text NOT NULL,
@@ -13,7 +12,7 @@ CREATE TABLE "identity" (
 	"password" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "identity_issuer_account_unique" UNIQUE("issuer","account_id")
+	CONSTRAINT "identity_provider_account_unique" UNIQUE("provider_id","account_id")
 );
 --> statement-breakpoint
 CREATE TABLE "invitation" (

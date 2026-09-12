@@ -13,18 +13,18 @@
     "typecheck": "tsc --noEmit",
     "example": "bun run example.ts"
   },
-  "peerDependencies": {
-    "@ws-kit/zod": "^0.10.2",
-    "zod": "^4.4.3"
-  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/bun": "^1.4.0",
+    "@types/bun": "^1.4.2",
     "@ws-kit/bun": "^0.10.1",
     "@ws-kit/memory": "^0.10.1",
     "@ws-kit/pubsub": "^0.10.2",
     "@ws-kit/zod": "^0.10.2",
-    "typescript": "~6.0.3",
-    "zod": "^4.4.3"
+    "typescript": "~7.0.2",
+    "zod": "^4.6.2"
+  },
+  "peerDependencies": {
+    "@ws-kit/zod": "^0.10.2",
+    "zod": "^4.6.2"
   }
 }

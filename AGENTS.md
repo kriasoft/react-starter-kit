@@ -12,7 +12,7 @@
 
 ## Tech Stack
 
-- **Toolchain:** Bun >=1.4.0 (package manager, scripts, local API server), TypeScript 6.0, ESM (`"type": "module"`)
+- **Toolchain:** Bun >=1.4.0 (package manager, scripts, local API server), TypeScript 7.0 (native compiler), Oxlint + Oxfmt, ESM (`"type": "module"`)
 - **Production runtime:** Cloudflare Workers (workerd) – not Bun. Code that ships must run on Workers APIs.
 - **Frontend:** React 19, TanStack Router, TanStack Query, Jotai, shadcn/ui (new-york), Tailwind CSS v4
 - **Backend:** Hono, tRPC 11, Better Auth (email OTP, passkey, Google OAuth, organizations)
@@ -27,7 +27,8 @@
 bun dev                        # Start web + api + app concurrently
 bun run build                  # Build email, web, api, and app workspaces
 bun run test                   # Vitest (watch mode; --run for single run)
-bun lint                       # ESLint with cache
+bun lint                       # Oxlint
+bun run format:check           # Oxfmt (bun run format writes)
 bun typecheck                  # tsc --build (builds apps/email for its types)
 bun infra:check                # Terraform fmt + validate, no credentials or state
 bun ui:add <component>         # Add shadcn/ui component to packages/ui
@@ -72,5 +73,5 @@ bun deploy:{staging,production} # Build and deploy api → app → web; no migra
 
 ## Markdown
 
-- Prose is not hard-wrapped: keep each paragraph on one line and use paragraphs, lists and headings for structure. Prettier enforces this with `proseWrap: "never"`.
-- Keep a blank line after a VitePress container's opening marker and before its closing `:::`. Prettier does not recognise `:::`, so an adjacent line gets folded into the marker, turning the body into the container title and swallowing everything up to the next `:::`.
+- Prose is not hard-wrapped: keep each paragraph on one line and use paragraphs, lists and headings for structure. Oxfmt enforces this with `proseWrap: "never"`.
+- Keep a blank line after a VitePress container's opening marker and before its closing `:::`. Oxfmt does not recognise `:::`, so an adjacent line gets folded into the marker, turning the body into the container title and swallowing everything up to the next `:::`.

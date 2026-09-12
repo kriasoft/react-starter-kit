@@ -7,7 +7,7 @@ Server state is managed with [TanStack Query](https://tanstack.com/query/latest)
 `apps/app/lib/trpc.ts` exports one thing – the tRPC client:
 
 ```tsx
-import { trpcClient } from "@/lib/trpc";
+import { trpcClient } from "#lib/trpc";
 ```
 
 It sends requests to `/api/trpc` with batched HTTP transport and includes credentials for cookie-based auth. A logger link is added in development.
@@ -126,7 +126,7 @@ export function useCreateProject() {
 The component picks the hook and reads its state:
 
 ```tsx
-import { useCreateProject } from "@/lib/queries/project";
+import { useCreateProject } from "#lib/queries/project";
 
 function CreateProjectButton() {
   const createProject = useCreateProject();

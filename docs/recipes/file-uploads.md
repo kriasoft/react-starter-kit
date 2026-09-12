@@ -313,7 +313,7 @@ const appRouter = router({
 
 ```tsx
 import { isUploadContentType } from "@repo/core";
-import { trpcClient } from "@/lib/trpc";
+import { trpcClient } from "#lib/trpc";
 
 async function uploadFile(file: File) {
   // `File.type` is an unvalidated `string` – and empty when the browser cannot

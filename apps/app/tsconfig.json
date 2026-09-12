@@ -2,9 +2,13 @@
   "extends": "../../packages/typescript-config/react.jsonc",
   "compilerOptions": {
     "noEmit": true,
-    "tsBuildInfoFile": "../../.cache/tsconfig/web.tsbuildinfo",
+    "tsBuildInfoFile": "../../.cache/tsconfig/app.tsbuildinfo",
+    // `#*` is declared twice on purpose. package.json "imports" is what Vite
+    // and Rolldown read, and they probe the target for a .ts/.tsx extension.
+    // TypeScript never probes an "imports" target, so it needs the same
+    // mapping as a path, where it does. Keep the two in step.
     "paths": {
-      "@/*": ["./*"],
+      "#*": ["./*"],
       "@repo/api": ["../api"],
       "@repo/api/*": ["../api/*"],
       "@repo/core": ["../../packages/core"],

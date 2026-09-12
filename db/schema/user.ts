@@ -90,10 +90,13 @@ export type NewSession = typeof session.$inferInsert;
  * Authentication identities: OAuth provider accounts and password credentials.
  * Matches to the `account` table in Better Auth.
  *
- * Better Auth keys an identity on `(issuer, accountId)`, never on `providerId`,
- * which names only the local provider configuration. `issuer` is the provider's
- * published OIDC issuer, or a synthetic `local:credential` or
- * `local:oauth:<providerId>` where it publishes none.
+ * Better Auth keys an identity on `(providerId, accountId)` and throws when a
+ * lookup matches two rows, so the pair is unique here.
+ *
+ * Never add an `issuer` column: 1.7.0 through 1.7.2 required one, 1.7.3
+ * stopped writing it, and `NOT NULL` there rejects every sign-up.
+ *
+ * @see https://www.better-auth.com/docs/guides/1-7-upgrade-guide
  */
 export const identity = pgTable(
   "identity",
@@ -101,7 +104,6 @@ export const identity = pgTable(
     id: text()
       .primaryKey()
       .$defaultFn(() => generateAuthId("account")),
-    issuer: text().notNull(),
     accountId: text().notNull(),
     providerId: text().notNull(),
     userId: text()
@@ -123,7 +125,10 @@ export const identity = pgTable(
       .notNull(),
   },
   (table) => [
-    unique("identity_issuer_account_unique").on(table.issuer, table.accountId),
+    unique("identity_provider_account_unique").on(
+      table.providerId,
+      table.accountId,
+    ),
     index("identity_user_id_idx").on(table.userId),
   ],
 );

@@ -14,12 +14,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "issuer": {
-          "name": "issuer",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "account_id": {
           "name": "account_id",
           "type": "text",
@@ -125,10 +119,10 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "identity_issuer_account_unique": {
-          "name": "identity_issuer_account_unique",
+        "identity_provider_account_unique": {
+          "name": "identity_provider_account_unique",
           "nullsNotDistinct": false,
-          "columns": ["issuer", "account_id"]
+          "columns": ["provider_id", "account_id"]
         }
       },
       "policies": {},

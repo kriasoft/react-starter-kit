@@ -137,7 +137,7 @@ export function useCreateProject() {
 Use in a component:
 
 ```tsx
-import { useProjectList } from "@/lib/queries/project";
+import { useProjectList } from "#lib/queries/project";
 
 function ProjectList() {
   const { data, isPending, error } = useProjectList();
@@ -160,7 +160,7 @@ function ProjectList() {
 The module owns the invalidation, so the component only picks a hook:
 
 ```tsx
-import { useCreateProject } from "@/lib/queries/project";
+import { useCreateProject } from "#lib/queries/project";
 
 function CreateProjectButton() {
   const createProject = useCreateProject();

@@ -1,11 +1,11 @@
-import { AuthForm } from "@/components/auth";
-import { getSafeRedirectUrl } from "@/lib/auth-config";
-import { socialProvidersQueryOptions } from "@/lib/queries/config";
+import { AuthForm } from "#components/auth";
+import { getSafeRedirectUrl } from "#lib/auth-config";
+import { socialProvidersQueryOptions } from "#lib/queries/config";
 import {
   isValidSession,
   revalidateSession,
   sessionQueryOptions,
-} from "@/lib/queries/session";
+} from "#lib/queries/session";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createFileRoute,

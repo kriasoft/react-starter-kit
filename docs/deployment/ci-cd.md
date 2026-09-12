@@ -30,7 +30,7 @@ steps:
   - run: bun install --frozen-lockfile
 
   # Formatting and linting run for every trigger
-  - run: bun prettier --check .
+  - run: bun run format:check
   - run: bun lint
 
   # Terraform fmt + validate for both roots, without credentials or state

@@ -1,7 +1,7 @@
-import { useBillingQuery } from "@/lib/queries/billing";
-import { useMembersQuery } from "@/lib/queries/organization";
-import { useSessionQuery } from "@/lib/queries/session";
-import type { FileRoutesByTo } from "@/lib/routeTree.gen";
+import { useBillingQuery } from "#lib/queries/billing";
+import { useMembersQuery } from "#lib/queries/organization";
+import { useSessionQuery } from "#lib/queries/session";
+import type { FileRoutesByTo } from "#lib/routeTree.gen";
 import {
   Card,
   CardContent,

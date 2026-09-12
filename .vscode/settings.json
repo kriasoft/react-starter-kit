@@ -2,7 +2,7 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   "editor.quickSuggestions": {
     "strings": "on"
@@ -12,11 +12,11 @@
     "editor.defaultFormatter": "hashicorp.terraform",
     "editor.formatOnSave": true
   },
-  "eslint.nodePath": "./node_modules",
-  "eslint.runtime": "node",
-  "prettier.prettierPath": "./node_modules/prettier",
-  "typescript.tsdk": "./node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "[astro]": {
+    "editor.defaultFormatter": "astro-build.astro-vscode"
+  },
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.tsdk.path": "./node_modules/typescript",
   "vitest.commandLine": "bun run vitest",
   "files.associations": {
     ".env.*.local": "properties",
@@ -27,12 +27,10 @@
     "**/.cache": true,
     "**/.DS_Store": true,
     "**/.editorconfig": true,
-    "**/.eslintcache": true,
     "**/.git": true,
     "**/.gitattributes": true,
     "**/.husky": true,
     "**/.pnp.*": true,
-    "**/.prettierignore": true,
     "**/node_modules": true,
     "**/bun.lock": true
   },
@@ -70,7 +68,6 @@
     "endregion",
     "entrypoint",
     "envalid",
-    "eslintcache",
     "esmodules",
     "esnext",
     "execa",
@@ -91,6 +88,10 @@
     "notistack",
     "oidc",
     "openai",
+    "oxfmt",
+    "oxfmtrc",
+    "oxlint",
+    "oxlintrc",
     "pathinfo",
     "pino",
     "pnpify",

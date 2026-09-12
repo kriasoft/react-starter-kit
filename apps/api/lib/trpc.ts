@@ -25,8 +25,7 @@ type ProtectedProcedure =
   typeof publicProcedure extends TRPCProcedureBuilder<
     infer TContext,
     infer TMeta,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    infer TContextOverrides,
+    infer _TContextOverrides,
     infer TInputIn,
     infer TInputOut,
     infer TOutputIn,

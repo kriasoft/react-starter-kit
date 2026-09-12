@@ -65,7 +65,7 @@ import { Link } from "@tanstack/react-router";
 Call a query module rather than `trpcClient`, so the cache key has one owner. `useProjectList` comes from [Add a tRPC Procedure](/recipes/new-procedure), which builds both the procedure and the module:
 
 ```tsx
-import { useProjectList } from "@/lib/queries/project";
+import { useProjectList } from "#lib/queries/project";
 
 function Projects() {
   const { data, isPending, error } = useProjectList();

@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "#lib/auth";
 import type { SubmitEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 
@@ -35,10 +35,6 @@ export function useAuthForm({ onSuccess, mode = "login" }: UseAuthFormOptions) {
   // Post-auth work runs once per form. Disabling is state-backed and therefore
   // not synchronous, so two completions can still land before React rerenders.
   const hasSucceededRef = useRef(false);
-  // Ref provides current step to memoized transitionTo callback (avoids stale closure)
-  const stepRef = useRef(step);
-  stepRef.current = step;
-
   // Track child loading via counter to correctly handle overlapping operations
   const setChildBusy = useCallback((busy: boolean) => {
     setPendingOps((c) => (busy ? c + 1 : Math.max(0, c - 1)));
@@ -65,9 +61,8 @@ export function useAuthForm({ onSuccess, mode = "login" }: UseAuthFormOptions) {
 
   // Validates transitions to prevent invalid step jumps.
   // Returning to "method" resets the success guard to allow fresh auth attempts.
-  const transitionTo = useCallback((next: AuthStep, clearErr = true) => {
-    const current = stepRef.current;
-    if (!VALID_TRANSITIONS[current].includes(next)) {
+  const transitionTo = (next: AuthStep, clearErr = true) => {
+    if (!VALID_TRANSITIONS[step].includes(next)) {
       return;
     }
     if (next === "method") {
@@ -75,7 +70,7 @@ export function useAuthForm({ onSuccess, mode = "login" }: UseAuthFormOptions) {
     }
     setStep(next);
     if (clearErr) setError(null);
-  }, []);
+  };
 
   const goToEmailStep = () => transitionTo("email");
   const goToMethodStep = () => transitionTo("method");

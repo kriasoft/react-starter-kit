@@ -1,4 +1,4 @@
-import { useSessionQuery, useSignOut } from "@/lib/queries/session";
+import { useSessionQuery, useSignOut } from "#lib/queries/session";
 import { Avatar, AvatarFallback, Button } from "@repo/ui";
 import { LogOut, RefreshCw, User } from "lucide-react";
 

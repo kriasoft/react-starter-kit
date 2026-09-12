@@ -1,8 +1,8 @@
 import {
   useCreateOrganization,
   useMembersQuery,
-} from "@/lib/queries/organization";
-import { useSessionQuery } from "@/lib/queries/session";
+} from "#lib/queries/organization";
+import { useSessionQuery } from "#lib/queries/session";
 import {
   Avatar,
   AvatarFallback,

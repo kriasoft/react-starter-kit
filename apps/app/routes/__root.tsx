@@ -1,5 +1,5 @@
-import { AppErrorBoundary } from "@/components/auth";
-import { Devtools } from "@/components/devtools";
+import { AppErrorBoundary } from "#components/auth";
+import { Devtools } from "#components/devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 

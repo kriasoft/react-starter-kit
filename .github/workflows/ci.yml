@@ -76,7 +76,7 @@ jobs:
 
       # Every run, not just PRs: whether `main` only receives reviewed commits
       # is a branch-protection setting this repository cannot assert.
-      - run: bun prettier --check .
+      - run: bun run format:check
       - run: bun lint
 
       # Validates both roots without remote state or provider credentials.
@@ -94,7 +94,8 @@ jobs:
       # declarations before compiling the code that imports them – and leaves
       # `apps/email/dist` in place for the artifact below.
       - run: bun typecheck
-      # tsc cannot parse .astro templates; astro check covers apps/web
+      # tsc cannot parse .astro templates; astro check covers apps/web. It runs
+      # on TypeScript 6 – see ADR-004 and apps/web/package.json.
       - run: bun --filter @repo/web check
 
       - run: bun run test -- --run

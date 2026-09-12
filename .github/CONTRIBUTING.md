@@ -51,13 +51,30 @@ Before starting work on a significant change, open an issue to discuss your prop
 
    ```bash
    bun run test --run     # Run tests (Vitest)
-   bun lint               # ESLint
+   bun lint               # Oxlint
+   bun run format:check   # Oxfmt
    bun typecheck          # TypeScript
    ```
 
 ### Project Structure
 
 See [`AGENTS.md`](../AGENTS.md) for the full monorepo layout, tech stack, and available commands.
+
+### Database schema changes
+
+This repository keeps a single squashed migration, so a schema change regenerates `db/migrations/0000_init.sql` rather than adding to it. Plain `bun db:generate` would append `0001_*` against the existing snapshot, so:
+
+```bash
+# from db/migrations/meta/_journal.json, note the entry's `when` value,
+# then set "entries" to []
+rm db/migrations/0000_init.sql db/migrations/meta/0000_snapshot.json
+bun db:generate --name init
+# restore the original `when` so the entry keeps its identity
+```
+
+`meta/0000_snapshot.json` must keep top-level `"version": "7"`. At `"1"` drizzle-kit reports `data is malformed`, writes nothing, and `bun db:check` exits non-zero — a silent no-op that is easy to miss. The journal entry's own `version` is not read.
+
+This convention is specific to the starter kit. A project generated from it should follow [`docs/database/migrations.md`](../docs/database/migrations.md) and never edit an applied migration.
 
 ## Pull Request Process
 
@@ -74,7 +91,7 @@ See [`AGENTS.md`](../AGENTS.md) for the full monorepo layout, tech stack, and av
 3. **Verify before pushing:**
 
    ```bash
-   bun run test --run && bun lint && bun typecheck
+   bun run test --run && bun lint && bun run format:check && bun typecheck
    ```
 
 4. **Write clear commit messages** using [conventional commits](https://www.conventionalcommits.org/):
