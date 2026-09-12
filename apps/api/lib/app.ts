@@ -6,6 +6,7 @@
 
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { Hono } from "hono";
+
 import { billingRouter } from "../routers/billing.js";
 import { configRouter } from "../routers/config.js";
 import type { AppContext } from "./context.js";

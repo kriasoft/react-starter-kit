@@ -4,12 +4,14 @@
  * Requires wrangler.jsonc with HYPERDRIVE_CACHED and HYPERDRIVE_UNCACHED bindings.
  */
 
+import { parseArgs } from "node:util";
+
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
-import { parseArgs } from "node:util";
 import { getPlatformProxy } from "wrangler";
+
 import api from "./index.js";
 import { createAuth } from "./lib/auth.js";
 import type { AppContext } from "./lib/context.js";

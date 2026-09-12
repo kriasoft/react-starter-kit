@@ -23,10 +23,11 @@
  * - Script handles concurrent executions without filename conflicts
  */
 
-import { $ } from "bun";
 import { existsSync } from "fs";
 import { chmod, mkdir } from "fs/promises";
 import { resolve } from "path";
+
+import { $ } from "bun";
 
 // Import drizzle config to trigger environment loading and validation
 import "../drizzle.config";

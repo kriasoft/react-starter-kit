@@ -1,5 +1,6 @@
 import { Button } from "@repo/ui";
 import { Menu, X } from "lucide-react";
+
 import { SIDEBAR_ID } from "./constants";
 
 interface HeaderProps {

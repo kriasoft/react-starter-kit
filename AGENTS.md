@@ -71,6 +71,10 @@ bun deploy:{staging,production} # Build and deploy api → app → web; no migra
 - Use precise TypeScript types. Avoid `any` and unnecessary type assertions – let the compiler enforce correctness.
 - Document non-obvious trade-offs and decisions. Explain why, not what – every word must add value.
 
+## Formatting
+
+- Import order belongs to Oxfmt (`sortImports` in `.oxfmtrc.json`): applied by `bun run format`, checked by `bun run format:check` in CI and by lint-staged on commit. Do not reintroduce an editor code action or a lint rule for it.
+
 ## Markdown
 
 - Prose is not hard-wrapped: keep each paragraph on one line and use paragraphs, lists and headings for structure. Oxfmt enforces this with `proseWrap: "never"`.

@@ -1,3 +1,11 @@
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  useRouter,
+} from "@tanstack/react-router";
+import { useEffect, type ReactNode } from "react";
+
 import { AuthErrorBoundary } from "#components/auth";
 import { Layout } from "#components/layout";
 import {
@@ -6,13 +14,6 @@ import {
   sessionQueryOptions,
   useSessionQuery,
 } from "#lib/queries/session";
-import {
-  createFileRoute,
-  Outlet,
-  redirect,
-  useRouter,
-} from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
 
 export const Route = createFileRoute("/(app)")({
   // Route-level authentication guard using cache-first strategy.

@@ -1,5 +1,3 @@
-import { getErrorMessage, isUnauthenticatedError } from "#lib/errors";
-import { sessionQueryKey } from "#lib/queries/session";
 import { Button } from "@repo/ui";
 import {
   useQueryClient,
@@ -7,6 +5,9 @@ import {
 } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
 import { ErrorBoundary } from "react-error-boundary";
+
+import { getErrorMessage, isUnauthenticatedError } from "#lib/errors";
+import { sessionQueryKey } from "#lib/queries/session";
 
 interface ResetProps {
   resetErrorBoundary: () => void;

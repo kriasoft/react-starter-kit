@@ -1,4 +1,5 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
+
 import { trpcClient } from "../trpc";
 
 export const socialProvidersQueryKey = ["config", "socialProviders"] as const;

@@ -13,6 +13,7 @@ import {
   organizationClient,
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
+
 import { authConfig } from "./auth-config";
 
 const baseURL =

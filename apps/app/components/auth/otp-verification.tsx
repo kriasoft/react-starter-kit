@@ -1,7 +1,8 @@
-import { auth } from "#lib/auth";
 import { Button, Input } from "@repo/ui";
 import type { SubmitEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
+
+import { auth } from "#lib/auth";
 
 const RESEND_COOLDOWN_SECONDS = 30;
 

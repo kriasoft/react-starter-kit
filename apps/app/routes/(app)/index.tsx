@@ -1,7 +1,3 @@
-import { useBillingQuery } from "#lib/queries/billing";
-import { useMembersQuery } from "#lib/queries/organization";
-import { useSessionQuery } from "#lib/queries/session";
-import type { FileRoutesByTo } from "#lib/routeTree.gen";
 import {
   Card,
   CardContent,
@@ -11,6 +7,11 @@ import {
 } from "@repo/ui";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CreditCard, type LucideIcon, Users } from "lucide-react";
+
+import { useBillingQuery } from "#lib/queries/billing";
+import { useMembersQuery } from "#lib/queries/organization";
+import { useSessionQuery } from "#lib/queries/session";
+import type { FileRoutesByTo } from "#lib/routeTree.gen";
 
 export const Route = createFileRoute("/(app)/")({
   component: Dashboard,

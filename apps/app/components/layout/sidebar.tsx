@@ -1,4 +1,5 @@
 import { UserMenu } from "#components/user-menu";
+
 import { SIDEBAR_ID, sidebarItems } from "./constants";
 import { SidebarNav } from "./sidebar-nav";
 

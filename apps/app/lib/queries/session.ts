@@ -4,7 +4,6 @@
  * UI disagree with the server about who is signed in.
  */
 
-import { getErrorStatus } from "#lib/errors";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   queryOptions,
@@ -12,6 +11,9 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+
+import { getErrorStatus } from "#lib/errors";
+
 import { auth, type Session, type User } from "../auth";
 
 export interface SessionData {

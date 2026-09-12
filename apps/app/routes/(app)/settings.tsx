@@ -1,11 +1,4 @@
 import {
-  useBillingPortal,
-  useBillingQuery,
-  useUpgradeSubscription,
-} from "#lib/queries/billing";
-import { useSessionQuery } from "#lib/queries/session";
-import { type ThemePreference, useTheme } from "#lib/theme";
-import {
   Button,
   Card,
   CardContent,
@@ -26,6 +19,14 @@ import {
   Sun,
 } from "lucide-react";
 import { useId } from "react";
+
+import {
+  useBillingPortal,
+  useBillingQuery,
+  useUpgradeSubscription,
+} from "#lib/queries/billing";
+import { useSessionQuery } from "#lib/queries/session";
+import { type ThemePreference, useTheme } from "#lib/theme";
 
 export const Route = createFileRoute("/(app)/settings")({
   component: Settings,
