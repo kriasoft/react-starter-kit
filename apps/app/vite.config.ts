@@ -1,8 +1,9 @@
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import { TLSSocket } from "node:tls";
 import { URL, fileURLToPath } from "node:url";
+
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import react from "@vitejs/plugin-react";
 import { loadEnv } from "vite";
 import { defineProject } from "vitest/config";
 

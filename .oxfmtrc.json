@@ -2,6 +2,11 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   // Everything else is an Oxfmt default; only the deltas belong here.
   "printWidth": 80,
+  // Import order belongs to the formatter, so it is identical for everyone and
+  // checked in CI. The defaults are the point: side-effect imports keep their
+  // position, and `#*` subpath imports form their own group, separate from
+  // `@repo/*` packages.
+  "sortImports": true,
   // .gitignore is read automatically. These are tracked files that are
   // generated or machine-owned, so formatting them only creates diff noise.
   "ignorePatterns": ["**/*.gen.ts", "bun.lock"],

@@ -1,8 +1,10 @@
-import { useSocialProviders } from "#lib/queries/config";
 import { Button, Input, cn } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail } from "lucide-react";
 import type { ComponentProps, SubmitEvent } from "react";
+
+import { useSocialProviders } from "#lib/queries/config";
+
 import { GoogleLogin } from "./google-login";
 import { OtpVerification } from "./otp-verification";
 import { PasskeyLogin } from "./passkey-login";

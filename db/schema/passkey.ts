@@ -9,6 +9,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+
 import { generateAuthId } from "./id";
 import { user } from "./user";
 

@@ -1,5 +1,6 @@
 import { getAuthTables } from "better-auth/db";
 import type { BetterAuthOptions } from "better-auth/types";
+
 import { createAuth } from "../../apps/api/lib/auth";
 
 /**

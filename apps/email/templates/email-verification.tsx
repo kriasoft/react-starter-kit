@@ -1,4 +1,5 @@
 import { Button, Heading, Section, Text } from "@react-email/components";
+
 import { BaseTemplate, colors } from "../components/BaseTemplate";
 
 interface EmailVerificationProps {

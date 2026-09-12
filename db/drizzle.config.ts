@@ -1,6 +1,7 @@
+import { resolve } from "node:path";
+
 import { configDotenv } from "dotenv";
 import { defineConfig } from "drizzle-kit";
-import { resolve } from "node:path";
 
 // No "test": tests run against PGlite in-process (`@repo/db/testing`), so
 // there is no test connection string to resolve. Leaving the name accepted

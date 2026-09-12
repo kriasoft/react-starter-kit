@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
 import { useData } from "vitepress";
+import { ref, computed, onMounted, watch } from "vue";
 
 const props = defineProps<{ code: string }>();
 const { isDark } = useData();

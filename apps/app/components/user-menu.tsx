@@ -1,6 +1,7 @@
-import { useSessionQuery, useSignOut } from "#lib/queries/session";
 import { Avatar, AvatarFallback, Button } from "@repo/ui";
 import { LogOut, RefreshCw, User } from "lucide-react";
+
+import { useSessionQuery, useSignOut } from "#lib/queries/session";
 
 export function UserMenu() {
   const { data: session, isPending, error, refetch } = useSessionQuery();

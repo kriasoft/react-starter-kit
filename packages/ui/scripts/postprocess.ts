@@ -1,4 +1,5 @@
 import { basename, join } from "node:path";
+
 import { Glob } from "bun";
 
 const packageDir = join(import.meta.dirname, "..");

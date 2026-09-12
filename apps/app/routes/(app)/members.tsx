@@ -1,9 +1,4 @@
 import {
-  useCreateOrganization,
-  useMembersQuery,
-} from "#lib/queries/organization";
-import { useSessionQuery } from "#lib/queries/session";
-import {
   Avatar,
   AvatarFallback,
   Button,
@@ -18,6 +13,12 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { Building2 } from "lucide-react";
 import { useId, useState } from "react";
+
+import {
+  useCreateOrganization,
+  useMembersQuery,
+} from "#lib/queries/organization";
+import { useSessionQuery } from "#lib/queries/session";
 
 export const Route = createFileRoute("/(app)/members")({
   component: Members,

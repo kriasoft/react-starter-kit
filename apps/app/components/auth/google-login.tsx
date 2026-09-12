@@ -1,8 +1,9 @@
-import { auth } from "#lib/auth";
-import { sessionQueryKey } from "#lib/queries/session";
 import { Button } from "@repo/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
+
+import { auth } from "#lib/auth";
+import { sessionQueryKey } from "#lib/queries/session";
 
 interface GoogleLoginProps {
   onError: (error: string | null) => void;

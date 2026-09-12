@@ -6,8 +6,10 @@
 import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 import { h } from "vue";
+
 import GitHubStats from "./components/GitHubStats.vue";
 import Mermaid from "./components/Mermaid.vue";
+
 import "./style.css";
 
 export default {

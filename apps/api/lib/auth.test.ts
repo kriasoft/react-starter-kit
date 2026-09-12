@@ -1,6 +1,7 @@
 import { member, organization, user } from "@repo/db";
 import { createTestDatabase } from "@repo/db/testing";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
+
 import { findInitialOrganization } from "./auth";
 
 const { db, reset, close } = await createTestDatabase();

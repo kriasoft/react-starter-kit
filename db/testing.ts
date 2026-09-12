@@ -1,11 +1,13 @@
 /** @file In-process PGlite database for tests. */
 
+import { fileURLToPath } from "node:url";
+
 import { PGlite } from "@electric-sql/pglite";
 import { is } from "drizzle-orm";
 import { getTableConfig, PgTable } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
-import { fileURLToPath } from "node:url";
+
 import type { Database } from "./index";
 import * as schema from "./schema";
 

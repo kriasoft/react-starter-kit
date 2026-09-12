@@ -1,4 +1,5 @@
 import { Heading, Section, Text } from "@react-email/components";
+
 import { BaseTemplate, colors } from "../components/BaseTemplate";
 
 interface OTPEmailProps {

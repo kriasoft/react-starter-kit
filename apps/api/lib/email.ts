@@ -7,6 +7,7 @@ import {
 } from "@repo/email";
 import { Resend } from "resend";
 import { z } from "zod";
+
 import type { Env } from "./env";
 
 export interface EmailOptions {

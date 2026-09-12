@@ -1,6 +1,7 @@
-import { auth } from "#lib/auth";
 import type { SubmitEvent } from "react";
 import { useCallback, useRef, useState } from "react";
+
+import { auth } from "#lib/auth";
 
 type AuthStep = "method" | "email" | "otp";
 

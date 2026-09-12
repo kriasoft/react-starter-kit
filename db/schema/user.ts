@@ -23,6 +23,7 @@ import {
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
+
 import { generateAuthId } from "./id";
 
 /**

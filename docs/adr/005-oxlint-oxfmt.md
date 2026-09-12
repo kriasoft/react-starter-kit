@@ -33,4 +33,4 @@
 ## Links
 
 - Code/Docs: `.oxlintrc.json`, `.oxfmtrc.json`, `.husky/pre-commit`, [Oxc](https://oxc.rs/)
-- Related ADRs: [ADR-004](/adr/004-typescript-7-native-compiler)
+- Related ADRs: [ADR-004](/adr/004-typescript-7-native-compiler), [ADR-007](/adr/007-oxfmt-sorts-imports)

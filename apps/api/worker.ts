@@ -8,6 +8,7 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
+
 import app from "./lib/app.js";
 import { createAuth } from "./lib/auth.js";
 import type { AppContext } from "./lib/context.js";

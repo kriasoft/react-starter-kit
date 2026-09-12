@@ -1,7 +1,8 @@
-import { execa } from "execa";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { EOL } from "node:os";
+
+import { execa } from "execa";
 
 // Create Git-ignored files for environment variable overrides
 if (!existsSync("./.env.local")) {
