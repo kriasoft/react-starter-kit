@@ -86,7 +86,7 @@ app.use(async (c, next) => {
   c.set("db", db);
   c.set("dbCached", dbCached);
   c.set("auth", createAuth(db, env)); // Uncached, as in worker.ts
-  c.env = env as Env; // tRPC reads ctx.env from c.env; keep it in sync with auth
+  c.env = env; // tRPC copies c.env into ctx.env; keep it in sync with auth
   await next();
 });
 
