@@ -1,3 +1,4 @@
+import type { Ai, KVNamespace, R2Bucket } from "@cloudflare/workers-types";
 import { z } from "zod";
 
 /** Environment contract and source for the inferred `Env` type. */
@@ -22,6 +23,16 @@ export const envSchema = z.object({
   STRIPE_STARTER_PRICE_ID: z.string().startsWith("price_").optional(),
   STRIPE_PRO_PRICE_ID: z.string().startsWith("price_").optional(),
   STRIPE_PRO_ANNUAL_PRICE_ID: z.string().startsWith("price_").optional(),
+  // Turnstile bot protection on generate (optional – when set, tokens are
+  // REQUIRED and verified server-side; absent means the gate is disabled,
+  // which is only acceptable in local development).
+  TURNSTILE_SECRET_KEY: z.string().optional(),
+  // Cloudflare bindings. Optional because tests and non-Workers runtimes build
+  // Env by hand: a missing binding degrades the feature (no rate limiting,
+  // generation reports unavailable) instead of crashing unrelated requests.
+  AI: z.custom<Ai>().optional(),
+  IMAGES: z.custom<R2Bucket>().optional(),
+  RATELIMIT: z.custom<KVNamespace>().optional(),
 });
 
 // Do not parse `Bun.env` at module load: production bindings arrive on `c.env`,

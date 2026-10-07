@@ -9,6 +9,9 @@ import { Hono } from "hono";
 
 import { billingRouter } from "../routers/billing.js";
 import { configRouter } from "../routers/config.js";
+import { creditsRouter } from "../routers/credits.js";
+import { generateRouter } from "../routers/generate.js";
+import { historyRouter } from "../routers/history.js";
 import type { AppContext } from "./context.js";
 import { router } from "./trpc.js";
 
@@ -16,6 +19,9 @@ import { router } from "./trpc.js";
 const appRouter = router({
   billing: billingRouter,
   config: configRouter,
+  credits: creditsRouter,
+  generate: generateRouter,
+  history: historyRouter,
 });
 
 // HTTP router

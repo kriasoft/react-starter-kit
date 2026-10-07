@@ -29,6 +29,20 @@
     { "binding": "HYPERDRIVE_CACHED", "id": "your-hyperdrive-cached-id-here" },
     { "binding": "HYPERDRIVE_UNCACHED", "id": "your-hyperdrive-uncached-id-here" }
   ],
+  // Engine bindings: Workers AI for image generation, R2 for image storage,
+  // KV for the best-effort generate rate limiter. Local `wrangler dev`
+  // simulates all three without provisioning.
+  "ai": { "binding": "AI" },
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "your-images-bucket-name-here",
+      "preview_bucket_name": "images-preview"
+    }
+  ],
+  "kv_namespaces": [
+    { "binding": "RATELIMIT", "id": "your-ratelimit-kv-id-here" }
+  ],
   // Deploy fails fast when one of these is unset. Values live in Cloudflare
   // (`wrangler secret put`); only the required-name contract is versioned.
   //
@@ -61,6 +75,18 @@
       "hyperdrive": [
         { "binding": "HYPERDRIVE_CACHED", "id": "local-dev-placeholder" },
         { "binding": "HYPERDRIVE_UNCACHED", "id": "local-dev-placeholder" }
+      ],
+      // Named environments do not inherit top-level bindings.
+      "ai": { "binding": "AI" },
+      "r2_buckets": [
+        {
+          "binding": "IMAGES",
+          "bucket_name": "images-dev",
+          "preview_bucket_name": "images-dev-preview"
+        }
+      ],
+      "kv_namespaces": [
+        { "binding": "RATELIMIT", "id": "local-dev-placeholder" }
       ],
       "secrets": {
         "required": ["BETTER_AUTH_SECRET", "RESEND_API_KEY"]
